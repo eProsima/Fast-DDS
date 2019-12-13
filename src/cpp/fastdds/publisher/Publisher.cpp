@@ -40,7 +40,7 @@ Publisher::Publisher(
         const PublisherQos& qos,
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& /*mask*/)
-    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener/*, mask*/)->impl_)
+    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener /*, mask*/)->impl_)
 {
 }
 
@@ -129,32 +129,32 @@ bool Publisher::has_datawriters() const
 }
 
 /* TODO
-bool Publisher::suspend_publications()
-{
+   bool Publisher::suspend_publications()
+   {
     return impl_->suspend_publications();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::resume_publications()
-{
+   bool Publisher::resume_publications()
+   {
     return impl_->resume_publications();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::begin_coherent_changes()
-{
+   bool Publisher::begin_coherent_changes()
+   {
     return impl_->begin_coherent_changes();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::end_coherent_changes()
-{
+   bool Publisher::end_coherent_changes()
+   {
     return impl_->end_coherent_changes();
-}
-*/
+   }
+ */
 
 ReturnCode_t Publisher::wait_for_acknowledgments(
         const fastrtps::Duration_t& max_wait)
@@ -168,11 +168,11 @@ const DomainParticipant* Publisher::get_participant() const
 }
 
 /* TODO
-bool Publisher::delete_contained_entities()
-{
+   bool Publisher::delete_contained_entities()
+   {
     return impl_->delete_contained_entities();
-}
-*/
+   }
+ */
 
 ReturnCode_t Publisher::set_default_datawriter_qos(
         const DataWriterQos& qos)
@@ -192,14 +192,12 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-bool Publisher::copy_from_topic_qos(
+ReturnCode_t Publisher::copy_from_topic_qos(
         DataWriterQos& writer_qos,
-        const fastrtps::TopicAttributes& topic_qos) const
+        const TopicQos& topic_qos) const
 {
     return impl_->copy_from_topic_qos(writer_qos, topic_qos);
 }
-*/
 
 const fastrtps::PublisherAttributes& Publisher::get_attributes() const
 {

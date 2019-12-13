@@ -23,6 +23,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
 #include <fastdds/dds/topic/qos/ReaderQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -126,6 +127,9 @@ public:
 
     RTPS_DllAPI void changeToDataReaderQos(
             const ReaderQos& qos);
+
+    RTPS_DllAPI void copyFromTopicQos(
+            const TopicQos& topic_qos);
 
 };
 

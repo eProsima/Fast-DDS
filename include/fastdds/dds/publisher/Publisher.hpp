@@ -56,6 +56,7 @@ class DataWriter;
 class DataWriterListener;
 class DataWriterQos;
 class Topic;
+class TopicQos;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -253,11 +254,9 @@ public:
     ReturnCode_t get_default_datawriter_qos(
             DataWriterQos& qos) const;
 
-    /* TODO
-       bool copy_from_topic_qos(
+    ReturnCode_t copy_from_topic_qos(
             DataWriterQos& writer_qos,
-            const fastrtps::TopicAttributes& topic_qos) const;
-     */
+            const TopicQos& topic_qos) const;
 
     /**
      * Get the Attributes of the Publisher.

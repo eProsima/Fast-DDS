@@ -394,15 +394,13 @@ const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const
     return default_datawriter_qos_;
 }
 
-/* TODO
-   bool PublisherImpl::copy_from_topic_qos(
-        DataWriterQos&,
-        const fastrtps::TopicAttributes&) const
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+ReturnCode_t PublisherImpl::copy_from_topic_qos(
+        DataWriterQos& reader_qos,
+        const TopicQos& topic_qos) const
+{
+    reader_qos.copyFromTopicQos(topic_qos);
+    return ReturnCode_t::RETCODE_OK;
+}
 
 ReturnCode_t PublisherImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)

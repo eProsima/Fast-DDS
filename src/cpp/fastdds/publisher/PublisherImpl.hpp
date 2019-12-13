@@ -29,6 +29,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 #include <mutex>
 #include <map>
@@ -140,11 +141,9 @@ public:
 
     const DataWriterQos& get_default_datawriter_qos() const;
 
-    /* TODO
-       bool copy_from_topic_qos(
+    ReturnCode_t copy_from_topic_qos(
             DataWriterQos& writer_qos,
-            const fastrtps::TopicAttributes& topic_qos) const;
-     */
+            const TopicQos& topic_qos) const;
 
     fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {
