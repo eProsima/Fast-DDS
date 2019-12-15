@@ -247,16 +247,16 @@ if(WIN32 AND (MSVC OR MSVC_IDE))
 endif()
 
 
-# Add sources to Makefile.am
-set_sources(SECTION SQLITE3)
-set_sources(${${PROJECT_NAME}_sqlite3_source_files})
-set_sources(ENDSECTION)
-
 #SQLITE3 persistence service sources
 set(${PROJECT_NAME}_sqlite3_source_files
     rtps/persistence/SQLite3PersistenceService.cpp
     rtps/persistence/sqlite3.c
     )
+
+# Add sources to Makefile.am
+set_sources(SECTION SQLITE3)
+set_sources(${${PROJECT_NAME}_sqlite3_source_files})
+set_sources(ENDSECTION)
 
 if(SQLITE3_SUPPORT)
     list(APPEND ${PROJECT_NAME}_source_files
