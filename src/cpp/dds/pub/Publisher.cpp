@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_TPUBLISHER_IMPL_HPP_
 #define EPROSIMA_DDS_PUB_TPUBLISHER_IMPL_HPP_
@@ -34,10 +34,10 @@ namespace pub {
 Publisher::Publisher(
         const dds::domain::DomainParticipant& dp)
     : ::dds::core::Reference<detail::Publisher>(
-          new detail::Publisher(dp,
-                         dp.default_publisher_qos(),
-                         nullptr,
-                         dds::core::status::StatusMask::none()))
+        new detail::Publisher(dp,
+        dp.default_publisher_qos(),
+        nullptr,
+        dds::core::status::StatusMask::none()))
 {
 }
 
@@ -47,7 +47,7 @@ Publisher::Publisher(
         PublisherListener* listener,
         const dds::core::status::StatusMask& mask)
     : ::dds::core::Reference<detail::Publisher>(
-          new detail::Publisher(dp, qos, listener, mask))
+        new detail::Publisher(dp, qos, listener, mask))
 {
 }
 
@@ -83,25 +83,20 @@ Publisher& Publisher::operator >>(
 Publisher& Publisher::default_datawriter_qos(
         const qos::DataWriterQos& dwqos)
 {
-    // TODO Use DataWriterQos instead of WriterQos
-    //delegate()->set_default_datawriter_qos(dwqos);
-    (void)dwqos;
+    delegate()->set_default_datawriter_qos(dwqos);
     return *this;
 }
 
-qos::DataWriterQos Publisher::default_datawriter_qos() const
+const qos::DataWriterQos Publisher::default_datawriter_qos() const
 {
-//    return this->delegate()->default_datawriter_qos();
-    // TODO Use DataWriterQos instead of WriterQos
-    //return delegate()->get_default_datawriter_qos();
-    return qos::DataWriterQos();
+    return qos::DataWriterQos(delegate()->get_default_datawriter_qos());
 }
 
 void Publisher::listener(
         Listener* plistener,
-        const dds::core::status::StatusMask& /*event_mask*/)
+        const dds::core::status::StatusMask& event_mask)
 {
-    delegate()->set_listener(plistener/*, event_mask*/);
+    delegate()->set_listener(plistener, event_mask);
 }
 
 typename Publisher::Listener* Publisher::listener() const

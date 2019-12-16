@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file
@@ -37,20 +37,13 @@ TAnyDataReader<DELEGATE>::~TAnyDataReader()
 template<typename DELEGATE>
 const dds::sub::Subscriber& TAnyDataReader<DELEGATE>::subscriber() const
 {
-    //To implement
-//    return this->delegate()->subscriber();
-    *this = dds::core::null;
-    return *this;
+    return this->delegate()->get_subscriber();
 }
 
 template<typename DELEGATE>
 const dds::topic::TopicDescription& TAnyDataReader<DELEGATE>::topic_description() const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->topic_description();
-    *this = dds::core::null;
-    return *this;
+    return this->delegate()->get_topic_description();
 }
 
 template<typename DELEGATE>
@@ -58,8 +51,8 @@ void TAnyDataReader<DELEGATE>::wait_for_historical_data(
         const dds::core::Duration& /*timeout*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->wait_for_historical_data(timeout);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->wait_for_historical_data(timeout);
 }
 
 
@@ -102,19 +95,15 @@ dds::core::status::LivelinessChangedStatus TAnyDataReader<DELEGATE>::liveliness_
 template<typename DELEGATE>
 dds::core::status::SampleRejectedStatus TAnyDataReader<DELEGATE>::sample_rejected_status()
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->sample_rejected_status();
-    *this = dds::core::null;
-    return *this;
+    return this->delegate()->get_sample_rejected_status();
 }
 
 template<typename DELEGATE>
 dds::core::status::SampleLostStatus TAnyDataReader<DELEGATE>::sample_lost_status()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->sample_lost_status();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->sample_lost_status();
     *this = dds::core::null;
     return *this;
 }
@@ -128,21 +117,13 @@ dds::core::status::RequestedDeadlineMissedStatus TAnyDataReader<DELEGATE>::reque
 template<typename DELEGATE>
 dds::core::status::RequestedIncompatibleQosStatus TAnyDataReader<DELEGATE>::requested_incompatible_qos_status()
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->requested_incompatible_qos_status();
-    *this = dds::core::null;
-    return *this;
+    return this->delegate()->get_requested_incompatible_qos_status();
 }
 
 template<typename DELEGATE>
 dds::core::status::SubscriptionMatchedStatus TAnyDataReader<DELEGATE>::subscription_matched_status()
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->subscription_matched_status();
-    *this = dds::core::null;
-    return *this;
+    return this->delegate()->get_subscription_matched_status();
 }
 
 } //namespace sub

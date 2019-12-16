@@ -40,6 +40,7 @@ namespace core {
 class InstanceHandle : public Value<detail::InstanceHandle>
 {
 public:
+
     /**
      * Create an nil instance handle.
      */
@@ -49,7 +50,7 @@ public:
      * Create an nil instance handle.
      *
      * @param nullHandle placeholder
-    InstanceHandle(
+       InstanceHandle(
             const null_type& nullHandle);
      */
 
@@ -76,6 +77,7 @@ public:
     /** @endcond */
 
 public:
+
     /**
      * Assign an existing InstancHandle to this InstancHandle
      *
@@ -112,6 +114,7 @@ public:
             const InstanceHandle& that) const;
 
 public:
+
     /**
      * Create an nil instance handle.
      *
@@ -132,10 +135,9 @@ typedef std::vector<InstanceHandle> InstanceHandleSeq;
 } //namespace core
 } //namespace dds
 
-/*
 inline std::ostream& operator <<(
         std::ostream& os,
         const dds::core::InstanceHandle& h);
-*/
+
 
 #endif //OMG_DDS_CORE_INSTANCE_HANDLE_HPP_
