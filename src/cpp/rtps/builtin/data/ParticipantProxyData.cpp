@@ -51,11 +51,15 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , plugin_security_attributes_(0UL)
 #endif
     , isAlive(false)
+    , m_is_properties_size_dynamic(allocation.max_properties == 0)
+    , m_is_user_data_size_dynamic(allocation.max_user_data == 0)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
+        m_properties.properties.reserve(allocation.max_properties);
+        m_userData.reserve(allocation.max_user_data);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
@@ -77,7 +81,9 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
 #endif
     , isAlive(pdata.isAlive)
     , m_properties(pdata.m_properties)
+    , m_is_properties_size_dynamic(pdata.m_is_properties_size_dynamic)
     , m_userData(pdata.m_userData)
+    , m_is_user_data_size_dynamic(pdata.m_is_user_data_size_dynamic)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , lease_duration_(std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration)))
