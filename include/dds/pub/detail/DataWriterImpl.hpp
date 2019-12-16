@@ -399,9 +399,7 @@ dds::core::InstanceHandle DataWriter<T>::lookup_instance(
 template<typename T>
 const dds::topic::Topic<T>& DataWriter<T>::topic() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->topic();
+    return this->delegate()->get_topic();
 }
 
 template<typename T>

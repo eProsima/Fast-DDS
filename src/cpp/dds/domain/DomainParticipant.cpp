@@ -64,9 +64,9 @@ void DomainParticipant::delete_participant()
 
 void DomainParticipant::listener(
         Listener* listener,
-        const ::dds::core::status::StatusMask& /*event_mask*/)
+        const ::dds::core::status::StatusMask& event_mask)
 {
-    this->delegate()->set_listener(listener /*, event_mask*/);
+    this->delegate()->set_listener(listener, event_mask);
 }
 
 typename DomainParticipant::Listener* DomainParticipant::listener() const

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file
@@ -31,10 +31,10 @@ namespace sub {
 Subscriber::Subscriber(
         const ::dds::domain::DomainParticipant& dp)
     : ::dds::core::Reference<detail::Subscriber>(
-            new detail::Subscriber(dp,
-                dp.default_subscriber_qos(),
-                nullptr,
-                dds::core::status::StatusMask::none()))
+        new detail::Subscriber(dp,
+        dp.default_subscriber_qos(),
+        nullptr,
+        dds::core::status::StatusMask::none()))
 {
 }
 
@@ -56,9 +56,9 @@ void Subscriber::notify_datareaders()
 
 void Subscriber::listener(
         Listener* listener,
-        const dds::core::status::StatusMask& /*event_mask*/)
+        const dds::core::status::StatusMask& event_mask)
 {
-    delegate()->set_listener(listener/*, event_mask*/);
+    delegate()->set_listener(listener, event_mask);
 }
 
 typename Subscriber::Listener* Subscriber::listener() const
@@ -73,7 +73,7 @@ const dds::sub::qos::SubscriberQos& Subscriber::qos() const
 }
 
 void Subscriber::qos(
-            const dds::sub::qos::SubscriberQos& sqos)
+        const dds::sub::qos::SubscriberQos& sqos)
 {
     delegate()->set_qos(sqos);
 }
@@ -86,7 +86,7 @@ dds::sub::qos::DataReaderQos Subscriber::default_datareader_qos() const
 }
 
 Subscriber& Subscriber::default_datareader_qos(
-    const dds::sub::qos::DataReaderQos& qos)
+        const dds::sub::qos::DataReaderQos& qos)
 {
     delegate()->set_default_datareader_qos(qos);
     return *this;
@@ -102,14 +102,14 @@ const dds::domain::DomainParticipant& Subscriber::participant() const
 }
 
 Subscriber& Subscriber::operator <<(
-            const dds::sub::qos::SubscriberQos& qos)
+        const dds::sub::qos::SubscriberQos& qos)
 {
     this->qos(qos);
     return *this;
 }
 
 const Subscriber& Subscriber::operator >>(
-            dds::sub::qos::SubscriberQos& qos) const
+        dds::sub::qos::SubscriberQos& qos) const
 {
     qos = this->qos();
     return *this;

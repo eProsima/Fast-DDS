@@ -296,9 +296,6 @@ DataReader<T>::DataReader(
             topic,
             sub.is_nil() ? dds::sub::qos::DataReaderQos() : sub.default_datareader_qos()))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    //    this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -316,9 +313,6 @@ DataReader<T>::DataReader(
             listener,
             mask))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    //    this->delegate()->init(this->impl_);
 }
 
 #ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
@@ -328,9 +322,6 @@ DataReader<T>::DataReader(
         const dds::topic::ContentFilteredTopic<T>& topic)
     : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, sub.default_datareader_qos()))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    //    this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -342,9 +333,6 @@ DataReader<T>::DataReader(
         const dds::core::status::StatusMask& mask)
     : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, qos, listener, mask))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    //    this->delegate()->init(this->impl_);
 }
 #endif //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
@@ -355,8 +343,6 @@ DataReader<T>::DataReader(
         const dds::topic::MultiTopic<T>& topic)
     : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic))
 {
-    //To implement
-    //    this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -368,8 +354,6 @@ DataReader<T>::DataReader(
         const dds::core::status::StatusMask& mask)
     : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, qos, listener, mask))
 {
-    //To implement
-    //    this->delegate()->init(this->impl_);
 }
 #endif //OMG_DDS_MULTI_TOPIC_SUPPORT
 
@@ -506,7 +490,6 @@ uint32_t DataReader<T>::take(
 template<typename T>
 typename DataReader<T>::Selector DataReader<T>::select()
 {
-    //To implement
     Selector selector(*this);
     return selector;
 }

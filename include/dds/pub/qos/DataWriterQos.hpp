@@ -31,6 +31,7 @@ namespace qos {
 class DataWriterQos : public detail::DataWriterQos
 {
 public:
+
     DataWriterQos()
         : detail::DataWriterQos ()
     {
@@ -38,6 +39,12 @@ public:
 
     DataWriterQos(
             const DataWriterQos& qos)
+        : detail::DataWriterQos(qos)
+    {
+    }
+
+    DataWriterQos(
+            const detail::DataWriterQos& qos)
         : detail::DataWriterQos(qos)
     {
     }

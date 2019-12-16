@@ -48,18 +48,19 @@ class PublisherListener;
 class Publisher : public dds::core::TEntity<detail::Publisher>
 {
 public:
+
     /**
      * Local convenience typedef for dds::pub::PublisherListener.
      */
     typedef PublisherListener Listener;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            Publisher,
-            dds::core::TEntity,
-            detail::Publisher)
+        Publisher,
+        dds::core::TEntity,
+        detail::Publisher)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            Publisher)
+        Publisher)
 
     /**
      * Create a new Publisher.
@@ -209,7 +210,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    qos::DataWriterQos default_datawriter_qos() const;
+    const qos::DataWriterQos default_datawriter_qos() const;
 
     //==========================================================================
 
