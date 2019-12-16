@@ -63,6 +63,12 @@
 #define HAVE_SECURITY @HAVE_SECURITY@
 #endif
 
+//Sqlite3 support
+#ifndef HAVE_SQLITE3
+#define HAVE_SQLITE3 @HAVE_SQLITE3@
+#endif
+
+
 // TLS support
 #ifndef TLS_FOUND
 #define TLS_FOUND @TLS_FOUND@

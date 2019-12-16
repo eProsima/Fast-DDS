@@ -61,9 +61,11 @@ bool EDPServer::createSEDPEndpoints()
     set_builtin_reader_attributes(ratt);
     set_builtin_writer_attributes(watt);
 
+#if HAVE_SQLITE3
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
         pPDP->GetPersistenceFileName()));
+#endif
     watt.endpoint.durabilityKind = _durability;
 
     publications_listener_ = new EDPServerPUBListener(this);

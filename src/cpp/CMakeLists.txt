@@ -189,8 +189,6 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatelessPersistentReader.cpp
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
-    rtps/persistence/SQLite3PersistenceService.cpp
-    rtps/persistence/sqlite3.c
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
     )
 
@@ -247,6 +245,28 @@ if(WIN32 AND (MSVC OR MSVC_IDE))
         ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
         )
 endif()
+
+
+#SQLITE3 persistence service sources
+set(${PROJECT_NAME}_sqlite3_source_files
+    rtps/persistence/SQLite3PersistenceService.cpp
+    rtps/persistence/sqlite3.c
+    )
+
+# Add sources to Makefile.am
+set_sources(SECTION SQLITE3)
+set_sources(${${PROJECT_NAME}_sqlite3_source_files})
+set_sources(ENDSECTION)
+
+if(SQLITE3_SUPPORT)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${${PROJECT_NAME}_sqlite3_source_files}
+        )
+    set(HAVE_SQLITE3 1)
+else()
+    set(HAVE_SQLITE3 0)
+endif()
+
 
 # External sources
 if(TINYXML2_SOURCE_DIR)

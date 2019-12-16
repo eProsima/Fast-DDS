@@ -107,11 +107,11 @@ bool BuiltinProtocols::initBuiltinProtocols(
         case DiscoveryProtocol_t::SERVER:
             mp_PDP = new PDPServer(this, allocation, DurabilityKind_t::TRANSIENT_LOCAL);
             break;
-
+#if HAVE_SQLITE3
         case DiscoveryProtocol_t::BACKUP:
             mp_PDP = new PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
-
+#endif
         default:
             logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
             return false;
