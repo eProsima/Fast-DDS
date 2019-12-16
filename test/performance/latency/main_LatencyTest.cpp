@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "LatencyTestPublisher.h"
-#include "LatencyTestSubscriber.h"
+#include "LatencyTestPublisher.hpp"
+#include "LatencyTestSubscriber.hpp"
 #include "../optionparser.h"
 
 #include <stdio.h>
