@@ -17,7 +17,7 @@
  *
  */
 
-#include "LatencyTestSubscriber.h"
+#include "LatencyTestSubscriber.hpp"
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
 #include <fastrtps/xmlparser/XMLProfileManager.h>

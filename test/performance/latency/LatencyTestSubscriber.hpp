@@ -22,7 +22,7 @@
 
 #include <asio.hpp>
 #include <condition_variable>
-#include "LatencyTestTypes.h"
+#include "LatencyTestTypes.hpp"
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>

@@ -22,7 +22,7 @@
 
 #include <asio.hpp>
 
-#include "LatencyTestTypes.h"
+#include "LatencyTestTypes.hpp"
 
 #include <condition_variable>
 #include <chrono>

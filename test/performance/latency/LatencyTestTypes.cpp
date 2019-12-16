@@ -17,7 +17,7 @@
  *
  */
 
-#include "LatencyTestTypes.h"
+#include "LatencyTestTypes.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
