@@ -435,10 +435,8 @@ public:
     {
         if (change->getFragmentSize() != 0)
         {
-            for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
-            {
-                unsent_fragments_.insert(i); // Indexed on 1
-            }
+            unsent_fragments_.base(1u);
+            unsent_fragments_.add_range(1u, change->getFragmentCount() + 1u);
         }
     }
 
@@ -519,35 +517,22 @@ public:
 
     FragmentNumberSet_t getUnsentFragments() const
     {
-        FragmentNumberSet_t rv;
-        auto min = unsent_fragments_.begin();
-        if (min != unsent_fragments_.end())
-        {
-            rv.base(*min);
-            for (FragmentNumber_t fn : unsent_fragments_)
-            {
-                rv.add(fn);
-            }
-        }
-
-        return rv;
+        return unsent_fragments_;
     }
 
     void markAllFragmentsAsUnsent()
     {
         if (change_ != nullptr && change_->getFragmentSize() != 0)
         {
-            for (uint32_t i = 1; i != change_->getFragmentCount() + 1; i++)
-            {
-                unsent_fragments_.insert(i); // Indexed on 1
-            }
+            unsent_fragments_.base(1u);
+            unsent_fragments_.add_range(1u, change_->getFragmentCount() + 1u);
         }
     }
 
     void markFragmentsAsSent(
             const FragmentNumber_t& sentFragment)
     {
-        unsent_fragments_.erase(sentFragment);
+        unsent_fragments_.remove(sentFragment);
     }
 
     void markFragmentsAsUnsent(
@@ -555,7 +540,7 @@ public:
     {
         unsentFragments.for_each([this](FragmentNumber_t element)
                     {
-                        unsent_fragments_.insert(element);
+                        unsent_fragments_.add(element);
                     });
     }
 
@@ -574,7 +559,7 @@ private:
     //const CacheChange_t* change_;
     CacheChange_t* change_;
 
-    std::set<FragmentNumber_t> unsent_fragments_;
+    FragmentNumberSet_t unsent_fragments_;
 };
 
 struct ChangeForReaderCmp
