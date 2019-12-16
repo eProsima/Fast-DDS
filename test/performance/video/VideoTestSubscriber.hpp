@@ -22,7 +22,7 @@
 
 #include <asio.hpp>
 #include <condition_variable>
-#include "VideoTestTypes.h"
+#include "VideoTestTypes.hpp"
 #include <gstreamer-1.0/gst/app/gstappsrc.h>
 #include <gstreamer-1.0/gst/app/gstappsink.h>
 #include <gstreamer-1.0/gst/gst.h>

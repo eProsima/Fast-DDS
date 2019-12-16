@@ -17,7 +17,7 @@
  *
  */
 
-#include "VideoTestPublisher.h"
+#include "VideoTestPublisher.hpp"
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
 #include <fastrtps/xmlparser/XMLProfileManager.h>

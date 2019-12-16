@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "VideoTestPublisher.h"
-#include "VideoTestSubscriber.h"
+#include "VideoTestPublisher.hpp"
+#include "VideoTestSubscriber.hpp"
 
 #include "../optionparser.h"
 
