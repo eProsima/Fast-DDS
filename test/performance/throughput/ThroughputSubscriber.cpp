@@ -17,7 +17,7 @@
  *
  */
 
-#include "ThroughputSubscriber.h"
+#include "ThroughputSubscriber.hpp"
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>

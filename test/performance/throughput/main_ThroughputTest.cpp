@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ThroughputTypes.h"
-#include "ThroughputPublisher.h"
-#include "ThroughputSubscriber.h"
+#include "ThroughputTypes.hpp"
+#include "ThroughputPublisher.hpp"
+#include "ThroughputSubscriber.hpp"
 
 #include "../optionparser.h"
 
