@@ -118,6 +118,8 @@ extern const char* TOTAL_WRITERS;
 extern const char* SEND_BUFFERS;
 extern const char* PREALLOCATED_NUMBER;
 extern const char* DYNAMIC_LC;
+extern const char* MAX_PROPERTIES;
+extern const char* MAX_USER_DATA;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;

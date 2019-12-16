@@ -123,7 +123,11 @@ class ParticipantProxyData
         //!
         ParameterPropertyList_t m_properties;
         //!
+        bool m_is_properties_size_dynamic;
+        //!
         std::vector<octet> m_userData;
+        //!
+        bool m_is_user_data_size_dynamic;
         //!
         TimedEvent* lease_duration_event;
         //!
