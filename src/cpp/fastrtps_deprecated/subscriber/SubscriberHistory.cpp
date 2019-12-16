@@ -169,7 +169,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
         mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
         mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
         mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance"; );
+        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
     return false;

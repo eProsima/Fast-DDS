@@ -1667,6 +1667,17 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
 }
 
+//! Tests that publisher can be created without providing an announcement period
+TEST_P(LivelinessQos, DefaultAnnouncementPeriod)
+{
+    unsigned int lease_duration_ms = 100;
+
+    // Publisher
+    PubSubWriter<HelloWorldType> pub(TEST_TOPIC_NAME);
+    pub.liveliness_lease_duration(lease_duration_ms * 1e-3).init();
+    EXPECT_NE(pub.getParticipant(), nullptr);
+}
+
 INSTANTIATE_TEST_CASE_P(LivelinessQos,
         LivelinessQos,
         testing::Values(false, true),
