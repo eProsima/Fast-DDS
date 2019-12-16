@@ -425,15 +425,25 @@ ReturnCode_t DomainParticipantImpl::get_discovered_participant_data(
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
-/* TODO
-   bool DomainParticipantImpl::get_discovered_topics(
+ReturnCode_t DomainParticipantImpl::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
-   {
-    (void)topic_handles;
-    logError(PARTICIPANT, "Not implemented.");
-    return false;
-   }
- */
+{
+    topic_handles = discovered_topics_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantImpl::get_discovered_topic_data(
+        TopicBuiltinTopicData& topic_data,
+        const fastrtps::rtps::InstanceHandle_t& topic_handle) const
+{
+    TopicBuiltinTopicData* data = BuiltinSubscriber::get_instance()->get_topic_data(topic_handle);
+    if (data != nullptr)
+    {
+        topic_data = *data;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+}
 
 bool DomainParticipantImpl::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle,
@@ -772,17 +782,36 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 #endif
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
-        RTPSParticipant*,
+        RTPSParticipant* participant,
         ReaderDiscoveryInfo&& info)
 {
+    Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
+
     if (info.status == fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
     {
         BuiltinSubscriber::get_instance()->add_subscription_data(info.info.key(),
                 SubscriptionBuiltinTopicData(info.info));
+
+        if (topic != nullptr &&
+                !(fastrtps::rtps::InstanceHandle_t(participant->getGuid()) == info.info.RTPSParticipantKey()))
+        {
+            participant_->discovered_topics_.push_back(topic->get_instance_handle());
+        }
     }
     else if (info.status == fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER)
     {
         BuiltinSubscriber::get_instance()->delete_subscription_data(info.info.key());
+
+        if (topic != nullptr &&
+                !(fastrtps::rtps::InstanceHandle_t(participant->getGuid()) == info.info.RTPSParticipantKey()))
+        {
+            auto it = std::find(participant_->discovered_topics_.begin(), participant_->discovered_topics_.end(),
+                            topic->get_instance_handle());
+            if (it != participant_->discovered_topics_.end())
+            {
+                participant_->discovered_topics_.erase(it);
+            }
+        }
     }
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
@@ -791,17 +820,36 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
-        RTPSParticipant*,
+        RTPSParticipant* participant,
         WriterDiscoveryInfo&& info)
 {
+    Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
+
     if (info.status == fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
     {
         BuiltinSubscriber::get_instance()->add_publication_data(info.info.key(),
                 PublicationBuiltinTopicData(info.info));
+
+        if (topic != nullptr &&
+                !(fastrtps::rtps::InstanceHandle_t(participant->getGuid()) == info.info.RTPSParticipantKey()))
+        {
+            participant_->discovered_topics_.push_back(topic->get_instance_handle());
+        }
     }
     else if (info.status == fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER)
     {
         BuiltinSubscriber::get_instance()->delete_publication_data(info.info.key());
+
+        if (topic != nullptr &&
+                !(fastrtps::rtps::InstanceHandle_t(participant->getGuid()) == info.info.RTPSParticipantKey()))
+        {
+            auto it = std::find(participant_->discovered_topics_.begin(), participant_->discovered_topics_.end(),
+                            topic->get_instance_handle());
+            if (it != participant_->discovered_topics_.end())
+            {
+                participant_->discovered_topics_.erase(it);
+            }
+        }
     }
 
     if (participant_ != nullptr && participant_->listener_ != nullptr)
@@ -1409,6 +1457,9 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     topic->set_listener(nullptr, ::dds::core::status::StatusMask::none());
+
+    BuiltinSubscriber::get_instance()->delete_topic_data(topic->get_instance_handle());
+
     std::lock_guard<std::mutex> lock(mtx_types_);
     topics_by_handle_.erase(topics_by_handle_.find(topic->get_instance_handle()));
     auto it = topics_.find(topic->get_name());
@@ -1423,10 +1474,10 @@ Topic* DomainParticipantImpl::find_topic(
         const std::string& topic_name,
         const Duration_t& timeout)
 {
-    std::unique_lock<std::mutex> lock(mtx_types_);
-
     Topic* topic = nullptr;
     std::chrono::microseconds max_wait(eprosima::fastrtps::rtps::TimeConv::Duration_t2MicroSecondsInt64(timeout));
+
+    std::unique_lock<std::mutex> lock(mtx_types_);
 
     cv_topic_.wait_for(lock, max_wait, [&]()
     {
@@ -1446,7 +1497,7 @@ Topic* DomainParticipantImpl::find_topic(
 TopicDescription* DomainParticipantImpl::lookup_topicdescription(
         const std::string& topic_name)
 {
-    std::unique_lock<std::mutex> lock(mtx_types_);
+    std::lock_guard<std::mutex> lock(mtx_types_);
     auto it = topics_.find(topic_name);
 
     if (it != topics_.end())
