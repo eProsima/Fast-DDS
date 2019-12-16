@@ -17,7 +17,7 @@
  *
  */
 
-#include "VideoTestTypes.h"
+#include "VideoTestTypes.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
