@@ -22,7 +22,7 @@
 
 #include <asio.hpp>
 
-#include "ThroughputTypes.h"
+#include "ThroughputTypes.hpp"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/publisher/PublisherListener.h>
