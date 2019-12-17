@@ -422,7 +422,7 @@ private:
     {
         // Every buffer allocated implies two internal allocations, node and payload.
         // Every internal allocation consumes 'per_allocation_extra_size_' bytes
-        auto allocation_extra_size = max_allocations * 
+        uint32_t allocation_extra_size = max_allocations * 
             ((sizeof(BufferNode) + per_allocation_extra_size_) + per_allocation_extra_size_);
 
         return std::make_shared<Segment>(size + allocation_extra_size);

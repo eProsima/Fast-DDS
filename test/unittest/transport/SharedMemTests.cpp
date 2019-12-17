@@ -327,9 +327,9 @@ TEST_F(SharedMemTests, port_and_segment_overflow_fail)
         Locators locators_end(locator_list.end());
         // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried 
         // to cause segment overflow
-        octet message[4096] = { 'H','e','l','l'};
+        octet message_big[4096] = { 'H','e','l','l'};
 
-        EXPECT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+        EXPECT_FALSE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
             (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
@@ -420,9 +420,9 @@ TEST_F(SharedMemTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
         // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried 
         // to cause segment overflow
-        octet message[4096] = { 'H','e','l','l'};
+        octet message_big[4096] = { 'H','e','l','l'};
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+        EXPECT_TRUE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
             (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 

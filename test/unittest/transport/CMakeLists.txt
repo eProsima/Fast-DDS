@@ -285,7 +285,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(TCPv4Tests SOURCES ${TCPV4TESTS_SOURCE})
 
         add_executable(SharedMemTests ${SHAREDMEMTESTS_SOURCE})
-        target_compile_definitions(SharedMemTests PRIVATE FASTRTPS_NO_LIB)
+        
+        target_compile_definitions(SharedMemTests PRIVATE FASTRTPS_NO_LIB
+        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>)
+
         target_include_directories(SharedMemTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver

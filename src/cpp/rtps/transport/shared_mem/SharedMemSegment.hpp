@@ -111,7 +111,7 @@ public:
         {
             Id uuid;
             boost::interprocess::managed_shared_memory 
-                    test_segment(boost::interprocess::create_only, uuid.to_string().c_str(), std::max((size_t)1024,allocation_alignment*4));
+                    test_segment(boost::interprocess::create_only, uuid.to_string().c_str(), (std::max)((size_t)1024,allocation_alignment*4));
 
             auto m1 = test_segment.get_free_memory();
             test_segment.allocate_aligned(1, allocation_alignment);

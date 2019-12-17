@@ -442,7 +442,7 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(uint32_t p
 	{
 		return opened_ports_.at(port_id);
 	}
-	catch(const std::out_of_range& e)
+	catch(const std::out_of_range&)
 	{
 		// The port is not opened
 		std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->open_port(port_id, configuration_.port_queue_capacity);
@@ -509,8 +509,6 @@ bool SharedMemTransport::push_fail(
 		logWarning(RTPS_MSG_OUT, error.what());
 		return false;
 	}	
-
-	return true;
 }
 
 bool SharedMemTransport::send(

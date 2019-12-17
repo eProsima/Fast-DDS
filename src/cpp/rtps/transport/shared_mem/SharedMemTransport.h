@@ -42,7 +42,7 @@ class SharedMemTransport : public TransportInterface
 {
 public:
 
-	static const uint32_t maximum_message_size = std::numeric_limits<uint32_t>::max();
+	static const uint32_t maximum_message_size = (std::numeric_limits<uint32_t>::max)();
 	static const uint32_t default_segment_size = s_maximumMessageSize;
 	static const uint32_t default_port_queue_capacity = 64;
 	static const SharedMemTransportDescriptor::OverflowPolicy default_overflow_policy =

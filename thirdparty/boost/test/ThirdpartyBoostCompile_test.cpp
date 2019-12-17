@@ -17,7 +17,7 @@
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
-#include <boost/interprocess/containers/list.hpp>
+#include <boost/thread/thread_time.hpp>
 
 /**
  * This is a temporary class intented to check the correct compilation of the
@@ -44,6 +44,7 @@ public:
         {
             boost::interprocess::interprocess_mutex mutex;
             boost::interprocess::interprocess_condition cv;
+			boost::get_system_time();
         }
         catch(const std::exception&)
         {
