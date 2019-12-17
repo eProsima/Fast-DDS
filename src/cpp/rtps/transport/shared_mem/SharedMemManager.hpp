@@ -440,7 +440,7 @@ private:
     uint32_t per_allocation_extra_size_;
 
     std::unordered_map<SharedMemSegment::Id::type, std::shared_ptr<SharedMemSegment>,
-            boost::hash<SharedMemSegment::Id::type> > ids_segments_;
+            std::hash<SharedMemSegment::Id::type> > ids_segments_;
     std::mutex ids_segments_mutex_;
 
     SharedMemGlobal global_segment_;

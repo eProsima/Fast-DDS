@@ -299,8 +299,9 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
 		uint32_t maxMsgSize,
 		TransportReceiverInterface* receiver)
 {
+	(void) maxMsgSize;
 	return new SharedMemChannelResource(this, shared_mem_manager_->open_port(locator.port,configuration_.port_queue_capacity)
-			->create_listener(), maxMsgSize, locator, receiver);
+				->create_listener(), locator, receiver);
 }
 
 bool SharedMemTransport::OpenOutputChannel(

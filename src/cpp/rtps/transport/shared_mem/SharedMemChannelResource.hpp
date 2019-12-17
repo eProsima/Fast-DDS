@@ -35,10 +35,9 @@ public:
 	SharedMemChannelResource(
 		SharedMemTransport* transport,
 		std::shared_ptr<SharedMemManager::Listener> listener,
-        uint32_t maxMsgSize,
         const fastrtps::rtps::Locator_t& locator,
         TransportReceiverInterface* receiver)
-    : ChannelResource(maxMsgSize)
+    : ChannelResource()
     , message_receiver_(receiver)
     , listener_(listener)
     , only_multicast_purpose_(false)
@@ -115,8 +114,9 @@ private:
         while (alive())
         {
             // Blocking receive.
-            auto& msg = message_buffer();
-            if (!Receive(msg.buffer, msg.max_size, msg.length, remote_locator))
+            std::shared_ptr<SharedMemManager::Buffer> message;
+
+            if (! (message = Receive(remote_locator)) )
             {
                 continue;
             }
@@ -124,7 +124,10 @@ private:
             // Processes the data through the CDR Message interface.
             if (message_receiver() != nullptr)
             {
-                message_receiver()->OnDataReceived(msg.buffer, msg.length, input_locator, remote_locator);
+                message_receiver()->OnDataReceived(
+                    static_cast<fastrtps::rtps::octet*>(message->data()),
+                    message->size(), 
+                    input_locator, remote_locator);
             }
             else if (alive())
             {
@@ -137,47 +140,22 @@ private:
 
     /**
     * Blocking Receive from the specified channel.
-    * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
-    * capacity must not be less than the receive_buffer_size supplied to this class during construction.
-    * @param receive_buffer_capacity Maximum size of the receive_buffer.
-    * @param[out] receive_buffer_size Size of the received buffer.
-    * @param[out] remote_locator Locator describing the remote destination we received a packet from.
     */
-    bool Receive(
-            fastrtps::rtps::octet* receive_buffer,
-            uint32_t receive_buffer_capacity,
-            uint32_t& receive_buffer_size,
+    std::shared_ptr<SharedMemManager::Buffer> Receive(
             fastrtps::rtps::Locator_t& remote_locator)
     {
         (void)remote_locator;
         
         try
         {
-            std::shared_ptr<SharedMemManager::Buffer> buffer = listener_->pop();
-
-            if(buffer)
-            {
-                if(buffer->size() > receive_buffer_capacity)
-                    throw std::runtime_error("Size of incoming message is bigger than buffer capacity");
-
-                memcpy(receive_buffer, buffer->data(), buffer->size());
-                receive_buffer_size = static_cast<uint32_t>(buffer->size());
-
-                buffer.reset(); // Forzes buffer release
-
-                return (receive_buffer_size > 0);
-            }
-            else
-            {
-                return false;
-            }
+            return listener_->pop();
         }
         catch (const std::exception& error)
         {
             (void)error;
             logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
                 << " (" << this << ")");
-            return false;
+            return nullptr;
         }
     }
 

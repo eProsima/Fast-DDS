@@ -20,15 +20,9 @@
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/functional/hash.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <boost/thread/thread_time.hpp>
 
-#ifdef _MSC_VER
-#include <Windows.h>
-#endif
+#include "SharedMemUUID.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -46,7 +40,6 @@ public:
     typedef boost::interprocess::interprocess_condition condition_variable;
     typedef boost::interprocess::interprocess_mutex mutex;
     typedef boost::interprocess::named_mutex named_mutex;
-    typedef boost::uuids::uuid uuid;
 
     static constexpr boost::interprocess::open_only_t open_only = boost::interprocess::open_only_t();
     static constexpr boost::interprocess::create_only_t create_only = boost::interprocess::create_only_t();
@@ -136,10 +129,9 @@ public:
     {
     public:
 
-        typedef boost::uuids::uuid type;
+        typedef UUID type;
 
         Id()
-            : uuid_(boost::uuids::random_generator()())
         {
         }
 
@@ -150,23 +142,14 @@ public:
 
         std::string to_string()
         {
-            return boost::uuids::to_string(uuid_);
+            return uuid_.to_string();
         }
 
-private:
+    private:
 
-        boost::uuids::uuid uuid_;
+        UUID uuid_;
 
     }; // Id
-
-    static uint64_t this_process_pid()
-    {
-#ifdef _MSC_VER
-        return GetCurrentProcessId();
-#else // POSIX
-        return static_cast<uint64_t>(getpid());
-#endif
-    }
 
 private:
 
