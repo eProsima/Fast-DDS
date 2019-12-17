@@ -148,6 +148,13 @@ public:
      */
     RTPS_DllAPI virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
 
+    /**
+     * Virtual method used to get the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    RTPS_DllAPI virtual bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) = 0;
+
 public:
     //!Parameter ID
     ParameterId_t Pid;
@@ -175,7 +182,16 @@ class ParameterKey_t:public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 };
+#define PARAMETER_KEY_LENGTH 16
 
 /**
  *
@@ -216,6 +232,13 @@ class ParameterLocator_t: public Parameter_t
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
@@ -241,6 +264,13 @@ class ParameterString_t: public Parameter_t
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
         inline const char* getName()const { return m_string.c_str(); };
         inline void setName(const char* name){ m_string = name; };
     private:
@@ -267,6 +297,13 @@ class ParameterPort_t: public Parameter_t {
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_PORT_LENGTH 4
@@ -301,6 +338,13 @@ class ParameterGuid_t: public Parameter_t {
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_GUID_LENGTH 16
@@ -324,6 +368,13 @@ class ParameterProtocolVersion_t: public Parameter_t {
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_PROTOCOL_LENGTH 4
@@ -349,6 +400,13 @@ class ParameterVendorId_t:public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
@@ -372,6 +430,13 @@ class ParameterIP4Address_t :public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
         void setIP4Address(rtps::octet o1, rtps::octet o2, rtps::octet o3, rtps::octet o4);
 };
 
@@ -397,6 +462,13 @@ class ParameterBool_t:public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_BOOL_LENGTH 4
@@ -423,6 +495,13 @@ public:
     * @return True if the parameter was correctly added.
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_STATUS_INFO_LENGTH 4
@@ -446,6 +525,13 @@ class ParameterCount_t:public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_COUNT_LENGTH 4
@@ -469,6 +555,13 @@ class ParameterEntityId_t:public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_ENTITYID_LENGTH 4
@@ -492,6 +585,13 @@ class ParameterTime_t:public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_TIME_LENGTH 8
@@ -520,6 +620,13 @@ class ParameterBuiltinEndpointSet_t : public Parameter_t{
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
@@ -551,6 +658,13 @@ class ParameterPropertyList_t : public Parameter_t {
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 /**
@@ -576,6 +690,13 @@ class ParameterSampleIdentity_t : public Parameter_t
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #if HAVE_SECURITY
@@ -603,6 +724,13 @@ class ParameterToken_t : public Parameter_t
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 class ParameterParticipantSecurityInfo_t : public Parameter_t
@@ -630,6 +758,13 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
         * @return True if the parameter was correctly added.
         */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
@@ -659,6 +794,13 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
         * @return True if the parameter was correctly added.
         */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        /**
+         * Read the parameter from a CDRMessage_t message.
+         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @return True if the parameter was correctly taken.
+         */
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 #define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8

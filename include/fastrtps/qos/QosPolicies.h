@@ -165,6 +165,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     DurabilityQosPolicyKind_t kind;
@@ -208,6 +215,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     Duration_t period;
@@ -250,6 +264,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 
 public:
 
@@ -313,6 +334,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     LivelinessQosPolicyKind kind;
@@ -368,6 +396,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 
 public:
 
@@ -437,6 +472,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     OwnershipQosPolicyKind kind;
@@ -491,6 +533,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     DestinationOrderQosPolicyKind kind;
@@ -508,6 +557,13 @@ public:
 
     RTPS_DllAPI UserDataQosPolicy()
         : Parameter_t(PID_USER_DATA, 0)
+        , QosPolicy(false)
+        , dataVec{}
+    {
+    }
+
+    RTPS_DllAPI UserDataQosPolicy(uint16_t in_length)
+        : Parameter_t(PID_USER_DATA, in_length)
         , QosPolicy(false)
         , dataVec{}
     {
@@ -532,6 +588,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 
     /**
      * Returns raw data vector.
@@ -595,6 +658,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     Duration_t minimum_separation;
@@ -656,6 +726,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     PresentationQosPolicyAccessScopeKind access_scope;
@@ -681,6 +758,13 @@ public:
     {
     }
 
+    RTPS_DllAPI PartitionQosPolicy(uint16_t in_length)
+        : Parameter_t(PID_PARTITION, in_length)
+        , QosPolicy(false)
+        , names{}
+    {
+    }
+
     virtual RTPS_DllAPI ~PartitionQosPolicy()
     {
     }
@@ -700,6 +784,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 
     /**
      * Appends a name to the list of partition names.
@@ -756,6 +847,14 @@ public:
     RTPS_DllAPI TopicDataQosPolicy()
         : Parameter_t(PID_TOPIC_DATA, 0)
         , QosPolicy(false)
+        , value{}
+    {
+    }
+
+    RTPS_DllAPI TopicDataQosPolicy(uint16_t in_length)
+        : Parameter_t(PID_TOPIC_DATA, in_length)
+        , QosPolicy(false)
+        , value{}
     {
     }
 
@@ -778,6 +877,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 
     /**
      * Appends topic data.
@@ -837,6 +943,13 @@ public:
     {
     }
 
+    RTPS_DllAPI GroupDataQosPolicy(uint16_t in_length)
+        : Parameter_t(PID_GROUP_DATA, in_length)
+        , QosPolicy(false)
+        , value{}
+    {
+    }
+
     virtual RTPS_DllAPI ~GroupDataQosPolicy()
     {
     }
@@ -856,6 +969,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 
     /**
      * Appends group data.
@@ -948,6 +1068,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     HistoryQosPolicyKind kind;
@@ -993,6 +1120,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 
@@ -1048,6 +1182,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     Duration_t service_cleanup_delay;
@@ -1096,6 +1237,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     Duration_t duration;
@@ -1138,6 +1286,13 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
 public:
 
     uint32_t value;
@@ -1175,6 +1330,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 /**
@@ -1241,6 +1403,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 enum TypeConsistencyKind : uint16_t
@@ -1288,6 +1457,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 };
 
 /**
@@ -1327,6 +1503,13 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
 
 public:
 

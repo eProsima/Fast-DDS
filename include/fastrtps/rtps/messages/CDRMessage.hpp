@@ -656,6 +656,25 @@ inline bool CDRMessage::addString(CDRMessage_t*msg, const std::string& in_str)
     return valid;
 }
 
+inline bool CDRMessage::addString(CDRMessage_t*msg, const string_255& in_str)
+{
+    uint32_t str_siz = (uint32_t)in_str.size();
+    int rest = (str_siz+1) % 4;
+    if (rest != 0)
+        rest = 4 - rest; //how many you have to add
+
+    bool valid = CDRMessage::addUInt32(msg, str_siz+1);
+    valid &= CDRMessage::addData(msg,
+            (unsigned char*) in_str.c_str(), str_siz+1);
+    if (rest != 0) {
+        octet oc = '\0';
+        for (int i = 0; i < rest; i++) {
+            valid &= CDRMessage::addOctet(msg, oc);
+        }
+    }
+    return valid;
+}
+
 inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id)
 {
     if(msg->pos + 28 > msg->max_size)
