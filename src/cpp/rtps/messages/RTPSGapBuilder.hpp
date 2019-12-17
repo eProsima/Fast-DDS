@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file RTPSGapBuilder.h
+ * @file RTPSGapBuilder.hpp
  *
  */
 
-#ifndef RTPSGAPBUILDER_H_
-#define RTPSGAPBUILDER_H_
+#ifndef RTPSGAPBUILDER_HPP
+#define RTPSGAPBUILDER_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
@@ -38,7 +38,7 @@ public:
     /**
      * RTPSGapBuilder constructor.
      *
-     * @param group Referemce to the @ref RTPSMessageGroup that will be used to send GAP messages.
+     * @param group Reference to the @ref RTPSMessageGroup that will be used to send GAP messages.
      */
     explicit RTPSGapBuilder(
             RTPSMessageGroup& group)
@@ -49,7 +49,7 @@ public:
     /**
      * RTPSGapBuilder constructor.
      *
-     * @param group Referemce to the @ref RTPSMessageGroup that will be used to send GAP messages.
+     * @param group Reference to the @ref RTPSMessageGroup that will be used to send GAP messages.
      * @param reader_guid Specific destination reader guid
      */
     explicit RTPSGapBuilder(
@@ -104,4 +104,4 @@ private:
 } /* namespace eprosima */
 
 #endif
-#endif /* RTPSGAPBUILDER_H_ */
+#endif /* RTPSGAPBUILDER_HPP */
