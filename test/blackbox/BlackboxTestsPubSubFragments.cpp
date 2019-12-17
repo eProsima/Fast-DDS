@@ -266,6 +266,7 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditionsSmallFragme
     // bultin transport, and instead use a lossy shim layer variant.
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->sendBufferSize = 1024;
+    testTransport->maxMessageSize = 1024;
     testTransport->receiveBufferSize = 65536;
     // We drop 20% of all data frags
     testTransport->dropDataFragMessagesPercentage = 20;
