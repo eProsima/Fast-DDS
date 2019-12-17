@@ -533,15 +533,27 @@ public:
             const FragmentNumber_t& sentFragment)
     {
         unsent_fragments_.remove(sentFragment);
+        if (!unsent_fragments_.empty() && unsent_fragments_.max() < change_->getFragmentCount())
+        {
+            unsent_fragments_.base_update(unsent_fragments_.base() + 1);
+            unsent_fragments_.add(unsent_fragments_.max() + 1);
+        }
     }
 
     void markFragmentsAsUnsent(
             const FragmentNumberSet_t& unsentFragments)
     {
-        unsentFragments.for_each([this](FragmentNumber_t element)
-                    {
-                        unsent_fragments_.add(element);
-                    });
+        FragmentNumber_t other_base = unsentFragments.base();
+        if (other_base < unsent_fragments_.base())
+        {
+            unsent_fragments_.base_update(other_base);
+        }
+        unsentFragments.for_each(
+            [this](
+                    FragmentNumber_t element)
+            {
+                unsent_fragments_.add(element);
+            });
     }
 
 private:
