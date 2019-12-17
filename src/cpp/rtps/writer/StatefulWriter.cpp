@@ -605,6 +605,13 @@ void StatefulWriter::send_any_unsent_changes()
                 RTPSGapBuilder gap_builder(group);
                 SequenceNumber_t seq = next_all_acked_notify_sequence_;
                 SequenceNumber_t last_sequence = mp_history->next_sequence_number();
+                SequenceNumber_t min_history_seq = get_seq_num_min();
+
+                if (seq < min_history_seq)
+                {
+                    force_piggyback_hb = true;
+                    seq = min_history_seq;
+                }
 
                 for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
                 {
@@ -1056,10 +1063,6 @@ bool StatefulWriter::matched_reader_add(
         // Always activate heartbeat period. We need a confirmation of the reader.
         // The state has to be updated.
         periodic_hb_event_->restart_timer();
-    }
-    else
-    {
-        send_heartbeat_to_nts(*rp);
     }
 
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
