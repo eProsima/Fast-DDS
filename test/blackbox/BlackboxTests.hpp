@@ -33,6 +33,7 @@
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
 
+#include <algorithm>
 #include <list>
 #include <functional>
 #include <gtest/gtest.h>

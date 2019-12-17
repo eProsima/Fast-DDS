@@ -237,7 +237,7 @@ TEST_P(CacheChangePoolTests, chage_change)
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     instance_1,
     CacheChangePoolTests,
     Combine(Values(0, 10, 20, 30),
@@ -245,7 +245,7 @@ INSTANTIATE_TEST_CASE_P(
             Values(128, 256, 512, 1024),
             Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
                    MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)), );
+                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)));
 
 int main(int argc, char **argv)
 {
