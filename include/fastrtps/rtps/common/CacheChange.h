@@ -533,10 +533,14 @@ public:
             const FragmentNumber_t& sentFragment)
     {
         unsent_fragments_.remove(sentFragment);
+
         if (!unsent_fragments_.empty() && unsent_fragments_.max() < change_->getFragmentCount())
         {
-            unsent_fragments_.base_update(unsent_fragments_.base() + 1);
-            unsent_fragments_.add(unsent_fragments_.max() + 1);
+            FragmentNumber_t base = unsent_fragments_.base();
+            FragmentNumber_t max = unsent_fragments_.max();
+            assert(!unsent_fragments_.is_set(base));
+            unsent_fragments_.base_update(base + 1);
+            unsent_fragments_.add(max + 1);
         }
     }
 
