@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/rtps/common/CDRMessage_t.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
 namespace eprosima {
@@ -36,23 +37,18 @@ class RTPSMessageGroup_t
 {
 public:
 
-    RTPSMessageGroup_t()
+    RTPSMessageGroup_t(
+#if HAVE_SECURITY
+            bool has_security,
+#endif
+            uint32_t payload,
+            const GuidPrefix_t& participant_guid)
         : rtpsmsg_submessage_(0u)
         , rtpsmsg_fullmsg_(0u)
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
 #endif
     {
-    }
-
-    void init(
-#if HAVE_SECURITY
-        bool has_security,
-#endif
-        uint32_t payload,
-        const GuidPrefix_t& participant_guid)
-    {
-
         rtpsmsg_fullmsg_.reserve(payload);
         rtpsmsg_submessage_.reserve(payload);
 

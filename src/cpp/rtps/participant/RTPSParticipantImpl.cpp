@@ -1239,12 +1239,12 @@ std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
     std::unique_ptr<RTPSMessageGroup_t> ret_val;
     if (send_buffers_pool_.empty())
     {
-        ret_val.reset(new RTPSMessageGroup_t());
+        ret_val.reset(
+            new RTPSMessageGroup_t(
 #if HAVE_SECURITY
-        ret_val->init(is_secure(), getMaxMessageSize(), m_guid.guidPrefix);
-#else
-        ret_val->init(getMaxMessageSize(), m_guid.guidPrefix);
+                is_secure(),
 #endif
+                getMaxMessageSize(), m_guid.guidPrefix));
     }
     else
     {
