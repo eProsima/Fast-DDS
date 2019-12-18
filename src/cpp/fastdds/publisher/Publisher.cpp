@@ -30,8 +30,10 @@ using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
 Publisher::Publisher(
-        PublisherImpl* p)
-    : impl_(p)
+        PublisherImpl* p,
+        const ::dds::core::status::StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(p)
 {
 }
 
@@ -40,7 +42,8 @@ Publisher::Publisher(
         const PublisherQos& qos,
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener)->impl_)
 {
 }
 
@@ -80,17 +83,9 @@ ReturnCode_t Publisher::set_listener(
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_condition_.set_enabled_statuses(mask);
+    return impl_->set_listener(listener);
 }
-
-//DataWriter* Publisher::create_datawriter(
-//        const fastrtps::TopicAttributes& topic_attr,
-//        const DataWriterQos& writer_qos,
-//        DataWriterListener* listener,
-//        const ::dds::core::status::StatusMask& mask)
-//{
-//    return impl_->create_datawriter(topic_attr, writer_qos, listener, mask);
-//}
 
 DataWriter* Publisher::create_datawriter(
         const Topic& topic,
@@ -202,9 +197,4 @@ bool Publisher::set_attributes(
         const fastrtps::PublisherAttributes& att)
 {
     return impl_->set_attributes(att);
-}
-
-const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
-{
-    return impl_->get_instance_handle();
 }

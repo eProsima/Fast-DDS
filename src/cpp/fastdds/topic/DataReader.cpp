@@ -39,8 +39,9 @@ DataReader::DataReader(
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(
-        (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_(
+        (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
 {
     impl_->set_topic(topic);
 }
@@ -51,14 +52,17 @@ DataReader::DataReader(
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(
-        (const_cast<Subscriber*>(sub))->create_datareader(topic_desc, qos, listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_(
+        (const_cast<Subscriber*>(sub))->create_datareader(topic_desc, qos, listener)->impl_)
 {
 }
 
 DataReader::DataReader(
-        DataReaderImpl* impl)
-    : impl_(impl)
+        DataReaderImpl* impl,
+        const ::dds::core::status::StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(impl)
 {}
 
 DataReader::~DataReader()
@@ -99,11 +103,6 @@ const GUID_t& DataReader::guid()
     return impl_->guid();
 }
 
-InstanceHandle_t DataReader::get_instance_handle() const
-{
-    return impl_->get_instance_handle();
-}
-
 ReturnCode_t DataReader::set_qos(
         const DataReaderQos& qos)
 {
@@ -139,7 +138,7 @@ const TopicAttributes& DataReader::get_topic() const
 }
 
 bool DataReader::set_attributes(
-        const rtps::ReaderAttributes& att)
+        const fastrtps::rtps::ReaderAttributes& att)
 {
     return impl_->set_attributes(att);
 }
@@ -177,7 +176,8 @@ ReturnCode_t DataReader::set_listener(
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_condition_.set_enabled_statuses(mask);
+    return impl_->set_listener(listener);
 }
 
 const DataReaderListener* DataReader::get_listener() const

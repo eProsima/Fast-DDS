@@ -87,19 +87,16 @@ private:
             const fastrtps::ParticipantAttributes& patt,
             DomainParticipant* pspart,
             const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
-            DomainParticipantListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            DomainParticipantListener* listen = nullptr);
 
     virtual ~DomainParticipantImpl();
 
 public:
 
     ReturnCode_t set_listener(
-            DomainParticipantListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
+            DomainParticipantListener* listener)
     {
         listener_ = listener;
-        mask_ = mask;
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -274,8 +271,6 @@ public:
     const TypeSupport find_type(
             const std::string& type_name) const;
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
-
     // From here legacy RTPS methods.
 
     const fastrtps::rtps::GUID_t& guid() const;
@@ -352,8 +347,6 @@ public:
         return topic_qos_;
     }
 
-    const ::dds::core::status::StatusMask& get_mask() const;
-
 private:
 
     //!Participant Attributes
@@ -373,8 +366,6 @@ private:
 
     //!Participant Listener
     DomainParticipantListener* listener_;
-
-    ::dds::core::status::StatusMask mask_;
 
     //!Publisher maps
     std::map<Publisher*, PublisherImpl*> publishers_;

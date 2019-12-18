@@ -24,6 +24,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastrtps/types/TypeIdentifier.h>
 
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -81,7 +82,7 @@ class TopicListener;
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DomainParticipant
+class RTPS_DllAPI DomainParticipant : public Entity
 {
 public:
 
@@ -393,12 +394,6 @@ public:
     TypeSupport find_type(
             const std::string& type_name) const;
 
-    /**
-     * Returns the DomainParticipant's handle.
-     * @return InstanceHandle of this DomainParticipant.
-     */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
-
     // From here legacy RTPS methods.
 
     const fastrtps::rtps::GUID_t& guid() const;
@@ -478,11 +473,10 @@ public:
 
     virtual ~DomainParticipant();
 
-    const ::dds::core::status::StatusMask& get_mask() const;
-
 private:
 
-    DomainParticipant();
+    DomainParticipant(
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DomainParticipant(
             DomainId_t did,

@@ -81,8 +81,7 @@ class DataWriterImpl
             const fastrtps::rtps::WriterAttributes& att,
             const fastdds::dds::DataWriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
-            DataWriterListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            DataWriterListener* listener = nullptr);
 
 public:
 
@@ -128,8 +127,6 @@ public:
      */
     const fastrtps::rtps::GUID_t& guid();
 
-    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
-
     /**
      * Get topic data type
      * @return Topic data type
@@ -167,8 +164,7 @@ public:
     const DataWriterListener* get_listener() const;
 
     ReturnCode_t set_listener(
-            DataWriterListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            DataWriterListener* listener);
 
     /* TODO
        bool get_key_value(
@@ -229,8 +225,6 @@ private:
 
     //! DataWriterListener
     DataWriterListener* listener_;
-
-    ::dds::core::status::StatusMask mask_;
 
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener

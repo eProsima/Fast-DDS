@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/BuiltinSubscriber.hpp>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastrtps/log/Log.h>
 
 #include <functional>
@@ -44,13 +45,11 @@ PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
         const PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
-        PublisherListener* listen,
-        const ::dds::core::status::StatusMask& mask)
+        PublisherListener* listen)
     : participant_(p)
     , qos_(&qos == &PUBLISHER_QOS_DEFAULT ? participant_->get_default_publisher_qos() : qos)
     , att_(att)
     , listener_(listen)
-    , mask_(mask)
     , user_publisher_(nullptr)
     , rtps_participant_(p->rtps_participant())
 {
@@ -120,11 +119,9 @@ PublisherListener* PublisherImpl::get_listener()
 }
 
 ReturnCode_t PublisherImpl::set_listener(
-        PublisherListener* listener,
-        const ::dds::core::status::StatusMask& mask)
+        PublisherListener* listener)
 {
     listener_ = listener;
-    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -223,8 +220,7 @@ DataWriter* PublisherImpl::create_datawriter(
         w_att,
         writer_qos,
         att_.historyMemoryPolicy,
-        listener,
-        mask);
+        listener);
 
     if (impl->writer_ == nullptr)
     {
@@ -233,12 +229,13 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
-    DataWriter* writer = new DataWriter(impl);
+    DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
 
     //REGISTER THE WRITER
     WriterQos wqos = writer_qos.changeToWriterQos();
     rtps_participant_->registerWriter(impl->writer_, topic.get_topic_attributes(), wqos);
+        writer->set_instance_handle(impl->writer_->getGuid());
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
@@ -515,11 +512,6 @@ bool PublisherImpl::set_attributes(
     }
 
     return updated;
-}
-
-const InstanceHandle_t& PublisherImpl::get_instance_handle() const
-{
-    return handle_;
 }
 
 bool PublisherImpl::type_in_use(

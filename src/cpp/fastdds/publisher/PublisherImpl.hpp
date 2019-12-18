@@ -77,8 +77,7 @@ class PublisherImpl
             DomainParticipantImpl* p,
             const PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
-            PublisherListener* p_listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            PublisherListener* p_listen = nullptr);
 
 public:
 
@@ -94,8 +93,7 @@ public:
     PublisherListener* get_listener();
 
     ReturnCode_t set_listener(
-            PublisherListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            PublisherListener* listener);
 
     DataWriter* create_datawriter(
             const Topic& topic,
@@ -161,8 +159,6 @@ public:
     bool set_attributes(
             const fastrtps::PublisherAttributes& att);
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
-
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -186,15 +182,11 @@ private:
     //!PublisherListener
     PublisherListener* listener_;
 
-    ::dds::core::status::StatusMask mask_;
-
     Publisher* user_publisher_;
 
     fastrtps::rtps::RTPSParticipant* rtps_participant_;
 
     DataWriterQos default_datawriter_qos_;
-
-    fastrtps::rtps::InstanceHandle_t handle_;
 
 };
 

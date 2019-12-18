@@ -201,8 +201,8 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         const ::dds::core::status::StatusMask& mask)
 {
     uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
-    DomainParticipant* dom_part = new DomainParticipant();
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, qos, listen, mask);
+    DomainParticipant* dom_part = new DomainParticipant(mask);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, qos, listen);
     RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
@@ -213,6 +213,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     }
 
     dom_part_impl->rtps_participant_ = part;
+    dom_part->set_instance_handle(static_cast<const fastrtps::rtps::InstanceHandle_t&>(part->getGuid()));
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);

@@ -25,17 +25,17 @@ namespace fastdds {
 namespace dds {
 
 Topic::Topic(
-        const DomainParticipant* dp,
+        DomainParticipant* dp,
         const std::string& topic_name,
         const std::string& type_name,
         const TopicQos& qos,
         TopicListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : TopicDescription(const_cast<DomainParticipant*>(dp), topic_name.c_str(), type_name.c_str())
+    : DomainEntity(mask)
+    , TopicDescription(dp, topic_name.c_str(), type_name.c_str())
     , listener_(listener)
     , qos_(qos)
-    , mask_(mask)
-    , participant_(const_cast<DomainParticipant*>(dp))
+    , participant_(dp)
 {
     topic_att_.topicName = topic_name;
     topic_att_.topicDataType = type_name;
@@ -45,15 +45,15 @@ Topic::Topic(
 }
 
 Topic::Topic(
-        const DomainParticipant* dp,
+        DomainParticipant* dp,
         fastrtps::TopicAttributes att,
         TopicListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : TopicDescription(const_cast<DomainParticipant*>(dp), att.getTopicName().c_str(), att.getTopicDataType().c_str())
+    : DomainEntity(mask)
+    , TopicDescription(dp, att.getTopicName().c_str(), att.getTopicDataType().c_str())
     , listener_(listener)
-    , mask_(mask)
     , topic_att_(att)
-    , participant_(const_cast<DomainParticipant*>(dp))
+    , participant_(dp)
 {
     TopicQos qos;
     qos.history = att.historyQos;
@@ -102,7 +102,7 @@ ReturnCode_t Topic::set_listener(
         const ::dds::core::status::StatusMask& mask)
 {
     listener_ = a_listener;
-    mask_ = mask;
+    status_condition_.set_enabled_statuses(mask);
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -131,18 +131,13 @@ std::vector<DataReader*>* Topic::get_readers() const
 ReturnCode_t Topic::set_instance_handle(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
-    handle_ = handle;
+    DomainEntity::set_instance_handle(handle);
     return ReturnCode_t::RETCODE_OK;
-}
-
-fastrtps::rtps::InstanceHandle_t Topic::get_instance_handle() const
-{
-    return handle_;
 }
 
 fastrtps::rtps::GUID_t Topic::get_guid() const
 {
-    return fastrtps::rtps::iHandle2GUID(handle_);
+    return fastrtps::rtps::iHandle2GUID(get_instance_handle());
 }
 
 } // namespace dds

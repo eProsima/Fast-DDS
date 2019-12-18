@@ -80,14 +80,12 @@ DomainParticipantImpl::DomainParticipantImpl(
         const ParticipantAttributes& patt,
         DomainParticipant* pspart,
         const DomainParticipantQos& qos,
-        DomainParticipantListener* listen,
-        const ::dds::core::status::StatusMask& mask)
+        DomainParticipantListener* listen)
     : att_(patt)
     , qos_(qos)
     , rtps_participant_(nullptr)
     , participant_(pspart)
     , listener_(listen)
-    , mask_(mask)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
     , subscriber_listener_(this)
@@ -165,14 +163,14 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     auto pit = publishers_.find(pub);
 
-    if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_instance_handle())
+    if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_publisher()->get_instance_handle())
     {
         if (pub->has_datawriters())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
         pit->second->set_listener(nullptr);
-        publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
+        publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_publisher()->get_instance_handle()));
         delete pit->second;
         publishers_.erase(pit);
         return ReturnCode_t::RETCODE_OK;
@@ -191,25 +189,20 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
     std::lock_guard<std::mutex> lock(mtx_subs_);
     auto sit = subscribers_.find(sub);
 
-    if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_instance_handle())
+    if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_subscriber()->get_instance_handle())
     {
         if (sub->has_datareaders())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
         sit->second->set_listener(nullptr);
-        subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
+        subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_subscriber()->get_instance_handle()));
         delete sit->second;
         subscribers_.erase(sit);
         return ReturnCode_t::RETCODE_OK;
     }
 
     return ReturnCode_t::RETCODE_ERROR;
-}
-
-const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
-{
-    return static_cast<const InstanceHandle_t&>(rtps_participant_->getGuid());
 }
 
 const GUID_t& DomainParticipantImpl::guid() const
@@ -260,8 +253,8 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         listen = listener_;
     }
-    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen, mask);
-    Publisher* pub = new Publisher(pubimpl);
+    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen);
+    Publisher* pub = new Publisher(pubimpl, mask);
     pubimpl->user_publisher_ = pub;
     pubimpl->rtps_participant_ = rtps_participant_;
 
@@ -273,12 +266,11 @@ Publisher* DomainParticipantImpl::create_publisher(
         rtps_participant_->get_new_entity_id(pub_guid.entityId);
     } while (exists_entity_id(pub_guid.entityId));
 
-    InstanceHandle_t pub_handle(pub_guid);
-    pubimpl->handle_ = pub_handle;
+    pub->set_instance_handle(pub_guid);
 
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_pubs_);
-    publishers_by_handle_[pub_handle] = pub;
+    publishers_by_handle_[pub_guid] = pub;
     publishers_[pub] = pubimpl;
 
     if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
@@ -579,8 +571,8 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         listen = listener_;
     }
-    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen, mask);
-    Subscriber* sub = new Subscriber(subimpl);
+    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen);
+    Subscriber* sub = new Subscriber(subimpl, mask);
     subimpl->user_subscriber_ = sub;
     subimpl->rtps_participant_ = this->rtps_participant_;
 
@@ -592,12 +584,11 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         rtps_participant_->get_new_entity_id(sub_guid.entityId);
     } while (exists_entity_id(sub_guid.entityId));
 
-    InstanceHandle_t sub_handle(sub_guid);
-    subimpl->handle_ = sub_handle;
+    sub->set_instance_handle(sub_guid);
 
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_subs_);
-    subscribers_by_handle_[sub_handle] = sub;
+    subscribers_by_handle_[sub_guid] = sub;
     subscribers_[sub] = subimpl;
 
     if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
@@ -1396,11 +1387,6 @@ std::string DomainParticipantImpl::get_inner_type_name(
     return str;
 }
 
-const ::dds::core::status::StatusMask& DomainParticipantImpl::get_mask() const
-{
-    return mask_;
-}
-
 Topic* DomainParticipantImpl::create_topic(
         std::string topic_name,
         std::string type_name,
@@ -1411,6 +1397,11 @@ Topic* DomainParticipantImpl::create_topic(
     if (!qos.checkQos())
     {
         return nullptr;
+    }
+
+    if (listen == nullptr)
+    {
+        listen = listener_;
     }
 
     Topic* topic = new Topic(this->get_participant(), topic_name, type_name, qos, listen, mask);
@@ -1425,12 +1416,11 @@ Topic* DomainParticipantImpl::create_topic(
         rtps_participant_->get_new_entity_id(topic_guid.entityId);
     } while (exists_entity_id(topic_guid.entityId));
 
-    InstanceHandle_t topic_handle(topic_guid);
-    topic->set_instance_handle(topic_handle);
+    topic->set_instance_handle(topic_guid);
 
     //SAVE THE TOPIC INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_types_);
-    topics_by_handle_[topic_handle] = topic;
+    topics_by_handle_[topic_guid] = topic;
     topics_[topic_name] = std::make_pair(topic, topic_description);
 
     if (qos.auto_fill_type_object || qos.auto_fill_type_information)
@@ -1438,7 +1428,7 @@ Topic* DomainParticipantImpl::create_topic(
         register_dynamic_type_to_factories(type_name);
     }
 
-    BuiltinSubscriber::get_instance()->add_topic_data(topic_handle, topic_name, type_name, qos);
+    BuiltinSubscriber::get_instance()->add_topic_data(topic_guid, topic_name, type_name, qos);
 
     cv_topic_.notify_all();
 

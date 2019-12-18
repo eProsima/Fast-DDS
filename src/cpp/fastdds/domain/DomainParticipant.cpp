@@ -26,8 +26,10 @@
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
-DomainParticipant::DomainParticipant()
-    : impl_(nullptr)
+DomainParticipant::DomainParticipant(
+        const ::dds::core::status::StatusMask &mask)
+    : Entity(mask)
+    , impl_(nullptr)
 {
 }
 
@@ -36,7 +38,8 @@ DomainParticipant::DomainParticipant(
         const DomainParticipantQos& qos,
         DomainParticipantListener* listen,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(DomainParticipantFactory::get_instance()->create_participant(did, qos, listen, mask)->impl_)
+    : Entity(mask)
+    , impl_(DomainParticipantFactory::get_instance()->create_participant(did, qos, listen)->impl_)
 {
 }
 
@@ -48,7 +51,8 @@ ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_condition_.set_enabled_statuses(mask);
+    return impl_->set_listener(listener);
 }
 
 DomainParticipantListener* DomainParticipant::get_listener() const
@@ -269,11 +273,6 @@ TypeSupport DomainParticipant::find_type(
     return impl_->find_type(type_name);
 }
 
-const fastrtps::rtps::InstanceHandle_t& DomainParticipant::get_instance_handle() const
-{
-    return impl_->get_instance_handle();
-}
-
 const fastrtps::rtps::GUID_t& DomainParticipant::guid() const
 {
     return impl_->guid();
@@ -354,9 +353,4 @@ ReturnCode_t DomainParticipant::get_default_topic_qos(
 const fastdds::dds::TopicQos& DomainParticipant::get_default_topic_qos() const
 {
     return impl_->get_default_topic_qos();
-}
-
-const ::dds::core::status::StatusMask& DomainParticipant::get_mask() const
-{
-    return impl_->get_mask();
 }

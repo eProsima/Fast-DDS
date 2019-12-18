@@ -39,8 +39,6 @@
 #include <string>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
 
 static bool run = true;
 
@@ -64,24 +62,24 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantDiscoveryInfo&& info) override
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
     {
-        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " discovered participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " detected changes on participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " removed participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " dropped participant " << info.info.m_guid << std::endl;
@@ -95,9 +93,9 @@ public:
 #if HAVE_SECURITY
     void onParticipantAuthentication(
             DomainParticipant* participant,
-            rtps::ParticipantAuthenticationInfo&& info) override
+            eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
     {
-        if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+        if (eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
         {
             std::cout << "Publisher participant " << participant->guid() <<
                 " authorized participant " << info.guid << std::endl;
@@ -233,9 +231,9 @@ int main(
        }
      */
 
-    xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
+    eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
 
-    ParticipantAttributes participant_attributes;
+    eprosima::fastrtps::ParticipantAttributes participant_attributes;
     DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_attributes);
     participant_attributes.rtps.builtin.typelookup_config.use_server = true;
     participant_attributes.rtps.builtin.domainId = seed % 230;
@@ -248,8 +246,8 @@ int main(
         return 1;
     }
 
-    types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
-    TypeSupport type(new types::DynamicPubSubType(dyn_type));
+    eprosima::fastrtps::types::DynamicType_ptr dyn_type = eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     participant->register_type(type);
 
     PubListener listener;
@@ -259,9 +257,9 @@ int main(
     topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
-    PublisherAttributes publisher_attributes;
+    eprosima::fastrtps::PublisherAttributes publisher_attributes;
     //Domain::getDefaultPublisherAttributes(publisher_attributes);
-    publisher_attributes.topic.topicKind = NO_KEY;
+    publisher_attributes.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
     publisher_attributes.topic.topicDataType = type.get_type_name();
     publisher_attributes.topic.topicName = topic.str();
     publisher_attributes.qos.m_liveliness.lease_duration = 3;
@@ -293,10 +291,10 @@ int main(
         });
     }
 
-    types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
+    eprosima::fastrtps::types::DynamicData_ptr data(eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type));
     data->set_string_value("Hello DDS Dynamic World", 0);
     data->set_uint32_value(1, 1);
-    types::DynamicData* inner = data->loan_value(2);
+    eprosima::fastrtps::types::DynamicData* inner = data->loan_value(2);
     inner->set_byte_value(10, 0);
     data->return_loaned_value(inner);
 
@@ -317,7 +315,7 @@ int main(
         }
 
         inner = data->loan_value(2);
-        octet inner_count;
+        eprosima::fastrtps::rtps::octet inner_count;
         inner->get_byte_value(inner_count, 0);
         inner->set_byte_value(inner_count + 1, 0);
         data->return_loaned_value(inner);

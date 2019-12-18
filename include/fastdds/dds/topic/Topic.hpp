@@ -20,6 +20,7 @@
 #define _FASTDDS_TOPIC_HPP_
 
 #include <dds/core/status/State.hpp>
+#include <fastdds/dds/core/Entity.hpp>
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/QosPolicies.h>
@@ -42,12 +43,14 @@ namespace dds {
 class TopicListener;
 class DomainParticipantImpl;
 
-class Topic : public TopicDescription
+class Topic : public DomainEntity,
+              public TopicDescription
+
 {
 public:
 
     RTPS_DllAPI Topic(
-            const DomainParticipant* dp,
+            DomainParticipant* dp,
             const std::string& topic_name,
             const std::string& type_name,
             const TopicQos& qos = TOPIC_QOS_DEFAULT,
@@ -55,7 +58,7 @@ public:
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     RTPS_DllAPI Topic(
-            const DomainParticipant* dp,
+            DomainParticipant* dp,
             fastrtps::TopicAttributes att,
             TopicListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
@@ -89,19 +92,13 @@ public:
     RTPS_DllAPI fastrtps::types::ReturnCode_t set_instance_handle(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
-    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
-
     RTPS_DllAPI fastrtps::rtps::GUID_t get_guid() const;
 
 private:
 
-    fastrtps::rtps::InstanceHandle_t handle_;
-
     TopicListener* listener_;
 
     TopicQos qos_;
-
-    ::dds::core::status::StatusMask mask_;
 
     InconsistentTopicStatus status_;
 
