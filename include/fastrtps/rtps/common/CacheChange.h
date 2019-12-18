@@ -539,8 +539,16 @@ public:
             FragmentNumber_t base = unsent_fragments_.base();
             FragmentNumber_t max = unsent_fragments_.max();
             assert(!unsent_fragments_.is_set(base));
-            unsent_fragments_.base_update(base + 1);
-            unsent_fragments_.add(max + 1);
+
+            // Update base to first bit set
+            do
+            {
+                ++base;
+            } while (!unsent_fragments_.is_set(base));
+            unsent_fragments_.base_update(base);
+
+            // Add all possible fragments
+            unsent_fragments_.add_range(max + 1u, change_->getFragmentCount() + 1u);
         }
     }
 
