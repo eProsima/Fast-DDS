@@ -301,7 +301,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
                 ${THIRDPARTY_BOOST_LINK_LIBS})
         if(MSVC OR MSVC_IDE)
-            target_link_libraries(SharedMemTests ${PRIVACY} phlpapi Shlwapi )
+            target_link_libraries(SharedMemTests ${PRIVACY} iphlpapi Shlwapi )
         else()
             target_link_libraries(SharedMemTests ${PRIVACY} )
         endif()

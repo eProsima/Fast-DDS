@@ -59,6 +59,7 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor()
 	, port_overflow_policy(SharedMemTransport::default_overflow_policy)
 	, segment_overflow_policy(SharedMemTransport::default_overflow_policy)
 {
+	maxMessageSize = segment_size;
 }
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor(
@@ -69,6 +70,7 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor(
 	, port_overflow_policy(t.port_overflow_policy)
 	, segment_overflow_policy(t.segment_overflow_policy)
 {
+	maxMessageSize = t.segment_size;
 }
 
 TransportInterface* SharedMemTransportDescriptor::create_transport() const

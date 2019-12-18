@@ -117,6 +117,14 @@ public:
         UUIDGen::instance().generate(uuid_, sizeof(uuid_));
     }
 
+	UUID& operator =(
+		const UUID& other)
+	{
+		memcpy(uuid_, other.uuid_, sizeof(uuid_));
+
+		return *this;
+	}
+
     uint8_t* get()
     {
         return uuid_;

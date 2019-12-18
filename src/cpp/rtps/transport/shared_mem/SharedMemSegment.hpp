@@ -135,6 +135,11 @@ public:
         {
         }
 
+		Id(const Id& other)
+		{
+			uuid_ = other.uuid_;
+		}
+
         const type& get() const
         {
             return uuid_;
