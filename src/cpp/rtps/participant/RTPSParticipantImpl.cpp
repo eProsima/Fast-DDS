@@ -237,11 +237,31 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     createReceiverResources(m_att.defaultUnicastLocatorList, true);
     createReceiverResources(m_att.defaultMulticastLocatorList, true);
 
+    // Three buffers (user, events and async writer threads)
+    size_t num_send_buffers = 3;
+    // Add one buffer per reception thread
+    num_send_buffers += m_receiverResourcelist.size();
+    // Reserve buffer pool
+    send_buffers_pool_.reserve(num_send_buffers);
+
 #if HAVE_SECURITY
     // Start security
     // TODO(Ricardo) Get returned value in future.
     m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
 #endif
+
+    // Security manager initialization may ask for one buffer, so we
+    // keep adding buffers till the number of required pre-allocations.
+    while (send_buffers_pool_.size() < num_send_buffers)
+    {
+        std::unique_ptr<RTPSMessageGroup_t> buffer(
+            new RTPSMessageGroup_t(
+#if HAVE_SECURITY
+                is_secure(),
+#endif
+                getMaxMessageSize(), m_guid.guidPrefix));
+        send_buffers_pool_.push_back(std::move(buffer));
+    }
 
     mp_builtinProtocols = new BuiltinProtocols();
 
