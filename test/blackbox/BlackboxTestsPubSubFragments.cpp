@@ -268,8 +268,9 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditionsSmallFragme
     testTransport->sendBufferSize = 1024;
     testTransport->maxMessageSize = 1024;
     testTransport->receiveBufferSize = 65536;
-    // We drop 20% of all data frags
-    testTransport->dropDataFragMessagesPercentage = 20;
+    // We are sending around 300 fragments per sample.
+    // We drop 1% of all data frags
+    testTransport->dropDataFragMessagesPercentage = 1;
     testTransport->dropLogLength = 1;
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);
