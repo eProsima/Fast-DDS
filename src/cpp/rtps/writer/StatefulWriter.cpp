@@ -529,7 +529,7 @@ void StatefulWriter::send_any_unsent_changes()
     {
         send_changes_no_push_mode();
     }
-    else if (m_separateSendingEnabled || readers_dont_share_locators_)
+    else if (m_separateSendingEnabled)
     {
         send_changes_separatedly(max_sequence, activateHeartbeatPeriod);
     }
@@ -538,7 +538,14 @@ void StatefulWriter::send_any_unsent_changes()
         bool no_flow_controllers = m_controllers.empty() && mp_RTPSParticipant->getFlowControllers().empty();
         if (no_flow_controllers || !there_are_remote_readers_)
         {
-            send_all_unsent_changes(max_sequence, activateHeartbeatPeriod);
+            if (readers_dont_share_locators_)
+            {
+                send_changes_separatedly(max_sequence, activateHeartbeatPeriod);
+            }
+            else
+            {
+                send_all_unsent_changes(max_sequence, activateHeartbeatPeriod);
+            }
         }
         else
         {
@@ -606,6 +613,10 @@ void StatefulWriter::send_changes_separatedly(
                 }
             };
             remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+            if (max_ack_seq != SequenceNumber_t::unknown())
+            {
+                remoteReader->acked_changes_set(max_ack_seq + 1);
+            }
         }
         else
         {
