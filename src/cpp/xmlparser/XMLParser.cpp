@@ -2338,7 +2338,7 @@ XMLP_ret XMLParser::parseXMLReplierProf(tinyxml2::XMLElement* p_root, BaseNode& 
     }
     else
     {
-        logError(XMLPARSER, "Error parsing requester profile");
+        logError(XMLPARSER, "Error parsing replier profile");
         ret = XMLP_ret::XML_ERROR;
     }
     return ret;

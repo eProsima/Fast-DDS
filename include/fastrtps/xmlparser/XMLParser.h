@@ -20,8 +20,8 @@
 #include "../attributes/ParticipantAttributes.h"
 #include "../attributes/PublisherAttributes.h"
 #include "../attributes/SubscriberAttributes.h"
-#include "../attributes/RequesterAttributes.h"
-#include "../attributes/ReplierAttributes.h"
+#include "../attributes/RequesterAttributes.hpp"
+#include "../attributes/ReplierAttributes.hpp"
 #include "./XMLParserCommon.h"
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
