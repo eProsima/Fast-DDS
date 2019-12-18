@@ -51,8 +51,7 @@ DataReaderImpl::DataReaderImpl(
         const fastrtps::rtps::ReaderAttributes& att,
         const DataReaderQos& qos,
         const MemoryManagementPolicy_t memory_policy,
-        DataReaderListener* listener,
-        const ::dds::core::status::StatusMask& mask)
+        DataReaderListener* listener)
     : subscriber_(s)
     , reader_(nullptr)
     , type_(type)
@@ -68,7 +67,6 @@ DataReaderImpl::DataReaderImpl(
             type_.get()->m_typeSize + 3,    /* Possible alignment */
             memory_policy)
     , listener_(listener)
-    , mask_(mask)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline.period.to_ns() * 1e-3)
     , deadline_missed_status_()
@@ -229,13 +227,6 @@ const GUID_t& DataReaderImpl::guid() const
     return reader_->getGuid();
 }
 
-InstanceHandle_t DataReaderImpl::get_instance_handle() const
-{
-    InstanceHandle_t handle;
-    handle = reader_->getGuid();
-    return handle;
-}
-
 ReturnCode_t DataReaderImpl::set_qos(
         const DataReaderQos& qos)
 {
@@ -394,7 +385,8 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
-        if (data_reader_->subscriber_->mask_.is_compatible(::dds::core::status::StatusMask::data_on_readers()))
+        if (data_reader_->subscriber_->get_subscriber()->get_status_changes().is_compatible(
+                    ::dds::core::status::StatusMask::data_on_readers()))
         {
             if (data_reader_->subscriber_->listener_ != nullptr)
             {
@@ -404,7 +396,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
                 data_reader_->get_subscriber());
 
         }
-        else if (data_reader_->subscriber_->get_participant().get_mask().is_compatible(::dds::core::status::StatusMask::
+        else if (data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
                 data_on_readers()))
         {
             if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
@@ -417,12 +409,13 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 
         }
         else if (data_reader_->listener_ != nullptr &&
-                data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::data_available()))
+                data_reader_->user_datareader_->get_status_changes().is_compatible(
+                     ::dds::core::status::StatusMask::data_available()))
         {
             data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
         }
         else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-                data_reader_->subscriber_->get_participant().get_mask().is_compatible(::dds::core::status::StatusMask::
+                data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
                 data_available()))
         {
             data_reader_->subscriber_->get_participant().get_listener()->on_data_available(
@@ -454,13 +447,14 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
 
     //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
     if (data_reader_->listener_ != nullptr &&
-            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::subscription_matched()))
+            data_reader_->user_datareader_->get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::subscription_matched()))
     {
         data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::subscription_matched()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
@@ -473,13 +467,14 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         const fastrtps::LivelinessChangedStatus& status)
 {
     if (data_reader_->listener_ != nullptr &&
-            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::liveliness_changed()))
+            data_reader_->user_datareader_->get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::liveliness_changed()))
     {
         data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::liveliness_changed()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
@@ -493,13 +488,14 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         const RequestedIncompatibleQosStatus& status)
 {
     if (data_reader_->listener_ != nullptr &&
-            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::requested_incompatible_qos()))
+            data_reader_->user_datareader_->get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::requested_incompatible_qos()))
     {
         data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::requested_incompatible_qos()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
@@ -513,13 +509,14 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         const SampleRejectedStatus& status)
 {
     if (data_reader_->listener_ != nullptr &&
-            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::sample_rejected()))
+            data_reader_->user_datareader_->get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::sample_rejected()))
     {
         data_reader_->listener_->on_sample_rejected(data_reader_->user_datareader_, status);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::sample_rejected()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
@@ -622,13 +619,13 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
 
-    if (mask_.is_compatible(::dds::core::status::StatusMask::requested_deadline_missed()))
+    if (user_datareader_->get_status_changes().is_compatible(::dds::core::status::StatusMask::requested_deadline_missed()))
     {
         listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
     }
 
     else if (subscriber_->get_participant().get_listener() != nullptr &&
-            subscriber_->get_participant().get_mask().is_compatible(::dds::core::status::StatusMask::
+            subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
             requested_deadline_missed()))
     {
         subscriber_->get_participant().get_listener()->
@@ -726,11 +723,9 @@ bool DataReaderImpl::lifespan_expired()
  */
 
 ReturnCode_t DataReaderImpl::set_listener(
-        DataReaderListener* listener,
-        const ::dds::core::status::StatusMask& mask)
+        DataReaderListener* listener)
 {
     listener_ = listener;
-    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 

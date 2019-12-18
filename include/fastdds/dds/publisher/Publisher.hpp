@@ -21,6 +21,7 @@
 #define _FASTDDS_PUBLISHER_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/TypesBase.h>
@@ -63,7 +64,7 @@ class TopicQos;
  * Class Publisher, used to send data to associated subscribers.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI Publisher
+class RTPS_DllAPI Publisher : public DomainEntity
 {
     friend class PublisherImpl;
     friend class DomainParticipantImpl;
@@ -74,7 +75,8 @@ class RTPS_DllAPI Publisher
      * Don't use directly, create Publisher using create_publisher from Participant.
      */
     Publisher(
-            PublisherImpl* p);
+            PublisherImpl* p,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     Publisher(
             const ::dds::domain::DomainParticipant& dp,
@@ -280,12 +282,6 @@ public:
      */
     bool set_attributes(
             const fastrtps::PublisherAttributes& att);
-
-    /**
-     * Returns the Publisher's handle.
-     * @return InstanceHandle of this Publisher.
-     */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
 private:
 

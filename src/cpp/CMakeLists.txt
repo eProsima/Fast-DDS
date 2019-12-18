@@ -81,6 +81,9 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/subscriber/Subscriber.cpp
     fastrtps_deprecated/subscriber/SubscriberImpl.cpp
     fastrtps_deprecated/subscriber/SubscriberHistory.cpp
+    fastdds/core/conditions/WaitSet.cpp
+    fastdds/core/conditions/StatusCondition.cpp
+    fastdds/core/conditions/ReadCondition.cpp
     fastdds/topic/DataReader.cpp
     fastdds/topic/DataWriter.cpp
     fastdds/topic/DataReaderImpl.cpp

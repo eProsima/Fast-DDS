@@ -21,6 +21,7 @@
 #define _FASTDDS_ENTITY_HPP_
 
 #include <dds/core/status/Status.hpp>
+#include <fastdds/dds/core/conditions/StatusCondition.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -33,11 +34,16 @@ namespace dds {
  * a status condition.
  *
  */
-class Entity
+class RTPS_DllAPI Entity
 {
 public:
-    // TODO Implement StatusCondition
-    // virtual const StatusCondition& get_statuscondition() const = 0;
+
+    Entity(
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
+        : status_condition_(this)
+    {
+        status_condition_.set_enabled_statuses(mask);
+    }
 
     fastrtps::types::ReturnCode_t enable()
     {
@@ -50,9 +56,14 @@ public:
         enable_ = false;
     }
 
+    const StatusCondition& get_statuscondition() const
+    {
+        return status_condition_;
+    }
+
     const ::dds::core::status::StatusMask& get_status_changes() const
     {
-        return status_mask_;
+        return status_condition_.get_statuses();
     }
 
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
@@ -60,11 +71,75 @@ public:
         return instance_handle_;
     }
 
-private:
-    ::dds::core::status::StatusMask status_mask_;
+    bool operator ==(
+            const Entity& other) const
+    {
+        return (this->instance_handle_ == other.instance_handle_);
+    }
+
+protected:
+
+    void set_instance_handle(
+            const fastrtps::rtps::InstanceHandle_t& handle)
+    {
+        instance_handle_ = handle;
+    }
+
+    StatusCondition status_condition_;
+
     fastrtps::rtps::InstanceHandle_t instance_handle_;
+
     bool enable_;
 
+};
+
+class RTPS_DllAPI DomainEntity : public Entity
+{
+public:
+    DomainEntity(
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
+        : Entity(mask)
+    {
+    }
+
+    fastrtps::types::ReturnCode_t enable()
+    {
+        return Entity::enable();
+    }
+
+    void close()
+    {
+        Entity::close();
+    }
+
+    const StatusCondition& get_statuscondition() const
+    {
+        return Entity::get_statuscondition();
+    }
+
+    const ::dds::core::status::StatusMask& get_status_changes() const
+    {
+        return Entity::get_status_changes();
+    }
+
+    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
+    {
+        return Entity::get_instance_handle();
+    }
+
+    bool operator ==(
+            const Entity& other) const
+    {
+        return Entity::operator ==(other);
+    }
+
+protected:
+
+    void set_instance_handle(
+            const fastrtps::rtps::InstanceHandle_t& handle)
+    {
+        Entity::set_instance_handle(handle);
+    }
 };
 
 } // namespace dds

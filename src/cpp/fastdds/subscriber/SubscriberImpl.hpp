@@ -74,8 +74,7 @@ class SubscriberImpl
             DomainParticipantImpl* p,
             const SubscriberQos& qos,
             const fastrtps::SubscriberAttributes& attr,
-            SubscriberListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            SubscriberListener* listen = nullptr);
 
 public:
 
@@ -89,8 +88,7 @@ public:
     SubscriberListener* get_listener() const;
 
     ReturnCode_t set_listener(
-            SubscriberListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            SubscriberListener* listener);
 
     DataReader* create_datareader(
             const Topic& topic,
@@ -175,8 +173,6 @@ public:
         return user_subscriber_;
     }
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
-
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -209,16 +205,12 @@ private:
 
     SubscriberListener* listener_;
 
-    ::dds::core::status::StatusMask mask_;
-
     Subscriber* user_subscriber_;
 
     //!RTPSParticipant
     fastrtps::rtps::RTPSParticipant* rtps_participant_;
 
     DataReaderQos default_datareader_qos_;
-
-    fastrtps::rtps::InstanceHandle_t handle_;
 
 };
 

@@ -21,6 +21,7 @@
 #define _FASTDDS_SUBSCRIBER_HPP_
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastdds/dds/core/Entity.hpp>
 
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
@@ -66,7 +67,7 @@ class TopicDescription;
  * DomainRTPSParticipant class should be used to correctly create this element.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI Subscriber
+class RTPS_DllAPI Subscriber : public DomainEntity
 {
     friend class SubscriberImpl;
     friend class DomainParticipantImpl;
@@ -77,8 +78,10 @@ class RTPS_DllAPI Subscriber
      * @param pimpl Actual implementation of the subscriber
      */
     Subscriber(
-            SubscriberImpl* pimpl)
-        : impl_(pimpl)
+            SubscriberImpl* pimpl,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
+        : DomainEntity(mask)
+        , impl_(pimpl)
     {}
 
     Subscriber(
@@ -266,12 +269,6 @@ public:
      * This operation returns the DomainParticipant to which the Subscriber belongs.
      */
     DomainParticipant& get_participant() const;
-
-    /**
-     * Returns the Subscriber's handle.
-     * @return InstanceHandle of this Subscriber.
-     */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
 private:
 

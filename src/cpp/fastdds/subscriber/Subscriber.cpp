@@ -34,7 +34,8 @@ Subscriber::Subscriber(
         const SubscriberQos& qos,
         SubscriberListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener)->impl_)
 {
 }
 
@@ -70,7 +71,8 @@ ReturnCode_t Subscriber::set_listener(
         SubscriberListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_condition_.set_enabled_statuses(mask);
+    return impl_->set_listener(listener);
 }
 
 DataReader* Subscriber::create_datareader(
@@ -80,7 +82,7 @@ DataReader* Subscriber::create_datareader(
         const ::dds::core::status::StatusMask& mask)
 {
     Topic* topic = get_participant().find_topic(topic_desc.get_name(),
-                    Duration_t(100, 0));
+                    Duration_t());
     if (topic == nullptr)
     {
         topic = get_participant().create_topic(topic_desc.get_name(),
@@ -193,9 +195,4 @@ const fastrtps::SubscriberAttributes& Subscriber::get_attributes() const
 DomainParticipant& Subscriber::get_participant() const
 {
     return impl_->get_participant();
-}
-
-const fastrtps::rtps::InstanceHandle_t& Subscriber::get_instance_handle() const
-{
-    return impl_->get_instance_handle();
 }

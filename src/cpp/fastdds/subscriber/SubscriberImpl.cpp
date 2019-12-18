@@ -40,13 +40,11 @@ SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
         const SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen,
-        const ::dds::core::status::StatusMask& mask)
+        SubscriberListener* listen)
     : participant_(p)
     , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? participant_->get_default_subscriber_qos() : qos)
     , att_(att)
     , listener_(listen)
-    , mask_(mask)
     , user_subscriber_(nullptr)
     , rtps_participant_(p->rtps_participant())
 {
@@ -111,11 +109,9 @@ SubscriberListener* SubscriberImpl::get_listener() const
 }
 
 ReturnCode_t SubscriberImpl::set_listener(
-        SubscriberListener* listener,
-        const ::dds::core::status::StatusMask& mask)
+        SubscriberListener* listener)
 {
     listener_ = listener;
-    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -204,8 +200,7 @@ DataReader* SubscriberImpl::create_datareader(
         ratt,
         reader_qos,
         att_.historyMemoryPolicy,
-        listener,
-        mask);
+        listener);
 
     if (impl->reader_ == nullptr)
     {
@@ -214,12 +209,13 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    DataReader* reader = new DataReader(impl);
+    DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
 
     ReaderQos rqos = reader_qos.changeToReaderQos();
     fastrtps::TopicAttributes topic_att = topic.get_topic_attributes();
     rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
+    reader->set_instance_handle(impl->reader_->getGuid());
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
@@ -308,7 +304,8 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     {
         for (DataReaderImpl* dr : it.second)
         {
-            if (dr->mask_.is_compatible(::dds::core::status::StatusMask::data_available()))
+            if (dr->user_datareader_->get_status_changes().is_compatible(
+                        ::dds::core::status::StatusMask::data_available()))
             {
                 dr->listener_->on_data_available(dr->user_datareader_);
             }
@@ -436,11 +433,6 @@ bool SubscriberImpl::set_attributes(
 DomainParticipant& SubscriberImpl::get_participant() const
 {
     return *participant_->get_participant();
-}
-
-const InstanceHandle_t& SubscriberImpl::get_instance_handle() const
-{
-    return handle_;
 }
 
 bool SubscriberImpl::type_in_use(
