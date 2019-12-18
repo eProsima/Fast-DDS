@@ -36,6 +36,7 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class Endpoint;
+class RTPSMessageGroup_t;
 
 /**
  * RTPSMessageGroup Class used to construct a RTPS message.
@@ -229,6 +230,7 @@ class Endpoint;
 
         std::chrono::steady_clock::time_point max_blocking_time_point_;
 
+        std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
 };
 
 } /* namespace rtps */

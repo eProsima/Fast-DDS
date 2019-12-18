@@ -1234,6 +1234,32 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(const Endpoint
         PersistenceFactory::create_persistence_service(m_att.properties);
 }
 
+std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
+{
+    std::unique_ptr<RTPSMessageGroup_t> ret_val;
+    if (send_buffers_pool_.empty())
+    {
+        ret_val.reset(new RTPSMessageGroup_t());
+#if HAVE_SECURITY
+        ret_val->init(is_secure(), getMaxMessageSize(), m_guid.guidPrefix);
+#else
+        ret_val->init(getMaxMessageSize(), m_guid.guidPrefix);
+#endif
+    }
+    else
+    {
+        ret_val = std::move(send_buffers_pool_.back());
+        send_buffers_pool_.pop_back();
+    }
+
+    return ret_val;
+}
+
+void RTPSParticipantImpl::return_send_buffer(std::unique_ptr <RTPSMessageGroup_t>&& buffer)
+{
+    send_buffers_pool_.push_back(std::move(buffer));
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
