@@ -39,6 +39,15 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+#define IF_VALID_CALL() {                                        \
+                            if(!valid)                           \
+                            {                                    \
+                                return false;                    \
+                            }                                    \
+                            qos_size += plength;                 \
+                        }
+
+
 ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation)
     : m_protocolVersion(c_ProtocolVersion)
     , m_VendorId(c_VendorId_Unknown)
@@ -218,186 +227,315 @@ bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encap
     return CDRMessage::addParameterSentinel(msg);
 }
 
+
 bool ParticipantProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         bool use_encapsulation,
         const NetworkFactory& network)
 {
-    auto param_process = [this, &network](const Parameter_t* param)
-    {
-        switch (param->Pid)
-        {
-            case PID_KEY_HASH:
-            {
-                const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                assert(p != nullptr);
-                GUID_t guid;
-                iHandle2GUID(guid, p->key);
-                this->m_guid = guid;
-                this->m_key = p->key;
-                break;
-            }
-            case PID_PROTOCOL_VERSION:
-            {
-                const ParameterProtocolVersion_t* p = dynamic_cast<const ParameterProtocolVersion_t*>(param);
-                assert(p != nullptr);
-                if (p->protocolVersion.m_major < c_ProtocolVersion.m_major)
-                {
-                    return false;
-                }
-                this->m_protocolVersion = p->protocolVersion;
-                break;
-            }
-            case PID_VENDORID:
-            {
-                const ParameterVendorId_t* p = dynamic_cast<const ParameterVendorId_t*>(param);
-                assert(p != nullptr);
-                this->m_VendorId[0] = p->vendorId[0];
-                this->m_VendorId[1] = p->vendorId[1];
-                break;
-            }
-            case PID_EXPECTS_INLINE_QOS:
-            {
-                const ParameterBool_t* p = dynamic_cast<const ParameterBool_t*>(param);
-                assert(p != nullptr);
-                this->m_expectsInlineQos = p->value;
-                break;
-            }
-            case PID_PARTICIPANT_GUID:
-            {
-                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                assert(p != nullptr);
-                this->m_guid = p->guid;
-                this->m_key = p->guid;
-                break;
-            }
-            case PID_METATRAFFIC_MULTICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    metatraffic_locators.add_multicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_METATRAFFIC_UNICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    metatraffic_locators.add_unicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_DEFAULT_UNICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    default_locators.add_unicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_DEFAULT_MULTICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    default_locators.add_multicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_PARTICIPANT_LEASE_DURATION:
-            {
-                const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
-                assert(p != nullptr);
-                this->m_leaseDuration = p->time.to_duration_t();
-                lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
-                break;
-            }
-            case PID_BUILTIN_ENDPOINT_SET:
-            {
-                const ParameterBuiltinEndpointSet_t* p = dynamic_cast<const ParameterBuiltinEndpointSet_t*>(param);
-                assert(p != nullptr);
-                this->m_availableBuiltinEndpoints = p->endpointSet;
-                break;
-            }
-            case PID_ENTITY_NAME:
-            {
-                const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
-                assert(p != nullptr);
-                this->m_participantName = p->getName();
-                break;
-            }
-            case PID_PROPERTY_LIST:
-            {
-                const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
-                assert(p != nullptr);
-                this->m_properties = *p;
-                break;
-            }
-            case PID_USER_DATA:
-            {
-                const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
-                assert(p != nullptr);
-                this->m_userData = p->getDataVec();
-                break;
-            }
-            case PID_IDENTITY_TOKEN:
-            {
-#if HAVE_SECURITY
-                const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
-                assert(p != nullptr);
-                this->identity_token_ = std::move(p->token);
-#else
-                logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
-#endif
-                break;
-            }
-            case PID_PERMISSIONS_TOKEN:
-            {
-#if HAVE_SECURITY
-                const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
-                assert(p != nullptr);
-                this->permissions_token_ = std::move(p->token);
-#else
-                logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
-#endif
-                break;
-            }
-            case PID_PARTICIPANT_SECURITY_INFO:
-            {
-#if HAVE_SECURITY
-                const ParameterParticipantSecurityInfo_t* p =
-                    dynamic_cast<const ParameterParticipantSecurityInfo_t*>(param);
-                assert(p != nullptr);
-                this->security_attributes_ = p->security_attributes;
-                this->plugin_security_attributes_ = p->plugin_security_attributes;
-#else
-                logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
-#endif
-                break;
-            }
-
-            default: break;
-        }
-
-        return true;
-    };
-
-    uint32_t qos_size;
     clear();
-    return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
-}
 
+    bool is_sentinel = false;
+    bool valid = true;
+    ParameterId_t pid;
+    uint16_t plength;
+    uint32_t qos_size = 0;
+
+    if (use_encapsulation)
+    {
+        // Read encapsulation
+        msg->pos += 1;
+        octet encapsulation = 0;
+        CDRMessage::readOctet(msg, &encapsulation);
+        if (encapsulation == PL_CDR_BE)
+        {
+            msg->msg_endian = BIGEND;
+        }
+        else if (encapsulation == PL_CDR_LE)
+        {
+            msg->msg_endian = LITTLEEND;
+        }
+        else
+        {
+            return false;
+        }
+        // Skip encapsulation options
+        msg->pos += 2;
+    }
+
+    uint32_t original_pos = msg->pos;
+    while (!is_sentinel)
+    {
+        // Align to 4 byte boundary
+        qos_size = (qos_size + 3) & ~3;
+        msg->pos = original_pos + qos_size;
+
+        valid = true;
+        valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
+        valid &= CDRMessage::readUInt16(msg, &plength);
+        qos_size += 4;
+        if (!valid || ((msg->pos + plength) > msg->length))
+        {
+            return false;
+        }
+        try
+        {
+            switch (pid)
+            {
+                case PID_DEFAULT_UNICAST_LOCATOR:
+                {
+                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
+                    ParameterLocator_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    Locator_t temp_locator;
+                    if (network.transform_remote_locator(p.locator, temp_locator))
+                    {
+                        default_locators.add_unicast_locator(temp_locator);
+                    }
+                    break;
+                }
+                case PID_METATRAFFIC_UNICAST_LOCATOR:
+                {
+                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
+                    ParameterLocator_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    Locator_t temp_locator;
+                    if (network.transform_remote_locator(p.locator, temp_locator))
+                    {
+                        metatraffic_locators.add_unicast_locator(temp_locator);
+                    }
+                    break;
+                }
+                case PID_DEFAULT_MULTICAST_LOCATOR:
+                {
+                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
+                    ParameterLocator_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    Locator_t temp_locator;
+                    if (network.transform_remote_locator(p.locator, temp_locator))
+                    {
+                        default_locators.add_multicast_locator(temp_locator);
+                    }
+                    break;
+                }
+                case PID_METATRAFFIC_MULTICAST_LOCATOR:
+                {
+                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
+                    ParameterLocator_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    Locator_t temp_locator;
+                    if (network.transform_remote_locator(p.locator, temp_locator))
+                    {
+                        metatraffic_locators.add_multicast_locator(temp_locator);
+                    }
+                    break;
+                }
+                case PID_PROTOCOL_VERSION:
+                {
+                    valid &= (plength == PARAMETER_PROTOCOL_LENGTH);
+                    ParameterProtocolVersion_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    if (p.protocolVersion.m_major < c_ProtocolVersion.m_major)
+                    {
+                        return false;
+                    }
+                    this->m_protocolVersion = p.protocolVersion;
+                    break;
+                }
+                case PID_EXPECTS_INLINE_QOS:
+                {
+                    if (plength != PARAMETER_BOOL_LENGTH)
+                    {
+                        return false;
+                    }
+                    ParameterBool_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->m_expectsInlineQos = p.value;
+                    break;
+                }
+                case PID_VENDORID:
+                {
+                    valid &= (plength == PARAMETER_VENDOR_LENGTH);
+                    ParameterVendorId_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->m_VendorId[0] = p.vendorId[0];
+                    this->m_VendorId[1] = p.vendorId[1];
+                    break;
+                }
+                case PID_PARTICIPANT_GUID:
+                {
+                    if (plength != PARAMETER_GUID_LENGTH)
+                    {
+                        return false;
+                    }
+                    ParameterGuid_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->m_guid = p.guid;
+                    this->m_key = p.guid;
+                    break;
+                }
+                case PID_ENTITY_NAME:
+                {
+                    if (plength > 256)
+                    {
+                        return false;
+                    }
+                    ParameterString_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->m_participantName = p.getName();
+                    break;
+                }
+                case PID_PROPERTY_LIST:
+                {
+                    ParameterPropertyList_t p(pid, plength);
+                    uint32_t pos_ref = msg->pos;
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    uint32_t length_diff = msg->pos - pos_ref;
+                    valid &= (plength == length_diff);
+                    IF_VALID_CALL()
+
+                    this->m_properties = p;
+                    break;
+                }
+                case PID_KEY_HASH:
+                {
+                    if (plength != PARAMETER_KEY_LENGTH)
+                    {
+                        return false;
+                    }
+                    ParameterKey_t p(PID_KEY_HASH, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    GUID_t guid;
+                    iHandle2GUID(guid, p.key);
+                    this->m_guid = guid;
+                    this->m_key = p.key;
+                    break;
+                }
+                case PID_SENTINEL:
+                {
+                    is_sentinel = true;
+                    break;
+                }
+                case PID_USER_DATA:
+                {
+                    UserDataQosPolicy p(plength);
+                    uint32_t pos_ref = msg->pos;
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    uint32_t length_diff = msg->pos - pos_ref;
+                    valid &= (plength == length_diff);
+                    IF_VALID_CALL()
+
+                    this->m_userData = p.getDataVec();
+                    break;
+                }
+                case PID_BUILTIN_ENDPOINT_SET:
+                {
+                    if (plength != 4)
+                    {
+                        return false;
+                    }
+                    ParameterBuiltinEndpointSet_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->m_availableBuiltinEndpoints = p.endpointSet;
+                    break;
+                }
+                case PID_PARTICIPANT_LEASE_DURATION:
+                {
+                    if (plength != PARAMETER_TIME_LENGTH)
+                    {
+                        return false;
+                    }
+                    ParameterTime_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->m_leaseDuration = p.time.to_duration_t();
+                    lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
+                    break;
+                }
+                case PID_IDENTITY_TOKEN:
+                {
+#if HAVE_SECURITY
+                    ParameterToken_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->identity_token_ = std::move(p.token);
+#else
+                    logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+#endif
+                    break;
+                }
+               case PID_PERMISSIONS_TOKEN:
+                {
+#if HAVE_SECURITY
+                    ParameterToken_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->permissions_token_ = std::move(p.token);
+#else
+                    logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+#endif
+                    break;
+                }
+
+                case PID_PARTICIPANT_SECURITY_INFO:
+                {
+#if HAVE_SECURITY
+                    if (plength != PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
+                    {
+                        return false;
+                    }
+                    ParameterParticipantSecurityInfo_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
+                    IF_VALID_CALL()
+
+                    this->security_attributes_ = p.security_attributes;
+                    this->plugin_security_attributes_ = p->plugin_security_attributes;
+#else
+                    logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+#endif
+                    break;
+                }
+
+                default:
+                {
+                    qos_size += plength;
+                    break;
+                }
+            }
+        }
+        catch (std::bad_alloc& ba)
+        {
+            std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+            return false;
+        }
+    }
+    return true;
+}
 
 void ParticipantProxyData::clear()
 {
