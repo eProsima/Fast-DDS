@@ -516,11 +516,6 @@ class XMLParser
         DisablePositiveACKsQosPolicy& disablePositiveAcks,
         uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLguidPrefix(
-        tinyxml2::XMLElement *elem,
-        rtps::GuidPrefix_t &prefix,
-        uint8_t ident);
-
     RTPS_DllAPI static XMLP_ret getXMLPublisherAttributes(
         tinyxml2::XMLElement *elem,
         PublisherAttributes &publisher,
