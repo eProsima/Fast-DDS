@@ -26,6 +26,8 @@
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
 
+#include <gtest/gtest.h>
+
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/log/Log.h>
 

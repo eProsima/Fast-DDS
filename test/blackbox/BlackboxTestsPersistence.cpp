@@ -20,6 +20,9 @@
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
+
+#include <gtest/gtest.h>
+
 #include <thread>
 
 using namespace eprosima::fastrtps;

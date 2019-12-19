@@ -19,6 +19,8 @@
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 
+#include <gtest/gtest.h>
+
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 
