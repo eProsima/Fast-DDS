@@ -506,6 +506,12 @@ void StatefulWriter::send_any_unsent_changes()
                     RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
                     RTPSGapBuilder gaps(group);
 
+                    if (!remoteReader->is_local_reader() &&
+                        remoteReader->are_there_gaps())
+                    {
+                        send_heartbeat_nts_(1u, group, true);
+                    }
+
                     // Loop all changes
                     bool is_remote_and_reliable = remoteReader->is_remote_and_reliable();
                     SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
@@ -589,6 +595,7 @@ void StatefulWriter::send_any_unsent_changes()
     {
         RTPSWriterCollector<ReaderProxy*> relevantChanges;
         bool force_piggyback_hb = false; // Force piggyback HB if old samples not acknowledged.
+        bool heartbeat_has_been_sent = false;
 
         NetworkFactory& network = mp_RTPSParticipant->network_factory();
         locator_selector_.reset(true);
@@ -607,11 +614,14 @@ void StatefulWriter::send_any_unsent_changes()
                 SequenceNumber_t last_sequence = mp_history->next_sequence_number();
                 SequenceNumber_t min_history_seq = get_seq_num_min();
 
-                if (seq < min_history_seq)
+                // This condition will be true if there is a hole in the history
+                if ( (seq + static_cast<uint32_t>(mp_history->getHistorySize()) + 1) != last_sequence)
                 {
-                    force_piggyback_hb = true;
-                    seq = min_history_seq;
+                    send_heartbeat_nts_(all_remote_readers_.size(), group, true);
+                    heartbeat_has_been_sent = true;
                 }
+
+                seq = min_history_seq;
 
                 for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
                 {
@@ -641,6 +651,12 @@ void StatefulWriter::send_any_unsent_changes()
 
         for (ReaderProxy* remoteReader : matched_readers_)
         {
+            if (!heartbeat_has_been_sent && !remoteReader->is_local_reader() && remoteReader->are_there_gaps())
+            {
+                send_heartbeat_nts_(all_remote_readers_.size(), group, true);
+                heartbeat_has_been_sent = true;
+            }
+
             RTPSGapBuilder gaps(group, remoteReader->guid());
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             SequenceNumber_t min_history_seq = get_seq_num_min();
