@@ -63,10 +63,12 @@ DataReader::DataReader(
         const ::dds::core::status::StatusMask& mask)
     : DomainEntity(mask)
     , impl_(impl)
-{}
+{
+}
 
 DataReader::~DataReader()
-{}
+{
+}
 
 bool DataReader::wait_for_unread_message(
         const fastrtps::Duration_t& timeout)
@@ -255,6 +257,17 @@ ReturnCode_t DataReader::get_matched_publications(
         std::vector<InstanceHandle_t>& publication_handles) const
 {
     return impl_->get_matched_publications(publication_handles);
+}
+
+ReturnCode_t DataReader::enable()
+{
+    //Check if its factory is enabled
+    if (!get_subscriber()->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    Entity::enable();
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } /* namespace dds */

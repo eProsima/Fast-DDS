@@ -35,20 +35,30 @@ namespace dds {
 class DomainParticipantFactoryQos
 {
 public:
+
     RTPS_DllAPI DomainParticipantFactoryQos()
-    {}
+    {
+    }
 
     RTPS_DllAPI virtual ~DomainParticipantFactoryQos()
-    {}
+    {
+    }
 
     bool operator ==(
-        const DomainParticipantFactoryQos& b) const
+            const DomainParticipantFactoryQos& b) const
     {
         return (this->entity_factory == b.entity_factory);
     }
 
     //!Auto enable on creation
     EntityFactoryQosPolicy entity_factory;
+
+    /**
+     * Set Qos from another class
+     * @param qos Reference from a DomainParticipantQos object.
+     */
+    RTPS_DllAPI void set_qos(
+            const DomainParticipantFactoryQos& qos);
 
 };
 

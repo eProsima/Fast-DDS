@@ -283,6 +283,8 @@ public:
     bool set_attributes(
             const fastrtps::PublisherAttributes& att);
 
+    ReturnCode_t enable();
+
 private:
 
     PublisherImpl* impl_;

@@ -66,7 +66,7 @@ DataWriterImpl::DataWriterImpl(
     , history_(topic_att_, type_.get()->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-            + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
+            + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
 #endif
             , memory_policy)
@@ -142,25 +142,45 @@ DataWriterImpl::~DataWriterImpl()
     delete user_datawriter_;
 }
 
-bool DataWriterImpl::write(
+ReturnCode_t DataWriterImpl::write(
         void* data)
 {
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     logInfo(DATA_WRITER, "Writing new data");
-    return create_new_change(ALIVE, data);
+    if (create_new_change(ALIVE, data))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DataWriterImpl::write(
+ReturnCode_t DataWriterImpl::write(
         void* data,
         fastrtps::rtps::WriteParams& params)
 {
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     logInfo(DATA_WRITER, "Writing new data with WriteParams");
-    return create_new_change_with_params(ALIVE, data, params);
+    if (create_new_change_with_params(ALIVE, data, params))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 ReturnCode_t DataWriterImpl::write(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
     // but it need to check if there is an existing entity with that handle
     if (!handle.isDefined())
@@ -180,6 +200,10 @@ ReturnCode_t DataWriterImpl::dispose(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (!handle.isDefined())
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -209,7 +233,6 @@ bool DataWriterImpl::create_new_change(
     return create_new_change_with_params(changeKind, data, wparams);
 }
 
-
 bool DataWriterImpl::check_new_change_preconditions(
         ChangeKind_t change_kind,
         void* data)
@@ -227,7 +250,7 @@ bool DataWriterImpl::check_new_change_preconditions(
     {
         if (!type_.get()->m_isGetKeyDefined)
         {
-            logError(PUBLISHER,"Topic is NO_KEY, operation not permitted");
+            logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
             return false;
         }
     }
@@ -256,7 +279,7 @@ bool DataWriterImpl::perform_create_new_change(
                 //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
                 if (!type_.serialize(data, &ch->serializedPayload))
                 {
-                    logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false"; );
+                    logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
                     history_.release_Cache(ch);
                     return false;
                 }
@@ -366,7 +389,7 @@ bool DataWriterImpl::create_new_change_with_params(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif
-        type_.get()->getKey(data,&handle,is_key_protected);
+        type_.get()->getKey(data, &handle, is_key_protected);
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);
@@ -385,7 +408,6 @@ bool DataWriterImpl::create_new_change_with_params(
 
     return perform_create_new_change(changeKind, data, wparams, handle);
 }
-
 
 bool DataWriterImpl::remove_min_seq_change()
 {
@@ -414,17 +436,17 @@ bool DataWriterImpl::set_attributes(
         if (att.endpoint.unicastLocatorList.size() != w_att_.endpoint.unicastLocatorList.size() ||
                 att.endpoint.multicastLocatorList.size() != w_att_.endpoint.multicastLocatorList.size())
         {
-            logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+            logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
             updated &= false;
         }
         else
         {
             for (LocatorListConstIterator lit1 = w_att_.endpoint.unicastLocatorList.begin();
-                    lit1!=this->w_att_.endpoint.unicastLocatorList.end(); ++lit1)
+                    lit1 != this->w_att_.endpoint.unicastLocatorList.end(); ++lit1)
             {
                 missing = true;
                 for (LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
-                        lit2!= att.endpoint.unicastLocatorList.end(); ++lit2)
+                        lit2 != att.endpoint.unicastLocatorList.end(); ++lit2)
                 {
                     if (*lit1 == *lit2)
                     {
@@ -434,16 +456,16 @@ bool DataWriterImpl::set_attributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER,"Locator: "<< *lit1 << " not present in new list");
-                    logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
             for (LocatorListConstIterator lit1 = this->w_att_.endpoint.multicastLocatorList.begin();
-                    lit1!=this->w_att_.endpoint.multicastLocatorList.end(); ++lit1)
+                    lit1 != this->w_att_.endpoint.multicastLocatorList.end(); ++lit1)
             {
                 missing = true;
                 for (LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
-                        lit2!= att.endpoint.multicastLocatorList.end(); ++lit2)
+                        lit2 != att.endpoint.multicastLocatorList.end(); ++lit2)
                 {
                     if (*lit1 == *lit2)
                     {
@@ -453,8 +475,8 @@ bool DataWriterImpl::set_attributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER,"Locator: "<< *lit1<< " not present in new list");
-                    logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
         }
@@ -494,7 +516,7 @@ ReturnCode_t DataWriterImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.setQos(qos,false);
+    qos_.setQos(qos, false);
     //Notify the participant that a Writer has changed its QOS
     fastrtps::WriterQos wqos_ = qos_.changeToWriterQos();
     publisher_->rtps_participant()->updateWriter(writer_, topic_att_, wqos_);
@@ -564,12 +586,30 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
+    bool matched = false;
+
+    //TODO: Check if the DataReader should be ignored (DomainParticipant::ignore_subscription)
+    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->is_enabled()
+            && data_writer_->user_datawriter_->get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::publication_matched()))
+    {
+        data_writer_->listener_->on_publication_matched(data_writer_->user_datawriter_, info);
+    }
+    else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
+            data_writer_->publisher_->get_participant().is_enabled() &&
+            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::publication_matched()))
+    {
+        DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
+        listener->on_publication_matched(data_writer_->user_datawriter_, info);
+    }
+
     //Update Matched Subscriptions List
-    if (info.current_count_change == 1) //MATCHED_MATCHING
+    if (info.current_count_change == 1 && matched) //MATCHED_MATCHING
     {
         data_writer_->matched_subscriptions_.push_back(info.last_subscription_handle);
     }
-    else if (info.current_count_change == -1) //REMOVE_MATCHING
+    else if (info.current_count_change == -1 && matched) //REMOVE_MATCHING
     {
         auto it = std::find(data_writer_->matched_subscriptions_.begin(),
                         data_writer_->matched_subscriptions_.end(), info.last_subscription_handle);
@@ -578,20 +618,6 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
             data_writer_->matched_subscriptions_.erase(it);
         }
         BuiltinSubscriber::get_instance()->delete_subscription_data(info.last_subscription_handle);
-    }
-
-    //TODO: Check if the DataReader should be ignored (DomainParticipant::ignore_subscription)
-    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::publication_matched()))
-    {
-        data_writer_->listener_->on_publication_matched(data_writer_->user_datawriter_, info);
-    }
-    else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
-            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(
-            ::dds::core::status::StatusMask::publication_matched()))
-    {
-        DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
-        listener->on_publication_matched(data_writer_->user_datawriter_, info);
     }
 }
 
@@ -609,14 +635,16 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
-    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->get_status_changes().is_compatible(
+    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->is_enabled() &&
+            data_writer_->user_datawriter_->get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::liveliness_lost()))
     {
         data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
     }
     else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
+            data_writer_->publisher_->get_participant().is_enabled() &&
             data_writer_->publisher_->get_participant().get_status_changes().is_compatible(
-            ::dds::core::status::StatusMask::liveliness_lost()))
+                ::dds::core::status::StatusMask::liveliness_lost()))
     {
         DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
         listener->on_liveliness_lost(data_writer_->user_datawriter_, status);
@@ -627,14 +655,16 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         RTPSWriter* /*writer*/,
         const OfferedIncompatibleQosStatus& status)
 {
-    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->get_status_changes().is_compatible(
+    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->is_enabled() &&
+            data_writer_->user_datawriter_->get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::offered_incompatible_qos()))
     {
         data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
     }
     else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
+            data_writer_->publisher_->get_participant().is_enabled() &&
             data_writer_->publisher_->get_participant().get_status_changes().is_compatible(
-            ::dds::core::status::StatusMask::offered_incompatible_qos()))
+                ::dds::core::status::StatusMask::offered_incompatible_qos()))
     {
         DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
         listener->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
@@ -644,6 +674,10 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
 {
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (writer_->wait_for_all_acked(max_wait))
     {
         return ReturnCode_t::RETCODE_OK;
@@ -678,14 +712,15 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    if (listener_ != nullptr && user_datawriter_->get_status_changes().is_compatible(
+    if (listener_ != nullptr && user_datawriter_->is_enabled() &&
+            user_datawriter_->get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::offered_deadline_missed()))
     {
         listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
     }
-    else if (publisher_->get_participant().get_listener() != nullptr &&
-            publisher_->get_participant().get_status_changes().is_compatible(
-                 ::dds::core::status::StatusMask::offered_deadline_missed()))
+    else if (publisher_->get_participant().get_listener() != nullptr && publisher_->get_participant().is_enabled() &&
+            publisher_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
+            offered_deadline_missed()))
     {
         DomainParticipantListener* listener = publisher_->get_participant().get_listener();
         listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
@@ -776,6 +811,10 @@ ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
 
 ReturnCode_t DataWriterImpl::assert_liveliness()
 {
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (!publisher_->rtps_participant()->wlp()->assert_liveliness(
                 writer_->getGuid(),
                 writer_->get_liveliness_kind(),

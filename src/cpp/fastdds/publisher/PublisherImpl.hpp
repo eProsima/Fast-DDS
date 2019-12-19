@@ -166,6 +166,8 @@ public:
     bool type_in_use(
             const std::string& type_name) const;
 
+    ReturnCode_t autoenable_entities();
+
 private:
 
     DomainParticipantImpl* participant_;

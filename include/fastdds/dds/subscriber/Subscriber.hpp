@@ -82,7 +82,8 @@ class RTPS_DllAPI Subscriber : public DomainEntity
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
         : DomainEntity(mask)
         , impl_(pimpl)
-    {}
+    {
+    }
 
     Subscriber(
             const ::dds::domain::DomainParticipant& dp,
@@ -92,7 +93,9 @@ class RTPS_DllAPI Subscriber : public DomainEntity
 
 public:
 
-    virtual ~Subscriber() {}
+    virtual ~Subscriber()
+    {
+    }
 
     /**
      * Allows accessing the Subscriber Qos.
@@ -269,6 +272,8 @@ public:
      * This operation returns the DomainParticipant to which the Subscriber belongs.
      */
     DomainParticipant& get_participant() const;
+
+    ReturnCode_t enable();
 
 private:
 

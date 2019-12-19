@@ -31,6 +31,7 @@ int main(
         char** argv)
 {
     std::cout << "Starting " << std::endl;
+    int domain_id = 0;
     int type = 1;
     int count = 20;
     int sleep = 100;
@@ -39,19 +40,48 @@ int main(
         if (strcmp(argv[1], "publisher") == 0)
         {
             type = 1;
-            if (argc >= 3)
-            {
-                count = atoi(argv[2]);
-                if (argc == 4)
-                {
-                    sleep = atoi(argv[3]);
-                }
-            }
         }
         else if (strcmp(argv[1], "subscriber") == 0)
         {
             type = 2;
         }
+        for (int i = 2; i < argc; i++)
+        {
+            if (strcmp(argv[i], "--samples") == 0)
+            {
+                i++;
+                if (argc < i)
+                {
+                    std::cout << "Samples needs an argument." << std::endl;
+                    Log::Reset();
+                    return 0;
+                }
+                count = atoi(argv[i]);
+            }
+            if (strcmp(argv[i], "--sleep") == 0)
+            {
+                i++;
+                if (argc < i)
+                {
+                    std::cout << "Sleep needs an argument." << std::endl;
+                    Log::Reset();
+                    return 0;
+                }
+                sleep = atoi(argv[i]);
+            }
+            if (strcmp(argv[i], "--domain_id") == 0)
+            {
+                i++;
+                if (argc < i)
+                {
+                    std::cout << "Domain Id needs an argument." << std::endl;
+                    Log::Reset();
+                    return 0;
+                }
+                domain_id = atoi(argv[i]);
+            }
+        }
+
     }
     else
     {
@@ -62,24 +92,24 @@ int main(
 
     switch (type)
     {
-    case 1:
-    {
-        HelloWorldPublisher mypub;
-        if (mypub.init())
+        case 1:
         {
-            mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
+            HelloWorldPublisher mypub;
+            if (mypub.init(domain_id))
+            {
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
+            }
+            break;
         }
-        break;
-    }
-    case 2:
-    {
-        HelloWorldSubscriber mysub;
-        if (mysub.init())
+        case 2:
         {
-            mysub.run();
+            HelloWorldSubscriber mysub;
+            if (mysub.init(domain_id))
+            {
+                mysub.run();
+            }
+            break;
         }
-        break;
-    }
     }
     Log::Reset();
     return 0;

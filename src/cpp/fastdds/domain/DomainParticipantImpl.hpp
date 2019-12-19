@@ -347,6 +347,8 @@ public:
         return topic_qos_;
     }
 
+    ReturnCode_t autoenable_entities();
+
 private:
 
     //!Participant Attributes
@@ -416,10 +418,12 @@ public:
         MyRTPSParticipantListener(
                 DomainParticipantImpl* impl)
             : participant_(impl)
-        {}
+        {
+        }
 
         virtual ~MyRTPSParticipantListener() override
-        {}
+        {
+        }
 
         void onParticipantDiscovery(
                 fastrtps::rtps::RTPSParticipant* participant,
@@ -507,9 +511,12 @@ public:
         Listener(
                 DomainParticipantImpl* dp)
             : domain_participant_(dp)
-        {}
+        {
+        }
 
-        ~Listener() override {}
+        ~Listener() override
+        {
+        }
 
         void on_data_on_readers(
                 Subscriber* subscriber) override;

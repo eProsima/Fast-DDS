@@ -232,10 +232,15 @@ DataWriter* PublisherImpl::create_datawriter(
     DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
 
+    if (qos_.entity_factory.autoenable_created_entities == true && user_publisher_->is_enabled())
+    {
+        writer->enable();
+    }
+
     //REGISTER THE WRITER
     WriterQos wqos = writer_qos.changeToWriterQos();
     rtps_participant_->registerWriter(impl->writer_, topic.get_topic_attributes(), wqos);
-        writer->set_instance_handle(impl->writer_->getGuid());
+    writer->set_instance_handle(impl->writer_->getGuid());
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
@@ -362,6 +367,10 @@ bool PublisherImpl::contains_entity(
 ReturnCode_t PublisherImpl::set_default_datawriter_qos(
         const DataWriterQos& qos)
 {
+    if (!user_publisher_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (&qos == &DDS_DATAWRITER_QOS_DEFAULT)
     {
         default_datawriter_qos_.setQos(DDS_DATAWRITER_QOS_DEFAULT, true);
@@ -384,6 +393,10 @@ ReturnCode_t PublisherImpl::copy_from_topic_qos(
         DataWriterQos& reader_qos,
         const TopicQos& topic_qos) const
 {
+    if (!user_publisher_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     reader_qos.copyFromTopicQos(topic_qos);
     return ReturnCode_t::RETCODE_OK;
 }
@@ -391,6 +404,10 @@ ReturnCode_t PublisherImpl::copy_from_topic_qos(
 ReturnCode_t PublisherImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
 {
+    if (!user_publisher_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     Duration_t current = max_wait;
     Duration_t begin, end;
     std::lock_guard<std::mutex> lock(mtx_writers_);
@@ -427,6 +444,10 @@ const Publisher* PublisherImpl::get_publisher() const
 
 ReturnCode_t PublisherImpl::delete_contained_entities()
 {
+    if (!user_publisher_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     for (auto it : writers_)
     {
         for (DataWriterImpl* writer : it.second)
@@ -528,6 +549,25 @@ bool PublisherImpl::type_in_use(
         }
     }
     return false;
+}
+
+ReturnCode_t PublisherImpl::autoenable_entities()
+{
+    if (qos_.entity_factory.autoenable_created_entities)
+    {
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        for (auto topic : writers_)
+        {
+            for (auto writer : topic.second)
+            {
+                if (!writer->user_datawriter_->is_enabled())
+                {
+                    writer->user_datawriter_->enable();
+                }
+            }
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } // dds

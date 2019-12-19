@@ -188,6 +188,8 @@ public:
     bool on_new_cache_change_added(
             const fastrtps::rtps::CacheChange_t* const change);
 
+    ReturnCode_t autoenable_entities();
+
 private:
 
     //!Participant

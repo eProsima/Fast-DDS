@@ -54,6 +54,13 @@ public:
     //!Auto enable on creation
     EntityFactoryQosPolicy entity_factory;
 
+    /**
+     * Set Qos from another class
+     * @param qos Reference from a DomainParticipantQos object.
+     */
+    RTPS_DllAPI void set_qos(
+            const DomainParticipantQos& qos);
+
 };
 
 RTPS_DllAPI extern const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;

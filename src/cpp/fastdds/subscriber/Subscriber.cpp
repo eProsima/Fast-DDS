@@ -196,3 +196,14 @@ DomainParticipant& Subscriber::get_participant() const
 {
     return impl_->get_participant();
 }
+
+ReturnCode_t Subscriber::enable()
+{
+    //Check if its factory is enabled
+    if (!get_participant().is_enabled())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    Entity::enable();
+    return impl_->autoenable_entities();
+}
