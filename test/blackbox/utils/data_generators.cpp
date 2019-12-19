@@ -14,6 +14,12 @@
 
 #include "../BlackboxTests.hpp"
 
+#include <cstddef>
+#include <cstdint>
+#include <iomanip>
+#include <list>
+#include <sstream>
+
 std::list<HelloWorld> default_helloworld_data_generator(size_t max)
 {
     uint16_t index = 1;

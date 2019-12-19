@@ -14,6 +14,8 @@
 
 #include "../BlackboxTests.hpp"
 
+#include <iostream>
+
 template<>
 void default_receive_print(const HelloWorld& hello)
 {
