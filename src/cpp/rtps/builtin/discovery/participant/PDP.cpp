@@ -267,7 +267,9 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 
     participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
 
-    participant_data->m_userData = mp_RTPSParticipant->getAttributes().userData;
+    participant_data->m_userData.copy_with_capacity_check(
+            mp_RTPSParticipant->getAttributes().userData,
+            participant_data->m_max_user_data_size);
 
 #if HAVE_SECURITY
     IdentityToken* identity_token = nullptr;

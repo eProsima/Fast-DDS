@@ -570,10 +570,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    DurabilityQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_durability.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_durability = p;
                     break;
                 }
                 case PID_DEADLINE:
@@ -582,10 +580,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    DeadlineQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_deadline.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_deadline = p;
                     break;
                 }
                 case PID_LATENCY_BUDGET:
@@ -594,10 +590,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    LatencyBudgetQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_latencyBudget.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_latencyBudget = p;
                     break;
                 }
                 case PID_LIVELINESS:
@@ -606,10 +600,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    LivelinessQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_liveliness.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_liveliness = p;
                     break;
                 }
                 case PID_OWNERSHIP:
@@ -618,10 +610,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    OwnershipQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_ownership.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_ownership = p;
                     break;
                 }
                 case PID_RELIABILITY:
@@ -630,10 +620,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    ReliabilityQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_reliability.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_reliability = p;
                     break;
                 }
                 case PID_DESTINATION_ORDER:
@@ -642,24 +630,21 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    DestinationOrderQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_destinationOrder.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_destinationOrder = p;
                     break;
                 }
                 case PID_USER_DATA:
                 {
-                    UserDataQosPolicy p(plength);
+                    m_qos.m_userData.length = plength;
                     uint32_t pos_ref = msg->pos;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_userData.readFromCDRMessage(msg, plength);
                     uint32_t length_diff = msg->pos - pos_ref;
                     if (plength != length_diff)
                     {
                         return false;
                     }
                     IF_VALID_CALL()
-                    m_qos.m_userData = p;
                     break;
                 }
                 case PID_TIME_BASED_FILTER:
@@ -668,10 +653,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    TimeBasedFilterQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_timeBasedFilter.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_timeBasedFilter = p;
                     break;
                 }
                 case PID_PRESENTATION:
@@ -680,52 +663,47 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    PresentationQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_presentation.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_presentation = p;
                     break;
                 }
                 case PID_PARTITION:
                 {
-                    PartitionQosPolicy p(plength);
+                    m_qos.m_partition.length = plength;
                     uint32_t pos_ref = msg->pos;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_partition.readFromCDRMessage(msg, plength);
                     uint32_t length_diff = msg->pos - pos_ref;
                     if (plength != length_diff)
                     {
                         return false;
                     }
                     IF_VALID_CALL()
-                    m_qos.m_partition = p;
                     break;
                 }
                 case PID_TOPIC_DATA:
                 {
-                    TopicDataQosPolicy p(plength);
+                    m_qos.m_topicData.length = plength;
                     uint32_t pos_ref = msg->pos;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_topicData.readFromCDRMessage(msg, plength);
                     uint32_t length_diff = msg->pos - pos_ref;
                     if (plength != length_diff)
                     {
                         return false;
                     }
                     IF_VALID_CALL()
-                    m_qos.m_topicData = p;
                     break;
                 }
                 case PID_GROUP_DATA:
                 {
-                    GroupDataQosPolicy p(plength);
+                    m_qos.m_groupData.length = plength;
                     uint32_t pos_ref = msg->pos;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_groupData.readFromCDRMessage(msg, plength);
                     uint32_t length_diff = msg->pos - pos_ref;
                     if (plength != length_diff)
                     {
                         return false;
                     }
                     IF_VALID_CALL()
-                    m_qos.m_groupData = p;
                     break;
                 }
                 case PID_DURABILITY_SERVICE:
@@ -734,10 +712,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    DurabilityServiceQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_durabilityService.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_durabilityService = p;
                     break;
                 }
                 case PID_LIFESPAN:
@@ -746,10 +722,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    LifespanQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_lifespan.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_lifespan = p;
                     break;
                 }
                 case PID_OWNERSHIP_STRENGTH:
@@ -758,10 +732,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    OwnershipStrengthQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_ownershipStrength.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_ownershipStrength = p;
                     break;
                 }
                 case PID_TYPE_IDV1:
@@ -816,10 +788,8 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         return false;
                     }
-                    DisablePositiveACKsQosPolicy p;
-                    valid &= p.readFromCDRMessage(msg, plength);
+                    valid &= m_qos.m_disablePositiveACKs.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    m_qos.m_disablePositiveACKs = p;
                     break;
                 }
 
