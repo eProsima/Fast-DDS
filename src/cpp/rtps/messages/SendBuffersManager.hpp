@@ -87,6 +87,8 @@ private:
     std::mutex mutex_;
     //!Send buffers pool
     std::vector<std::unique_ptr<RTPSMessageGroup_t>> pool_;
+    //!Raw buffer shared by the buffers created inside init()
+    std::vector<octet> common_buffer_;
     //!Creation counter
     std::size_t n_created_ = 0;
     //!Whether we allow n_created_ to grow beyond the pool_ capacity.
