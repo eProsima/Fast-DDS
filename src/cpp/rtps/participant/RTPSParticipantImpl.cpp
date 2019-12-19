@@ -1256,7 +1256,7 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(const Endpoint
 
 std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::mutex> guard(send_buffers_pool_mutex_);
     std::unique_ptr<RTPSMessageGroup_t> ret_val;
     if (send_buffers_pool_.empty())
     {
@@ -1278,7 +1278,7 @@ std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
 
 void RTPSParticipantImpl::return_send_buffer(std::unique_ptr <RTPSMessageGroup_t>&& buffer)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::mutex> guard(send_buffers_pool_mutex_);
     send_buffers_pool_.push_back(std::move(buffer));
 }
 
