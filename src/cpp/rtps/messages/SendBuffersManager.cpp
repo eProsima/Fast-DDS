@@ -38,16 +38,14 @@ void SendBuffersManager::init(
 
     if (n_created_ < pool_.capacity())
     {
+        const GuidPrefix_t& guid_prefix = participant->getGuid().guidPrefix;
+
         // Single allocation for the data of all the buffers.
         // We align the payload size to the size of a pointer, so all buffers will
         // be aligned as if directly allocated.
         constexpr size_t align_size = sizeof(octet*) - 1;
         size_t payload_size = participant->getMaxMessageSize();
         payload_size = (payload_size + align_size) & ~align_size;
-        size_t data_size = payload_size * (pool_.capacity() - n_created_);
-        common_buffer_.assign(data_size, 0);
-
-        const GuidPrefix_t& guid_prefix = participant->getGuid().guidPrefix;
         size_t advance = payload_size;
 #if HAVE_SECURITY
         bool secure = participant->is_secure();
@@ -55,6 +53,8 @@ void SendBuffersManager::init(
 #else
         advance *= 2;
 #endif
+        size_t data_size = advance * (pool_.capacity() - n_created_);
+        common_buffer_.assign(data_size, 0);
 
         octet* raw_buffer = common_buffer_.data();
         while(n_created_ < pool_.capacity())
@@ -69,7 +69,6 @@ void SendBuffersManager::init(
             raw_buffer += advance;
             ++n_created_;
         }
-        add_one_buffer(participant);
     }
 }
 
