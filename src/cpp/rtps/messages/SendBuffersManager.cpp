@@ -43,7 +43,7 @@ void SendBuffersManager::init(
         // be aligned as if directly allocated.
         constexpr size_t align_size = sizeof(octet*) - 1;
         size_t payload_size = participant->getMaxMessageSize();
-        payload_size = (payload_size + align_size) & align_size;
+        payload_size = (payload_size + align_size) & ~align_size;
         size_t data_size = payload_size * (pool_.capacity() - n_created_);
         common_buffer_.assign(data_size, 0);
 
