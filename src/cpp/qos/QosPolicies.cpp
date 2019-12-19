@@ -259,11 +259,11 @@ bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    uint32_t align = (4 - (msg->pos + 6 + dataVec.size())  % 4) & 3; //align
-    this->length = (uint16_t)(4 + this->dataVec.size() + align);
+    uint32_t align = (4 - (msg->pos + 6 + dataVec_.size())  % 4) & 3; //align
+    this->length = (uint16_t)(4 + this->dataVec_.size() + align);
     valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addUInt32(msg, (uint32_t)this->dataVec.size());
-    valid &= CDRMessage::addData(msg,this->dataVec.data(),(uint32_t)this->dataVec.size());
+    valid &= CDRMessage::addUInt32(msg, (uint32_t)this->dataVec_.size());
+    valid &= CDRMessage::addData(msg,this->dataVec_.data(),(uint32_t)this->dataVec_.size());
     for(uint32_t count = 0; count < align; ++count)
     {
         valid &= CDRMessage::addOctet(msg, 0);
@@ -274,7 +274,11 @@ bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 bool UserDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 {
     (void) size;
-    return CDRMessage::readOctetVector(msg, &dataVec);
+    if (max_size_ != 0 && size > max_size_)
+    {
+        return false;
+    }
+    return CDRMessage::readOctetVector(msg, &dataVec_);
 }
 
 bool TopicDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)

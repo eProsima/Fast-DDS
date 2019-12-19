@@ -638,6 +638,7 @@ class ParameterBuiltinEndpointSet_t : public Parameter_t{
 class ParameterPropertyList_t : public Parameter_t {
     public:
         std::vector<std::pair<std::string,std::string>> properties;
+        size_t max_size = 0;
 
         ParameterPropertyList_t():Parameter_t(PID_PROPERTY_LIST, 0) {}
 
@@ -647,9 +648,27 @@ class ParameterPropertyList_t : public Parameter_t {
          */
         ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST, in_length) {}
 
-        ParameterPropertyList_t(const ParameterPropertyList_t &parameter_properties) : Parameter_t(PID_PROPERTY_LIST, 0)
+        ParameterPropertyList_t(const ParameterPropertyList_t &parameter_properties)
+            : Parameter_t(PID_PROPERTY_LIST, 0)
+            , max_size(parameter_properties.max_size)
         {
+            properties.reserve(max_size);
             properties.assign(parameter_properties.properties.begin(), parameter_properties.properties.end());
+        }
+
+        ParameterPropertyList_t& operator =(
+                const ParameterPropertyList_t& b)
+        {
+            max_size = b.max_size;
+            properties.reserve(max_size);
+            properties.assign(b.properties.begin(), b.properties.end());
+            return *this;
+        }
+
+        void set_max_size (size_t size)
+        {
+            max_size = size;
+            properties.reserve(max_size);
         }
 
         /**

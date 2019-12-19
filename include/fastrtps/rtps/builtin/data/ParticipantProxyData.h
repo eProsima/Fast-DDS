@@ -128,8 +128,6 @@ class ParticipantProxyData
         //!
         UserDataQosPolicy m_userData;
         //!
-        size_t m_max_user_data_size = 0;
-        //!
         TimedEvent* lease_duration_event;
         //!
         bool should_check_lease_duration;

@@ -72,7 +72,7 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
         m_destinationOrder = qos.m_destinationOrder;
         m_destinationOrder.hasChanged = true;
     }
-    if (m_userData.getDataVec() != qos.m_userData.getDataVec())
+    if (m_userData.dataVec() != qos.m_userData.dataVec())
     {
         m_userData = qos.m_userData;
         m_userData.hasChanged = true;

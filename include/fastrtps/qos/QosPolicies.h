@@ -558,15 +558,25 @@ public:
     RTPS_DllAPI UserDataQosPolicy()
         : Parameter_t(PID_USER_DATA, 0)
         , QosPolicy(false)
-        , dataVec{}
+        , dataVec_{}
     {
     }
 
     RTPS_DllAPI UserDataQosPolicy(uint16_t in_length)
         : Parameter_t(PID_USER_DATA, in_length)
         , QosPolicy(false)
-        , dataVec{}
+        , dataVec_{}
     {
+    }
+
+
+    RTPS_DllAPI UserDataQosPolicy(const UserDataQosPolicy& data)
+        : Parameter_t(PID_USER_DATA, data.length)
+        , QosPolicy(false)
+        , max_size_(data.max_size_)
+    {
+            dataVec_.reserve(max_size_);
+            dataVec_.assign(data.dataVec().begin(), data.dataVec().end());
     }
 
     virtual RTPS_DllAPI ~UserDataQosPolicy()
@@ -576,10 +586,54 @@ public:
     bool operator ==(
             const UserDataQosPolicy& b) const
     {
-        return (this->dataVec == b.dataVec) &&
+        return (dataVec_ == b.dataVec()) &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
     }
+
+    UserDataQosPolicy& operator =(
+            const UserDataQosPolicy& b)
+    {
+        max_size_ = b.max_size_;
+        dataVec_.reserve(max_size_);
+        dataVec_.assign(b.dataVec().begin(), b.dataVec().end());
+        return *this;
+    }
+
+    /**
+     * @return the maximuim size of the user data
+     */
+    size_t max_size () const
+    {
+        return max_size_;
+    }
+
+    /**
+     * Set the maximum size of the user data and reserves memory for that much.
+     * @param size new maximum size of the user data
+     */
+    void max_size (size_t size)
+    {
+        max_size_ = size;
+        dataVec_.reserve(max_size_);
+    }
+
+    /**
+     * @return const reference to the internal raw data.
+     * */
+    inline const std::vector<rtps::octet>& dataVec() const
+    {
+        return dataVec_;
+    }
+
+    /**
+     * clears the data.
+     * */
+    inline void clear()
+    {
+        dataVec_.clear();
+    }
+
 
     /**
      * Appends QoS to the specified CDR message.
@@ -602,7 +656,7 @@ public:
      * */
     RTPS_DllAPI inline std::vector<rtps::octet> getDataVec() const
     {
-        return dataVec;
+        return dataVec_;
     }
 
     /**
@@ -612,27 +666,15 @@ public:
     RTPS_DllAPI inline void setDataVec(
             const std::vector<rtps::octet>& vec)
     {
-        dataVec = vec;
-    }
-
-    bool copy_with_capacity_check(
-            const std::vector<rtps::octet>& vec,
-            size_t max_size)
-    {
-        if (max_size != 0 && vec.size() > max_size)
+        if (max_size_ == 0 || vec.size() < max_size_)
         {
-            logError(RTPS_PDP,"UserData is too large. Review configuration "
-                    << "(size:" << vec.size()
-                    << " max capacity: " << max_size << ")");
-            return false;
+            dataVec_.assign(vec.begin(), vec.end());
         }
-        dataVec.assign(vec.begin(), vec.end());
-        return true;
     }
 
-public:
-
-    std::vector<rtps::octet> dataVec;
+private:
+    std::vector<rtps::octet> dataVec_;
+    size_t max_size_ = 0;
 };
 
 /**

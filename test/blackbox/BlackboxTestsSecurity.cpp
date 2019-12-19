@@ -2129,9 +2129,9 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
         if (info.info.m_guid == writer.participant_guid())
         {
             std::cout << "Received USER_DATA from the writer: ";
-            for (auto i : info.info.m_userData.m_userData)
+            for (auto i : info.info.m_userData.dataVec)
                 std::cout << i << ' ';
-            return info.info.m_userData.m_userData == std::vector<octet>({ 'a','b','c','d','e' });
+            return info.info.m_userData.dataVec == std::vector<octet>({ 'a','b','c','d','e' });
         }
 
         return false;
