@@ -658,7 +658,6 @@ void StatefulWriter::send_any_unsent_changes()
 
             RTPSGapBuilder gaps(group, remoteReader->guid());
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
-            SequenceNumber_t min_history_seq = get_seq_num_min();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                 {
                     if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
