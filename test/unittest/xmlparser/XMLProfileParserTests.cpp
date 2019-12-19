@@ -507,11 +507,11 @@ TEST_F(XMLProfileParserTests, XMLParserRequesterProfile)
 
     EXPECT_EQ(publisher_atts.topic.topicDataType, "request_type");
     EXPECT_EQ(publisher_atts.topic.topicName, "service_name_Request");
-    EXPECT_EQ(publisher_atts.qos.m_durability.kind, PERSISTENT);
+    EXPECT_EQ(publisher_atts.qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
 
     EXPECT_EQ(subscriber_atts.topic.topicDataType, "reply_type");
     EXPECT_EQ(subscriber_atts.topic.topicName, "service_name_Reply");
-    EXPECT_EQ(subscriber_atts.qos.m_durability.kind, PERSISTENT);
+    EXPECT_EQ(subscriber_atts.qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
 }
 
 TEST_F(XMLProfileParserTests, XMLParserReplierProfile)

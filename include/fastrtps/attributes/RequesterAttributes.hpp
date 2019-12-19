@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file RequesterAttributes.h
+ * @file RequesterAttributes.hpp
  */
 
 #ifndef REQUESTERATTRIBUTES_HPP_
