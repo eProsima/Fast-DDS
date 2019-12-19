@@ -61,14 +61,13 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
 #endif
     , isAlive(false)
     , m_max_properties_size(allocation.max_properties)
-    , m_max_user_data_size(allocation.max_user_data)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
         m_properties.properties.reserve(allocation.max_properties);
-        m_userData.dataVec.reserve(allocation.max_user_data);
+        m_userData.max_size(allocation.max_user_data);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
@@ -92,7 +91,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     , m_properties(pdata.m_properties)
     , m_max_properties_size(pdata.m_max_properties_size)
     , m_userData(pdata.m_userData)
-    , m_max_user_data_size(pdata.m_max_user_data_size)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , lease_duration_(std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration)))
@@ -102,7 +100,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     // so there is no need to copy m_readers and m_writers
     {
         //Data has been copied, but we must check capacity
-        m_userData.dataVec.reserve(pdata.m_max_user_data_size);
         m_properties.properties.reserve(pdata.m_max_properties_size);
     }
 
@@ -190,7 +187,7 @@ bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encap
         if (!p.addToCDRMessage(msg)) return false;
     }
 
-    if(this->m_userData.dataVec.size()>0)
+    if(this->m_userData.dataVec().size()>0)
     {
         if (!m_userData.addToCDRMessage(msg)) return false;
     }
@@ -444,14 +441,6 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_USER_DATA:
                 {
-                    if (m_max_user_data_size != 0 &&
-                            m_max_user_data_size < plength)
-                    {
-                        logError(RTPS_PDP,"User data too big "
-                                << "(size:" << plength
-                                << " max capacity: " << m_userData.dataVec.capacity() << ")");
-                        return false;
-                    }
                     m_userData.length = plength;
                     uint32_t pos_ref = msg->pos;
                     valid &= m_userData.readFromCDRMessage(msg, plength);
@@ -574,7 +563,7 @@ void ParticipantProxyData::clear()
 #endif
     m_properties.properties.clear();
     m_properties.length = 0;
-    m_userData.dataVec.clear();
+    m_userData.clear();
     m_userData.length = 0;
 }
 
@@ -592,34 +581,8 @@ void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
     lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration));
     m_key = pdata.m_key;
     isAlive = pdata.isAlive;
-
-    if (m_max_user_data_size != 0 && pdata.m_userData.dataVec.size() > m_max_user_data_size)
-    {
-        logError(RTPS_PDP,"Trying to copy a ParticipantProxyData with too large UserData "
-                << "(size:" << pdata.m_userData.dataVec.size()
-                << " max capacity: " << m_max_user_data_size << ")");
-        m_userData.dataVec.clear();
-        m_userData.length = 0;
-    }
-    else
-    {
-        m_userData.dataVec.assign(pdata.m_userData.dataVec.begin(), pdata.m_userData.dataVec.end());
-        m_userData.length = pdata.m_userData.length;
-    }
-
-    if (m_max_properties_size != 0 && pdata.m_properties.properties.size() > m_max_properties_size)
-    {
-        logError(RTPS_PDP,"Trying to copy a ParticipantProxyData with too large properties "
-                << "(size:" << pdata.m_properties.properties.size()
-                << " max capacity: " << m_max_properties_size << ")");
-        m_properties.properties.clear();
-        m_properties.length = 0;
-    }
-    else
-    {
-        m_properties.properties.assign(pdata.m_properties.properties.begin(), pdata.m_properties.properties.end());
-        m_properties.length = pdata.m_properties.length;
-    }
+    m_userData = pdata.m_userData;
+    m_properties = pdata.m_properties;
 
     // This method is only called when a new participant is discovered.The destination of the copy
     // will always be a new ParticipantProxyData or one from the pool, so there is no need for
@@ -639,34 +602,8 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     default_locators = pdata.default_locators;
     m_leaseDuration = pdata.m_leaseDuration;
     isAlive = true;
-
-    if (m_max_user_data_size != 0 && pdata.m_userData.dataVec.size() > m_max_user_data_size)
-    {
-        logError(RTPS_PDP,"Trying to copy a ParticipantProxyData with too large UserData "
-                << "(size:" << pdata.m_userData.dataVec.size()
-                << " max capacity: " << m_max_user_data_size << ")");
-        m_userData.dataVec.clear();
-        m_userData.length = 0;
-    }
-    else
-    {
-        m_userData.dataVec.assign(pdata.m_userData.dataVec.begin(), pdata.m_userData.dataVec.end());
-        m_userData.length = pdata.m_userData.length;
-    }
-
-    if (m_max_properties_size != 0 && pdata.m_properties.properties.size() > m_max_properties_size)
-    {
-        logError(RTPS_PDP,"Trying to copy a ParticipantProxyData with too large properties "
-                << "(size:" << pdata.m_properties.properties.size()
-                << " max capacity: " << m_max_properties_size << ")");
-        m_properties.properties.clear();
-        m_properties.length = 0;
-    }
-    else
-    {
-        m_properties.properties.assign(pdata.m_properties.properties.begin(), pdata.m_properties.properties.end());
-        m_properties.length = pdata.m_properties.length;
-    }
+    m_userData = pdata.m_userData;
+    m_properties = pdata.m_properties;
 
 #if HAVE_SECURITY
     identity_token_ = pdata.identity_token_;

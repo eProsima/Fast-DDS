@@ -516,7 +516,15 @@ public:
     RTPS_DllAPI UserDataQosPolicy(uint16_t in_length)
         : Parameter_t(PID_USER_DATA, in_length)
         , QosPolicy(false)
-        , dataVec{}
+        , dataVec_{}
+    {
+    }
+
+    RTPS_DllAPI UserDataQosPolicy(const UserDataQosPolicy& data)
+        : Parameter_t(PID_USER_DATA, data.length)
+        , QosPolicy(false)
+        , dataVec_(data.dataVec())
+        , max_size_(data.max_size())
     {
     }
 
@@ -552,7 +560,7 @@ public:
      * */
     RTPS_DllAPI inline std::vector<rtps::octet> getDataVec() const
     {
-        return dataVec;
+        return dataVec_;
     }
 
     /**
@@ -562,12 +570,47 @@ public:
     RTPS_DllAPI inline void setDataVec(
             const std::vector<rtps::octet>& vec)
     {
-        dataVec = vec;
+        dataVec_ = vec;
     }
 
-private:
+    /**
+     * @return the maximuim size of the user data
+     */
+    size_t max_size () const
+    {
+        return max_size_;
+    }
 
-    std::vector<rtps::octet> dataVec;
+    /**
+     * Set the maximum size of the user data and reserves memory for that much.
+     * @param size new maximum size of the user data
+     */
+    void max_size (size_t size)
+    {
+        max_size_ = size;
+    }
+
+    /**
+     * @return const reference to the internal raw data.
+     * */
+    inline const std::vector<rtps::octet>& dataVec() const
+    {
+        return dataVec_;
+    }
+
+    /**
+     * clears the data.
+     * */
+    inline void clear()
+    {
+        dataVec_.clear();
+    }
+
+
+public:
+
+    std::vector<rtps::octet> dataVec_;
+    size_t max_size_ = 0;
 };
 
 /**
