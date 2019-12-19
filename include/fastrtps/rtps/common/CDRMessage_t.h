@@ -168,6 +168,7 @@ struct RTPS_DllAPI CDRMessage_t{
             octet* buffer_ptr,
             uint32_t size)
     {
+        assert(buffer == nullptr);
         wraps = true;
         pos = 0;
         length = 0;
