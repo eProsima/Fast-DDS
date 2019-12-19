@@ -615,7 +615,22 @@ public:
         dataVec = vec;
     }
 
-private:
+    bool copy_with_capacity_check(
+            const std::vector<rtps::octet>& vec,
+            size_t max_size)
+    {
+        if (max_size != 0 && vec.size() > max_size)
+        {
+            logError(RTPS_PDP,"UserData is too large. Review configuration "
+                    << "(size:" << vec.size()
+                    << " max capacity: " << max_size << ")");
+            return false;
+        }
+        dataVec.assign(vec.begin(), vec.end());
+        return true;
+    }
+
+public:
 
     std::vector<rtps::octet> dataVec;
 };
