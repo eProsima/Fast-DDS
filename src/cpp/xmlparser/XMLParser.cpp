@@ -2835,7 +2835,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<RequesterAttributes>& requester_node)
 {
     /*
-        <xs:complexType name="requesterAttributesType">
+        <xs:complexType name="requesterProfileType">
             <xs:all>
                 <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
                 <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
@@ -2948,7 +2948,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Reque
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ReplierAttributes>& replier_node)
 {
     /*
-        <xs:complexType name="replierAttributesType">
+        <xs:complexType name="replierProfileType">
             <xs:all>
                 <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
                 <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
