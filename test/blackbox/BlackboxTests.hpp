@@ -34,9 +34,10 @@
 #include "types/Data1mbType.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <iostream>
 #include <list>
 #include <functional>
-#include <gtest/gtest.h>
 
 #if HAVE_SECURITY
 extern void blackbox_security_init();
