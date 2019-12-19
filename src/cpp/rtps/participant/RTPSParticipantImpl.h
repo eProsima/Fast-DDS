@@ -47,6 +47,7 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include "../messages/RTPSMessageGroup_t.hpp"
+#include "../messages/SendBuffersManager.hpp"
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/Endpoint.h>
@@ -335,10 +336,8 @@ private:
     NetworkFactory m_network_Factory;
     //!Async writer thread
     AsyncWriterThread async_thread_;
-    //!Protects access to send_buffers_pool_
-    std::mutex send_buffers_pool_mutex_;
-    //!Send buffers pool
-    std::vector<std::unique_ptr<RTPSMessageGroup_t>> send_buffers_pool_;
+    //!Pool of send buffers
+    std::unique_ptr<SendBuffersManager> send_buffers_;
 
 #if HAVE_SECURITY
     // Security manager

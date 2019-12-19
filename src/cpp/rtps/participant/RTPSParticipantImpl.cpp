@@ -242,7 +242,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // Add one buffer per reception thread
     num_send_buffers += m_receiverResourcelist.size();
     // Reserve buffer pool
-    send_buffers_pool_.reserve(num_send_buffers);
+    send_buffers_.reset(new SendBuffersManager(num_send_buffers, true));
 
 #if HAVE_SECURITY
     // Start security
@@ -250,18 +250,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
 #endif
 
-    // Security manager initialization may ask for one buffer, so we
-    // keep adding buffers till the number of required pre-allocations.
-    while (send_buffers_pool_.size() < num_send_buffers)
-    {
-        std::unique_ptr<RTPSMessageGroup_t> buffer(
-            new RTPSMessageGroup_t(
-#if HAVE_SECURITY
-                is_secure(),
-#endif
-                getMaxMessageSize(), m_guid.guidPrefix));
-        send_buffers_pool_.push_back(std::move(buffer));
-    }
+    send_buffers_->init(this);
 
     mp_builtinProtocols = new BuiltinProtocols();
 
@@ -1256,30 +1245,12 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(const Endpoint
 
 std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
 {
-    std::lock_guard<std::mutex> guard(send_buffers_pool_mutex_);
-    std::unique_ptr<RTPSMessageGroup_t> ret_val;
-    if (send_buffers_pool_.empty())
-    {
-        ret_val.reset(
-            new RTPSMessageGroup_t(
-#if HAVE_SECURITY
-                is_secure(),
-#endif
-                getMaxMessageSize(), m_guid.guidPrefix));
-    }
-    else
-    {
-        ret_val = std::move(send_buffers_pool_.back());
-        send_buffers_pool_.pop_back();
-    }
-
-    return ret_val;
+    return send_buffers_->get_buffer(this);
 }
 
 void RTPSParticipantImpl::return_send_buffer(std::unique_ptr <RTPSMessageGroup_t>&& buffer)
 {
-    std::lock_guard<std::mutex> guard(send_buffers_pool_mutex_);
-    send_buffers_pool_.push_back(std::move(buffer));
+    send_buffers_->return_buffer(std::move(buffer));
 }
 
 } /* namespace rtps */
