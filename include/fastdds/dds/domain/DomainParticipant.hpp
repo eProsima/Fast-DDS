@@ -471,6 +471,8 @@ public:
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
+    ReturnCode_t enable();
+
     virtual ~DomainParticipant();
 
 private:

@@ -27,7 +27,7 @@ using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
 DomainParticipant::DomainParticipant(
-        const ::dds::core::status::StatusMask &mask)
+        const ::dds::core::status::StatusMask& mask)
     : Entity(mask)
     , impl_(nullptr)
 {
@@ -353,4 +353,11 @@ ReturnCode_t DomainParticipant::get_default_topic_qos(
 const fastdds::dds::TopicQos& DomainParticipant::get_default_topic_qos() const
 {
     return impl_->get_default_topic_qos();
+}
+
+ReturnCode_t DomainParticipant::enable()
+{
+    //As the DomainParticipantFactory is not an Entity, it is not needed to check if it is enabled
+    Entity::enable();
+    return impl_->autoenable_entities();
 }

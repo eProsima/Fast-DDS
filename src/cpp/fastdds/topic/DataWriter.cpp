@@ -46,18 +46,20 @@ DataWriter::DataWriter(
         const ::dds::core::status::StatusMask& mask)
     : DomainEntity(mask)
     , impl_(impl)
-{}
+{
+}
 
 DataWriter::~DataWriter()
-{}
+{
+}
 
-bool DataWriter::write(
+ReturnCode_t DataWriter::write(
         void* data)
 {
     return impl_->write(data);
 }
 
-bool DataWriter::write(
+ReturnCode_t DataWriter::write(
         void* data,
         fastrtps::rtps::WriteParams& params)
 {
@@ -193,6 +195,17 @@ ReturnCode_t DataWriter::get_matched_subscription_data(
         const fastrtps::rtps::InstanceHandle_t& subscription_handle) const
 {
     return impl_->get_matched_subscription_data(subscription_data, subscription_handle);
+}
+
+ReturnCode_t DataWriter::enable()
+{
+    //Check if its factory is enabled
+    if (!get_publisher()->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    Entity::enable();
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } // namespace dds

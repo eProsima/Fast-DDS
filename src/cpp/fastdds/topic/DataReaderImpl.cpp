@@ -144,6 +144,10 @@ ReturnCode_t DataReaderImpl::read_next_sample(
         void* data,
         SampleInfo_t* info)
 {
+    if (!user_datareader_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
@@ -185,6 +189,10 @@ ReturnCode_t DataReaderImpl::take_next_sample(
         void* data,
         SampleInfo_t* info)
 {
+    if (!user_datareader_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
@@ -241,7 +249,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.setQos(qos,false);
+    qos_.setQos(qos, false);
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
     ReaderQos rqos = qos_.changeToReaderQos();
     subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
@@ -285,7 +293,7 @@ bool DataReaderImpl::set_topic_attributes(
     //TOPIC ATTRIBUTES
     if (topic_att_ != topic_att)
     {
-        logWarning(RTPS_READER,"Topic Attributes cannot be updated");
+        logWarning(RTPS_READER, "Topic Attributes cannot be updated");
         return false;
     }
     return true;
@@ -321,17 +329,17 @@ bool DataReaderImpl::set_attributes(
     if (att.endpoint.unicastLocatorList.size() != att_.endpoint.unicastLocatorList.size() ||
             att.endpoint.multicastLocatorList.size() != att_.endpoint.multicastLocatorList.size())
     {
-        logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
+        logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
         updated &= false;
     }
     else
     {
         for (LocatorListConstIterator lit1 = att_.endpoint.unicastLocatorList.begin();
-                lit1!=att_.endpoint.unicastLocatorList.end(); ++lit1)
+                lit1 != att_.endpoint.unicastLocatorList.end(); ++lit1)
         {
             missing = true;
             for (LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
-                    lit2!= att.endpoint.unicastLocatorList.end(); ++lit2)
+                    lit2 != att.endpoint.unicastLocatorList.end(); ++lit2)
             {
                 if (*lit1 == *lit2)
                 {
@@ -341,16 +349,16 @@ bool DataReaderImpl::set_attributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER,"Locator: "<< *lit1 << " not present in new list");
-                logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
+                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
         for (LocatorListConstIterator lit1 = att_.endpoint.multicastLocatorList.begin();
-                lit1!=att_.endpoint.multicastLocatorList.end(); ++lit1)
+                lit1 != att_.endpoint.multicastLocatorList.end(); ++lit1)
         {
             missing = true;
             for (LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
-                    lit2!= att.endpoint.multicastLocatorList.end(); ++lit2)
+                    lit2 != att.endpoint.multicastLocatorList.end(); ++lit2)
             {
                 if (*lit1 == *lit2)
                 {
@@ -360,8 +368,8 @@ bool DataReaderImpl::set_attributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER,"Locator: "<< *lit1<< " not present in new list");
-                logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
+                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
     }
@@ -386,7 +394,8 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
     if (data_reader_->on_new_cache_change_added(change_in))
     {
         if (data_reader_->subscriber_->get_subscriber()->get_status_changes().is_compatible(
-                    ::dds::core::status::StatusMask::data_on_readers()))
+                    ::dds::core::status::StatusMask::data_on_readers()) &&
+                data_reader_->subscriber_->get_subscriber()->is_enabled())
         {
             if (data_reader_->subscriber_->listener_ != nullptr)
             {
@@ -396,8 +405,8 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
                 data_reader_->get_subscriber());
 
         }
-        else if (data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
-                data_on_readers()))
+        else if (data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::
+                StatusMask::data_on_readers()) && data_reader_->subscriber_->get_participant().is_enabled())
         {
             if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
             {
@@ -410,13 +419,13 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
         }
         else if (data_reader_->listener_ != nullptr &&
                 data_reader_->user_datareader_->get_status_changes().is_compatible(
-                     ::dds::core::status::StatusMask::data_available()))
+                    ::dds::core::status::StatusMask::data_available()) && data_reader_->user_datareader_->is_enabled())
         {
             data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
         }
         else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-                data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
-                data_available()))
+                data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::
+                StatusMask::data_available()) && data_reader_->subscriber_->get_participant().is_enabled())
         {
             data_reader_->subscriber_->get_participant().get_listener()->on_data_available(
                 data_reader_->user_datareader_);
@@ -424,17 +433,37 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
     }
 }
 
-
 void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
+    bool matched = false;
+
+    //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
+    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
+            data_reader_->user_datareader_->get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::subscription_matched()) )
+    {
+        matched = true;
+        data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
+    }
+
+    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            data_reader_->subscriber_->get_participant().is_enabled() &&
+            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
+                ::dds::core::status::StatusMask::subscription_matched()))
+    {
+        matched = true;
+        data_reader_->subscriber_->get_participant().get_listener()->
+        on_subscription_matched(data_reader_->user_datareader_, info);
+    }
+
     //Update Matched Publications List
-    if (info.current_count_change == 1) //MATCHED_MATCHING
+    if (info.current_count_change == 1 && matched) //MATCHED_MATCHING
     {
         data_reader_->matched_publications_.push_back(info.last_publication_handle);
     }
-    else if (info.current_count_change == -1) //REMOVE_MATCHING
+    else if (info.current_count_change == -1 && matched) //REMOVE_MATCHING
     {
         auto it = std::find(data_reader_->matched_publications_.begin(),
                         data_reader_->matched_publications_.end(), info.last_publication_handle);
@@ -444,29 +473,13 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         }
         BuiltinSubscriber::get_instance()->delete_publication_data(info.last_publication_handle);
     }
-
-    //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
-    if (data_reader_->listener_ != nullptr &&
-            data_reader_->user_datareader_->get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::subscription_matched()))
-    {
-        data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
-    }
-
-    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::subscription_matched()))
-    {
-        data_reader_->subscriber_->get_participant().get_listener()->
-        on_subscription_matched(data_reader_->user_datareader_, info);
-    }
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         RTPSReader* /*reader*/,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    if (data_reader_->listener_ != nullptr &&
+    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
             data_reader_->user_datareader_->get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::liveliness_changed()))
     {
@@ -474,6 +487,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            data_reader_->subscriber_->get_participant().is_enabled() &&
             data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::liveliness_changed()))
     {
@@ -487,7 +501,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         RTPSReader* /*reader*/,
         const RequestedIncompatibleQosStatus& status)
 {
-    if (data_reader_->listener_ != nullptr &&
+    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
             data_reader_->user_datareader_->get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::requested_incompatible_qos()))
     {
@@ -495,6 +509,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            data_reader_->subscriber_->get_participant().is_enabled() &&
             data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::requested_incompatible_qos()))
     {
@@ -508,7 +523,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         RTPSReader* /*reader*/,
         const SampleRejectedStatus& status)
 {
-    if (data_reader_->listener_ != nullptr &&
+    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
             data_reader_->user_datareader_->get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::sample_rejected()))
     {
@@ -516,6 +531,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            data_reader_->subscriber_->get_participant().is_enabled() &&
             data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(
                 ::dds::core::status::StatusMask::sample_rejected()))
     {
@@ -619,12 +635,14 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
 
-    if (user_datareader_->get_status_changes().is_compatible(::dds::core::status::StatusMask::requested_deadline_missed()))
+    if (listener_ != nullptr && user_datareader_->is_enabled() &&
+            user_datareader_->get_status_changes().is_compatible(::dds::core::status::StatusMask::
+            requested_deadline_missed()))
     {
         listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
     }
 
-    else if (subscriber_->get_participant().get_listener() != nullptr &&
+    else if (subscriber_->get_participant().get_listener() != nullptr && subscriber_->get_participant().is_enabled() &&
             subscriber_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
             requested_deadline_missed()))
     {
@@ -644,10 +662,13 @@ bool DataReaderImpl::deadline_missed()
     return deadline_timer_reschedule();
 }
 
-
 ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
         RequestedDeadlineMissedStatus& status)
 {
+    if (!user_datareader_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     status = deadline_missed_status_;
@@ -758,7 +779,6 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
     // TODO add callback call subscriber_->subscriber_listener_->on_liveliness_changed
     return ReturnCode_t::RETCODE_OK;
 }
-
 
 ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
         RequestedIncompatibleQosStatus& status) const

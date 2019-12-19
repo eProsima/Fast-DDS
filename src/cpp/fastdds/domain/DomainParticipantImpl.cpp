@@ -152,7 +152,6 @@ DomainParticipantImpl::~DomainParticipantImpl()
     participant_ = nullptr;
 }
 
-
 ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
@@ -220,26 +219,26 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
     if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
     if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
     if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Remote Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
@@ -267,6 +266,12 @@ Publisher* DomainParticipantImpl::create_publisher(
     } while (exists_entity_id(pub_guid.entityId));
 
     pub->set_instance_handle(pub_guid);
+
+    //If the factory is disable all the created entities are disable
+    if (qos_.entity_factory.autoenable_created_entities == true && participant_->is_enabled())
+    {
+        pub->enable();
+    }
 
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_pubs_);
@@ -341,6 +346,10 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
+    if (!participant_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (rtps_participant_->wlp() != nullptr)
     {
         if (rtps_participant_->wlp()->assert_liveliness_manual_by_participant())
@@ -358,6 +367,10 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
 ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
         const fastdds::dds::PublisherQos& qos)
 {
+    if (!participant_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
         default_pub_qos_.set_qos(PUBLISHER_QOS_DEFAULT, true);
@@ -379,6 +392,10 @@ const fastdds::dds::PublisherQos& DomainParticipantImpl::get_default_publisher_q
 ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         const fastdds::dds::SubscriberQos& qos)
 {
+    if (!participant_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
         default_sub_qos_.set_qos(SUBSCRIBER_QOS_DEFAULT, true);
@@ -538,26 +555,26 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
     if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
     if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
     if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
@@ -571,6 +588,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         listen = listener_;
     }
+
     SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen);
     Subscriber* sub = new Subscriber(subimpl, mask);
     subimpl->user_subscriber_ = sub;
@@ -586,6 +604,12 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 
     sub->set_instance_handle(sub_guid);
 
+    //If the factory is disable all the created entities are disable
+    if (qos_.entity_factory.autoenable_created_entities == true && participant_->is_enabled())
+    {
+        sub->enable();
+    }
+
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_subs_);
     subscribers_by_handle_[sub_guid] = sub;
@@ -598,7 +622,6 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 
     return sub;
 }
-
 
 const TypeSupport DomainParticipantImpl::find_type(
         const std::string& type_name) const
@@ -736,6 +759,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         participant_->discovered_participants_.push_back(info.info.m_key);
@@ -765,17 +793,28 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
     }
 }
+
 #endif
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant* participant,
         ReaderDiscoveryInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
 
     if (info.status == fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
@@ -814,6 +853,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant* participant,
         WriterDiscoveryInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
 
     if (info.status == fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
@@ -857,6 +901,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         const fastrtps::types::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_type_discovery(
@@ -876,6 +925,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
         const fastrtps::rtps::SampleIdentity& request_sample_id,
         const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_type_dependencies_reply(
@@ -891,6 +945,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
         const fastrtps::string_255& type_name,
         const fastrtps::types::TypeInformation& type_information)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         if (type_information.complete().typeid_with_size().type_id()._d() > 0
@@ -1383,7 +1442,7 @@ std::string DomainParticipantImpl::get_inner_type_name(
         return static_cast<char>(std::tolower(c));
     });
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
-    std::replace(str.begin(), str.end(), '|','_');
+    std::replace(str.begin(), str.end(), '|', '_');
     return str;
 }
 
@@ -1417,6 +1476,12 @@ Topic* DomainParticipantImpl::create_topic(
     } while (exists_entity_id(topic_guid.entityId));
 
     topic->set_instance_handle(topic_guid);
+
+    //If the factory is disable all the created entities are disable
+    if (qos_.entity_factory.autoenable_created_entities == true && participant_->is_enabled())
+    {
+        topic->enable();
+    }
 
     //SAVE THE TOPIC INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_types_);
@@ -1501,4 +1566,42 @@ void DomainParticipantImpl::Listener::on_data_on_readers(
         Subscriber* subscriber)
 {
     subscriber->notify_datareaders();
+}
+
+ReturnCode_t DomainParticipantImpl::autoenable_entities()
+{
+    if (qos_.entity_factory.autoenable_created_entities)
+    {
+        {
+            std::lock_guard<std::mutex> lock(mtx_pubs_);
+            for (auto pub: publishers_)
+            {
+                if (!pub.first->is_enabled())
+                {
+                    pub.first->enable();
+                }
+            }
+        }
+        {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
+            for (auto sub: subscribers_)
+            {
+                if (!sub.first->is_enabled())
+                {
+                    sub.first->enable();
+                }
+            }
+        }
+        {
+            std::lock_guard<std::mutex> lock(mtx_types_);
+            for (auto topic: topics_)
+            {
+                if (!std::get<0>(topic.second)->is_enabled())
+                {
+                    std::get<0>(topic.second)->enable();
+                }
+            }
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
 }

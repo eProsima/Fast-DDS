@@ -41,11 +41,12 @@ public:
     Entity(
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
         : status_condition_(this)
+        , enable_(false)
     {
         status_condition_.set_enabled_statuses(mask);
     }
 
-    fastrtps::types::ReturnCode_t enable()
+    virtual fastrtps::types::ReturnCode_t enable()
     {
         enable_ = true;
         return fastrtps::types::ReturnCode_t::RETCODE_OK;
@@ -71,6 +72,15 @@ public:
         return instance_handle_;
     }
 
+    bool is_enabled() const
+    {
+        if (enable_)
+        {
+            return true;
+        }
+        return false;
+    }
+
     bool operator ==(
             const Entity& other) const
     {
@@ -93,53 +103,18 @@ protected:
 
 };
 
+
+
 class RTPS_DllAPI DomainEntity : public Entity
 {
 public:
+
     DomainEntity(
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
         : Entity(mask)
     {
     }
 
-    fastrtps::types::ReturnCode_t enable()
-    {
-        return Entity::enable();
-    }
-
-    void close()
-    {
-        Entity::close();
-    }
-
-    const StatusCondition& get_statuscondition() const
-    {
-        return Entity::get_statuscondition();
-    }
-
-    const ::dds::core::status::StatusMask& get_status_changes() const
-    {
-        return Entity::get_status_changes();
-    }
-
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
-    {
-        return Entity::get_instance_handle();
-    }
-
-    bool operator ==(
-            const Entity& other) const
-    {
-        return Entity::operator ==(other);
-    }
-
-protected:
-
-    void set_instance_handle(
-            const fastrtps::rtps::InstanceHandle_t& handle)
-    {
-        Entity::set_instance_handle(handle);
-    }
 };
 
 } // namespace dds

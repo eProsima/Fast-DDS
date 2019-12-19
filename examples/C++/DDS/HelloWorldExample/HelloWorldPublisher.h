@@ -35,7 +35,8 @@ public:
     virtual ~HelloWorldPublisher();
 
     //!Initialize
-    bool init();
+    bool init(
+            int domain_id);
 
     //!Publish a sample
     bool publish(
@@ -65,10 +66,12 @@ public:
         PubListener()
             : matched_(0)
             , firstConnected_(false)
-        {}
+        {
+        }
 
         ~PubListener() override
-        {}
+        {
+        }
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
@@ -81,6 +84,8 @@ public:
         int matched_;
 
         bool firstConnected_;
+
+        bool enable_ = true;
     } listener_;
 
     void runThread(

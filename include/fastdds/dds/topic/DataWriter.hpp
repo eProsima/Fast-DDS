@@ -105,7 +105,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(
+    ReturnCode_t write(
             void* data);
 
     /**
@@ -116,7 +116,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(
+    fastrtps::types::ReturnCode_t write(
             void* data,
             fastrtps::rtps::WriteParams& params);
 
@@ -234,6 +234,8 @@ public:
     ReturnCode_t get_matched_subscription_data(
             SubscriptionBuiltinTopicData& subscription_data,
             const fastrtps::rtps::InstanceHandle_t& subscription_handle) const;
+
+    ReturnCode_t enable();
 
 private:
 
