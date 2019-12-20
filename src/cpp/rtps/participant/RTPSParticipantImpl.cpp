@@ -248,6 +248,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // Start security
     // TODO(Ricardo) Get returned value in future.
     m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
+    if (!m_security_manager_initialized)
+    {
+        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
+        return;
+    }
 #endif
 
     send_buffers_->init(this);
@@ -314,8 +319,6 @@ const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
     disable();
-
-    delete mp_builtinProtocols;
 
 #if HAVE_SECURITY
     m_security_manager.destroy();
