@@ -565,7 +565,7 @@ void StatefulWriter::send_any_unsent_changes()
                                     }
                                     else
                                     {
-                                        if (is_remote_and_reliable)
+                                        if (unsentChange != nullptr && is_remote_and_reliable)
                                         {
                                             gaps.add(seqNum);
                                         }
@@ -702,7 +702,7 @@ void StatefulWriter::send_any_unsent_changes()
                         else
                         {
                             // Skip holes in history, as they were added before
-                            if (unsentChange != nullptr)
+                            if (unsentChange != nullptr && remoteReader->is_reliable())
                             {
                                 gaps.add(seq_num);
                             }
@@ -954,7 +954,6 @@ bool StatefulWriter::matched_reader_add(
     update_reader_info(true);
 
     RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
-    RTPSGapBuilder gap_builder(group);
 
     // Add initial heartbeat to message group
     send_heartbeat_nts_(1u, group, disable_positive_acks_);
@@ -968,28 +967,38 @@ bool StatefulWriter::matched_reader_add(
         assert(last_seq != SequenceNumber_t::unknown());
         assert(current_seq <= last_seq);
 
+        RTPSGapBuilder gap_builder(group);
+        bool is_reliable = rp->is_reliable();
+
         for (std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
                 cit != mp_history->changesEnd(); ++cit)
         {
             // This is to cover the case when there are holes in the history
-            while (current_seq != (*cit)->sequenceNumber)
+            if (is_reliable)
             {
-                if (rp->is_local_reader())
+                while (current_seq != (*cit)->sequenceNumber)
                 {
-                    intraprocess_gap(rp, current_seq);
-                }
-                else
-                {
-                    try
+                    if (rp->is_local_reader())
                     {
-                        gap_builder.add(current_seq);
+                        intraprocess_gap(rp, current_seq);
                     }
-                    catch (const RTPSMessageGroup::timeout&)
+                    else
                     {
-                        logError(RTPS_WRITER, "Max blocking time reached");
+                        try
+                        {
+                            gap_builder.add(current_seq);
+                        }
+                        catch (const RTPSMessageGroup::timeout&)
+                        {
+                            logError(RTPS_WRITER, "Max blocking time reached");
+                        }
                     }
+                    ++current_seq;
                 }
-                ++current_seq;
+            }
+            else
+            {
+                current_seq = (*cit)->sequenceNumber;
             }
 
             ChangeForReader_t changeForReader(*cit);
@@ -998,7 +1007,7 @@ bool StatefulWriter::matched_reader_add(
                 m_att.durabilityKind >= TRANSIENT_LOCAL &&
                 rp->rtps_is_relevant(*cit);
             changeForReader.setRelevance(relevance);
-            if (!relevance)
+            if (!relevance && is_reliable)
             {
                 if (rp->is_local_reader())
                 {
@@ -1027,24 +1036,27 @@ bool StatefulWriter::matched_reader_add(
         }
 
         // This is to cover the case where the last changes have been removed from the history
-        while (current_seq < next_sequence_number())
+        if (is_reliable)
         {
-            if (rp->is_local_reader())
+            while (current_seq < next_sequence_number())
             {
-                intraprocess_gap(rp, current_seq);
-            }
-            else
-            {
-                try
+                if (rp->is_local_reader())
                 {
-                    gap_builder.add(current_seq);
+                    intraprocess_gap(rp, current_seq);
                 }
-                catch (const RTPSMessageGroup::timeout&)
+                else
                 {
-                    logError(RTPS_WRITER, "Max blocking time reached");
+                    try
+                    {
+                        gap_builder.add(current_seq);
+                    }
+                    catch (const RTPSMessageGroup::timeout&)
+                    {
+                        logError(RTPS_WRITER, "Max blocking time reached");
+                    }
                 }
+                ++current_seq;
             }
-            ++current_seq;
         }
 
         try
@@ -1053,13 +1065,10 @@ bool StatefulWriter::matched_reader_add(
             {
                 mp_RTPSParticipant->async_thread().wake_up(this);
             }
-            else
+            else if(is_reliable)
             {
                 // Send Gap
                 gap_builder.flush();
-
-                // Send all messages
-                group.flush_and_reset();
             }
         }
         catch (const RTPSMessageGroup::timeout&)
@@ -1070,6 +1079,16 @@ bool StatefulWriter::matched_reader_add(
         // Always activate heartbeat period. We need a confirmation of the reader.
         // The state has to be updated.
         periodic_hb_event_->restart_timer();
+    }
+
+    try
+    {
+        // Send all messages
+        group.flush_and_reset();
+    }
+    catch (const RTPSMessageGroup::timeout&)
+    {
+        logError(RTPS_WRITER, "Max blocking time reached");
     }
 
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
