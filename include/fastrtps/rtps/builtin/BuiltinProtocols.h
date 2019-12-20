@@ -24,7 +24,7 @@
 #include <list>
 
 #include "../attributes/RTPSParticipantAttributes.h"
-
+#include "../network/NetworkFactory.h"
 
 namespace eprosima {
 
@@ -70,6 +70,13 @@ class BuiltinProtocols
      * @return True on success
      */
     bool updateMetatrafficLocators(LocatorList_t& loclist);
+
+    /**
+     * Traverses the list of discover servers translating from remote to local locators
+     * if possible
+     * @param nf NetworkFactory used to make the translation
+     */
+    void transform_server_remote_locators(NetworkFactory & nf);
 
     //!BuiltinAttributes of the builtin protocols.
     BuiltinAttributes m_att;

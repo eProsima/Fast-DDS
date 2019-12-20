@@ -708,6 +708,8 @@ bool PDPServer::match_servers_EDP_endpoints()
 
 void PDPServer::announceParticipantState(bool new_change, bool dispose /* = false */, WriteParams& )
 {
+    logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
+
     StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
     assert(pW);
 

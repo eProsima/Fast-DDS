@@ -79,6 +79,8 @@ bool BuiltinProtocols::initBuiltinProtocols(
     m_initialPeersList = m_att.initialPeersList;
     m_DiscoveryServers = m_att.discovery_config.m_DiscoveryServers;
 
+    transform_server_remote_locators(p_part->network_factory());
+
     const RTPSParticipantAllocationAttributes& allocation = p_part->getRTPSParticipantAttributes().allocation;
 
     // PDP
@@ -141,6 +143,21 @@ bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
 {
     m_metatrafficUnicastLocatorList = loclist;
     return true;
+}
+
+void BuiltinProtocols::transform_server_remote_locators(NetworkFactory & nf)
+{
+    for(RemoteServerAttributes & rs : m_DiscoveryServers)
+    {
+        for(Locator_t & loc : rs.metatrafficUnicastLocatorList)
+        {
+            Locator_t localized;
+            if(nf.transform_remote_locator(loc, localized))
+            {
+                loc = localized;
+            }
+        }
+    }
 }
 
 bool BuiltinProtocols::addLocalWriter(
