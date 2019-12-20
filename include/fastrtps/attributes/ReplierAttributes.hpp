@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file RequesterAttributes.h
+ * @file ReplierAttributes.hpp
  */
 
-#ifndef REQUESTERATTRIBUTES_H_
-#define REQUESTERATTRIBUTES_H_
+#ifndef REPLIERATTRIBUTES_HPP_
+#define REPLIERATTRIBUTES_HPP_
 
 #include "PublisherAttributes.h"
 #include "SubscriberAttributes.h"
@@ -25,12 +25,12 @@
 namespace eprosima {
 namespace fastrtps {
 
-class RequesterAttributes
+class ReplierAttributes
 {
 public:
-    RequesterAttributes() = default;
+    ReplierAttributes() = default;
 
-    bool operator==(const RequesterAttributes& b) const
+    bool operator==(const ReplierAttributes& b) const
     {
         return (this->service_name == b.service_name) &&
                (this->request_topic_name == b.request_topic_name) &&
@@ -48,8 +48,7 @@ public:
     SubscriberAttributes subscriber;
 };
 
-
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /* REQUESTERATTRIBUTES_H_ */
+#endif /* REPLIERATTRIBUTES_HPP_ */
