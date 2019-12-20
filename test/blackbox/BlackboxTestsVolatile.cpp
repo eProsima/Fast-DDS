@@ -21,6 +21,8 @@
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 
+#include <gtest/gtest.h>
+
 // Test created to check bug #3020 (Github ros2/demos #238)
 TEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 {

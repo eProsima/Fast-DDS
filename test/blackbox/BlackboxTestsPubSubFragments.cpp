@@ -17,6 +17,8 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include <gtest/gtest.h>
+
 #include <fastrtps/log/Log.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 

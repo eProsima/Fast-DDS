@@ -19,6 +19,8 @@
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 
+#include <gtest/gtest.h>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 

@@ -18,7 +18,8 @@
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
-#include <thread>
+
+#include <gtest/gtest.h>
 
 #include <thread>
 

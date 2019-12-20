@@ -20,6 +20,8 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/utils/IPFinder.h>
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 using namespace eprosima::fastrtps;

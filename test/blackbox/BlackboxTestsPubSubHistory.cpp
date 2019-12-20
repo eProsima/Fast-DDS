@@ -17,6 +17,8 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include <gtest/gtest.h>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 

@@ -17,6 +17,8 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include <gtest/gtest.h>
+
 #include <fastrtps/transport/UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
