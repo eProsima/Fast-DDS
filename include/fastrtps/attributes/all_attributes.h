@@ -23,6 +23,8 @@
 #include "PublisherAttributes.h"
 #include "SubscriberAttributes.h"
 #include "TopicAttributes.h"
+#include "RequesterAttributes.hpp"
+#include "ReplierAttributes.hpp"
 
 
 #endif /* ALL_ATTRIBUTES_H_ */
