@@ -60,13 +60,13 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , plugin_security_attributes_(0UL)
 #endif
     , isAlive(false)
-    , m_properties(allocation.max_properties)
+    , m_properties(allocation.data_limits.max_properties)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
-        m_userData.max_size(allocation.max_user_data);
+        m_userData.max_size(allocation.data_limits.max_user_data);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)

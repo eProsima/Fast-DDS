@@ -97,7 +97,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            allocation.max_properties = tmp;
+            allocation.data_limits.max_properties = tmp;
         }
         else if (strcmp(name, MAX_USER_DATA) == 0)
         {
@@ -106,7 +106,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            allocation.max_user_data = tmp;
+            allocation.data_limits.max_user_data = tmp;
         }
         else
         {
