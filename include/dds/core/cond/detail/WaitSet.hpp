@@ -22,18 +22,14 @@
  * @cond
  * Ignore this file in the API
  */
-//TODO: Fix when WaitSetDelegate is implemented
-//#include <dds/core/cond/detail/TWaitSetImpl.hpp>
-//#include <org/opensplice/core/cond/WaitSetDelegate.hpp>
+#include <fastdds/dds/core/conditions/WaitSet.hpp>
 
 namespace dds {
 namespace core {
 namespace cond {
 namespace detail {
 
-//TODO: Fix when WaitSetDelegate is implemented
-//typedef dds::core::cond::TWaitSet<org::opensplice::core::cond::WaitSetDelegate> WaitSet;
-class WaitSet { };
+using WaitSet = eprosima::fastdds::dds::WaitSet;
 
 } //namespace detail
 } //namespace cond

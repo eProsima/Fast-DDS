@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_TCONDITION_IMPL_HPP_
 #define EPROSIMA_DDS_CORE_COND_TCONDITION_IMPL_HPP_
@@ -46,8 +46,8 @@ void TCondition<DELEGATE>::handler(
         Functor& func)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->set_handler(func);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->set_handler(func);
 
 }
 
@@ -57,8 +57,8 @@ void TCondition<DELEGATE>::handler(
         const Functor& func)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//        this->delegate()->set_handler(func);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //        this->delegate()->set_handler(func);
 }
 /** @endcond */
 
@@ -66,24 +66,22 @@ template<typename DELEGATE>
 void TCondition<DELEGATE>::reset_handler()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->reset_handler();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->reset_handler();
 }
 
 template<typename DELEGATE>
 void TCondition<DELEGATE>::dispatch()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->dispatch();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->dispatch();
 }
 
 template<typename DELEGATE>
 bool TCondition<DELEGATE>::trigger_value() const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->trigger_value();
+    return this->delegate()->get_trigger_value();
 }
 
 } //namespace cond

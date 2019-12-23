@@ -24,7 +24,6 @@
 #include <dds/core/cond/Condition.hpp>
 #include <dds/sub/AnyDataReader.hpp>
 #include <dds/sub/status/DataState.hpp>
-//#include <dds/sub/cond/detail/TReadConditionImpl.hpp>
 
 namespace dds {
 namespace sub {
@@ -59,12 +58,12 @@ class TReadCondition : public dds::core::cond::TCondition<DELEGATE>
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TReadCondition,
-            dds::core::cond::TCondition,
-            DELEGATE)
+        TReadCondition,
+        dds::core::cond::TCondition,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TReadCondition)
+        TReadCondition)
 
     /**
      * Create a dds::sub::cond::ReadCondition associated with a DataReader.
@@ -160,5 +159,7 @@ typedef dds::sub::cond::detail::ReadCondition ReadCondition;
 } //namespace cond
 } //namespace sub
 } //namespace dds
+
+#include <dds/sub/cond/detail/TReadConditionImpl.hpp>
 
 #endif //OMG_DDS_SUB_COND_READ_CONDITION_HPP_

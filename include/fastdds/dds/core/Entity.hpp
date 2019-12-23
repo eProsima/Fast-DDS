@@ -57,9 +57,9 @@ public:
         enable_ = false;
     }
 
-    const StatusCondition& get_statuscondition() const
+    StatusCondition* get_statuscondition()
     {
-        return status_condition_;
+        return &status_condition_;
     }
 
     const ::dds::core::status::StatusMask& get_status_changes() const
