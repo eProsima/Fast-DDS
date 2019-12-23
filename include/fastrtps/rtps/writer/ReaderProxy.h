@@ -63,7 +63,8 @@ public:
     ReaderProxy(
             const WriterTimes& times,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
-            StatefulWriter* writer);
+            const VariableLengthDataLimits& limits,
+           StatefulWriter* writer);
 
     /**
      * Activate this proxy associating it to a remote reader.
@@ -392,6 +393,8 @@ private:
     bool is_active_;
     //!Reader locator information
     ReaderLocator locator_info_;
+    //!Data limits for variable length submessages
+    VariableLengthDataLimits data_limits_;
     //!Taken from QoS
     DurabilityKind_t durability_kind_;
     //!Taken from QoS
