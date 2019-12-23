@@ -49,10 +49,12 @@ public:
     ParListener(
             bool exit_on_lost_liveliness)
         : exit_on_lost_liveliness_(exit_on_lost_liveliness)
-    {}
+    {
+    }
 
     virtual ~ParListener() override
-    {}
+    {
+    }
 
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant
@@ -106,6 +108,7 @@ public:
                 " unauthorized participant " << info.guid << std::endl;
         }
     }
+
 #endif
 
 private:
@@ -119,10 +122,12 @@ public:
 
     PubListener()
         : matched_(0)
-    {}
+    {
+    }
 
     ~PubListener() override
-    {}
+    {
+    }
 
     void on_publication_matched(
             DataWriter* /*writer*/,
@@ -246,7 +251,8 @@ int main(
         return 1;
     }
 
-    eprosima::fastrtps::types::DynamicType_ptr dyn_type = eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    eprosima::fastrtps::types::DynamicType_ptr dyn_type =
+            eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     participant->register_type(type);
 
@@ -274,7 +280,7 @@ int main(
     }
 
     DataWriterQos qos;
-    qos.changeToDataWriterQos(publisher_attributes.qos);
+    qos.change_to_datawriter_qos(publisher_attributes.qos);
     Topic topic_(participant, publisher_attributes.topic);
     DataWriter* writer = publisher->create_datawriter(topic_, qos, nullptr);
     if (writer == nullptr)
@@ -291,7 +297,8 @@ int main(
         });
     }
 
-    eprosima::fastrtps::types::DynamicData_ptr data(eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type));
+    eprosima::fastrtps::types::DynamicData_ptr data(
+        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type));
     data->set_string_value("Hello DDS Dynamic World", 0);
     data->set_uint32_value(1, 1);
     eprosima::fastrtps::types::DynamicData* inner = data->loan_value(2);

@@ -31,8 +31,7 @@ DataWriterQos::DataWriterQos()
     this->durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
-
-void DataWriterQos::setQos(
+void DataWriterQos::set_qos(
         const DataWriterQos& qos,
         bool first_time)
 {
@@ -127,9 +126,7 @@ void DataWriterQos::setQos(
     }
 }
 
-
-
-bool DataWriterQos::checkQos() const
+bool DataWriterQos::check_qos() const
 {
     if (durability.kind == PERSISTENT_DURABILITY_QOS)
     {
@@ -158,9 +155,7 @@ bool DataWriterQos::checkQos() const
     return true;
 }
 
-
-
-bool DataWriterQos::canQosBeUpdated(
+bool DataWriterQos::can_qos_be_updated(
         const DataWriterQos& qos) const
 {
     bool updatable = true;
@@ -207,7 +202,7 @@ bool DataWriterQos::canQosBeUpdated(
 }
 
 //TODO: Remove below methods when the rtps classes use DataWriterQos instead of WriterQos
-WriterQos DataWriterQos::changeToWriterQos() const
+WriterQos DataWriterQos::change_to_writer_qos() const
 {
     WriterQos wqos;
     wqos.m_durability = this->durability;
@@ -227,7 +222,7 @@ WriterQos DataWriterQos::changeToWriterQos() const
     return wqos;
 }
 
-void DataWriterQos::changeToDataWriterQos(
+void DataWriterQos::change_to_datawriter_qos(
         const WriterQos& qos)
 {
     this->durability = qos.m_durability;
@@ -246,7 +241,7 @@ void DataWriterQos::changeToDataWriterQos(
     this->representation = qos.representation;
 }
 
-void DataWriterQos::copyFromTopicQos(
+void DataWriterQos::copy_from_topic_qos(
         const TopicQos& topic_qos)
 {
     this->deadline = topic_qos.deadline;

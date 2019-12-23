@@ -162,7 +162,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     Rparam = subscriber_->att_;
                     Rparam.topic = subscriber_->topic_;
                     Rparam.topic.topicName = topic_name;
-                    Rparam.qos = subscriber_->qos_.changeToReaderQos();
+                    Rparam.qos = subscriber_->qos_.change_to_reader_qos();
                     subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
                         SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
 

@@ -69,6 +69,15 @@ fastrtps::TopicAttributes Topic::get_topic_attributes() const
     return topic_att_;
 }
 
+fastrtps::TopicAttributes Topic::get_topic_attributes(
+        const DataReaderQos& qos) const
+{
+    fastrtps::TopicAttributes att;
+    att = topic_att_;
+    qos.copy_to_topic_attributes(&att);
+    return att;
+}
+
 ReturnCode_t Topic::get_qos(
         TopicQos& qos) const
 {

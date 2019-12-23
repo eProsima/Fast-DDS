@@ -44,7 +44,7 @@ class TopicListener;
 class DomainParticipantImpl;
 
 class Topic : public DomainEntity,
-              public TopicDescription
+    public TopicDescription
 
 {
 public:
@@ -65,6 +65,9 @@ public:
 
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
+
+    RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes(
+            const DataReaderQos& qos) const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;

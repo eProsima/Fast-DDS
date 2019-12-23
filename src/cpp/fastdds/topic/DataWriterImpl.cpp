@@ -43,6 +43,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
+using namespace ::dds::core::status;
 
 namespace eprosima {
 namespace fastdds {
@@ -511,18 +512,18 @@ ReturnCode_t DataWriterImpl::set_qos(
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if (!qos.checkQos())
+    if (!qos.check_qos())
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    else if (!qos_.canQosBeUpdated(qos))
+    else if (!qos_.can_qos_be_updated(qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.setQos(qos, false);
+    qos_.set_qos(qos, false);
     //Notify the participant that a Writer has changed its QOS
-    fastrtps::WriterQos wqos_ = qos_.changeToWriterQos();
+    fastrtps::WriterQos wqos_ = qos_.change_to_writer_qos();
     publisher_->rtps_participant()->updateWriter(writer_, topic_att_, wqos_);
 
     // Deadline
@@ -593,19 +594,30 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
     bool matched = false;
 
     //TODO: Check if the DataReader should be ignored (DomainParticipant::ignore_subscription)
-    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->is_enabled()
-            && data_writer_->user_datawriter_->get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::publication_matched()))
+    if (data_writer_->user_datawriter_->get_status_changes().is_compatible(StatusMask::publication_matched())
+            && data_writer_->user_datawriter_->is_enabled())
     {
-        data_writer_->listener_->on_publication_matched(data_writer_->user_datawriter_, info);
+        matched = true;
+        if (data_writer_->listener_ != nullptr)
+        {
+            data_writer_->listener_->on_publication_matched(data_writer_->user_datawriter_, info);
+        }
+        //Conditions aproach
+        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::publication_matched());
     }
-    else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
-            data_writer_->publisher_->get_participant().is_enabled() &&
-            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::publication_matched()))
+    else if (data_writer_->publisher_->get_participant().is_enabled() &&
+            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(StatusMask::
+            publication_matched()))
     {
-        DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
-        listener->on_publication_matched(data_writer_->user_datawriter_, info);
+        matched = true;
+        if (data_writer_->publisher_->get_participant().get_listener() != nullptr)
+        {
+            DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
+            listener->on_publication_matched(data_writer_->user_datawriter_, info);
+        }
+        //Conditions aproach
+        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+            StatusMask::publication_matched());
     }
 
     //Update Matched Subscriptions List
@@ -639,19 +651,27 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
-    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->is_enabled() &&
-            data_writer_->user_datawriter_->get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::liveliness_lost()))
+    if (data_writer_->user_datawriter_->is_enabled() &&
+            data_writer_->user_datawriter_->get_status_changes().is_compatible(StatusMask::liveliness_lost()))
     {
-        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
+        if (data_writer_->listener_ != nullptr)
+        {
+            data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
+        }
+        //Conditions
+        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::liveliness_lost());
     }
-    else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
-            data_writer_->publisher_->get_participant().is_enabled() &&
-            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::liveliness_lost()))
+    else if (data_writer_->publisher_->get_participant().is_enabled() &&
+            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(StatusMask::liveliness_lost()))
     {
-        DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
-        listener->on_liveliness_lost(data_writer_->user_datawriter_, status);
+        if (data_writer_->publisher_->get_participant().get_listener() != nullptr)
+        {
+            DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
+            listener->on_liveliness_lost(data_writer_->user_datawriter_, status);
+        }
+        //Conditions aproach
+        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+            StatusMask::liveliness_lost());
     }
 }
 
@@ -659,19 +679,29 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         RTPSWriter* /*writer*/,
         const OfferedIncompatibleQosStatus& status)
 {
-    if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->is_enabled() &&
-            data_writer_->user_datawriter_->get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::offered_incompatible_qos()))
+    if (data_writer_->user_datawriter_->is_enabled() &&
+            data_writer_->user_datawriter_->get_status_changes().is_compatible(StatusMask::offered_incompatible_qos()))
     {
-        data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+        if (data_writer_->listener_ != nullptr)
+        {
+            data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+        }
+        //Conditions aproach
+        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
+            StatusMask::offered_incompatible_qos());
     }
-    else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
-            data_writer_->publisher_->get_participant().is_enabled() &&
-            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::offered_incompatible_qos()))
+    else if (data_writer_->publisher_->get_participant().is_enabled() &&
+            data_writer_->publisher_->get_participant().get_status_changes().is_compatible(StatusMask::
+            offered_incompatible_qos()))
     {
-        DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
-        listener->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+        if (data_writer_->publisher_->get_participant().get_listener() != nullptr)
+        {
+            DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
+            listener->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+        }
+        //Conditions aproach
+        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+            StatusMask::offered_incompatible_qos());
     }
 }
 
@@ -716,18 +746,26 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    if (listener_ != nullptr && user_datawriter_->is_enabled() &&
-            user_datawriter_->get_status_changes().is_compatible(
-                ::dds::core::status::StatusMask::offered_deadline_missed()))
+    if (user_datawriter_->is_enabled() &&
+            user_datawriter_->get_status_changes().is_compatible(StatusMask::offered_deadline_missed()))
     {
-        listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        if (listener_ != nullptr)
+        {
+            listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        }
+        //Conditions aproach
+        user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::offered_deadline_missed());
     }
-    else if (publisher_->get_participant().get_listener() != nullptr && publisher_->get_participant().is_enabled() &&
-            publisher_->get_participant().get_status_changes().is_compatible(::dds::core::status::StatusMask::
-            offered_deadline_missed()))
+    else if (publisher_->get_participant().is_enabled() &&
+            publisher_->get_participant().get_status_changes().is_compatible(StatusMask::offered_deadline_missed()))
     {
-        DomainParticipantListener* listener = publisher_->get_participant().get_listener();
-        listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        if (publisher_->get_participant().get_listener() != nullptr)
+        {
+            DomainParticipantListener* listener = publisher_->get_participant().get_listener();
+            listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        }
+        //Conditions aproach
+        publisher_->get_participant().get_statuscondition()->notify_status_change(StatusMask::offered_deadline_missed());
     }
     deadline_missed_status_.total_count_change = 0;
 
@@ -748,6 +786,7 @@ ReturnCode_t DataWriterImpl::get_offered_deadline_missed_status(
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
+    user_datawriter_->get_statuscondition()->set_status_as_read(StatusMask::offered_deadline_missed());
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -756,6 +795,7 @@ ReturnCode_t DataWriterImpl::get_offered_incompatible_qos_status(
 {
     status = writer_->offered_incompatible_qos_status_;
     writer_->offered_incompatible_qos_status_.total_count_change = 0;
+    user_datawriter_->get_statuscondition()->set_status_as_read(StatusMask::offered_incompatible_qos());
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -809,7 +849,7 @@ ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
     status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
 
     writer_->liveliness_lost_status_.total_count_change = 0u;
-
+    user_datawriter_->get_statuscondition()->set_status_as_read(StatusMask::liveliness_lost());
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -847,6 +887,7 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
         PublicationMatchedStatus& status)
 {
     status = writer_->publication_matched_status_;
+    user_datawriter_->get_statuscondition()->set_status_as_read(StatusMask::publication_matched());
     return ReturnCode_t::RETCODE_OK;
 }
 
