@@ -45,6 +45,7 @@ bool HelloWorldSubscriber::init(
     participant_att.rtps.builtin.domainId = domain_id;
     participant_att.rtps.setName("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
+    std::cout << "Participant " << participant_->get_instance_handle() << std::endl;
 
     if (participant_ == nullptr)
     {
@@ -57,6 +58,7 @@ bool HelloWorldSubscriber::init(
     //CREATE THE SUBSCRIBER
     eprosima::fastrtps::SubscriberAttributes sub_att;
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
+    std::cout << "Subscriber " << subscriber_->get_instance_handle() << std::endl;
 
     if (subscriber_ == nullptr)
     {
@@ -69,6 +71,7 @@ bool HelloWorldSubscriber::init(
     //Topic topic(participant_, "HelloWorldTopic", "HelloWorld", TopicQos()); //PSM
     TopicDescription topic_desc(participant_, "HelloWorldTopic", "HelloWorld"); //PIM
     reader_ = subscriber_->create_datareader(topic_desc, rqos, &listener_);
+    std::cout << "Reader " << reader_->get_instance_handle() << std::endl;
 
     if (reader_ == nullptr)
     {

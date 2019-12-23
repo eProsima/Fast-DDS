@@ -50,10 +50,12 @@ class ParListener : public DomainParticipantListener
 public:
 
     ParListener()
-    {}
+    {
+    }
 
     virtual ~ParListener() override
-    {}
+    {
+    }
 
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
@@ -93,7 +95,8 @@ public:
             const eprosima::fastrtps::types::TypeInformation& type_information) override
     {
         std::function<void(const std::string&, const eprosima::fastrtps::types::DynamicType_ptr)> callback =
-                [participant, topic_name, type_name](const std::string& name, const eprosima::fastrtps::types::DynamicType_ptr type)
+                [participant, topic_name, type_name](const std::string& name,
+                        const eprosima::fastrtps::types::DynamicType_ptr type)
                 {
                     if (nullptr != g_subscriber)
                     {
@@ -101,7 +104,7 @@ public:
                         g_subscriber_attributes.topic.topicDataType = type_name;
                         Topic topic(participant, g_subscriber_attributes.topic);
                         DataReaderQos qos;
-                        qos.changeToDataReaderQos(g_subscriber_attributes.qos);
+                        qos.change_to_datareader_qos(g_subscriber_attributes.qos);
                         g_subscriber->create_datareader(
                             topic,
                             qos,
@@ -110,15 +113,18 @@ public:
                         if (type == nullptr)
                         {
                             const eprosima::fastrtps::types::TypeIdentifier* ident =
-                                    eprosima::fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
+                                    eprosima::fastrtps::types::TypeObjectFactory::get_instance()->
+                                    get_type_identifier_trying_complete(name);
 
                             if (nullptr != ident)
                             {
                                 const eprosima::fastrtps::types::TypeObject* obj =
-                                        eprosima::fastrtps::types::TypeObjectFactory::get_instance()->get_type_object(ident);
+                                        eprosima::fastrtps::types::TypeObjectFactory::get_instance()->get_type_object(
+                                    ident);
 
                                 eprosima::fastrtps::types::DynamicType_ptr dyn_type =
-                                        eprosima::fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+                                        eprosima::fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(
+                                    name, ident, obj);
 
                                 if (nullptr != dyn_type)
                                 {
@@ -164,6 +170,7 @@ public:
                 " unauthorized participant " << info.guid << std::endl;
         }
     }
+
 #endif
 };
 
@@ -172,9 +179,13 @@ class SubListener : public SubscriberListener
 public:
 
     SubListener()
-        : number_samples_(0) {}
+        : number_samples_(0)
+    {
+    }
 
-    ~SubListener() override {}
+    ~SubListener() override
+    {
+    }
 
     void on_subscription_matched(
             DataReader* /*reader*/,
@@ -201,7 +212,8 @@ public:
         if (nullptr != g_type)
         {
             eprosima::fastrtps::types::DynamicPubSubType pst(g_type);
-            eprosima::fastrtps::types::DynamicData_ptr sample(static_cast<eprosima::fastrtps::types::DynamicData*>(pst.createData()));
+            eprosima::fastrtps::types::DynamicData_ptr sample(
+                static_cast<eprosima::fastrtps::types::DynamicData*>(pst.createData()));
             SampleInfo_t info;
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))

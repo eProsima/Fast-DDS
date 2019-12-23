@@ -47,6 +47,7 @@ bool HelloWorldPublisher::init(
     participant_att.rtps.builtin.domainId = domain_id;
     participant_att.rtps.setName("Participant_pub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
+    std::cout << "Participant " << participant_->get_instance_handle() << std::endl;
 
     if (participant_ == nullptr)
     {
@@ -61,6 +62,7 @@ bool HelloWorldPublisher::init(
     pub_att.topic.topicDataType = "HelloWorld";
     pub_att.topic.topicName = "HelloWorldTopic";
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
+    std::cout << "Participant " << publisher_->get_instance_handle() << std::endl;
 
     Topic* topic = participant_->create_topic(pub_att.topic.topicName.c_str(),
                     pub_att.topic.topicDataType.c_str(), TOPIC_QOS_DEFAULT);
@@ -75,6 +77,7 @@ bool HelloWorldPublisher::init(
 
     // CREATE THE WRITER
     writer_ = publisher_->create_datawriter(*topic, qos, &listener_);
+    std::cout << "Participant " << writer_->get_instance_handle() << std::endl;
 
     if (writer_ == nullptr)
     {

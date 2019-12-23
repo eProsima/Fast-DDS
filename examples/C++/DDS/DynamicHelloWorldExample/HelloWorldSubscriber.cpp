@@ -70,12 +70,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         n_matched = info.total_count;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         n_matched = info.total_count;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
     else
     {
@@ -134,7 +134,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         Rparam = subscriber_->att_;
         Rparam.topic = subscriber_->topic_;
         Rparam.topic.topicName = topic;
-        Rparam.qos = subscriber_->qos_.changeToReaderQos();
+        Rparam.qos = subscriber_->qos_.change_to_reader_qos();
         subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
             SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
 
@@ -165,7 +165,7 @@ void HelloWorldSubscriber::run()
 void HelloWorldSubscriber::run(
         uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
+    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
     while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

@@ -79,7 +79,7 @@ bool TestSubscriber::init(
     PParam.rtps.setName(m_Name.c_str());
 
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
-    if (mp_participant==nullptr)
+    if (mp_participant == nullptr)
     {
         return false;
     }
@@ -131,7 +131,7 @@ bool TestSubscriber::init(
             return false;
         }
 
-        reader_qos.changeToDataReaderQos(Rparam.qos);
+        reader_qos.change_to_datareader_qos(Rparam.qos);
         Topic topic(mp_participant, Rparam.topic);
         reader_ = mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
         m_Data = m_Type.create_data();
@@ -227,12 +227,12 @@ void TestSubscriber::SubListener::on_subscription_matched(
     if (info.current_count_change > 0)
     {
         mParent->matched();
-        std::cout << mParent->m_Name << " matched."<<std::endl;
+        std::cout << mParent->m_Name << " matched." << std::endl;
     }
     else if (info.current_count_change < 0)
     {
         mParent->matched(true);
-        std::cout << mParent->m_Name << " unmatched."<<std::endl;
+        std::cout << mParent->m_Name << " unmatched." << std::endl;
     }
 }
 
@@ -293,7 +293,7 @@ DataReader* TestSubscriber::create_datareader()
     {
         SubscriberAttributes Rparam;
         Rparam.topic = topic_att;
-        Rparam.qos = reader_qos.changeToReaderQos();
+        Rparam.qos = reader_qos.change_to_reader_qos();
         mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
 
         if (mp_subscriber == nullptr)

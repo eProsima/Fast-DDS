@@ -138,7 +138,7 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    if (!reader_qos.checkQos() || !topic.get_qos().checkQos())
+    if (!reader_qos.check_qos() || !topic.get_qos().checkQos())
     {
         return nullptr;
     }
@@ -217,7 +217,7 @@ DataReader* SubscriberImpl::create_datareader(
         reader->enable();
     }
 
-    ReaderQos rqos = reader_qos.changeToReaderQos();
+    ReaderQos rqos = reader_qos.change_to_reader_qos();
     fastrtps::TopicAttributes topic_att = topic.get_topic_attributes();
     rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
     reader->set_instance_handle(impl->reader_->getGuid());
@@ -349,12 +349,12 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
     }
     if (&qos == &DDS_DATAREADER_QOS_DEFAULT)
     {
-        default_datareader_qos_.setQos(DDS_DATAREADER_QOS_DEFAULT, true);
+        default_datareader_qos_.set_qos(DDS_DATAREADER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (qos.checkQos())
+    else if (qos.check_qos())
     {
-        default_datareader_qos_.setQos(qos, true);
+        default_datareader_qos_.set_qos(qos, true);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
@@ -391,7 +391,7 @@ ReturnCode_t SubscriberImpl::copy_from_topic_qos(
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
-    reader_qos.copyFromTopicQos(topic_qos);
+    reader_qos.copy_from_topic_qos(topic_qos);
     return ReturnCode_t::RETCODE_OK;
 }
 

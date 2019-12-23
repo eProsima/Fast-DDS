@@ -131,7 +131,7 @@ bool TestPublisher::init(
         }
 
         DataWriterQos wqos;
-        wqos.changeToDataWriterQos(Wparam.qos);
+        wqos.change_to_datawriter_qos(Wparam.qos);
         Topic topic(mp_participant, Wparam.topic);
         writer_ = mp_publisher->create_datawriter(topic, wqos, &m_pubListener);
 
