@@ -48,6 +48,16 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
+
+#define IF_VALID_CALL() {                                        \
+                            if(!valid)                           \
+                            {                                    \
+                                return false;                    \
+                            }                                    \
+                            qos_size += plength;                 \
+                        }
+
+
 static const unsigned char* BN_deserialize_raw(BIGNUM** bn, const unsigned char* raw_pointer,
     size_t length, SecurityException& exception)
 {
@@ -1260,6 +1270,79 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     return ValidationResult_t::VALIDATION_FAILED;
 }
 
+
+bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t participant_guid) const
+{
+    bool is_sentinel = false;
+    bool valid = true;
+    ParameterId_t pid;
+    uint16_t plength;
+    uint32_t qos_size = 0;
+
+    uint32_t original_pos = cdr_pdata->pos;
+    while (!is_sentinel)
+    {
+        // Align to 4 byte boundary
+        qos_size = (qos_size + 3) & ~3;
+        msg->pos = original_pos + qos_size;
+
+        valid = true;
+        valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
+        valid &= CDRMessage::readUInt16(msg, &plength);
+        qos_size += 4;
+        if (!valid || ((msg->pos + plength) > msg->length))
+        {
+            return false;
+        }
+        try
+        {
+            switch (pid)
+            {
+                case PID_KEY_HASH:
+                {
+                    if (plength != PARAMETER_KEY_LENGTH)
+                    {
+                        return false;
+                    }
+                    ParameterKey_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(&msg, plength);
+                    IF_VALID_CALL()
+                    iHandle2GUID(participant_guid, p->key);
+                    break;
+                }
+                case PID_PARTICIPANT_GUID:
+                {
+                    if (plength != PARAMETER_GUID_LENGTH)
+                    {
+                        return false;
+                    }
+                    ParameterGuid_t p(pid, plength);
+                    valid &= p.readFromCDRMessage(&msg, plength);
+                    IF_VALID_CALL()
+                    participant_guid = p->guid;
+                    break;
+                }
+                case PID_SENTINEL:
+                {
+                    is_sentinel = true;
+                    break;
+                }
+                default:
+                {
+                    qos_size += plength;
+                    break;
+                }
+            }
+        }
+        catch (std::bad_alloc& ba)
+        {
+            std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+            return false;
+        }
+    }
+    return true;
+}
+
 ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_handle,
         HandshakeMessageToken** handshake_message_out,
         HandshakeMessageToken&& handshake_message_in,
@@ -1366,39 +1449,14 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     }
 
     GUID_t participant_guid;
-    auto param_process = [& participant_guid](const Parameter_t* param)
-    {
-        switch (param->Pid)
-        {
-            case PID_KEY_HASH:
-            {
-                const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                assert(p != nullptr);
-                iHandle2GUID(participant_guid, p->key);
-                break;
-            }
-            case PID_PARTICIPANT_GUID:
-            {
-                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                assert(p != nullptr);
-                participant_guid = p->guid;
-                break;
-            }
-
-            default: break;
-        }
-
-        return true;
-    };
-
     CDRMessage_t cdr_pdata(0);
     cdr_pdata.wraps = true;
     cdr_pdata.msg_endian = BIGEND;
     cdr_pdata.length = (uint32_t)pdata->size();
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
-    uint32_t qos_size;
-    if(!ParameterList::readParameterListfromCDRMsg(cdr_pdata, param_process, false, qos_size))
+
+    if(!readFromCDRMessage(cdr_pdata, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1788,39 +1846,14 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     }
 
     GUID_t participant_guid;
-    auto param_process = [&participant_guid](const Parameter_t* param)
-    {
-        switch (param->Pid)
-        {
-            case PID_KEY_HASH:
-            {
-                const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                assert(p != nullptr);
-                iHandle2GUID(participant_guid, p->key);
-                break;
-            }
-            case PID_PARTICIPANT_GUID:
-            {
-                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                assert(p != nullptr);
-                participant_guid = p->guid;
-                break;
-            }
-
-            default: break;
-        }
-
-        return true;
-    };
-
     CDRMessage_t cdr_pdata(0);
     cdr_pdata.wraps = true;
     cdr_pdata.msg_endian = BIGEND;
     cdr_pdata.length = (uint32_t)pdata->size();
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
-    uint32_t qos_size;
-    if (!ParameterList::readParameterListfromCDRMsg(cdr_pdata, param_process, false, qos_size))
+
+    if (!readFromCDRMessage(cdr_pdata, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;

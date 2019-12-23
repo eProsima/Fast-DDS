@@ -632,43 +632,287 @@ class ParameterBuiltinEndpointSet_t : public Parameter_t{
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
 
+class ParameterProperty_t {
+
+    friend class ParameterPropertyList_t;
+
+
+private:
+
+    rtps::octet* data;
+
+public:
+
+    ParameterProperty_t() = delete;
+    explicit ParameterProperty_t(void* ptr)
+    {
+        data = (rtps::octet*)ptr;
+    }
+
+    std::string first() const
+    {
+        //Skip the size and return the string
+        return std::string((char*)data + 4);
+    }
+
+    void set_first(const std::string& new_value)
+    {
+        assert (new_value.size()+1 == *(uint32_t*)data);
+
+        //Skip the size and write the null terminated string
+        memcpy(data + 4, new_value.c_str(), new_value.size());
+    }
+
+    std::string second() const
+    {
+        //Skip the first element
+        uint32_t size1 = ParameterProperty_t::element_size(data);
+
+        //Skip the size of the second element and return the string
+        return std::string((char*)data + size1 + 4);
+    }
+
+    void set_second(const std::string& new_value)
+    {
+        //Skip the first element (with alignment)
+        uint32_t size1 = ParameterProperty_t::element_size(data);
+        assert (new_value.size()+1 == *(uint32_t*)(data+size1));
+
+        //Skip the size and write the null terminated string
+        memcpy(data + size1 + 4, new_value.c_str(), new_value.size());
+    }
+
+    std::pair<const std::string, const std::string> pair() const
+    {
+        return std::make_pair(std::string(first()), std::string(second()));
+    }
+
+    size_t size() const
+    {
+        //Size of the first element (with alignment)
+        uint32_t size1 = ParameterProperty_t::element_size(data);
+
+        //Size of the second element (with alignment)
+        uint32_t size2 = ParameterProperty_t::element_size(data + size1);
+        return size1 + size2;
+    }
+
+    bool operator ==(
+            const ParameterProperty_t& b) const
+    {
+        return (first() == b.first()) &&
+                (second() == b.second());
+    }
+
+    bool operator !=(
+            const ParameterProperty_t& b) const
+    {
+        return !(*this == b);
+    }
+
+private:
+    static size_t element_size(const rtps::octet* ptr)
+    {
+        //Size of the element (with alignment)
+        uint32_t size = *(uint32_t*)ptr;
+        return (4 + ((size + 3) & ~3));
+    }
+};
+
+
 /**
  *
  */
 class ParameterPropertyList_t : public Parameter_t {
-    public:
-        std::vector<std::pair<std::string,std::string>> properties;
-        size_t max_size = 0;
 
-        ParameterPropertyList_t():Parameter_t(PID_PROPERTY_LIST, 0) {}
+    private:
+
+        rtps::SerializedPayload_t properties_;
+        size_t Nproperties_ = 0;
+        bool limit_size_ = false;
+
+    public:
+
+        class iterator
+        {
+            public:
+                typedef iterator self_type;
+                typedef ParameterProperty_t value_type;
+                typedef ParameterProperty_t reference;
+                typedef ParameterProperty_t* pointer;
+                typedef size_t difference_type;
+                typedef std::forward_iterator_tag iterator_category;
+
+                iterator(rtps::octet* ptr) : ptr_(ptr) { }
+                self_type operator++() { self_type i = *this; advance(); return i; }
+                self_type operator++(int) { advance(); return *this; }
+                reference operator*() { return ParameterProperty_t(ptr_); }
+                bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+                bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+
+            protected:
+
+                void advance()
+                {
+                    ptr_ += ParameterProperty_t(ptr_).size();
+                }
+
+            private:
+                rtps::octet* ptr_;
+        };
+
+        class const_iterator
+        {
+            public:
+                typedef const_iterator self_type;
+                typedef const ParameterProperty_t value_type;
+                typedef const ParameterProperty_t reference;
+                typedef const ParameterProperty_t* pointer;
+                typedef size_t difference_type;
+                typedef std::forward_iterator_tag iterator_category;
+
+                const_iterator(const rtps::octet* ptr) : ptr_(ptr) { }
+                self_type operator++() { self_type i = *this; advance(); return i; }
+                self_type operator++(int) { advance(); return *this; }
+                reference operator*() { return ParameterProperty_t(const_cast<rtps::octet*>(ptr_)); }
+                bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+                bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+
+            protected:
+
+                void advance()
+                {
+                    ptr_ += ParameterProperty_t(const_cast<rtps::octet*>(ptr_)).size();
+                }
+
+            private:
+                const rtps::octet* ptr_;
+        };
+
+
+
+public:
+
+        ParameterPropertyList_t()
+            : Parameter_t(PID_PROPERTY_LIST, 0)
+            , Nproperties_ (0)
+            , limit_size_ (false)
+        {
+        }
+
+        /**
+         * Constructor with a defined maximum size
+         */
+        ParameterPropertyList_t(size_t size)
+            : Parameter_t(PID_PROPERTY_LIST, 0)
+            , properties_(size)
+            , Nproperties_ (0)
+            , limit_size_ (size == 0 ? false : true)
+        {
+        }
 
         /**
          * Constructor using a parameter PID and the parameter length
          * @param in_length Its associated length
          */
-        ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST, in_length) {}
-
-        ParameterPropertyList_t(const ParameterPropertyList_t &parameter_properties)
-            : Parameter_t(PID_PROPERTY_LIST, 0)
-            , max_size(parameter_properties.max_size)
+        ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length)
+            : Parameter_t(PID_PROPERTY_LIST, in_length)
+            , Nproperties_ (0)
+            , limit_size_ (false)
         {
-            properties.reserve(max_size);
-            properties.assign(parameter_properties.properties.begin(), parameter_properties.properties.end());
         }
 
-        ParameterPropertyList_t& operator =(
-                const ParameterPropertyList_t& b)
+        ParameterPropertyList_t(const ParameterPropertyList_t &parameter_properties)
+            : Parameter_t(PID_PROPERTY_LIST, parameter_properties.length)
+            , properties_(parameter_properties.limit_size_ ?
+                    parameter_properties.properties_.max_size :
+                    parameter_properties.properties_.length)
+            , Nproperties_ (parameter_properties.Nproperties_)
+            , limit_size_ (parameter_properties.limit_size_)
         {
-            max_size = b.max_size;
-            properties.reserve(max_size);
-            properties.assign(b.properties.begin(), b.properties.end());
+            properties_.copy(&parameter_properties.properties_, parameter_properties.limit_size_);
+        }
+
+        ParameterPropertyList_t& operator= (const ParameterPropertyList_t &parameter_properties)
+        {
+            length = parameter_properties.length;
+            limit_size_ = parameter_properties.limit_size_;
+            properties_.reserve(limit_size_ ?
+                                parameter_properties.properties_.max_size :
+                                parameter_properties.properties_.length);
+            properties_.copy(&parameter_properties.properties_, parameter_properties.limit_size_);
+            Nproperties_ = parameter_properties.Nproperties_;
             return *this;
+        }
+
+        iterator begin()
+        {
+            return iterator(properties_.data);
+        }
+
+        iterator end()
+        {
+            return iterator(properties_.data + properties_.length);
+        }
+
+        const_iterator begin() const
+        {
+            return const_iterator(properties_.data);
+        }
+
+        const_iterator end() const
+        {
+            return const_iterator(properties_.data + properties_.length);
+        }
+
+
+        bool push_back(std::pair<std::string, std::string> p)
+        {
+
+            //Realloc if needed;
+            uint32_t size1 = p.first.length()+1;
+            uint32_t alignment1 = ((size1 + 3) & ~3) - size1;
+
+            uint32_t size2 = p.second.length()+1;
+            uint32_t alignment2 = ((size2 + 3) & ~3) - size2;
+
+            if (limit_size_ && (properties_.max_size < properties_.length +
+                    size1 + alignment1 + 4 +
+                    size2 + alignment2 + 4))
+            {
+                return false;
+            }
+            properties_.reserve(properties_.length +
+                    size1 + alignment1 + 4 +
+                    size2 + alignment2 + 4);
+
+            push_back_helper((rtps::octet*)p.first.c_str(), size1, alignment1);
+            push_back_helper((rtps::octet*)p.second.c_str(), size2, alignment2);
+            ++Nproperties_;
+            return true;
+        }
+
+        void clear()
+        {
+            properties_.length = 0;
+            Nproperties_ = 0;
+        }
+
+        size_t size() const
+        {
+            return Nproperties_;
         }
 
         void set_max_size (size_t size)
         {
-            max_size = size;
-            properties.reserve(max_size);
+            properties_.reserve(size);
+            limit_size_ = true;
+        }
+
+
+        size_t max_size ()
+        {
+            return (limit_size_ ? properties_.max_size : 0);
         }
 
         /**
@@ -684,6 +928,26 @@ class ParameterPropertyList_t : public Parameter_t {
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+
+protected:
+
+        void push_back_helper (const rtps::octet* data, uint32_t size, uint32_t alignment)
+        {
+            rtps::octet* o = (rtps::octet*)&size;
+            memcpy(properties_.data + properties_.length,
+                    o, 4);
+            properties_.length += 4;
+
+            memcpy(properties_.data + properties_.length,
+                    data, size);
+            properties_.length += size;
+
+            for (uint32_t i = 0; i < alignment; ++i)
+            {
+                properties_.data[properties_.length + i] = '\0';
+            }
+            properties_.length += alignment;
+        }
 };
 
 /**

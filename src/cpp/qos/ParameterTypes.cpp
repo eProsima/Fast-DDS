@@ -279,17 +279,13 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     uint16_t pos_str = (uint16_t)msg->pos;
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addUInt32(msg,(uint32_t)this->properties.size());
-    for(std::vector<std::pair<std::string,std::string>>::iterator it = this->properties.begin();
-            it!=this->properties.end();++it)
+    valid &= CDRMessage::addUInt32(msg,(uint32_t)this->size());
+    for(ParameterPropertyList_t::iterator it = this->begin();
+            it!=this->end();++it)
     {
-        valid &= CDRMessage::addString(msg,it->first);
-        valid &= CDRMessage::addString(msg,it->second);
-    }
-    uint32_t align = (4 - msg->pos % 4) & 3; //align
-    for(uint32_t count = 0; count < align; ++count)
-    {
-        valid &= CDRMessage::addOctet(msg, 0);
+        //it is a custom iterator with no operator-> overload
+        valid &= CDRMessage::addString(msg,(*it).first());
+        valid &= CDRMessage::addString(msg,(*it).second());
     }
     uint16_t pos_param_end = (uint16_t)msg->pos;
     this->length = pos_param_end-pos_str-2;
@@ -302,32 +298,39 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 
 bool ParameterPropertyList_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 {
-    (void) size;
-    uint32_t num_properties;
-    bool valid = CDRMessage::readUInt32(msg, &num_properties);
-    if (!valid)
+    if (limit_size_ && properties_.max_size < size - 4)
     {
         return false;
     }
 
-    std::string str;
-    std::pair<std::string, std::string> pair;
-    for (uint32_t n_prop = 0; n_prop < num_properties; ++n_prop)
+    uint32_t num_properties;
+    bool valid = CDRMessage::readUInt32(msg, &num_properties);
+
+    properties_.reserve(size - 4);
+
+    for(size_t i = 0; i < num_properties; ++i)
     {
-        pair.first.clear();
-        valid &= CDRMessage::readString(msg, &pair.first);
+        uint32_t size, alignment;
+
+        valid &= CDRMessage::readUInt32(msg,&size);
         if (!valid)
         {
             return false;
         }
-        pair.second.clear();
-        valid &= CDRMessage::readString(msg, &pair.second);
+        alignment = ((size + 3) & ~3) - size;
+        push_back_helper (&msg->buffer[msg->pos], size, alignment);
+        msg->pos += (size + alignment);
+
+        valid &= CDRMessage::readUInt32(msg,&size);
         if (!valid)
         {
             return false;
         }
-        properties.push_back(pair);
+        alignment = ((size + 3) & ~3) - size;
+        push_back_helper (&msg->buffer[msg->pos], size, alignment);
+        msg->pos += (size + alignment);
     }
+    Nproperties_ = num_properties;
     return valid;
 }
 
