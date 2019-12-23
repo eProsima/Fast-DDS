@@ -279,7 +279,7 @@ public:
         {
             // Remove will fail if the segment is open, but it will remove segments
             // unopened but not properly closed
-            SharedMemSegment::remove(port_segment_name.c_str());
+            //SharedMemSegment::remove(port_segment_name.c_str());
 
             // Try to open
             auto port_segment = std::unique_ptr<SharedMemSegment>(

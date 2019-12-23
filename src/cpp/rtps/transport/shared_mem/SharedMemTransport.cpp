@@ -528,7 +528,7 @@ bool SharedMemTransport::send(
 		return false;
 	}
 
-	logInfo(RTPS_MSG_OUT, "SharedMemTransport: " << buffer->size() << " bytes to port " << remote_locator.port);
+	logInfo(RTPS_MSG_OUT, "(ID:" << std::this_thread::get_id() <<") " << "SharedMemTransport: " << buffer->size() << " bytes to port " << remote_locator.port);
 
 	return true;		
 }
@@ -586,34 +586,14 @@ void SharedMemTransport::select_locators(
 		{
 			bool selected = false;
 
-			// First try to find a multicast locator which is at least on another list.
-			for (size_t j = 0; j < entry->multicast.size() && !selected; ++j)
+			// With shared-memory transport using multicast vs unicast is not an advantage
+			// because no copies are saved. So no multicast locators are selected
+			for (size_t j = 0; j < entry->unicast.size(); ++j)
 			{
-				if (IsLocatorSupported(entry->multicast[j]))
+				if (IsLocatorSupported(entry->unicast[j]) && !selector.is_selected(entry->unicast[j]))
 				{
-					if (check_and_invalidate(entries, i + 1, entry->multicast[j]))
-					{
-						entry->state.multicast.push_back(j);
-						selected = true;
-					}
-					else if (entry->unicast.size() == 0)
-					{
-						entry->state.multicast.push_back(j);
-						selected = true;
-					}
-				}
-			}
-
-			// If we couldn't find a multicast locator, select all unicast locators
-			if (!selected)
-			{
-				for (size_t j = 0; j < entry->unicast.size(); ++j)
-				{
-					if (IsLocatorSupported(entry->unicast[j].kind) && !selector.is_selected(entry->unicast[j]))
-					{
-						entry->state.unicast.push_back(j);
-						selected = true;
-					}
+					entry->state.unicast.push_back(j);
+					selected = true;
 				}
 			}
 
