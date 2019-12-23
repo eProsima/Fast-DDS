@@ -130,7 +130,7 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
-    const DomainParticipant& get_participant() const;
+    DomainParticipant& get_participant() const;
 
     ReturnCode_t delete_contained_entities();
 

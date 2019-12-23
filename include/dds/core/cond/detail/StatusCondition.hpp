@@ -23,6 +23,8 @@
  * Ignore this file in the API
  */
 
+#include <fastdds/dds/core/conditions/StatusCondition.hpp>
+
 namespace dds {
 namespace core {
 namespace cond {
@@ -32,11 +34,7 @@ class TStatusCondition;
 
 namespace detail {
 
-//TODO: Fix when StatusConditionDelegate is implemented
-//typedef dds::core::cond::TStatusCondition<org::opensplice::core::cond::StatusConditionDelegate> StatusCondition;
-class StatusCondition
-{
-};
+using StatusCondition = eprosima::fastdds::dds::StatusCondition;
 
 } //namespace detail
 } //namespace cond

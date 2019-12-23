@@ -132,7 +132,7 @@ Topic* DataReader::get_topic() const
 }
 
 bool DataReader::set_attributes(
-        const rtps::ReaderAttributes& att)
+        const fastrtps::rtps::ReaderAttributes& att)
 {
     return impl_->set_attributes(att);
 }
@@ -170,7 +170,7 @@ ReturnCode_t DataReader::set_listener(
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    status_mask_ = mask;
+    status_condition_.set_enabled_statuses(mask);
     return impl_->set_listener(listener);
 }
 

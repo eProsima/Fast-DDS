@@ -26,8 +26,6 @@
  * OMG PSM class declaration
  */
 #include <dds/sub/cond/ReadCondition.hpp>
-//TODO: Fix when ReadConditionDelegate is implemented
-//#include <org/opensplice/sub/cond/ReadConditionDelegate.hpp>
 
 namespace dds {
 namespace sub {
@@ -37,11 +35,8 @@ template<typename DELEGATE>
 TReadCondition<DELEGATE>::TReadCondition(
         const dds::sub::AnyDataReader& dr,
         const dds::sub::status::DataState& status)
+    : ::dds::core::cond::TCondition<detail::ReadCondition>(new detail::ReadCondition(dr, status.sample_state(), status.view_state(), status.instance_state())
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
-    //    this->set_ref(new DELEGATE(dr, status));
-    //	this->delegate()->init(this->impl_);
 }
 
 /** @cond
@@ -85,17 +80,15 @@ TReadCondition<DELEGATE>::~TReadCondition()
 template<typename DELEGATE>
 const dds::sub::status::DataState TReadCondition<DELEGATE>::state_filter() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->state_filter();
+    dds::sub::status::DataState state_filter(this->delegate()->get_sample_state_mask(),
+            this->delegate()->get_view_state_mask(), this->delegate()->get_instance_state_mask());
+    return state_filter;
 }
 
 template<typename DELEGATE>
 const AnyDataReader& TReadCondition<DELEGATE>::data_reader() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->data_reader();
+    return this->delegate()->get_datareader();
 }
 
 } //namespace cond

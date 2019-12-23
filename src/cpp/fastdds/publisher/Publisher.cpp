@@ -83,7 +83,7 @@ ReturnCode_t Publisher::set_listener(
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    status_mask_ = mask;
+    status_condition_.set_enabled_statuses(mask);
     return impl_->set_listener(listener);
 }
 

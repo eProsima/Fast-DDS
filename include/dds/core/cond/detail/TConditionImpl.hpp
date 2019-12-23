@@ -82,9 +82,7 @@ void TCondition<DELEGATE>::dispatch()
 template<typename DELEGATE>
 bool TCondition<DELEGATE>::trigger_value() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->trigger_value();
+    return this->delegate()->get_trigger_value();
 }
 
 } //namespace cond

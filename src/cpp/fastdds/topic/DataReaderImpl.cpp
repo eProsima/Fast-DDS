@@ -37,6 +37,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
+using namespace ::dds::core::status;
 
 using DeprecatedSampleInfo = eprosima::fastrtps::SampleInfo_t;
 
@@ -372,7 +373,7 @@ bool DataReaderImpl::set_attributes(
     return updated;
 }
 
-const ReaderAttributes& DataReaderImpl::get_attributes() const
+const fastrtps::rtps::ReaderAttributes& DataReaderImpl::get_attributes() const
 {
     return att_;
 }
@@ -383,8 +384,8 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
-        if (data_reader_->get_subscriber()->get_status_mask().is_compatible(::dds::core::status::StatusMask::
-                data_on_readers()) && data_reader_->subscriber_->get_subscriber()->is_enabled())
+        if (data_reader_->get_subscriber()->get_status_mask().is_compatible(StatusMask::data_on_readers())
+                && data_reader_->get_subscriber()->is_enabled())
         {
             if (data_reader_->subscriber_->listener_ != nullptr)
             {
@@ -392,75 +393,100 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
             }
             data_reader_->subscriber_->participant_->subscriber_listener_.on_data_on_readers(
                 data_reader_->get_subscriber());
+            if (data_reader_->get_subscriber()->get_statuscondition()->is_attached())
+            {
+                data_reader_->get_subscriber()->get_statuscondition()->notify_status_change(
+                    StatusMask::data_on_readers());
+            }
 
         }
-        else if (data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(::dds::core::status::
-                StatusMask::data_on_readers()) && data_reader_->subscriber_->get_participant().is_enabled())
+        else if (data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
+                data_on_readers()) && data_reader_->subscriber_->get_participant().is_enabled())
         {
-            if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
+            if (data_reader_->subscriber_->participant_->get_listener() != nullptr)
             {
-                data_reader_->subscriber_->get_participant().get_listener()->on_data_on_readers(
+                data_reader_->subscriber_->participant_->get_listener()->on_data_on_readers(
                     data_reader_->get_subscriber());
             }
             data_reader_->subscriber_->participant_->subscriber_listener_.on_data_on_readers(
                 data_reader_->get_subscriber());
+            if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                    StatusMask::data_on_readers());
+            }
 
         }
-        else if (data_reader_->listener_ != nullptr &&
-                data_reader_->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
-                data_available()) && data_reader_->user_datareader_->is_enabled())
+        else if (data_reader_->user_datareader_->is_enabled() &&
+                data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::data_available()))
         {
-            data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
+            if (data_reader_->listener_ != nullptr)
+            {
+                data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
+            }
+            if (data_reader_->user_datareader_->get_statuscondition()->is_attached())
+            {
+                data_reader_->user_datareader_->get_statuscondition()->notify_status_change(
+                    StatusMask::data_available());
+            }
+
         }
-        else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-                data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(::dds::core::status::
-                StatusMask::data_available()) && data_reader_->subscriber_->get_participant().is_enabled())
+        else if (data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
+                data_available()) && data_reader_->subscriber_->get_participant().is_enabled())
         {
-            data_reader_->subscriber_->get_participant().get_listener()->on_data_available(
-                data_reader_->user_datareader_);
+            if (data_reader_->subscriber_->participant_->get_listener() != nullptr)
+            {
+                data_reader_->subscriber_->get_participant().get_listener()->on_data_available(
+                    data_reader_->user_datareader_);
+            }
+            if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                    StatusMask::data_available());
+            }
         }
     }
 }
 
 void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
-        RTPSReader* /*reader*/,
+        RTPSReader* reader,
         const SubscriptionMatchedStatus& info)
 {
     bool matched = false;
 
-    //Update Matched Publications List
-    if (info.current_count_change == 1) //MATCHED_MATCHING
-    {
-        data_reader_->matched_publications_.push_back(info.last_publication_handle);
-    }
-    else if (info.current_count_change == -1) //REMOVE_MATCHING
-    {
-        auto it = std::find(data_reader_->matched_publications_.begin(),
-                        data_reader_->matched_publications_.end(), info.last_publication_handle);
-        if (it != data_reader_->matched_publications_.end())
-        {
-            data_reader_->matched_publications_.erase(it);
-        }
-        BuiltinSubscriber::get_instance()->delete_publication_data(info.last_publication_handle);
-    }
-
     //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
-    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
-            data_reader_->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
+    if (data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::subscription_matched())
+            && data_reader_->user_datareader_->is_enabled())
+    {
+        matched = true;
+        if (data_reader_->listener_ != nullptr)
+        {
+            data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
+            if (!data_reader_->user_datareader_->get_statuscondition()->is_attached())
+            {
+                reader->subscription_matched_status_read();
+            }
+        }
+        data_reader_->user_datareader_->get_statuscondition()->notify_status_change(
+            StatusMask::subscription_matched());
+
+    }
+    else if (data_reader_->subscriber_->get_participant().is_enabled() &&
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
             subscription_matched()))
     {
         matched = true;
-        data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
-    }
-
-    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(
-                ::dds::core::status::StatusMask::subscription_matched()))
-    {
-        matched = true;
-        data_reader_->subscriber_->get_participant().get_listener()->
-        on_subscription_matched(data_reader_->user_datareader_, info);
+        if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
+        {
+            data_reader_->subscriber_->participant_->get_listener()->on_subscription_matched(
+                data_reader_->user_datareader_, info);
+            if (!data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                reader->subscription_matched_status_read();
+            }
+        }
+        data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+            StatusMask::subscription_matched());
     }
 
     //Update Matched Publications List
@@ -481,68 +507,127 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
-        RTPSReader* /*reader*/,
+        RTPSReader* reader,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
-            data_reader_->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
+    if (data_reader_->user_datareader_->is_enabled() &&
+            data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::liveliness_changed()))
+    {
+        if (data_reader_->listener_ != nullptr)
+        {
+            data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
+            if (!data_reader_->user_datareader_->get_statuscondition()->is_attached())
+            {
+                reader->liveliness_changed_status_read();
+            }
+        }
+        if (data_reader_->user_datareader_->get_statuscondition()->is_attached())
+        {
+            data_reader_->user_datareader_->get_statuscondition()->notify_status_change(StatusMask::liveliness_changed());
+        }
+
+    }
+    else if (data_reader_->subscriber_->get_participant().is_enabled() &&
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
             liveliness_changed()))
     {
-        data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
-    }
-
-    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(
-                ::dds::core::status::StatusMask::liveliness_changed()))
-    {
-        data_reader_->subscriber_->get_participant().get_listener()->
-        on_liveliness_changed(data_reader_->user_datareader_, status);
+        if (data_reader_->subscriber_->participant_->get_listener() != nullptr)
+        {
+            data_reader_->subscriber_->participant_->get_listener()->on_liveliness_changed(
+                data_reader_->user_datareader_, status);
+            if (!data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                reader->liveliness_changed_status_read();
+            }
+        }
+        if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::liveliness_changed());
+        }
     }
 
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
-        RTPSReader* /*reader*/,
+        RTPSReader* reader,
         const RequestedIncompatibleQosStatus& status)
 {
-    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
-            (data_reader_->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
-            requested_incompatible_qos())))
+    if (data_reader_->user_datareader_->is_enabled() &&
+            data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::requested_incompatible_qos()))
     {
-        data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+        if (data_reader_->listener_ != nullptr)
+        {
+            data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+            if (!data_reader_->user_datareader_->get_statuscondition()->is_attached())
+            {
+                reader->requested_incompatible_qos_status_read();
+            }
+        }
+        if (data_reader_->user_datareader_->get_statuscondition()->is_attached())
+        {
+            data_reader_->user_datareader_->get_statuscondition()->notify_status_change(
+                StatusMask::requested_incompatible_qos());
+        }
     }
-
-    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(
-                ::dds::core::status::StatusMask::requested_incompatible_qos()))
+    else if (data_reader_->subscriber_->get_participant().is_enabled() &&
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
+            requested_incompatible_qos()))
     {
-        data_reader_->subscriber_->get_participant().get_listener()->
-        on_requested_incompatible_qos(data_reader_->user_datareader_,
-                status);
+        if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
+        {
+            data_reader_->subscriber_->participant_->get_listener()->on_requested_incompatible_qos(
+                data_reader_->user_datareader_, status);
+            if (!data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                reader->requested_incompatible_qos_status_read();
+            }
+        }
+        if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::requested_incompatible_qos());
+        }
     }
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
-        RTPSReader* /*reader*/,
+        RTPSReader* reader,
         const SampleRejectedStatus& status)
 {
-    if (data_reader_->listener_ != nullptr && data_reader_->user_datareader_->is_enabled() &&
-            (data_reader_->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
-            sample_rejected())))
+    if (data_reader_->user_datareader_->is_enabled() &&
+            data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::sample_rejected()))
     {
-        data_reader_->listener_->on_sample_rejected(data_reader_->user_datareader_, status);
+        if (data_reader_->listener_ != nullptr)
+        {
+            data_reader_->listener_->on_sample_rejected(data_reader_->user_datareader_, status);
+            if (!data_reader_->user_datareader_->get_statuscondition()->is_attached())
+            {
+                reader->sample_rejected_status_read();
+            }
+        }
+        if (data_reader_->user_datareader_->get_statuscondition()->is_attached())
+        {
+            data_reader_->user_datareader_->get_statuscondition()->notify_status_change(StatusMask::sample_rejected());
+        }
     }
-
-    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(
-                ::dds::core::status::StatusMask::sample_rejected()))
+    else if (data_reader_->subscriber_->get_participant().is_enabled() &&
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::sample_rejected()))
     {
-        data_reader_->subscriber_->get_participant().get_listener()->
-        on_sample_rejected(data_reader_->user_datareader_,
-                status);
+        if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
+        {
+            data_reader_->subscriber_->participant_->get_listener()->on_sample_rejected(data_reader_->user_datareader_,
+                    status);
+            if (!data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                reader->sample_rejected_status_read();
+            }
+        }
+        if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::sample_rejected());
+        }
     }
 }
 
@@ -640,21 +725,41 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
 
-    if (listener_ != nullptr && user_datareader_->is_enabled() &&
-            user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::requested_deadline_missed()))
+    if (user_datareader_->is_enabled() &&
+            user_datareader_->get_status_mask().is_compatible(StatusMask::requested_deadline_missed()))
     {
-        listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
+        if (listener_ != nullptr)
+        {
+            listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
+            if (!user_datareader_->get_statuscondition()->is_attached())
+            {
+                deadline_missed_status_.total_count_change = 0;
+            }
+        }
+        if (user_datareader_->get_statuscondition()->is_attached())
+        {
+            user_datareader_->get_statuscondition()->notify_status_change(StatusMask::requested_deadline_missed());
+        }
     }
 
-    else if (subscriber_->get_participant().get_listener() != nullptr && subscriber_->get_participant().is_enabled() &&
-            subscriber_->get_participant().get_status_mask().is_compatible(::dds::core::status::StatusMask::
-            requested_deadline_missed()))
+    else if (subscriber_->get_participant().is_enabled() &&
+            subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::requested_deadline_missed()))
     {
-        subscriber_->get_participant().get_listener()->
-        on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
+        if (subscriber_->participant_->get_listener() != nullptr)
+        {
+            subscriber_->participant_->get_listener()->on_requested_deadline_missed(user_datareader_,
+                    deadline_missed_status_);
+            if (!subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                deadline_missed_status_.total_count_change = 0;
+            }
+        }
+        if (subscriber_->get_participant().get_statuscondition()->is_attached())
+        {
+            subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::requested_deadline_missed());
+        }
     }
-
-    deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(
                 timer_owner_,
@@ -778,8 +883,8 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
 
     status = reader_->liveliness_changed_status_;
 
-    reader_->liveliness_changed_status_.alive_count_change = 0u;
-    reader_->liveliness_changed_status_.not_alive_count_change = 0u;
+    reader_->liveliness_changed_status_read();
+    user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::liveliness_changed());
     // TODO add callback call subscriber_->subscriber_listener_->on_liveliness_changed
     return ReturnCode_t::RETCODE_OK;
 }
@@ -788,7 +893,8 @@ ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
         RequestedIncompatibleQosStatus& status) const
 {
     status = reader_->requested_incompatible_qos_status_;
-    reader_->requested_incompatible_qos_status_.total_count_change = 0;
+    reader_->requested_incompatible_qos_status_read();
+    user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::requested_incompatible_qos());
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -815,6 +921,8 @@ ReturnCode_t DataReaderImpl::get_sample_rejected_status(
         SampleRejectedStatus& status) const
 {
     status = reader_->sample_rejected_status_;
+    reader_->sample_rejected_status_read();
+    user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::sample_rejected());
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -822,6 +930,8 @@ types::ReturnCode_t DataReaderImpl::get_subscription_matched_status(
         SubscriptionMatchedStatus& status) const
 {
     status = reader_->subscription_matched_status_;
+    reader_->subscription_matched_status_read();
+    user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::subscription_matched());
     return ReturnCode_t::RETCODE_OK;
 }
 

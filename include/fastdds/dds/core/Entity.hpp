@@ -21,6 +21,7 @@
 #define _FASTDDS_ENTITY_HPP_
 
 #include <dds/core/status/Status.hpp>
+#include <fastdds/dds/core/conditions/StatusCondition.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -39,14 +40,16 @@ public:
 
     RTPS_DllAPI Entity(
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
-        : status_mask_(mask)
+        : status_condition_(this)
         , enable_(false)
     {
+        status_condition_.set_enabled_statuses(mask);
     }
 
-    // TODO Implement StatusCondition
-    // virtual const StatusCondition& get_statuscondition() const = 0;
-
+    /**
+     * @brief enable This operation enables the Entity
+     * @return true
+     */
     virtual fastrtps::types::ReturnCode_t enable()
     {
         enable_ = true;
@@ -58,11 +61,39 @@ public:
         enable_ = false;
     }
 
-    const ::dds::core::status::StatusMask& get_status_mask() const
+    /**
+     * @brief get_statuscondition Retrieves the StatusCondition associated to the Entity
+     * @return Pointer to the StatusCondition
+     */
+    RTPS_DllAPI StatusCondition* get_statuscondition()
     {
-        return status_mask_;
+        return &status_condition_;
     }
 
+    /**
+     * @brief get_status_mask Retrieves the set of relevant statuses for the Entity
+     * @return Reference to the StatusMask with the relevant statuses set to 1
+     */
+    RTPS_DllAPI const ::dds::core::status::StatusMask& get_status_mask() const
+    {
+        return status_condition_.get_enabled_statuses();
+    }
+
+    /**
+     * @brief get_status_changes Retrieves the set of statuses that has been triggered since the last time
+     * the application read it
+     * @return Reference to a StatusMask with the triggered status set to 1
+     */
+    RTPS_DllAPI const ::dds::core::status::StatusMask& get_status_changes() const
+    {
+        return status_condition_.get_triggered_status();
+    }
+
+
+   /**
+     * @brief get_instance_handle Retrieves the instance handler that represents the Entity
+     * @return Reference to the InstanceHandle
+     */
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
     {
         return instance_handle_;
@@ -95,7 +126,7 @@ protected:
         instance_handle_ = handle;
     }
 
-    ::dds::core::status::StatusMask status_mask_;
+    StatusCondition status_condition_;
 
     fastrtps::rtps::InstanceHandle_t instance_handle_;
 

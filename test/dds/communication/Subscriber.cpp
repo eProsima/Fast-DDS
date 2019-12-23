@@ -44,7 +44,7 @@ using namespace eprosima::fastrtps::rtps;
 static bool g_run = true;
 static types::DynamicType_ptr g_type;
 static SubscriberAttributes g_subscriber_attributes;
-static Subscriber* g_subscriber = nullptr;
+static eprosima::fastdds::dds::Subscriber* g_subscriber = nullptr;
 
 class ParListener : public DomainParticipantListener
 {
@@ -173,7 +173,7 @@ public:
 #endif
 };
 
-class SubListener : public SubscriberListener
+class SubListener : public eprosima::fastdds::dds::SubscriberListener
 {
 public:
 
@@ -212,7 +212,7 @@ public:
         {
             types::DynamicPubSubType pst(g_type);
             types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
-            SampleInfo_t info;
+            eprosima::fastdds::dds::SampleInfo_t info;
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {

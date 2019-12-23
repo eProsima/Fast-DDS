@@ -117,7 +117,7 @@ private:
     bool exit_on_lost_liveliness_;
 };
 
-class PubListener : public PublisherListener
+class PubListener : public eprosima::fastdds::dds::PublisherListener
 {
 public:
 
@@ -271,7 +271,7 @@ int main(
     pub_qos.pub_attr.qos.m_liveliness.announcement_period = 1;
     pub_qos.pub_attr.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
-    Publisher* publisher = participant->create_publisher(pub_qos, &listener);
+    eprosima::fastdds::dds::Publisher* publisher = participant->create_publisher(pub_qos, &listener);
     if (publisher == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);

@@ -23,18 +23,7 @@
  * Ignore this file in the API
  */
 
-//TODO: Fix when ReadConditionDelegate is implemented
-//namespace org {
-//namespace opensplice {
-//namespace sub {
-//namespace cond {
-
-//class ReadConditionDelegate;
-
-//}
-//}
-//}
-//}
+#include <fastdds/dds/core/conditions/ReadCondition.hpp>
 
 namespace dds {
 namespace sub {
@@ -45,11 +34,7 @@ class TReadCondition;
 
 namespace detail {
 
-//TODO: Fix when ReadConditionDelegate is implemented
-//typedef dds::sub::cond::TReadCondition<org::opensplice::sub::cond::ReadConditionDelegate> ReadCondition;
-class ReadCondition
-{
-};
+using ReadCondition = eprosima::fastdds::dds::ReadCondition;
 
 } //namespace detail
 } //namespace cond

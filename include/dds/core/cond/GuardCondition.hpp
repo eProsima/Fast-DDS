@@ -23,7 +23,6 @@
 
 #include <dds/core/cond/detail/GuardCondition.hpp>
 #include <dds/core/cond/Condition.hpp>
-//#include <dds/core/cond/detail/TGuardConditionImpl.hpp>
 
 namespace dds {
 namespace core {
@@ -137,5 +136,7 @@ typedef dds::core::cond::detail::GuardCondition GuardCondition;
 } //namespace cond
 } //namespace core
 } //namespace dds
+
+#include <dds/core/cond/detail/TGuardConditionImpl.hpp>
 
 #endif //OMG_DDS_CORE_COND_GUARDCONDITION_HPP_

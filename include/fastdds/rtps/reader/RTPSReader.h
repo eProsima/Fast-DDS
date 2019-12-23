@@ -258,6 +258,14 @@ public:
 
     fastdds::dds::SampleRejectedStatus sample_rejected_status_;
 
+    void subscription_matched_status_read();
+
+    void requested_incompatible_qos_status_read();
+
+    void sample_rejected_status_read();
+
+    void liveliness_changed_status_read();
+
 protected:
 
     /*!

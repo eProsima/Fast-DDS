@@ -26,9 +26,6 @@
  * OMG PSM class declaration
  */
 #include <dds/core/cond/StatusCondition.hpp>
-//TODO: Fix when StatusConditionDelegate and ReportUtils are implemented
-//#include <org/opensplice/core/cond/StatusConditionDelegate.hpp>
-//#include <org/opensplice/core/ReportUtils.hpp>
 
 namespace dds {
 namespace core {
@@ -37,12 +34,8 @@ namespace cond {
 template<typename DELEGATE>
 TStatusCondition<DELEGATE>::TStatusCondition(
         const dds::core::Entity& e)
+    : ::dds::core::cond::TCondition<detail::StatusCondition>(new detail::StatusCondition(e))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(e);
-    //    dds::core::Reference<DELEGATE>::impl_=
-    //            OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<org::opensplice::core::cond::StatusConditionDelegate>(
-    //                        e.delegate()->get_statusCondition());
 }
 
 /** @cond
@@ -53,13 +46,8 @@ template<typename FUN>
 TStatusCondition<DELEGATE>::TStatusCondition(
         const dds::core::Entity& e,
         FUN& functor)
+    : ::dds::core::cond::TCondition<detail::StatusCondition>(new detail::StatusCondition(e, functor))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(e);
-    //    dds::core::Reference<DELEGATE>::impl_=
-    //            OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<org::opensplice::core::cond::StatusConditionDelegate>(
-    //                          e.delegate()->get_statusCondition());
-    //    this->delegate()->set_handler(functor);
 }
 
 template<typename DELEGATE>
@@ -67,13 +55,8 @@ template<typename FUN>
 TStatusCondition<DELEGATE>::TStatusCondition(
         const dds::core::Entity& e,
         const FUN& functor)
+    : ::dds::core::cond::TCondition<detail::StatusCondition>(new detail::StatusCondition(e, functor))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(e);
-    //    dds::core::Reference<DELEGATE>::impl_=
-    //            OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<org::opensplice::core::cond::StatusConditionDelegate>(
-    //                          e.delegate()->get_statusCondition());
-    //    this->delegate()->set_handler(functor);
 }
 
 /** @endcond */
@@ -87,25 +70,19 @@ template<typename DELEGATE>
 void TStatusCondition<DELEGATE>::enabled_statuses(
         const dds::core::status::StatusMask& status) const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    this->delegate()->enabled_statuses(status);
+    this->delegate()->set_enabled_statuses(status);
 }
 
 template<typename DELEGATE>
 const dds::core::status::StatusMask TStatusCondition<DELEGATE>::enabled_statuses() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->enabled_statuses();
+    return this->delegate()->get_enabled_statuses();
 }
 
 template<typename DELEGATE>
 const dds::core::Entity& TStatusCondition<DELEGATE>::entity() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->entity();
+    return this->delegate()->get_entity();
 }
 
 template<typename DELEGATE>

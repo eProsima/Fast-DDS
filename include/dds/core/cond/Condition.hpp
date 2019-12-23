@@ -143,4 +143,6 @@ typedef TCondition<detail::Condition> Condition;
 } //namespace core
 } //namespace dds
 
+#include <dds/core/cond/detail/TConditionImpl.hpp>
+
 #endif  //OMG_DDS_CORE_COND_CONDITION_HPP_

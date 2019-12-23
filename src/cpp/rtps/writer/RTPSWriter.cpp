@@ -218,10 +218,10 @@ bool RTPSWriter::encrypt_cachechange(
     if (getAttributes().security_attributes().is_payload_protected && change->getFragmentCount() == 0)
     {
         if (encrypt_payload_.max_size < change->serializedPayload.length +
-            // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-            +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
-            + 16 + 4 /*SecureDataTag*/ &&
-            (mp_history->m_att.memoryPolicy != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE))
+                // In future v2 changepool is in writer, and writer set this value to cachechagepool.
+                +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
+                + 16 + 4 /*SecureDataTag*/ &&
+                (mp_history->m_att.memoryPolicy != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE))
         {
             encrypt_payload_.data = (octet*)realloc(encrypt_payload_.data, change->serializedPayload.length +
                             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
@@ -303,6 +303,22 @@ const Duration_t& RTPSWriter::get_liveliness_lease_duration() const
 const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
 {
     return liveliness_announcement_period_;
+}
+
+void RTPSWriter::publication_matched_status_read()
+{
+    publication_matched_status_.total_count_change = 0;
+    publication_matched_status_.current_count_change = 0;
+}
+
+void RTPSWriter::offered_incompatible_qos_status_read()
+{
+    offered_incompatible_qos_status_.total_count_change = 0;
+}
+
+void RTPSWriter::liveliness_lost_status_read()
+{
+    liveliness_lost_status_.total_count_change = 0;
 }
 
 }  // namespace rtps

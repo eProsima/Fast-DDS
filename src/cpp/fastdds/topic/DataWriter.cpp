@@ -60,21 +60,21 @@ ReturnCode_t DataWriter::write(
 
 ReturnCode_t DataWriter::write(
         void* data,
-        rtps::WriteParams& params)
+        fastrtps::rtps::WriteParams& params)
 {
     return impl_->write(data, params);
 }
 
 ReturnCode_t DataWriter::write(
         void* data,
-        const rtps::InstanceHandle_t& handle)
+        const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
 
 ReturnCode_t DataWriter::dispose(
         void* data,
-        const rtps::InstanceHandle_t& handle)
+        const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->dispose(data, handle);
 }
@@ -85,23 +85,23 @@ bool DataWriter::dispose(
     return impl_->dispose(data);
 }
 
-const rtps::GUID_t& DataWriter::guid()
+const fastrtps::rtps::GUID_t& DataWriter::guid()
 {
     return impl_->guid();
 }
 
-rtps::InstanceHandle_t DataWriter::get_instance_handle() const
+fastrtps::rtps::InstanceHandle_t DataWriter::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }
 
 bool DataWriter::set_attributes(
-        const rtps::WriterAttributes& att)
+        const fastrtps::rtps::WriterAttributes& att)
 {
     return impl_->set_attributes(att);
 }
 
-const rtps::WriterAttributes& DataWriter::get_attributes() const
+const fastrtps::rtps::WriterAttributes& DataWriter::get_attributes() const
 {
     return impl_->get_attributes();
 }
@@ -128,7 +128,7 @@ ReturnCode_t DataWriter::set_listener(
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    status_mask_ = mask;
+    status_condition_.set_enabled_statuses(mask);
     return impl_->set_listener(listener);
 }
 
@@ -189,14 +189,14 @@ ReturnCode_t DataWriter::assert_liveliness()
 }
 
 ReturnCode_t DataWriter::get_matched_subscriptions(
-        std::vector<rtps::InstanceHandle_t>& subscription_handles) const
+        std::vector<fastrtps::rtps::InstanceHandle_t>& subscription_handles) const
 {
     return impl_->get_matched_subscriptions(subscription_handles);
 }
 
 ReturnCode_t DataWriter::get_matched_subscription_data(
         SubscriptionBuiltinTopicData& subscription_data,
-        const rtps::InstanceHandle_t& subscription_handle) const
+        const fastrtps::rtps::InstanceHandle_t& subscription_handle) const
 {
     return impl_->get_matched_subscription_data(subscription_data, subscription_handle);
 }

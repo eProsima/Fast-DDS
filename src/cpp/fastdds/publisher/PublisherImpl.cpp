@@ -441,7 +441,7 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const DomainParticipant& PublisherImpl::get_participant() const
+DomainParticipant& PublisherImpl::get_participant() const
 {
     return *participant_->get_participant();
 }

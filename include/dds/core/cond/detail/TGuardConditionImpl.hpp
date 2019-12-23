@@ -26,11 +26,7 @@
  * OMG PSM class declaration
  */
 #include <dds/core/cond/GuardCondition.hpp>
-//TODO: Fix when GuardConditionDelegate and ReportUtils are implemented
-//#include <org/opensplice/core/cond/GuardConditionDelegate.hpp>
-//#include <org/opensplice/core/ReportUtils.hpp>
 
-// Implementation
 namespace dds {
 namespace core {
 namespace cond {
@@ -38,10 +34,6 @@ namespace cond {
 template<typename DELEGATE>
 TGuardCondition<DELEGATE>::TGuardCondition()
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_NC_BEGIN();
-    //    this->set_ref(new DELEGATE);
-    //    this->delegate()->init(this->impl_);
 }
 
 /** @cond
@@ -82,16 +74,13 @@ template<typename DELEGATE>
 void TGuardCondition<DELEGATE>::trigger_value(
         bool value)
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_NC_BEGIN();
-    //    this->delegate()->trigger_value(value);
+    this->delegate()->set_trigger_value(value);
 }
 
 template<typename DELEGATE>
 bool TGuardCondition<DELEGATE>::trigger_value()
 {
-    //To implement
-    //    return TCondition<DELEGATE>::trigger_value();
+    return TCondition<DELEGATE>::trigger_value();
 }
 
 template<typename DELEGATE>

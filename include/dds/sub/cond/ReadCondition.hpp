@@ -24,7 +24,6 @@
 #include <dds/core/cond/Condition.hpp>
 #include <dds/sub/AnyDataReader.hpp>
 #include <dds/sub/status/DataState.hpp>
-//#include <dds/sub/cond/detail/TReadConditionImpl.hpp>
 
 namespace dds {
 namespace sub {
@@ -160,5 +159,7 @@ typedef dds::sub::cond::detail::ReadCondition ReadCondition;
 } //namespace cond
 } //namespace sub
 } //namespace dds
+
+#include <dds/sub/cond/detail/TReadConditionImpl.hpp>
 
 #endif //OMG_DDS_SUB_COND_READ_CONDITION_HPP_

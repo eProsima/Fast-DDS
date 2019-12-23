@@ -23,19 +23,14 @@
  * Ignore this file in the API
  */
 
-//TODO: Fix when ConditionImpl is implemented
-//#include <dds/core/cond/detail/TConditionImpl.hpp>
+#include <fastdds/dds/core/conditions/Condition.hpp>
 
 namespace dds {
 namespace core {
 namespace cond {
 namespace detail {
 
-//TODO: Fix when ConditionDelegate is implemented
-//typedef dds::core::cond::TCondition<eprosima::fastdds::dds::core::cond::ConditionDelegate> Condition;
-class Condition
-{
-};
+using Condition = eprosima::fastdds::dds::Condition;
 
 } //namespace detail
 } //namespace cond

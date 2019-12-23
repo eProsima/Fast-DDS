@@ -23,7 +23,7 @@
  * Ignore this file in the API
  */
 
-//TODO: Add GuardConditionDelegate when is implemented
+#include <fastdds/dds/core/conditions/GuardCondition.hpp>
 
 namespace dds {
 namespace core {
@@ -34,11 +34,7 @@ class TGuardCondition;
 
 namespace detail {
 
-//TODO: Fix when GuardConditionDelegate is implemented
-//typedef dds::core::cond::TGuardCondition<org::opensplice::core::cond::GuardConditionDelegate> GuardCondition;
-class GuardCondition
-{
-};
+using GuardCondition = eprosima::fastdds::dds::GuardCondition;
 
 } //namespace detail
 } //namespace cond
