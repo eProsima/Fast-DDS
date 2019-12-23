@@ -20,9 +20,10 @@
 #define ALL_ATTRIBUTES_H_
 
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/PublisherAttributes.h>
-#include <fastrtps/SubscriberAttributes.h>
-#include <fastrtps/TopicAttributes.h>
-
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/attributes/RequesterAttributes.hpp>
+#include <fastrtps/attributes/ReplierAttributes.hpp>
 
 #endif /* ALL_ATTRIBUTES_H_ */

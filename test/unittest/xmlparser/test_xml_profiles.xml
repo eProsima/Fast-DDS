@@ -345,5 +345,53 @@
             </matchedPublishersAllocation>
         </subscriber>
 
+        <requester profile_name="test_requester_profile"
+                   service_name="service_name"
+                   request_type="request_type"
+                   reply_type="reply_type">
+            <publisher>
+                <topic>
+                    <name>otherSamplePubSubTopic</name>
+                    <dataType>otherSamplePubSubTopicType</dataType>
+                </topic>
+                <qos>
+                    <durability>
+                        <kind>PERSISTENT</kind>
+                    </durability>
+                </qos>
+            </publisher>
+            <subscriber>
+                <qos>
+                    <durability>
+                        <kind>PERSISTENT</kind>
+                    </durability>
+                </qos>
+            </subscriber>
+        </requester>
+        <replier profile_name="test_replier_profile"
+                 service_name="service_name"
+                 request_type="request_type"
+                 reply_type="reply_type">
+            <request_topic_name>request_topic_name</request_topic_name>
+            <reply_topic_name>reply_topic_name</reply_topic_name>
+            <publisher>
+                <topic>
+                    <name>otherSamplePubSubTopic</name>
+                    <dataType>otherSamplePubSubTopicType</dataType>
+                </topic>
+                <qos>
+                    <liveliness>
+                        <kind>MANUAL_BY_TOPIC</kind>
+                    </liveliness>
+                </qos>
+            </publisher>
+            <subscriber>
+                <qos>
+                    <liveliness>
+                        <kind>MANUAL_BY_TOPIC</kind>
+                    </liveliness>
+                </qos>
+            </subscriber>
+        </replier>
     </profiles>
 </dds>

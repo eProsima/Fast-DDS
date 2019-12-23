@@ -33,6 +33,8 @@ const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
 const char* TYPES = "types";
 const char* LOG = "log";
+const char* REQUESTER = "requester";
+const char* REPLIER = "replier";
 
 const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";
@@ -395,6 +397,13 @@ const char* TLS_VERIFY_NONE = "VERIFY_NONE";
 const char* TLS_VERIFY_PEER = "VERIFY_PEER";
 const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT = "VERIFY_FAIL_IF_NO_PEER_CERT";
 const char* TLS_VERIFY_CLIENT_ONCE = "VERIFY_CLIENT_ONCE";
+
+// Requester and Replier
+const char* SERVICE_NAME = "service_name";
+const char* REQUEST_TYPE = "request_type";
+const char* REPLY_TYPE = "reply_type";
+const char* REQUEST_TOPIC_NAME = "request_topic_name";
+const char* REPLY_TOPIC_NAME = "reply_topic_name";
 
 } /* xmlparser */
 } /* namespace */

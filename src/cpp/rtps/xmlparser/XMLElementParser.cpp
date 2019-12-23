@@ -3339,3 +3339,255 @@ XMLP_ret XMLParser::getXMLguidPrefix(
     return (is >> prefix ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR);
 
 }
+
+XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, PublisherAttributes &publisher, uint8_t ident)
+{
+    /*
+        <xs:complexType name="publisherProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+                <xs:element name="qos" type="writerQosPoliciesType" minOccurs="0"/>
+                <xs:element name="times" type="writerTimesType" minOccurs="0"/>
+                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, TOPIC) == 0)
+        {
+            // topic
+            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, publisher.topic, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, QOS) == 0)
+        {
+            // qos
+            if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux0, publisher.qos, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, TIMES) == 0)
+        {
+            // times
+            if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux0, publisher.times, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, UNI_LOC_LIST) == 0)
+        {
+            // unicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.unicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, MULTI_LOC_LIST) == 0)
+        {
+            // multicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.multicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, REM_LOC_LIST) == 0)
+        {
+            // remoteLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.remoteLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, THROUGHPUT_CONT) == 0)
+        {
+            // throughputController
+            if (XMLP_ret::XML_OK !=
+                getXMLThroughputController(p_aux0, publisher.throughputController, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, HIST_MEM_POLICY) == 0)
+        {
+            // historyMemoryPolicy
+            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, publisher.historyMemoryPolicy, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PROPERTIES_POLICY) == 0)
+        {
+            // propertiesPolicy
+            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, publisher.properties, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, USER_DEF_ID) == 0)
+        {
+            // userDefinedID - int16type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            publisher.setUserDefinedID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, ENTITY_ID) == 0)
+        {
+            // entityID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            publisher.setEntityID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, MATCHED_SUBSCRIBERS_ALLOCATION) == 0)
+        {
+            // matchedSubscribersAllocation - containerAllocationConfigType
+            if(XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, publisher.matched_subscriber_allocation, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'publisherProfileType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLSubscriberAttributes(tinyxml2::XMLElement *elem, SubscriberAttributes &subscriber, uint8_t ident)
+{
+    /*
+        <xs:complexType name="subscriberProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+                <xs:element name="qos" type="readerQosPoliciesType" minOccurs="0"/>
+                <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
+                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, TOPIC) == 0)
+        {
+            // topic
+            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, subscriber.topic, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, QOS) == 0)
+        {
+            // qos
+            if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux0, subscriber.qos, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, TIMES) == 0)
+        {
+            // times
+            if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux0, subscriber.times, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, UNI_LOC_LIST) == 0)
+        {
+            // unicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber.unicastLocatorList, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, MULTI_LOC_LIST) == 0)
+        {
+            // multicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber.multicastLocatorList, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, REM_LOC_LIST) == 0)
+        {
+            // remote LocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber.remoteLocatorList, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, EXP_INLINE_QOS) == 0)
+        {
+            // expectsInlineQos - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber.expectsInlineQos, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, HIST_MEM_POLICY) == 0)
+        {
+            // historyMemoryPolicy
+            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(
+                    p_aux0,
+                    subscriber.historyMemoryPolicy,
+                    ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, PROPERTIES_POLICY) == 0)
+        {
+            // propertiesPolicy
+            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, subscriber.properties, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, USER_DEF_ID) == 0)
+        {
+            // userDefinedID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            subscriber.setUserDefinedID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, ENTITY_ID) == 0)
+        {
+            // entityID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            subscriber.setEntityID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, MATCHED_PUBLISHERS_ALLOCATION) == 0)
+        {
+            // matchedPublishersAllocation - containerAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(
+                    p_aux0,
+                    subscriber.matched_publisher_allocation,
+                    ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'subscriberProfileType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}

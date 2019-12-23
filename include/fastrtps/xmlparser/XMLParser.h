@@ -20,13 +20,11 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/attributes/RequesterAttributes.hpp>
+#include <fastrtps/attributes/ReplierAttributes.hpp>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 #include <map>
 #include <string>
@@ -73,6 +71,16 @@ typedef std::unique_ptr<TopicAttributes>       up_topic_t;
 typedef DataNode<TopicAttributes>              node_topic_t;
 typedef node_topic_t*                          p_node_topic_t;
 typedef std::unique_ptr<node_topic_t>          up_node_topic_t;
+
+typedef std::unique_ptr<RequesterAttributes>   up_requester_t;
+typedef DataNode<RequesterAttributes>          node_requester_t;
+typedef node_requester_t*                      p_node_requester_t;
+typedef std::unique_ptr<node_requester_t>      up_node_requester_t;
+
+typedef std::unique_ptr<ReplierAttributes>     up_replier_t;
+typedef DataNode<ReplierAttributes>            node_replier_t;
+typedef node_replier_t*                        p_node_replier_t;
+typedef std::unique_ptr<node_replier_t>        up_node_replier_t;
 
 /**
  * Class XMLParser, used to load XML data.
@@ -189,6 +197,14 @@ protected:
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
+    RTPS_DllAPI static XMLP_ret parseXMLRequesterProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode);
+
+    RTPS_DllAPI static XMLP_ret parseXMLReplierProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode);
+
     RTPS_DllAPI static XMLP_ret parseXMLTransportData(
             tinyxml2::XMLElement* p_root);
 
@@ -279,6 +295,14 @@ protected:
     RTPS_DllAPI static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
             DataNode<TopicAttributes>& topic_node);
+
+    RTPS_DllAPI static XMLP_ret fillDataNode(
+        tinyxml2::XMLElement* node,
+        DataNode<RequesterAttributes>& requester_node);
+
+    RTPS_DllAPI static XMLP_ret fillDataNode(
+        tinyxml2::XMLElement* node,
+        DataNode<ReplierAttributes>& replier_node);
 
     template <typename T>
     RTPS_DllAPI static void addAllAttributes(
@@ -558,6 +582,16 @@ protected:
     RTPS_DllAPI static XMLP_ret getXMLguidPrefix(
             tinyxml2::XMLElement* elem,
             rtps::GuidPrefix_t& prefix,
+            uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLPublisherAttributes(
+            tinyxml2::XMLElement *elem,
+            PublisherAttributes &publisher,
+            uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLSubscriberAttributes(
+            tinyxml2::XMLElement *elem,
+            SubscriberAttributes &subscriber,
             uint8_t ident);
 };
 
