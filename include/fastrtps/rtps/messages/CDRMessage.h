@@ -59,6 +59,12 @@ namespace CDRMessage{
             octet* o,
             uint32_t length);
 
+    inline bool readArray(
+            CDRMessage_t*msg,
+            octet* arr,
+            size_t size);
+
+
     inline bool readDataReversed(
             CDRMessage_t* msg,
             octet* o,

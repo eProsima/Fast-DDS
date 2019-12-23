@@ -124,8 +124,6 @@ class ParticipantProxyData
         //!
         ParameterPropertyList_t m_properties;
         //!
-        size_t m_max_properties_size = 0;
-        //!
         UserDataQosPolicy m_userData;
         //!
         TimedEvent* lease_duration_event;

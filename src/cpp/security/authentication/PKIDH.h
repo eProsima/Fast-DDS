@@ -97,6 +97,8 @@ class PKIDH : public Authentication
         bool return_authenticated_peer_credential_token(PermissionsCredentialToken* token,
                 SecurityException& ex) override;
 
+        bool readFromCDRMessage(CDRMessage_t* msg, GUID_t participant_guid) const;
+
     private:
 
         ValidationResult_t process_handshake_request(HandshakeMessageToken** handshake_message_out,

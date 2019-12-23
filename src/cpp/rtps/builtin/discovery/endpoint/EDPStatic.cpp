@@ -109,7 +109,7 @@ bool EDPStatic::processLocalReaderProxyData(RTPSReader*, ReaderProxyData* rdata)
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE", rdata->userDefinedId(), rdata->guid().entityId));
+    localpdata->m_properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE", rdata->userDefinedId(), rdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -121,7 +121,7 @@ bool EDPStatic::processLocalWriterProxyData(RTPSWriter*, WriterProxyData* wdata)
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",
+    localpdata->m_properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",
                 wdata->userDefinedId(), wdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
@@ -132,16 +132,18 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
-            pit!=localpdata->m_properties.properties.end();++pit)
+    for(ParameterPropertyList_t::iterator pit = localpdata->m_properties.begin();
+            pit!=localpdata->m_properties.end();++pit)
     {
         EDPStaticProperty staticproperty;
-        if(staticproperty.fromProperty(*pit))
+        if(staticproperty.fromProperty((*pit).pair()))
         {
             if(staticproperty.m_entityId == R->getGuid().entityId)
             {
-                *pit = EDPStaticProperty::toProperty("Reader","ENDED",R->getAttributes().getUserDefinedID(),
-                        R->getGuid().entityId);
+                auto new_property = EDPStaticProperty::toProperty("Reader","ENDED",
+                        R->getAttributes().getUserDefinedID(), R->getGuid().entityId);
+                (*pit).set_first(new_property.first);
+                (*pit).set_second(new_property.second);
             }
         }
     }
@@ -152,16 +154,18 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
-            pit!=localpdata->m_properties.properties.end();++pit)
+    for(ParameterPropertyList_t::iterator pit = localpdata->m_properties.begin();
+            pit!=localpdata->m_properties.end();++pit)
     {
         EDPStaticProperty staticproperty;
-        if(staticproperty.fromProperty(*pit))
+        if(staticproperty.fromProperty((*pit).pair()))
         {
             if(staticproperty.m_entityId == W->getGuid().entityId)
             {
-                *pit = EDPStaticProperty::toProperty("Writer","ENDED",W->getAttributes().getUserDefinedID(),
-                        W->getGuid().entityId);
+                auto new_property = EDPStaticProperty::toProperty("Writer","ENDED",
+                        W->getAttributes().getUserDefinedID(), W->getGuid().entityId);
+                (*pit).set_first(new_property.first);
+                (*pit).set_second(new_property.second);
             }
         }
     }
@@ -170,12 +174,12 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 
 void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
-    for(std::vector<std::pair<std::string,std::string>>::const_iterator pit = pdata.m_properties.properties.begin();
-            pit!=pdata.m_properties.properties.end();++pit)
+    for(ParameterPropertyList_t::const_iterator pit = pdata.m_properties.begin();
+            pit!=pdata.m_properties.end();++pit)
     {
         //cout << "STATIC EDP READING PROPERTY " << pit->first << "// " << pit->second << endl;
         EDPStaticProperty staticproperty;
-        if(staticproperty.fromProperty(*pit))
+        if(staticproperty.fromProperty((*pit).pair()))
         {
             if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status=="ALIVE")
             {
