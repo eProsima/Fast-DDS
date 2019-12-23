@@ -34,6 +34,8 @@ std::map<std::string, up_subscriber_t> XMLProfileManager::subscriber_profiles_;
 SubscriberAttributes default_subscriber_attributes;
 std::map<std::string, up_topic_t> XMLProfileManager::topic_profiles_;
 TopicAttributes default_topic_attributes;
+std::map<std::string, up_requester_t> XMLProfileManager::requester_profiles_;
+std::map<std::string, up_replier_t> XMLProfileManager::replier_profiles_;
 std::map<std::string, XMLP_ret> XMLProfileManager::xml_files_;
 sp_transport_map_t XMLProfileManager::transport_profiles_;
 p_dynamictype_map_t XMLProfileManager::dynamic_types_;
@@ -99,6 +101,34 @@ XMLP_ret XMLProfileManager::fillTopicAttributes(
 {
     topic_map_iterator_t it = topic_profiles_.find(profile_name);
     if (it == topic_profiles_.end())
+    {
+        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+        return XMLP_ret::XML_ERROR;
+    }
+    atts = *(it->second);
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLProfileManager::fillRequesterAttributes(
+        const std::string& profile_name,
+        RequesterAttributes& atts)
+{
+    requester_map_iterator_t it = requester_profiles_.find(profile_name);
+    if (it == requester_profiles_.end())
+    {
+        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+        return XMLP_ret::XML_ERROR;
+    }
+    atts = *(it->second);
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLProfileManager::fillReplierAttributes(
+        const std::string& profile_name,
+        ReplierAttributes& atts)
+{
+    replier_map_iterator_t it = replier_profiles_.find(profile_name);
+    if (it == replier_profiles_.end())
     {
         logError(XMLPARSER, "Profile '" << profile_name << "' not found");
         return XMLP_ret::XML_ERROR;
@@ -360,6 +390,20 @@ XMLP_ret XMLProfileManager::extractProfiles(
                 ++profile_count;
             }
         }
+        else if (NodeType::REQUESTER == profile.get()->getType())
+        {
+            if (XMLP_ret::XML_OK == extractRequesterProfile(profile, filename))
+            {
+                ++profile_count;
+            }
+        }
+        else if (NodeType::REPLIER == profile.get()->getType())
+        {
+            if (XMLP_ret::XML_OK == extractReplierProfile(profile, filename))
+            {
+                ++profile_count;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Not expected tag");
@@ -559,5 +603,59 @@ XMLP_ret XMLProfileManager::extractTopicProfile(
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
         default_topic_attributes = *(emplace.first->second.get());
     }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLProfileManager::extractRequesterProfile(
+        up_base_node_t& profile,
+        const std::string& filename)
+{
+    (void)(filename);
+    std::string profile_name = "";
+
+    p_node_requester_t node_requester = dynamic_cast<p_node_requester_t>(profile.get());
+    node_att_map_cit_t it = node_requester->getAttributes().find(PROFILE_NAME);
+    if (it == node_requester->getAttributes().end() || it->second.empty())
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    profile_name = it->second;
+
+    std::pair<requester_map_iterator_t, bool> emplace = requester_profiles_.emplace(profile_name, node_requester->getData());
+    if (false == emplace.second)
+    {
+        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLProfileManager::extractReplierProfile(
+        up_base_node_t& profile,
+        const std::string& filename)
+{
+    (void)(filename);
+    std::string profile_name = "";
+
+    p_node_replier_t node_replier = dynamic_cast<p_node_replier_t>(profile.get());
+    node_att_map_cit_t it = node_replier->getAttributes().find(PROFILE_NAME);
+    if (it == node_replier->getAttributes().end() || it->second.empty())
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': no name found");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    profile_name = it->second;
+
+    std::pair<replier_map_iterator_t, bool> emplace = replier_profiles_.emplace(profile_name, node_replier->getData());
+    if (false == emplace.second)
+    {
+        logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+
     return XMLP_ret::XML_OK;
 }
