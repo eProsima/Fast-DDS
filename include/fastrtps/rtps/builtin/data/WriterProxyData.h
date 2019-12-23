@@ -27,6 +27,7 @@
 #include "../../../qos/ParameterList.h"
 
 #include "../../../utils/fixed_size_string.hpp"
+#include "../../attributes/RTPSParticipantAllocationAttributes.hpp"
 
 #if HAVE_SECURITY
 #include "../../security/accesscontrol/EndpointSecurityAttributes.h"
@@ -51,7 +52,8 @@ public:
 
     RTPS_DllAPI WriterProxyData(
             const size_t max_unicast_locators,
-            const size_t max_multicast_locators);
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits);
 
     virtual RTPS_DllAPI ~WriterProxyData();
 

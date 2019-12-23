@@ -37,7 +37,8 @@ namespace rtps {
 
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
-        const size_t max_multicast_locators)
+        const size_t max_multicast_locators,
+        const VariableLengthDataLimits& data_limits)
     : m_expectsInlineQos(false)
 #if HAVE_SECURITY
     , security_attributes_(0UL)
@@ -51,6 +52,9 @@ ReaderProxyData::ReaderProxyData (
     , m_type_id(nullptr)
     , m_type(nullptr)
 {
+    {
+        m_qos.m_userData.max_size(data_limits.max_user_data);
+    }
 }
 
 ReaderProxyData::~ReaderProxyData()
