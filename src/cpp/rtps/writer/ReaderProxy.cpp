@@ -40,9 +40,11 @@ namespace rtps {
 ReaderProxy::ReaderProxy(
         const WriterTimes& times,
         const RemoteLocatorsAllocationAttributes& loc_alloc,
+        const VariableLengthDataLimits& limits,
         StatefulWriter* writer)
     : is_active_(false)
     , locator_info_(writer->getRTPSParticipant(), loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , data_limits_ (limits)
     , durability_kind_(VOLATILE)
     , expects_inline_qos_(false)
     , is_reliable_(false)

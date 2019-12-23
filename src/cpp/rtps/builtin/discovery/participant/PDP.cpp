@@ -85,8 +85,8 @@ PDP::PDP (
     , mp_listener(nullptr)
     , mp_PDPWriterHistory(nullptr)
     , mp_PDPReaderHistory(nullptr)
-    , temp_reader_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-    , temp_writer_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+    , temp_reader_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators, allocation.data_limits)
+    , temp_writer_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators, allocation.data_limits)
     , mp_mutex(new std::recursive_mutex())
     , resend_participant_info_event_(nullptr)
 {
@@ -687,7 +687,8 @@ ReaderProxyData* PDP::addReaderProxyData(
                     ++reader_proxies_number_;
                     ret_val = new ReaderProxyData(
                         mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
-                        mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators);
+                        mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators,
+                        mp_RTPSParticipant->getAttributes().allocation.data_limits);
                 }
                 else
                 {
@@ -777,7 +778,8 @@ WriterProxyData* PDP::addWriterProxyData(
                     ++writer_proxies_number_;
                     ret_val = new WriterProxyData(
                         mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
-                        mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators);
+                        mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators,
+                        mp_RTPSParticipant->getAttributes().allocation.data_limits);
                 }
                 else
                 {
