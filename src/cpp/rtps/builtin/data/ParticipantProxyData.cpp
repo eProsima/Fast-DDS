@@ -60,13 +60,12 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , plugin_security_attributes_(0UL)
 #endif
     , isAlive(false)
-    , m_max_properties_size(allocation.max_properties)
+    , m_properties(allocation.max_properties)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
-        m_properties.properties.reserve(allocation.max_properties);
         m_userData.max_size(allocation.max_user_data);
     }
 
@@ -89,7 +88,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
 #endif
     , isAlive(pdata.isAlive)
     , m_properties(pdata.m_properties)
-    , m_max_properties_size(pdata.m_max_properties_size)
     , m_userData(pdata.m_userData)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
@@ -99,8 +97,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     // corresponding DiscoveredParticipantInfo struct is created. Only participant info is used,
     // so there is no need to copy m_readers and m_writers
     {
-        //Data has been copied, but we must check capacity
-        m_properties.properties.reserve(pdata.m_max_properties_size);
     }
 
 ParticipantProxyData::~ParticipantProxyData()
@@ -192,7 +188,7 @@ bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encap
         if (!m_userData.addToCDRMessage(msg)) return false;
     }
 
-    if(this->m_properties.properties.size()>0)
+    if(this->m_properties.size()>0)
     {
         if (!m_properties.addToCDRMessage(msg)) return false;
     }
@@ -402,12 +398,12 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_PROPERTY_LIST:
                 {
-                    if (m_max_properties_size != 0 &&
-                            m_max_properties_size < plength)
+                    if (m_properties.max_size() != 0 &&
+                            m_properties.max_size() < plength)
                     {
                         logError(RTPS_PDP,"User data too big "
                                 << "(size:" << plength
-                                << " max capacity: " << m_properties.properties.capacity() << ")");
+                                << " max capacity: " << m_properties.max_size() << ")");
                         return false;
                     }
                     this->m_properties.length = plength;
@@ -561,7 +557,7 @@ void ParticipantProxyData::clear()
     security_attributes_ = 0UL;
     plugin_security_attributes_ = 0UL;
 #endif
-    m_properties.properties.clear();
+    m_properties.clear();
     m_properties.length = 0;
     m_userData.clear();
     m_userData.length = 0;
@@ -646,25 +642,23 @@ void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
     persistent_guid.second = data.str();
 
     // if exists replace
-    std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
-
-    std::vector<std::pair<std::string, std::string>>::iterator it =
+    ParameterPropertyList_t::iterator it =
         std::find_if(
-            props.begin(),
-            props.end(),
-            [&persistent_guid](const std::pair<std::string, std::string> & p)
+                m_properties.begin(),
+                m_properties.end(),
+                [&persistent_guid](const ParameterProperty_t p)
             {
-                return persistent_guid.first == p.first;
+                return persistent_guid.first == p.first();
             });
 
-    if (it != props.end())
+    if (it != m_properties.end())
     {
-        *it = std::move(persistent_guid);
+        (*it).set_second(persistent_guid.second);
     }
     else
     {
         // if not exists add
-        m_properties.properties.push_back(std::move(persistent_guid));
+        m_properties.push_back(persistent_guid);
     }
 }
 
@@ -672,20 +666,18 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
 {
     GUID_t persistent(c_Guid_Unknown);
 
-    const std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
-
-    std::vector<std::pair<std::string, std::string>>::const_iterator it =
+    ParameterPropertyList_t::const_iterator it =
         std::find_if(
-            props.cbegin(),
-            props.cend(),
-            [](const std::pair<std::string, std::string> & p)
+                m_properties.begin(),
+                m_properties.end(),
+                [](const ParameterProperty_t p)
             {
-                return "PID_PERSISTENCE_GUID" == p.first;
+                return "PID_PERSISTENCE_GUID" == p.first();
             });
 
-    if (it != props.end())
+    if (it != m_properties.end())
     {
-        std::istringstream in(it->second);
+        std::istringstream in((*it).second());
         in >> persistent;
     }
 
