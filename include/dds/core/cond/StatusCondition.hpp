@@ -24,7 +24,6 @@
 #include <dds/core/cond/detail/StatusCondition.hpp>
 #include <dds/core/cond/Condition.hpp>
 #include <dds/core/Entity.hpp>
-//#include <dds/core/cond/detail/TStatusConditionImpl.hpp>
 
 namespace dds {
 namespace core {
@@ -76,14 +75,15 @@ template<typename DELEGATE>
 class TStatusCondition : public TCondition<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_DELEGATE_C(
-            TStatusCondition,
-            TCondition,
-            DELEGATE)
+        TStatusCondition,
+        TCondition,
+        DELEGATE)
 
     OMG_DDS_EXPLICIT_REF_BASE(
-            TStatusCondition,
-            dds::core::cond::Condition)
+        TStatusCondition,
+        dds::core::cond::Condition)
 
     /**
      * Create a dds::core::cond::StatusCondition associated with an Entity.
@@ -236,5 +236,7 @@ typedef detail::StatusCondition StatusCondition;
 } //namespace cond
 } //namespace core
 } //namespace dds
+
+#include <dds/core/cond/detail/TStatusConditionImpl.hpp>
 
 #endif //OMG_DDS_CORE_STATUSCONDITION_HPP_

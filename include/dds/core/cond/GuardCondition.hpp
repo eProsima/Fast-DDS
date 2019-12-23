@@ -23,7 +23,6 @@
 
 #include <dds/core/cond/detail/GuardCondition.hpp>
 #include <dds/core/cond/Condition.hpp>
-//#include <dds/core/cond/detail/TGuardConditionImpl.hpp>
 
 namespace dds {
 namespace core {
@@ -62,14 +61,15 @@ template<typename DELEGATE>
 class TGuardCondition : public TCondition<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_NO_DC(
-            TGuardCondition,
-            TCondition,
-            DELEGATE)
+        TGuardCondition,
+        TCondition,
+        DELEGATE)
 
     OMG_DDS_EXPLICIT_REF_BASE(
-            TGuardCondition,
-            dds::core::cond::Condition)
+        TGuardCondition,
+        dds::core::cond::Condition)
     /**
      * Create a dds::core::cond::GuardCondition.
      *
@@ -136,5 +136,7 @@ typedef dds::core::cond::detail::GuardCondition GuardCondition;
 } //namespace cond
 } //namespace core
 } //namespace dds
+
+#include <dds/core/cond/detail/TGuardConditionImpl.hpp>
 
 #endif //OMG_DDS_CORE_COND_GUARDCONDITION_HPP_

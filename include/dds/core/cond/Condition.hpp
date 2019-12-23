@@ -54,26 +54,27 @@ template<typename DELEGATE>
 class TCondition : public virtual Reference<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TCondition,
-            dds::core::Reference,
-            DELEGATE)
+        TCondition,
+        dds::core::Reference,
+        DELEGATE)
 
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            TCondition,
-            detail::StatusCondition)
+        TCondition,
+        detail::StatusCondition)
 
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            TCondition,
-            detail::GuardCondition)
+        TCondition,
+        detail::GuardCondition)
 
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            TCondition,
-            dds::sub::cond::detail::ReadCondition)
+        TCondition,
+        dds::sub::cond::detail::ReadCondition)
 
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            TCondition,
-            dds::sub::cond::detail::QueryCondition)
+        TCondition,
+        dds::sub::cond::detail::QueryCondition)
 
     /** @cond */
     ~TCondition();
@@ -141,5 +142,7 @@ typedef TCondition<detail::Condition> Condition;
 } //namespace cond
 } //namespace core
 } //namespace dds
+
+#include <dds/core/cond/detail/TConditionImpl.hpp>
 
 #endif  //OMG_DDS_CORE_COND_CONDITION_HPP_
