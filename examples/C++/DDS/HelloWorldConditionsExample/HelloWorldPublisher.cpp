@@ -33,6 +33,7 @@
 #include <thread>
 
 using namespace eprosima::fastdds::dds;
+using namespace ::dds::core::status;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -84,24 +85,23 @@ bool HelloWorldPublisher::init(
         return false;
     }
 
-    writer_->get_statuscondition()->set_handler([this](StatusCondition* writer_cond) -> void {
-        eprosima::fastdds::dds::PublicationMatchedStatus info;
-        static_cast<DataWriter*>(writer_cond->get_entity())->get_publication_matched_status(info);
-        if (info.current_count_change == 1)
+    writer_->get_statuscondition()->set_handler([this]() -> void {
+        StatusMask triggered_status = writer_->get_status_changes();
+        if (triggered_status.is_active(StatusMask::publication_matched()))
         {
-            matched_ = info.total_count;
-            firstConnected_ = true;
-            std::cout << "Publisher matched." << std::endl;
+            publication_matched_handler();
         }
-        else if (info.current_count_change == -1)
+        if (triggered_status.is_active(StatusMask::offered_deadline_missed()))
         {
-            matched_ = info.total_count;
-            std::cout << "Publisher unmatched." << std::endl;
+            offered_deadline_missed_handler();
         }
-        else
+        if (triggered_status.is_active(StatusMask::offered_incompatible_qos()))
         {
-            std::cout << info.current_count_change
-                      << " is not a valid value for PublicationMatchedStatus current count change." << std::endl;
+            offered_incompatible_qos_handler();
+        }
+        if (triggered_status.is_active(StatusMask::liveliness_lost()))
+        {
+            liveliness_lost_handler();
         }
     });
 
@@ -127,7 +127,7 @@ void HelloWorldPublisher::check_reader_matched()
         {
             if (writer_->get_statuscondition() == cond)
             {
-                writer_->get_statuscondition()->call_handler(writer_->get_statuscondition());
+                writer_->get_statuscondition()->call_handler();
             }
         }
     }
@@ -206,4 +206,50 @@ bool HelloWorldPublisher::publish(
         }
     }
     return false;
+}
+
+void HelloWorldPublisher::liveliness_lost_handler()
+{
+    eprosima::fastdds::dds::LivelinessLostStatus status;
+    writer_->get_liveliness_lost_status(status);
+    std::cout << "Writer " << writer_->get_instance_handle() << " lost liveliness: " << status.total_count << std::endl;
+}
+
+void HelloWorldPublisher::offered_deadline_missed_handler()
+{
+    eprosima::fastdds::dds::OfferedDeadlineMissedStatus status;
+    writer_->get_offered_deadline_missed_status(status);
+    std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;
+}
+
+void HelloWorldPublisher::offered_incompatible_qos_handler()
+{
+    eprosima::fastdds::dds::OfferedIncompatibleQosStatus status;
+    writer_->get_offered_incompatible_qos_status(status);
+    QosPolicy qos;
+    std::cout << "The Offered Qos is incompatible with the Requested one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
+}
+
+void HelloWorldPublisher::publication_matched_handler()
+{
+    eprosima::fastdds::dds::PublicationMatchedStatus info;
+    writer_->get_publication_matched_status(info);
+    if (info.current_count_change == 1)
+    {
+        matched_ = info.total_count;
+        firstConnected_ = true;
+        std::cout << "Publisher matched." << std::endl;
+    }
+    else if (info.current_count_change == -1)
+    {
+        matched_ = info.total_count;
+        std::cout << "Publisher unmatched." << std::endl;
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for PublicationMatchedStatus current count change." << std::endl;
+    }
 }

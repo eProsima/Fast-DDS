@@ -23,7 +23,7 @@
 #include "HelloWorldPubSubTypes.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/topic/DataReaderListener.hpp>
+#include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 class HelloWorldSubscriber
@@ -64,6 +64,21 @@ private:
     eprosima::fastdds::dds::DataReader* reader_;
 
     eprosima::fastdds::dds::TypeSupport type_;
+
+    void data_available_handler(
+            eprosima::fastdds::dds::DataReader* reader);
+
+    void liveliness_changed_handler();
+
+    void requested_deadline_missed_handler();
+
+    void requested_incompatible_qos_handler();
+
+    void subscription_matched_handler();
+
+    void sample_rejected_handler();
+
+    void sample_lost_handler();
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

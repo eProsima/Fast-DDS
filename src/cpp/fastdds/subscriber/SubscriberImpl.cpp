@@ -313,14 +313,14 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     {
         for (DataReaderImpl* dr : it.second)
         {
-            if (dr->user_datareader_->get_status_changes().is_compatible(::dds::core::status::StatusMask::data_available())
+            if (dr->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::data_available())
                     && dr->user_datareader_->is_enabled() && dr->listener_ != nullptr)
             {
                 dr->listener_->on_data_available(dr->user_datareader_);
             }
             else if (dr->get_subscriber()->get_participant().get_listener() != nullptr &&
                     dr->get_subscriber()->get_participant().is_enabled() &&
-                    dr->get_subscriber()->get_participant().get_status_changes().is_compatible(::dds::core::status::
+                    dr->get_subscriber()->get_participant().get_status_mask().is_compatible(::dds::core::status::
                     StatusMask::
                     data_available()))
             {

@@ -31,6 +31,7 @@
 #include <fastdds/dds/core/conditions/StatusCondition.hpp>
 
 using namespace eprosima::fastdds::dds;
+using namespace ::dds::core::status;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -46,6 +47,7 @@ bool HelloWorldSubscriber::init(
     participant_att.rtps.builtin.domainId = domain_id;
     participant_att.rtps.setName("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, nullptr);
+
 
     if (participant_ == nullptr)
     {
@@ -65,16 +67,12 @@ bool HelloWorldSubscriber::init(
     }
 
     //Set the handler associated to the subscriber status condition
-    subscriber_->get_statuscondition()->set_handler([this](StatusCondition* subs_cond) -> void {
-        (void) subs_cond;
-        while (reader_->take_next_sample(&hello_, &info_) == ReturnCode_t::RETCODE_OK)
+    subscriber_->get_statuscondition()->set_handler([this]() -> void {
+        std::vector<DataReader*> readers;
+        subscriber_->get_datareaders(readers);
+        for (auto reader : readers)
         {
-            if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
-            {
-                samples_++;
-                // Print your structure data here.
-                std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
-            }
+            data_available_handler(reader);
         }
     });
 
@@ -94,24 +92,37 @@ bool HelloWorldSubscriber::init(
     }
 
     //Set the handler associated to the reader status condition
-    reader_->get_statuscondition()->set_handler([this](StatusCondition* reader_cond) -> void {
-        eprosima::fastdds::dds::SubscriptionMatchedStatus info;
-        static_cast<DataReader*>(reader_cond->get_entity())->get_subscription_matched_status(info);
-        if (info.current_count_change == 1)
+    reader_->get_statuscondition()->set_handler([this]() -> void {
+        StatusMask triggered_status = reader_->get_status_changes();
+        if (triggered_status.is_active(StatusMask::subscription_matched()))
         {
-            matched_ = info.total_count;
-            std::cout << "Subscriber matched." << std::endl;
+            subscription_matched_handler();
         }
-        else if (info.current_count_change == -1)
+        if (triggered_status.is_active(StatusMask::requested_incompatible_qos()))
         {
-            matched_ = info.total_count;
-            std::cout << "Subscriber unmatched." << std::endl;
+            requested_incompatible_qos_handler();
         }
-        else
+        if (triggered_status.is_active(StatusMask::data_available()))
         {
-            std::cout << info.current_count_change
-                      << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+            data_available_handler(reader_);
         }
+        if (triggered_status.is_active(StatusMask::sample_rejected()))
+        {
+            sample_rejected_handler();
+        }
+        if (triggered_status.is_active(StatusMask::liveliness_changed()))
+        {
+            liveliness_changed_handler();
+        }
+        if (triggered_status.is_active(StatusMask::requested_deadline_missed()))
+        {
+            requested_deadline_missed_handler();
+        }
+        if (triggered_status.is_active(StatusMask::sample_lost()))
+        {
+            sample_lost_handler();
+        }
+
     });
 
     return true;
@@ -147,13 +158,92 @@ void HelloWorldSubscriber::run(
             {
                 if (reader_->get_statuscondition() == cond)
                 {
-                    reader_->get_statuscondition()->call_handler(reader_->get_statuscondition());
+                    reader_->get_statuscondition()->call_handler();
                 }
                 else if (subscriber_->get_statuscondition() == cond)
                 {
-                    subscriber_->get_statuscondition()->call_handler(subscriber_->get_statuscondition());
+                    subscriber_->get_statuscondition()->call_handler();
                 }
             }
         }
     }
+}
+
+void HelloWorldSubscriber::data_available_handler(
+        eprosima::fastdds::dds::DataReader* reader)
+{
+    while (reader->take_next_sample(&hello_, &info_) == ReturnCode_t::RETCODE_OK)
+    {
+        if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
+        {
+            samples_++;
+            // Print your structure data here.
+            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+        }
+    }
+}
+
+void HelloWorldSubscriber::liveliness_changed_handler()
+{
+    eprosima::fastdds::dds::LivelinessChangedStatus status;
+    reader_->get_liveliness_changed_status(status);
+    if (status.alive_count_change == 1)
+    {
+        std::cout << "Publisher " << status.last_publication_handle << " recovered liveliness" << std::endl;
+    }
+    else if (status.not_alive_count_change == 1)
+    {
+        std::cout << "Publisher " << status.last_publication_handle << " lost liveliness" << std::endl;
+    }
+}
+
+void HelloWorldSubscriber::requested_deadline_missed_handler()
+{
+    eprosima::fastdds::dds::RequestedDeadlineMissedStatus status;
+    reader_->get_requested_deadline_missed_status(status);
+    std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;
+}
+
+void HelloWorldSubscriber::requested_incompatible_qos_handler()
+{
+    eprosima::fastdds::dds::RequestedIncompatibleQosStatus status;
+    reader_->get_requested_incompatible_qos_status(status);
+    QosPolicy qos;
+    std::cout << "The Requested Qos is incompatible with the Offered one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
+}
+
+void HelloWorldSubscriber::subscription_matched_handler()
+{
+    eprosima::fastdds::dds::SubscriptionMatchedStatus info;
+    reader_->get_subscription_matched_status(info);
+    if (info.current_count_change == 1)
+    {
+        matched_ = info.total_count;
+        std::cout << "Subscriber matched." << std::endl;
+    }
+    else if (info.current_count_change == -1)
+    {
+        matched_ = info.total_count;
+        std::cout << "Subscriber unmatched." << std::endl;
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    }
+}
+
+void HelloWorldSubscriber::sample_rejected_handler()
+{
+    eprosima::fastdds::dds::SampleRejectedStatus status;
+    reader_->get_sample_rejected_status(status);
+    std::cout << "The sample " << status.last_instance_handle << "is rejected due to " << status.reason_to_string() <<
+        std::endl;
+}
+
+void HelloWorldSubscriber::sample_lost_handler()
+{
+
 }

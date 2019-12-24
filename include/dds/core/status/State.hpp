@@ -389,6 +389,13 @@ public:
         return (*this == all() || *this == base);
     }
 
+    bool is_active(
+            StatusMask status)
+    {
+        bitset<16> r = *this & status;
+        return r == status;
+    }
+
 };
 
 } //namespace status

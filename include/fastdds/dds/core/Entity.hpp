@@ -46,6 +46,10 @@ public:
         status_condition_.set_enabled_statuses(mask);
     }
 
+    /**
+     * @brief enable This operation enables the Entity
+     * @return true
+     */
     virtual fastrtps::types::ReturnCode_t enable()
     {
         enable_ = true;
@@ -57,21 +61,47 @@ public:
         enable_ = false;
     }
 
+    /**
+     * @brief get_statuscondition Retrieves the StatusCondition associated to the Entity
+     * @return Pointer to the StatusCondition
+     */
     StatusCondition* get_statuscondition()
     {
         return &status_condition_;
     }
 
-    const ::dds::core::status::StatusMask& get_status_changes() const
+    /**
+     * @brief get_status_mask Retrieves the set of relevant statuses for the Entity
+     * @return Reference to the StatusMask with the relevant statuses set to 1
+     */
+    const ::dds::core::status::StatusMask& get_status_mask() const
     {
-        return status_condition_.get_statuses();
+        return status_condition_.get_enabled_statuses();
     }
 
+    /**
+     * @brief get_status_changes Retrieves the set of statuses that has been triggered since the last time
+     * the application read it
+     * @return Reference to a StatusMask with the triggered status set to 1
+     */
+    const ::dds::core::status::StatusMask& get_status_changes() const
+    {
+        return status_condition_.get_triggered_status();
+    }
+
+    /**
+     * @brief get_instance_handle Retrieves the instance handler that represents the Entity
+     * @return Reference to the InstanceHandle
+     */
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
     {
         return instance_handle_;
     }
 
+    /**
+     * @brief is_enabled Checks if the Entity is enabled
+     * @return true if enabled, false if not
+     */
     bool is_enabled() const
     {
         if (enable_)
@@ -104,7 +134,10 @@ protected:
 };
 
 
-
+/**
+ * @brief The DomainEntity class Subclass of Entity created in order to differentiate between DomainParticipants
+ * and the rest of Entities
+ */
 class RTPS_DllAPI DomainEntity : public Entity
 {
 public:
