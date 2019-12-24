@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_TWAITSET_HPP_
 #define EPROSIMA_DDS_CORE_COND_TWAITSET_HPP_
@@ -22,12 +22,7 @@
  * @file
  */
 
-/*
- * OMG PSM class declaration
- */
 #include <dds/core/cond/WaitSet.hpp>
-//TODO: Fix when ReportUtils is implemented
-//#include <org/opensplice/core/ReportUtils.hpp>
 
 namespace dds {
 namespace core {
@@ -60,8 +55,8 @@ const typename TWaitSet<DELEGATE>::ConditionSeq TWaitSet<DELEGATE>::wait()
 
 template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
-        ConditionSeq& triggered,
-        const dds::core::Duration& timeout)
+    ConditionSeq & triggered,
+    const dds::core::Duration& timeout)
 {
     this->delegate()->wait(triggered, timeout);
     return triggered;
@@ -69,7 +64,7 @@ typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
 
 template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
-        ConditionSeq& triggered)
+    ConditionSeq & triggered)
 {
     this->wait(triggered, dds::core::Duration::infinite());
     return triggered;
@@ -79,8 +74,8 @@ template<typename DELEGATE>
 void TWaitSet<DELEGATE>::dispatch()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->dispatch(dds::core::Duration::infinite());
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->dispatch(dds::core::Duration::infinite());
 }
 
 template<typename DELEGATE>
@@ -88,8 +83,8 @@ void TWaitSet<DELEGATE>::dispatch(
         const dds::core::Duration& timeout)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->dispatch(timeout);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->dispatch(timeout);
 }
 
 template<typename DELEGATE>
@@ -120,7 +115,8 @@ template<typename DELEGATE>
 bool TWaitSet<DELEGATE>::detach_condition(
         const Condition& cond)
 {
-    if(this->delegate()->detach_condition(cond.delegate().get()) == eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK)
+    if (this->delegate()->detach_condition(cond.delegate().get()) ==
+            eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK)
     {
         return true;
     }
@@ -136,7 +132,7 @@ const typename TWaitSet<DELEGATE>::ConditionSeq TWaitSet<DELEGATE>::conditions()
 
 template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::conditions(
-        ConditionSeq& conds) const
+    ConditionSeq & conds) const
 {
     this->delegate()->get_conditions(conds);
     return conds;

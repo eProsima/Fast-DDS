@@ -34,7 +34,7 @@ StatusCondition::StatusCondition(
 
 StatusCondition::StatusCondition(
         Entity* entity,
-        std::function<void(StatusCondition* cond)> functor)
+        std::function<void()> functor)
     : handler(functor)
     , entity_(entity)
     , status_mask_(::dds::core::status::StatusMask::all())
@@ -46,15 +46,26 @@ ReturnCode_t StatusCondition::set_enabled_statuses(
 {
     status_mask_ = mask;
 
+    if (!entity_->is_enabled())
+    {
+        set_trigger_value(false);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     //Check if the new mask change the trigger_value
     std::bitset<16> out = status_change_flag_ & status_mask_;
     set_trigger_value(out.any());
     return ReturnCode_t::RETCODE_OK;
 }
 
-const ::dds::core::status::StatusMask& StatusCondition::get_statuses() const
+const ::dds::core::status::StatusMask& StatusCondition::get_enabled_statuses() const
 {
     return status_mask_;
+}
+
+const ::dds::core::status::StatusMask& StatusCondition::get_triggered_status() const
+{
+    return status_change_flag_;
 }
 
 Entity* StatusCondition::get_entity()
@@ -66,6 +77,13 @@ void StatusCondition::notify_status_change(
         const ::dds::core::status::StatusMask& mask)
 {
     status_change_flag_ |= mask;
+
+    if (!entity_->is_enabled())
+    {
+        set_trigger_value(false);
+        return;
+    }
+
     std::bitset<16> out = status_change_flag_ & status_mask_;
     set_trigger_value(out.any());
 }
@@ -73,6 +91,12 @@ void StatusCondition::notify_status_change(
 void StatusCondition::set_status_as_read(
         const ::dds::core::status::StatusMask& mask)
 {
+    if (!entity_->is_enabled())
+    {
+        set_trigger_value(false);
+        return;
+    }
+
     status_change_flag_ ^= mask;
     std::bitset<16> out = status_change_flag_ & status_mask_;
     set_trigger_value(out.any());
@@ -84,14 +108,13 @@ void StatusCondition::set_trigger_value(
     trigger_value_ = value;
 }
 
-void StatusCondition::call_handler(
-        StatusCondition* cond)
+void StatusCondition::call_handler()
 {
-    handler(cond);
+    handler();
 }
 
 void StatusCondition::set_handler(
-        std::function<void(StatusCondition*)> functor)
+        std::function<void()> functor)
 {
     handler = functor;
 }
@@ -100,7 +123,8 @@ inline bool StatusCondition::operator ==(
         StatusCondition* obj) const
 {
     return (this->entity_ == obj->get_entity()) &&
-           (this->status_mask_ == obj->get_statuses());
+           (this->status_mask_ == obj->get_enabled_statuses()) &&
+           (this->status_change_flag_ == obj->get_triggered_status());
 }
 
 bool StatusCondition::operator ==(

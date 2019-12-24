@@ -394,7 +394,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
-        if (data_reader_->get_subscriber()->get_status_changes().is_compatible(StatusMask::data_on_readers())
+        if (data_reader_->get_subscriber()->get_status_mask().is_compatible(StatusMask::data_on_readers())
                 && data_reader_->get_subscriber()->is_enabled())
         {
             if (data_reader_->subscriber_->listener_ != nullptr)
@@ -408,7 +408,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
                 StatusMask::data_on_readers());
 
         }
-        else if (data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(StatusMask::
+        else if (data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
                 data_on_readers()) && data_reader_->subscriber_->get_participant().is_enabled())
         {
             if (data_reader_->subscriber_->participant_->get_listener() != nullptr)
@@ -424,7 +424,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 
         }
         else if (data_reader_->user_datareader_->is_enabled() &&
-                data_reader_->user_datareader_->get_status_changes().is_compatible(StatusMask::data_available()))
+                data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::data_available()))
         {
             if (data_reader_->listener_ != nullptr)
             {
@@ -434,7 +434,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
             data_reader_->user_datareader_->get_statuscondition()->notify_status_change(StatusMask::data_available());
 
         }
-        else if (data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(StatusMask::
+        else if (data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
                 data_available()) && data_reader_->subscriber_->get_participant().is_enabled())
         {
             if (data_reader_->subscriber_->participant_->get_listener() != nullptr)
@@ -456,7 +456,7 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
     bool matched = false;
 
     //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
-    if (data_reader_->user_datareader_->get_status_changes().is_compatible(StatusMask::subscription_matched())
+    if (data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::subscription_matched())
             && data_reader_->user_datareader_->is_enabled())
     {
         matched = true;
@@ -468,7 +468,7 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         data_reader_->user_datareader_->get_statuscondition()->notify_status_change(StatusMask::subscription_matched());
     }
     else if (data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(StatusMask::
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
             subscription_matched()))
     {
         matched = true;
@@ -504,7 +504,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         const fastrtps::LivelinessChangedStatus& status)
 {
     if (data_reader_->user_datareader_->is_enabled() &&
-            data_reader_->user_datareader_->get_status_changes().is_compatible(StatusMask::liveliness_changed()))
+            data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::liveliness_changed()))
     {
         if (data_reader_->listener_ != nullptr)
         {
@@ -515,7 +515,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 
     }
     else if (data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(StatusMask::
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
             liveliness_changed()))
     {
         if (data_reader_->subscriber_->participant_->get_listener() != nullptr)
@@ -535,7 +535,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         const RequestedIncompatibleQosStatus& status)
 {
     if (data_reader_->user_datareader_->is_enabled() &&
-            data_reader_->user_datareader_->get_status_changes().is_compatible(StatusMask::requested_incompatible_qos()))
+            data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::requested_incompatible_qos()))
     {
         if (data_reader_->listener_ != nullptr)
         {
@@ -546,7 +546,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
             StatusMask::requested_incompatible_qos());
     }
     else if (data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(StatusMask::
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
             requested_incompatible_qos()))
     {
         if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
@@ -565,7 +565,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         const SampleRejectedStatus& status)
 {
     if (data_reader_->user_datareader_->is_enabled() &&
-            data_reader_->user_datareader_->get_status_changes().is_compatible(StatusMask::sample_rejected()))
+            data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::sample_rejected()))
     {
         if (data_reader_->listener_ != nullptr)
         {
@@ -575,7 +575,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         data_reader_->user_datareader_->get_statuscondition()->notify_status_change(StatusMask::sample_rejected());
     }
     else if (data_reader_->subscriber_->get_participant().is_enabled() &&
-            data_reader_->subscriber_->get_participant().get_status_changes().is_compatible(StatusMask::sample_rejected()))
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::sample_rejected()))
     {
         if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
         {
@@ -683,7 +683,7 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.last_instance_handle = timer_owner_;
 
     if (user_datareader_->is_enabled() &&
-            user_datareader_->get_status_changes().is_compatible(StatusMask::requested_deadline_missed()))
+            user_datareader_->get_status_mask().is_compatible(StatusMask::requested_deadline_missed()))
     {
         if (listener_ != nullptr)
         {
@@ -694,7 +694,7 @@ bool DataReaderImpl::deadline_missed()
     }
 
     else if (subscriber_->get_participant().is_enabled() &&
-            subscriber_->get_participant().get_status_changes().is_compatible(StatusMask::requested_deadline_missed()))
+            subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::requested_deadline_missed()))
     {
         if (subscriber_->participant_->get_listener() != nullptr)
         {

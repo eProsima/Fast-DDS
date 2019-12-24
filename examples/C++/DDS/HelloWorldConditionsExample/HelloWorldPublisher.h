@@ -76,6 +76,14 @@ private:
     std::mutex mtx_;
 
     std::condition_variable cv_;
+
+    void liveliness_lost_handler();
+
+    void offered_deadline_missed_handler();
+
+    void offered_incompatible_qos_handler();
+
+    void publication_matched_handler();
 };
 
 

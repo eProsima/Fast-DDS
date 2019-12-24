@@ -48,7 +48,7 @@ public:
 
     StatusCondition(
             Entity* entity,
-            std::function<void(StatusCondition* cond)> functor);
+            std::function<void()> functor);
 
     /**
      * @brief set_enabled_statuses Change the set of status enabled for an entity.
@@ -60,10 +60,19 @@ public:
             const ::dds::core::status::StatusMask& mask);
 
     /**
-     * @brief get_statuses Retrieves the set of statuses that are taken into account to change the trigger_value
-     * @return true
+     * @brief get_enabled_statuses Retrieves the set of statuses that are taken into account to change the
+     * trigger_value
+     * @return StatusMask with the relevant statuses set to 1
      */
-    const ::dds::core::status::StatusMask& get_statuses() const;
+    const ::dds::core::status::StatusMask& get_enabled_statuses() const;
+
+
+    /**
+     * @brief get_triggered_status Retrieves the list of statuses that are triggered since the last time the
+     * application read it
+     * @return StatusMask with the triggered statuses set to 1
+     */
+    const ::dds::core::status::StatusMask& get_triggered_status() const;
 
     /**
      * @brief get_entity Retrieves the entity asociated with the StatusCondition
@@ -71,15 +80,32 @@ public:
      */
     Entity* get_entity();
 
-    void call_handler(
-            StatusCondition* cond);
+    /**
+     * @brief call_handler Called when any of the relevant statuses is triggered. It call the handler associated
+     * to the StatusCondition to manage the change in the application.
+     * @param cond The triggered StatusCondition
+     */
+    void call_handler();
 
+    /**
+     * @brief set_handler Link a handler to the StatusCondition
+     * @param functor Handler that is going to be applied when the StatusCondition is triggered
+     */
     void set_handler(
-            std::function<void(StatusCondition*)> functor);
+            std::function<void()> functor);
 
+    /**
+     * @brief notify_status_change Notifies to the StatusCondition of a status change within the application
+     * @param mask StatusMask that indicates which status is changed
+     */
     void notify_status_change(
             const ::dds::core::status::StatusMask& mask);
 
+    /**
+     * @brief set_status_as_read Notifies to the StatusCondition that the user already manage the change related
+     * to a concrete status
+     * @param mask StatusMask that indicated which status is managed
+     */
     void set_status_as_read(
             const ::dds::core::status::StatusMask& mask);
 
@@ -89,17 +115,21 @@ public:
     bool operator ==(
             Condition* obj) const override;
 
-    std::function<void(StatusCondition* cond)> handler;
+    //!Function handler
+    std::function<void()> handler;
 
 private:
 
     void set_trigger_value(
             bool value);
 
+    //!Associated Entity
     Entity* entity_;
 
+    //!Set of statuses relevant to the StatusCondition
     ::dds::core::status::StatusMask status_mask_;
 
+    //!Set of statuses triggered
     ::dds::core::status::StatusMask status_change_flag_;
 
 };
