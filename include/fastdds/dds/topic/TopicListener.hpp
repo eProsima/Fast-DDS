@@ -31,12 +31,13 @@ namespace dds {
 class RTPS_DllAPI TopicListener
 {
 public:
+
     TopicListener() = default;
 
     ~TopicListener() = default;
 
     virtual void on_inconsistent_topic(
-            const Topic* topic,
+            Topic* topic,
             const InconsistentTopicStatus& status)
     {
         (void)topic;

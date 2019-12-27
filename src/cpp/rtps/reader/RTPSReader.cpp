@@ -220,6 +220,33 @@ uint64_t RTPSReader::get_unread_count() const
     return total_unread_;
 }
 
+void RTPSReader::subscription_matched_status_read()
+{
+    subscription_matched_status_.total_count_change = 0;
+    subscription_matched_status_.current_count_change = 0;
+}
+
+void RTPSReader::requested_incompatible_qos_status_read()
+{
+    requested_incompatible_qos_status_.total_count_change = 0;
+}
+
+void RTPSReader::liveliness_changed_status_read()
+{
+    liveliness_changed_status_.alive_count_change = 0;
+    liveliness_changed_status_.not_alive_count_change = 0;
+}
+
+void RTPSReader::sample_rejected_status_read()
+{
+    sample_rejected_status_.total_count_change = 0;
+}
+
+void RTPSReader::sample_lost_status_read()
+{
+    sample_lost_status_.total_count_change = 0;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

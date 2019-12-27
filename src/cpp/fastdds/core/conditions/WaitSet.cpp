@@ -33,6 +33,7 @@ ReturnCode_t WaitSet::attach_condition(
         return ReturnCode_t::RETCODE_OK;
     }
     attached_conditions_.push_back(condition);
+    condition->attached(true);
     if (condition->get_trigger_value())
     {
         cv_.notify_one();
@@ -51,6 +52,7 @@ ReturnCode_t WaitSet::detach_condition(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     attached_conditions_.erase(it);
+    condition->attached(false);
     return ReturnCode_t::RETCODE_OK;
 }
 

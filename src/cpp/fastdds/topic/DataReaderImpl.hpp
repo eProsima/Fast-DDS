@@ -160,7 +160,7 @@ public:
 
     const fastrtps::TopicAttributes& get_topic_attributes() const;
 
-    const Topic& get_topic() const;
+    Topic& get_topic() const;
 
     TopicDescription* get_topicdescription() const;
 
@@ -181,13 +181,11 @@ public:
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status) const;
 
-    /* TODO
-       bool get_sample_lost_status(
-            fastrtps::SampleLostStatus& status) const;
-     */
+    ReturnCode_t get_sample_lost_status(
+            SampleLostStatus& status) const;
 
     ReturnCode_t get_sample_rejected_status(
-            fastrtps::SampleRejectedStatus& status) const;
+            SampleRejectedStatus& status) const;
 
     ReturnCode_t get_subscription_matched_status(
             SubscriptionMatchedStatus& status) const;
@@ -222,7 +220,7 @@ private:
 
     fastrtps::TopicAttributes topic_att_;
 
-    Topic topic_;
+    Topic& topic_;
 
     //!Attributes of the Subscriber
     fastrtps::rtps::ReaderAttributes att_;
@@ -247,7 +245,9 @@ public:
         {
         }
 
-        virtual ~InnerDataReaderListener() override {}
+        virtual ~InnerDataReaderListener() override
+        {
+        }
 
         void onReaderMatched(
                 fastrtps::rtps::RTPSReader* reader,
@@ -268,6 +268,10 @@ public:
         void on_sample_rejected(
                 fastrtps::rtps::RTPSReader* reader,
                 const SampleRejectedStatus& status) override;
+
+        void on_sample_lost(
+                fastrtps::rtps::RTPSReader* reader,
+                const SampleLostStatus& status) override;
 
         DataReaderImpl* data_reader_;
     } reader_listener_;

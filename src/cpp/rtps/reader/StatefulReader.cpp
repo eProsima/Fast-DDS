@@ -529,6 +529,7 @@ bool StatefulReader::processHeartbeatMsg(
     if (acceptMsgFrom(writerGUID, &writer) && writer)
     {
         bool assert_liveliness = false;
+        new_lost_sample(firstSN, writer->get_low_mark());
         if (writer->process_heartbeat(
                     hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
@@ -1072,4 +1073,17 @@ bool StatefulReader::send_sync_nts(
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
     return mp_RTPSParticipant->sendSync(message, locator, max_blocking_time_point);
+}
+
+void StatefulReader::new_lost_sample(
+        SequenceNumber_t seq_num,
+        SequenceNumber_t low_mark)
+{
+    if (seq_num > (low_mark + 1))
+    {
+        int num_samples = (seq_num - (low_mark + 1)).to64long();
+        sample_lost_status_.total_count += num_samples;
+        sample_lost_status_.total_count_change += num_samples;
+        getListener()->on_sample_lost(this, sample_lost_status_);
+    }
 }

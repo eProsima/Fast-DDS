@@ -74,14 +74,12 @@ bool HelloWorldSubscriber::init(
         {
             data_available_handler(reader);
         }
+        subscriber_->get_statuscondition()->set_status_as_read(StatusMask::data_on_readers());
     });
 
     // CREATE THE READER
     DataReaderQos rqos;
     rqos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-    rqos.history.depth = 20;
-    rqos.history.kind = KEEP_ALL_HISTORY_QOS;
-    rqos.durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     //Topic topic(participant_, "HelloWorldTopic", "HelloWorld", TopicQos()); //PSM
     TopicDescription topic_desc(participant_, "HelloWorldTopic", "HelloWorld"); //PIM
     reader_ = subscriber_->create_datareader(topic_desc, rqos, nullptr);
@@ -125,6 +123,22 @@ bool HelloWorldSubscriber::init(
 
     });
 
+    topic_ = &reader_->get_topic();
+
+    topic_->get_statuscondition()->set_handler([this]() -> void {
+        StatusMask triggered_status = topic_->get_status_changes();
+        if (triggered_status.is_active(StatusMask::inconsistent_topic()))
+        {
+            eprosima::fastdds::dds::InconsistentTopicStatus status;
+            topic_->get_inconsistent_topic_status(
+                status);
+            if (status.total_count_change == 1)
+            {
+                std::cout << "The discovered topic is inconsistent with topic " << topic_->get_instance_handle() << std::endl;
+            }
+        }
+    });
+
     return true;
 }
 
@@ -135,22 +149,15 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
 
 void HelloWorldSubscriber::run()
 {
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
-    std::cin.ignore();
-}
-
-void HelloWorldSubscriber::run(
-        uint32_t number)
-{
-    std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
-
+    std::cout << "Subscriber running." << std::endl;
     //Creation of waitset and attachment of the conditions
     WaitSet waitset;
     waitset.attach_condition(participant_->get_statuscondition());
     waitset.attach_condition(subscriber_->get_statuscondition());
+    waitset.attach_condition(topic_->get_statuscondition());
     waitset.attach_condition(reader_->get_statuscondition());
     ConditionSeq active_conditions;
-    while (number > samples_)
+    while (true)
     {
         if (waitset.wait(active_conditions, Duration_t(0, 500)) != ReturnCode_t::RETCODE_TIMEOUT)
         {
@@ -163,6 +170,10 @@ void HelloWorldSubscriber::run(
                 else if (subscriber_->get_statuscondition() == cond)
                 {
                     subscriber_->get_statuscondition()->call_handler();
+                }
+                else if (topic_->get_statuscondition() == cond)
+                {
+                    topic_->get_statuscondition()->call_handler();
                 }
             }
         }
@@ -178,9 +189,11 @@ void HelloWorldSubscriber::data_available_handler(
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" <<
+                std::endl;
         }
     }
+    reader->get_statuscondition()->set_status_as_read(StatusMask::data_available());
 }
 
 void HelloWorldSubscriber::liveliness_changed_handler()
@@ -199,6 +212,7 @@ void HelloWorldSubscriber::liveliness_changed_handler()
 
 void HelloWorldSubscriber::requested_deadline_missed_handler()
 {
+    std::cout << "Condition" << std::endl;
     eprosima::fastdds::dds::RequestedDeadlineMissedStatus status;
     reader_->get_requested_deadline_missed_status(status);
     std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;
@@ -239,11 +253,13 @@ void HelloWorldSubscriber::sample_rejected_handler()
 {
     eprosima::fastdds::dds::SampleRejectedStatus status;
     reader_->get_sample_rejected_status(status);
-    std::cout << "The sample " << status.last_instance_handle << "is rejected due to " << status.reason_to_string() <<
+    std::cout << "The sample " << status.last_seq_num << " is " << status.reason_to_string() <<
         std::endl;
 }
 
 void HelloWorldSubscriber::sample_lost_handler()
 {
-
+    eprosima::fastdds::dds::SampleLostStatus status;
+    reader_->get_sample_lost_status(status);
+    std::cout << "There are " << status.total_count << " samples lost" << std::endl;
 }

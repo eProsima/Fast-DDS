@@ -66,7 +66,7 @@ bool HelloWorldPublisher::init(
     pub_att.topic.topicName = "HelloWorldTopic";
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
-    Topic* topic = participant_->create_topic(pub_att.topic.topicName.c_str(),
+    topic_ = participant_->create_topic(pub_att.topic.topicName.c_str(),
                     pub_att.topic.topicDataType.c_str(), TOPIC_QOS_DEFAULT);
 
     DataWriterQos qos;
@@ -78,7 +78,7 @@ bool HelloWorldPublisher::init(
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(*topic, qos, nullptr);
+    writer_ = publisher_->create_datawriter(*topic_, qos, nullptr);
 
     if (writer_ == nullptr)
     {
@@ -105,6 +105,20 @@ bool HelloWorldPublisher::init(
         }
     });
 
+    topic_->get_statuscondition()->set_handler([this]() -> void {
+        StatusMask triggered_status = topic_->get_status_changes();
+        if (triggered_status.is_active(StatusMask::inconsistent_topic()))
+        {
+            eprosima::fastdds::dds::InconsistentTopicStatus status;
+            topic_->get_inconsistent_topic_status(
+                status);
+            if (status.total_count_change == 1)
+            {
+                std::cout << "The discovered topic is inconsistent with topic " << topic_->get_instance_handle() << std::endl;
+            }
+        }
+    });
+
     return true;
 }
 
@@ -116,6 +130,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 void HelloWorldPublisher::check_reader_matched()
 {
     WaitSet waitset;
+    waitset.attach_condition(topic_->get_statuscondition());
     waitset.attach_condition(writer_->get_statuscondition());
     ConditionSeq active_conditions;
     std::unique_lock<std::mutex> lock(mtx_);
@@ -128,6 +143,10 @@ void HelloWorldPublisher::check_reader_matched()
             if (writer_->get_statuscondition() == cond)
             {
                 writer_->get_statuscondition()->call_handler();
+            }
+            else if (topic_->get_statuscondition() == cond)
+            {
+                topic_->get_statuscondition()->call_handler();
             }
         }
     }

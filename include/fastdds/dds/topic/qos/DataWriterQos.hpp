@@ -24,6 +24,7 @@
 #include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 #include <fastdds/dds/topic/qos/WriterQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -145,6 +146,9 @@ public:
 
     RTPS_DllAPI void copy_from_topic_qos(
             const TopicQos& topic_qos);
+
+    RTPS_DllAPI void copy_to_topic_attributes(
+            eprosima::fastrtps::TopicAttributes* topic_att) const;
 
 };
 

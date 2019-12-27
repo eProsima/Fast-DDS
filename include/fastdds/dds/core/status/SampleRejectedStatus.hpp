@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -59,20 +60,24 @@ struct SampleRejectedStatus
     fastrtps::rtps::InstanceHandle_t last_instance_handle;
 
 
+    fastrtps::rtps::SequenceNumber_t last_seq_num;
+
+
     std::string reason_to_string() const
     {
         switch (this->last_reason){
-        case 0:
-        default:
-            return "Not rejected";
-        case 1:
-            return "Rejected by instances limit";
-        case 2:
-            return "Rejected by samples limit";
-        case 3:
-            return "Rejected by samples per instance limit";
+            case 0:
+            default:
+                return "Not rejected";
+            case 1:
+                return "Rejected by instances limit";
+            case 2:
+                return "Rejected by samples limit";
+            case 3:
+                return "Rejected by samples per instance limit";
         }
     }
+
 };
 
 } //namespace dds

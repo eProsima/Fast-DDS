@@ -29,6 +29,7 @@ StatusCondition::StatusCondition(
     : handler(nullptr)
     , entity_(entity)
     , status_mask_(::dds::core::status::StatusMask::all())
+    , status_change_flag_(::dds::core::status::StatusMask::none())
 {
 }
 
@@ -38,6 +39,7 @@ StatusCondition::StatusCondition(
     : handler(functor)
     , entity_(entity)
     , status_mask_(::dds::core::status::StatusMask::all())
+    , status_change_flag_(::dds::core::status::StatusMask::none())
 {
 }
 

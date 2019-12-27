@@ -315,6 +315,22 @@ const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
     return liveliness_announcement_period_;
 }
 
+void RTPSWriter::publication_matched_status_read()
+{
+    publication_matched_status_.total_count_change = 0;
+    publication_matched_status_.current_count_change = 0;
+}
+
+void RTPSWriter::offered_incompatible_qos_status_read()
+{
+    offered_incompatible_qos_status_.total_count_change = 0;
+}
+
+void RTPSWriter::liveliness_lost_status_read()
+{
+    liveliness_lost_status_.total_count_change = 0;
+}
+
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima

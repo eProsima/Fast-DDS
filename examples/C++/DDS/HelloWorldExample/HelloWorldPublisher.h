@@ -73,6 +73,10 @@ public:
         {
         }
 
+        void on_inconsistent_topic(
+                eprosima::fastdds::dds::Topic* topic,
+                const eprosima::fastdds::dds::InconsistentTopicStatus& status) override;
+
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;

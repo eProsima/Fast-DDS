@@ -23,6 +23,7 @@
 #include "HelloWorldPubSubTypes.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
@@ -41,17 +42,13 @@ public:
     //!RUN the subscriber
     void run();
 
-    //!Run the subscriber until number samples have been recevied.
-    void run(
-            uint32_t number);
+    int matched_ = 0;
+
+    uint32_t samples_ = 0;
 
     HelloWorld hello_;
 
     eprosima::fastdds::dds::SampleInfo_t info_;
-
-    int matched_ = 0;
-
-    uint32_t samples_ = 0;
 
     bool enable_ = true;
 
@@ -62,6 +59,8 @@ private:
     eprosima::fastdds::dds::Subscriber* subscriber_;
 
     eprosima::fastdds::dds::DataReader* reader_;
+
+    eprosima::fastdds::dds::Topic* topic_;
 
     eprosima::fastdds::dds::TypeSupport type_;
 

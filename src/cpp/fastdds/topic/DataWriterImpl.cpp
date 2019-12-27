@@ -60,7 +60,7 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , writer_(nullptr)
     , type_(type)
-    , topic_att_(topic.get_topic_attributes())
+    , topic_att_(topic.get_topic_attributes(qos))
     , topic_(topic)
     , w_att_(att)
     , qos_(&qos == &DDS_DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
@@ -588,7 +588,7 @@ const Publisher* DataWriterImpl::get_publisher() const
 }
 
 void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
-        RTPSWriter* /*writer*/,
+        RTPSWriter* writer,
         const PublicationMatchedStatus& info)
 {
     bool matched = false;
@@ -601,9 +601,16 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         if (data_writer_->listener_ != nullptr)
         {
             data_writer_->listener_->on_publication_matched(data_writer_->user_datawriter_, info);
+            if (!data_writer_->user_datawriter_->get_statuscondition()->is_attached())
+            {
+                writer->publication_matched_status_read();
+            }
         }
-        //Conditions aproach
-        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::publication_matched());
+        if (data_writer_->user_datawriter_->get_statuscondition()->is_attached())
+        {
+            data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
+                StatusMask::publication_matched());
+        }
     }
     else if (data_writer_->publisher_->get_participant().is_enabled() &&
             data_writer_->publisher_->get_participant().get_status_mask().is_compatible(StatusMask::
@@ -614,10 +621,16 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         {
             DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
             listener->on_publication_matched(data_writer_->user_datawriter_, info);
+            if (!data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
+            {
+                writer->publication_matched_status_read();
+            }
         }
-        //Conditions aproach
-        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
-            StatusMask::publication_matched());
+        if (data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::publication_matched());
+        }
     }
 
     //Update Matched Subscriptions List
@@ -648,7 +661,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
-        fastrtps::rtps::RTPSWriter* /*writer*/,
+        fastrtps::rtps::RTPSWriter* writer,
         const fastrtps::LivelinessLostStatus& status)
 {
     if (data_writer_->user_datawriter_->is_enabled() &&
@@ -657,9 +670,15 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         if (data_writer_->listener_ != nullptr)
         {
             data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
+            if (!data_writer_->user_datawriter_->get_statuscondition()->is_attached())
+            {
+                writer->liveliness_lost_status_read();
+            }
         }
-        //Conditions
-        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::liveliness_lost());
+        if (data_writer_->user_datawriter_->get_statuscondition()->is_attached())
+        {
+            data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::liveliness_lost());
+        }
     }
     else if (data_writer_->publisher_->get_participant().is_enabled() &&
             data_writer_->publisher_->get_participant().get_status_mask().is_compatible(StatusMask::liveliness_lost()))
@@ -668,15 +687,21 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         {
             DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
             listener->on_liveliness_lost(data_writer_->user_datawriter_, status);
+            if (!data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
+            {
+                writer->liveliness_lost_status_read();
+            }
         }
-        //Conditions aproach
-        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
-            StatusMask::liveliness_lost());
+        if (data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::liveliness_lost());
+        }
     }
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
-        RTPSWriter* /*writer*/,
+        RTPSWriter* writer,
         const OfferedIncompatibleQosStatus& status)
 {
     if (data_writer_->user_datawriter_->is_enabled() &&
@@ -685,10 +710,16 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         if (data_writer_->listener_ != nullptr)
         {
             data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+            if (!data_writer_->user_datawriter_->get_statuscondition()->is_attached())
+            {
+                writer->offered_incompatible_qos_status_read();
+            }
         }
-        //Conditions aproach
-        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
-            StatusMask::offered_incompatible_qos());
+        if (data_writer_->user_datawriter_->get_statuscondition()->is_attached())
+        {
+            data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
+                StatusMask::offered_incompatible_qos());
+        }
     }
     else if (data_writer_->publisher_->get_participant().is_enabled() &&
             data_writer_->publisher_->get_participant().get_status_mask().is_compatible(StatusMask::
@@ -698,10 +729,16 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         {
             DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
             listener->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+            if (!data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
+            {
+                writer->offered_incompatible_qos_status_read();
+            }
         }
-        //Conditions aproach
-        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
-            StatusMask::offered_incompatible_qos());
+        if (data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::offered_incompatible_qos());
+        }
     }
 }
 
@@ -752,9 +789,15 @@ bool DataWriterImpl::deadline_missed()
         if (listener_ != nullptr)
         {
             listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+            if (!user_datawriter_->get_statuscondition()->is_attached())
+            {
+                deadline_missed_status_.total_count_change = 0;
+            }
         }
-        //Conditions aproach
-        user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::offered_deadline_missed());
+        if (user_datawriter_->get_statuscondition()->is_attached())
+        {
+            user_datawriter_->get_statuscondition()->notify_status_change(StatusMask::offered_deadline_missed());
+        }
     }
     else if (publisher_->get_participant().is_enabled() &&
             publisher_->get_participant().get_status_mask().is_compatible(StatusMask::offered_deadline_missed()))
@@ -763,11 +806,17 @@ bool DataWriterImpl::deadline_missed()
         {
             DomainParticipantListener* listener = publisher_->get_participant().get_listener();
             listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+            if (!publisher_->get_participant().get_statuscondition()->is_attached())
+            {
+                deadline_missed_status_.total_count_change = 0;
+            }
         }
-        //Conditions aproach
-        publisher_->get_participant().get_statuscondition()->notify_status_change(StatusMask::offered_deadline_missed());
+        if (publisher_->get_participant().get_statuscondition()->is_attached())
+        {
+            publisher_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::offered_deadline_missed());
+        }
     }
-    deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(
                 timer_owner_,
@@ -794,7 +843,7 @@ ReturnCode_t DataWriterImpl::get_offered_incompatible_qos_status(
         OfferedIncompatibleQosStatus& status)
 {
     status = writer_->offered_incompatible_qos_status_;
-    writer_->offered_incompatible_qos_status_.total_count_change = 0;
+    writer_->offered_incompatible_qos_status_read();
     user_datawriter_->get_statuscondition()->set_status_as_read(StatusMask::offered_incompatible_qos());
     return ReturnCode_t::RETCODE_OK;
 }
@@ -845,10 +894,8 @@ ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-    status.total_count = writer_->liveliness_lost_status_.total_count;
-    status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
-
-    writer_->liveliness_lost_status_.total_count_change = 0u;
+    status = writer_->liveliness_lost_status_;
+    writer_->liveliness_lost_status_read();
     user_datawriter_->get_statuscondition()->set_status_as_read(StatusMask::liveliness_lost());
     return ReturnCode_t::RETCODE_OK;
 }
@@ -887,6 +934,7 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
         PublicationMatchedStatus& status)
 {
     status = writer_->publication_matched_status_;
+    writer_->publication_matched_status_read();
     user_datawriter_->get_statuscondition()->set_status_as_read(StatusMask::publication_matched());
     return ReturnCode_t::RETCODE_OK;
 }

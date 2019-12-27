@@ -117,6 +117,11 @@ bool DataReader::set_topic(
     return impl_->set_topic_attributes(topic_att);
 }
 
+Topic& DataReader::get_topic()
+{
+    return impl_->get_topic();
+}
+
 TopicDescription* DataReader::get_topicdescription() const
 {
     return impl_->get_topicdescription();
@@ -134,7 +139,7 @@ ReturnCode_t DataReader::get_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const TopicAttributes& DataReader::get_topic() const
+const TopicAttributes& DataReader::get_topic_attributes() const
 {
     return impl_->get_topic_attributes();
 }
@@ -208,13 +213,11 @@ ReturnCode_t DataReader::get_requested_incompatible_qos_status(
     return impl_->get_requested_incompatible_qos_status(status);
 }
 
-/* TODO
-   bool DataReader::get_sample_lost_status(
+ReturnCode_t DataReader::get_sample_lost_status(
         SampleLostStatus& status) const
-   {
-    return impl_->get...;
-   }
- */
+{
+    return impl_->get_sample_lost_status(status);
+}
 
 ReturnCode_t DataReader::get_sample_rejected_status(
         SampleRejectedStatus& status) const

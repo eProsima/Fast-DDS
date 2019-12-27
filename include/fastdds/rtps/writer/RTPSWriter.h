@@ -329,6 +329,12 @@ public:
     //! Offered incompatible qos status of this writer
     fastdds::dds::OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
 
+    void publication_matched_status_read();
+
+    void offered_incompatible_qos_status_read();
+
+    void liveliness_lost_status_read();
+
     /**
      * Check if the destinations managed by this sender interface have changed.
      *

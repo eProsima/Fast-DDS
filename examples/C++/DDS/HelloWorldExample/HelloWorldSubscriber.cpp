@@ -45,7 +45,6 @@ bool HelloWorldSubscriber::init(
     participant_att.rtps.builtin.domainId = domain_id;
     participant_att.rtps.setName("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
-    std::cout << "Participant " << participant_->get_instance_handle() << std::endl;
 
     if (participant_ == nullptr)
     {
@@ -58,7 +57,6 @@ bool HelloWorldSubscriber::init(
     //CREATE THE SUBSCRIBER
     eprosima::fastrtps::SubscriberAttributes sub_att;
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
-    std::cout << "Subscriber " << subscriber_->get_instance_handle() << std::endl;
 
     if (subscriber_ == nullptr)
     {
@@ -71,7 +69,6 @@ bool HelloWorldSubscriber::init(
     //Topic topic(participant_, "HelloWorldTopic", "HelloWorld", TopicQos()); //PSM
     TopicDescription topic_desc(participant_, "HelloWorldTopic", "HelloWorld"); //PIM
     reader_ = subscriber_->create_datareader(topic_desc, rqos, &listener_);
-    std::cout << "Reader " << reader_->get_instance_handle() << std::endl;
 
     if (reader_ == nullptr)
     {
@@ -107,6 +104,17 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     }
 }
 
+void HelloWorldSubscriber::SubListener::on_inconsistent_topic(
+        Topic* topic,
+        const InconsistentTopicStatus& status)
+{
+    if (status.total_count_change == 1)
+    {
+        std::cout << "The discovered topic is inconsistent with topic " << topic->get_instance_handle() <<
+            std::endl;
+    }
+}
+
 void HelloWorldSubscriber::SubListener::on_requested_incompatible_qos(
         DataReader*,
         const RequestedIncompatibleQosStatus& status)
@@ -127,6 +135,15 @@ void HelloWorldSubscriber::SubListener::on_sample_rejected(
     std::cout << "Reason " << status.reason_to_string() << std::endl;
 }
 
+void HelloWorldSubscriber::SubListener::on_sample_lost(
+        DataReader*,
+        const SampleLostStatus& status)
+{
+    std::cout << "Sample Lost Status" << std::endl;
+    std::cout << "Total Count " << status.total_count << std::endl;
+    std::cout << "Total Count Change " << status.total_count_change << std::endl;
+}
+
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
@@ -138,7 +155,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
             samples_++;
             // Print your structure data here.
             std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
-            //std::this_thread::sleep_for(std::chrono::milliseconds(10000)); //-->Lost samples
+
         }
     }
     else if (code == ReturnCode_t::RETCODE_NOT_ENABLED && enable_)

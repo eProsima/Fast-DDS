@@ -23,6 +23,7 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -257,6 +258,18 @@ public:
     fastdds::dds::RequestedIncompatibleQosStatus requested_incompatible_qos_status_;
 
     fastdds::dds::SampleRejectedStatus sample_rejected_status_;
+
+    fastdds::dds::SampleLostStatus sample_lost_status_;
+
+    void subscription_matched_status_read();
+
+    void requested_incompatible_qos_status_read();
+
+    void sample_rejected_status_read();
+
+    void sample_lost_status_read();
+
+    void liveliness_changed_status_read();
 
 protected:
 

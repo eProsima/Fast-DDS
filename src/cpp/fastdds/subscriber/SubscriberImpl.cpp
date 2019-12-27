@@ -238,7 +238,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    auto it = readers_.find(reader->get_topic().getTopicName().to_string());
+    auto it = readers_.find(reader->get_topic_attributes().getTopicName().to_string());
     if (it != readers_.end())
     {
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);

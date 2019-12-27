@@ -14,7 +14,7 @@
 
 /**
  * @file BaseStatus.hpp
-*/
+ */
 
 #ifndef _FASTDDS_BASE_STATUS_HPP_
 #define _FASTDDS_BASE_STATUS_HPP_
@@ -28,6 +28,8 @@ namespace dds {
 //! @brief A struct storing the base status
 struct BaseStatus
 {
+public:
+
     int32_t total_count = 0;
 
     int32_t total_count_change = 0;
