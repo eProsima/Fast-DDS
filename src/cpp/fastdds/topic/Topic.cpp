@@ -78,6 +78,15 @@ fastrtps::TopicAttributes Topic::get_topic_attributes(
     return att;
 }
 
+fastrtps::TopicAttributes Topic::get_topic_attributes(
+        const DataWriterQos& qos) const
+{
+    fastrtps::TopicAttributes att;
+    att = topic_att_;
+    qos.copy_to_topic_attributes(&att);
+    return att;
+}
+
 ReturnCode_t Topic::get_qos(
         TopicQos& qos) const
 {
@@ -116,9 +125,11 @@ ReturnCode_t Topic::set_listener(
 }
 
 ReturnCode_t Topic::get_inconsistent_topic_status(
-        InconsistentTopicStatus& status) const
+        InconsistentTopicStatus& status)
 {
     status = status_;
+    status_.total_count_change = 0;
+    status_condition_.set_status_as_read(::dds::core::status::StatusMask::inconsistent_topic());
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -147,6 +158,34 @@ ReturnCode_t Topic::set_instance_handle(
 fastrtps::rtps::GUID_t Topic::get_guid() const
 {
     return fastrtps::rtps::iHandle2GUID(get_instance_handle());
+}
+
+void Topic::new_inconsistent_topic(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    status_.total_count++;
+    status_.total_count_change++;
+    entity_with_inconsistent_topic_.push_back(handle);
+
+    if (listener_ != nullptr)
+    {
+        listener_->on_inconsistent_topic(this, status_);
+        if (!status_condition_.is_attached())
+        {
+            status_.total_count_change = 0;
+        }
+    }
+}
+
+bool Topic::is_entity_already_checked(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    auto it = std::find(entity_with_inconsistent_topic_.begin(), entity_with_inconsistent_topic_.end(), handle);
+    if (it != entity_with_inconsistent_topic_.end())
+    {
+        return true;
+    }
+    return false;
 }
 
 } // namespace dds

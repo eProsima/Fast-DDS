@@ -62,7 +62,7 @@ protected:
             const GUID_t& guid,
             const WriterAttributes& att,
             WriterHistory* hist,
-            WriterListener* listen=nullptr);
+            WriterListener* listen = nullptr);
     virtual ~RTPSWriter();
 
 public:
@@ -84,7 +84,6 @@ public:
                         return (uint32_t)T::getCdrSerializedSize(data);
                     }, changeKind, handle);
     }
-
 
     RTPS_DllAPI CacheChange_t* new_change(
             const std::function<uint32_t()>& dataCdrSerializedSize,
@@ -121,14 +120,20 @@ public:
      * @return True if acknowledged by all.
      */
     RTPS_DllAPI virtual bool is_acked_by_all(
-            const CacheChange_t* /*a_change*/) const { return false; }
+            const CacheChange_t* /*a_change*/) const
+    {
+        return false;
+    }
 
     /**
      * Waits until all changes were acknowledged or max_wait.
      * @return True if all were acknowledged.
      */
     RTPS_DllAPI virtual bool wait_for_all_acked(
-            const Duration_t& /*max_wait*/) { return true; }
+            const Duration_t& /*max_wait*/)
+    {
+        return true;
+    }
 
     /**
      * Update the Attributes of the Writer.
@@ -172,7 +177,10 @@ public:
      * Get listener
      * @return Listener
      */
-    RTPS_DllAPI inline WriterListener* getListener() { return mp_listener; }
+    RTPS_DllAPI inline WriterListener* getListener()
+    {
+        return mp_listener;
+    }
 
     RTPS_DllAPI inline bool set_listener(
             WriterListener* listener)
@@ -185,7 +193,10 @@ public:
      * Get the publication mode
      * @return publication mode
      */
-    RTPS_DllAPI inline bool isAsync() const { return is_async_; }
+    RTPS_DllAPI inline bool isAsync() const
+    {
+        return is_async_;
+    }
 
     /**
      * Remove an specified max number of changes
@@ -216,7 +227,10 @@ public:
      * Get RTPS participant
      * @return RTPS participant
      */
-    inline RTPSParticipantImpl* getRTPSParticipant() const { return mp_RTPSParticipant; }
+    inline RTPSParticipantImpl* getRTPSParticipant() const
+    {
+        return mp_RTPSParticipant;
+    }
 
     /**
      * Enable or disable sending data to readers separately
@@ -224,13 +238,19 @@ public:
      * @param enable If separate sending should be enabled
      */
     void set_separate_sending (
-            bool enable) { m_separateSendingEnabled = enable; }
+            bool enable)
+    {
+        m_separateSendingEnabled = enable;
+    }
 
     /**
      * Inform if data is sent to readers separatedly
      * @return true if separate sending is enabled
      */
-    bool get_separate_sending () const { return m_separateSendingEnabled; }
+    bool get_separate_sending () const
+    {
+        return m_separateSendingEnabled;
+    }
 
     /**
      * Process an incoming ACKNACK submessage.
@@ -308,6 +328,12 @@ public:
 
     //! Offered incompatible qos status of this writer
     fastdds::dds::OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
+
+    void publication_matched_status_read();
+
+    void offered_incompatible_qos_status_read();
+
+    void liveliness_lost_status_read();
 
     /**
      * Check if the destinations managed by this sender interface have changed.
@@ -394,7 +420,7 @@ protected:
      * @return True if removed correctly.
      */
     virtual bool change_removed_by_history(
-            CacheChange_t* a_change)=0;
+            CacheChange_t* a_change) = 0;
 
 #if HAVE_SECURITY
     SerializedPayload_t encrypt_payload_;
@@ -412,7 +438,7 @@ protected:
 
 private:
 
-    RTPSWriter& operator=(
+    RTPSWriter& operator =(
             const RTPSWriter&) = delete;
 
     RTPSWriter* next_[2];

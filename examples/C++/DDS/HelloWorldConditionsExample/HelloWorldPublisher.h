@@ -57,6 +57,8 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
+    eprosima::fastdds::dds::Topic* topic_;
+
     bool stop_;
 
     int matched_ = 0;
@@ -85,7 +87,5 @@ private:
 
     void publication_matched_handler();
 };
-
-
 
 #endif /* HELLOWORLDPUBLISHER_H_ */

@@ -182,7 +182,9 @@ public:
     bool set_topic(
             const fastrtps::TopicAttributes& att);
 
-    const fastrtps::TopicAttributes& get_topic() const;
+    Topic& get_topic();
+
+    const fastrtps::TopicAttributes& get_topic_attributes() const;
 
     TopicDescription* get_topicdescription() const;
 
@@ -204,10 +206,8 @@ public:
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status) const;
 
-    /* TODO
-       bool get_sample_lost_status(
-            fastrtps::SampleLostStatus& status) const;
-     */
+    ReturnCode_t get_sample_lost_status(
+            SampleLostStatus& status) const;
 
     ReturnCode_t get_sample_rejected_status(
             SampleRejectedStatus& status) const;

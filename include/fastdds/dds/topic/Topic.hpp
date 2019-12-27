@@ -69,6 +69,9 @@ public:
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes(
             const DataReaderQos& qos) const;
 
+    RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes(
+            const DataWriterQos& qos) const;
+
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;
 
@@ -84,7 +87,7 @@ public:
             const ::dds::core::status::StatusMask& mask);
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_inconsistent_topic_status(
-            InconsistentTopicStatus& status) const;
+            InconsistentTopicStatus& status);
 
     RTPS_DllAPI DomainParticipant* get_participant() const;
 
@@ -96,6 +99,12 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     RTPS_DllAPI fastrtps::rtps::GUID_t get_guid() const;
+
+    void new_inconsistent_topic(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    bool is_entity_already_checked(
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
 private:
 
@@ -111,6 +120,7 @@ private:
 
     std::vector<DataReader*> readers_;
     std::vector<DataWriter*> writers_;
+    std::vector<fastrtps::rtps::InstanceHandle_t> entity_with_inconsistent_topic_;
 };
 
 }

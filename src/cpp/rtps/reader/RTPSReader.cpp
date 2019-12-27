@@ -15,7 +15,7 @@
 /*
  * RTPSReader.cpp
  *
-*/
+ */
 
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -56,12 +56,12 @@ RTPSReader::RTPSReader(
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
 
-    logInfo(RTPS_READER,"RTPSReader created correctly");
+    logInfo(RTPS_READER, "RTPSReader created correctly");
 }
 
 RTPSReader::~RTPSReader()
 {
-    logInfo(RTPS_READER,"Removing reader "<<this->getGuid().entityId;);
+    logInfo(RTPS_READER, "Removing reader " << this->getGuid().entityId; );
     delete history_state_;
     mp_history->mp_reader = nullptr;
     mp_history->mp_mutex = nullptr;
@@ -74,7 +74,8 @@ bool RTPSReader::reserveCache(
     return mp_history->reserve_Cache(change, dataCdrSerializedSize);
 }
 
-void RTPSReader::releaseCache(CacheChange_t* change)
+void RTPSReader::releaseCache(
+        CacheChange_t* change)
 {
     return mp_history->release_Cache(change);
 }
@@ -84,7 +85,8 @@ ReaderListener* RTPSReader::getListener() const
     return mp_listener;
 }
 
-bool RTPSReader::setListener(ReaderListener *target)
+bool RTPSReader::setListener(
+        ReaderListener* target)
 {
     mp_listener = target;
     return true;
@@ -157,7 +159,8 @@ SequenceNumber_t RTPSReader::update_last_notified(
     return ret_val;
 }
 
-SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid)
+SequenceNumber_t RTPSReader::get_last_notified(
+        const GUID_t& guid)
 {
     SequenceNumber_t ret_val;
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
@@ -185,19 +188,19 @@ void RTPSReader::set_last_notified(
 }
 
 bool RTPSReader::wait_for_unread_cache(
-        const eprosima::fastrtps::Duration_t &timeout)
+        const eprosima::fastrtps::Duration_t& timeout)
 {
     auto time_out = std::chrono::steady_clock::now() + std::chrono::seconds(timeout.seconds) +
-        std::chrono::nanoseconds(timeout.nanosec);
+            std::chrono::nanoseconds(timeout.nanosec);
 
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex, std::defer_lock);
 
-    if(lock.try_lock_until(time_out))
+    if (lock.try_lock_until(time_out))
     {
-        if(new_notification_cv_.wait_until(lock, time_out, [&]()
-            {
-                return total_unread_ > 0;
-            }))
+        if (new_notification_cv_.wait_until(lock, time_out, [&]()
+                    {
+                        return total_unread_ > 0;
+                    }))
         {
             return true;
         }
@@ -210,6 +213,33 @@ uint64_t RTPSReader::get_unread_count() const
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     return total_unread_;
+}
+
+void RTPSReader::subscription_matched_status_read()
+{
+    subscription_matched_status_.total_count_change = 0;
+    subscription_matched_status_.current_count_change = 0;
+}
+
+void RTPSReader::requested_incompatible_qos_status_read()
+{
+    requested_incompatible_qos_status_.total_count_change = 0;
+}
+
+void RTPSReader::liveliness_changed_status_read()
+{
+    liveliness_changed_status_.alive_count_change = 0;
+    liveliness_changed_status_.not_alive_count_change = 0;
+}
+
+void RTPSReader::sample_rejected_status_read()
+{
+    sample_rejected_status_.total_count_change = 0;
+}
+
+void RTPSReader::sample_lost_status_read()
+{
+    sample_lost_status_.total_count_change = 0;
 }
 
 } /* namespace rtps */

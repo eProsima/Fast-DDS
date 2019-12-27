@@ -115,11 +115,15 @@ bool SubscriberHistory::received_change_keep_all_no_key(
         return add_received_change(a_change);
     }
 
-    mp_reader->sample_rejected_status_.total_count++;
-    mp_reader->sample_rejected_status_.total_count_change++;
-    mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
-    mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
-    mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+    if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+    {
+        mp_reader->sample_rejected_status_.total_count++;
+        mp_reader->sample_rejected_status_.total_count_change++;
+        mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
+        mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+        mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+        mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+    }
 
     return false;
 }
@@ -164,11 +168,15 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
 
-        mp_reader->sample_rejected_status_.total_count++;
-        mp_reader->sample_rejected_status_.total_count_change++;
-        mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
-        mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
-        mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        }
         logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
@@ -211,11 +219,15 @@ bool SubscriberHistory::add_received_change(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
-        mp_reader->sample_rejected_status_.total_count++;
-        mp_reader->sample_rejected_status_.total_count_change++;
-        mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
-        mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
-        mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        }
         logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
@@ -244,11 +256,15 @@ bool SubscriberHistory::add_received_change_with_key(
     if (m_isHistoryFull)
     {
         // Discarting the sample.
-        mp_reader->sample_rejected_status_.total_count++;
-        mp_reader->sample_rejected_status_.total_count_change++;
-        mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
-        mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
-        mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        }
         logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
@@ -365,7 +381,6 @@ bool SubscriberHistory::readNextData(
     return false;
 }
 
-
 bool SubscriberHistory::takeNextData(
         void* data,
         SampleInfo_t* info,
@@ -417,7 +432,7 @@ bool SubscriberHistory::find_key(
     }
     else
     {
-        for (vit = keyed_changes_.begin(); vit!= keyed_changes_.end(); ++vit)
+        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
         {
             if (vit->second.cache_changes.size() == 0)
             {
@@ -426,17 +441,20 @@ bool SubscriberHistory::find_key(
                 return true;
             }
         }
-        mp_reader->sample_rejected_status_.total_count++;
-        mp_reader->sample_rejected_status_.total_count_change++;
-        mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_INSTANCES_LIMIT;
-        mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
-        mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_INSTANCES_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        }
 
         logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
     }
     return false;
 }
-
 
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change)

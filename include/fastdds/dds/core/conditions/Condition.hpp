@@ -30,6 +30,11 @@ class RTPS_DllAPI Condition
 {
 public:
 
+    Condition()
+        : is_attached_(false)
+    {
+    }
+
     bool get_trigger_value()
     {
         return trigger_value_;
@@ -39,6 +44,17 @@ public:
             Condition* cond)
     {
         (void) cond;
+    }
+
+    void attached(
+            bool value)
+    {
+        is_attached_ = value;
+    }
+
+    bool is_attached()
+    {
+        return is_attached_;
     }
 
     /**
@@ -57,6 +73,8 @@ public:
 protected:
 
     bool trigger_value_;
+
+    bool is_attached_;
 
 };
 

@@ -71,6 +71,10 @@ public:
         {
         }
 
+        void on_inconsistent_topic(
+                eprosima::fastdds::dds::Topic* topic,
+                const eprosima::fastdds::dds::InconsistentTopicStatus& status) override;
+
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
 
@@ -85,6 +89,10 @@ public:
         void on_sample_rejected(
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SampleRejectedStatus& status) override;
+
+        void on_sample_lost(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SampleLostStatus& status) override;
 
         HelloWorld hello_;
 

@@ -106,7 +106,7 @@ int main(
             HelloWorldSubscriber mysub;
             if (mysub.init(domain_id))
             {
-                mysub.run(static_cast<uint32_t>(count));
+                mysub.run();
             }
             break;
         }
