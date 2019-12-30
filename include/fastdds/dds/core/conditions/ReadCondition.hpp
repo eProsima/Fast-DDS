@@ -39,32 +39,34 @@ class RTPS_DllAPI ReadCondition : public Condition
 {
 public:
 
-        ReadCondition(
-                DataReader* reader,
-                const ::dds::sub::status::SampleState& sample_mask = ::dds::sub::status::SampleState::any(),
-                const ::dds::sub::status::ViewState& view_mask = ::dds::sub::status::ViewState::any(),
-                const ::dds::sub::status::InstanceState& instance_mask = ::dds::sub::status::InstanceState::any());
+    ReadCondition(
+            DataReader* reader,
+            const ::dds::sub::status::SampleState& sample_mask = ::dds::sub::status::SampleState::any(),
+            const ::dds::sub::status::ViewState& view_mask = ::dds::sub::status::ViewState::any(),
+            const ::dds::sub::status::InstanceState& instance_mask = ::dds::sub::status::InstanceState::any());
 
-        DataReader* get_datareader();
+    virtual ~ReadCondition();
 
-        ::dds::sub::status::SampleState get_sample_state_mask();
+    DataReader* get_datareader();
 
-        ::dds::sub::status::ViewState get_view_state_mask();
+    ::dds::sub::status::SampleState get_sample_state_mask();
 
-        ::dds::sub::status::InstanceState get_instance_state_mask();
+    ::dds::sub::status::ViewState get_view_state_mask();
 
-        inline bool operator ==(
-                ReadCondition* obj) const;
+    ::dds::sub::status::InstanceState get_instance_state_mask();
+
+    inline bool operator ==(
+            ReadCondition* obj) const;
 
 private:
 
-        DataReader* reader_;
+    DataReader* reader_;
 
-        ::dds::sub::status::SampleState sample_state_mask_;
+    ::dds::sub::status::SampleState sample_state_mask_;
 
-        ::dds::sub::status::ViewState view_state_mask_;
+    ::dds::sub::status::ViewState view_state_mask_;
 
-        ::dds::sub::status::InstanceState instance_state_mask_;
+    ::dds::sub::status::InstanceState instance_state_mask_;
 
 };
 

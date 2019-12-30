@@ -192,6 +192,25 @@ const DataReaderListener* DataReader::get_listener() const
     return impl_->get_listener();
 }
 
+ReadCondition* DataReader::create_readcondition(
+        ::dds::sub::status::SampleState sample_states,
+        ::dds::sub::status::ViewState view_states,
+        ::dds::sub::status::InstanceState instance_states)
+{
+    return impl_->create_readcondition(sample_states, view_states, instance_states);
+}
+
+ReturnCode_t DataReader::delete_readcondition(
+        ReadCondition* condition)
+{
+    return impl_->delete_readcondition(condition);
+}
+
+ReturnCode_t DataReader::delete_contained_entities()
+{
+    return impl_->delete_contained_entities();
+}
+
 /* TODO
    bool DataReader::get_key_value(
         void* data,
