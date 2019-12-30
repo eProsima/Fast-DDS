@@ -17,44 +17,44 @@
  *
  */
 
-#include <fastrtps/subscriber/SubscriberHistory.h>
-#include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
+#include <fastdds/dds/subscriber/SubscriberHistory.hpp>
+#include <fastdds/topic/DataReaderImpl.hpp>
 
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <rtps/reader/WriterProxy.h>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
-using namespace rtps;
-
-using eprosima::fastdds::dds::TopicDataType;
+using namespace fastrtps::rtps;
 
 SubscriberHistory::SubscriberHistory(
-        const TopicAttributes& topic_att,
+        const fastrtps::TopicAttributes& topic_att,
         TopicDataType* type,
-        const ReaderQos& qos,
+        const DataReaderQos& qos,
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.allocated_samples :
+            qos.history.kind == KEEP_ALL_HISTORY_QOS ?
+            qos.resource_limits.allocated_samples :
             topic_att.getTopicKind() == NO_KEY ?
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-            * topic_att.resourceLimitsQos.max_instances),
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.max_samples :
+            std::min(qos.resource_limits.allocated_samples, qos.history.depth) :
+            std::min(qos.resource_limits.allocated_samples, qos.history.depth
+            * qos.resource_limits.max_instances),
+            qos.history.kind == KEEP_ALL_HISTORY_QOS ?
+            qos.resource_limits.max_samples :
             topic_att.getTopicKind() == NO_KEY ?
-            topic_att.historyQos.depth :
-            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
-    , history_qos_(topic_att.historyQos)
-    , resource_limited_qos_(topic_att.resourceLimitsQos)
+            qos.history.depth :
+            qos.history.depth * qos.resource_limits.max_instances))
+    , history_qos_(qos.history)
+    , resource_limited_qos_(qos.resource_limits)
     , topic_att_(topic_att)
     , type_(type)
     , qos_(qos)
@@ -70,13 +70,13 @@ SubscriberHistory::SubscriberHistory(
 
     if (topic_att.getTopicKind() == NO_KEY)
     {
-        receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+        receive_fn_ = qos.history.kind == KEEP_ALL_HISTORY_QOS ?
                 std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
                 std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
-        receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+        receive_fn_ = qos.history.kind == KEEP_ALL_HISTORY_QOS ?
                 std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
                 std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
     }
@@ -100,7 +100,7 @@ bool SubscriberHistory::received_change(
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<fastrtps::RecursiveTimedMutex> guard(*mp_mutex);
     return receive_fn_(a_change, unknown_missing_changes_up_to);
 }
 
@@ -112,6 +112,16 @@ bool SubscriberHistory::received_change_keep_all_no_key(
     if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples) )
     {
         return add_received_change(a_change);
+    }
+
+    if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+    {
+        mp_reader->sample_rejected_status_.total_count++;
+        mp_reader->sample_rejected_status_.total_count_change++;
+        mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
+        mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+        mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+        mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
     }
 
     return false;
@@ -157,6 +167,15 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
 
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        }
         logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
@@ -199,6 +218,15 @@ bool SubscriberHistory::add_received_change(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        }
         logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
@@ -227,6 +255,15 @@ bool SubscriberHistory::add_received_change_with_key(
     if (m_isHistoryFull)
     {
         // Discarting the sample.
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_SAMPLES_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
+        }
         logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
@@ -255,7 +292,7 @@ bool SubscriberHistory::add_received_change_with_key(
 }
 
 bool SubscriberHistory::find_key_for_change(
-        rtps::CacheChange_t* a_change,
+        CacheChange_t* a_change,
         t_m_Inst_Caches::iterator& map_it)
 {
     if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
@@ -283,7 +320,7 @@ bool SubscriberHistory::find_key_for_change(
 
 void SubscriberHistory::deserialize_change(
         CacheChange_t* change,
-        uint32_t ownership_strength,
+        uint32_t /*ownership_strength*/,
         void* data,
         SampleInfo_t* info)
 {
@@ -294,11 +331,37 @@ void SubscriberHistory::deserialize_change(
 
     if (info != nullptr)
     {
-        info->sampleKind = change->kind;
-        info->sample_identity.writer_guid(change->writerGUID);
-        info->sample_identity.sequence_number(change->sequenceNumber);
-        info->sourceTimestamp = change->sourceTimestamp;
-        info->ownershipStrength = ownership_strength;
+        info->sample_state = ::dds::sub::status::SampleState::not_read();
+        info->view_state = ::dds::sub::status::ViewState::new_view();
+        if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::alive();
+            auto it = not_new_samples_.find(change->writerGUID);
+            if (it != not_new_samples_.end() && it->second == true)
+            {
+                info->view_state = ::dds::sub::status::ViewState::not_new_view();
+            }
+        }
+        else if (change->kind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
+        }
+        else if (change->kind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
+        }
+        else if (change->kind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
+        }
+        info->publication_handle = change->writerGUID;
+        info->source_timestamp = change->sourceTimestamp;
+        info->sample_rank = change->sequenceNumber.to64long();
+        info->generation_rank = 0;
+        info->absolute_generation_rank = 0;
+        info->disposed_generation_count = 0;
+        info->no_writers_generation_count = 0;
+        info->valid_data = true;
         if (topic_att_.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown &&
                 change->kind == ALIVE)
@@ -309,9 +372,14 @@ void SubscriberHistory::deserialize_change(
 #endif
             type_->getKey(data, &change->instanceHandle, is_key_protected);
         }
-        info->iHandle = change->instanceHandle;
-        info->related_sample_identity = change->write_params.sample_identity();
+        info->instance_handle = change->instanceHandle;
     }
+}
+
+void SubscriberHistory::notify_not_new(
+        SampleInfo_t* info)
+{
+    not_new_samples_[fastrtps::rtps::iHandle2GUID(info->publication_handle)] = true;
 }
 
 bool SubscriberHistory::readNextData(
@@ -325,7 +393,7 @@ bool SubscriberHistory::readNextData(
         return false;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
 
     if (lock.try_lock_until(max_blocking_time))
     {
@@ -334,7 +402,7 @@ bool SubscriberHistory::readNextData(
         if (mp_reader->nextUnreadCache(&change, &wp))
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
-            uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
+            uint32_t ownership = wp && qos_.ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             return true;
@@ -354,7 +422,7 @@ bool SubscriberHistory::takeNextData(
         return false;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
 
     if (lock.try_lock_until(max_blocking_time))
     {
@@ -364,7 +432,7 @@ bool SubscriberHistory::takeNextData(
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
-            uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
+            uint32_t ownership = wp && qos_.ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             remove_change_sub(change);
@@ -389,7 +457,7 @@ bool SubscriberHistory::find_key(
 
     if (keyed_changes_.size() < static_cast<size_t>(resource_limited_qos_.max_instances))
     {
-        *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+        *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, fastrtps::KeyedChanges())).first;
         return true;
     }
     else
@@ -399,9 +467,20 @@ bool SubscriberHistory::find_key(
             if (vit->second.cache_changes.size() == 0)
             {
                 keyed_changes_.erase(vit);
-                *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+                *vit_out =
+                        keyed_changes_.insert(std::make_pair(a_change->instanceHandle,
+                                fastrtps::KeyedChanges())).first;
                 return true;
             }
+        }
+        if (a_change->sequenceNumber != mp_reader->sample_rejected_status_.last_seq_num)
+        {
+            mp_reader->sample_rejected_status_.total_count++;
+            mp_reader->sample_rejected_status_.total_count_change++;
+            mp_reader->sample_rejected_status_.last_reason = fastdds::dds::REJECTED_BY_INSTANCES_LIMIT;
+            mp_reader->sample_rejected_status_.last_instance_handle = a_change->instanceHandle;
+            mp_reader->sample_rejected_status_.last_seq_num = a_change->sequenceNumber;
+            mp_reader->getListener()->on_sample_rejected(mp_reader, mp_reader->sample_rejected_status_);
         }
 
         logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
@@ -418,7 +497,7 @@ bool SubscriberHistory::remove_change_sub(
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<fastrtps::RecursiveTimedMutex> guard(*mp_mutex);
     if (topic_att_.getTopicKind() == NO_KEY)
     {
         if (remove_change(change))
@@ -462,7 +541,7 @@ bool SubscriberHistory::set_next_deadline(
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<fastrtps::RecursiveTimedMutex> guard(*mp_mutex);
 
     if (topic_att_.getTopicKind() == NO_KEY)
     {
@@ -492,7 +571,7 @@ bool SubscriberHistory::get_next_deadline(
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::lock_guard<fastrtps::RecursiveTimedMutex> guard(*mp_mutex);
 
     if (topic_att_.getTopicKind() == NO_KEY)
     {
@@ -504,11 +583,11 @@ bool SubscriberHistory::get_next_deadline(
         auto min = std::min_element(keyed_changes_.begin(),
                         keyed_changes_.end(),
                         [](
-                            const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
-                            const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
-                {
-                    return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-                });
+                            const std::pair<InstanceHandle_t, fastrtps::KeyedChanges>& lhs,
+                            const std::pair<InstanceHandle_t, fastrtps::KeyedChanges>& rhs)
+                    {
+                        return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                    });
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
         return true;
@@ -517,5 +596,6 @@ bool SubscriberHistory::get_next_deadline(
     return false;
 }
 
-} // namespace fastrtps
+} // namespace dds
+} // namespace fastdds
 } // namsepace eprosima

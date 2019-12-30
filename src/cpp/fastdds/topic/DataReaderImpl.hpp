@@ -31,15 +31,17 @@
 #include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/subscriber/SubscriberHistory.h>
+#include <fastdds/dds/subscriber/SubscriberHistory.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/core/conditions/ReadCondition.hpp>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/State.hpp>
+#include <dds/sub/status/DataState.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -99,26 +101,100 @@ public:
     ///@{
 
     /* TODO
-       bool read(
+       ReturnCode_t read(
             std::vector<void*>& data_values,
             std::vector<SampleInfo_t>& sample_infos,
-            uint32_t max_samples);
-     */
+            uint32_t max_samples,
+            ::dds::sub::status::SampleState sample_states,
+            ::dds::sub::status::ViewState view_states,
+            ::dds::sub::status::InstanceState instance_states);*/
+
+    /* TODO
+       ReturnCode_t read_w_condition(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        ReadCondition condition);*/
 
     ReturnCode_t read_next_sample(
             void* data,
             SampleInfo_t* info);
 
     /* TODO
-       bool take(
-            std::vector<void*>& data_values,
-            std::vector<SampleInfo_t>& sample_infos,
-            uint32_t max_samples);
-     */
+       ReturnCode_t read_instance(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        fastrtps::rtps::InstanceHandle_t handle,
+        ::dds::sub::status::SampleState sample_states,
+        ::dds::sub::status::ViewState view_states,
+        ::dds::sub::status::InstanceState instance_states);*/
+
+    /* TODO
+       ReturnCode_t read_next_instance(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        fastrtps::rtps::InstanceHandle_t previous_handle,
+        ::dds::sub::status::SampleState sample_states,
+        ::dds::sub::status::ViewState view_states,
+        ::dds::sub::status::InstanceState instance_states);*/
+
+    /* TODO
+       ReturnCode_t read_next_instance_w_condition(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        fastrtps::rtps::InstanceHandle_t previous_handle,
+        ReadCondition condition);*/
+
+    /* TODO
+       ReturnCode_t take(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        ::dds::sub::status::SampleState sample_states,
+        ::dds::sub::status::ViewState view_states,
+        ::dds::sub::status::InstanceState instance_states);*/
+
+    /* TODO
+       ReturnCode_t take_w_condition(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        ReadCondition condition);*/
 
     ReturnCode_t take_next_sample(
             void* data,
             SampleInfo_t* info);
+
+    /* TODO
+       ReturnCode_t take_instance(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        fastrtps::rtps::InstanceHandle_t handle,
+        ::dds::sub::status::SampleState sample_states,
+        ::dds::sub::status::ViewState view_states,
+        ::dds::sub::status::InstanceState instance_states);*/
+
+    /* TODO
+       ReturnCode_t take_next_instance(
+        std::vector<void*>& data_values,
+        std::vector<SampleInfo_t>& sample_infos,
+        uint32_t max_samples,
+        fastrtps::rtps::InstanceHandle_t previous_handle,
+        ::dds::sub::status::SampleState sample_states,
+        ::dds::sub::status::ViewState view_states,
+        ::dds::sub::status::InstanceState instance_states);*/
+
+    /* TODO
+       ReturnCode_t take_next_instance_w_condition(
+            std::vector<void*>& data_values,
+            std::vector<SampleInfo_t>& sample_infos,
+            uint32_t max_samples,
+            fastrtps::rtps::InstanceHandle_t previous_handle,
+            ReadCondition condition);*/
 
     ///@}
 
@@ -168,6 +244,16 @@ public:
             DataReaderListener* listener);
 
     const DataReaderListener* get_listener() const;
+
+    ReadCondition* create_readcondition(
+            ::dds::sub::status::SampleState sample_states,
+            ::dds::sub::status::ViewState view_states,
+            ::dds::sub::status::InstanceState instance_states);
+
+    ReturnCode_t delete_readcondition(
+            ReadCondition* condition);
+
+    ReturnCode_t delete_contained_entities();
 
     /* TODO
        bool get_key_value(
@@ -227,10 +313,8 @@ private:
 
     DataReaderQos qos_;
 
-    ReaderQos rqos_;
-
     //!History
-    fastrtps::SubscriberHistory history_;
+    SubscriberHistory history_;
 
     //!Listener
     DataReaderListener* listener_;
@@ -297,6 +381,10 @@ public:
     DataReader* user_datareader_;
 
     std::vector<fastrtps::rtps::InstanceHandle_t> matched_publications_;
+
+    std::vector<ReadCondition*> read_conditions_;
+
+    std::mutex mtx_read_cond_;
 
     /**
      * @brief A method called when a new cache change is added

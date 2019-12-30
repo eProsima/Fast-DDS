@@ -30,6 +30,7 @@
 
 #include <dds/core/status/Status.hpp>
 #include <dds/core/status/State.hpp>
+#include <dds/sub/status/DataState.hpp>
 
 #include <vector>
 #include <cstdint>
@@ -69,6 +70,7 @@ class Topic;
 class TopicDescription;
 struct LivelinessChangedStatus;
 class SampleInfo_t;
+class ReadCondition;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -193,6 +195,16 @@ public:
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     const DataReaderListener* get_listener() const;
+
+    ReadCondition* create_readcondition(
+            ::dds::sub::status::SampleState sample_states,
+            ::dds::sub::status::ViewState view_states,
+            ::dds::sub::status::InstanceState instance_states);
+
+    ReturnCode_t delete_readcondition(
+            ReadCondition* condition);
+
+    ReturnCode_t delete_contained_entities();
 
     /* TODO
        bool get_key_value(

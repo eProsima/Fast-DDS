@@ -30,7 +30,12 @@ ReadCondition::ReadCondition(
     , sample_state_mask_(sample_mask)
     , view_state_mask_(view_mask)
     , instance_state_mask_(instance_mask)
-{}
+{
+}
+
+ReadCondition::~ReadCondition()
+{
+}
 
 DataReader* ReadCondition::get_datareader()
 {

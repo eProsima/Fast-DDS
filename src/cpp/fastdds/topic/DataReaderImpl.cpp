@@ -60,11 +60,10 @@ DataReaderImpl::DataReaderImpl(
     , topic_(const_cast<Topic&>(topic))
     , att_(att)
     , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
-    , rqos_(qos_.change_to_reader_qos())
 #pragma warning (disable : 4355 )
     , history_(topic_att_,
             type_.get(),
-            rqos_,
+            qos_,
             type_.get()->m_typeSize + 3,    /* Possible alignment */
             memory_policy)
     , listener_(listener)
@@ -151,36 +150,11 @@ ReturnCode_t DataReaderImpl::read_next_sample(
     }
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
-    DeprecatedSampleInfo dep_info;
-    if (history_.readNextData(data, &dep_info, max_blocking_time))
+    if (history_.readNextData(data, info, max_blocking_time))
     {
-        // Transform SampleInfo
-        info->valid_data = dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE;
-        info->view_state = ::dds::sub::status::ViewState::new_view();
-        if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::alive();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
-        }
+        info->view_state = ::dds::sub::status::ViewState::not_new_view();
+        history_.notify_not_new(info);
         info->sample_state = ::dds::sub::status::SampleState::read();
-        info->sample_rank = static_cast<int32_t>(dep_info.sample_identity.sequence_number().to64long()); // ??
-        info->generation_rank = 0;
-        info->source_timestamp = dep_info.sourceTimestamp.to_duration_t();
-        info->publication_handle = dep_info.sample_identity.writer_guid();
-        info->absolute_generation_rank = 0;
-        info->disposed_generation_count = 0;
-        info->no_writers_generation_count = 0;
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
@@ -196,36 +170,11 @@ ReturnCode_t DataReaderImpl::take_next_sample(
     }
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
-    DeprecatedSampleInfo dep_info;
-    if (history_.takeNextData(data, &dep_info, max_blocking_time))
+    if (history_.takeNextData(data, info, max_blocking_time))
     {
-        // Transform SampleInfo
-        info->valid_data = dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE;
-        info->view_state = ::dds::sub::status::ViewState::new_view();
-        if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::alive();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
-        }
+        info->view_state = ::dds::sub::status::ViewState::not_new_view();
+        history_.notify_not_new(info);
         info->sample_state = ::dds::sub::status::SampleState::read();
-        info->sample_rank = static_cast<int32_t>(dep_info.sample_identity.sequence_number().to64long()); // ??
-        info->generation_rank = 0;
-        info->source_timestamp = dep_info.sourceTimestamp.to_duration_t();
-        info->publication_handle = dep_info.sample_identity.writer_guid();
-        info->absolute_generation_rank = 0;
-        info->disposed_generation_count = 0;
-        info->no_writers_generation_count = 0;
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
@@ -917,6 +866,44 @@ ReturnCode_t DataReaderImpl::set_listener(
 const DataReaderListener* DataReaderImpl::get_listener() const
 {
     return listener_;
+}
+
+ReadCondition* DataReaderImpl::create_readcondition(
+        ::dds::sub::status::SampleState sample_states,
+        ::dds::sub::status::ViewState view_states,
+        ::dds::sub::status::InstanceState instance_states)
+{
+    ReadCondition* cond = new ReadCondition(user_datareader_, sample_states, view_states, instance_states);
+    if (cond != nullptr)
+    {
+        std::lock_guard<std::mutex> lock(mtx_read_cond_);
+        read_conditions_.push_back(cond);
+        return cond;
+    }
+    return nullptr;
+}
+
+ReturnCode_t DataReaderImpl::delete_readcondition(
+        ReadCondition* condition)
+{
+    std::lock_guard<std::mutex> lock(mtx_read_cond_);
+    auto it = std::find(read_conditions_.begin(), read_conditions_.end(), condition);
+    if (it == read_conditions_.end())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    delete *it;
+    read_conditions_.erase(it);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataReaderImpl::delete_contained_entities()
+{
+    for (auto cond: read_conditions_)
+    {
+        delete_readcondition(cond);
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 /* TODO
