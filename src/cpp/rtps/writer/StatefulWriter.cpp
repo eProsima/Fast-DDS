@@ -621,25 +621,27 @@ void StatefulWriter::send_any_unsent_changes()
                 }
 
                 seq = min_history_seq;
-
-                for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
+                if (seq != c_SequenceNumber_Unknown)
                 {
-                    // Add all sequence numbers until the change's sequence number
-                    while (seq < (*cit)->sequenceNumber)
+                    for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
+                    {
+                        // Add all sequence numbers until the change's sequence number
+                        while (seq < (*cit)->sequenceNumber)
+                        {
+                            gap_builder.add(seq);
+                            seq++;
+                        }
+
+                        // Skip change's sequence number
+                        seq++;
+                    }
+
+                    // Add all sequence numbers above last change
+                    while (seq < last_sequence)
                     {
                         gap_builder.add(seq);
                         seq++;
                     }
-
-                    // Skip change's sequence number
-                    seq++;
-                }
-
-                // Add all sequence numbers above last change
-                while (seq < last_sequence)
-                {
-                    gap_builder.add(seq);
-                    seq++;
                 }
             }
             catch (const RTPSMessageGroup::timeout&)
