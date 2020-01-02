@@ -327,7 +327,7 @@ private:
      */
     bool ack_timer_expired();
 
-    void send_changes_no_push_mode();
+    void send_heartbeat_to_all_readers();
 
     void send_changes_separatedly(
             SequenceNumber_t max_sequence,

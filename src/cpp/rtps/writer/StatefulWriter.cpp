@@ -525,9 +525,9 @@ void StatefulWriter::send_any_unsent_changes()
     bool activateHeartbeatPeriod = false;
     SequenceNumber_t max_sequence = mp_history->next_sequence_number();
 
-    if (!m_pushMode)
+    if (!m_pushMode || mp_history->getHistorySize() == 0)
     {
-        send_changes_no_push_mode();
+        send_heartbeat_to_all_readers();
     }
     else if (m_separateSendingEnabled)
     {
@@ -564,16 +564,37 @@ void StatefulWriter::send_any_unsent_changes()
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
-void StatefulWriter::send_changes_no_push_mode()
+void StatefulWriter::send_heartbeat_to_all_readers()
 {
-    try
+    if (m_separateSendingEnabled)
     {
-        RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
-        send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
+        for (ReaderProxy* reader : matched_readers_)
+        {
+            if (reader->is_local_reader())
+            {
+                intraprocess_heartbeat(reader);
+            }
+            else
+            {
+                send_heartbeat_to_nts(*reader);
+            }
+        }
     }
-    catch (const RTPSMessageGroup::timeout&)
+    else
     {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        for (ReaderProxy* reader : matched_readers_)
+        {
+            if (reader->is_local_reader())
+            {
+                intraprocess_heartbeat(reader);
+            }
+        }
+
+        if (there_are_remote_readers_)
+        {
+            RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
+            send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
+        }
     }
 }
 
@@ -1694,7 +1715,7 @@ bool StatefulWriter::send_periodic_heartbeat(
     {
         for (ReaderProxy* it : matched_readers_)
         {
-            if (it->has_unacknowledged())
+            if (it->has_unacknowledged() && !it->is_local_reader())
             {
                 send_heartbeat_to_nts(*it, liveliness);
                 unacked_changes = true;
