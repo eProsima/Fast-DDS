@@ -103,7 +103,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     StatefulReader readerMock; // avoid annoying uninteresting call warnings
 
     // Testing the Timed events are properly configured
-    WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+    WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), VariableLengthDataLimits(), ResourceLimitedContainerConfig());
     EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
     EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
@@ -270,7 +270,7 @@ TEST(WriterProxyTests, LostChangesUpdate)
 {
     WriterProxyData wattr(4u, 1u);
     StatefulReader readerMock;
-    WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+    WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), VariableLengthDataLimits(), ResourceLimitedContainerConfig());
     EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
     EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
@@ -379,6 +379,7 @@ TEST(WriterProxyTests, ReceivedChangeSet)
     StatefulReader readerMock;
     WriterProxy wproxy(&readerMock,
                        RemoteLocatorsAllocationAttributes(),
+                       VariableLengthDataLimits(),
                        ResourceLimitedContainerConfig());
 
     /// Tests that initial acknack timed event is updated with new interval
@@ -550,7 +551,7 @@ TEST(WriterProxyTests, IrrelevantChangeSet)
 {
     WriterProxyData wattr(4u, 1u);
     StatefulReader readerMock;
-    WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+    WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), VariableLengthDataLimits(), ResourceLimitedContainerConfig());
     EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
     EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);

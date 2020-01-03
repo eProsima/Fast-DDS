@@ -40,8 +40,7 @@ namespace rtps {
 
 WriterProxyData::WriterProxyData(
         const size_t max_unicast_locators,
-        const size_t max_multicast_locators,
-        const VariableLengthDataLimits& data_limits)
+        const size_t max_multicast_locators)
 #if HAVE_SECURITY
     : security_attributes_(0)
     , plugin_security_attributes_(0)
@@ -55,6 +54,14 @@ WriterProxyData::WriterProxyData(
     , m_topicDiscoveryKind(NO_CHECK)
     , m_type_id(nullptr)
     , m_type(nullptr)
+{
+}
+
+WriterProxyData::WriterProxyData(
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators,
+        const VariableLengthDataLimits& data_limits)
+    : WriterProxyData(max_unicast_locators, max_multicast_locators)
 {
     m_qos.m_userData.max_size(data_limits.max_user_data);
 }
@@ -832,7 +839,10 @@ void WriterProxyData::clear()
     m_typeName = "";
     m_topicName = "";
     m_userDefinedId = 0;
+    //clear user data but keep max size on qos
+    size_t max_user_data = m_qos.m_userData.max_size();
     m_qos = WriterQos();
+    m_qos.m_userData.max_size(max_user_data);
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;

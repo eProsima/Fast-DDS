@@ -100,12 +100,12 @@ PDP::PDP (
 
     for (size_t i = 0; i < allocation.total_readers().initial; ++i)
     {
-        reader_proxies_pool_.push_back(new ReaderProxyData(max_unicast_locators, max_multicast_locators));
+        reader_proxies_pool_.push_back(new ReaderProxyData(max_unicast_locators, max_multicast_locators, allocation.data_limits));
     }
 
     for (size_t i = 0; i < allocation.total_writers().initial; ++i)
     {
-        writer_proxies_pool_.push_back(new WriterProxyData(max_unicast_locators, max_multicast_locators));
+        writer_proxies_pool_.push_back(new WriterProxyData(max_unicast_locators, max_multicast_locators, allocation.data_limits));
     }
 }
 

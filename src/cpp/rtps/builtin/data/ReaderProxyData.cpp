@@ -37,8 +37,7 @@ namespace rtps {
 
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
-        const size_t max_multicast_locators,
-        const VariableLengthDataLimits& data_limits)
+        const size_t max_multicast_locators)
     : m_expectsInlineQos(false)
 #if HAVE_SECURITY
     , security_attributes_(0UL)
@@ -52,9 +51,15 @@ ReaderProxyData::ReaderProxyData (
     , m_type_id(nullptr)
     , m_type(nullptr)
 {
-    {
-        m_qos.m_userData.max_size(data_limits.max_user_data);
-    }
+}
+
+ReaderProxyData::ReaderProxyData (
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators,
+        const VariableLengthDataLimits& data_limits)
+    : ReaderProxyData(max_unicast_locators, max_multicast_locators)
+{
+    m_qos.m_userData.max_size(data_limits.max_user_data);
 }
 
 ReaderProxyData::~ReaderProxyData()
@@ -829,7 +834,10 @@ void ReaderProxyData::clear()
     m_userDefinedId = 0;
     m_isAlive = true;
     m_topicKind = NO_KEY;
+    //clear user data but keep max size on qos
+    size_t max_user_data = m_qos.m_userData.max_size();
     m_qos = ReaderQos();
+    m_qos.m_userData.max_size(max_user_data);
     m_topicDiscoveryKind = NO_CHECK;
     if (m_type_id)
     {
