@@ -23,8 +23,10 @@
 #include <iostream>
 
 #if defined(_WIN32)
-#include <thr/xthreads.h>
-extern int clock_gettime(int, struct timespec* tv);
+#include <thread>
+extern int clock_gettime(
+        int,
+        struct timespec* tv);
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK
 #include <mutex>
 #else
@@ -44,8 +46,10 @@ public:
         _Mtx_init(&mutex_, _Mtx_timed);
     }
 
-    TimedMutex(const TimedMutex&) = delete;
-    TimedMutex& operator=(const TimedMutex&) = delete;
+    TimedMutex(
+            const TimedMutex&) = delete;
+    TimedMutex& operator =(
+            const TimedMutex&) = delete;
 
     ~TimedMutex()
     {
@@ -63,14 +67,15 @@ public:
     }
 
     template <class Rep, class Period>
-    bool try_lock_for(const std::chrono::duration<Rep, Period>& rel_time)
+    bool try_lock_for(
+            const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(chrono::steady_clock::now() + rel_time);
     }
 
     template <class Clock, class Duration>
     bool try_lock_until(
-        const std::chrono::time_point<Clock, Duration>& abs_time)
+            const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
 
@@ -110,8 +115,10 @@ public:
         _Mtx_init(&mutex_, _Mtx_timed | _Mtx_recursive);
     }
 
-    RecursiveTimedMutex(const TimedMutex&) = delete;
-    RecursiveTimedMutex& operator=(const TimedMutex&) = delete;
+    RecursiveTimedMutex(
+            const TimedMutex&) = delete;
+    RecursiveTimedMutex& operator =(
+            const TimedMutex&) = delete;
 
     ~RecursiveTimedMutex()
     {
@@ -129,14 +136,15 @@ public:
     }
 
     template <class Rep, class Period>
-    bool try_lock_for(const std::chrono::duration<Rep, Period>& rel_time)
+    bool try_lock_for(
+            const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(chrono::steady_clock::now() + rel_time);
     }
 
     template <class Clock, class Duration>
     bool try_lock_until(
-        const std::chrono::time_point<Clock, Duration>& abs_time)
+            const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
         if (0 < nsecs.count())
@@ -148,7 +156,7 @@ public:
             nsecs -= secs;
             max_wait.tv_sec += secs.count();
             max_wait.tv_nsec = (long)nsecs.count();
-            return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)& max_wait));
+            return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)&max_wait));
         }
         else
         {
@@ -178,8 +186,10 @@ public:
         pthread_mutex_init(&mutex_, nullptr);
     }
 
-    TimedMutex(const TimedMutex&) = delete;
-    TimedMutex& operator=(const TimedMutex&) = delete;
+    TimedMutex(
+            const TimedMutex&) = delete;
+    TimedMutex& operator =(
+            const TimedMutex&) = delete;
 
     ~TimedMutex()
     {
@@ -197,14 +207,15 @@ public:
     }
 
     template <class Rep, class Period>
-    bool try_lock_for(const std::chrono::duration<Rep, Period>& rel_time)
+    bool try_lock_for(
+            const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(std::chrono::steady_clock::now() + rel_time);
     }
 
     template <class Clock, class Duration>
     bool try_lock_until(
-        const std::chrono::time_point<Clock, Duration>& abs_time)
+            const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
         struct timespec max_wait = { 0, 0 };
@@ -238,8 +249,10 @@ public:
         pthread_mutex_init(&mutex_, &mutex_attr_);
     }
 
-    RecursiveTimedMutex(const RecursiveTimedMutex&) = delete;
-    RecursiveTimedMutex& operator=(const RecursiveTimedMutex&) = delete;
+    RecursiveTimedMutex(
+            const RecursiveTimedMutex&) = delete;
+    RecursiveTimedMutex& operator =(
+            const RecursiveTimedMutex&) = delete;
 
     ~RecursiveTimedMutex()
     {
@@ -258,14 +271,15 @@ public:
     }
 
     template <class Rep, class Period>
-    bool try_lock_for(const std::chrono::duration<Rep, Period>& rel_time)
+    bool try_lock_for(
+            const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(std::chrono::steady_clock::now() + rel_time);
     }
 
     template <class Clock, class Duration>
     bool try_lock_until(
-        const std::chrono::time_point<Clock, Duration>& abs_time)
+            const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
         struct timespec max_wait = { 0, 0 };
