@@ -83,7 +83,7 @@ StatefulReader::StatefulReader(
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
-        matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_));
+        matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, part_att.allocation.data_limits, proxy_changes_config_));
     }
 }
 
@@ -126,7 +126,7 @@ bool StatefulReader::matched_writer_add(
         if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
         {
             const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
-            wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
+            wp = new WriterProxy(this, part_att.allocation.locators, part_att.allocation.data_limits, proxy_changes_config_);
         }
         else
         {
