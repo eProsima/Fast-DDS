@@ -22,6 +22,7 @@
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/RemoteLocators.hpp>
 #include <fastrtps/qos/WriterQos.h>
+#include "fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp"
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
@@ -42,6 +43,13 @@ class WriterProxyData
                 size_t max_multicast_locators) 
             : remote_locators_(max_unicast_locators, max_multicast_locators)
         { }
+
+        WriterProxyData(
+                size_t max_unicast_locators,
+                size_t max_multicast_locators,
+                const VariableLengthDataLimits& data_limits)
+            : remote_locators_(max_unicast_locators, max_multicast_locators)
+        { m_qos.m_userData.max_size(data_limits.max_user_data); }
 
         const GUID_t& guid() const { return m_guid; }
 
