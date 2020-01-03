@@ -72,7 +72,7 @@ public:
     using iterator = typename collection_type::iterator;
     using const_iterator = typename collection_type::const_iterator;
     using reverse_iterator = typename collection_type::reverse_iterator;
-    using const_reverse_iterator = typename collection_type::reverse_iterator;
+    using const_reverse_iterator = typename collection_type::const_reverse_iterator;
 
     /**
      * Construct a ResourceLimitedVector.
