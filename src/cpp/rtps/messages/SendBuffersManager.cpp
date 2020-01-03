@@ -44,7 +44,8 @@ void SendBuffersManager::init(
         // We align the payload size to the size of a pointer, so all buffers will
         // be aligned as if directly allocated.
         constexpr size_t align_size = sizeof(octet*) - 1;
-        size_t payload_size = participant->getMaxMessageSize();
+        uint32_t payload_size = participant->getMaxMessageSize();
+        assert(payload_size > 0u);
         payload_size = (payload_size + align_size) & ~align_size;
         size_t advance = payload_size;
 #if HAVE_SECURITY
