@@ -134,6 +134,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     mp_userParticipant->mp_impl = this;
     mp_event_thr.init_thread();
 
+    if (!networkFactoryHasRegisteredTransports())
+    {
+        return;
+    }
+
     // Throughput controller, if the descriptor has valid values
     if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
     {
