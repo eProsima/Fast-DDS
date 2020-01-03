@@ -136,8 +136,15 @@ RTPSMessageGroup::RTPSMessageGroup(
 
 RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
 {
-    send();
-    participant_->return_send_buffer(std::move(send_buffer_));
+    try
+    {
+        send();
+    }
+    catch (...)
+    {
+        participant_->return_send_buffer(std::move(send_buffer_));
+        throw;
+    }
 }
 
 void RTPSMessageGroup::reset_to_header()
