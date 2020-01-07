@@ -120,6 +120,7 @@ extern const char* PREALLOCATED_NUMBER;
 extern const char* DYNAMIC_LC;
 extern const char* MAX_PROPERTIES;
 extern const char* MAX_USER_DATA;
+extern const char* MAX_PARTITIONS;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;

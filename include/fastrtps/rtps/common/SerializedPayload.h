@@ -78,6 +78,13 @@ namespace eprosima{
                     this->empty();
                 }
 
+                bool operator== (const SerializedPayload_t& other) const
+                {
+                    return ((encapsulation == other.encapsulation) &&
+                            (length == other.length) &&
+                            (memcmp(data, other.data, length)));
+                }
+
                 /*!
                  * Copy another structure (including allocating new space for the data.)
                  * @param[in] serData Pointer to the structure to copy
