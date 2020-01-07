@@ -82,13 +82,12 @@ DataReader* Subscriber::create_datareader(
         const ::dds::core::status::StatusMask& mask)
 {
     Topic* topic = get_participant().find_topic(topic_desc.get_name(),
-                    Duration_t());
-    if (topic == nullptr)
+                    Duration_t(reader_qos.reliability.max_blocking_time));
+    if (topic != nullptr)
     {
-        topic = get_participant().create_topic(topic_desc.get_name(),
-                        topic_desc.get_type_name(), TOPIC_QOS_DEFAULT);
+        return impl_->create_datareader(*topic, reader_qos, listener, mask);
     }
-    return impl_->create_datareader(*topic, reader_qos, listener, mask);
+    return nullptr;
 }
 
 DataReader* Subscriber::create_datareader(
@@ -149,12 +148,10 @@ ReturnCode_t Subscriber::notify_datareaders() const
     return impl_->notify_datareaders();
 }
 
-/* TODO
-   bool Subscriber::delete_contained_entities()
-   {
+ReturnCode_t Subscriber::delete_contained_entities()
+{
     return impl_->delete_contained_entities();
-   }
- */
+}
 
 ReturnCode_t Subscriber::set_default_datareader_qos(
         const DataReaderQos& qos)

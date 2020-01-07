@@ -866,6 +866,13 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     }
 
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
+    if (topic == nullptr &&
+            !(fastrtps::rtps::InstanceHandle_t(participant->getGuid()) == info.info.RTPSParticipantKey()))
+    {
+        TopicQos qos = TOPIC_QOS_DEFAULT;
+        qos.topic_kind = info.info.topicKind();
+        topic = participant_->create_topic(info.info.topicName().c_str(), info.info.typeName().c_str(), qos);
+    }
     if (topic != nullptr && strcmp(topic->get_type_name(), info.info.typeName().c_str()) != 0
             && !topic->is_entity_already_checked(info.info.key()))
     {
@@ -1566,9 +1573,8 @@ Topic* DomainParticipantImpl::find_topic(
         if (it != topics_.end())
         {
             topic = std::get<0>(it->second);
-
         }
-        return topic == nullptr;
+        return topic != nullptr;
 
     });
     return topic;

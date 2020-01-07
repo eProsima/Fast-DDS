@@ -275,6 +275,29 @@ bool SubscriberHistory::add_received_change_with_key(
             m_isHistoryFull = true;
         }
 
+        auto it = most_recent_sample_.find(a_change->instanceHandle);
+        if (it != most_recent_sample_.end())
+        {
+            if (it->second.instance_state == ::dds::sub::status::InstanceState::not_alive_disposed() &&
+                    a_change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+            {
+                it->second.disposed_generation_count++;
+            }
+            else if (it->second.instance_state == ::dds::sub::status::InstanceState::not_alive_no_writers() &&
+                    a_change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+            {
+                it->second.no_writers_generation_count++;
+            }
+            it->second.instance_state = a_change->kind;
+
+        }
+        else
+        {
+            SampleInfo_t sample;
+            sample.instance_state = a_change->kind;
+            most_recent_sample_[a_change->instanceHandle] = sample;
+        }
+
         //ADD TO KEY VECTOR
 
         // As the instance should be ordered following the presentation QoS, and
@@ -333,14 +356,28 @@ void SubscriberHistory::deserialize_change(
     {
         info->sample_state = ::dds::sub::status::SampleState::not_read();
         info->view_state = ::dds::sub::status::ViewState::new_view();
+        info->publication_handle = change->writerGUID;
+        info->source_timestamp = change->sourceTimestamp;
+        info->sample_rank = change->sequenceNumber.to64long();
+        info->valid_data = false;
+        auto instance_it = instance_info_.find(change->instanceHandle);
         if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
         {
-            info->instance_state = ::dds::sub::status::InstanceState::alive();
-            auto it = not_new_samples_.find(change->writerGUID);
-            if (it != not_new_samples_.end() && it->second == true)
+            if (instance_it != instance_info_.end())
             {
-                info->view_state = ::dds::sub::status::ViewState::not_new_view();
+                info->view_state = instance_it->second.view_state;
+                if (instance_it->second.instance_state == ::dds::sub::status::InstanceState::not_alive_disposed())
+                {
+                    instance_it->second.disposed_generation_count++;
+                }
+                else if (instance_it->second.instance_state ==
+                        ::dds::sub::status::InstanceState::not_alive_no_writers())
+                {
+                    instance_it->second.no_writers_generation_count++;
+                }
             }
+            info->instance_state = ::dds::sub::status::InstanceState::alive();
+            info->valid_data = true;
         }
         else if (change->kind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
         {
@@ -354,14 +391,21 @@ void SubscriberHistory::deserialize_change(
         {
             info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
         }
-        info->publication_handle = change->writerGUID;
-        info->source_timestamp = change->sourceTimestamp;
-        info->sample_rank = change->sequenceNumber.to64long();
+        instance_it->second.instance_state = info->instance_state;
         info->generation_rank = 0;
-        info->absolute_generation_rank = 0;
-        info->disposed_generation_count = 0;
-        info->no_writers_generation_count = 0;
-        info->valid_data = true;
+        auto MRS = most_recent_sample_.find(change->instanceHandle);
+        if (instance_it != instance_info_.end())
+        {
+            info->disposed_generation_count = instance_it->second.disposed_generation_count;
+            info->no_writers_generation_count = instance_it->second.no_writers_generation_count;
+        }
+        if (MRS != most_recent_sample_.end())
+        {
+            info->absolute_generation_rank =
+                    (MRS->second.disposed_generation_count + MRS->second.no_writers_generation_count) -
+                    (info->disposed_generation_count + info->no_writers_generation_count);
+        }
+
         if (topic_att_.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown &&
                 change->kind == ALIVE)
@@ -379,7 +423,17 @@ void SubscriberHistory::deserialize_change(
 void SubscriberHistory::notify_not_new(
         SampleInfo_t* info)
 {
-    not_new_samples_[fastrtps::rtps::iHandle2GUID(info->publication_handle)] = true;
+    auto it = instance_info_.find(info->instance_handle);
+    if (it != instance_info_.end())
+    {
+        it->second.view_state = ::dds::sub::status::ViewState::not_new_view();
+    }
+    else
+    {
+        SampleInfo_t s_info;
+        s_info.view_state = ::dds::sub::status::ViewState::not_new_view();
+        instance_info_[info->instance_handle] = s_info;
+    }
 }
 
 bool SubscriberHistory::readNextData(

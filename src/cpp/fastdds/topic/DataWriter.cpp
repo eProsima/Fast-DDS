@@ -80,7 +80,7 @@ ReturnCode_t DataWriter::dispose(
     return impl_->dispose(data, handle);
 }
 
-bool DataWriter::dispose(
+ReturnCode_t DataWriter::dispose(
         void* data)
 {
     return impl_->dispose(data);
