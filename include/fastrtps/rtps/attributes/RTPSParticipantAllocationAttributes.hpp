@@ -81,6 +81,8 @@ struct VariableLengthDataLimits
     size_t max_properties = 0;
     //! Defines the maximum size (in octets) of user data in the local or remote participant
     size_t max_user_data = 0;
+    //! Defines the maximum size (in octets) of partitions data
+    size_t max_partitions = 0;
 };
 
 /**

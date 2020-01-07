@@ -40,6 +40,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
                 <xs:element name="send_buffers" type="sendBuffersAllocationConfigType" minOccurs="0"/>
                 <xs:element name="max_propertiess" type="uint32Type" minOccurs="0"/>
                 <xs:element name="max_user_data" type="uint32Type" minOccurs="0"/>
+                <xs:element name="max_partitions" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
     */
@@ -107,6 +108,15 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
                 return XMLP_ret::XML_ERROR;
             }
             allocation.data_limits.max_user_data = tmp;
+        }
+        else if (strcmp(name, MAX_PARTITIONS) == 0)
+        {
+            // max number of user data in incomming message - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.data_limits.max_partitions = tmp;
         }
         else
         {

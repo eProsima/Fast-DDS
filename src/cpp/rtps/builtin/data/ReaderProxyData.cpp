@@ -60,6 +60,7 @@ ReaderProxyData::ReaderProxyData (
     : ReaderProxyData(max_unicast_locators, max_multicast_locators)
 {
     m_qos.m_userData.max_size(data_limits.max_user_data);
+    m_qos.m_partition.max_size(data_limits.max_partitions);
 }
 
 ReaderProxyData::~ReaderProxyData()
@@ -836,8 +837,10 @@ void ReaderProxyData::clear()
     m_topicKind = NO_KEY;
     //clear user data but keep max size on qos
     size_t max_user_data = m_qos.m_userData.max_size();
+    size_t max_partitions = m_qos.m_partition.max_size();
     m_qos = ReaderQos();
     m_qos.m_userData.max_size(max_user_data);
+    m_qos.m_partition.max_size(max_partitions);
     m_topicDiscoveryKind = NO_CHECK;
     if (m_type_id)
     {
