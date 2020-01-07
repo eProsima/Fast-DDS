@@ -385,7 +385,8 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
             }
             if (data_reader_->user_datareader_->get_statuscondition()->is_attached())
             {
-                data_reader_->user_datareader_->get_statuscondition()->notify_status_change(StatusMask::data_available());
+                data_reader_->user_datareader_->get_statuscondition()->notify_status_change(
+                    StatusMask::data_available());
             }
 
         }
@@ -901,7 +902,10 @@ ReturnCode_t DataReaderImpl::delete_contained_entities()
 {
     for (auto cond: read_conditions_)
     {
-        delete_readcondition(cond);
+        if (delete_readcondition(cond) != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
     }
     return ReturnCode_t::RETCODE_OK;
 }

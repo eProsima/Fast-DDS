@@ -207,9 +207,7 @@ public:
      */
     ReturnCode_t notify_datareaders() const;
 
-    /* TODO
-       bool delete_contained_entities();
-     */
+    ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataReader QoS policies which will be used for newly created

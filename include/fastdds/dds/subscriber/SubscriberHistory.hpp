@@ -143,7 +143,9 @@ private:
     //!DataReaderQos
     DataReaderQos qos_;
 
-    std::map<fastrtps::rtps::GUID_t, bool> not_new_samples_;
+    std::map<fastrtps::rtps::InstanceHandle_t, SampleInfo_t> instance_info_;
+
+    std::map<fastrtps::rtps::InstanceHandle_t, SampleInfo_t> most_recent_sample_;
 
     //!Type object to deserialize Key
     void* get_key_object_;
