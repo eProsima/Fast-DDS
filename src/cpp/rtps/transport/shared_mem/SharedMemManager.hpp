@@ -230,20 +230,36 @@ private:
          */
         std::shared_ptr<Buffer> pop()
         {
+            bool was_cell_freed;
             std::shared_ptr<Buffer> buffer_ref;
 
             SharedMemGlobal::PortCell* head_cell = nullptr;
+            SharedMemGlobal::BufferDescriptor buffer_descriptor;
 
-            while ( !is_closed_.load() && !(head_cell = global_listener_->head()) )
+            do
             {
-                // Wait until threre's data to pop
-                global_port_->wait_pop(*global_listener_, is_closed_);
-            }
+                while ( !is_closed_.load() && !(head_cell = global_listener_->head()) )
+                {
+                    // Wait until threre's data to pop
+                    global_port_->wait_pop(*global_listener_, is_closed_);
+                }
 
-            if(!head_cell)
-                return nullptr;
+                if(!head_cell)
+                    return nullptr;
 
-            SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
+                buffer_descriptor = head_cell->data();
+
+                // Null segment is not a valid payload (is a healthy check metadata cell)
+                if(buffer_descriptor.source_segment_id == SharedMemSegment::Id::null())
+                {
+                    global_port_->pop(*global_listener_, was_cell_freed);
+                }
+                else // There's data to process
+                {
+                    break;
+                }
+                
+            } while (1);
 
             auto segment = shared_mem_manager_.find_segment(buffer_descriptor.source_segment_id);
             auto buffer_node =
@@ -253,13 +269,11 @@ private:
             buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id, buffer_node);
 
             // If the cell has been read by all listeners
-            bool was_cell_freed;
-            if (global_port_->pop(*global_listener_, was_cell_freed))
+            global_port_->pop(*global_listener_, was_cell_freed);
+
+            if (was_cell_freed)
             {
-                if (was_cell_freed)
-                {
-                    buffer_node->ref_count.fetch_sub(1);
-                }
+                buffer_node->ref_count.fetch_sub(1);
             }
 
             return buffer_ref;
@@ -267,7 +281,6 @@ private:
 
         /**
          * Unblock a thread blocked in pop() call, not allowing pop() to block again,
-         * and performs listener unregister from the port.
          */
         void close()
         {
@@ -299,39 +312,8 @@ private:
         }
 
         /**
-         * Enqueue a buffer in the port.
-         * If the port queue is full, blocks until push can be done
-         */
-        void push(
-                const std::shared_ptr<Buffer>& buffer)
-        {
-            assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
-
-            SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
-            shared_mem_buffer->increase_ref();
-
-            bool are_listeners_active;
-
-            try
-            {
-                global_port_->push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
-                        &are_listeners_active);
-
-                if (!are_listeners_active)
-                {
-                    shared_mem_buffer->decrease_ref();
-                }
-            }
-            catch(std::exception&)
-            {
-                shared_mem_buffer->decrease_ref();
-                throw;
-            }
-        }
-
-        /**
          * Try to enqueue a buffer in the port.
-         * If the port queue is full returns inmediatelly with false value.
+         * @returns false If the port's queue is full so buffer couldn't be enqueued.
          */
         bool try_push(
             const std::shared_ptr<Buffer>& buffer)
@@ -368,41 +350,6 @@ private:
             return std::make_shared<Listener>(shared_mem_manager_, global_port_);
         }
 
-        /**
-         * Try to enqueue a buffer in the port.
-         * If the port queue is full blocks until push can be done or timeout is reached
-         * @param[in] timeout max wait timeout in microseconds
-         * @throw std::exception& if timeout is reached
-         */
-        void timed_push(
-            const std::shared_ptr<Buffer>& buffer,
-            const std::chrono::microseconds& timeout)
-        {
-            assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
-
-            SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
-            shared_mem_buffer->increase_ref();
-
-            bool are_listeners_active;
-
-            try
-            {
-                global_port_->timed_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
-                        &are_listeners_active,
-                        timeout);
-
-                if (!are_listeners_active)
-                {
-                    shared_mem_buffer->decrease_ref();
-                }
-            }
-            catch(std::exception&)
-            {
-                shared_mem_buffer->decrease_ref();
-                throw;
-            }
-        }
-
 private:
 
         SharedMemManager& shared_mem_manager_;
@@ -430,9 +377,10 @@ private:
 
     std::shared_ptr<Port> open_port(
             uint32_t port_id,
-            uint32_t max_descriptors)
+            uint32_t max_descriptors,
+            uint32_t healthy_check_timeout_ms)
     {
-        return std::make_shared<Port>(*this, global_segment_.open_port(port_id, max_descriptors));
+        return std::make_shared<Port>(*this, global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms));
     }
 
 private:

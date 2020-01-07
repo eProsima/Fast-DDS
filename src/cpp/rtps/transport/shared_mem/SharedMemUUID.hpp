@@ -108,13 +108,22 @@ private:
     }
 };
 
+template <size_t SIZE>
 class UUID
 {
 public:
 
+    struct null_t {};
+    static constexpr null_t null = null_t();
+
     UUID()
-    {
+    {    
         UUIDGen::instance().generate(uuid_, sizeof(uuid_));
+    }
+
+    UUID(const null_t&)
+    {    
+        memset(uuid_, 0, SIZE);
     }
 
 	UUID& operator =(
@@ -158,7 +167,7 @@ public:
 
 private:
 
-    uint8_t uuid_[16];
+    uint8_t uuid_[SIZE];
 
 };
 
@@ -168,11 +177,11 @@ private:
 
 namespace std {
 template <>
-struct hash<eprosima::fastdds::rtps::UUID>
+struct hash<eprosima::fastdds::rtps::UUID<16>>
 {
     // TODO(Adolfo): Improve the hash (allocation free, fast algorithm)
     std::size_t operator()(
-            const eprosima::fastdds::rtps::UUID& k) const
+            const eprosima::fastdds::rtps::UUID<16>& k) const
     {
         return std::hash<std::string>{}(k.to_string());
     }

@@ -125,11 +125,40 @@ public:
         }
     }
 
+    static std::unique_ptr<SharedMemSegment::named_mutex> open_or_create_and_lock_named_mutex(
+        const std::string& mutex_name)
+    {
+        std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
+
+        // Todo(Adolfo) : Dataraces could occur, this algorithm has to be improved
+
+        named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
+            new SharedMemSegment::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
+
+        boost::posix_time::ptime wait_time
+            = boost::posix_time::microsec_clock::universal_time()
+            + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS*2);
+        if (!named_mutex->timed_lock(wait_time))
+        {
+            // Interprocess mutex timeout when locking. Possible deadlock: owner died without unlocking?
+            // try to remove and create again
+            SharedMemSegment::named_mutex::remove(mutex_name.c_str());
+
+            named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
+            new SharedMemSegment::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
+
+            if (!named_mutex->try_lock())
+                throw std::runtime_error("Couldn't create name_mutex: " + mutex_name);
+        }
+        
+        return named_mutex;
+    }
+
     class Id
     {
     public:
 
-        typedef UUID type;
+        typedef UUID<16> type;
 
         Id()
         {
@@ -140,9 +169,19 @@ public:
 			uuid_ = other.uuid_;
 		}
 
+        Id(const type& uuid)
+		{
+			uuid_ = uuid;
+		}
+
         const type& get() const
         {
             return uuid_;
+        }
+
+        bool operator == (const Id& other) const
+        {
+            return uuid_ == other.uuid_;
         }
 
         std::string to_string()
@@ -150,9 +189,14 @@ public:
             return uuid_.to_string();
         }
 
+        static const Id null()
+        {
+            return Id(type(type::null_t()));
+        }
+
     private:
 
-        UUID uuid_;
+        type uuid_;
 
     }; // Id
 

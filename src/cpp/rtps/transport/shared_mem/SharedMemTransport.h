@@ -47,6 +47,7 @@ public:
 	static const uint32_t default_port_queue_capacity = 64;
 	static const SharedMemTransportDescriptor::OverflowPolicy default_overflow_policy =
         SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
+	static const uint32_t default_healthy_check_timeout_ms = 1000;
 
     RTPS_DllAPI SharedMemTransport(const SharedMemTransportDescriptor&);
     void clean();
@@ -224,11 +225,6 @@ private:
 
 	std::shared_ptr<SharedMemManager::Port> find_port(
         uint32_t port_id);
-
-	bool push_wait(
-        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-		const fastrtps::rtps::Locator_t& remote_locator,
-		const std::chrono::microseconds& timeout);
 
 	bool push_fail(
         const std::shared_ptr<SharedMemManager::Buffer>& buffer,
