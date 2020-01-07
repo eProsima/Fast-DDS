@@ -215,59 +215,76 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     //Obtain Length:
-    this->length = 0;
-    this->length += 4;
-    uint16_t rest;
-    for(std::vector<std::string>::iterator it = names.begin();it!=names.end();++it)
+    uint16_t pos_str = (uint16_t)msg->pos;
+    valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+    valid &= CDRMessage::addUInt32(msg,(uint32_t)this->size());
+
+    for(PartitionQosPolicy::const_iterator it = this->begin();
+            it != this->end(); ++it)
     {
-        this->length +=4;
-        this->length += (uint16_t)it->size()+1;
-        rest = ((uint16_t)it->size() +1 ) % 4;
-        this->length += rest != 0 ? 4 - rest : 0;
+        uint32_t size = it->size(); //Already accounts for null char
+        valid &= CDRMessage::addUInt32(msg,size);
+        valid &= CDRMessage::addData(msg,(unsigned char*)it->name(),size);
+        uint32_t align = ((size + 3) & ~3) - size;
+        for(uint32_t count = 0; count < align; ++count)
+        {
+            valid &= CDRMessage::addOctet(msg, 0);
+        }
     }
+
+    uint16_t pos_param_end = (uint16_t)msg->pos;
+    this->length = pos_param_end-pos_str-2;
+    msg->pos = pos_str;
     valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addUInt32(msg,(uint32_t)this->names.size());
-    for(std::vector<std::string>::iterator it = names.begin();it!=names.end();++it)
-        valid &= CDRMessage::addString(msg,*it);
-    //valid &= CDRMessage::addOctetVector(msg,&name);
+    msg->pos = pos_param_end;
+    msg->length-=2;
+
     return valid;
 }
 
 bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 {
-    (void) size;
-    uint32_t namessize = 0;
-    bool valid = CDRMessage::readUInt32(msg, &namessize);
-    if (!valid)
+    if (max_size_ != 0 && partitions_.max_size < size - 4)
     {
         return false;
     }
-    for (uint32_t i = 1; i <= namessize; ++i)
+
+    uint32_t num_partitions;
+    bool valid = CDRMessage::readUInt32(msg, &num_partitions);
+    partitions_.reserve(size - 4);
+
+    for(size_t i = 0; i < num_partitions; ++i)
     {
-        std::string auxstr;
-        valid &= CDRMessage::readString(msg, &auxstr);
+        uint32_t size, alignment;
+
+        valid &= CDRMessage::readUInt32(msg,&size);
         if (!valid)
         {
             return false;
         }
-        names.push_back(auxstr);
-    }
 
+        push_back ((const char*)&msg->buffer[msg->pos]);
+        alignment = ((size + 3) & ~3) - size;
+        msg->pos += (size + alignment);
+    }
+    Npartitions_ = num_partitions;
     return valid;
 }
 
 bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    uint32_t align = (4 - (msg->pos + 6 + dataVec_.size())  % 4) & 3; //align
-    this->length = (uint16_t)(4 + this->dataVec_.size() + align);
+    uint32_t size = dataVec_.size();
+    uint32_t align = ((size + 3) & ~3) - size;
+    this->length = (uint16_t)(4 + size + align);
     valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addUInt32(msg, (uint32_t)this->dataVec_.size());
-    valid &= CDRMessage::addData(msg,this->dataVec_.data(),(uint32_t)this->dataVec_.size());
+    valid &= CDRMessage::addUInt32(msg, size);
+    valid &= CDRMessage::addData(msg,this->dataVec_.data(),size);
     for(uint32_t count = 0; count < align; ++count)
     {
         valid &= CDRMessage::addOctet(msg, 0);
     }
+
     return valid;
 }
 
