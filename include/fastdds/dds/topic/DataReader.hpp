@@ -184,6 +184,8 @@ public:
 
     const DataReaderListener* get_listener() const;
 
+    ReturnCode_t delete_contained_entities();
+
     /* TODO
        bool get_key_value(
             void* data,

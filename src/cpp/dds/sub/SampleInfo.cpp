@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file
@@ -42,11 +42,13 @@ SampleInfo::SampleInfo(
 }
 
 SampleInfo::~SampleInfo()
-{}
+{
+}
 
 const dds::core::Time SampleInfo::timestamp() const
 {
-    return dds::core::Time(delegate().source_timestamp.seconds, delegate().source_timestamp.nanosec);
+    return dds::core::Time(delegate().source_timestamp.seconds(),
+                   delegate().source_timestamp.nanosec());
 }
 
 const dds::sub::status::DataState SampleInfo::state() const

@@ -359,13 +359,22 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool SubscriberImpl::delete_contained_entities()
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+ReturnCode_t SubscriberImpl::delete_contained_entities()
+{
+    std::lock_guard<std::mutex> lock(mtx_readers_);
+    for (auto it : readers_)
+    {
+        for (DataReaderImpl* dr : it.second)
+        {
+            if (dr->delete_contained_entities() != ReturnCode_t::RETCODE_OK)
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
 
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const DataReaderQos& qos)

@@ -141,12 +141,10 @@ ReturnCode_t Subscriber::notify_datareaders() const
     return impl_->notify_datareaders();
 }
 
-/* TODO
-   bool Subscriber::delete_contained_entities()
-   {
+ReturnCode_t Subscriber::delete_contained_entities()
+{
     return impl_->delete_contained_entities();
-   }
- */
+}
 
 ReturnCode_t Subscriber::set_default_datareader_qos(
         const DataReaderQos& qos)

@@ -125,9 +125,7 @@ public:
 
     ReturnCode_t notify_datareaders() const;
 
-    /* TODO
-       bool delete_contained_entities();
-     */
+    ReturnCode_t delete_contained_entities();
 
     ReturnCode_t set_default_datareader_qos(
             const DataReaderQos& qos);

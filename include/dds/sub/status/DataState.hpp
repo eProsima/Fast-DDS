@@ -23,6 +23,7 @@
 #include <bitset>
 
 #include <dds/core/types.hpp>
+#include <fastrtps/rtps/common/CacheChange.h>
 
 
 namespace dds {
@@ -141,6 +142,7 @@ public:
     {
         return SampleState(0xffff);
     }
+
 };
 
 /**
@@ -334,6 +336,27 @@ public:
             const MaskType& src)
         : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
     {
+    }
+
+    inline void operator =(
+            eprosima::fastrtps::rtps::ChangeKind_t kind)
+    {
+        if (kind == eprosima::fastrtps::rtps::ALIVE)
+        {
+            *this = alive();
+        }
+        else if (kind == eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED)
+        {
+            *this = not_alive_disposed();
+        }
+        else if (kind == eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED)
+        {
+            *this = not_alive_no_writers();
+        }
+        else if (kind == eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED)
+        {
+            *this = not_alive_mask();
+        }
     }
 
     /**

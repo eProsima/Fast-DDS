@@ -31,7 +31,7 @@
 #include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/subscriber/SubscriberHistory.h>
+#include <fastdds/dds/subscriber/SubscriberHistory.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/reader/ReaderListener.h>
@@ -167,6 +167,8 @@ public:
 
     const DataReaderListener* get_listener() const;
 
+    ReturnCode_t delete_contained_entities();
+
     /* TODO
        bool get_key_value(
             void* data,
@@ -223,10 +225,8 @@ private:
 
     DataReaderQos qos_;
 
-    ReaderQos rqos_;
-
     //!History
-    fastrtps::SubscriberHistory history_;
+    fastdds::dds::SubscriberHistory history_;
 
     //!Listener
     DataReaderListener* listener_;

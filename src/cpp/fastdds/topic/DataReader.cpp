@@ -179,6 +179,11 @@ const DataReaderListener* DataReader::get_listener() const
     return impl_->get_listener();
 }
 
+ReturnCode_t DataReader::delete_contained_entities()
+{
+    return impl_->delete_contained_entities();
+}
+
 /* TODO
    bool DataReader::get_key_value(
         void* data,

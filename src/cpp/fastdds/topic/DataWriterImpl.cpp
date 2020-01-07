@@ -207,12 +207,19 @@ ReturnCode_t DataWriterImpl::dispose(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DataWriterImpl::dispose(
+ReturnCode_t DataWriterImpl::dispose(
         void* data)
 {
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     logInfo(DATA_WRITER, "Disposing of data");
-    WriteParams wparams;
-    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams);
+    if (create_new_change(NOT_ALIVE_DISPOSED, data))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 bool DataWriterImpl::create_new_change(

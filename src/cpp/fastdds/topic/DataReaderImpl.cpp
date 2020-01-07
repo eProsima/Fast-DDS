@@ -59,11 +59,10 @@ DataReaderImpl::DataReaderImpl(
     , topic_(topic)
     , att_(att)
     , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
-    , rqos_(qos_.change_to_readerqos())
 #pragma warning (disable : 4355 )
     , history_(topic->get_topic_attributes(),
             type_.get(),
-            rqos_,
+            qos_,
             type_.get()->m_typeSize + 3,    /* Possible alignment */
             memory_policy)
     , listener_(listener)
@@ -145,36 +144,12 @@ ReturnCode_t DataReaderImpl::read_next_sample(
             std::chrono::hours(24);
 #endif
 
-    DeprecatedSampleInfo dep_info;
-    if (history_.readNextData(data, &dep_info, max_blocking_time))
+    if (history_.readNextData(data, info, max_blocking_time))
     {
-        // Transform SampleInfo
-        info->valid_data = dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE;
-        info->view_state = ::dds::sub::status::ViewState::new_view();
-        if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::alive();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
-        }
+        info->view_state = ::dds::sub::status::ViewState::not_new_view();
+        history_.notify_not_new(info);
         info->sample_state = ::dds::sub::status::SampleState::read();
-        info->sample_rank = static_cast<int32_t>(dep_info.sample_identity.sequence_number().to64long()); // ??
-        info->generation_rank = 0;
-        info->source_timestamp = dep_info.sourceTimestamp.to_duration_t();
-        info->publication_handle = dep_info.sample_identity.writer_guid();
-        info->absolute_generation_rank = 0;
-        info->disposed_generation_count = 0;
-        info->no_writers_generation_count = 0;
+        user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::data_available());
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
@@ -195,36 +170,11 @@ ReturnCode_t DataReaderImpl::take_next_sample(
             std::chrono::hours(24);
 #endif
 
-    DeprecatedSampleInfo dep_info;
-    if (history_.takeNextData(data, &dep_info, max_blocking_time))
+    if (history_.takeNextData(data, info, max_blocking_time))
     {
-        // Transform SampleInfo
-        info->valid_data = dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE;
-        info->view_state = ::dds::sub::status::ViewState::new_view();
-        if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::alive();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
-        }
-        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
-        {
-            info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
-        }
+        info->view_state = ::dds::sub::status::ViewState::not_new_view();
+        history_.notify_not_new(info);
         info->sample_state = ::dds::sub::status::SampleState::read();
-        info->sample_rank = static_cast<int32_t>(dep_info.sample_identity.sequence_number().to64long()); // ??
-        info->generation_rank = 0;
-        info->source_timestamp = dep_info.sourceTimestamp.to_duration_t();
-        info->publication_handle = dep_info.sample_identity.writer_guid();
-        info->absolute_generation_rank = 0;
-        info->disposed_generation_count = 0;
-        info->no_writers_generation_count = 0;
         return ReturnCode_t::RETCODE_OK;
     }
     user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::data_available());
@@ -486,8 +436,11 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
                 reader->subscription_matched_status_read();
             }
         }
-        data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
-            StatusMask::subscription_matched());
+        if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::subscription_matched());
+        }
     }
 
     //Update Matched Publications List
@@ -823,6 +776,7 @@ ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
+    user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::requested_deadline_missed());
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -903,6 +857,12 @@ ReturnCode_t DataReaderImpl::set_listener(
 const DataReaderListener* DataReaderImpl::get_listener() const
 {
     return listener_;
+}
+
+ReturnCode_t DataReaderImpl::delete_contained_entities()
+{
+    //TODO: Update it to delete the read conditions created when implemented
+    return ReturnCode_t::RETCODE_OK;
 }
 
 /* TODO

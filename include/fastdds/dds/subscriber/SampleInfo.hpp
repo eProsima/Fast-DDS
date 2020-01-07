@@ -73,7 +73,7 @@ public:
     int32_t absolute_generation_rank = 0;
 
     //!Timestamp provided by the DataWriter at the time the sample was produced.
-    fastrtps::Time_t source_timestamp;
+    fastrtps::rtps::Time_t source_timestamp;
 
     fastrtps::rtps::InstanceHandle_t instance_handle;
 
