@@ -149,7 +149,7 @@ bool ResourceEvent::register_timer_nts(
     return false;
 }
 
-void ResourceEvent::activate_timer(
+bool ResourceEvent::activate_timer(
         TimedEventImpl* event)
 {
     std::vector<TimedEventImpl*>::iterator low_bound;
@@ -163,7 +163,10 @@ void ResourceEvent::activate_timer(
     {
         // ... add it on its place
         active_timers_.emplace(low_bound, event);
+        return true;
     }
+
+    return false;
 }
 
 void ResourceEvent::run_io_service()
@@ -219,7 +222,10 @@ void ResourceEvent::do_timer_actions()
             did_something = true;
             if (tp->update(current_time_, cancel_time))
             {
-                activate_timer(tp);
+                if (!activate_timer(tp))
+                {
+                    sort_timers();
+                }
             }
         }
         pending_timers_.clear();
