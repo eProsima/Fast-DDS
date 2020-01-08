@@ -55,7 +55,6 @@ void TAnyDataReader<DELEGATE>::wait_for_historical_data(
     //    this->delegate()->wait_for_historical_data(timeout);
 }
 
-
 template<typename DELEGATE>
 dds::sub::qos::DataReaderQos TAnyDataReader<DELEGATE>::qos() const
 {
@@ -85,45 +84,58 @@ const TAnyDataReader<DELEGATE>& TAnyDataReader<DELEGATE>::operator >>(
     return *this;
 }
 
-
 template<typename DELEGATE>
 dds::core::status::LivelinessChangedStatus TAnyDataReader<DELEGATE>::liveliness_changed_status()
 {
-    return this->delegate()->get_liveliness_changed_status();
+    dds::core::status::LivelinessChangedStatus status;
+    this->delegate()->get_liveliness_changed_status(status);
+    return status;
 }
 
 template<typename DELEGATE>
 dds::core::status::SampleRejectedStatus TAnyDataReader<DELEGATE>::sample_rejected_status()
 {
-    return this->delegate()->get_sample_rejected_status();
+    dds::core::status::SampleRejectedStatus status;
+    this->delegate()->get_sample_rejected_status(status);
+    return status;
 }
 
 template<typename DELEGATE>
 dds::core::status::SampleLostStatus TAnyDataReader<DELEGATE>::sample_lost_status()
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->sample_lost_status();
-    *this = dds::core::null;
-    return *this;
+    dds::core::status::SampleLostStatus status;
+    this->delegate()->get_sample_lost_status(status);
+    return status;
 }
 
 template<typename DELEGATE>
 dds::core::status::RequestedDeadlineMissedStatus TAnyDataReader<DELEGATE>::requested_deadline_missed_status()
 {
-    return this->delegate()->get_requested_deadline_missed_status();
+    dds::core::status::RequestedDeadlineMissedStatus status;
+    this->delegate()->get_requested_deadline_missed_status(status);
+    return status;
 }
 
 template<typename DELEGATE>
 dds::core::status::RequestedIncompatibleQosStatus TAnyDataReader<DELEGATE>::requested_incompatible_qos_status()
 {
-    return this->delegate()->get_requested_incompatible_qos_status();
+    dds::core::status::RequestedIncompatibleQosStatus status;
+    this->delegate()->get_requested_incompatible_qos_status(status);
+    return status;
 }
 
 template<typename DELEGATE>
 dds::core::status::SubscriptionMatchedStatus TAnyDataReader<DELEGATE>::subscription_matched_status()
 {
-    return this->delegate()->get_subscription_matched_status();
+    dds::core::status::SubscriptionMatchedStatus status;
+    this->delegate()->get_subscription_matched_status(status);
+    return status;
+}
+
+template<typename DELEGATE>
+dds::core::cond::StatusCondition* TAnyDataReader<DELEGATE>::status_condition()
+{
+    return this->delegate()->get_statuscondition();
 }
 
 } //namespace sub

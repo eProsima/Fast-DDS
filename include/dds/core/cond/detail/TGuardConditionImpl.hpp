@@ -43,25 +43,18 @@ template<typename DELEGATE>
 template<typename FUN>
 TGuardCondition<DELEGATE>::TGuardCondition(
         FUN& functor)
+    : ::dds::core::cond::TCondition<detail::GuardCondition>(new detail::GuardCondition(functor))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_NC_BEGIN();
-    //    this->set_ref(new DELEGATE);
-    //    this->delegate()->init(this->impl_);
-    //    this->delegate()->set_handler(functor);
 }
 
 template<typename DELEGATE>
 template<typename FUN>
 TGuardCondition<DELEGATE>::TGuardCondition(
         const FUN& functor)
+    : ::dds::core::cond::TCondition<detail::GuardCondition>(new detail::GuardCondition(functor))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_NC_BEGIN();
-    //    this->set_ref(new DELEGATE);
-    //    this->delegate()->init(this->impl_);
-    //    this->delegate()->set_handler(functor);
 }
+
 /** @endcond */
 
 template<typename DELEGATE>

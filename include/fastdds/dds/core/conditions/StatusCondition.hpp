@@ -81,20 +81,6 @@ public:
     Entity* get_entity();
 
     /**
-     * @brief call_handler Called when any of the relevant statuses is triggered. It call the handler associated
-     * to the StatusCondition to manage the change in the application.
-     * @param cond The triggered StatusCondition
-     */
-    void call_handler();
-
-    /**
-     * @brief set_handler Link a handler to the StatusCondition
-     * @param functor Handler that is going to be applied when the StatusCondition is triggered
-     */
-    void set_handler(
-            std::function<void()> functor);
-
-    /**
      * @brief notify_status_change Notifies to the StatusCondition of a status change within the application
      * @param mask StatusMask that indicates which status is changed
      */
@@ -114,9 +100,6 @@ public:
 
     bool operator ==(
             Condition* obj) const override;
-
-    //!Function handler
-    std::function<void()> handler;
 
 private:
 

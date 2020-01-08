@@ -774,7 +774,7 @@ public:
          *                  The DataReader has not yet been enabled.
          */
         ManipulatorSelector& operator >>(
-                ManipulatorSelector& (manipulator)(ManipulatorSelector&));
+                ManipulatorSelector& (manipulator)(ManipulatorSelector &));
 
         /**
          * This operation works the same as the @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls)
@@ -1085,7 +1085,7 @@ public:
 
     /** @copydoc dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) */
     ManipulatorSelector operator >>(
-            ManipulatorSelector& (manipulator)(ManipulatorSelector&));
+            ManipulatorSelector& (manipulator)(ManipulatorSelector &));
 
     /** @copydoc dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) */
     template<typename Functor>
@@ -1746,6 +1746,10 @@ public:
      *                  The entity was not properly created and references to dds::core::null.
      */
     Listener* listener() const;
+
+protected:
+
+    const Subscriber* subscriber_;
 
 };
 

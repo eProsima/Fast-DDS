@@ -32,18 +32,20 @@ public:
 
     Condition()
         : is_attached_(false)
+        , handler(nullptr)
+    {
+    }
+
+    Condition(
+            std::function<void()> functor)
+        : is_attached_(false)
+        , handler(functor)
     {
     }
 
     bool get_trigger_value()
     {
         return trigger_value_;
-    }
-
-    virtual void call_handler(
-            Condition* cond)
-    {
-        (void) cond;
     }
 
     void attached(
@@ -55,6 +57,25 @@ public:
     bool is_attached()
     {
         return is_attached_;
+    }
+
+    /**
+     * @brief set_handler Link a handler to the Condition
+     * @param functor Handler that is going to be applied when the Condition is triggered
+     */
+    void set_handler(
+            std::function<void()> functor)
+    {
+        handler = functor;
+    }
+
+    /**
+     * @brief call_handler Called when the condition is triggered. It call the handler associated
+     * to the Condition to manage the change in the application.
+     */
+    void call_handler()
+    {
+        handler();
     }
 
     /**
@@ -75,6 +96,9 @@ protected:
     bool trigger_value_;
 
     bool is_attached_;
+
+    //!Function handler
+    std::function<void()> handler;
 
 };
 

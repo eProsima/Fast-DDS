@@ -118,6 +118,13 @@ void TAnyDataWriter<DELEGATE>::assert_liveliness()
     this->delegate()->assert_liveliness();
 }
 
+template<typename DELEGATE>
+dds::core::cond::StatusCondition* TAnyDataWriter<DELEGATE>::status_condition()
+{
+    eprosima::fastdds::dds::StatusCondition* cond = this->delegate()->get_statuscondition();
+    return cond;
+}
+
 } //namespace pub
 } //namespace dds
 

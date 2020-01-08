@@ -46,12 +46,12 @@ class TAnyTopic :
     public TTopicDescription<DELEGATE>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TAnyTopic,
-            TTopicDescription,
-            DELEGATE)
+        TAnyTopic,
+        TTopicDescription,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TAnyTopic)
+        TAnyTopic)
 
     /** @cond */
     virtual ~TAnyTopic();
@@ -137,6 +137,9 @@ class TAnyTopic :
      *                  complete this operation.
      */
     dds::core::status::InconsistentTopicStatus inconsistent_topic_status() const;
+
+
+    dds::core::cond::StatusCondition* status_condition();
 
 };
 

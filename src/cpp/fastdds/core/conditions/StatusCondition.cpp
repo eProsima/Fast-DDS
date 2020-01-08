@@ -26,7 +26,7 @@ using namespace eprosima::fastdds::dds;
 
 StatusCondition::StatusCondition(
         Entity* entity)
-    : handler(nullptr)
+    : Condition()
     , entity_(entity)
     , status_mask_(::dds::core::status::StatusMask::all())
     , status_change_flag_(::dds::core::status::StatusMask::none())
@@ -36,7 +36,7 @@ StatusCondition::StatusCondition(
 StatusCondition::StatusCondition(
         Entity* entity,
         std::function<void()> functor)
-    : handler(functor)
+    : Condition(functor)
     , entity_(entity)
     , status_mask_(::dds::core::status::StatusMask::all())
     , status_change_flag_(::dds::core::status::StatusMask::none())
@@ -108,17 +108,6 @@ void StatusCondition::set_trigger_value(
         bool value)
 {
     trigger_value_ = value;
-}
-
-void StatusCondition::call_handler()
-{
-    handler();
-}
-
-void StatusCondition::set_handler(
-        std::function<void()> functor)
-{
-    handler = functor;
 }
 
 inline bool StatusCondition::operator ==(

@@ -499,6 +499,9 @@ public:
     DomainParticipant& default_topic_qos(
             const dds::topic::qos::TopicQos& qos);
 
+
+    dds::core::cond::StatusCondition* status_condition();
+
     //=============================================================================
 };
 

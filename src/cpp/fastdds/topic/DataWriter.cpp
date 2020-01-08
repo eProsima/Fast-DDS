@@ -39,6 +39,7 @@ DataWriter::DataWriter(
     , impl_(
         (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
 {
+    set_instance_handle(impl_->guid());
 }
 
 DataWriter::DataWriter(
@@ -47,6 +48,7 @@ DataWriter::DataWriter(
     : DomainEntity(mask)
     , impl_(impl)
 {
+    set_instance_handle(impl_->guid());
 }
 
 DataWriter::~DataWriter()

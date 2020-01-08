@@ -98,3 +98,42 @@ ReturnCode_t WaitSet::wait(
     }
 
 }
+
+ReturnCode_t WaitSet::dispatch(
+        const fastrtps::Duration_t& timeout)
+{
+    if (waiting)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    waiting = true;
+
+    std::chrono::microseconds max_wait(eprosima::fastrtps::rtps::TimeConv::Duration_t2MicroSecondsInt64(timeout));
+
+    std::unique_lock<std::mutex> lock(mtx_cond_);
+
+    if (cv_.wait_for(lock, max_wait, [&]()
+    {
+        bool unblock = false;
+        for (auto cond : attached_conditions_)
+        {
+            if (cond->get_trigger_value())
+            {
+                cond->call_handler();
+                unblock = true;
+            }
+        }
+        return unblock;
+    }))
+    {
+        waiting = false;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        waiting = false;
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+
+}

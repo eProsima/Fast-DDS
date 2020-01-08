@@ -22,11 +22,13 @@
 
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/topic/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/core/conditions/WaitSet.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/sub/Subscriber.hpp>
+#include <dds/sub/DataReader.hpp>
+#include <dds/sub/DataReaderListener.hpp>
+#include <dds/core/cond/WaitSet.hpp>
+#include <dds/sub/SampleInfo.hpp>
+#include <dds/core/status/State.hpp>
 
 class HelloWorldSubscriber
 {
@@ -43,32 +45,36 @@ public:
     //!RUN the subscriber
     void run();
 
+    //!Run the subscriber until number samples have been recevied.
+    void run(
+            uint32_t number);
+
+    HelloWorld hello_;
+
     int matched_ = 0;
 
     uint32_t samples_ = 0;
 
-    HelloWorld hello_;
-
-    eprosima::fastdds::dds::SampleInfo_t info_;
+    dds::sub::SampleInfo info_;
 
     bool enable_ = true;
 
 private:
 
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    dds::domain::DomainParticipant participant_;
 
-    eprosima::fastdds::dds::Subscriber* subscriber_;
+    dds::sub::Subscriber subscriber_;
 
-    eprosima::fastdds::dds::DataReader* reader_;
+    dds::sub::DataReader<HelloWorld> reader_;
 
-    eprosima::fastdds::dds::Topic* topic_;
+    HelloWorldTypeSupport type_;
 
-    eprosima::fastdds::dds::TypeSupport type_;
+    dds::topic::Topic<HelloWorld> topic_;
 
-    eprosima::fastdds::dds::WaitSet waitset_;
+    dds::core::cond::WaitSet waitset_;
 
     void data_available_handler(
-            eprosima::fastdds::dds::DataReader* reader);
+            dds::sub::DataReader<HelloWorld>* reader);
 
     void liveliness_changed_handler();
 
@@ -81,6 +87,7 @@ private:
     void sample_rejected_handler();
 
     void sample_lost_handler();
+
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

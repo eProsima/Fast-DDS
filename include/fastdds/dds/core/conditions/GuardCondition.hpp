@@ -41,7 +41,15 @@ public:
 
     GuardCondition()
     {
-        trigger_value_ = false;
+        set_trigger_value(false);
+    }
+
+    GuardCondition(
+            std::function<void()> functor,
+            bool trigger_value = false)
+        : Condition(functor)
+    {
+        set_trigger_value(trigger_value);
     }
 
     ReturnCode_t set_trigger_value(

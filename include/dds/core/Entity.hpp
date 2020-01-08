@@ -52,17 +52,18 @@ template<typename DELEGATE>
 class TEntity : public virtual Reference<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TEntity,
-            Reference,
-            DELEGATE)
+        TEntity,
+        Reference,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TEntity)
+        TEntity)
 
     /** @cond */
-    virtual ~TEntity()
-    {}
+    virtual ~TEntity();
+
     /** @endcond */
 
     /**
@@ -147,10 +148,7 @@ public:
      * @throw  dds::core::PreconditionNotMetError
      *              Entities' factory is not enabled.
      */
-    void enable()
-    {
-        this->delegate()->enable();
-    }
+    void enable();
 
     /**
      * This operation returns a mask with the communication statuses in the Entity that
@@ -199,10 +197,7 @@ public:
      * @return dds::core::status::StatusMask
      *              a bit mask in which each bit shows which value has changed.
      */
-    const dds::core::status::StatusMask status_changes()
-    {
-        return this->delegate()->get_status_changes();
-    }
+    const dds::core::status::StatusMask status_changes();
 
     /**
      * This operation returns the InstanceHandle_t that represents the Entity.
@@ -221,11 +216,7 @@ public:
      *              Result value is the instance_handle of the built-in topic
      *              sample that represents the state of this Entity.
      */
-    const InstanceHandle instance_handle() const
-    {
-        return this->delegate()->get_instance_handle();
-    }
-
+    const InstanceHandle instance_handle() const;
 
     /**
      * This function closes the entity and releases related resources.
@@ -245,10 +236,7 @@ public:
      *
      * @return void
      */
-    void close()
-    {
-        this->delegate()->close();
-    }
+    void close();
 
     /**
      * Retain the Entity, even when it goes out of scope.
@@ -260,15 +248,14 @@ public:
      *
      * @return void
      */
-    void retain()
-    {
-        // this->delegate()->retain();
-    }
+    void retain();
 };
 
 typedef dds::core::detail::Entity Entity;
 
 } //namespace core
 } //namespace dds
+
+#include <dds/core/detail/EntityImpl.hpp>
 
 #endif //OMG_DDS_CORE_ENTITY_HPP_
