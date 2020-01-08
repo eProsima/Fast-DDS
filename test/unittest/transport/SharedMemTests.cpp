@@ -16,8 +16,10 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/log/Log.h>
 #include <MockReceiverResource.h>
+#include <SharedMemGlobalMock.hpp>
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp"
+#include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
 
 #include <memory>
 #include <gtest/gtest.h>
@@ -96,27 +98,7 @@ TEST_F(SharedMemTests, locators_with_kind_16_supported)
     ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorUdpv4));
     ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorUdpv6));
 }
-/*
-TEST_F(SharedMemTests, opening_and_closing_output_channel)
-{
-    // Given
-    SharedMemTransport transportUnderTest(descriptorOnlyOutput);
-    transportUnderTest.init();
 
-    Locator_t genericOutputChannelLocator;
-    genericOutputChannelLocator.kind = LOCATOR_KIND_SHMEM;
-    genericOutputChannelLocator.port = g_output_port; // arbitrary
-    SendResourceList send_resource_list;
-
-    // Then
-    ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, genericOutputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
-    ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
-    send_resource_list.clear();
-    ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
-}
-*/
 TEST_F(SharedMemTests, opening_and_closing_input_channel)
 {
     // Given
@@ -470,6 +452,79 @@ TEST_F(SharedMemTests, port_and_segment_overflow_discard)
 void SharedMemTests::HELPER_SetDescriptorDefaults()
 {
     
+}
+
+TEST_F(SharedMemTests, port_mutex_deadlock_recover)
+{
+    const std::string domain_name("SharedMemTests");
+
+    SharedMemGlobal shared_mem_global(domain_name);
+    MockPortSharedMemGlobal port_mocker;
+
+    port_mocker.remove_port_mutex(domain_name, 0);
+
+    auto global_port = shared_mem_global.open_port(0, 1, 1000);
+
+    ASSERT_TRUE(port_mocker.lock_port_mutex(domain_name, 0));
+    ASSERT_FALSE(port_mocker.lock_port_mutex(domain_name, 0));
+
+    auto global_port2 = shared_mem_global.open_port(0, 1, 1000);
+
+    ASSERT_NO_THROW(global_port2->healthy_check(1000));
+}
+
+TEST_F(SharedMemTests, empty_cv_mutex_deadlocked_try_push)
+{
+    const std::string domain_name("SharedMemTests");
+
+    SharedMemGlobal shared_mem_global(domain_name);
+    MockPortSharedMemGlobal port_mocker;
+
+    auto global_port = shared_mem_global.open_port(0, 1, 1000);
+
+    ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
+    ASSERT_FALSE(port_mocker.lock_empty_cv_mutex(*global_port));
+
+    bool listerner_active;
+    SharedMemGlobal::BufferDescriptor foo;
+    ASSERT_THROW(global_port->try_push(foo, &listerner_active), std::exception);
+
+    ASSERT_THROW(global_port->healthy_check(1000), std::exception);
+}
+
+TEST_F(SharedMemTests, dead_listener_port_recover)
+{
+    const std::string domain_name("SharedMemTests");
+
+    SharedMemGlobal shared_mem_global(domain_name);
+    auto deadlocked_port = shared_mem_global.open_port(0, 1, 1000);
+    auto deadlocked_listener = deadlocked_port->create_listener();
+    
+    // Simulates a deadlocked wait_pop
+    std::atomic_bool is_listener_closed(false);
+    std::thread thread_wait_deadlock([&] 
+        {
+            MockPortSharedMemGlobal port_mocker;
+            port_mocker.wait_pop_deadlock(*deadlocked_port, *deadlocked_listener, is_listener_closed);                
+        });
+    
+    // Assert the thread is waiting
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // Open the deadlocked port
+    auto port = shared_mem_global.open_port(0, 1, 1000);
+    auto listener = port->create_listener();
+    bool listerners_active;
+    SharedMemSegment::Id random_id;
+    SharedMemGlobal::BufferDescriptor foo = {random_id, 0};
+    ASSERT_TRUE(port->try_push(foo, &listerners_active));
+    ASSERT_TRUE(listerners_active);
+    ASSERT_TRUE(listener->head() != nullptr);
+    ASSERT_TRUE(listener->head()->data().source_segment_id == random_id);
+    ASSERT_TRUE(listener->pop());
+
+    deadlocked_port->close_listener(&is_listener_closed);
+    thread_wait_deadlock.join();
 }
 
 int main(int argc, char **argv)

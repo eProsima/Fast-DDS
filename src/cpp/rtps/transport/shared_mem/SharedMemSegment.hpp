@@ -154,6 +154,19 @@ public:
         return named_mutex;
     }
 
+    static std::unique_ptr<SharedMemSegment::named_mutex> open_named_mutex(
+        const std::string& mutex_name)
+    {
+        std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
+
+        // Todo(Adolfo) : Dataraces could occur, this algorithm has to be improved
+
+        named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
+            new SharedMemSegment::named_mutex(boost::interprocess::open_only, mutex_name.c_str()));
+        
+        return named_mutex;
+    }
+
     class Id
     {
     public:

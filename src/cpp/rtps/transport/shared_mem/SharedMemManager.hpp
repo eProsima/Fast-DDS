@@ -234,32 +234,17 @@ private:
             std::shared_ptr<Buffer> buffer_ref;
 
             SharedMemGlobal::PortCell* head_cell = nullptr;
-            SharedMemGlobal::BufferDescriptor buffer_descriptor;
-
-            do
+            
+            while ( !is_closed_.load() && !(head_cell = global_listener_->head()) )
             {
-                while ( !is_closed_.load() && !(head_cell = global_listener_->head()) )
-                {
-                    // Wait until threre's data to pop
-                    global_port_->wait_pop(*global_listener_, is_closed_);
-                }
+                // Wait until threre's data to pop
+                global_port_->wait_pop(*global_listener_, is_closed_);
+            }
 
-                if(!head_cell)
-                    return nullptr;
+            if(!head_cell)
+                return nullptr;
 
-                buffer_descriptor = head_cell->data();
-
-                // Null segment is not a valid payload (is a healthy check metadata cell)
-                if(buffer_descriptor.source_segment_id == SharedMemSegment::Id::null())
-                {
-                    global_port_->pop(*global_listener_, was_cell_freed);
-                }
-                else // There's data to process
-                {
-                    break;
-                }
-                
-            } while (1);
+            SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
 
             auto segment = shared_mem_manager_.find_segment(buffer_descriptor.source_segment_id);
             auto buffer_node =

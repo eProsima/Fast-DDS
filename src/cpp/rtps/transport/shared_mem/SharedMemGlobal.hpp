@@ -71,6 +71,8 @@ public:
 
     class Port
     {
+        friend class MockPortSharedMemGlobal;
+
     private:
 
         std::unique_ptr<SharedMemSegment> port_segment_;
@@ -80,44 +82,6 @@ public:
         std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>> buffer_;
 
         bool was_check_thread_detached_;
-
-        bool check_send_receive_loop()
-        {
-            bool check_completed = false;
-
-            try
-            {
-                auto listener = create_listener();
-                std::atomic_bool is_listener_closed(false);
-
-                BufferDescriptor test_buffer_descriptor = {SharedMemSegment::Id::null(), 0};
-
-                bool listeners_active;
-                try_push(test_buffer_descriptor, &listeners_active);
-
-                SharedMemGlobal::PortCell* head_cell = nullptr;
-
-                do
-                {
-                    wait_pop(*listener, is_listener_closed);
-
-                    head_cell = listener->head();
-
-                    if(!head_cell)
-                        throw std::runtime_error("healthy_check error, port empty");
-
-                    check_completed = (head_cell->data().source_segment_id == SharedMemSegment::Id::null());
-
-                    listener->pop();
-
-                }while(!check_completed);
-            }
-            catch(std::exception&)
-            {
-            }
-
-            return check_completed;
-        }
 
         bool check_all_waiting_threads_alive(uint32_t time_out_ms)
         {
@@ -300,8 +264,7 @@ public:
             {
                 try
                 {
-                    is_check_ok = ( check_all_waiting_threads_alive(healthy_check_timeout_ms) &&
-                                check_send_receive_loop() );
+                    is_check_ok =check_all_waiting_threads_alive(healthy_check_timeout_ms);
 
                     {
                         std::lock_guard<std::mutex> lock_received(*notify_check_done_mutex);
@@ -309,8 +272,8 @@ public:
                     }
 
                     notify_check_done_cv->notify_one();
-                }
-                catch(const std::exception&)
+                } 
+                catch(std::exception&)
                 {
                     is_check_ok = false;
                 }
@@ -375,11 +338,29 @@ public:
             auto port_segment = std::unique_ptr<SharedMemSegment>(
                     new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
 
-            auto port_node = port_segment->get().find<PortNode>("port_node").first;
-            port = std::make_shared<Port>(std::move(port_segment), port_node);
+            SharedMemGlobal::PortNode* port_node;
+
+            try
+            {
+                port_node = port_segment->get().find<PortNode>("port_node").first;
+                port = std::make_shared<Port>(std::move(port_segment), port_node);
+            }
+            catch(std::exception&)
+            {
+                logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
+                    << port_id << " Couldn't find port_node ");
+
+                SharedMemSegment::remove(port_segment_name.c_str());
+
+                logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
+                    << port_id << " Removed.");
+
+				throw;
+            }
 
 			try
             {
+                
 				port->healthy_check(healthy_check_timeout_ms);
 
                 logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 

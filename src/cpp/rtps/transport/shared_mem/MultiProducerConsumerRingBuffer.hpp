@@ -31,7 +31,7 @@ public:
 
     class Cell
     {
-public:
+    public:
 
         const T& data() const
         {
@@ -49,9 +49,7 @@ public:
             return ref_counter_.load(std::memory_order_relaxed);
         }
 
-private:
-
-public:
+    public:
 
         friend class MultiProducerConsumerRingBuffer<T>;
 
@@ -61,7 +59,7 @@ public:
 
     class Listener
     {
-public:
+    public:
 
         Listener(
                 MultiProducerConsumerRingBuffer<T>& buffer,
@@ -132,7 +130,7 @@ public:
             return (counter == 1);
         }
 
-private:
+    private:
 
         MultiProducerConsumerRingBuffer<T>& buffer_;
         uint32_t read_p_;
