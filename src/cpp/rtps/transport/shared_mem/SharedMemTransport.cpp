@@ -465,7 +465,10 @@ bool SharedMemTransport::push_discard(
 
 	try
 	{
-		find_port(remote_locator.port)->try_push(buffer);
+		if(!find_port(remote_locator.port)->try_push(buffer))
+		{
+			logWarning(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+		}
 	}
 	catch (const std::exception& error)
 	{
