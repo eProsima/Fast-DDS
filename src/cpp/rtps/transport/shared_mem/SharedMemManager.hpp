@@ -25,8 +25,23 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+/**
+ *  Provides functionality for the application to: 
+ * 
+ *  Open shared-memory ports.
+ *  Create shared memory segments.
+ */
 class SharedMemManager
 {
+private:
+
+    struct BufferNode
+    {
+        std::atomic<uint32_t> ref_count;
+        SharedMemSegment::offset data_offset;
+        uint32_t data_size;
+    };
+
 public:
 
     SharedMemManager(
@@ -36,13 +51,6 @@ public:
         per_allocation_extra_size_ = 
             SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
     }
-
-    struct BufferNode
-    {
-        std::atomic<uint32_t> ref_count;
-        SharedMemSegment::offset data_offset;
-        uint32_t data_size;
-    };
 
     class Buffer
     {
@@ -102,13 +110,17 @@ public:
             return buffer_node_->ref_count.fetch_sub(1);
         }
 
-private:
+    private:
 
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
         BufferNode* buffer_node_;
     };
 
+    /**
+     * Handle a shared-memory segment
+     * Allows buffer allocation / deallocation
+     */
     class Segment
     {
     public:
@@ -173,7 +185,7 @@ private:
             return new_buffer;
         }
 
-private:
+    private:
 
         std::list<BufferNode*> allocated_nodes_;
         std::mutex alloc_mutex_;
@@ -208,6 +220,11 @@ private:
     }; // Segment
 
     class Port;
+
+    /**
+     * Listen to descriptors pushed to a port. 
+     * Provides an interface to wait and access to the data referenced by the descriptors
+     */
     class Listener
     {
     public:
@@ -273,7 +290,7 @@ private:
             global_port_->close_listener(&is_closed_);
         }
 
-private:
+    private:
 
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
 
@@ -284,6 +301,9 @@ private:
         std::atomic<bool> is_closed_;
     }; // Listener
 
+    /**
+     * Allows to push buffers and create listeners of a shared-memory port,
+     */
     class Port
     {
     public:
@@ -335,7 +355,7 @@ private:
             return std::make_shared<Listener>(shared_mem_manager_, global_port_);
         }
 
-private:
+    private:
 
         SharedMemManager& shared_mem_manager_;
 

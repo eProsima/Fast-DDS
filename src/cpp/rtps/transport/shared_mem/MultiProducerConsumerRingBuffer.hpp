@@ -19,11 +19,19 @@
 #include <memory>
 #include <cstdlib>
 
-
 namespace eprosima{
 namespace fastdds{
 namespace rtps{
 
+/**
+ * Ring buffer capable of multiple producers / multiple consumers.
+ * Read / Write operations are lock-free.
+ * Data is organized in a fixed number of Cells of the same type.
+ * Consumers (listeners) must be registered to access the cells.
+ * When a Cell is pushed to the buffer, a counter for that cell is initialized with number
+ * of listeners registered in the buffer in that moment. The Cell will be freed
+ * when all listeners have poped the cell. 
+ */
 template <class T>
 class MultiProducerConsumerRingBuffer
 {
@@ -250,6 +258,12 @@ public:
         return (node_->pointer_.load(std::memory_order_relaxed).free_cells == node_->total_cells_);
     }
 
+    /**
+     * Register a new listener (consumer)
+     * The new listener's read pointer is equal to the ring-buffer write pointer at the registering moment.
+     * @return A shared_ptr to the listener.
+     * The listener will be unregistered when shared_ptr is destroyed.
+     */
     std::shared_ptr<Listener> register_listener()
     {
         lock_pushing();
@@ -295,8 +309,8 @@ private:
     uint32_t inc_pointer(
             const uint32_t pointer)
     {
-        auto value = pointer & 0x7FFFFFFF;
-        auto loop_flag = pointer >> 31;
+        uint32_t value = pointer & 0x7FFFFFFF;
+        uint32_t loop_flag = pointer >> 31;
 
         value = (value + 1) % node_->total_cells_;
 

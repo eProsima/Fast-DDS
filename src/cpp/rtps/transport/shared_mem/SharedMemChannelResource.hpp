@@ -55,7 +55,7 @@ public:
     SharedMemChannelResource& operator=(SharedMemChannelResource&& channelResource)
     {
         (void)channelResource;
-        //socket_ = moveSocket(channelResource.socket_);
+        
         return *this;
     }
 

@@ -47,7 +47,7 @@ public:
 
     // Boost memory manager needs extra memory to maintain its structures,
     // as these structures are shared they are stored in the segment.
-    // TODO: Further analysis to determine the perfect value for this extra segment size
+    // TODO(Adolfo): Further analysis to determine the perfect value for this extra segment size
     static constexpr uint32_t EXTRA_SEGMENT_SIZE = 512;
 
     SharedMemSegment(
@@ -167,6 +167,9 @@ public:
         return named_mutex;
     }
 
+    /**
+     * Unique ID of the memory segment
+     */
     class Id
     {
     public:

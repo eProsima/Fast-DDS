@@ -29,6 +29,10 @@ namespace rtps{
 
 using Log = fastdds::dds::Log;
 
+/**
+ * This class defines the global resources for shared-memory communication.
+ * Mainly the shared-memory ports and its operations.
+ */
 class SharedMemGlobal
 {
 public:
@@ -45,6 +49,10 @@ public:
     
     }
 
+    /**
+     * Identifies a data buffer given its segment_id (shared-memory segment global_name)
+     * and offset inside the segment
+     */
     struct BufferDescriptor
     {
         SharedMemSegment::Id source_segment_id;
@@ -69,6 +77,11 @@ public:
         bool is_port_ok;
     };
 
+    /**
+     * A shared-memory port is a communication channel where data can be written / read.
+     * A port has a port_id and a global name derived from the port_id and the domain.
+     * System processes can open a port by knowing its name.
+     */
     class Port
     {
         friend class MockPortSharedMemGlobal;
@@ -240,6 +253,12 @@ public:
             was_cell_freed = listener.pop();
         }
 
+        /**
+         * Register a new listener
+         * The new listener's read pointer is equal to the ring-buffer write pointer at the registering moment.
+         * @return A shared_ptr to the listener.
+         * The listener will be unregistered when shared_ptr is destroyed.
+         */
         std::shared_ptr<Listener> create_listener()
         {
             return buffer_->register_listener();
@@ -250,6 +269,11 @@ public:
             return was_check_thread_detached_;
         }
 
+        /**
+         * Performs a check of the opened port.
+         * When a process crash with a port opened the port can be leave inoperative.
+         * @throw std::exception if the port is inoperative.
+         */
         void healthy_check(uint32_t healthy_check_timeout_ms)
         {
             bool is_check_ok;
@@ -331,9 +355,6 @@ public:
 
         try
         {
-            // Remove will fail if the segment is open, but it will remove segments
-            // unopened but not properly closed
-
             // Try to open
             auto port_segment = std::unique_ptr<SharedMemSegment>(
                     new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
