@@ -266,6 +266,11 @@ bool SharedMemTransport::init()
 
 		shared_mem_manager_ = std::make_shared<SharedMemManager>(SHMEM_MANAGER_DOMAIN);
 		shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size, configuration_.port_queue_capacity);
+
+		// Memset the whole segment to zero in order to forze physical map of the buffer
+		auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size);
+		memset(buffer->data(), 0, configuration_.segment_size);
+		buffer.reset();
 	}
 	catch (std::exception& e)
 	{
