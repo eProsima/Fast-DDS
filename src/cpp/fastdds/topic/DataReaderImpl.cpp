@@ -426,11 +426,9 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
                 reader->subscription_matched_status_read();
             }
         }
-        if (data_reader_->user_datareader_->get_statuscondition()->is_attached())
-        {
-            data_reader_->user_datareader_->get_statuscondition()->notify_status_change(
-                StatusMask::subscription_matched());
-        }
+        data_reader_->user_datareader_->get_statuscondition()->notify_status_change(
+            StatusMask::subscription_matched());
+
     }
     else if (data_reader_->subscriber_->get_participant().is_enabled() &&
             data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::
@@ -446,11 +444,8 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
                 reader->subscription_matched_status_read();
             }
         }
-        if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
-        {
-            data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
-                StatusMask::subscription_matched());
-        }
+        data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+            StatusMask::subscription_matched());
     }
 
     //Update Matched Publications List

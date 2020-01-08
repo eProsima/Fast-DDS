@@ -314,17 +314,31 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
         for (DataReaderImpl* dr : it.second)
         {
             if (dr->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::data_available())
-                    && dr->user_datareader_->is_enabled() && dr->listener_ != nullptr)
+                    && dr->user_datareader_->is_enabled())
             {
-                dr->listener_->on_data_available(dr->user_datareader_);
+                if (dr->listener_ != nullptr)
+                {
+                    dr->listener_->on_data_available(dr->user_datareader_);
+                }
+                if (dr->user_datareader_->get_statuscondition()->is_attached())
+                {
+                    dr->user_datareader_->get_statuscondition()->notify_status_change(
+                        ::dds::core::status::StatusMask::data_available());
+                }
             }
-            else if (dr->get_subscriber()->get_participant().get_listener() != nullptr &&
-                    dr->get_subscriber()->get_participant().is_enabled() &&
+            else if (dr->get_subscriber()->get_participant().is_enabled() &&
                     dr->get_subscriber()->get_participant().get_status_mask().is_compatible(::dds::core::status::
-                    StatusMask::
-                    data_available()))
+                    StatusMask::data_available()))
             {
-                dr->get_subscriber()->get_participant().get_listener()->on_data_available(dr->user_datareader_);
+                if (dr->get_subscriber()->get_participant().get_listener() != nullptr)
+                {
+                    dr->get_subscriber()->get_participant().get_listener()->on_data_available(dr->user_datareader_);
+                }
+                if (dr->get_subscriber()->get_participant().get_statuscondition()->is_attached())
+                {
+                    dr->get_subscriber()->get_participant().get_statuscondition()->notify_status_change(
+                        ::dds::core::status::StatusMask::data_available());
+                }
             }
         }
     }

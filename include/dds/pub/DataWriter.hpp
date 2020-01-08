@@ -1595,6 +1595,7 @@ public:
      *                  The entity was not properly created and references to dds::core::null.
      */
     DataWriterListener<T>* listener() const;
+
 };
 
 } //namespace pub

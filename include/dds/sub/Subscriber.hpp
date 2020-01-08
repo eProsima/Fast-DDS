@@ -52,13 +52,14 @@ class SubscriberListener;
 class Subscriber : public dds::core::TEntity<detail::Subscriber>
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            Subscriber,
-            dds::core::TEntity,
-            detail::Subscriber)
+        Subscriber,
+        dds::core::TEntity,
+        detail::Subscriber)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            Subscriber)
+        Subscriber)
     /**
      * Local convenience typedef for dds::sub::SubscriberListener.
      */
@@ -80,7 +81,7 @@ public:
      *                  complete this operation.
      */
     Subscriber(
-            const ::dds::domain::DomainParticipant& dp);
+            const domain::DomainParticipant& dp);
 
     /**
      * Create a new Subscriber.
@@ -108,7 +109,7 @@ public:
             const ::dds::domain::DomainParticipant& dp,
             const qos::SubscriberQos& qos,
             SubscriberListener* listener = NULL,
-            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::all());
 
     /** @cond */
     virtual OMG_DDS_API ~Subscriber();
@@ -296,7 +297,9 @@ public:
     const Subscriber& operator >>(
             qos::SubscriberQos& qos) const;
 
-    dds::domain::DomainParticipant* participant_;
+    dds::core::cond::StatusCondition* status_condition();
+
+    const dds::domain::DomainParticipant* participant_;
 };
 
 } //namespace sub

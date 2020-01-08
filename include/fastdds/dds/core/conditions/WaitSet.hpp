@@ -51,6 +51,9 @@ public:
             ConditionSeq& active_conditions,
             const fastrtps::Duration_t& timeout);
 
+    ReturnCode_t dispatch(
+            const fastrtps::Duration_t& timeout);
+
     ReturnCode_t get_conditions(
             ConditionSeq& attached_conditions)
     {

@@ -95,7 +95,7 @@ public:
      * @throw  dds::core::Exception
      */
     TStatusCondition(
-            const dds::core::Entity& e);
+            dds::core::Entity& e);
 
     /**
      * Create a dds::core::cond::StatusCondition associated with an Entity.

@@ -29,7 +29,6 @@
 #include <dds/pub/Publisher.hpp>
 #include <dds/topic/Topic.hpp>
 
-#include <fastdds/dds/topic/qos/WriterQos.hpp>
 
 namespace dds {
 namespace pub {
@@ -39,9 +38,8 @@ DataWriter<T>::DataWriter(
         const dds::pub::Publisher& pub,
         const dds::topic::Topic<T>& topic)
     : dds::core::Reference<detail::DataWriter>(
-        new detail::DataWriter(pub,
-        topic,
-        pub.is_nil() ? dds::pub::qos::DataWriterQos() : pub.default_datawriter_qos(),
+        pub.delegate()->create_datawriter(*topic.delegate().get(),
+        pub.default_datawriter_qos(),
         nullptr,
         dds::core::status::StatusMask::all()))
 {
@@ -56,12 +54,10 @@ DataWriter<T>::DataWriter(
         dds::pub::DataWriterListener<T>* listener,
         const dds::core::status::StatusMask& mask)
     : dds::core::Reference<detail::DataWriter>(
-        new detail::DataWriter(
-            pub.delegate().get(),
-            *topic.delegate().get(),
-            qos,
-            listener,
-            mask))
+        pub.delegate()->create_datawriter(*topic.delegate().get(),
+        qos,
+        listener,
+        mask))
 {
     publisher_ = &pub;
 }
@@ -69,6 +65,7 @@ DataWriter<T>::DataWriter(
 template<typename T>
 DataWriter<T>::~DataWriter()
 {
+    publisher_->delegate()->delete_datawriter(this->delegate().get());
 }
 
 template<typename T>

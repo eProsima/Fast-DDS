@@ -612,12 +612,10 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
             {
                 writer->publication_matched_status_read();
             }
+
         }
-        if (data_writer_->user_datawriter_->get_statuscondition()->is_attached())
-        {
-            data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
-                StatusMask::publication_matched());
-        }
+        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
+            StatusMask::publication_matched());
     }
     else if (data_writer_->publisher_->get_participant().is_enabled() &&
             data_writer_->publisher_->get_participant().get_status_mask().is_compatible(StatusMask::
@@ -633,11 +631,8 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
                 writer->publication_matched_status_read();
             }
         }
-        if (data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
-        {
-            data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
-                StatusMask::publication_matched());
-        }
+        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+            StatusMask::publication_matched());
     }
 
     //Update Matched Subscriptions List

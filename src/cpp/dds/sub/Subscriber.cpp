@@ -29,13 +29,13 @@ namespace dds {
 namespace sub {
 
 Subscriber::Subscriber(
-        const ::dds::domain::DomainParticipant& dp)
+        const domain::DomainParticipant& dp)
     : ::dds::core::Reference<detail::Subscriber>(
-        new detail::Subscriber(dp,
-        dp.default_subscriber_qos(),
-        nullptr,
-        dds::core::status::StatusMask::none()))
+        dp.delegate()->create_subscriber(
+            dp.default_subscriber_qos(),
+            eprosima::fastrtps::SubscriberAttributes()))
 {
+    participant_ = &dp;
 }
 
 Subscriber::Subscriber(
@@ -43,29 +43,35 @@ Subscriber::Subscriber(
         const dds::sub::qos::SubscriberQos& qos,
         dds::sub::SubscriberListener* listener,
         const dds::core::status::StatusMask& mask)
-    : ::dds::core::Reference<detail::Subscriber>(new detail::Subscriber(dp, qos, listener, mask))
+    : ::dds::core::Reference<detail::Subscriber>(
+        dp.delegate()->create_subscriber(qos,
+        eprosima::fastrtps::SubscriberAttributes(),
+        listener,
+        mask))
+{
+    participant_ = &dp;
+}
+
+Subscriber::~Subscriber()
 {
 }
 
-Subscriber::~Subscriber() {}
-
 void Subscriber::notify_datareaders()
 {
-    delegate()->notify_datareaders();
+    this->delegate()->notify_datareaders();
 }
 
 void Subscriber::listener(
         Listener* listener,
         const dds::core::status::StatusMask& event_mask)
 {
-    delegate()->set_listener(listener, event_mask);
+    this->delegate()->set_listener(listener, event_mask);
 }
 
 typename Subscriber::Listener* Subscriber::listener() const
 {
     return dynamic_cast<Listener*>(delegate()->get_listener());
 }
-
 
 const dds::sub::qos::SubscriberQos& Subscriber::qos() const
 {
@@ -94,10 +100,6 @@ Subscriber& Subscriber::default_datareader_qos(
 
 const dds::domain::DomainParticipant& Subscriber::participant() const
 {
-    eprosima::fastdds::dds::DomainParticipant p = delegate()->get_participant();
-    std::shared_ptr<eprosima::fastdds::dds::DomainParticipant> ptr(&p);
-    participant_->delegate().swap(ptr);
-
     return *participant_;
 }
 
@@ -113,6 +115,11 @@ const Subscriber& Subscriber::operator >>(
 {
     qos = this->qos();
     return *this;
+}
+
+dds::core::cond::StatusCondition* Subscriber::status_condition()
+{
+    return this->delegate()->get_statuscondition();
 }
 
 } //namespace sub

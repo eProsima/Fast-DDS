@@ -306,6 +306,9 @@ public:
     void wait_for_acknowledgments(
             const dds::core::Duration& timeout);
 
+
+    dds::core::cond::StatusCondition* status_condition();
+
     //==========================================================================
 
     /**

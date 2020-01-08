@@ -120,6 +120,11 @@ const dds::domain::DomainParticipant& Publisher::participant() const
     return *participant_;
 }
 
+dds::core::cond::StatusCondition* Publisher::status_condition()
+{
+    return this->delegate()->get_statuscondition();
+}
+
 } //namespace pub
 } //namespace dds
 

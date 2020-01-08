@@ -33,8 +33,8 @@ namespace cond {
 
 template<typename DELEGATE>
 TStatusCondition<DELEGATE>::TStatusCondition(
-        const dds::core::Entity& e)
-    : ::dds::core::cond::TCondition<detail::StatusCondition>(new detail::StatusCondition(e))
+        dds::core::Entity& e)
+    : ::dds::core::cond::TCondition<detail::StatusCondition>(new detail::StatusCondition(&e))
 {
 }
 
@@ -85,45 +85,45 @@ const dds::core::Entity& TStatusCondition<DELEGATE>::entity() const
     return this->delegate()->get_entity();
 }
 
-template<typename DELEGATE>
-TCondition<DELEGATE>::TCondition(
-        /*const TStatusCondition<org::opensplice::core::cond::StatusConditionDelegate>& h*/)
-{
-    //To implement
-    //    if (h.is_nil()) {
-    //        /* We got a null object and are not really able to do a typecheck here. */
-    //        /* So, just set a null object. */
-    //        *this = dds::core::null;
-    //    } else {
-    //        ISOCPP_REPORT_STACK_DDS_BEGIN(h);
+//template<typename DELEGATE>
+//TCondition<DELEGATE>::TCondition(
+//        /*const TStatusCondition<org::opensplice::core::cond::StatusConditionDelegate>& h*/)
+//{
+//    To implement
+//        if (h.is_nil()) {
+//            /* We got a null object and are not really able to do a typecheck here. */
+//            /* So, just set a null object. */
+//            *this = dds::core::null;
+//        } else {
+//            ISOCPP_REPORT_STACK_DDS_BEGIN(h);
 
-    //        this->::dds::core::Reference<DELEGATE>::impl_ = OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<DELEGATE_T>(h.delegate());
-    //        if (h.delegate() != this->::dds::core::Reference<DELEGATE>::impl_) {
-    //            throw dds::core::IllegalOperationError(std::string("Attempted invalid cast: ") + typeid(h).name() + " to " + typeid(*this).name());
-    //        }
-    //    }
-}
+//            this->::dds::core::Reference<DELEGATE>::impl_ = OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<DELEGATE_T>(h.delegate());
+//            if (h.delegate() != this->::dds::core::Reference<DELEGATE>::impl_) {
+//                throw dds::core::IllegalOperationError(std::string("Attempted invalid cast: ") + typeid(h).name() + " to " + typeid(*this).name());
+//            }
+//        }
+//}
 
-template<typename DELEGATE>
-TCondition<DELEGATE>& TCondition<DELEGATE>::operator =(
-        /*const dds::core::cond::TStatusCondition<org::opensplice::core::cond::StatusConditionDelegate>& rhs*/)
-{
-    //To implement
-    //    if (this != (TCondition*)&rhs) {
-    //        if (rhs.is_nil()) {
-    //            /* We got a null object and are not really able to do a typecheck here. */
-    //            /* So, just set a null object. */
-    //            *this = dds::core::null;
-    //        } else {
-    //            TCondition other(rhs);
-    //            /* Dont have to copy when the delegate is the same. */
-    //            if (other.delegate() != this->::dds::core::Reference<DELEGATE>::impl_) {
-    //                *this = other;
-    //            }
-    //        }
-    //    }
-    //    return *this;
-}
+//template<typename DELEGATE>
+//TCondition<DELEGATE>& TCondition<DELEGATE>::operator =(
+//        /*const dds::core::cond::TStatusCondition<org::opensplice::core::cond::StatusConditionDelegate>& rhs*/)
+//{
+//    To implement
+//        if (this != (TCondition*)&rhs) {
+//            if (rhs.is_nil()) {
+//                /* We got a null object and are not really able to do a typecheck here. */
+//                /* So, just set a null object. */
+//                *this = dds::core::null;
+//            } else {
+//                TCondition other(rhs);
+//                /* Dont have to copy when the delegate is the same. */
+//                if (other.delegate() != this->::dds::core::Reference<DELEGATE>::impl_) {
+//                    *this = other;
+//                }
+//            }
+//        }
+//        return *this;
+//}
 
 } //namespace cond
 } //namespace core

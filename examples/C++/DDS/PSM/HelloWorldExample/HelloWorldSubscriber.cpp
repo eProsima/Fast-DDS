@@ -128,7 +128,6 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     }
 }
 
-
 void HelloWorldSubscriber::run()
 {
     std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;

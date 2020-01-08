@@ -35,7 +35,7 @@ DomainParticipant::DomainParticipant(
             static_cast<uint8_t>(did),
             eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT,
             nullptr,
-            dds::core::status::StatusMask::none()))
+            dds::core::status::StatusMask::all()))
 {
 }
 
@@ -169,6 +169,11 @@ const DomainParticipant& DomainParticipant::operator >>(
 {
     qos = this->qos();
     return *this;
+}
+
+core::cond::StatusCondition* DomainParticipant::status_condition()
+{
+    return this->delegate()->get_statuscondition();
 }
 
 } //namespace domain

@@ -73,18 +73,14 @@ typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
 template<typename DELEGATE>
 void TWaitSet<DELEGATE>::dispatch()
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    this->dispatch(dds::core::Duration::infinite());
+    this->dispatch(dds::core::Duration::infinite());
 }
 
 template<typename DELEGATE>
 void TWaitSet<DELEGATE>::dispatch(
         const dds::core::Duration& timeout)
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    this->delegate()->dispatch(timeout);
+    this->delegate()->dispatch(timeout);
 }
 
 template<typename DELEGATE>

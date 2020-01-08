@@ -23,6 +23,7 @@
  * OMG PSM class declaration
  */
 #include <dds/sub/detail/DataReader.hpp>
+#include <dds/sub/Subscriber.hpp>
 #include <dds/sub/Query.hpp>
 #include <dds/sub/detail/SamplesHolder.hpp>
 
@@ -41,6 +42,260 @@ namespace sub {
 //--------------------------------------------------------------------------------
 //  DATAREADER
 //--------------------------------------------------------------------------------
+template<typename T>
+DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const dds::topic::Topic<T>& topic)
+    : dds::core::Reference< detail::DataReader>(
+        sub.delegate()->create_datareader(
+            *topic.delegate().get(),
+            sub.is_nil() ? dds::sub::qos::DataReaderQos() : sub.default_datareader_qos(),
+            nullptr,
+            dds::core::status::StatusMask::all()))
+{
+    subscriber_ = &sub;
+}
+
+template<typename T>
+DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const ::dds::topic::Topic<T>& topic,
+        const dds::sub::qos::DataReaderQos& qos,
+        dds::sub::DataReaderListener<T>* listener,
+        const dds::core::status::StatusMask& mask)
+    : ::dds::core::Reference< detail::DataReader>(
+        sub.delegate()->create_datareader(
+            *topic.delegate().get(),
+            qos,
+            listener,
+            mask))
+{
+    subscriber_ = &sub;
+}
+
+#ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
+template<typename T>
+DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const dds::topic::ContentFilteredTopic<T>& topic)
+    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, sub.default_datareader_qos()))
+{
+}
+
+template<typename T>
+DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const ::dds::topic::ContentFilteredTopic<T>& topic,
+        const dds::sub::qos::DataReaderQos& qos,
+        dds::sub::DataReaderListener<T>* listener,
+        const dds::core::status::StatusMask& mask)
+    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, qos, listener, mask))
+{
+}
+
+#endif //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
+
+#ifdef OMG_DDS_MULTI_TOPIC_SUPPORT
+template<typename T>
+DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const dds::topic::MultiTopic<T>& topic)
+    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic))
+{
+}
+
+template<typename T>
+DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const ::dds::topic::MultiTopic<T>& topic,
+        const dds::sub::qos::DataReaderQos& qos,
+        dds::sub::DataReaderListener<T>* listener,
+        const dds::core::status::StatusMask& mask)
+    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, qos, listener, mask))
+{
+}
+
+#endif //OMG_DDS_MULTI_TOPIC_SUPPORT
+
+template<typename T>
+DataReader<T>::~DataReader()
+{
+}
+
+template<typename T>
+dds::sub::status::DataState DataReader<T>::default_filter_state()
+{
+    //To implement
+    //    return this->delegate()->default_filter_state();
+    *this = dds::core::null;
+    return *this;
+}
+
+template<typename T>
+DataReader<T>& DataReader<T>::default_filter_state(
+        const dds::sub::status::DataState& /*status*/)
+{
+    //To implement
+    //    this->delegate()->default_filter_state(status);
+    return *this;
+}
+
+template<typename T>
+DataReader<T>& DataReader<T>::operator >>(
+        dds::sub::LoanedSamples<T>& ls)
+{
+    ls = this->read();
+    return *this;
+}
+
+template<typename T>
+typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>(
+        ManipulatorSelector& (manipulator)(ManipulatorSelector &))
+{
+    ManipulatorSelector selector(*this);
+    manipulator(selector);
+    return selector;
+}
+
+/** @cond */
+template<typename T>
+template<typename Functor>
+typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>(
+        Functor f)
+{
+    ManipulatorSelector selector(*this);
+    f(selector);
+    return selector;
+}
+
+/** @endcond */
+
+template<typename T>
+LoanedSamples<T> DataReader<T>::read()
+{
+    //To implement
+    //    return this->delegate()->read();
+    *this = dds::core::null;
+    return *this;
+}
+
+template<typename T>
+LoanedSamples<T> DataReader<T>::take()
+{
+    //To implement
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->take();
+    LoanedSamples<T> result;
+    T data;
+    SampleInfo info;
+
+    //if (!!reader->take_next_sample(&hello_, info_))
+    if (!!this->delegate()->take_next_sample(&data, info))
+    {
+        Sample<T> sample;
+        sample.data(data);
+        sample.info(info);
+        result.delegate()->container().push_back(sample);
+    }
+
+    return result;
+}
+
+template<typename T>
+template<typename SamplesFWIterator>
+uint32_t DataReader<T>::read(
+        SamplesFWIterator /*sfit*/,
+        uint32_t /*max_samples*/)
+{
+    //To implement
+    //    return this->delegate()->read(sfit, max_samples);
+    throw "Not implemented";
+    return 0;
+}
+
+template<typename T>
+template<typename SamplesFWIterator>
+uint32_t DataReader<T>::take(
+        SamplesFWIterator /*sfit*/,
+        uint32_t /*max_samples*/)
+{
+    //To implement
+    //    return this->delegate()->take(sfit, max_samples);
+    throw "Not implemented";
+    return 0;
+}
+
+template<typename T>
+template<typename SamplesBIIterator>
+uint32_t DataReader<T>::read(
+        SamplesBIIterator /*sbit*/)
+{
+    //To implement
+    //    return this->delegate()->read(sbit);
+    throw "Not implemented";
+    return 0;
+}
+
+template<typename T>
+template<typename SamplesBIIterator>
+uint32_t DataReader<T>::take(
+        SamplesBIIterator /*sbit*/)
+{
+    //To implement
+    //    return this->delegate()->take(sbit);
+    throw "Not implemented";
+    return 0;
+}
+
+template<typename T>
+typename DataReader<T>::Selector DataReader<T>::select()
+{
+    Selector selector(*this);
+    return selector;
+}
+
+template<typename T>
+dds::topic::TopicInstance<T> DataReader<T>::key_value(
+        const dds::core::InstanceHandle& /*h*/)
+{
+    //To implement
+    //    return this->delegate()->key_value(h);
+}
+
+template<typename T>
+T& DataReader<T>::key_value(
+        T& /*sample*/,
+        const dds::core::InstanceHandle& /*h*/)
+{
+    //To implement
+    //    return this->delegate()->key_value(sample, h);
+}
+
+template<typename T>
+const dds::core::InstanceHandle DataReader<T>::lookup_instance(
+        const T& /*key*/) const
+{
+    //To implement
+    //    return this->delegate()->lookup_instance(key);
+    *this = dds::core::null;
+    return *this;
+}
+
+template<typename T>
+void DataReader<T>::listener(
+        Listener* listener,
+        const dds::core::status::StatusMask& event_mask)
+{
+    delegate()->set_listener(listener, event_mask);
+}
+
+template<typename T>
+typename DataReader<T>::Listener*
+DataReader<T>::listener() const
+{
+    return delegate()->get_listener();
+}
+
 /*
    template<typename T>
    DataReader<T>::Selector::Selector(
@@ -286,255 +541,6 @@ namespace sub {
    //    return *this;
    }
  */
-template<typename T>
-DataReader<T>::DataReader(
-        const dds::sub::Subscriber& sub,
-        const dds::topic::Topic<T>& topic)
-    : ::dds::core::Reference< detail::DataReader >(
-        new detail::DataReader(
-            sub.delegate().get(),
-            topic,
-            sub.is_nil() ? dds::sub::qos::DataReaderQos() : sub.default_datareader_qos()))
-{
-}
-
-template<typename T>
-DataReader<T>::DataReader(
-        const dds::sub::Subscriber& sub,
-        const ::dds::topic::Topic<T>& topic,
-        const dds::sub::qos::DataReaderQos& qos,
-        dds::sub::DataReaderListener<T>* listener,
-        const dds::core::status::StatusMask& mask)
-    : ::dds::core::Reference< detail::DataReader >(
-        new detail::DataReader(
-            sub.delegate().get(),
-            *topic.delegate().get(),
-            qos,
-            listener,
-            mask))
-{
-}
-
-#ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
-template<typename T>
-DataReader<T>::DataReader(
-        const dds::sub::Subscriber& sub,
-        const dds::topic::ContentFilteredTopic<T>& topic)
-    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, sub.default_datareader_qos()))
-{
-}
-
-template<typename T>
-DataReader<T>::DataReader(
-        const dds::sub::Subscriber& sub,
-        const ::dds::topic::ContentFilteredTopic<T>& topic,
-        const dds::sub::qos::DataReaderQos& qos,
-        dds::sub::DataReaderListener<T>* listener,
-        const dds::core::status::StatusMask& mask)
-    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, qos, listener, mask))
-{
-}
-#endif //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
-
-#ifdef OMG_DDS_MULTI_TOPIC_SUPPORT
-template<typename T>
-DataReader<T>::DataReader(
-        const dds::sub::Subscriber& sub,
-        const dds::topic::MultiTopic<T>& topic)
-    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic))
-{
-}
-
-template<typename T>
-DataReader<T>::DataReader(
-        const dds::sub::Subscriber& sub,
-        const ::dds::topic::MultiTopic<T>& topic,
-        const dds::sub::qos::DataReaderQos& qos,
-        dds::sub::DataReaderListener<T>* listener,
-        const dds::core::status::StatusMask& mask)
-    : ::dds::core::Reference< detail::DataReader >(new detail::DataReader(sub, topic, qos, listener, mask))
-{
-}
-#endif //OMG_DDS_MULTI_TOPIC_SUPPORT
-
-template<typename T>
-DataReader<T>::~DataReader()
-{
-}
-
-template<typename T>
-dds::sub::status::DataState DataReader<T>::default_filter_state()
-{
-    //To implement
-    //    return this->delegate()->default_filter_state();
-    *this = dds::core::null;
-    return *this;
-}
-
-template<typename T>
-DataReader<T>& DataReader<T>::default_filter_state(
-        const dds::sub::status::DataState& /*status*/)
-{
-    //To implement
-    //    this->delegate()->default_filter_state(status);
-    return *this;
-}
-
-template<typename T>
-DataReader<T>& DataReader<T>::operator >>(
-        dds::sub::LoanedSamples<T>& ls)
-{
-    ls = this->read();
-    return *this;
-}
-
-template<typename T>
-typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>(
-        ManipulatorSelector& (manipulator)(ManipulatorSelector&))
-{
-    ManipulatorSelector selector(*this);
-    manipulator(selector);
-    return selector;
-}
-
-/** @cond */
-template<typename T>
-template<typename Functor>
-typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>(
-        Functor f)
-{
-    ManipulatorSelector selector(*this);
-    f(selector);
-    return selector;
-}
-/** @endcond */
-
-template<typename T>
-LoanedSamples<T> DataReader<T>::read()
-{
-    //To implement
-    //    return this->delegate()->read();
-    *this = dds::core::null;
-    return *this;
-}
-
-template<typename T>
-LoanedSamples<T> DataReader<T>::take()
-{
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->take();
-    LoanedSamples<T> result;
-    T data;
-    SampleInfo info;
-
-    //if (!!reader->take_next_sample(&hello_, info_))
-    if (!!this->delegate()->take_next_sample(&data, info))
-    {
-        Sample<T> sample;
-        sample.data(data);
-        sample.info(info);
-        result.delegate()->container().push_back(sample);
-    }
-
-    return result;
-}
-
-
-template<typename T>
-template<typename SamplesFWIterator>
-uint32_t DataReader<T>::read(
-        SamplesFWIterator /*sfit*/,
-        uint32_t /*max_samples*/)
-{
-    //To implement
-    //    return this->delegate()->read(sfit, max_samples);
-    throw "Not implemented";
-    return 0;
-}
-
-template<typename T>
-template<typename SamplesFWIterator>
-uint32_t DataReader<T>::take(
-        SamplesFWIterator /*sfit*/,
-        uint32_t /*max_samples*/)
-{
-    //To implement
-    //    return this->delegate()->take(sfit, max_samples);
-    throw "Not implemented";
-    return 0;
-}
-
-template<typename T>
-template<typename SamplesBIIterator>
-uint32_t DataReader<T>::read(
-        SamplesBIIterator /*sbit*/)
-{
-    //To implement
-    //    return this->delegate()->read(sbit);
-    throw "Not implemented";
-    return 0;
-}
-
-template<typename T>
-template<typename SamplesBIIterator>
-uint32_t DataReader<T>::take(
-        SamplesBIIterator /*sbit*/)
-{
-    //To implement
-    //    return this->delegate()->take(sbit);
-    throw "Not implemented";
-    return 0;
-}
-
-template<typename T>
-typename DataReader<T>::Selector DataReader<T>::select()
-{
-    Selector selector(*this);
-    return selector;
-}
-
-template<typename T>
-dds::topic::TopicInstance<T> DataReader<T>::key_value(
-        const dds::core::InstanceHandle& /*h*/)
-{
-    //To implement
-    //    return this->delegate()->key_value(h);
-}
-
-template<typename T>
-T& DataReader<T>::key_value(
-        T& /*sample*/,
-        const dds::core::InstanceHandle& /*h*/)
-{
-    //To implement
-    //    return this->delegate()->key_value(sample, h);
-}
-
-template<typename T>
-const dds::core::InstanceHandle DataReader<T>::lookup_instance(
-        const T& /*key*/) const
-{
-    //To implement
-    //    return this->delegate()->lookup_instance(key);
-    *this = dds::core::null;
-    return *this;
-}
-
-template<typename T>
-void DataReader<T>::listener(
-        Listener* listener,
-        const dds::core::status::StatusMask& event_mask)
-{
-    delegate()->set_listener(listener, event_mask);
-}
-
-template<typename T>
-typename DataReader<T>::Listener*
-DataReader<T>::listener() const
-{
-    return delegate()->get_listener();
-}
 
 } //namespace sub
 } //namespace dds

@@ -87,6 +87,7 @@ DataReader* Subscriber::create_datareader(
     {
         return impl_->create_datareader(*topic, reader_qos, listener, mask);
     }
+    logWarning(SUBSCRIBER, "There isn't any existing topic with that name");
     return nullptr;
 }
 
