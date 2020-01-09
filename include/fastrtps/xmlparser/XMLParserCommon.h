@@ -71,6 +71,13 @@ extern const char* METADATA_LOGICAL_PORT;
 extern const char* LISTENING_PORTS;
 extern const char* CALCULATE_CRC;
 extern const char* CHECK_CRC;
+extern const char* SEGMENT_SIZE;
+extern const char* PORT_QUEUE_CAPACITY;
+extern const char* PORT_OVERFLOW_POLICY;
+extern const char* SEGMENT_OVERFLOW_POLICY;
+extern const char* HEALTHY_CHECK_TIMEOUT_MS;
+extern const char* DISCARD;
+extern const char* FAIL;
 
 // IntraprocessDeliveryType
 extern const char* OFF;
@@ -161,6 +168,7 @@ extern const char* UDPv4;
 extern const char* UDPv6;
 extern const char* TCPv4;
 extern const char* TCPv6;
+extern const char* SHM;
 extern const char* INIT_ACKNACK_DELAY;
 extern const char* HEARTB_RESP_DELAY;
 extern const char* INIT_HEARTB_DELAY;

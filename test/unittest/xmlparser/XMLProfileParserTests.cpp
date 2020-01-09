@@ -18,6 +18,7 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
@@ -717,6 +718,27 @@ TEST_F(XMLProfileParserTests, UDP_transport_descriptors_config)
     EXPECT_EQ(descriptor->interfaceWhiteList[0], "192.168.1.41");
     EXPECT_EQ(descriptor->interfaceWhiteList[1], "127.0.0.1");
     EXPECT_EQ(descriptor->m_output_udp_socket, 5101u);
+}
+
+TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
+{
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::loadXMLFile("SHM_transport_descriptors_config.xml"));
+
+    xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
+
+    using SHMDescriptor = std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor>;
+    SHMDescriptor descriptor = std::dynamic_pointer_cast<eprosima::fastdds::rtps::SharedMemTransportDescriptor>(
+        transport);
+
+    ASSERT_NE(descriptor, nullptr);
+    ASSERT_EQ(descriptor->segment_size, std::numeric_limits<uint32_t>::max());
+    ASSERT_EQ(descriptor->port_queue_capacity, std::numeric_limits<uint32_t>::max());
+    ASSERT_EQ(descriptor->port_overflow_policy,
+            eprosima::fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+    ASSERT_EQ(descriptor->segment_overflow_policy,
+            eprosima::fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+    ASSERT_EQ(descriptor->healthy_check_timeout_ms, std::numeric_limits<uint32_t>::max());
 }
 
 int main(

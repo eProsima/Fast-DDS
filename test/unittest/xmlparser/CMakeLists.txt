@@ -55,6 +55,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UDP_transport_descriptors_config.xml
             ${CMAKE_CURRENT_BINARY_DIR}/UDP_transport_descriptors_config.xml
             COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SHM_transport_descriptors_config.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/SHM_transport_descriptors_config.xml
+            COPYONLY)
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp
@@ -115,6 +118,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
         target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
@@ -188,6 +192,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )

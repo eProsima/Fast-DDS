@@ -30,24 +30,37 @@ class TransportInterface;
  */
 typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 {
-	virtual ~SharedMemTransportDescriptor() {}
+    virtual ~SharedMemTransportDescriptor() {}
 
-	virtual TransportInterface* create_transport() const override;
-	uint32_t min_send_buffer_size() const override {return 0;}
 
-	RTPS_DllAPI SharedMemTransportDescriptor();
+    RTPS_DllAPI SharedMemTransportDescriptor()
+        : TransportDescriptorInterface(0, 0)
+    {
 
-	RTPS_DllAPI SharedMemTransportDescriptor(
-        	const SharedMemTransportDescriptor& t);
+    }
 
-	uint32_t segment_size;
-	uint32_t port_queue_capacity;
+    RTPS_DllAPI SharedMemTransportDescriptor(
+            const SharedMemTransportDescriptor& t)
+        : TransportDescriptorInterface(t)
+    {
+        (void)t;
+    }
 
-	enum class OverflowPolicy { DISCARD, FAIL };
+	TransportInterface* create_transport() const override
+	{
+		return nullptr;
+	}
 
-	OverflowPolicy port_overflow_policy;
-	OverflowPolicy segment_overflow_policy;
-	uint32_t healthy_check_timeout_ms;
+    uint32_t min_send_buffer_size() const override {return 0;}
+
+    uint32_t segment_size;
+    uint32_t port_queue_capacity;
+
+    enum class OverflowPolicy { DISCARD, FAIL };
+
+    OverflowPolicy port_overflow_policy;
+    OverflowPolicy segment_overflow_policy;
+    uint32_t healthy_check_timeout_ms;
 }SharedMemTransportDescriptor;
 
 } // namespace rtps
