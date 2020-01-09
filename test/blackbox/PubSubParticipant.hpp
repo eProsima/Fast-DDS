@@ -64,7 +64,7 @@ class PubSubParticipant
                     rtps::MatchingInfo &info) override
             {
                 (void)pub;
-                (info.status == rtps::MATCHED_MATCHING)? participant_->pub_matched(): participant_->sub_unmatched();
+                (info.status == rtps::MATCHED_MATCHING)? participant_->pub_matched(): participant_->pub_unmatched();
             }
 
             void on_liveliness_lost(
