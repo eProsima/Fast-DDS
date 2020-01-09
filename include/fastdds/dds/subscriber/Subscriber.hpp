@@ -148,7 +148,7 @@ public:
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DataReader* create_datareader(
-            const Topic& topic, //Change to TopicDescription when DomainParticipant::find_topic() is implemented
+            Topic* topic,
             const DataReaderQos& qos,
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

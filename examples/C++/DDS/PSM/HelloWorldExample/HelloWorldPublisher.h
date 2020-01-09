@@ -71,10 +71,12 @@ public:
         PubListener()
             : matched_(0)
             , firstConnected_(false)
-        {}
+        {
+        }
 
         ~PubListener() override
-        {}
+        {
+        }
 
         void on_publication_matched(
                 dds::pub::DataWriter<HelloWorld>& writer,

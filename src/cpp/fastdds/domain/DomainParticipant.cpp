@@ -180,12 +180,10 @@ DomainId_t DomainParticipant::get_domain_id() const
     return impl_->get_domain_id();
 }
 
-/* TODO
-   bool DomainParticipant::delete_contained_entities()
-   {
+ReturnCode_t DomainParticipant::delete_contained_entities()
+{
     return impl_->delete_contained_entities();
-   }
- */
+}
 
 ReturnCode_t DomainParticipant::assert_liveliness()
 {

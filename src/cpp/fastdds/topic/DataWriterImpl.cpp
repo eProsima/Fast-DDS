@@ -52,7 +52,7 @@ namespace dds {
 DataWriterImpl::DataWriterImpl(
         PublisherImpl* p,
         TypeSupport type,
-        const Topic& topic,
+        Topic* topic,
         const WriterAttributes& att,
         const DataWriterQos& qos,
         const MemoryManagementPolicy_t memory_policy,
@@ -60,7 +60,7 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , writer_(nullptr)
     , type_(type)
-    , topic_att_(topic.get_topic_attributes(qos))
+    , topic_att_(topic->get_topic_attributes(qos))
     , topic_(topic)
     , w_att_(att)
     , qos_(&qos == &DDS_DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
@@ -574,13 +574,13 @@ const DataWriterListener* DataWriterImpl::get_listener() const
 }
 
 bool DataWriterImpl::set_topic(
-        const Topic& topic)
+        Topic& topic)
 {
-    topic_ = topic;
+    topic_ = &topic;
     return true;
 }
 
-const Topic& DataWriterImpl::get_topic() const
+Topic* DataWriterImpl::get_topic() const
 {
     return topic_;
 }

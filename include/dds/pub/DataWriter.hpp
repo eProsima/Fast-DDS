@@ -126,7 +126,7 @@ public:
      */
     DataWriter(
             const Publisher& pub,
-            const ::dds::topic::Topic<T>& topic);
+            ::dds::topic::Topic<T>& topic);
 
     /**
      * Create a new DataWriter for the desired Topic, using the given Publisher and
@@ -194,7 +194,7 @@ public:
      */
     DataWriter(
             const Publisher& pub,
-            const ::dds::topic::Topic<T>& topic,
+            ::dds::topic::Topic<T>& topic,
             const qos::DataWriterQos& qos,
             DataWriterListener<T>* listener = nullptr,
             const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

@@ -35,7 +35,7 @@ namespace dds {
 
 DataReader::DataReader(
         const Subscriber* sub,
-        const Topic& topic,
+        Topic* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
@@ -43,7 +43,7 @@ DataReader::DataReader(
     , impl_(
         (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
 {
-    impl_->set_topic(topic);
+    impl_->set_topic(*topic);
 }
 
 DataReader::DataReader(
@@ -117,7 +117,7 @@ bool DataReader::set_topic(
     return impl_->set_topic_attributes(topic_att);
 }
 
-Topic& DataReader::get_topic()
+Topic* DataReader::get_topic()
 {
     return impl_->get_topic();
 }

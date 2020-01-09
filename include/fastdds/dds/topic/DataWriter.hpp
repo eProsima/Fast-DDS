@@ -81,7 +81,7 @@ class RTPS_DllAPI DataWriter : public DomainEntity
 
     DataWriter(
             const Publisher* pub,
-            const Topic& topic,
+            Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
@@ -183,12 +183,12 @@ public:
      * Establishes the topic for this DataWriter.
      */
     bool set_topic(
-            const Topic& topic);
+            Topic& topic);
 
     /**
      * Retrieves the topic for this DataWriter.
      */
-    const Topic& get_topic() const;
+    Topic* get_topic() const;
 
     /**
      * Retrieves the listener for this DataWriter.

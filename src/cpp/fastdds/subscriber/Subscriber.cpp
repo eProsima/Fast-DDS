@@ -85,23 +85,23 @@ DataReader* Subscriber::create_datareader(
                     Duration_t(reader_qos.reliability.max_blocking_time));
     if (topic != nullptr)
     {
-        return impl_->create_datareader(*topic, reader_qos, listener, mask);
+        return impl_->create_datareader(topic, reader_qos, listener, mask);
     }
     logWarning(SUBSCRIBER, "There isn't any existing topic with that name");
     return nullptr;
 }
 
 DataReader* Subscriber::create_datareader(
-        const Topic& topic,
+        Topic* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
     fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicName = topic.get_name();
-    topic_attr.topicDataType = topic.get_type_name();
+    topic_attr.topicName = topic->get_name();
+    topic_attr.topicDataType = topic->get_type_name();
     TopicQos topic_qos;
-    topic.get_qos(topic_qos);
+    topic->get_qos(topic_qos);
     topic_attr.historyQos = qos.history;
 
     return impl_->create_datareader(topic, qos, listener, mask);
