@@ -180,9 +180,9 @@ void HelloWorldPublisher::run(
 bool HelloWorldPublisher::publish(
         bool waitForListener)
 {
-    if (listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
+    if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
     {
-        hello_.index(hello_.index()+1);
+        hello_.index(hello_.index() + 1);
         writer_.write(hello_);
         return true;
     }

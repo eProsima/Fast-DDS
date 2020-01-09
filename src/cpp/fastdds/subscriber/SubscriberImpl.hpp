@@ -91,7 +91,7 @@ public:
             SubscriberListener* listener);
 
     DataReader* create_datareader(
-            const Topic& topic,
+            Topic* topic,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

@@ -77,7 +77,7 @@ class DataReaderImpl
     DataReaderImpl(
             SubscriberImpl* s,
             TypeSupport type,
-            const Topic& topic,
+            Topic* topic,
             const fastrtps::rtps::ReaderAttributes& att,
             const DataReaderQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
@@ -229,14 +229,14 @@ public:
 
 
     bool set_topic(
-            const Topic& topic);
+            Topic& topic);
 
     bool set_topic_attributes(
             const fastrtps::TopicAttributes& att);
 
     const fastrtps::TopicAttributes& get_topic_attributes() const;
 
-    Topic& get_topic() const;
+    Topic* get_topic() const;
 
     TopicDescription* get_topicdescription() const;
 
@@ -306,7 +306,7 @@ private:
 
     fastrtps::TopicAttributes topic_att_;
 
-    Topic& topic_;
+    Topic* topic_;
 
     //!Attributes of the Subscriber
     fastrtps::rtps::ReaderAttributes att_;

@@ -139,7 +139,7 @@ public:
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DataWriter* create_datawriter(
-            const Topic& topic,
+            Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

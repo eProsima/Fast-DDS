@@ -102,7 +102,7 @@ bool HelloWorldPublisher::init()
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
     Topic topic(mp_participant, Wparam.topic);
-    writer_ = mp_publisher->create_datawriter(topic, qos, &m_listener);
+    writer_ = mp_publisher->create_datawriter(&topic, qos, &m_listener);
 
     if (writer_ == nullptr)
     {
@@ -126,12 +126,12 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     {
         n_matched = info.total_count;
         firstConnected = true;
-        std::cout << "Publisher matched"<<std::endl;
+        std::cout << "Publisher matched" << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         n_matched = info.total_count;
-        std::cout << "Publisher unmatched"<<std::endl;
+        std::cout << "Publisher unmatched" << std::endl;
     }
     else
     {
@@ -242,11 +242,11 @@ void HelloWorldPublisher::run(
 bool HelloWorldPublisher::publish(
         bool waitForListener)
 {
-    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);
-        m_Hello->set_uint32_value(index+1, 1);
+        m_Hello->set_uint32_value(index + 1, 1);
 
         eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
         array->set_uint32_value(10 + index, array->get_array_index({0, 0}));

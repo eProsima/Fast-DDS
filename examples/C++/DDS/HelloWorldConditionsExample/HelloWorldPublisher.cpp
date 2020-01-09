@@ -78,7 +78,7 @@ bool HelloWorldPublisher::init(
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(*topic_, qos, nullptr);
+    writer_ = publisher_->create_datawriter(topic_, qos, nullptr);
 
     if (writer_ == nullptr)
     {

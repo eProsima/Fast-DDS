@@ -88,7 +88,7 @@ ReturnCode_t Publisher::set_listener(
 }
 
 DataWriter* Publisher::create_datawriter(
-        const Topic& topic,
+        Topic* topic,
         const DataWriterQos& qos,
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& mask)

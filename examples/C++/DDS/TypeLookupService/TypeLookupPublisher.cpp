@@ -89,7 +89,7 @@ bool TypeLookupPublisher::init()
     Wparam.topic.auto_fill_type_object = false;
     Wparam.topic.auto_fill_type_information = true; // Share the type with readers.
     Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
+    Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
 
     if (mp_publisher == nullptr)
@@ -101,7 +101,7 @@ bool TypeLookupPublisher::init()
     DataWriterQos wqos;
     wqos.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     Topic mp_topic(mp_participant, Wparam.topic);
-    writer_ = mp_publisher->create_datawriter(mp_topic, wqos, &m_listener);
+    writer_ = mp_publisher->create_datawriter(&mp_topic, wqos, &m_listener);
 
     if (writer_ == nullptr)
     {
@@ -210,7 +210,7 @@ void TypeLookupPublisher::run(
 bool TypeLookupPublisher::publish(
         bool waitForListener)
 {
-    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);

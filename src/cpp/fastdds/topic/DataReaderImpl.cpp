@@ -48,7 +48,7 @@ namespace dds {
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
         TypeSupport type,
-        const Topic& topic,
+        Topic* topic,
         const fastrtps::rtps::ReaderAttributes& att,
         const DataReaderQos& qos,
         const MemoryManagementPolicy_t memory_policy,
@@ -56,8 +56,8 @@ DataReaderImpl::DataReaderImpl(
     : subscriber_(s)
     , reader_(nullptr)
     , type_(type)
-    , topic_att_(topic.get_topic_attributes(qos))
-    , topic_(const_cast<Topic&>(topic))
+    , topic_att_(topic->get_topic_attributes(qos))
+    , topic_(topic)
     , att_(att)
     , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
@@ -70,7 +70,7 @@ DataReaderImpl::DataReaderImpl(
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline.period.to_ns() * 1e-3)
     , deadline_missed_status_()
-    , lifespan_duration_us_(topic_.get_qos().lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(topic_->get_qos().lifespan.duration.to_ns() * 1e-3)
     , user_datareader_(nullptr)
 {
     deadline_timer_ = new TimedEvent(subscriber_->get_participant().get_resource_event(),
@@ -95,7 +95,7 @@ DataReaderImpl::DataReaderImpl(
 
                     return false;
                 },
-                    topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
+                    topic_->get_qos().lifespan.duration.to_ns() * 1e-6);
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -127,7 +127,7 @@ DataReaderImpl::~DataReaderImpl()
 
     if (reader_ != nullptr)
     {
-        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_.get_name());
+        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_->get_name());
     }
 
     RTPSDomain::removeRTPSReader(reader_);
@@ -217,12 +217,12 @@ ReturnCode_t DataReaderImpl::set_qos(
     }
 
     // Lifespan
-    if (topic_.get_qos().lifespan.duration != c_TimeInfinite)
+    if (topic_->get_qos().lifespan.duration != c_TimeInfinite)
     {
         lifespan_duration_us_ =
                 std::chrono::duration<double,
-                        std::ratio<1, 1000000> >(topic_.get_qos().lifespan.duration.to_ns() * 1e-3);
-        lifespan_timer_->update_interval_millisec(topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
+                        std::ratio<1, 1000000> >(topic_->get_qos().lifespan.duration.to_ns() * 1e-3);
+        lifespan_timer_->update_interval_millisec(topic_->get_qos().lifespan.duration.to_ns() * 1e-6);
     }
     else
     {
@@ -255,20 +255,20 @@ const TopicAttributes& DataReaderImpl::get_topic_attributes() const
 }
 
 bool DataReaderImpl::set_topic(
-        const Topic& topic)
+        Topic& topic)
 {
-    topic_ = topic;
+    topic_ = &topic;
     return true;
 }
 
-Topic& DataReaderImpl::get_topic() const
+Topic* DataReaderImpl::get_topic() const
 {
     return topic_;
 }
 
 TopicDescription* DataReaderImpl::get_topicdescription() const
 {
-    return get_subscriber()->get_participant().lookup_topicdescription(topic_.get_name());
+    return get_subscriber()->get_participant().lookup_topicdescription(topic_->get_name());
 }
 
 bool DataReaderImpl::set_attributes(

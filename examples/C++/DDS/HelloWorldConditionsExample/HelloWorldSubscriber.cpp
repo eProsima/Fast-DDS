@@ -129,7 +129,7 @@ bool HelloWorldSubscriber::init(
 
     waitset_.attach_condition(reader_->get_statuscondition());
 
-    topic_ = &reader_->get_topic();
+    topic_ = reader_->get_topic();
 
     topic_->get_statuscondition()->set_handler([this]() -> void {
         StatusMask triggered_status = topic_->get_status_changes();

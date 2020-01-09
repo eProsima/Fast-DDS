@@ -76,7 +76,7 @@ bool KeysPublisher::init(
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(*topic, qos, &listener_);
+    writer_ = publisher_->create_datawriter(topic, qos, &listener_);
 
     if (writer_ == nullptr)
     {

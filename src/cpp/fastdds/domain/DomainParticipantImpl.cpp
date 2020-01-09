@@ -336,13 +336,32 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
     return static_cast<uint8_t>(att_.rtps.builtin.domainId);
 }
 
-/* TODO
-   bool DomainParticipantImpl::delete_contained_entities()
-   {
-    logError(PARTICIPANT, "Not implemented.");
-    return false;
-   }
- */
+ReturnCode_t DomainParticipantImpl::delete_contained_entities()
+{
+    for (auto it : publishers_)
+    {
+        if (it.first->delete_contained_entities() != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        delete_publisher(it.first);
+    }
+
+    for (auto it : subscribers_)
+    {
+        if (it.first->delete_contained_entities() != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        delete_subscriber(it.first);
+    }
+
+    for (auto it: topics_)
+    {
+        delete_topic(std::get<0>(it.second));
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {

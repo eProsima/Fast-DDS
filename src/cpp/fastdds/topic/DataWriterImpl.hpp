@@ -77,7 +77,7 @@ class DataWriterImpl
     DataWriterImpl(
             PublisherImpl* p,
             TypeSupport type,
-            const Topic& topic,
+            Topic* topic,
             const fastrtps::rtps::WriterAttributes& att,
             const fastdds::dds::DataWriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
@@ -157,9 +157,9 @@ public:
     const fastdds::dds::DataWriterQos& get_qos() const;
 
     bool set_topic(
-            const Topic& topic);
+            Topic& topic);
 
-    const Topic& get_topic() const;
+    Topic* get_topic() const;
 
     const DataWriterListener* get_listener() const;
 
@@ -214,7 +214,7 @@ private:
 
     fastrtps::TopicAttributes topic_att_;
 
-    Topic topic_;
+    Topic* topic_;
 
     fastrtps::rtps::WriterAttributes w_att_;
 

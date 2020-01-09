@@ -96,7 +96,7 @@ public:
             PublisherListener* listener);
 
     DataWriter* create_datawriter(
-            const Topic& topic,
+            Topic* topic,
             const DataWriterQos& writer_qos,
             DataWriterListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

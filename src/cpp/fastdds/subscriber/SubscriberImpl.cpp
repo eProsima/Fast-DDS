@@ -116,29 +116,29 @@ ReturnCode_t SubscriberImpl::set_listener(
 }
 
 DataReader* SubscriberImpl::create_datareader(
-        const Topic& topic,
+        Topic* topic,
         const DataReaderQos& reader_qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic.get_name())
+    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name())
     //Look for the correct type registration
-    TypeSupport type_support = participant_->find_type(topic.get_type_name());
+    TypeSupport type_support = participant_->find_type(topic->get_type_name());
 
     /// Preconditions
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(SUBSCRIBER, "Type : " << topic.get_type_name() << " Not Registered");
+        logError(SUBSCRIBER, "Type : " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
-    if (topic.get_qos().topic_kind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
+    if (topic->get_qos().topic_kind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
     {
         logError(SUBSCRIBER, "Keyed Topic needs getKey function");
         return nullptr;
     }
 
-    if (!reader_qos.check_qos() || !topic.get_qos().checkQos())
+    if (!reader_qos.check_qos() || !topic->get_qos().checkQos())
     {
         return nullptr;
     }
@@ -148,7 +148,7 @@ DataReader* SubscriberImpl::create_datareader(
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = att_.multicastLocatorList;
     ratt.endpoint.reliabilityKind = reader_qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    ratt.endpoint.topicKind = topic.get_qos().topic_kind;
+    ratt.endpoint.topicKind = topic->get_qos().topic_kind;
     ratt.endpoint.unicastLocatorList = att_.unicastLocatorList;
     ratt.endpoint.remoteLocatorList = att_.remoteLocatorList;
     ratt.expectsInlineQos = att_.expectsInlineQos;
@@ -170,7 +170,7 @@ DataReader* SubscriberImpl::create_datareader(
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(topic.get_name());
+    property.value(topic->get_name());
     ratt.endpoint.properties.properties().push_back(std::move(property));
     if (qos_.partition.names().size() > 0)
     {
@@ -218,13 +218,13 @@ DataReader* SubscriberImpl::create_datareader(
     }
 
     ReaderQos rqos = reader_qos.change_to_reader_qos();
-    fastrtps::TopicAttributes topic_att = topic.get_topic_attributes();
+    fastrtps::TopicAttributes topic_att = topic->get_topic_attributes();
     rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
     reader->set_instance_handle(impl->reader_->getGuid());
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic.get_name()].push_back(impl);
+        readers_[topic->get_name()].push_back(impl);
     }
 
     return reader;
@@ -245,7 +245,18 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         if (dr_it != it->second.end())
         {
             (*dr_it)->set_listener(nullptr);
+            std::vector<DataReader*>* topic_readers = (*dr_it)->get_topic()->get_readers();
+            auto t_it = std::find(topic_readers->begin(), topic_readers->end(), reader);
+            if (t_it != topic_readers->end())
+            {
+                topic_readers->erase(t_it);
+            }
             it->second.erase(dr_it);
+            BuiltinSubscriber::get_instance()->delete_subscription_data(reader->get_instance_handle());
+            if (it->second.empty())
+            {
+                readers_.erase(it);
+            }
             return ReturnCode_t::RETCODE_OK;
         }
     }
@@ -348,7 +359,6 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
 
 ReturnCode_t SubscriberImpl::delete_contained_entities()
 {
-    std::lock_guard<std::mutex> lock(mtx_readers_);
     for (auto it : readers_)
     {
         for (DataReaderImpl* dr : it.second)
@@ -357,6 +367,7 @@ ReturnCode_t SubscriberImpl::delete_contained_entities()
             {
                 return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
             }
+            delete_datareader(dr->user_datareader_);
         }
     }
 

@@ -36,9 +36,9 @@ namespace pub {
 template<typename T>
 DataWriter<T>::DataWriter(
         const dds::pub::Publisher& pub,
-        const dds::topic::Topic<T>& topic)
+        dds::topic::Topic<T>& topic)
     : dds::core::Reference<detail::DataWriter>(
-        pub.delegate()->create_datawriter(*topic.delegate().get(),
+        pub.delegate()->create_datawriter(topic.delegate().get(),
         pub.default_datawriter_qos(),
         nullptr,
         dds::core::status::StatusMask::all()))
@@ -49,12 +49,12 @@ DataWriter<T>::DataWriter(
 template<typename T>
 DataWriter<T>::DataWriter(
         const dds::pub::Publisher& pub,
-        const dds::topic::Topic<T>& topic,
+        dds::topic::Topic<T>& topic,
         const dds::pub::qos::DataWriterQos& qos,
         dds::pub::DataWriterListener<T>* listener,
         const dds::core::status::StatusMask& mask)
     : dds::core::Reference<detail::DataWriter>(
-        pub.delegate()->create_datawriter(*topic.delegate().get(),
+        pub.delegate()->create_datawriter(topic.delegate().get(),
         qos,
         listener,
         mask))
