@@ -391,7 +391,7 @@ class PubSubWriter
     void wait_liveliness_lost(unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
-        liveliness_cv_.wait(lock, [&](){ return times_liveliness_lost_ == times; });
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_lost_ >= times; });
     }
 
     void liveliness_lost()
