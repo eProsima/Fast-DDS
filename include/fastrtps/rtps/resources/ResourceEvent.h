@@ -140,8 +140,6 @@ private:
 
     void sort_timers();
     void update_current_time();
-    void activate_timer(
-            TimedEventImpl* event);
 
     void do_timer_actions();
 
