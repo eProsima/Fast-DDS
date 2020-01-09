@@ -37,6 +37,8 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
+#include <dds/core/InstanceHandle.hpp>
+
 #include <functional>
 #include <iostream>
 
@@ -173,13 +175,39 @@ ReturnCode_t DataWriterImpl::write(
     }
     //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
     // but it need to check if there is an existing entity with that handle
-    if (!handle.isDefined())
-    {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
+    // Needs the function register_instance to be implemented
+    //    if (!handle.isDefined())
+    //    {
+    //        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    //    }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
     if (create_new_change_with_params(ALIVE, data, wparams, handle))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
+ReturnCode_t DataWriterImpl::write_w_timestamp(
+        void* data,
+        const fastrtps::rtps::InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+    //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
+    // but it need to check if there is an existing entity with that handle
+    // Needs the function register_instance to be implemented
+    //    if (!handle.isDefined())
+    //    {
+    //        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    //    }
+    logInfo(DATA_WRITER, "Writing new data with Handle");
+    WriteParams wparams;
+    if (create_new_change_with_params(ALIVE, data, wparams, handle, timestamp))
     {
         return ReturnCode_t::RETCODE_OK;
     }
@@ -259,7 +287,8 @@ bool DataWriterImpl::perform_create_new_change(
         ChangeKind_t change_kind,
         void* data,
         WriteParams& wparams,
-        const InstanceHandle_t& handle)
+        const InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
 {
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
@@ -332,6 +361,7 @@ bool DataWriterImpl::perform_create_new_change(
                 // Note: high_mark will always be a value that can be casted to uint16_t)
                 ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
             }
+            ch->sourceTimestamp = timestamp;
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
@@ -409,6 +439,21 @@ bool DataWriterImpl::create_new_change_with_params(
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);
+}
+
+bool DataWriterImpl::create_new_change_with_params(
+        ChangeKind_t changeKind,
+        void* data,
+        WriteParams& wparams,
+        const fastrtps::rtps::InstanceHandle_t& handle,
+        const fastrtps::Time_t& timestamp)
+{
+    if (!check_new_change_preconditions(changeKind, data))
+    {
+        return false;
+    }
+
+    return perform_create_new_change(changeKind, data, wparams, handle, timestamp);
 }
 
 bool DataWriterImpl::remove_min_seq_change()

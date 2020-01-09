@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_TINSTANCEHANDLE_IMPL_HPP_
 #define EPROSIMA_DDS_CORE_TINSTANCEHANDLE_IMPL_HPP_
@@ -42,13 +42,11 @@ InstanceHandle::InstanceHandle(
 {
 }
 
-/*
 InstanceHandle::InstanceHandle(
-        const dds::core::null_type& nullHandle)
-    : Value(nullHandle)
+        const dds::core::null_type& /*nullHandle*/)
+    : Value(eprosima::fastrtps::rtps::c_InstanceHandle_Unknown)
 {
 }
-*/
 
 InstanceHandle::InstanceHandle(
         const InstanceHandle& other)
@@ -60,11 +58,10 @@ InstanceHandle::~InstanceHandle()
 {
 }
 
-InstanceHandle& InstanceHandle::operator=(
+InstanceHandle& InstanceHandle::operator =(
         const InstanceHandle& that)
 {
-    //To implement
-    if(this != &that)
+    if (this != &that)
     {
         this->delegate() = that.delegate();
     }
@@ -74,21 +71,18 @@ InstanceHandle& InstanceHandle::operator=(
 bool InstanceHandle::operator ==(
         const InstanceHandle& that) const
 {
-    //To implement
     return this->delegate() == that.delegate();
 }
 
 bool InstanceHandle::operator <(
         const InstanceHandle& that) const
 {
-    //To implement
     return this->delegate() < that.delegate();
 }
 
 bool InstanceHandle::operator >(
         const InstanceHandle& that) const
 {
-    //To implement
     for (int i = 0; i < 16; ++i)
     {
         if (delegate().value[i] > that.delegate().value[i])
@@ -97,28 +91,22 @@ bool InstanceHandle::operator >(
         }
     }
     return false;
-    //return this->delegate() > that.delegate();
 }
 
 const InstanceHandle InstanceHandle::nil()
 {
-    //To implement
-    //dds::core::null_type nt;
-    //static InstanceHandle nil_handle(nt);
-    //return nil_handle;
-    return InstanceHandle();
+    return InstanceHandle(dds::core::null_type());
 }
 
 bool InstanceHandle::is_nil() const
 {
-    //To implement
     return !this->delegate().isDefined();
 }
 
 } //namespace core
 } //namespace dds
 
-/*
+
 inline std::ostream& operator <<(
         std::ostream& os,
         const dds::core::InstanceHandle& h)
@@ -126,6 +114,5 @@ inline std::ostream& operator <<(
     os << h.delegate();
     return os;
 }
-*/
 
 #endif //EPROSIMA_DDS_CORE_TINSTANCEHANDLE_IMPL_HPP_

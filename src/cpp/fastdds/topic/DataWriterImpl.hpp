@@ -121,6 +121,20 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
+     * Write data with handle and timestamp.
+     * @param data Pointer to the data
+     * @param handle InstanceHandle_t.
+     * @param timestamp Time_t used for the sample source timestamp
+     * @return True if correct
+     * @par Calling example:
+     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     */
+    ReturnCode_t write_w_timestamp(
+            void* data,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
+    /**
      *
      * @return
      */
@@ -320,6 +334,22 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
+     *
+     * @param kind
+     * @param  data
+     * @param wparams
+     * @param handle
+     * @param timestamp
+     * @return
+     */
+    bool create_new_change_with_params(
+            fastrtps::rtps::ChangeKind_t kind,
+            void* data,
+            fastrtps::rtps::WriteParams& wparams,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
+    /**
      * Removes the cache change with the minimum sequence number
      * @return True if correct.
      */
@@ -356,7 +386,8 @@ public:
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp = fastrtps::Time_t());
 };
 
 } /* namespace dds */

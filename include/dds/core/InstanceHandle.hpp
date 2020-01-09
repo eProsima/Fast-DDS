@@ -29,7 +29,6 @@
 
 #include <dds/core/detail/InstanceHandle.hpp>
 
-
 namespace dds {
 namespace core {
 
@@ -50,9 +49,10 @@ public:
      * Create an nil instance handle.
      *
      * @param nullHandle placeholder
+     */
     InstanceHandle(
             const null_type& nullHandle);
-     */
+
 
     /**
      * Copy an existing InstancHandle
@@ -135,10 +135,9 @@ typedef std::vector<InstanceHandle> InstanceHandleSeq;
 } //namespace core
 } //namespace dds
 
-/*
 inline std::ostream& operator <<(
         std::ostream& os,
         const dds::core::InstanceHandle& h);
-*/
+
 
 #endif //OMG_DDS_CORE_INSTANCE_HANDLE_HPP_
