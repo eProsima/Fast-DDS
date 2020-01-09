@@ -23,9 +23,9 @@
 
 #include <asio.hpp>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class TCPConnector;
 class TCPTransportInterface;
@@ -71,7 +71,6 @@ protected:
     std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
     std::vector<uint16_t> logical_output_ports_;
     std::mutex read_mutex_;
-    std::mutex write_mutex_;
     std::recursive_mutex pending_logical_mutex_;
     std::atomic<eConnectionStatus> connection_status_;
 
@@ -81,15 +80,19 @@ public:
             uint16_t port,
             RTCPMessageManager* rtcp_manager);
 
-    void set_logical_port_pending(uint16_t port);
+    void set_logical_port_pending(
+            uint16_t port);
 
-    bool remove_logical_port(uint16_t port);
+    bool remove_logical_port(
+            uint16_t port);
 
     virtual void disable() override;
 
-    bool is_logical_port_opened(uint16_t port);
+    bool is_logical_port_opened(
+            uint16_t port);
 
-    bool is_logical_port_added(uint16_t port);
+    bool is_logical_port_added(
+            uint16_t port);
 
     bool connection_established()
     {
@@ -106,7 +109,8 @@ public:
         return locator_;
     }
 
-    ResponseCode process_bind_request(const Locator_t& locator);
+    ResponseCode process_bind_request(
+            const Locator_t& locator);
 
     // Socket related methods
     virtual void connect(
@@ -115,45 +119,52 @@ public:
     virtual void disconnect() = 0;
 
     virtual uint32_t read(
-        octet* buffer,
-        std::size_t size,
-        asio::error_code& ec) = 0;
+            octet* buffer,
+            std::size_t size,
+            asio::error_code& ec) = 0;
 
     virtual size_t send(
-        const octet* header,
-        size_t header_size,
-        const octet* buffer,
-        size_t size,
-        asio::error_code& ec) = 0;
+            const octet* header,
+            size_t header_size,
+            const octet* buffer,
+            size_t size,
+            asio::error_code& ec) = 0;
 
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
 
     virtual asio::ip::tcp::endpoint local_endpoint() const = 0;
 
-    virtual void set_options(const TCPTransportDescriptor* options) = 0;
+    virtual void set_options(
+            const TCPTransportDescriptor* options) = 0;
 
     virtual void cancel() = 0;
 
     virtual void close() = 0;
 
-    virtual void shutdown(asio::socket_base::shutdown_type what) = 0;
+    virtual void shutdown(
+            asio::socket_base::shutdown_type what) = 0;
 
-    TCPConnectionType tcp_connection_type() const { return tcp_connection_type_; }
+    TCPConnectionType tcp_connection_type() const
+    {
+        return tcp_connection_type_;
+    }
 
 protected:
 
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(
-        TCPTransportInterface* parent,
-        const Locator_t& locator,
-        uint32_t maxMsgSize);
+            TCPTransportInterface* parent,
+            const Locator_t& locator,
+            uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
     TCPChannelResource(
-        TCPTransportInterface* parent,
-        uint32_t maxMsgSize);
+            TCPTransportInterface* parent,
+            uint32_t maxMsgSize);
 
-    inline eConnectionStatus change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
+    inline eConnectionStatus change_status(
+            eConnectionStatus s,
+            RTCPMessageManager* rtcp_manager = nullptr)
     {
         eConnectionStatus old = connection_status_.exchange(s);
 
@@ -169,11 +180,14 @@ protected:
         return old;
     }
 
-    void add_logical_port_response(const TCPTransactionId &id, bool success, RTCPMessageManager* rtcp_manager);
+    void add_logical_port_response(
+            const TCPTransactionId& id,
+            bool success,
+            RTCPMessageManager* rtcp_manager);
 
     void process_check_logical_ports_response(
-            const TCPTransactionId &transactionId,
-            const std::vector<uint16_t> &availablePorts,
+            const TCPTransactionId& transactionId,
+            const std::vector<uint16_t>& availablePorts,
             RTCPMessageManager* rtcp_manager);
 
     TCPConnectionType tcp_connection_type_;
@@ -187,13 +201,16 @@ private:
             uint16_t closedPort,
             RTCPMessageManager* rtcp_manager);
 
-    void send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager);
+    void send_pending_open_logical_ports(
+            RTCPMessageManager* rtcp_manager);
 
     void set_all_ports_pending();
 
-    TCPChannelResource(const TCPChannelResource&) = delete;
+    TCPChannelResource(
+            const TCPChannelResource&) = delete;
 
-    TCPChannelResource& operator=(const TCPChannelResource&) = delete;
+    TCPChannelResource& operator =(
+            const TCPChannelResource&) = delete;
 };
 
 
