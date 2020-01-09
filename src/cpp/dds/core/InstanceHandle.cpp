@@ -42,13 +42,11 @@ InstanceHandle::InstanceHandle(
 {
 }
 
-/*
-   InstanceHandle::InstanceHandle(
-        const dds::core::null_type& nullHandle)
-    : Value(nullHandle)
-   {
-   }
- */
+InstanceHandle::InstanceHandle(
+        const dds::core::null_type& /*nullHandle*/)
+    : Value(eprosima::fastrtps::rtps::c_InstanceHandle_Unknown)
+{
+}
 
 InstanceHandle::InstanceHandle(
         const InstanceHandle& other)
@@ -60,7 +58,7 @@ InstanceHandle::~InstanceHandle()
 {
 }
 
-InstanceHandle& InstanceHandle::operator=(
+InstanceHandle& InstanceHandle::operator =(
         const InstanceHandle& that)
 {
     if (this != &that)
@@ -97,7 +95,7 @@ bool InstanceHandle::operator >(
 
 const InstanceHandle InstanceHandle::nil()
 {
-    return InstanceHandle();
+    return InstanceHandle(dds::core::null_type());
 }
 
 bool InstanceHandle::is_nil() const

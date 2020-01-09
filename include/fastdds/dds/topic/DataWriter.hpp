@@ -133,6 +133,18 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
+     * Write data with handle and timestamp.
+     * @param data Pointer to the data
+     * @param handle InstanceHandle_t.
+     * @param timestamp Time_t used for the sample source timestamp
+     * @return True if correct
+     */
+    ReturnCode_t write_w_timestamp(
+            void* data,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::Time_t& timestamp);
+
+    /**
      * Returns the DataWriter's GUID
      */
     const fastrtps::rtps::GUID_t& guid();

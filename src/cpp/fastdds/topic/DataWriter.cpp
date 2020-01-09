@@ -75,6 +75,14 @@ ReturnCode_t DataWriter::write(
     return impl_->write(data, handle);
 }
 
+ReturnCode_t DataWriter::write_w_timestamp(
+        void* data,
+        const fastrtps::rtps::InstanceHandle_t& handle,
+        const Time_t& timestamp)
+{
+    return impl_->write_w_timestamp(data, handle, timestamp);
+}
+
 ReturnCode_t DataWriter::dispose(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle)
