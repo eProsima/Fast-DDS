@@ -18,6 +18,7 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #include <future>
+#include <vector>
 
 using namespace asio;
 
@@ -56,7 +57,7 @@ TCPChannelResourceBasic::~TCPChannelResourceBasic()
 }
 
 void TCPChannelResourceBasic::connect(
-            const std::shared_ptr<TCPChannelResource>& myself)
+        const std::shared_ptr<TCPChannelResource>& myself)
 {
     assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
     eConnectionStatus expected = eConnectionStatus::eDisconnected;
@@ -68,8 +69,9 @@ void TCPChannelResourceBasic::connect(
             ip::tcp::resolver resolver(service_);
 
             auto endpoints = resolver.resolve({
-                IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(locator_),
-                std::to_string(IPLocator::getPhysicalPort(locator_))});
+                            IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
+                                locator_),
+                            std::to_string(IPLocator::getPhysicalPort(locator_))});
 
             socket_ = std::make_shared<asio::ip::tcp::socket>(service_);
             std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
@@ -79,20 +81,20 @@ void TCPChannelResourceBasic::connect(
                 endpoints,
                 [this, channel_weak_ptr](std::error_code ec
 #if ASIO_VERSION >= 101200
-                        , ip::tcp::endpoint
+                , ip::tcp::endpoint
 #else
-                        , ip::tcp::resolver::iterator
+                , ip::tcp::resolver::iterator
 #endif
-                        )
-                {
-                    if (!channel_weak_ptr.expired())
-                    {
-                        parent_->SocketConnected(channel_weak_ptr, ec);
-                    }
-                }
-            );
+                )
+                        {
+                            if (!channel_weak_ptr.expired())
+                            {
+                                parent_->SocketConnected(channel_weak_ptr, ec);
+                            }
+                        }
+                );
         }
-        catch(const std::system_error &error)
+        catch (const std::system_error& error)
         {
             logError(RTCP, "Openning socket " << error.what());
         }
@@ -106,23 +108,23 @@ void TCPChannelResourceBasic::disconnect()
         auto socket = socket_;
 
         service_.post([&, socket]()
-                {
-                    try
                     {
-                        std::error_code ec;
-                        socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-                        socket->cancel();
+                        try
+                        {
+                            std::error_code ec;
+                            socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+                            socket->cancel();
 
-                    // This method was added on the version 1.12.0
+                            // This method was added on the version 1.12.0
 #if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-                        socket->release();
+                            socket->release();
 #endif
-                        socket->close();
-                    }
-                    catch(std::exception&)
-                    {
-                    }
-                });
+                            socket->close();
+                        }
+                        catch (std::exception&)
+                        {
+                        }
+                    });
 
     }
 }
@@ -153,21 +155,16 @@ size_t TCPChannelResourceBasic::send(
 
     if (eConnecting < connection_status_)
     {
-        std::unique_lock<std::mutex> write_lock(write_mutex_);
-
-
+        std::vector<asio::const_buffer> buffers;
         if (header_size > 0)
         {
-            bytes_sent = socket_->send(asio::buffer(header, header_size), 0, ec);
+            buffers.push_back(asio::buffer(header, header_size));
         }
-
-        if (!ec)
-        {
-            bytes_sent += socket_->send(asio::buffer(data, size), 0, ec);
-        }
+        buffers.push_back(asio::buffer(data, size));
+        bytes_sent = asio::write(*socket_.get(), buffers, ec);
     }
 
-    return  bytes_sent;
+    return bytes_sent;
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint() const
@@ -181,7 +178,8 @@ asio::ip::tcp::endpoint TCPChannelResourceBasic::local_endpoint() const
     return socket_->local_endpoint(ec);
 }
 
-void TCPChannelResourceBasic::set_options(const TCPTransportDescriptor* options)
+void TCPChannelResourceBasic::set_options(
+        const TCPTransportDescriptor* options)
 {
     socket_->set_option(socket_base::receive_buffer_size(options->receiveBufferSize));
     socket_->set_option(socket_base::send_buffer_size(options->sendBufferSize));
@@ -198,7 +196,8 @@ void TCPChannelResourceBasic::close()
     socket_->close();
 }
 
-void TCPChannelResourceBasic::shutdown(asio::socket_base::shutdown_type what)
+void TCPChannelResourceBasic::shutdown(
+        asio::socket_base::shutdown_type what)
 {
     socket_->shutdown(what);
 }
