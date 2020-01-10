@@ -95,9 +95,12 @@ if(PYTHONINTERP_FOUND)
             APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
         )
         if(WIN32)
+            set(WIN_PATH "$ENV{PATH}")
+            set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+            string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
             set_property(
                 TEST performance.throughput.${throughput_test_name}
-                PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
             )
         endif()
 
@@ -128,9 +131,12 @@ if(PYTHONINTERP_FOUND)
                 APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
             )
             if(WIN32)
+                set(WIN_PATH "$ENV{PATH}")
+                set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+                string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
                 set_property(
                     TEST performance.throughput.${throughput_test_name}_security
-                    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                    APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
                 )
             endif()
 
