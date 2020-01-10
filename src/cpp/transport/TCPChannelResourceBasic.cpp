@@ -18,7 +18,7 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #include <future>
-#include <vector>
+#include <array>
 
 using namespace asio;
 
