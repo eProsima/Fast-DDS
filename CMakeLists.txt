@@ -311,7 +311,7 @@ if(BUILD_DOCUMENTATION)
     elseif(WIN32)
         set(DOXYFILE_MAKE make.bat)
     endif()
-    
+
     if(NOT CHECK_DOCUMENTATION)
         find_program(WGET_EXE wget)
         if(WGET_EXE)
