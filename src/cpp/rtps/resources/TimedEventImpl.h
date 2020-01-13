@@ -17,11 +17,11 @@
  *
  */
 
-
-
 #ifndef _RTPS_RESOURCES_TIMEDEVENTIMPL_H_
 #define _RTPS_RESOURCES_TIMEDEVENTIMPL_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC 
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
@@ -33,8 +33,6 @@
 #include <mutex>
 #include <condition_variable>
 #include <system_error>
-
-
 
 namespace eprosima {
 namespace fastrtps {
@@ -48,9 +46,9 @@ namespace rtps {
  */
 class TimedEventImpl
 {
-    using Callback = std::function<bool(TimedEvent::EventCode)>;
+    using Callback = std::function<bool (TimedEvent::EventCode)>;
 
-    public:
+public:
 
     typedef enum
     {
@@ -72,12 +70,12 @@ class TimedEventImpl
             Callback callback,
             std::chrono::microseconds interval);
 
-    protected:
+protected:
 
     //! Expiration time in milliseconds of the event.
     std::chrono::microseconds m_interval_microsec;
 
-    public:
+public:
 
     /*!
      * @brief Return next linked TimedEventImpl object.
@@ -93,7 +91,8 @@ class TimedEventImpl
      * @param next TimedEventImpl object to be linked.
      * @return Previous linked TimedEventImpl object. Can be nullptr.
      */
-    TimedEventImpl* next(TimedEventImpl* next)
+    TimedEventImpl* next(
+            TimedEventImpl* next)
     {
         TimedEventImpl* old = next_;
         next_ = next;
@@ -108,7 +107,8 @@ class TimedEventImpl
      * @param time New expiration time.
      * @return true on success
      */
-    bool update_interval(const Duration_t& time);
+    bool update_interval(
+            const Duration_t& time);
 
     /*!
      * @brief Updates the expiration time of the event.
@@ -118,7 +118,8 @@ class TimedEventImpl
      * @param time_millisec New expiration time in milliseconds.
      * @return true on success
      */
-    bool update_interval_millisec(double time_millisec);
+    bool update_interval_millisec(
+            double time_millisec);
 
     /*!
      * @brief Returns current expiration time in milliseconds
@@ -138,7 +139,8 @@ class TimedEventImpl
     double getRemainingTimeMilliSec()
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timer_.expires_from_now()).count());
+        return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timer_.expires_from_now()).
+               count());
     }
 
     /*!
@@ -161,7 +163,7 @@ class TimedEventImpl
      */
     void update();
 
-    private:
+private:
 
     /*!
      * @brief Callback called by asio::steady_timer when it expires.
@@ -188,9 +190,10 @@ class TimedEventImpl
     std::mutex mutex_;
 };
 
-}
-}
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif //DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #endif //_RTPS_RESOURCES_TIMEDEVENTIMPL_H_

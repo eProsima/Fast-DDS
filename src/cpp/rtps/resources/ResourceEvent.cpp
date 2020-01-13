@@ -28,7 +28,7 @@
 #include <asio/steady_timer.hpp>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
@@ -39,11 +39,11 @@ ResourceEvent::ResourceEvent()
     , back_(nullptr)
     , io_service_(
 #if ASIO_VERSION >= 101200
-            ASIO_CONCURRENCY_HINT_UNSAFE_IO
+        ASIO_CONCURRENCY_HINT_UNSAFE_IO
 #else
-            1
+        1
 #endif
-            )
+        )
 {
 }
 
@@ -53,7 +53,7 @@ ResourceEvent::~ResourceEvent()
     assert(front_ == nullptr);
     assert(back_ == nullptr);
 
-    logInfo(RTPS_PARTICIPANT,"Removing event thread");
+    logInfo(RTPS_PARTICIPANT, "Removing event thread");
     stop_.store(true);
     io_service_.stop();
 
@@ -63,13 +63,14 @@ ResourceEvent::~ResourceEvent()
     }
 }
 
-bool ResourceEvent::register_timer_nts(TimedEventImpl* event)
+bool ResourceEvent::register_timer_nts(
+        TimedEventImpl* event)
 {
     TimedEventImpl* curr = front_;
 
-    while(curr != nullptr)
+    while (curr != nullptr)
     {
-        if(curr == event)
+        if (curr == event)
         {
             return false;
         }
@@ -77,7 +78,7 @@ bool ResourceEvent::register_timer_nts(TimedEventImpl* event)
         curr = curr->next();
     }
 
-    if(back_)
+    if (back_)
     {
         back_->next(event);
         back_ = event;
@@ -92,28 +93,29 @@ bool ResourceEvent::register_timer_nts(TimedEventImpl* event)
     return true;
 }
 
-void ResourceEvent::unregister_timer(TimedEventImpl* event)
+void ResourceEvent::unregister_timer(
+        TimedEventImpl* event)
 {
     assert(!stop_.load());
 
     std::unique_lock<TimedMutex> lock(mutex_);
 
     cv_.wait(lock, [&]()
-    {
-        return allow_to_delete_;
-    });
+                {
+                    return allow_to_delete_;
+                });
 
-    TimedEventImpl *prev = nullptr, *curr = front_;
+    TimedEventImpl* prev = nullptr, * curr = front_;
 
-    while(curr && curr != event && curr->next())
+    while (curr && curr != event && curr->next())
     {
         prev = curr;
         curr = curr->next();
     }
 
-    if(curr)
+    if (curr)
     {
-        if(prev)
+        if (prev)
         {
             prev->next(curr->next());
         }
@@ -122,7 +124,7 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
             front_ = curr->next();
         }
 
-        if(!curr->next())
+        if (!curr->next())
         {
             back_ = prev;
         }
@@ -133,23 +135,26 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
     }
 }
 
-void ResourceEvent::notify(TimedEventImpl* event)
+void ResourceEvent::notify(
+        TimedEventImpl* event)
 {
     std::unique_lock<TimedMutex> lock(mutex_);
 
-    if(register_timer_nts(event))
+    if (register_timer_nts(event))
     {
         cv_.notify_one();
     }
 }
 
-void ResourceEvent::notify(TimedEventImpl* event, const std::chrono::steady_clock::time_point& timeout)
+void ResourceEvent::notify(
+        TimedEventImpl* event,
+        const std::chrono::steady_clock::time_point& timeout)
 {
     std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
 
     if (lock.try_lock_until(timeout))
     {
-        if(register_timer_nts(event))
+        if (register_timer_nts(event))
         {
             cv_.notify_one();
         }
@@ -173,13 +178,13 @@ void ResourceEvent::run_io_service()
         cv_.notify_one();
 
         if (cv_.wait_for(lock, std::chrono::nanoseconds(1000000), [&]()
-            {
-                return front_ != nullptr;
-            }))
+                    {
+                        return front_ != nullptr;
+                    }))
         {
             TimedEventImpl* curr = front_;
 
-            while(curr)
+            while (curr)
             {
                 curr->update();
                 curr = curr->next(nullptr);
@@ -198,12 +203,12 @@ void ResourceEvent::init_thread()
     thread_ = std::thread(&ResourceEvent::run_io_service, this);
     std::future<void> ready_fut = ready.get_future();
     io_service_.post([this]()
-        {
-            ready.set_value();
-        });
+                {
+                    ready.set_value();
+                });
     ready_fut.wait();
 }
 
-}
-} /* namespace */
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
