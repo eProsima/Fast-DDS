@@ -87,10 +87,13 @@ if(PYTHONINTERP_FOUND)
             APPEND PROPERTY ENVIRONMENT "LATENCY_TEST_BIN=$<TARGET_FILE:LatencyTest>"
         )
         if(WIN32)
+            set(WIN_PATH "$ENV{PATH}")
+            set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+            string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
             set_property(
                 TEST performance.latency.${latency_test_name}
-                PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
-        )
+                APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
+            )
         endif()
 
         # If there is security, add a secure test as well
@@ -120,10 +123,13 @@ if(PYTHONINTERP_FOUND)
                 APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             )
             if(WIN32)
+                set(WIN_PATH "$ENV{PATH}")
+                set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+                string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
                 set_property(
                     TEST performance.latency.${latency_test_name}_security
-                    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
-            )
+                    APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
+                )
             endif()
         endif()
     endforeach(latency_test_name)
