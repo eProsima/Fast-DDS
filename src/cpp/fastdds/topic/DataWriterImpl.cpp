@@ -209,7 +209,7 @@ ReturnCode_t DataWriterImpl::write(
 ReturnCode_t DataWriterImpl::write_w_timestamp(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastrtps::rtps::Time_t& timestamp)
 {
     if (!user_datawriter_->is_enabled())
     {
@@ -269,6 +269,39 @@ ReturnCode_t DataWriterImpl::dispose(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DataWriterImpl::dispose_w_timestamp(
+        void* data,
+        const fastrtps::rtps::InstanceHandle_t& handle,
+        const fastrtps::rtps::Time_t& timestamp)
+{
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    InstanceHandle_t instance_handle;
+    if (type_.get()->m_isGetKeyDefined)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_.get()->getKey(data, &instance_handle, is_key_protected);
+    }
+
+    //Check if the Handle is different from the special value HANDLE_NIL and
+    //does not correspond with the instance referred by the data
+    if (handle.isDefined() && handle.value != instance_handle.value)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    logInfo(DATA_WRITER, "Disposing of data");
+    WriteParams wparams;
+    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle, timestamp);
+
+}
+
 bool DataWriterImpl::create_new_change(
         ChangeKind_t changeKind,
         void* data)
@@ -307,7 +340,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         void* data,
         WriteParams& wparams,
         const InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastrtps::rtps::Time_t& timestamp)
 {
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
@@ -455,7 +488,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         void* data,
         WriteParams& wparams,
         const fastrtps::rtps::InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastrtps::rtps::Time_t& timestamp)
 {
     if (!check_new_change_preconditions(changeKind, data))
     {

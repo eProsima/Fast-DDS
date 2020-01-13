@@ -132,7 +132,7 @@ public:
     ReturnCode_t write_w_timestamp(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastrtps::rtps::Time_t& timestamp);
 
     /**
      *
@@ -191,6 +191,11 @@ public:
 
     ReturnCode_t dispose(
             void* data);
+
+    ReturnCode_t dispose_w_timestamp(
+            void* data,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::rtps::Time_t& timestamp);
 
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
@@ -333,7 +338,7 @@ public:
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp = fastrtps::Time_t());
+            const fastrtps::rtps::Time_t& timestamp = fastrtps::rtps::Time_t());
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -373,7 +378,7 @@ public:
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp = fastrtps::Time_t());
+            const fastrtps::rtps::Time_t& timestamp = fastrtps::rtps::Time_t());
 };
 
 } /* namespace dds */

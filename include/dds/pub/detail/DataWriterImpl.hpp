@@ -101,9 +101,7 @@ void DataWriter<T>::write(
         const ::dds::core::InstanceHandle& instance,
         const dds::core::Time& timestamp)
 {
-    this->delegate()->write(const_cast<T*>(&sample), instance);
-    //To implement
-    (void)timestamp;
+    this->delegate()->write_w_timestamp(const_cast<T*>(&sample), instance, timestamp);
 }
 
 template<typename T>
@@ -341,26 +339,17 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::dispose_instance(
-        const T& /*key*/)
+        const T& key)
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    /* Invalid time will be used as current time. */
-    //    this->delegate()->dispose_instance(key, dds::core::Time::invalid());
-    //    return *this;
-    return *this;
+    return this->delegate()->dispose(const_cast<T*>(&key));
 }
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::dispose_instance(
-        const T& /*key*/,
-        const dds::core::Time& /*timestamp*/)
+        const T& key,
+        const dds::core::Time& timestamp)
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    this->delegate()->dispose_instance(key, timestamp);
-    //    return *this;
-    return *this;
+    return this->delegate()->dispose_w_timestamp(const_cast<T*>(&key), dds::core::InstanceHandle(), timestamp);
 }
 
 template<typename T>

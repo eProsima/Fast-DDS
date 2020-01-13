@@ -78,7 +78,7 @@ ReturnCode_t DataWriter::write(
 ReturnCode_t DataWriter::write_w_timestamp(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle,
-        const Time_t& timestamp)
+        const fastrtps::rtps::Time_t& timestamp)
 {
     return impl_->write_w_timestamp(data, handle, timestamp);
 }
@@ -94,6 +94,14 @@ ReturnCode_t DataWriter::dispose(
         void* data)
 {
     return impl_->dispose(data);
+}
+
+ReturnCode_t DataWriter::dispose_w_timestamp(
+        void* data,
+        const fastrtps::rtps::InstanceHandle_t& handle,
+        const fastrtps::rtps::Time_t& timestamp)
+{
+    return impl_->dispose_w_timestamp(data, handle, timestamp);
 }
 
 const fastrtps::rtps::GUID_t& DataWriter::guid()
