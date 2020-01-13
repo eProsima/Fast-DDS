@@ -170,9 +170,12 @@ if(GST_FOUND)
                     APPEND PROPERTY ENVIRONMENT "VIDEO_TEST_BIN=$<TARGET_FILE:VideoTest>"
                 )
                 if(WIN32)
+                    set(WIN_PATH "$ENV{PATH}")
+                    set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+                    string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
                     set_property(
                         TEST performance.video.${video_test_name}
-                        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                        APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
                     )
                 endif()
 
@@ -196,9 +199,12 @@ if(GST_FOUND)
                         APPEND PROPERTY ENVIRONMENT "VIDEO_TEST_BIN=$<TARGET_FILE:VideoTest>"
                     )
                     if(WIN32)
+                        set(WIN_PATH "$ENV{PATH}")
+                        set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+                        string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
                         set_property(
                             TEST performance.video.${video_test_name}_security
-                            PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                            APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
                         )
                     endif()
                 endif()
