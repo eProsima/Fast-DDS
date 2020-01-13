@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Topic.hpp
+ * @file TopicImpl.hpp
  */
 
-#ifndef _FASTDDS_TOPIC_HPP_
-#define _FASTDDS_TOPIC_HPP_
+#ifndef _FASTDDS_TOPICIMPL_HPP_
+#define _FASTDDS_TOPICIMPL_HPP_
 
 #include <dds/core/status/State.hpp>
 #include <fastdds/dds/core/Entity.hpp>
@@ -36,49 +36,29 @@
 #include <string>
 #include <vector>
 
-namespace dds {
-namespace topic {
-template<typename T>
-class Topic;
-} // topic
-} // dds
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class TopicImpl;
 class TopicListener;
 class DomainParticipantImpl;
 
-class Topic : public DomainEntity,
-    public TopicDescription
-
+class TopicImpl
 {
-    friend class TopicImpl;
-    template<typename T>
-    friend class ::dds::topic::Topic;
 
 public:
 
-    RTPS_DllAPI Topic(
+    RTPS_DllAPI TopicImpl(
             DomainParticipant* dp,
             const std::string& topic_name,
             const std::string& type_name,
             const TopicQos& qos = TOPIC_QOS_DEFAULT,
-            TopicListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            TopicListener* listener = nullptr);
 
-    RTPS_DllAPI Topic(
+    RTPS_DllAPI TopicImpl(
             DomainParticipant* dp,
             fastrtps::TopicAttributes att,
-            TopicListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
-
-    RTPS_DllAPI Topic(
-            TopicImpl* impl,
-            TopicDescription* topic_description,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            TopicListener* listener = nullptr);
 
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
@@ -100,8 +80,7 @@ public:
     RTPS_DllAPI TopicListener* get_listener() const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t set_listener(
-            TopicListener* a_listener,
-            const ::dds::core::status::StatusMask& mask);
+            TopicListener* a_listener);
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_inconsistent_topic_status(
             InconsistentTopicStatus& status);
@@ -112,11 +91,6 @@ public:
 
     RTPS_DllAPI std::vector<DataReader*>* get_readers() const;
 
-    RTPS_DllAPI fastrtps::types::ReturnCode_t set_instance_handle(
-            const fastrtps::rtps::InstanceHandle_t& handle);
-
-    RTPS_DllAPI fastrtps::rtps::GUID_t get_guid() const;
-
     void new_inconsistent_topic(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
@@ -125,11 +99,25 @@ public:
 
 private:
 
-    TopicImpl* impl_;
+    TopicListener* listener_;
+
+    Topic* user_topic_;
+
+    TopicQos qos_;
+
+    InconsistentTopicStatus status_;
+
+    fastrtps::TopicAttributes topic_att_;
+
+    DomainParticipant* participant_;
+
+    std::vector<DataReader*> readers_;
+    std::vector<DataWriter*> writers_;
+    std::vector<fastrtps::rtps::InstanceHandle_t> entity_with_inconsistent_topic_;
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace eprosima
+} // namespace fastdds
+} // namespace dds
 
-#endif // _FASTDDS_TOPIC_HPP_
+#endif // _FASTDDS_TOPICIMPL_HPP_
