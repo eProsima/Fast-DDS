@@ -527,6 +527,201 @@ TEST_F(SharedMemTests, dead_listener_port_recover)
     thread_wait_deadlock.join();
 }
 
+TEST_F(SharedMemTests, simple_latency)
+{
+	int num_samples = 1000;
+	char data[16] = { "" };
+
+	std::thread thread_subscriber([&]
+		{
+			SharedMemManager shared_mem_manager("SharedMemTests");
+			auto port_pub_to_sub = shared_mem_manager.open_port(0, 64, 1000);
+			auto port_sub_to_pub = shared_mem_manager.open_port(1, 64, 1000);
+			auto listener_sub = port_pub_to_sub->create_listener();
+
+			auto segment = shared_mem_manager.create_segment(sizeof(data)*64,64);
+			int i = num_samples;
+
+			do
+			{
+				auto recv_sample = listener_sub->pop();
+
+				auto sample_to_send = segment->alloc_buffer(sizeof(data));
+				memcpy(sample_to_send->data(), data, sizeof(data));
+				ASSERT_TRUE(port_sub_to_pub->try_push(sample_to_send));
+			} while (--i);
+		});
+
+	std::thread thread_publisher([&]
+		{
+			SharedMemManager shared_mem_manager("SharedMemTests");
+			auto port_pub_to_sub = shared_mem_manager.open_port(0, 64, 1000);
+			auto port_sub_to_pub = shared_mem_manager.open_port(1, 64, 1000);
+			auto listener_pub = port_sub_to_pub->create_listener();
+
+			auto segment = shared_mem_manager.create_segment(sizeof(data) * 64, 64);
+			int i = num_samples;
+
+			std::chrono::high_resolution_clock::rep total_times = 0;
+			std::chrono::high_resolution_clock::rep min_time = (std::numeric_limits<std::chrono::high_resolution_clock::rep>::max)();
+			std::chrono::high_resolution_clock::rep max_time = (std::numeric_limits<std::chrono::high_resolution_clock::rep>::min)();
+
+			while (i--)
+			{
+				auto t0 = std::chrono::high_resolution_clock::now();
+
+				auto sample_to_send = segment->alloc_buffer(sizeof(data));
+				memcpy(sample_to_send->data(), data, sizeof(data));
+				ASSERT_TRUE(port_pub_to_sub->try_push(sample_to_send));
+				sample_to_send.reset();
+
+				auto recv_sample = listener_pub->pop();
+
+				auto t1 = std::chrono::high_resolution_clock::now();
+
+				auto t = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+				if (t < min_time)
+				{
+					min_time = t;
+				}
+				if (t > max_time)
+				{
+					max_time = t;
+				}
+				total_times += t;
+			}
+
+			printf("LatencyTest for %d samples. Avg = %.3f(us) Min = %.3f(us) Max = %.3f(us)\n", num_samples, total_times / (num_samples*1000.0), min_time/1000.0, max_time/1000.0);
+		});
+
+	thread_subscriber.join();
+	thread_publisher.join();
+}
+
+TEST_F(SharedMemTests, simple_latency2)
+{
+	int num_samples = 1000;
+	octet data[16] = { "" };
+
+	Locator_t sub_locator;
+	sub_locator.kind = LOCATOR_KIND_SHMEM;
+	sub_locator.port = 0;
+
+	Locator_t pub_locator;
+	pub_locator.kind = LOCATOR_KIND_SHMEM;
+	pub_locator.port = 1;
+
+	SharedMemTransportDescriptor my_descriptor;
+
+	std::thread thread_subscriber([&]
+		{
+			SharedMemTransport transport(my_descriptor);
+			ASSERT_TRUE(transport.init());
+
+			MockReceiverResource receiver(transport, sub_locator);
+			MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+			int samples_to_receive = num_samples;
+
+			Semaphore sem;
+
+			LocatorList_t send_locators_list;
+			send_locators_list.push_back(pub_locator);
+
+			SendResourceList send_resource_list;
+			ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, pub_locator));
+
+			std::function<void()> sub_callback = [&]()
+			{
+				Locators locators_begin(send_locators_list.begin());
+				Locators locators_end(send_locators_list.end());
+
+				EXPECT_TRUE(send_resource_list.at(0)->send(data, sizeof(data), &locators_begin, &locators_end,
+					(std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
+
+				if (--samples_to_receive == 0)
+				{
+					sem.post();
+				}
+			};
+
+			msg_recv->setCallback(sub_callback);
+
+			sem.wait();
+		});
+
+	std::thread thread_publisher([&]
+		{
+			SharedMemTransport transport(my_descriptor);
+			ASSERT_TRUE(transport.init());
+
+			MockReceiverResource receiver(transport, pub_locator);
+			MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+			int samples_sent = 0;
+
+			Semaphore sem;
+
+			LocatorList_t send_locators_list;
+			send_locators_list.push_back(sub_locator);
+
+			SendResourceList send_resource_list;
+			ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, sub_locator));
+
+			std::chrono::high_resolution_clock::rep total_times = 0;
+			std::chrono::high_resolution_clock::rep min_time = (std::numeric_limits<std::chrono::high_resolution_clock::rep>::max)();
+			std::chrono::high_resolution_clock::rep max_time = (std::numeric_limits<std::chrono::high_resolution_clock::rep>::min)();
+
+			auto t0 = std::chrono::high_resolution_clock::now();
+
+			Locators locators_begin(send_locators_list.begin());
+			Locators locators_end(send_locators_list.end());
+
+			EXPECT_TRUE(send_resource_list.at(0)->send(data, sizeof(data), &locators_begin, &locators_end,
+				(std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
+
+			std::function<void()> pub_callback = [&]()
+			{
+				if (++samples_sent < num_samples)
+				{
+					auto t1 = std::chrono::high_resolution_clock::now();
+
+					auto t = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+					if (t < min_time)
+					{
+						min_time = t;
+					}
+					if (t > max_time)
+					{
+						max_time = t;
+					}
+					total_times += t;
+
+					t0 = std::chrono::high_resolution_clock::now();
+
+					Locators locators_begin(send_locators_list.begin());
+					Locators locators_end(send_locators_list.end());
+
+					EXPECT_TRUE(send_resource_list.at(0)->send(data, sizeof(data), &locators_begin, &locators_end,
+						(std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
+				}
+				else
+				{
+					sem.post();
+				}
+			};
+
+			msg_recv->setCallback(pub_callback);
+
+			sem.wait();
+
+			printf("LatencyTest for %d samples. Avg = %.3f(us) Min = %.3f(us) Max = %.3f(us)\n", num_samples, total_times / (num_samples * 1000.0), min_time / 1000.0, max_time / 1000.0);
+		});
+
+	thread_subscriber.join();
+	thread_publisher.join();
+}
+
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);

@@ -190,6 +190,11 @@ public:
 			uuid_ = uuid;
 		}
 
+		void generate()
+		{
+			type::generate(uuid_);
+		}
+
         const type& get() const
         {
             return uuid_;

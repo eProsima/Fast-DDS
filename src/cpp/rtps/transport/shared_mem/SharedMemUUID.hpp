@@ -116,10 +116,9 @@ public:
     struct null_t {};
     static constexpr null_t null = null_t();
 
-    UUID()
-    {    
-        UUIDGen::instance().generate(uuid_, sizeof(uuid_));
-    }
+	UUID()
+	{
+	}
 
     UUID(const null_t&)
     {    
@@ -134,6 +133,11 @@ public:
 		return *this;
 	}
 
+	static void generate(UUID& other)
+	{
+		UUIDGen::instance().generate(other.uuid_, sizeof(other.uuid_));
+	}
+
     uint8_t* get()
     {
         return uuid_;
@@ -143,6 +147,11 @@ public:
     {
         return sizeof(uuid_);
     }
+
+	size_t hash() const
+	{
+		return *reinterpret_cast<const size_t*>(uuid_);
+	}
 
     std::string to_string() const
     {
@@ -179,11 +188,10 @@ namespace std {
 template <>
 struct hash<eprosima::fastdds::rtps::UUID<16>>
 {
-    // TODO(Adolfo): Improve the hash (allocation free, fast algorithm)
     std::size_t operator()(
             const eprosima::fastdds::rtps::UUID<16>& k) const
     {
-        return std::hash<std::string>{}(k.to_string());
+		return k.hash();
     }
 };
 

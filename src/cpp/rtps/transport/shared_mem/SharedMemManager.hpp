@@ -66,7 +66,7 @@ public:
 
         SharedMemBuffer(
                 std::shared_ptr<SharedMemSegment>& segment,
-                SharedMemSegment::Id segment_id,
+                const SharedMemSegment::Id& segment_id,
                 BufferNode* buffer_node)
             : segment_(segment)
             , segment_id_(segment_id)
@@ -129,6 +129,7 @@ public:
                 uint32_t size)
             : segment_id_()
         {
+			segment_id_.generate();
 
             auto segment_name = segment_id_.to_string();
 
