@@ -28,8 +28,7 @@
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/publisher/PublisherHistory.h>
-//#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/dds/publisher/PublisherHistory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/rtps/writer/WriterListener.h>
@@ -235,7 +234,7 @@ private:
     fastdds::dds::DataWriterQos qos_;
 
     //!Publisher History
-    fastrtps::PublisherHistory history_;
+    PublisherHistory history_;
 
     //! DataWriterListener
     DataWriterListener* listener_;
@@ -326,29 +325,15 @@ public:
      * @param  data
      * @param wparams
      * @param handle
-     * @return
-     */
-    bool create_new_change_with_params(
-            fastrtps::rtps::ChangeKind_t kind,
-            void* data,
-            fastrtps::rtps::WriteParams& wparams,
-            const fastrtps::rtps::InstanceHandle_t& handle);
-
-    /**
-     *
-     * @param kind
-     * @param  data
-     * @param wparams
-     * @param handle
      * @param timestamp
      * @return
      */
-    bool create_new_change_with_params(
+    ReturnCode_t create_new_change_with_params(
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastrtps::Time_t& timestamp = fastrtps::Time_t());
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -383,7 +368,7 @@ public:
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data);
 
-    bool perform_create_new_change(
+    ReturnCode_t perform_create_new_change(
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,

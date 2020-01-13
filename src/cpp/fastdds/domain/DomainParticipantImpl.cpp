@@ -40,6 +40,7 @@
 #include <fastdds/dds/topic/DataWriter.hpp>
 
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/topic/TopicImpl.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
@@ -175,7 +176,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_subscriber(
@@ -201,7 +202,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 const GUID_t& DomainParticipantImpl::guid() const
@@ -215,6 +216,7 @@ Publisher* DomainParticipantImpl::create_publisher(
         PublisherListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
+
     if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if (att.getUserDefinedID() <= 0)
@@ -344,7 +346,10 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
-        delete_publisher(it.first);
+        if (delete_publisher(it.first) != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
     }
 
     for (auto it : subscribers_)
@@ -353,12 +358,18 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
-        delete_subscriber(it.first);
+        if (delete_subscriber(it.first) != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
     }
 
     for (auto it: topics_)
     {
-        delete_topic(std::get<0>(it.second));
+        if (delete_topic(std::get<0>(it.second)) != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
     }
     return ReturnCode_t::RETCODE_OK;
 }
@@ -519,7 +530,6 @@ bool DomainParticipantImpl::contains_entity(
         }
 
         // Look into subscribers
-        std::vector<DataReader*> readers;
         {
             for (auto sit : subscribers_)
             {
@@ -1514,9 +1524,11 @@ Topic* DomainParticipantImpl::create_topic(
         return t;
     }
 
-    Topic* topic = new Topic(this->get_participant(), topic_name, type_name, qos, listen, mask);
+    TopicImpl* topicimpl = new TopicImpl(this->get_participant(), topic_name, type_name, qos, listen);
     TopicDescription* topic_description = new TopicDescription(this->get_participant(),
                     topic_name.c_str(), type_name.c_str());
+    Topic* topic = new Topic(topicimpl, topic_description, mask);
+
 
     // Create InstanceHandle for the new topic
     GUID_t topic_guid = guid();

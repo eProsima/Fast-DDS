@@ -184,20 +184,26 @@ ReturnCode_t DataWriterImpl::write(
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
-    //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
-    // but it need to check if there is an existing entity with that handle
-    // Needs the function register_instance to be implemented
-    //    if (!handle.isDefined())
-    //    {
-    //        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    //    }
+
+    InstanceHandle_t instance_handle;
+    if (type_.get()->m_isGetKeyDefined)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_.get()->getKey(data, &instance_handle, is_key_protected);
+    }
+
+    //Check if the Handle is different from the special value HANDLE_NIL and
+    //does not correspond with the instance referred by the data
+    if (handle.isDefined() && handle.value != instance_handle.value)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    if (create_new_change_with_params(ALIVE, data, wparams, handle))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(ALIVE, data, wparams, instance_handle);
 }
 
 ReturnCode_t DataWriterImpl::write_w_timestamp(
@@ -209,20 +215,26 @@ ReturnCode_t DataWriterImpl::write_w_timestamp(
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
-    //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
-    // but it need to check if there is an existing entity with that handle
-    // Needs the function register_instance to be implemented
-    //    if (!handle.isDefined())
-    //    {
-    //        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    //    }
+
+    InstanceHandle_t instance_handle;
+    if (type_.get()->m_isGetKeyDefined)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_.get()->getKey(data, &instance_handle, is_key_protected);
+    }
+
+    //Check if the Handle is different from the special value HANDLE_NIL and
+    //does not correspond with the instance referred by the data
+    if (handle.isDefined() && handle.value != instance_handle.value)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    if (create_new_change_with_params(ALIVE, data, wparams, handle, timestamp))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(ALIVE, data, wparams, handle, timestamp);
 }
 
 ReturnCode_t DataWriterImpl::dispose(
@@ -239,11 +251,7 @@ ReturnCode_t DataWriterImpl::dispose(
     }
     logInfo(DATA_WRITER, "Disposing of data");
     WriteParams wparams;
-    if (create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle);
 }
 
 ReturnCode_t DataWriterImpl::dispose(
@@ -294,7 +302,7 @@ bool DataWriterImpl::check_new_change_preconditions(
     return true;
 }
 
-bool DataWriterImpl::perform_create_new_change(
+ReturnCode_t DataWriterImpl::perform_create_new_change(
         ChangeKind_t change_kind,
         void* data,
         WriteParams& wparams,
@@ -318,7 +326,7 @@ bool DataWriterImpl::perform_create_new_change(
                 {
                     logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
                     history_.release_Cache(ch);
-                    return false;
+                    return ReturnCode_t::RETCODE_ERROR;
                 }
             }
 
@@ -359,7 +367,7 @@ bool DataWriterImpl::perform_create_new_change(
                             ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
                             final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
                     history_.release_Cache(ch);
-                    return false;
+                    return ReturnCode_t::RETCODE_ERROR;
                 }
 
                 /// Fragment the data.
@@ -367,12 +375,13 @@ bool DataWriterImpl::perform_create_new_change(
                 // Note: high_mark will always be a value that can be casted to uint16_t)
                 ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
             }
-            ch->sourceTimestamp = timestamp;
+            ch->sourceTimestamp = timestamp; //Set source timestamp value
 
-            if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
+            ReturnCode_t code = this->history_.add_pub_change(ch, wparams, lock, max_blocking_time);
+            if (code != ReturnCode_t::RETCODE_OK)
             {
                 history_.release_Cache(ch);
-                return false;
+                return code;
             }
 
             if (qos_.deadline.period != c_TimeInfinite)
@@ -403,11 +412,11 @@ bool DataWriterImpl::perform_create_new_change(
                 lifespan_timer_->cancel_timer();
             }
 
-            return true;
+            return ReturnCode_t::RETCODE_OK;
         }
     }
 
-    return false;
+    return ReturnCode_t::RETCODE_TIMEOUT;
 }
 
 bool DataWriterImpl::create_new_change_with_params(
@@ -430,24 +439,14 @@ bool DataWriterImpl::create_new_change_with_params(
         type_.get()->getKey(data, &handle, is_key_protected);
     }
 
-    return perform_create_new_change(changeKind, data, wparams, handle);
-}
-
-bool DataWriterImpl::create_new_change_with_params(
-        ChangeKind_t changeKind,
-        void* data,
-        WriteParams& wparams,
-        const fastrtps::rtps::InstanceHandle_t& handle)
-{
-    if (!check_new_change_preconditions(changeKind, data))
+    if (perform_create_new_change(changeKind, data, wparams, handle) == ReturnCode_t::RETCODE_OK)
     {
-        return false;
+        return true;
     }
-
-    return perform_create_new_change(changeKind, data, wparams, handle);
+    return false;
 }
 
-bool DataWriterImpl::create_new_change_with_params(
+ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams,
@@ -456,7 +455,7 @@ bool DataWriterImpl::create_new_change_with_params(
 {
     if (!check_new_change_preconditions(changeKind, data))
     {
-        return false;
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle, timestamp);

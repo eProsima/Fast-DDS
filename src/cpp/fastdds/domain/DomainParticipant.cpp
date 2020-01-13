@@ -41,6 +41,7 @@ DomainParticipant::DomainParticipant(
     : Entity(mask)
     , impl_(DomainParticipantFactory::get_instance()->create_participant(did, qos, listen)->impl_)
 {
+    set_instance_handle(this->guid());
 }
 
 DomainParticipant::~DomainParticipant()

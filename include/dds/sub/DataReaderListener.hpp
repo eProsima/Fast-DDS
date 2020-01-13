@@ -20,7 +20,6 @@
 #ifndef OMG_DDS_SUB_DATA_READER_LISTENER_HPP_
 #define OMG_DDS_SUB_DATA_READER_LISTENER_HPP_
 
-// TODO Remove when PSM DDS Listeners are ready to be used.
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 
 #include <dds/core/status/Status.hpp>

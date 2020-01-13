@@ -20,7 +20,6 @@
 #ifndef OMG_DDS_TOPIC_TOPIC_LISTENER_HPP_
 #define OMG_DDS_TOPIC_TOPIC_LISTENER_HPP_
 
-// TODO Remove when PSM DDS Listeners are ready to be used.
 #include <fastdds/dds/topic/TopicListener.hpp>
 
 #include "dds/topic/Topic.hpp"
@@ -76,7 +75,6 @@ namespace topic {
  * @see @ref DCPS_Modules_Topic "Topic"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-// TODO Uncomment when PSM DDS listeners are ready to be used
 template<typename T>
 class TopicListener : public eprosima::fastdds::dds::TopicListener
 {
@@ -88,6 +86,9 @@ public:
     /** @endcond */
 
 public:
+
+    using eprosima::fastdds::dds::TopicListener::on_inconsistent_topic;
+
     /**
      * This operation is called by the Data Distribution Service when the
      * InconsistentTopicStatus changes.
@@ -105,8 +106,7 @@ public:
      *               an input to the application).
      */
     virtual void on_inconsistent_topic(
-            //Topic<T>& topic,
-            Topic& topic,
+            Topic<T>& topic,
             const dds::core::status::InconsistentTopicStatus& status) = 0;
 };
 
@@ -141,10 +141,11 @@ public:
 
 public:
     virtual void on_inconsistent_topic(
-            //Topic<T>& topic,
-            Topic& topic,
+            Topic<T>& topic,
             const dds::core::status::InconsistentTopicStatus& status)
     {
+        (void) topic;
+        (void) status;
     }
 /** @endcond */
 };

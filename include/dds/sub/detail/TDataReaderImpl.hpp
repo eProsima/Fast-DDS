@@ -47,11 +47,10 @@ DataReader<T>::DataReader(
         const dds::sub::Subscriber& sub,
         const dds::topic::Topic<T>& topic)
     : dds::core::Reference< detail::DataReader>(
-        sub.delegate()->create_datareader(
-            *topic.delegate().get(),
-            sub.is_nil() ? dds::sub::qos::DataReaderQos() : sub.default_datareader_qos(),
-            nullptr,
-            dds::core::status::StatusMask::all()))
+          new detail::DataReader(
+                     sub.delegate().get(),
+                     topic,
+                     sub.is_nil() ? dds::sub::qos::DataReaderQos() : sub.default_datareader_qos()))
 {
     subscriber_ = &sub;
 }
@@ -64,11 +63,12 @@ DataReader<T>::DataReader(
         dds::sub::DataReaderListener<T>* listener,
         const dds::core::status::StatusMask& mask)
     : ::dds::core::Reference< detail::DataReader>(
-        sub.delegate()->create_datareader(
-            *topic.delegate().get(),
-            qos,
-            listener,
-            mask))
+            new detail::DataReader(
+                sub.delegate().get(),
+                *topic.delegate().get(),
+                qos,
+                listener,
+                mask))
 {
     subscriber_ = &sub;
 }

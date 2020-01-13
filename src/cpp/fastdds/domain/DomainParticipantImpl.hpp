@@ -69,6 +69,7 @@ class PublisherListener;
 class Subscriber;
 class SubscriberImpl;
 class SubscriberListener;
+class TopicImpl;
 class Topic;
 class TopicListener;
 class TopicDescription;
