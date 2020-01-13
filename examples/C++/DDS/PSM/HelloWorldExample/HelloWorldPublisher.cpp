@@ -183,7 +183,8 @@ bool HelloWorldPublisher::publish(
     if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
     {
         hello_.index(hello_.index() + 1);
-        writer_.write(hello_);
+        const ::dds::core::InstanceHandle handle = writer_.register_instance(hello_);
+        writer_.write(hello_, handle);
         return true;
     }
     return false;

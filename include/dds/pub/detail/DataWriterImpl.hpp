@@ -38,8 +38,9 @@ DataWriter<T>::DataWriter(
         const dds::pub::Publisher& pub,
         dds::topic::Topic<T>& topic)
     : dds::core::Reference<detail::DataWriter>(
-        pub.delegate()->create_datawriter(topic.delegate().get(),
-        pub.default_datawriter_qos(),
+        new detail::DataWriter(pub,
+        topic.delegate().get(),
+        pub.is_nil() ? dds::pub::qos::DataWriterQos() : pub.default_datawriter_qos(),
         nullptr,
         dds::core::status::StatusMask::all()))
 {
@@ -54,10 +55,12 @@ DataWriter<T>::DataWriter(
         dds::pub::DataWriterListener<T>* listener,
         const dds::core::status::StatusMask& mask)
     : dds::core::Reference<detail::DataWriter>(
-        pub.delegate()->create_datawriter(topic.delegate().get(),
-        qos,
-        listener,
-        mask))
+        new detail::DataWriter(
+            pub.delegate().get(),
+            topic.delegate().get(),
+            qos,
+            listener,
+            mask))
 {
     publisher_ = &pub;
 }
@@ -65,7 +68,6 @@ DataWriter<T>::DataWriter(
 template<typename T>
 DataWriter<T>::~DataWriter()
 {
-    publisher_->delegate()->delete_datawriter(this->delegate().get());
 }
 
 template<typename T>
@@ -250,8 +252,7 @@ template<typename T>
 const dds::core::InstanceHandle DataWriter<T>::register_instance(
         const T& /*key*/)
 {
-    /* Invalid time will be used as current time. */
-    //return this->delegate()->register_instance(key, dds::core::Time::invalid());
+    //return this->delegate()->register_instance(const_cast<T*>(&key));
     return dds::core::InstanceHandle::nil();
 }
 

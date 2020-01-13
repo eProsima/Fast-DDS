@@ -31,9 +31,10 @@ namespace sub {
 Subscriber::Subscriber(
         const domain::DomainParticipant& dp)
     : ::dds::core::Reference<detail::Subscriber>(
-        dp.delegate()->create_subscriber(
-            dp.default_subscriber_qos(),
-            eprosima::fastrtps::SubscriberAttributes()))
+        new detail::Subscriber(dp,
+        dp.default_subscriber_qos(),
+        nullptr,
+        dds::core::status::StatusMask::all()))
 {
     participant_ = &dp;
 }
@@ -44,8 +45,8 @@ Subscriber::Subscriber(
         dds::sub::SubscriberListener* listener,
         const dds::core::status::StatusMask& mask)
     : ::dds::core::Reference<detail::Subscriber>(
-        dp.delegate()->create_subscriber(qos,
-        eprosima::fastrtps::SubscriberAttributes(),
+        new detail::Subscriber(dp,
+        qos,
         listener,
         mask))
 {
@@ -54,6 +55,7 @@ Subscriber::Subscriber(
 
 Subscriber::~Subscriber()
 {
+    participant_->delegate()->delete_subscriber(this->delegate().get());
 }
 
 void Subscriber::notify_datareaders()
