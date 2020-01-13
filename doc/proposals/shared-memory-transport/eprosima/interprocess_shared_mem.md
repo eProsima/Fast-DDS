@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes a model for interprocess shared memory communication  of software components interchanging data messages. The objective of the model is to provide a shared memory based transport layer suitable for a Real-time Publish-Subscribe DDS (Data Distribution Service).
+This document describes a model for interprocess shared memory communication of software components interchanging data messages. The objective of the model is to provide a shared memory based transport layer suitable for a Real-time Publish-Subscribe DDS (Data Distribution Service).
 
 ## Context
 
