@@ -75,7 +75,8 @@ Finally, let's observe how P1 share Data1b with P3 and Data1c with P2 and P3, th
 * **SharedMemTransportDescriptor**: The following values can be customized:
     * segment_size: Size of the shared memory segment reserved by the transport.
     * port_queue_capacity: Size, in number of messages, of the shared memory port message queue.
-    * port_overflow_policy: WAIT_ON_OVERFLOW or FAIL_ON_OVERFLOW.
+    * port_overflow_policy: DISCARD or FAIL.
+    * segment_overflow_policy: DISCARD or FAIL
 
     Non customizable values:
     * min_send_buffer_size = 1
