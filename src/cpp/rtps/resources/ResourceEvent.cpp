@@ -43,11 +43,13 @@ ResourceEvent::~ResourceEvent()
     assert(timers_count_ == 0);
 
     logInfo(RTPS_PARTICIPANT, "Removing event thread");
-    stop_.store(true);
-    cv_.notify_one();
-
     if (thread_.joinable())
     {
+        {
+            std::unique_lock<TimedMutex> lock(mutex_);
+            stop_.store(true);
+            cv_.notify_one();
+        }
         thread_.join();
     }
 }
@@ -146,23 +148,6 @@ bool ResourceEvent::register_timer_nts(
     return false;
 }
 
-void ResourceEvent::activate_timer(
-        TimedEventImpl* event)
-{
-    std::vector<TimedEventImpl*>::iterator low_bound;
-    std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
-
-    // Find insertion position
-    low_bound = std::lower_bound(active_timers_.begin(), end_it, event, event_compare);
-
-    // If event is not found from there onwards ...
-    if (std::find(low_bound, end_it, event) == end_it)
-    {
-        // ... add it on its place
-        active_timers_.emplace(low_bound, event);
-    }
-}
-
 void ResourceEvent::run_io_service()
 {
     while (!stop_.load())
@@ -213,10 +198,23 @@ void ResourceEvent::do_timer_actions()
         std::lock_guard<TimedMutex> lock(mutex_);
         for (TimedEventImpl* tp : pending_timers_)
         {
-            did_something = true;
+            // Remove item from active timers
+            auto current_pos = std::lower_bound(active_timers_.begin(), active_timers_.end(), tp, event_compare);
+            current_pos = std::find(current_pos, active_timers_.end(), tp);
+            if (current_pos != active_timers_.end())
+            {
+                active_timers_.erase(current_pos);
+            }
+
+            // Update timer info
             if (tp->update(current_time_, cancel_time))
             {
-                activate_timer(tp);
+                // Timer has to be activated: add to active timers
+                std::vector<TimedEventImpl*>::iterator low_bound;
+
+                // Insert on correct position
+                low_bound = std::lower_bound(active_timers_.begin(), active_timers_.end(), tp, event_compare);
+                active_timers_.emplace(low_bound, tp);
             }
         }
         pending_timers_.clear();
