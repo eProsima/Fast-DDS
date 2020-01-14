@@ -171,13 +171,9 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
             if (participant_guid != mp_RTPSParticipant->getGuid())
             {
                 ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
-                        [this, ret_val](TimedEvent::EventCode code) -> bool
+                        [this, ret_val]() -> bool
                         {
-                            if (TimedEvent::EVENT_SUCCESS == code)
-                            {
-                                check_remote_participant_liveliness(ret_val);
-                            }
-
+                            check_remote_participant_liveliness(ret_val);
                             return false;
                         }, 0.0);
             }
@@ -350,28 +346,19 @@ bool PDP::initPDP(
     for (ParticipantProxyData* pool_item : participant_proxies_pool_)
     {
         pool_item->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
-                [this, pool_item](TimedEvent::EventCode code) -> bool
+                [this, pool_item]() -> bool
                 {
-                    if (TimedEvent::EVENT_SUCCESS == code)
-                    {
-                        check_remote_participant_liveliness(pool_item);
-                    }
-
+                    check_remote_participant_liveliness(pool_item);
                     return false;
                 }, 0.0);
     }
 
     resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    announceParticipantState(false);
-                    set_next_announcement_interval();
-                    return true;
-                }
-
-                return false;
+                announceParticipantState(false);
+                set_next_announcement_interval();
+                return true;
             },
             0);
 

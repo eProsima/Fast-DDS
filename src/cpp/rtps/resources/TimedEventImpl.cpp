@@ -18,35 +18,23 @@
  */
 
 
-#include <rtps/resources/TimedEventImpl.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
+#include "TimedEventImpl.h"
+
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <cassert>
-#include <functional>
 #include <atomic>
-#include <system_error>
+#include <functional>
 
-using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 TimedEventImpl::TimedEventImpl(
-        asio::io_service& service,
         Callback callback,
         std::chrono::microseconds interval)
-    : m_interval_microsec(interval)
-    , timer_(service, interval)
-    , callback_(callback)
-    , callback_ptr_(&callback, [](Callback*){
-})
+    : interval_microsec_(interval)
+    , callback_(std::move(callback))
     , state_(StateCode::INACTIVE)
-    , cancel_(false)
-    , next_(nullptr)
-{
-    //TIME_INFINITE(m_timeInfinite);
-}
-
-TimedEventImpl::~TimedEventImpl()
 {
 }
 
@@ -63,10 +51,6 @@ bool TimedEventImpl::go_ready()
     return returned_value;
 }
 
-/* In this function we don't need to exchange the state,
- * because this function try to cancel, but if the event is running
- * in the middle of the operation, it doesn't bother.
- */
 bool TimedEventImpl::go_cancel()
 {
     bool returned_value = false;
@@ -74,44 +58,66 @@ bool TimedEventImpl::go_cancel()
 
     if ((prev_code = state_.exchange(StateCode::INACTIVE)) != StateCode::INACTIVE)
     {
-        cancel_.store(true);
         returned_value = true;
-
-        if (prev_code == StateCode::READY)
-        {
-            callback_(TimedEvent::EVENT_ABORT);
-        }
     }
 
     return returned_value;
 }
 
-void TimedEventImpl::update()
+bool TimedEventImpl::update(
+        std::chrono::steady_clock::time_point current_time,
+        std::chrono::steady_clock::time_point cancel_time)
 {
     StateCode expected = StateCode::READY;
+    bool ret_val = state_.compare_exchange_strong(expected, StateCode::WAITING);
 
-    if (cancel_.exchange(false))
+    if (ret_val)
     {
-        timer_.cancel();
+        std::unique_lock<std::mutex> lock(mutex_);
+        next_trigger_time_ = current_time + interval_microsec_;
+    }
+    else
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        next_trigger_time_ = cancel_time;
     }
 
-    if (state_.compare_exchange_strong(expected, StateCode::WAITING))
+    return ret_val;
+}
+
+void TimedEventImpl::trigger(
+        std::chrono::steady_clock::time_point current_time,
+        std::chrono::steady_clock::time_point cancel_time)
+{
+    if (callback_)
     {
+        StateCode expected = StateCode::WAITING;
+        state_.compare_exchange_strong(expected, StateCode::INACTIVE);
+
+        //Exec
+        bool restart = callback_();
+
+        if (restart)
         {
-            std::unique_lock<std::mutex> lock(mutex_);
-            timer_.expires_from_now(m_interval_microsec);
+            expected = StateCode::INACTIVE;
+            if (state_.compare_exchange_strong(expected, StateCode::WAITING))
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                next_trigger_time_ = current_time + interval_microsec_;
+                return;
+            }
         }
 
-        std::weak_ptr<Callback> callback_weak_ptr = callback_ptr_;
-        timer_.async_wait(std::bind(&TimedEventImpl::event, this, callback_weak_ptr, std::placeholders::_1));
+        std::unique_lock<std::mutex> lock(mutex_);
+        next_trigger_time_ = cancel_time;
     }
 }
 
 bool TimedEventImpl::update_interval(
-        const eprosima::fastrtps::Duration_t& inter)
+        const eprosima::fastrtps::Duration_t& time)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    m_interval_microsec = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
+    interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(time));
     return true;
 }
 
@@ -119,44 +125,11 @@ bool TimedEventImpl::update_interval_millisec(
         double time_millisec)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    m_interval_microsec = std::chrono::microseconds((int64_t)(time_millisec * 1000));
+    interval_microsec_ = std::chrono::microseconds(
+        static_cast<int64_t>(time_millisec * 1000));
     return true;
 }
 
-void TimedEventImpl::event(
-        std::weak_ptr<Callback> callback_weak_ptr,
-        const std::error_code& ec)
-{
-    std::shared_ptr<Callback> callback_ptr = callback_weak_ptr.lock();
-
-    if (callback_ptr)
-    {
-        if (ec != asio::error::operation_aborted)
-        {
-            StateCode expected = StateCode::WAITING;
-            state_.compare_exchange_strong(expected, StateCode::INACTIVE);
-
-            //Exec
-            bool restart = callback_(TimedEvent::EVENT_SUCCESS);
-
-            if (restart)
-            {
-                expected = StateCode::INACTIVE;
-                if (state_.compare_exchange_strong(expected, StateCode::WAITING))
-                {
-                    {
-                        std::unique_lock<std::mutex> lock(mutex_);
-                        timer_.expires_from_now(m_interval_microsec);
-                    }
-
-                    timer_.async_wait(std::bind(&TimedEventImpl::event, this, callback_weak_ptr,
-                            std::placeholders::_1));
-                }
-            }
-        }
-        else
-        {
-            callback_(TimedEvent::EVENT_ABORT);
-        }
-    }
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

@@ -28,8 +28,6 @@
 #include <thread>
 #include <atomic>
 #include <vector>
-#include <future>
-#include <asio.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -38,17 +36,16 @@ namespace rtps {
 class TimedEventImpl;
 
 /**
- * This class centralizes all operations over asio::io_service and its asio::deadlline_timer objects in the same
- * thread.
+ * This class centralizes all operations over timed events in the same thread.
  * @ingroup MANAGEMENT_MODULE
  */
 class ResourceEvent
 {
 public:
 
-    ResourceEvent();
+    ResourceEvent() = default;
 
-    virtual ~ResourceEvent();
+    ~ResourceEvent();
 
     /*!
      * @brief Method to initialize the internal thread.
@@ -56,12 +53,21 @@ public:
     void init_thread();
 
     /*!
+     * @brief This method informs that a TimedEventImpl has been created.
+     *
+     * This method has to be called when creating a TimedEventImpl object.
+     * @param event TimedEventImpl object that has been created.
+     */
+    void register_timer(
+            TimedEventImpl* event);
+
+    /*!
      * @brief This method removes a TimedEventImpl object in case it is waiting to be processed by ResourceEvent's
      * internal thread.
      *
      * This method has to be called before deleting the TimedEventImpl object.
-     * This method cancels any operation of the internal asio::steady_timer.
-     * Then it avoids the situation of asio calling the event handler when it was removed previously.
+     * This method cancels any operation of the timer.
+     * Then it avoids the situation of the execution thread calling the event handler when it was removed previously.
      * @param event TimedEventImpl object that will be deleted and we have to be sure all its operations are cancelled.
      */
     void unregister_timer(
@@ -70,7 +76,7 @@ public:
     /*!
      * @brief This method notifies to ResourceEvent that the TimedEventImpl object has operations to be scheduled.
      *
-     * These operations can be the cancellation of the internal asio::steady_timer or starting another async_wait.
+     * These operations can be the cancellation of the timer or starting another async_wait.
      * @param event TimedEventImpl object that has operations to be scheduled.
      */
     void notify(
@@ -79,7 +85,7 @@ public:
     /*!
      * @brief This method notifies to ResourceEvent that the TimedEventImpl object has operations to be scheduled.
      *
-     * These operations can be the cancellation of the internal asio::steady_timer or starting another async_wait.
+     * These operations can be the cancellation of the timer or starting another async_wait.
      * @note Non-blocking call version of the method.
      * @param event TimedEventImpl object that has operations to be scheduled.
      * @param timeout Maximum blocking time of the method.
@@ -88,40 +94,37 @@ public:
             TimedEventImpl* event,
             const std::chrono::steady_clock::time_point& timeout);
 
-    /*!
-     * @brief Returns the internal asio::io_service.
-     * @return Associated asio::io_service.
-     */
-    asio::io_service& get_io_service()
-    {
-        return io_service_;
-    }
-
 private:
 
     //! Warns the internal thread can stop.
-    std::atomic<bool> stop_;
+    std::atomic<bool> stop_{ false };
 
     //! Protects internal data.
     TimedMutex mutex_;
 
+    //! Used to warn about changes on allow_vector_manipulation_.
+    TimedConditionVariable cv_manipulation_;
+
+    //! Flag used to allow a thread to manipulate the timer collections when the execution thread is not using them.
+    bool allow_vector_manipulation_ = true;
+
     //! Used to warn there are new TimedEventImpl objects to be processed.
     TimedConditionVariable cv_;
 
-    //! Flag used to allow a thread to delete a TimedEventImpl because the main thread is not using asio::io_service.
-    bool allow_to_delete_;
+    //! The total number of created timers.
+    size_t timers_count_ = 0;
 
-    //! Head of the list of TimedEventImpl objects that have to be processed.
-    TimedEventImpl* front_;
+    //! Collection of events pending update action.
+    std::vector<TimedEventImpl*> pending_timers_;
 
-    //! Back of the list of TimedEventImpl objects that have to be processed.
-    TimedEventImpl* back_;
+    //! Collection of registered events waiting completion.
+    std::vector<TimedEventImpl*> active_timers_;
 
-    //! Thread
+    //! Current time as seen by the execution thread.
+    std::chrono::steady_clock::time_point current_time_;
+
+    //! Execution thread.
     std::thread thread_;
-
-    //! IO service
-    asio::io_service io_service_;
 
     /*!
      * @brief Registers a new TimedEventImpl object in the internal queue to be processed.
@@ -135,7 +138,19 @@ private:
     //! Method called by the internal thread.
     void run_io_service();
 
-    std::promise<void> ready;
+    void sort_timers();
+    void update_current_time();
+    void activate_timer(
+            TimedEventImpl* event);
+
+    void do_timer_actions();
+
+    void resize_collections()
+    {
+        pending_timers_.reserve(timers_count_);
+        active_timers_.reserve(timers_count_);
+    }
+
 };
 
 } /* namespace rtps */

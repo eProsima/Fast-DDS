@@ -76,26 +76,18 @@ WriterProxy::WriterProxy(
 {
     //Create Events
     heartbeat_response_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
-                    [&](TimedEvent::EventCode code) -> bool
-                {
-                    if (TimedEvent::EVENT_SUCCESS == code)
-                    {
-                        perform_heartbeat_response();
-                    }
-
-                    return false;
-                }, 0);
+            [&]() -> bool
+            {
+                perform_heartbeat_response();
+                return false;
+            }, 0);
 
     initial_acknack_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
-                    [&](TimedEvent::EventCode code) -> bool
-                {
-                    if (TimedEvent::EVENT_SUCCESS == code)
-                    {
-                        perform_initial_ack_nack();
-                    }
-
-                    return false;
-                }, 0 );
+            [&]() -> bool
+            {
+                perform_initial_ack_nack();
+                return false;
+            }, 0 );
 
     clear();
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);

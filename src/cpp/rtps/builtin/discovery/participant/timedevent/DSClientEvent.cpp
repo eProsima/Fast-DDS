@@ -38,9 +38,9 @@ DSClientEvent::DSClientEvent(
         PDPClient* p_PDP,
         double interval)
     : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
-        [this](EventCode code)
+        [this]()
         {
-            return event(code);
+            return event();
         }, interval)
     , mp_PDP(p_PDP)
 {
@@ -50,45 +50,36 @@ DSClientEvent::DSClientEvent(
 {
 }
 
-bool DSClientEvent::event(EventCode code)
+bool DSClientEvent::event()
 {
-    if(code == EVENT_SUCCESS)
-    {
-        logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " DSClientEvent Period");
-        bool restart = true;
+    logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " DSClientEvent Period");
+    bool restart = true;
 
-        // Check if all servers received my discovery data
-        if (mp_PDP->all_servers_acknowledge_PDP())
+    // Check if all servers received my discovery data
+    if (mp_PDP->all_servers_acknowledge_PDP())
+    {
+        // Wait until we have received all network discovery info currently available
+        if (mp_PDP->is_all_servers_PDPdata_updated())
         {
-            // Wait until we have received all network discovery info currently available
-            if (mp_PDP->is_all_servers_PDPdata_updated())
-            {
-                restart = !mp_PDP->match_servers_EDP_endpoints();
-                // we must keep this TimedEvent alive to cope with servers' shutdown
-                // PDPClient::removeRemoteEndpoints would restart_timer if a server vanishes
-                logInfo(CLIENT_PDP_THREAD,"Client " << mp_PDP->getRTPSParticipant()->getGuid() << " matching servers EDP endpoints")
-            }
-            else
-            {
-                logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " not all servers acknowledge PDP info")
-            }
+            restart = !mp_PDP->match_servers_EDP_endpoints();
+            // we must keep this TimedEvent alive to cope with servers' shutdown
+            // PDPClient::removeRemoteEndpoints would restart_timer if a server vanishes
+            logInfo(CLIENT_PDP_THREAD,"Client " << mp_PDP->getRTPSParticipant()->getGuid() << " matching servers EDP endpoints")
         }
         else
         {
-            // Not all servers have yet received our DATA(p) thus resend
-            mp_PDP->_serverPing = true;
-            mp_PDP->announceParticipantState(false);
-            logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement")
+            logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " not all servers acknowledge PDP info")
         }
-
-        return restart;
     }
-    else if(code == EVENT_ABORT)
+    else
     {
-        logInfo(RTPS_PDP,"DSClientEvent aborted");
+        // Not all servers have yet received our DATA(p) thus resend
+        mp_PDP->_serverPing = true;
+        mp_PDP->announceParticipantState(false);
+        logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement")
     }
 
-    return false;
+    return restart;
 }
 
 }

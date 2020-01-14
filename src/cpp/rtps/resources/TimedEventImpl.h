@@ -25,14 +25,12 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <asio.hpp>
-
+#include <atomic>
 #include <thread>
 #include <memory>
 #include <functional>
 #include <mutex>
 #include <condition_variable>
-#include <system_error>
 
 namespace eprosima {
 namespace fastrtps {
@@ -46,18 +44,16 @@ namespace rtps {
  */
 class TimedEventImpl
 {
-    using Callback = std::function<bool (TimedEvent::EventCode)>;
+    using Callback = std::function<bool ()>;
 
 public:
 
-    typedef enum
+    enum StateCode
     {
         INACTIVE = 0, //! The event is inactive. asio::io_service is not waiting for it.
         READY, //! The event is ready for being processed by ResourceEvent and added to asio::io_service.
         WAITING, //! The event is being waiting by asio::io_service to being triggered.
-    } StateCode;
-
-    ~TimedEventImpl();
+    };
 
     /*!
      * @brief Default constructor.
@@ -66,38 +62,8 @@ public:
      * @param interval Expiration time in milliseconds of the event.
      */
     TimedEventImpl(
-            asio::io_service& service,
             Callback callback,
             std::chrono::microseconds interval);
-
-protected:
-
-    //! Expiration time in milliseconds of the event.
-    std::chrono::microseconds m_interval_microsec;
-
-public:
-
-    /*!
-     * @brief Return next linked TimedEventImpl object.
-     * @return Next linked TimedEventImpl object. Can be nullptr.
-     */
-    TimedEventImpl* next() const
-    {
-        return next_;
-    }
-
-    /*!
-     * @brief Links the passed TimedEventImpl object.
-     * @param next TimedEventImpl object to be linked.
-     * @return Previous linked TimedEventImpl object. Can be nullptr.
-     */
-    TimedEventImpl* next(
-            TimedEventImpl* next)
-    {
-        TimedEventImpl* old = next_;
-        next_ = next;
-        return old;
-    }
 
     /*!
      * @brief Updates the expiration time of the event.
@@ -128,7 +94,7 @@ public:
     double getIntervalMsec()
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        auto total_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(m_interval_microsec);
+        auto total_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(interval_microsec_);
         return static_cast<double>(total_milliseconds.count());
     }
 
@@ -139,8 +105,16 @@ public:
     double getRemainingTimeMilliSec()
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timer_.expires_from_now()).
-               count());
+        return static_cast<double>(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                next_trigger_time_ - std::chrono::steady_clock::now()).
+            count());
+    }
+
+    std::chrono::steady_clock::time_point next_trigger_time()
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        return next_trigger_time_;
     }
 
     /*!
@@ -160,32 +134,28 @@ public:
     /*!
      * @brief It updates the asio::steady_timer depending of the state of TimedEventImpl object.
      * @warning This method has to be called from ResourceEvent's internal thread.
+     * @return false if the event was canceled, true otherwise.
      */
-    void update();
+    bool update(
+            std::chrono::steady_clock::time_point current_time,
+            std::chrono::steady_clock::time_point cancel_time);
+
+
+    void trigger(
+            std::chrono::steady_clock::time_point current_time,
+            std::chrono::steady_clock::time_point cancel_time);
 
 private:
 
-    /*!
-     * @brief Callback called by asio::steady_timer when it expires.
-     * @param callback_weak_ptr Weak shared pointer to the callback.
-     * Used to verify the TimedEventImpl object is still alive.
-     * @param ec Error code provided by asio::steady_timer.
-     */
-    void event(
-            std::weak_ptr<Callback> callback_weak_ptr,
-            const std::error_code& ec);
+    //! Expiration time in milliseconds of the event.
+    std::chrono::microseconds interval_microsec_;
 
-    asio::steady_timer timer_;
+    //! Next time to update this event
+    std::chrono::steady_clock::time_point next_trigger_time_;
 
     Callback callback_;
 
-    std::shared_ptr<Callback> callback_ptr_;
-
     std::atomic<StateCode> state_;
-
-    std::atomic<bool> cancel_;
-
-    TimedEventImpl* next_;
 
     std::mutex mutex_;
 };

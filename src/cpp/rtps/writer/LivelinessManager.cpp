@@ -22,14 +22,9 @@ LivelinessManager::LivelinessManager(
     , timer_owner_(nullptr)
     , timer_(
         service,
-        [this](TimedEvent::EventCode code) -> bool
+        [this]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    return timer_expired();
-                }
-
-                return false;
+                return timer_expired();
             },
         0)
 {

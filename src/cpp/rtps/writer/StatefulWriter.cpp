@@ -82,43 +82,26 @@ StatefulWriter::StatefulWriter(
 
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
 
-    periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
-    {
-        if (TimedEvent::EVENT_SUCCESS == code)
-        {
-            if (send_periodic_heartbeat())
+    periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
             {
-                return true;
-            }
-        }
+                return send_periodic_heartbeat();
+            },
+            TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 
-        return false;
-    },
-                    TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
-
-    nack_response_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
-    {
-        if (TimedEvent::EVENT_SUCCESS == code)
-        {
-            perform_nack_response();
-        }
-
-        return false;
-    },
-                    TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
+    nack_response_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
+            {
+                perform_nack_response();
+                return false;
+            },
+            TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     if (disable_positive_acks_)
     {
-        ack_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
-        {
-            if (TimedEvent::EVENT_SUCCESS == code)
-            {
-                return ack_timer_expired();
-            }
-
-            return false;
-        },
-                        att.keep_duration.to_ns() * 1e-6); // in milliseconds
+        ack_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
+                {
+                        return ack_timer_expired();
+                },
+                att.keep_duration.to_ns() * 1e-6); // in milliseconds
     }
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)

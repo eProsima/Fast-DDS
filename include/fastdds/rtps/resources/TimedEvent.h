@@ -42,23 +42,15 @@ class ResourceEvent;
  * In the construct you can set the callback to be called when the expiration time expires.
  * @code
    TimedEvent* event = new TimedEvent(resource_event_,
-        [&](TimedEvent::EventCode code) -> bool
+        [&]() -> bool
         {
-            if(TimedEvent::EVENT_SUCCESS == code)
-            {
-                std::cout << "hello" << std::endl;
-                return true;
-            }
-
-            return false;
+            std::cout << "hello" << std::endl;
+            return true;
         },
         100);
  * @endcode
  *
  * The signature of the callback is:
- * - The parameter of TimedEvent::EventCode type tells the user if the event achieves the deadline timer or it was
- *   aborted.
- *
  * - The returned value tells if the event has to be scheduled again or not. true value tells to reschedule the event.
  *   false value doesn't.
  *
@@ -106,15 +98,6 @@ class TimedEvent
 {
 public:
 
-    /**
-     * Enum representing event statuses
-     */
-    enum EventCode
-    {
-        EVENT_SUCCESS,
-        EVENT_ABORT
-    };
-
     /*!
      * @brief Default constructor.
      *
@@ -125,7 +108,7 @@ public:
      */
     TimedEvent(
             ResourceEvent& service,
-            std::function<bool(EventCode)> callback,
+            std::function<bool()> callback,
             double milliseconds);
 
     //! Default destructor.

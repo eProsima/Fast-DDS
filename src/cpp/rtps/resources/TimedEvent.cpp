@@ -19,7 +19,8 @@
 
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <rtps/resources/TimedEventImpl.h>
+
+#include "TimedEventImpl.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -27,13 +28,15 @@ namespace rtps {
 
 TimedEvent::TimedEvent(
         ResourceEvent& service,
-        std::function<bool(EventCode)> callback,
+        std::function<bool()> callback,
         double milliseconds)
     : service_(service)
     , impl_(nullptr)
 {
-    impl_ = new TimedEventImpl(service_.get_io_service(), callback,
-                    std::chrono::microseconds((int64_t)(milliseconds * 1000)));
+    impl_ = new TimedEventImpl(
+        callback,
+        std::chrono::microseconds(static_cast<int64_t>(milliseconds * 1000)));
+    service_.register_timer(impl_);
 }
 
 TimedEvent::~TimedEvent()
