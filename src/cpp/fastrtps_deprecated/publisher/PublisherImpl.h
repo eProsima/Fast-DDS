@@ -35,9 +35,8 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
 namespace eprosima {
-namespace fastrtps{
-namespace rtps
-{
+namespace fastrtps {
+namespace rtps {
 class RTPSWriter;
 class RTPSParticipant;
 class TimedEvent;
@@ -56,17 +55,18 @@ class Publisher;
 class PublisherImpl
 {
     friend class ParticipantImpl;
-    public:
+
+public:
 
     /**
      * Create a publisher, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
     PublisherImpl(
-        ParticipantImpl* p,
-        fastdds::dds::TopicDataType* ptype,
-        const PublisherAttributes& att,
-        PublisherListener* p_listen = nullptr);
+            ParticipantImpl* p,
+            fastdds::dds::TopicDataType* ptype,
+            const PublisherAttributes& att,
+            PublisherListener* p_listen = nullptr);
 
     virtual ~PublisherImpl();
 
@@ -77,8 +77,8 @@ class PublisherImpl
      * @return
      */
     bool create_new_change(
-        rtps::ChangeKind_t kind,
-        void* Data);
+            rtps::ChangeKind_t kind,
+            void* Data);
 
     /**
      *
@@ -88,9 +88,16 @@ class PublisherImpl
      * @return
      */
     bool create_new_change_with_params(
-        rtps::ChangeKind_t kind,
-        void* Data,
-        rtps::WriteParams& wparams);
+            rtps::ChangeKind_t kind,
+            void* Data,
+            rtps::WriteParams& wparams);
+
+    /*!
+     * @param sample
+     * @return
+     */
+    rtps::InstanceHandle_t register_instance(
+            void* sample);
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -102,7 +109,8 @@ class PublisherImpl
      * @param[out] removed Number of removed elements
      * @return True if correct.
      */
-    bool removeAllChange(size_t* removed);
+    bool removeAllChange(
+            size_t* removed);
 
     /**
      *
@@ -115,40 +123,51 @@ class PublisherImpl
      * @param att Reference to a PublisherAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
      */
-    bool updateAttributes(const PublisherAttributes& att);
+    bool updateAttributes(
+            const PublisherAttributes& att);
 
     /**
      * Get the Attributes of the Subscriber.
      * @return Attributes of the Subscriber.
      */
-    inline const PublisherAttributes& getAttributes(){ return m_att; };
+    inline const PublisherAttributes& getAttributes()
+    {
+        return m_att;
+    }
 
     /**
      * Get topic data type
      * @return Topic data type
      */
-    fastdds::dds::TopicDataType* getType() {return mp_type;};
+    fastdds::dds::TopicDataType* getType()
+    {
+        return mp_type;
+    }
 
-    bool wait_for_all_acked(const Duration_t& max_wait);
+    bool wait_for_all_acked(
+            const Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param Deadline missed status struct
      */
-    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
+    void get_offered_deadline_missed_status(
+            OfferedDeadlineMissedStatus& status);
 
     /**
      * @brief Returns the liveliness lost status
      * @param status Liveliness lost status
      */
-    void get_liveliness_lost_status(LivelinessLostStatus& status);
+    void get_liveliness_lost_status(
+            LivelinessLostStatus& status);
 
     /**
      * @brief Asserts liveliness
      */
     void assert_liveliness();
 
-    private:
+private:
+
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.
     rtps::RTPSWriter* mp_writer;
@@ -161,23 +180,32 @@ class PublisherImpl
     //!PublisherListener
     PublisherListener* mp_listener;
     //!Listener to capture the events of the Writer
-    class PublisherWriterListener: public rtps::WriterListener
+    class PublisherWriterListener : public rtps::WriterListener
     {
-        public:
-            PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
-            virtual ~PublisherWriterListener(){};
-            void onWriterMatched(
-                    rtps::RTPSWriter* writer,
-                    rtps::MatchingInfo& info) override;
-            void onWriterChangeReceivedByAll(
-                    rtps::RTPSWriter* writer,
-                    rtps::CacheChange_t* change) override;
-            void on_liveliness_lost(
-                    rtps::RTPSWriter* writer,
-                    const LivelinessLostStatus& status) override;
+public:
 
-            PublisherImpl* mp_publisherImpl;
-    }m_writerListener;
+        PublisherWriterListener(
+                PublisherImpl* p)
+            : mp_publisherImpl(p)
+        {
+        }
+
+        virtual ~PublisherWriterListener()
+        {
+        }
+
+        void onWriterMatched(
+                rtps::RTPSWriter* writer,
+                rtps::MatchingInfo& info) override;
+        void onWriterChangeReceivedByAll(
+                rtps::RTPSWriter* writer,
+                rtps::CacheChange_t* change) override;
+        void on_liveliness_lost(
+                rtps::RTPSWriter* writer,
+                const LivelinessLostStatus& status) override;
+
+        PublisherImpl* mp_publisherImpl;
+    } m_writerListener;
 
     Publisher* mp_userPublisher;
 
@@ -188,7 +216,7 @@ class PublisherImpl
     //! A timer used to check for deadlines
     rtps::TimedEvent* deadline_timer_;
     //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the deadline timer
     rtps::InstanceHandle_t timer_owner_;
     //! The offered deadline missed status
@@ -197,7 +225,7 @@ class PublisherImpl
     //! A timed callback to remove expired samples for lifespan QoS
     rtps::TimedEvent* lifespan_timer_;
     //! The lifespan duration, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
     /**
      * @brief A method called when an instance misses the deadline

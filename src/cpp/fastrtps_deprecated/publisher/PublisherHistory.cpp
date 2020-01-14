@@ -39,17 +39,17 @@ PublisherHistory::PublisherHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                        topic_att.resourceLimitsQos.allocated_samples :
-                        topic_att.getTopicKind() == NO_KEY ?
-                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-                                     * topic_att.resourceLimitsQos.max_instances),
-                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                        topic_att.resourceLimitsQos.max_samples :
-                        topic_att.getTopicKind() == NO_KEY ?
-                            topic_att.historyQos.depth :
-                            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+            topic_att.resourceLimitsQos.allocated_samples :
+            topic_att.getTopicKind() == NO_KEY ?
+            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
+            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
+            * topic_att.resourceLimitsQos.max_instances),
+            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+            topic_att.resourceLimitsQos.max_samples :
+            topic_att.getTopicKind() == NO_KEY ?
+            topic_att.historyQos.depth :
+            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
@@ -58,6 +58,28 @@ PublisherHistory::PublisherHistory(
 
 PublisherHistory::~PublisherHistory()
 {
+}
+
+bool PublisherHistory::register_instance(
+        const InstanceHandle_t& instance_handle,
+        std::unique_lock<RecursiveTimedMutex>& lock,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+{
+    bool returned_value = false;
+
+    /// Preconditions
+    if (topic_att_.getTopicKind() == NO_KEY)
+    {
+        return false;
+    }
+
+    t_m_Inst_Caches::iterator vit;
+    if (find_key(instance_handle, &vit))
+    {
+        returned_value = true;
+    }
+
+    return returned_value;
 }
 
 bool PublisherHistory::add_pub_change(
@@ -106,7 +128,7 @@ bool PublisherHistory::add_pub_change(
     else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         t_m_Inst_Caches::iterator vit;
-        if (find_key(change, &vit))
+        if (find_key(change->instanceHandle, &vit))
         {
             logInfo(RTPS_HISTORY, "Found key: " << vit->first);
             bool add = false;
@@ -147,7 +169,7 @@ bool PublisherHistory::add_pub_change(
 #endif
                 {
                     logInfo(RTPS_HISTORY,
-                            topic_att_.getTopicDataType() 
+                            topic_att_.getTopicDataType()
                             << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
                             << " and " << change->serializedPayload.length << " bytes");
                     returnedValue =  true;
@@ -161,11 +183,11 @@ bool PublisherHistory::add_pub_change(
 }
 
 bool PublisherHistory::find_key(
-        CacheChange_t* a_change,
+        const InstanceHandle_t& instance_handle,
         t_m_Inst_Caches::iterator* vit_out)
 {
     t_m_Inst_Caches::iterator vit;
-    vit = keyed_changes_.find(a_change->instanceHandle);
+    vit = keyed_changes_.find(instance_handle);
     if (vit != keyed_changes_.end())
     {
         *vit_out = vit;
@@ -174,22 +196,10 @@ bool PublisherHistory::find_key(
 
     if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
-        *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+        *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, KeyedChanges())).first;
         return true;
     }
-    else
-    {
-        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
-        {
-            if (vit->second.cache_changes.size() == 0)
-            {
-                keyed_changes_.erase(vit);
-                *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
-                return true;
-            }
-        }
-        logWarning(PUBLISHER, "History has reached the maximum number of instances");
-    }
+
     return false;
 }
 
@@ -262,7 +272,7 @@ bool PublisherHistory::remove_change_pub(
     else
     {
         t_m_Inst_Caches::iterator vit;
-        if (!this->find_key(change, &vit))
+        if (!this->find_key(change->instanceHandle, &vit))
         {
             return false;
         }
@@ -337,11 +347,11 @@ bool PublisherHistory::get_next_deadline(
             keyed_changes_.begin(),
             keyed_changes_.end(),
             [](
-                    const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
-                    const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
-            {
-                return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-            });
+                const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+        {
+            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+        });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;

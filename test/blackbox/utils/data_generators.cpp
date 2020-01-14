@@ -20,7 +20,8 @@
 #include <list>
 #include <sstream>
 
-std::list<HelloWorld> default_helloworld_data_generator(size_t max)
+std::list<HelloWorld> default_helloworld_data_generator(
+        size_t max)
 {
     uint16_t index = 1;
     size_t maximum = max ? max : 10;
@@ -40,7 +41,8 @@ std::list<HelloWorld> default_helloworld_data_generator(size_t max)
     return returnedValue;
 }
 
-std::list<FixedSized> default_fixed_sized_data_generator(size_t max)
+std::list<FixedSized> default_fixed_sized_data_generator(
+        size_t max)
 {
     uint16_t index = 1;
     size_t maximum = max ? max : 10;
@@ -57,7 +59,8 @@ std::list<FixedSized> default_fixed_sized_data_generator(size_t max)
     return returnedValue;
 }
 
-std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max)
+std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(
+        size_t max)
 {
     uint16_t index = 0;
     size_t maximum = max ? max : 10;
@@ -67,7 +70,7 @@ std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max)
     {
         KeyedHelloWorld hello;
         hello.index(index);
-        hello.key(index % 2);
+        hello.key(index % 2 + 1);
         std::stringstream ss;
         ss << "HelloWorld " << index;
         hello.message(ss.str());
@@ -78,7 +81,8 @@ std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max)
     return returnedValue;
 }
 
-std::list<String> default_large_string_data_generator(size_t max)
+std::list<String> default_large_string_data_generator(
+        size_t max)
 {
     uint16_t index = 1;
     size_t maximum = max ? max : 10;
@@ -98,7 +102,8 @@ std::list<String> default_large_string_data_generator(size_t max)
 }
 
 const size_t data64kb_length = 63996;
-std::list<Data64kb> default_data64kb_data_generator(size_t max)
+std::list<Data64kb> default_data64kb_data_generator(
+        size_t max)
 {
     unsigned char index = 1;
     size_t maximum = max ? max : 10;
@@ -121,7 +126,8 @@ std::list<Data64kb> default_data64kb_data_generator(size_t max)
 }
 
 const size_t data300kb_length = 307201;
-std::list<Data1mb> default_data300kb_data_generator(size_t max)
+std::list<Data1mb> default_data300kb_data_generator(
+        size_t max)
 {
     unsigned char index = 1;
     size_t maximum = max ? max : 10;
@@ -143,7 +149,8 @@ std::list<Data1mb> default_data300kb_data_generator(size_t max)
     return returnedValue;
 }
 
-std::list<Data1mb> default_data300kb_mix_data_generator(size_t max)
+std::list<Data1mb> default_data300kb_mix_data_generator(
+        size_t max)
 {
     unsigned char index = 1;
     size_t maximum = max ? max : 10;
@@ -166,26 +173,27 @@ std::list<Data1mb> default_data300kb_mix_data_generator(size_t max)
     return returnedValue;
 }
 
-const size_t data96kb_length = 96*1024;
-std::list<Data1mb> default_data96kb_data300kb_data_generator(size_t max)
+const size_t data96kb_length = 96 * 1024;
+std::list<Data1mb> default_data96kb_data300kb_data_generator(
+        size_t max)
 {
     unsigned char index = 1;
     size_t maximum = max ? max : 10;
     std::list<Data1mb> returnedValue(maximum);
 
     std::generate(returnedValue.begin(), returnedValue.end(), [&index]
+    {
+        Data1mb data;
+        size_t length = index % 2 != 0 ? data96kb_length : data300kb_length;
+        data.data().resize(length);
+        data.data()[0] = index;
+        for (size_t i = 1; i < length; ++i)
         {
-            Data1mb data;
-            size_t length = index % 2 != 0 ? data96kb_length : data300kb_length;
-            data.data().resize(length);
-            data.data()[0] = index;
-            for (size_t i = 1; i < length; ++i)
-            {
-                data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
-            }
-            ++index;
-            return data;
-        });
+            data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+        }
+        ++index;
+        return data;
+    });
 
     return returnedValue;
 }

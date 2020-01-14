@@ -30,11 +30,10 @@
 namespace eprosima {
 namespace fastrtps {
 
-namespace rtps
-{
-    struct GUID_t;
-    class WriteParams;
-    class RTPSParticipant;
+namespace rtps {
+struct GUID_t;
+class WriteParams;
+class RTPSParticipant;
 }
 
 class Participant;
@@ -55,7 +54,8 @@ public:
      * Constructor from a PublisherImpl pointer
      * @param pimpl Actual implementation of the publisher
      */
-    Publisher(PublisherImpl* pimpl);
+    Publisher(
+            PublisherImpl* pimpl);
 
     /*!
      * @brief Writes a sample of the topic.
@@ -66,7 +66,8 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(void* sample);
+    bool write(
+            void* sample);
 
     /*!
      * @brief Writes a sample of the topic with additional options.
@@ -82,38 +83,51 @@ public:
             void* sample,
             rtps::WriteParams& wparams);
 
+    /*!
+     * @brief Registers an instance.
+     * Informs the publisher will start writing samples of this instance.
+     * @param sample Pointer to the sample used to retrieve the instance.
+     */
+    fastrtps::rtps::InstanceHandle_t register_instance(
+            void* sample);
+
     /**
      * Dispose of a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool dispose(void* Data);
+    bool dispose(
+            void* Data);
     /**
      * Unregister a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool unregister(void* Data);
+    bool unregister(
+            void* Data);
     /**
      * Dispose and unregister a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool dispose_and_unregister(void* Data);
+    bool dispose_and_unregister(
+            void* Data);
 
     /**
      * Remove all the Changes in the associated RTPSWriter.
      * @param[out] removed Number of elements removed
      * @return True if all elements were removed.
      */
-    bool removeAllChange(size_t* removed = nullptr);
+    bool removeAllChange(
+            size_t* removed = nullptr);
 
     /**
-    * Waits until all changes were acknowledged or max_wait.
-    * @param max_wait Maximum time to wait until all changes are acknowledged.
-    * @return True if all were acknowledged.
-    */
-    bool wait_for_all_acked(const Duration_t& max_wait);
+     * Waits until all changes were acknowledged or max_wait.
+     * @param max_wait Maximum time to wait until all changes are acknowledged.
+     * @return True if all were acknowledged.
+     */
+    bool wait_for_all_acked(
+            const Duration_t& max_wait);
 
     /**
      * Get the GUID_t of the associated RTPSWriter.
@@ -132,13 +146,15 @@ public:
      * @param att Reference to a PublisherAttributes object to update the parameters.
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
      */
-    bool updateAttributes(const PublisherAttributes& att);
+    bool updateAttributes(
+            const PublisherAttributes& att);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param status missed status struct
      */
-    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
+    void get_offered_deadline_missed_status(
+            OfferedDeadlineMissedStatus& status);
 
     /**
      * @brief Asserts liveliness
@@ -149,7 +165,8 @@ public:
      * @brief Returns the liveliness lost status
      * @param status Liveliness lost status
      */
-    void get_liveliness_lost_status(LivelinessLostStatus& status);
+    void get_liveliness_lost_status(
+            LivelinessLostStatus& status);
 
 private:
 

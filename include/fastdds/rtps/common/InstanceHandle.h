@@ -23,30 +23,37 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Guid.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 /**
  * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI InstanceHandle_t{
+struct RTPS_DllAPI InstanceHandle_t
+{
     //!Value
     octet value[16];
     InstanceHandle_t()
     {
-        for(uint8_t i=0;i<16;i++)
+        for (uint8_t i = 0; i < 16; i++)
+        {
             value[i] = 0;
+        }
     }
 
-    InstanceHandle_t(const InstanceHandle_t& ihandle)
+    InstanceHandle_t(
+            const InstanceHandle_t& ihandle)
     {
-        for(uint8_t i = 0; i < 16; i++)
+        for (uint8_t i = 0; i < 16; i++)
+        {
             value[i] = ihandle.value[i];
+        }
     }
 
-    InstanceHandle_t(const GUID_t& guid)
+    InstanceHandle_t(
+            const GUID_t& guid)
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -62,12 +69,14 @@ struct RTPS_DllAPI InstanceHandle_t{
     }
 
     /**
-    * Assingment operator
-    * @param ihandle Instance handle to copy the data from
-    */
-    InstanceHandle_t& operator=(const InstanceHandle_t& ihandle){
+     * Assingment operator
+     * @param ihandle Instance handle to copy the data from
+     */
+    InstanceHandle_t& operator =(
+            const InstanceHandle_t& ihandle)
+    {
 
-        for(uint8_t i =0;i<16;i++)
+        for (uint8_t i = 0; i < 16; i++)
         {
             value[i] = ihandle.value[i];
         }
@@ -75,31 +84,38 @@ struct RTPS_DllAPI InstanceHandle_t{
     }
 
     /**
-    * Assingment operator
-    * @param guid GUID to copy the data from
-    */
-    InstanceHandle_t& operator=(const GUID_t& guid)
+     * Assingment operator
+     * @param guid GUID to copy the data from
+     */
+    InstanceHandle_t& operator =(
+            const GUID_t& guid)
     {
-        for(uint8_t i =0;i<16;i++)
+        for (uint8_t i = 0; i < 16; i++)
         {
-            if(i<12)
+            if (i < 12)
+            {
                 value[i] = guid.guidPrefix.value[i];
+            }
             else
-                value[i] = guid.entityId.value[i-12];
+            {
+                value[i] = guid.entityId.value[i - 12];
+            }
         }
         return *this;
     }
 
     /**
-    * Know if the instance handle is defined
-    * @return True if the values are not zero.
-    */
+     * Know if the instance handle is defined
+     * @return True if the values are not zero.
+     */
     bool isDefined() const
     {
-        for(uint8_t i=0;i<16;++i)
+        for (uint8_t i = 0; i < 16; ++i)
         {
-            if(value[i]!=0)
+            if (value[i] != 0)
+            {
                 return true;
+            }
         }
         return false;
     }
@@ -109,6 +125,7 @@ struct RTPS_DllAPI InstanceHandle_t{
     {
         return *reinterpret_cast<const GUID_t*>(this);
     }
+
 };
 
 const InstanceHandle_t c_InstanceHandle_Unknown;
@@ -116,59 +133,83 @@ const InstanceHandle_t c_InstanceHandle_Unknown;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
-* Comparison operator
-* @param ihandle1 First InstanceHandle_t to compare
-* @param ihandle2 Second InstanceHandle_t to compare
-* @return True if equal
-*/
-inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t& ihandle2)
+ * Comparison operator
+ * @param ihandle1 First InstanceHandle_t to compare
+ * @param ihandle2 Second InstanceHandle_t to compare
+ * @return True if equal
+ */
+inline bool operator ==(
+        const InstanceHandle_t& ihandle1,
+        const InstanceHandle_t& ihandle2)
 {
-    for(uint8_t i =0;i<16;++i)
+    for (uint8_t i = 0; i < 16; ++i)
     {
-        if(ihandle1.value[i] != ihandle2.value[i])
+        if (ihandle1.value[i] != ihandle2.value[i])
+        {
             return false;
+        }
     }
     return true;
 }
+
+inline bool operator !=(
+        const InstanceHandle_t& ihandle1,
+        const InstanceHandle_t& ihandle2)
+{
+    return !(ihandle1 == ihandle2);
+}
+
 #endif
 
 /**
-* Convert InstanceHandle_t to GUID
-* @param guid GUID to store the results
-* @param ihandle InstanceHandle_t to copy
-*/
-inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
+ * Convert InstanceHandle_t to GUID
+ * @param guid GUID to store the results
+ * @param ihandle InstanceHandle_t to copy
+ */
+inline void iHandle2GUID(
+        GUID_t& guid,
+        const InstanceHandle_t& ihandle)
 {
-    for(uint8_t i = 0;i<16;++i)
+    for (uint8_t i = 0; i < 16; ++i)
     {
-        if(i<12)
+        if (i < 12)
+        {
             guid.guidPrefix.value[i] = ihandle.value[i];
+        }
         else
-            guid.entityId.value[i-12] = ihandle.value[i];
+        {
+            guid.entityId.value[i - 12] = ihandle.value[i];
+        }
     }
     return;
 }
 
-
 /**
-* Convert GUID to InstanceHandle_t
-* @param ihandle InstanceHandle_t to store the results
-* @return GUID_t
-*/
-inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
+ * Convert GUID to InstanceHandle_t
+ * @param ihandle InstanceHandle_t to store the results
+ * @return GUID_t
+ */
+inline GUID_t iHandle2GUID(
+        const InstanceHandle_t& ihandle)
 {
     GUID_t guid;
-    for(uint8_t i = 0;i<16;++i)
+    for (uint8_t i = 0; i < 16; ++i)
     {
-        if(i<12)
+        if (i < 12)
+        {
             guid.guidPrefix.value[i] = ihandle.value[i];
+        }
         else
-            guid.entityId.value[i-12] = ihandle.value[i];
+        {
+            guid.entityId.value[i - 12] = ihandle.value[i];
+        }
     }
     return guid;
 }
 
-inline bool operator<(const InstanceHandle_t& h1, const InstanceHandle_t& h2)
+inline bool operator <(
+        const InstanceHandle_t& h1,
+        const InstanceHandle_t& h2)
 {
     return memcmp(h1.value, h2.value, 16) < 0;
 }
@@ -176,15 +217,19 @@ inline bool operator<(const InstanceHandle_t& h1, const InstanceHandle_t& h2)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
-*
-* @param output
-* @param iHandle
-*/
-inline std::ostream& operator<<(std::ostream& output,const InstanceHandle_t& iHandle)
+ *
+ * @param output
+ * @param iHandle
+ */
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const InstanceHandle_t& iHandle)
 {
     output << std::hex;
-    for(uint8_t i =0;i<15;++i)
+    for (uint8_t i = 0; i < 15; ++i)
+    {
         output << (int)iHandle.value[i] << ".";
+    }
     output << (int)iHandle.value[15] << std::dec;
     return output;
 }

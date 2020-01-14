@@ -351,6 +351,12 @@ public:
         }
     }
 
+    eprosima::fastrtps::rtps::InstanceHandle_t register_instance(
+            type& msg)
+    {
+        return publisher_->register_instance((void*)&msg);
+    }
+
     bool send_sample(
             type& msg)
     {

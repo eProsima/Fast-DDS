@@ -226,6 +226,49 @@ ReturnCode_t DataWriterImpl::write(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+fastrtps::rtps::InstanceHandle_t DataWriterImpl::register_instance(
+        void* key)
+{
+    /// Preconditions
+    if (key == nullptr)
+    {
+        logError(PUBLISHER, "Data pointer not valid");
+        return c_InstanceHandle_Unknown;
+    }
+
+    if (!type_->m_isGetKeyDefined)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return c_InstanceHandle_Unknown;
+    }
+
+    InstanceHandle_t instance_handle = c_InstanceHandle_Unknown;
+    bool is_key_protected = false;
+#if HAVE_SECURITY
+    is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+    type_->getKey(key, &instance_handle, is_key_protected);
+
+    // Block lowlevel writer
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
+    if (lock.try_lock_until(max_blocking_time))
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+#endif
+    {
+        if (history_.register_instance(instance_handle, lock, max_blocking_time))
+        {
+            return instance_handle;
+        }
+    }
+
+    return c_InstanceHandle_Unknown;
+}
+
 ReturnCode_t DataWriterImpl::dispose(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle)
