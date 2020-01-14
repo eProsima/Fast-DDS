@@ -653,7 +653,12 @@ void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
 
     if (it != m_properties.end())
     {
-        (*it).set_second(persistent_guid.second);
+        if (!it->modify(persistent_guid))
+        {
+            logError(RTPS_PARTICIPANT,"Failed to change property <"
+                    << it->first() << " | " << it->second() << "> to <"
+                    << persistent_guid.first << " | " << persistent_guid.second << ">");
+        }
     }
     else
     {

@@ -142,8 +142,12 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
             {
                 auto new_property = EDPStaticProperty::toProperty("Reader","ENDED",
                         R->getAttributes().getUserDefinedID(), R->getGuid().entityId);
-                (*pit).set_first(new_property.first);
-                (*pit).set_second(new_property.second);
+                if (!pit->modify(new_property))
+                {
+                    logError(RTPS_EDP,"Failed to change property <"
+                            << pit->first() << " | " << pit->second() << "> to <"
+                            << new_property.first << " | " << new_property.second << ">");
+                }
             }
         }
     }
@@ -158,14 +162,18 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
             pit!=localpdata->m_properties.end();++pit)
     {
         EDPStaticProperty staticproperty;
-        if(staticproperty.fromProperty((*pit).pair()))
+        if(staticproperty.fromProperty(pit->pair()))
         {
             if(staticproperty.m_entityId == W->getGuid().entityId)
             {
                 auto new_property = EDPStaticProperty::toProperty("Writer","ENDED",
                         W->getAttributes().getUserDefinedID(), W->getGuid().entityId);
-                (*pit).set_first(new_property.first);
-                (*pit).set_second(new_property.second);
+                if (!pit->modify(new_property))
+                {
+                    logError(RTPS_EDP,"Failed to change property <"
+                            << pit->first() << " | " << pit->second() << "> to <"
+                            << new_property.first << " | " << new_property.second << ">");
+                }
             }
         }
     }

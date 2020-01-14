@@ -643,7 +643,11 @@ private:
 
 public:
 
-    ParameterProperty_t() = delete;
+    ParameterProperty_t()
+    {
+        data = nullptr;
+    }
+
     explicit ParameterProperty_t(void* ptr)
     {
         data = (rtps::octet*)ptr;
@@ -655,14 +659,6 @@ public:
         return std::string((char*)data + 4);
     }
 
-    void set_first(const std::string& new_value)
-    {
-        assert (new_value.size()+1 == *(uint32_t*)data);
-
-        //Skip the size and write the null terminated string
-        memcpy(data + 4, new_value.c_str(), new_value.size());
-    }
-
     std::string second() const
     {
         //Skip the first element
@@ -672,14 +668,32 @@ public:
         return std::string((char*)data + size1 + 4);
     }
 
-    void set_second(const std::string& new_value)
+    bool modify(const std::pair<std::string, std::string> &new_value)
     {
-        //Skip the first element (with alignment)
-        uint32_t size1 = ParameterProperty_t::element_size(data);
-        assert (new_value.size()+1 == *(uint32_t*)(data+size1));
+        uint32_t old_size = size();
 
-        //Skip the size and write the null terminated string
-        memcpy(data + size1 + 4, new_value.c_str(), new_value.size());
+        uint32_t first_size = new_value.first.size() + 1;
+        uint32_t first_alignment = ((first_size + 3) & ~3) - first_size;
+        uint32_t second_size = new_value.second.size() + 1;
+        uint32_t second_alignment = ((second_size + 3) & ~3) - second_size;
+        uint32_t new_size = first_size + first_alignment + second_size + second_alignment + 8;
+
+        if (old_size != new_size)
+        {
+            return false;
+        }
+
+        rtps::octet* current = data;
+        memcpy(current, &first_size, 4);
+        memcpy(current + 4, new_value.first.c_str(), first_size);
+        memset(current + 4 + first_size, 0, first_alignment);
+
+        current = data + 4 + first_size + first_alignment;
+        memcpy(current, &second_size, 4);
+        memcpy(current + 4, new_value.second.c_str(), second_size);
+        memset(current + 4 + second_size, 0, second_alignment);
+
+        return true;
     }
 
     std::pair<const std::string, const std::string> pair() const
@@ -743,10 +757,11 @@ class ParameterPropertyList_t : public Parameter_t {
                 typedef size_t difference_type;
                 typedef std::forward_iterator_tag iterator_category;
 
-                iterator(rtps::octet* ptr) : ptr_(ptr) { }
+                iterator(rtps::octet* ptr) : ptr_(ptr), value_(ptr) { }
                 self_type operator++() { self_type i = *this; advance(); return i; }
                 self_type operator++(int) { advance(); return *this; }
-                reference operator*() { return ParameterProperty_t(ptr_); }
+                reference operator*() { return value_; }
+                pointer operator->() { return &value_; }
                 bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
                 bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
 
@@ -754,11 +769,19 @@ class ParameterPropertyList_t : public Parameter_t {
 
                 void advance()
                 {
-                    ptr_ += ParameterProperty_t(ptr_).size();
+                    ptr_ += value_.size();
+                    value_ = ParameterProperty_t(ptr_);
                 }
+
+                rtps::octet* address() const
+                {
+                    return ptr_;
+                }
+
 
             private:
                 rtps::octet* ptr_;
+                ParameterProperty_t value_;
         };
 
         class const_iterator
@@ -771,10 +794,11 @@ class ParameterPropertyList_t : public Parameter_t {
                 typedef size_t difference_type;
                 typedef std::forward_iterator_tag iterator_category;
 
-                const_iterator(const rtps::octet* ptr) : ptr_(ptr) { }
+                const_iterator(const rtps::octet* ptr) : ptr_(ptr), value_(const_cast<rtps::octet*>(ptr)) { }
                 self_type operator++() { self_type i = *this; advance(); return i; }
                 self_type operator++(int) { advance(); return *this; }
-                reference operator*() { return ParameterProperty_t(const_cast<rtps::octet*>(ptr_)); }
+                reference operator*() { return value_; }
+                pointer operator->() { return &value_; }
                 bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
                 bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
 
@@ -782,11 +806,18 @@ class ParameterPropertyList_t : public Parameter_t {
 
                 void advance()
                 {
-                    ptr_ += ParameterProperty_t(const_cast<rtps::octet*>(ptr_)).size();
+                    ptr_ += value_.size();
+                    value_ = ParameterProperty_t(const_cast<rtps::octet*>(ptr_));
+                }
+
+                const rtps::octet* address() const
+                {
+                    return ptr_;
                 }
 
             private:
                 const rtps::octet* ptr_;
+                ParameterProperty_t value_;
         };
 
 
@@ -890,6 +921,11 @@ public:
             push_back_helper((rtps::octet*)p.second.c_str(), size2, alignment2);
             ++Nproperties_;
             return true;
+        }
+
+        bool set_property (iterator pos, const std::pair<std::string, std::string> &new_value)
+        {
+            return pos->modify(new_value);
         }
 
         void clear()
