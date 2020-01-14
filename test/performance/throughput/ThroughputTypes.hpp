@@ -131,19 +131,19 @@ class ThroughputDataType: public eprosima::fastrtps::TopicDataType
 
         bool serialize(
                 void*data,
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+                eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
 
         bool deserialize(
                 eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-                void * data);
+                void * data) override;
 
         std::function<uint32_t()> getSerializedSizeProvider(
-                void* data);
+                void* data) override;
 
-        void* createData();
+        void* createData() override;
 
         void deleteData(
-                void* data);
+                void* data) override;
 
         bool getKey(
                 void* /*data*/,
@@ -230,19 +230,19 @@ class ThroughputCommandDataType : public eprosima::fastrtps::TopicDataType
 
         bool serialize(
                 void*data,
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+                eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
 
         bool deserialize(
                 eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-                void * data);
+                void * data) override;
 
         std::function<uint32_t()> getSerializedSizeProvider(
-                void* data);
+                void* data) override;
 
-        void* createData();
+        void* createData() override;
 
         void deleteData(
-                void* data);
+                void* data) override;
 
         bool getKey(
                 void* /*data*/,

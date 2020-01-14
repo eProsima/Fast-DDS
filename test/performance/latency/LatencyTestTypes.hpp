@@ -61,11 +61,11 @@ class LatencyDataType : public eprosima::fastrtps::TopicDataType
             m_isGetKeyDefined = false;
         };
         ~LatencyDataType(){};
-        bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
-        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-        void* createData();
-        void deleteData(void* data);
+        bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data) override;
+        std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+        void* createData() override;
+        void deleteData(void* data) override;
         bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
             (void)force_md5;
             return false;
@@ -99,11 +99,11 @@ class TestCommandDataType : public eprosima::fastrtps::TopicDataType
             m_isGetKeyDefined = false;
         };
         ~TestCommandDataType(){};
-        bool serialize(void*data,eprosima::fastrtps::rtps::SerializedPayload_t* payload);
-        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-        void* createData();
-        void deleteData(void* data);
+        bool serialize(void*data,eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data) override;
+        std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+        void* createData() override;
+        void deleteData(void* data) override;
         bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
             (void)force_md5;
             return false;
