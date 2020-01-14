@@ -465,12 +465,30 @@ TEST_F(SharedMemTests, port_mutex_deadlock_recover)
 
     auto global_port = shared_mem_global.open_port(0, 1, 1000);
 
-    ASSERT_TRUE(port_mocker.lock_port_mutex(domain_name, 0));
-    ASSERT_FALSE(port_mocker.lock_port_mutex(domain_name, 0));
+	Semaphore sem_lock_done;
+	Semaphore sem_end_thread_locker;
+	std::thread thread_locker([&] 
+		{
+			// lock has to be done in another thread because
+			// boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+			auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
+			ASSERT_TRUE(port_mutex->try_lock());
+			sem_lock_done.post();
+			sem_end_thread_locker.wait();
+		}
+	);
+
+	sem_lock_done.wait();
+
+	auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
+	ASSERT_FALSE(port_mutex->try_lock());
 
     auto global_port2 = shared_mem_global.open_port(0, 1, 1000);
 
     ASSERT_NO_THROW(global_port2->healthy_check(1000));
+
+	sem_end_thread_locker.post();
+	thread_locker.join();
 }
 
 TEST_F(SharedMemTests, empty_cv_mutex_deadlocked_try_push)
@@ -482,7 +500,20 @@ TEST_F(SharedMemTests, empty_cv_mutex_deadlocked_try_push)
 
     auto global_port = shared_mem_global.open_port(0, 1, 1000);
 
-    ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
+	Semaphore sem_lock_done;
+	Semaphore sem_end_thread_locker;
+	std::thread thread_locker([&]
+		{
+			// lock has to be done in another thread because
+			// boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+			ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
+			sem_lock_done.post();
+			sem_end_thread_locker.wait();
+		}
+	);
+
+	sem_lock_done.wait();
+    
     ASSERT_FALSE(port_mocker.lock_empty_cv_mutex(*global_port));
 
     bool listerner_active;
@@ -490,6 +521,9 @@ TEST_F(SharedMemTests, empty_cv_mutex_deadlocked_try_push)
     ASSERT_THROW(global_port->try_push(foo, &listerner_active), std::exception);
 
     ASSERT_THROW(global_port->healthy_check(1000), std::exception);
+
+	sem_end_thread_locker.post();
+	thread_locker.join();
 }
 
 TEST_F(SharedMemTests, dead_listener_port_recover)
