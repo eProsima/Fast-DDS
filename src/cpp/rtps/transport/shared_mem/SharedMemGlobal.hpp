@@ -276,7 +276,7 @@ public:
          */
         void healthy_check(uint32_t healthy_check_timeout_ms)
         {
-            bool is_check_ok;
+			std::shared_ptr<bool> is_check_ok = std::make_shared<bool>(false);
 
             was_check_thread_detached_ = false;
 
@@ -284,11 +284,11 @@ public:
 			std::shared_ptr<std::condition_variable> notify_check_done_cv = std::make_shared<std::condition_variable>();
 			std::shared_ptr<bool> is_check_done_received = std::make_shared<bool>(false);
 
-            std::thread check_thread([&] 
+            std::thread check_thread([=] 
             {
                 try
                 {
-                    is_check_ok =check_all_waiting_threads_alive(healthy_check_timeout_ms);
+                    *is_check_ok = check_all_waiting_threads_alive(healthy_check_timeout_ms);
 
                     {
                         std::lock_guard<std::mutex> lock_received(*notify_check_done_mutex);
@@ -299,7 +299,7 @@ public:
                 } 
                 catch(std::exception&)
                 {
-                    is_check_ok = false;
+                    *is_check_ok = false;
                 }
             });
 
@@ -317,7 +317,7 @@ public:
 
             check_thread.join();
 
-            if(!is_check_ok)
+            if(!(*is_check_ok))
             {
                 node_->is_port_ok = false;
                 throw std::runtime_error("healthy_check failed");
@@ -380,8 +380,7 @@ public:
             }
 
 			try
-            {
-                
+            {   
 				port->healthy_check(healthy_check_timeout_ms);
 
                 logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
@@ -390,25 +389,28 @@ public:
 			}
 			catch (std::exception& e)
 			{
+				auto port_uuid = port_node->uuid.to_string();
+
                 // Healthy check leaved a thread blocked at port resources
                 // So we leave port_segment unmanaged, better to leak memory than a crash
                 if(port->was_check_thread_detached())
                 {
-                    port_segment.release();
+					// Release owership
+					port_segment.release();
 
-                    logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Existing Port " 
-                    << port_node->port_id << " (" << port_node->uuid.to_string() << ") NOT Healthy (check_thread detached).");
+					logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Existing Port "
+						<< port_id << " (" << port_uuid << ") NOT Healthy (check_thread detached).");
                 }
                 else
                 {
                     logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Existing Port " 
-                    << port_node->port_id << " (" << port_node->uuid.to_string() << ") NOT Healthy.");
+                    << port_id << " (" << port_uuid << ") NOT Healthy.");
                 }
                 
 				SharedMemSegment::remove(port_segment_name.c_str());
 
                 logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
-                    << port_node->port_id << " (" << port_node->uuid.to_string() << ") Removed.");
+                    << port_id << " (" << port_uuid << ") Removed.");
 
 				throw;
 			}
@@ -453,6 +455,7 @@ private:
             port_node = segment->get().construct<PortNode>("port_node")();
             port_node->port_id = port_id;
             port_node->is_port_ok = true;
+			UUID<8>::generate(port_node->uuid);
             port_node->waiting_count = 0;
             port_node->check_awaken_count = 0;
             port_node->check_id = 0;
