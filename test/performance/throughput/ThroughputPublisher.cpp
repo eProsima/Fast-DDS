@@ -760,7 +760,7 @@ bool ThroughputPublisher::load_recoveries()
     std::string line;
     size_t start;
     size_t end;
-    int32_t recovery;
+    uint32_t recovery;
     bool more = true;
     while (std::getline(fi, line))
     {
