@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/utils/TimeConversion.h>
 
 using namespace eprosima::fastdds::dds;
 
@@ -58,6 +59,15 @@ void DataWriterQos::set_qos(
     if (first_time)
     {
         liveliness = qos.liveliness;
+        if (liveliness.lease_duration < fastrtps::c_TimeInfinite &&
+                liveliness.lease_duration <= liveliness.announcement_period &&
+                liveliness.announcement_period == fastrtps::c_TimeInfinite)
+        {
+            liveliness.announcement_period = fastrtps::rtps::TimeConv::Duration_t2MilliSecondsDouble(
+                liveliness.lease_duration) * 0.25;
+            logInfo(RTPS_LIVELINESS,
+                    "Setting liveliness announcement period to " << liveliness.announcement_period << " ms");
+        }
         liveliness.hasChanged = true;
     }
     if (first_time)
@@ -145,7 +155,8 @@ bool DataWriterQos::check_qos() const
     }
     if (liveliness.kind == AUTOMATIC_LIVELINESS_QOS || liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if (liveliness.lease_duration < eprosima::fastrtps::c_TimeInfinite &&
+        if (liveliness.lease_duration < fastrtps::c_TimeInfinite &&
+                liveliness.announcement_period < fastrtps::c_TimeInfinite &&
                 liveliness.lease_duration <= liveliness.announcement_period)
         {
             logError(DDS_QOS_CHECK, "DATAWRITERQOS: LeaseDuration <= announcement period.");

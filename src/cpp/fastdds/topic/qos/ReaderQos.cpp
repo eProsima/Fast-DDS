@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/topic/qos/ReaderQos.hpp>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 using namespace eprosima::fastrtps;
 
@@ -50,6 +51,15 @@ void ReaderQos::setQos(
     if (first_time)
     {
         m_liveliness = qos.m_liveliness;
+        if (m_liveliness.lease_duration < c_TimeInfinite &&
+                m_liveliness.lease_duration <= m_liveliness.announcement_period &&
+                m_liveliness.announcement_period == c_TimeInfinite)
+        {
+            m_liveliness.announcement_period = fastrtps::rtps::TimeConv::Duration_t2MilliSecondsDouble(
+                m_liveliness.lease_duration) * 0.25;
+            logInfo(RTPS_LIVELINESS,
+                    "Setting liveliness announcement period to " << m_liveliness.announcement_period << " ms");
+        }
         m_liveliness.hasChanged = true;
     }
     if (first_time)
@@ -155,6 +165,16 @@ bool ReaderQos::checkQos() const
     {
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
+    }
+    if (m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS || m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        if (m_liveliness.lease_duration < c_TimeInfinite &&
+                m_liveliness.announcement_period < c_TimeInfinite &&
+                m_liveliness.lease_duration <= m_liveliness.announcement_period)
+        {
+            logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
+            return false;
+        }
     }
     return true;
 }
