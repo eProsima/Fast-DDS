@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file
  */
 
-#ifndef EPROSIMA_DDS_PUB_DETAIL_DISCOVERY_HPP_
-#define EPROSIMA_DDS_PUB_DETAIL_DISCOVERY_HPP_
-
-#include <dds/pub/DataWriter.hpp>
+#include <dds/pub/discovery.hpp>
 
 
 /**
@@ -33,6 +30,15 @@
 namespace dds {
 namespace pub {
 
+void ignore(
+        const domain::DomainParticipant& dp,
+        const core::InstanceHandle& handle)
+{
+    //To implement
+    (void) dp;
+    (void) handle;
+}
+
 template<typename FwdIterator>
 void ignore(
         const dds::domain::DomainParticipant& dp,
@@ -40,29 +46,33 @@ void ignore(
         FwdIterator end)
 {
     //To implement
-//    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
+    (void) dp;
+    (void) begin;
+    (void) end;
 }
 
 template<typename T>
 ::dds::core::InstanceHandleSeq matched_subscriptions(
         const DataWriter<T>& dw)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
-//    return dw.delegate()->matched_subscriptions();
+    return dw.delegate()->get_matched_subscriptions();
 }
 
 template<
-        typename T,
-        typename FwdIterator>
+    typename T,
+    typename FwdIterator>
 uint32_t matched_subscriptions(
         const DataWriter<T>& dw,
         FwdIterator begin,
         uint32_t max_size)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
-//    return dw.delegate()->matched_subscriptions(begin, max_size);
+    ::dds::core::InstanceHandleSeq seq = dw.delegate()->get_matched_subscriptions();
+    uint32_t handle_num = seq.size() < max_size ? seq.size() : max_size;
+    for (uint32_t h = 0; h < handle_num; h++)
+    {
+        *begin = seq[h];
+    }
+    return handle_num;
 }
 
 template<typename T>
@@ -70,14 +80,10 @@ const dds::topic::SubscriptionBuiltinTopicData matched_subscription_data(
         const DataWriter<T>& dw,
         const ::dds::core::InstanceHandle& h)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
-//    return dw.delegate()->matched_subscription_data(h);
+    return dw.delegate()->get_matched_subscription_data(h);
 }
 
 } //namespace pub
 } //namespace dds
 
 /** @endcond */
-
-#endif //EPROSIMA_DDS_PUB_DETAIL_DISCOVERY_HPP_

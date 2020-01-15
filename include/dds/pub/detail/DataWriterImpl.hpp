@@ -82,9 +82,7 @@ void DataWriter<T>::write(
         const T& sample,
         const dds::core::Time& timestamp)
 {
-    this->delegate()->write(const_cast<T*>(&sample));
-    //To implement
-    (void)timestamp;
+    this->delegate()->write_w_timestamp(const_cast<T*>(&sample), dds::core::InstanceHandle(), timestamp);
 }
 
 template<typename T>

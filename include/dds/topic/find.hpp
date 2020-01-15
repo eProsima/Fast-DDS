@@ -21,8 +21,7 @@
 #define OMG_DDS_TOPIC_FIND_HPP_
 
 #include <string>
-
-#include <dds/topic/detail/find.hpp>
+#include <dds/domain/DomainParticipant.hpp>
 
 namespace dds {
 namespace topic {

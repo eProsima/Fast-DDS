@@ -23,7 +23,6 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/DataWriter.hpp>
 #include <dds/topic/BuiltinTopic.hpp>
-#include <dds/pub/detail/discovery.hpp>
 
 namespace dds {
 namespace pub {
@@ -170,8 +169,8 @@ template<typename T>
  *                  complete this operation.
  */
 template<
-        typename T,
-        typename FwdIterator>
+    typename T,
+    typename FwdIterator>
 uint32_t matched_subscriptions(
         const DataWriter<T>& dw,
         FwdIterator begin,

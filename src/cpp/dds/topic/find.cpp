@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 
 /**
  * @file
  */
 
-#ifndef EPROSIMA_DDS_TOPIC_DETAIL_FIND_HPP_
-#define EPROSIMA_DDS_TOPIC_DETAIL_FIND_HPP_
-
-//TODO: Fix when find is implemented
-//#include <org/opensplice/topic/find.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-
-#include <string>
-#include <dds/domain/DomainParticipant.hpp>
+#include <dds/topic/find.hpp>
+#include <fastrtps/rtps/common/Time_t.h>
 
 namespace dds {
 namespace topic {
@@ -38,14 +31,9 @@ TOPIC find(
         const dds::domain::DomainParticipant& dp,
         const std::string& topic_name)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    TOPIC t = org::opensplice::topic::finder<TOPIC, typename TOPIC::DELEGATE_T>::find(dp, topic_name);
-
-//    return t;
+    TOPIC t = dp.delegate()->find_topic(topic_name, eprosima::fastrtps::c_TimeInfinite);
+    return t;
 }
 
 } //namespace topic
 } //namespace dds
-
-#endif //EPROSIMA_DDS_TOPIC_DETAIL_FIND_HPP_

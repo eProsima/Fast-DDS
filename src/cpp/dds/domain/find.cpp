@@ -18,10 +18,8 @@
  * limitations under the License.
  */
 
-#ifndef OMG_DDS_DOMAIN_FIND_HPP_
-#define OMG_DDS_DOMAIN_FIND_HPP_
-
-#include <dds/domain/DomainParticipant.hpp>
+#include <dds/domain/find.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 namespace dds {
 namespace domain {
@@ -33,10 +31,12 @@ namespace domain {
  *
  * @param id the domain id
  */
-OMG_DDS_API DomainParticipant* find(
-        uint32_t id);
+DomainParticipant* find(
+        uint32_t id)
+{
+    return (dds::domain::DomainParticipant*) eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+           lookup_participant(id);
+}
 
 } //namespace domain
 } //namespace dds
-
-#endif //OMG_DDS_DOMAIN_FIND_HPP_
