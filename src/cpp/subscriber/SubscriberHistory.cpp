@@ -276,7 +276,7 @@ bool SubscriberHistory::find_key_for_change(
     return find_key(a_change, &map_it);
 }
 
-void SubscriberHistory::deserialize_change(
+bool SubscriberHistory::deserialize_change(
         CacheChange_t* change,
         uint32_t ownership_strength,
         void* data,
@@ -284,7 +284,11 @@ void SubscriberHistory::deserialize_change(
 {
     if (change->kind == ALIVE)
     {
-        mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
+        if (!mp_subImpl->getType()->deserialize(&change->serializedPayload, data))
+        {
+            logError(RTPS_HISTORY, "Deserialization of data failed");
+            return false;
+        }
     }
 
     if (info != nullptr)
@@ -307,6 +311,8 @@ void SubscriberHistory::deserialize_change(
         info->iHandle = change->instanceHandle;
         info->related_sample_identity = change->write_params.sample_identity();
     }
+
+    return true;
 }
 
 bool SubscriberHistory::readNextData(
@@ -331,8 +337,7 @@ bool SubscriberHistory::readNextData(
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
             uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                 wp->ownership_strength() : 0;
-            deserialize_change(change, ownership, data, info);
-            return true;
+            return deserialize_change(change, ownership, data, info);
         }
     }
     return false;
@@ -362,9 +367,9 @@ bool SubscriberHistory::takeNextData(
                     " from writer: " << change->writerGUID);
             uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                 wp->ownership_strength() : 0;
-            deserialize_change(change, ownership, data, info);
-            remove_change_sub(change);
-            return true;
+            bool deserialized = deserialize_change(change, ownership, data, info);
+            bool removed = remove_change_sub(change);
+            return (deserialized && removed);
         }
     }
 
@@ -403,7 +408,6 @@ bool SubscriberHistory::find_key(
     }
     return false;
 }
-
 
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change)
