@@ -144,7 +144,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         }
     }
     subscriber_->topic_.topicDataType = m_type.get_type_name();
-    Topic mp_topic(subscriber_->mp_participant, subscriber_->topic_);
+    Topic* mp_topic = subscriber_->mp_participant->create_topic(subscriber_->topic_);
     DataReader* reader = subscriber_->mp_subscriber->create_datareader(
         mp_topic,
         subscriber_->qos_,

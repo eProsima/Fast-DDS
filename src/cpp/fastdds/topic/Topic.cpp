@@ -28,34 +28,6 @@ namespace fastdds {
 namespace dds {
 
 Topic::Topic(
-        DomainParticipant* dp,
-        const std::string& topic_name,
-        const std::string& type_name,
-        const TopicQos& qos,
-        TopicListener* listener,
-        const ::dds::core::status::StatusMask& mask)
-    : DomainEntity(mask)
-    , TopicDescription(dp, topic_name.c_str(), type_name.c_str())
-    , impl_(
-        dp->create_topic(topic_name, type_name, qos, listener, mask)->impl_)
-{
-}
-
-Topic::Topic(
-        DomainParticipant* dp,
-        fastrtps::TopicAttributes att,
-        TopicListener* listener,
-        const ::dds::core::status::StatusMask& mask)
-    : DomainEntity(mask)
-    , TopicDescription(dp, att.getTopicName().c_str(), att.getTopicDataType().c_str())
-    , impl_(
-        dp->create_topic(att.getTopicName().c_str(), att.getTopicDataType().c_str(), dp->get_default_topic_qos(),
-        listener,
-        mask)->impl_)
-{
-}
-
-Topic::Topic(
         TopicImpl* impl,
         TopicDescription* topic_description,
         const ::dds::core::status::StatusMask& mask)

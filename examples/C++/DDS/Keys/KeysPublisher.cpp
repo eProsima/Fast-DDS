@@ -61,11 +61,9 @@ bool KeysPublisher::init(
     pub_att.topic.topicName = "SampleTopic";
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
-    TopicQos tqos = TOPIC_QOS_DEFAULT;
-    tqos.topic_kind = eprosima::fastrtps::rtps::WITH_KEY;
+    pub_att.topic.topicKind = eprosima::fastrtps::rtps::WITH_KEY;
 
-    Topic* topic = participant_->create_topic(pub_att.topic.topicName.c_str(),
-                    pub_att.topic.topicDataType.c_str(), tqos);
+    Topic* topic = participant_->create_topic(pub_att.topic);
 
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;

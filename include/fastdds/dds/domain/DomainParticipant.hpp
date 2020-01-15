@@ -155,9 +155,16 @@ public:
      * @return Pointer to the created Topic.
      */
     Topic* create_topic(
+            const fastrtps::TopicAttributes& att,
+            const fastdds::dds::TopicQos& qos = TOPIC_QOS_DEFAULT,
+            TopicListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+
+    Topic* create_topic(
             std::string topic_name,
             std::string type_name,
-            const fastdds::dds::TopicQos& qos,
+            const fastdds::dds::TopicQos& qos = TOPIC_QOS_DEFAULT,
+            const fastrtps::TopicAttributes& att = fastrtps::TopicAttributes(),
             TopicListener* listen = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 

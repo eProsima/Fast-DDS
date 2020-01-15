@@ -67,11 +67,7 @@ bool KeysSubscriber::init(
     DataReaderQos rqos;
     rqos.reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-    TopicQos tqos = TOPIC_QOS_DEFAULT;
-    tqos.topic_kind = eprosima::fastrtps::rtps::WITH_KEY;
-
-    //Topic topic(participant_, "SampleTopic", "sample", tqos); //PSM
-    TopicDescription topic_desc(participant_, "SampleTopic", "sample"); //PIM
+    TopicDescription topic_desc(participant_, "SampleTopic", "sample");
     reader_ = subscriber_->create_datareader(topic_desc, rqos, &listener_);
 
     if (reader_ == nullptr)

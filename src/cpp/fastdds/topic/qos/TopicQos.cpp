@@ -99,14 +99,6 @@ void TopicQos::setQos(
         topic_data = qos.topic_data;
         topic_data.hasChanged = true;
     }
-    if (auto_fill_type_information != qos.auto_fill_type_information)
-    {
-        auto_fill_type_information = qos.auto_fill_type_information;
-    }
-    if (auto_fill_type_object != qos.auto_fill_type_object)
-    {
-        auto_fill_type_object = qos.auto_fill_type_object;
-    }
 }
 
 bool TopicQos::checkQos() const

@@ -172,7 +172,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     }
                 }
                 subscriber_->topic_.topicDataType = name;
-                Topic mp_topic(subscriber_->mp_participant, subscriber_->topic_);
+                Topic* mp_topic = subscriber_->mp_participant->create_topic(subscriber_->topic_);
                 DataReader* reader = subscriber_->mp_subscriber->create_datareader(
                     mp_topic,
                     subscriber_->qos_,

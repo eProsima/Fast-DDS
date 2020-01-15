@@ -413,6 +413,8 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
 {
     bool matched = false;
 
+    std::cout << "Data Reader On Reader Matched" << std::endl;
+
     //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
     if (data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::subscription_matched())
             && data_reader_->user_datareader_->is_enabled())

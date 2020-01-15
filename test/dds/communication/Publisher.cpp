@@ -281,8 +281,8 @@ int main(
 
     DataWriterQos qos;
     qos.change_to_datawriter_qos(publisher_attributes.qos);
-    Topic topic_(participant, publisher_attributes.topic);
-    DataWriter* writer = publisher->create_datawriter(&topic_, qos, nullptr);
+    Topic* topic_ = participant->create_topic(publisher_attributes.topic);
+    DataWriter* writer = publisher->create_datawriter(topic_, qos, nullptr);
     if (writer == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);

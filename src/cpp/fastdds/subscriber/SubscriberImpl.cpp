@@ -132,7 +132,7 @@ DataReader* SubscriberImpl::create_datareader(
         logError(SUBSCRIBER, "Type : " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
-    if (topic->get_qos().topic_kind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
+    if (topic->get_topic_attributes().topicKind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
     {
         logError(SUBSCRIBER, "Keyed Topic needs getKey function");
         return nullptr;
@@ -148,7 +148,7 @@ DataReader* SubscriberImpl::create_datareader(
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = att_.multicastLocatorList;
     ratt.endpoint.reliabilityKind = reader_qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    ratt.endpoint.topicKind = topic->get_qos().topic_kind;
+    ratt.endpoint.topicKind = topic->get_topic_attributes().topicKind;
     ratt.endpoint.unicastLocatorList = att_.unicastLocatorList;
     ratt.endpoint.remoteLocatorList = att_.remoteLocatorList;
     ratt.expectsInlineQos = att_.expectsInlineQos;

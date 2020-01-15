@@ -1332,6 +1332,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
         const GUID_t& remote_participant_guid,
         WriterProxyData& wdata)
 {
+
     logInfo(RTPS_EDP, wdata.guid() << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());

@@ -46,13 +46,10 @@ template<typename T>
 Topic<T>::Topic(
         const ::dds::domain::DomainParticipant& dp,
         const std::string& topic_name)
-    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
-                dp.delegate().get(),
-                topic_name,
-                "",
-                dp.is_nil() ? qos::TopicQos() : dp.default_topic_qos(),
-                nullptr,
-                ::dds::core::status::StatusMask::all()))
+//    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
+//                dp.delegate().get(),
+//                topic_name,
+//                ""))
 {
 }
 
@@ -61,14 +58,11 @@ Topic<T>::Topic(
         const ::dds::domain::DomainParticipant& dp,
         const std::string& topic_name,
         const std::string& type_name)
-    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
-                dp.delegate().get(),
-                topic_name,
-                type_name,
-                dp.is_nil() ? dds::topic::qos::TopicQos() : dp.default_topic_qos(),
-                nullptr,
-                ::dds::core::status::StatusMask::all()))
-    , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
+//    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
+//                dp.delegate().get(),
+//                topic_name,
+//                type_name))
+//    , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
 {
 }
 
@@ -79,14 +73,14 @@ Topic<T>::Topic(
         const dds::topic::qos::TopicQos& qos,
         dds::topic::TopicListener<T>* /*listener*/,
         const ::dds::core::status::StatusMask& mask)
-    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
-                dp.delegate().get(),
-                topic_name,
-                typeid(T).name(),
-                qos,
-                nullptr,//listener,
-                mask))
-    , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
+//    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
+//                dp.delegate().get(),
+//                topic_name,
+//                typeid(T).name(),
+//                qos,
+//                nullptr,//listener,
+//                mask))
+//    , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
 {
 }
 
@@ -98,14 +92,14 @@ Topic<T>::Topic(
         const dds::topic::qos::TopicQos& qos,
         dds::topic::TopicListener<T>* /*listener*/,
         const ::dds::core::status::StatusMask& mask)
-    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
-                dp.delegate().get(),
-                topic_name,
-                type_name,
-                qos,
-                nullptr,//listener,
-                mask))
-    , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
+//    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
+//                dp.delegate().get(),
+//                topic_name,
+//                type_name,
+//                qos,
+//                nullptr,//listener,
+//                mask))
+//    , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
 {
 }
 

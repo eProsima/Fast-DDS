@@ -531,6 +531,7 @@ bool DomainParticipantImpl::contains_entity(
 
         // Look into subscribers
         {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
             for (auto sit : subscribers_)
             {
                 if (sit.second->contains_entity(handle))
@@ -846,7 +847,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
 
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
     if (topic != nullptr && strcmp(topic->get_type_name(), info.info.typeName().c_str()) != 0
-            && !topic->is_entity_already_checked(info.info.key()))
+            && !topic->is_entity_already_checked(info.info.key()) && topic->get_statuscondition()->is_attached())
     {
         topic->new_inconsistent_topic(info.info.key());
         topic->get_statuscondition()->notify_status_change(::dds::core::status::StatusMask::inconsistent_topic());
@@ -898,12 +899,14 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     if (topic == nullptr &&
             !(fastrtps::rtps::InstanceHandle_t(participant->getGuid()) == info.info.RTPSParticipantKey()))
     {
-        TopicQos qos = TOPIC_QOS_DEFAULT;
-        qos.topic_kind = info.info.topicKind();
-        topic = participant_->create_topic(info.info.topicName().c_str(), info.info.typeName().c_str(), qos);
+        fastrtps::TopicAttributes t_att;
+        t_att.topicName = info.info.topicName();
+        t_att.topicDataType = info.info.typeName();
+        t_att.topicKind = info.info.topicKind();
+        topic = participant_->get_participant()->create_topic(t_att);
     }
     if (topic != nullptr && strcmp(topic->get_type_name(), info.info.typeName().c_str()) != 0
-            && !topic->is_entity_already_checked(info.info.key()))
+            && !topic->is_entity_already_checked(info.info.key()) && topic->get_statuscondition()->is_attached())
     {
         topic->new_inconsistent_topic(info.info.key());
         topic->get_statuscondition()->notify_status_change(::dds::core::status::StatusMask::inconsistent_topic());
@@ -1499,6 +1502,7 @@ std::string DomainParticipantImpl::get_inner_type_name(
 Topic* DomainParticipantImpl::create_topic(
         std::string topic_name,
         std::string type_name,
+        const fastrtps::TopicAttributes& att,
         const TopicQos& qos,
         TopicListener* listen,
         const ::dds::core::status::StatusMask& mask)
@@ -1524,7 +1528,10 @@ Topic* DomainParticipantImpl::create_topic(
         return t;
     }
 
-    TopicImpl* topicimpl = new TopicImpl(this->get_participant(), topic_name, type_name, qos, listen);
+    fastrtps::TopicAttributes t_att = att;
+    t_att.topicName = (fastrtps::string_255) topic_name;
+    t_att.topicDataType = (fastrtps::string_255) type_name;
+    TopicImpl* topicimpl = new TopicImpl(this->get_participant(), t_att, qos, listen);
     TopicDescription* topic_description = new TopicDescription(this->get_participant(),
                     topic_name.c_str(), type_name.c_str());
     Topic* topic = new Topic(topicimpl, topic_description, mask);
@@ -1547,12 +1554,14 @@ Topic* DomainParticipantImpl::create_topic(
     }
 
     //SAVE THE TOPIC INTO MAPS
-    std::lock_guard<std::mutex> lock(mtx_types_);
-    topics_by_handle_[topic_guid] = topic;
-    topics_by_name_[topic_name] = topic;
-    topics_[topic] = std::make_pair(topicimpl, topic_description);
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+        topics_by_handle_[topic_guid] = topic;
+        topics_by_name_[topic_name] = topic;
+        topics_[topic] = std::make_pair(topicimpl, topic_description);
+    }
 
-    if (qos.auto_fill_type_object || qos.auto_fill_type_information)
+    if (att.auto_fill_type_object || att.auto_fill_type_information)
     {
         register_dynamic_type_to_factories(type_name);
     }

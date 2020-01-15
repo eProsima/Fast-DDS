@@ -101,8 +101,8 @@ bool HelloWorldPublisher::init()
     // CREATE THE WRITER
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Topic topic(mp_participant, Wparam.topic);
-    writer_ = mp_publisher->create_datawriter(&topic, qos, &m_listener);
+    Topic* topic = mp_participant->create_topic(Wparam.topic);
+    writer_ = mp_publisher->create_datawriter(topic, qos, &m_listener);
 
     if (writer_ == nullptr)
     {

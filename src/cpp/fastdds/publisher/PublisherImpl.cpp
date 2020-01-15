@@ -144,7 +144,7 @@ DataWriter* PublisherImpl::create_datawriter(
     }
 
     // Check the type supports keys.
-    if (topic->get_qos().topic_kind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
+    if (topic->get_topic_attributes().topicKind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
     {
         logError(PUBLISHER, "Keyed Topic " << topic->get_type_name() << " needs getKey function");
         return nullptr;
@@ -161,7 +161,7 @@ DataWriter* PublisherImpl::create_datawriter(
     w_att.endpoint.endpointKind = WRITER;
     w_att.endpoint.multicastLocatorList = att_.multicastLocatorList;
     w_att.endpoint.reliabilityKind = writer_qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    w_att.endpoint.topicKind = topic->get_qos().topic_kind;
+    w_att.endpoint.topicKind = topic->get_topic_attributes().topicKind;
     w_att.endpoint.unicastLocatorList = att_.unicastLocatorList;
     w_att.endpoint.remoteLocatorList = att_.remoteLocatorList;
     w_att.mode = writer_qos.publish_mode.kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;

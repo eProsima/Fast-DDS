@@ -79,13 +79,6 @@ public:
     //!Ownership Qos, NOT implemented in the library.
     OwnershipQosPolicy ownership;
 
-    //!Topic Kind
-    fastrtps::rtps::TopicKind_t topic_kind;
-
-    //!Tries to complete type identifier and type object (TypeObjectV1)
-    bool auto_fill_type_object;
-    //!Tries to complete type information (TypeObjectV2)
-    bool auto_fill_type_information;
 
     bool operator ==(
             const TopicQos& b) const
@@ -102,8 +95,7 @@ public:
                (this->resource_limits == b.resource_limits) &&
                (this->transport_priority == b.transport_priority) &&
                (this->lifespan == b.lifespan) &&
-               (this->ownership == b.ownership) &&
-               (this->topic_kind == b.topic_kind);
+               (this->ownership == b.ownership);
     }
 
     TopicQos& operator <<(

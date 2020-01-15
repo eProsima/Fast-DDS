@@ -121,8 +121,8 @@ public:
     Publisher* create_publisher(
             const fastdds::dds::PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
-            PublisherListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            PublisherListener* listen,
+            const ::dds::core::status::StatusMask& mask);
 
     ReturnCode_t delete_publisher(
             Publisher* publisher);
@@ -137,8 +137,8 @@ public:
     Subscriber* create_subscriber(
             const fastdds::dds::SubscriberQos& qos,
             const fastrtps::SubscriberAttributes& att,
-            SubscriberListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            SubscriberListener* listen,
+            const ::dds::core::status::StatusMask& mask);
 
     ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
@@ -155,9 +155,10 @@ public:
     Topic* create_topic(
             std::string topic_name,
             std::string type_name,
+            const fastrtps::TopicAttributes& att,
             const fastdds::dds::TopicQos& qos,
-            TopicListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            TopicListener* listen,
+            const ::dds::core::status::StatusMask& mask);
 
     ReturnCode_t delete_topic(
             Topic* topic);

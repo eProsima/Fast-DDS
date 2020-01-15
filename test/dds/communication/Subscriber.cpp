@@ -102,7 +102,7 @@ public:
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
                         g_subscriber_attributes.topic.topicDataType = type_name;
-                        Topic topic(participant, g_subscriber_attributes.topic);
+                        Topic* topic = participant->create_topic(g_subscriber_attributes.topic);
                         DataReaderQos qos;
                         qos.change_to_datareader_qos(g_subscriber_attributes.qos);
                         g_subscriber->create_datareader(

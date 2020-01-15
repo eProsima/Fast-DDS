@@ -62,20 +62,6 @@ class Topic : public DomainEntity,
 public:
 
     RTPS_DllAPI Topic(
-            DomainParticipant* dp,
-            const std::string& topic_name,
-            const std::string& type_name,
-            const TopicQos& qos = TOPIC_QOS_DEFAULT,
-            TopicListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
-
-    RTPS_DllAPI Topic(
-            DomainParticipant* dp,
-            fastrtps::TopicAttributes att,
-            TopicListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
-
-    RTPS_DllAPI Topic(
             TopicImpl* impl,
             TopicDescription* topic_description,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

@@ -50,14 +50,8 @@ public:
 
     RTPS_DllAPI TopicImpl(
             DomainParticipant* dp,
-            const std::string& topic_name,
-            const std::string& type_name,
-            const TopicQos& qos = TOPIC_QOS_DEFAULT,
-            TopicListener* listener = nullptr);
-
-    RTPS_DllAPI TopicImpl(
-            DomainParticipant* dp,
             fastrtps::TopicAttributes att,
+            const TopicQos& qos,
             TopicListener* listener = nullptr);
 
 

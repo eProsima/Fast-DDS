@@ -132,7 +132,7 @@ bool TestSubscriber::init(
         }
 
         reader_qos.change_to_datareader_qos(Rparam.qos);
-        Topic topic(mp_participant, Rparam.topic);
+        Topic* topic = mp_participant->create_topic(Rparam.topic);
         reader_ = mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
         m_Data = m_Type.create_data();
     }
@@ -224,6 +224,7 @@ void TestSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader*,
         const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
+    std::cout << "On Subscription Matched" << std::endl;
     if (info.current_count_change > 0)
     {
         mParent->matched();
@@ -302,7 +303,7 @@ DataReader* TestSubscriber::create_datareader()
         }
     }
     topic_att.topicDataType = disc_type_->get_name();
-    Topic topic(mp_participant, topic_att);
+    Topic* topic = mp_participant->create_topic(topic_att);
     return mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
 }
 

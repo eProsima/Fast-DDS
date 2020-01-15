@@ -100,8 +100,8 @@ bool TypeLookupPublisher::init()
     // CREATE THE WRITER
     DataWriterQos wqos;
     wqos.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-    Topic mp_topic(mp_participant, Wparam.topic);
-    writer_ = mp_publisher->create_datawriter(&mp_topic, wqos, &m_listener);
+    Topic* mp_topic = mp_participant->create_topic(Wparam.topic);
+    writer_ = mp_publisher->create_datawriter(mp_topic, wqos, &m_listener);
 
     if (writer_ == nullptr)
     {

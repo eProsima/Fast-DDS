@@ -92,13 +92,23 @@ ReturnCode_t DomainParticipant::delete_subscriber(
 }
 
 Topic* DomainParticipant::create_topic(
-        std::string topic_name,
-        std::string type_name,
-        const fastdds::dds::TopicQos& qos,
+        const fastrtps::TopicAttributes& att,
+        const TopicQos& qos,
         TopicListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->create_topic(topic_name, type_name, qos, listen, mask);
+    return impl_->create_topic(att.topicName.c_str(), att.topicDataType.c_str(), att, qos, listen, mask);
+}
+
+Topic* DomainParticipant::create_topic(
+        std::string topic_name,
+        std::string type_name,
+        const fastdds::dds::TopicQos& qos,
+        const fastrtps::TopicAttributes& att,
+        TopicListener* listen,
+        const ::dds::core::status::StatusMask& mask)
+{
+    return impl_->create_topic(topic_name, type_name, att, qos, listen, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_topic(

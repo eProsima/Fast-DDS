@@ -26,36 +26,14 @@ namespace dds {
 
 TopicImpl::TopicImpl(
         DomainParticipant* dp,
-        const std::string& topic_name,
-        const std::string& type_name,
+        fastrtps::TopicAttributes att,
         const TopicQos& qos,
         TopicListener* listener)
     : listener_(listener)
     , qos_(qos)
-    , participant_(dp)
-{
-    topic_att_.topicName = topic_name;
-    topic_att_.topicDataType = type_name;
-    topic_att_.topicKind = qos.topic_kind;
-    topic_att_.historyQos = qos.history;
-    topic_att_.resourceLimitsQos = qos.resource_limits;
-}
-
-TopicImpl::TopicImpl(
-        DomainParticipant* dp,
-        fastrtps::TopicAttributes att,
-        TopicListener* listener)
-    : listener_(listener)
     , topic_att_(att)
     , participant_(dp)
 {
-    TopicQos qos;
-    qos.history = att.historyQos;
-    qos.resource_limits = att.resourceLimitsQos;
-    qos.topic_kind = att.topicKind;
-    qos.auto_fill_type_information = att.auto_fill_type_information;
-    qos.auto_fill_type_object = att.auto_fill_type_object;
-    qos_ = qos;
 }
 
 fastrtps::TopicAttributes TopicImpl::get_topic_attributes() const

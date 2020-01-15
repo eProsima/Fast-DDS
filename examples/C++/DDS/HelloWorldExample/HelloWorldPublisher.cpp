@@ -62,8 +62,11 @@ bool HelloWorldPublisher::init(
     pub_att.topic.topicName = "HelloWorldTopic";
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
-    Topic* topic = participant_->create_topic(pub_att.topic.topicName.c_str(),
-                    pub_att.topic.topicDataType.c_str(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant_->create_topic(pub_att.topic);
+    if (topic == nullptr)
+    {
+        return false;
+    }
 
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
