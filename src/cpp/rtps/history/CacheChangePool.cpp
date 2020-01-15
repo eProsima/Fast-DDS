@@ -22,7 +22,7 @@
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
-
+#include <cstring>
 #include <cassert>
 
 
@@ -123,7 +123,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
             }
             *chan = m_freeCaches.back();
             m_freeCaches.pop_back();
-            m_freeCaches.erase(m_freeCaches.end()-1);
 
             // TODO(Ricardo) Improve reallocation.
             try
@@ -216,8 +215,7 @@ void CacheChangePool::return_cache_to_pool(CacheChange_t* ch)
     ch->writerGUID = c_Guid_Unknown;
     ch->serializedPayload.length = 0;
     ch->serializedPayload.pos = 0;
-    for(uint8_t i=0;i<16;++i)
-        ch->instanceHandle.value[i] = 0;
+    memset(ch->instanceHandle.value, 0, 16);
     ch->isRead = 0;
     ch->sourceTimestamp.seconds(0);
     ch->sourceTimestamp.fraction(0);
