@@ -576,6 +576,18 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& resource_limits_max_instances(const int32_t max)
+    {
+        publisher_attr_.topic.resourceLimitsQos.max_instances = max;
+        return *this;
+    }
+
+    PubSubWriter& resource_limits_max_samples_per_instance(const int32_t max)
+    {
+        publisher_attr_.topic.resourceLimitsQos.max_samples_per_instance = max;
+        return *this;
+    }
+
     PubSubWriter& matched_readers_allocation(size_t initial, size_t maximum)
     {
         publisher_attr_.matched_subscriber_allocation.initial = initial;

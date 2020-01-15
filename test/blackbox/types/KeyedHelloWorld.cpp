@@ -35,8 +35,8 @@ using namespace eprosima::fastcdr::exception;
 
 KeyedHelloWorld::KeyedHelloWorld()
 {
+    m_index = 0;
     m_key = 0;
-
 }
 
 KeyedHelloWorld::~KeyedHelloWorld()
@@ -45,18 +45,21 @@ KeyedHelloWorld::~KeyedHelloWorld()
 
 KeyedHelloWorld::KeyedHelloWorld(const KeyedHelloWorld &x)
 {
+    m_index = x.m_index;
     m_key = x.m_key;
     m_message = x.m_message;
 }
 
 KeyedHelloWorld::KeyedHelloWorld(KeyedHelloWorld &&x)
 {
+    m_index = x.m_index;
     m_key = x.m_key;
     m_message = std::move(x.m_message);
 }
 
 KeyedHelloWorld& KeyedHelloWorld::operator=(const KeyedHelloWorld &x)
 {
+    m_index = x.m_index;
     m_key = x.m_key;
     m_message = x.m_message;
     
@@ -65,6 +68,7 @@ KeyedHelloWorld& KeyedHelloWorld::operator=(const KeyedHelloWorld &x)
 
 KeyedHelloWorld& KeyedHelloWorld::operator=(KeyedHelloWorld &&x)
 {
+    m_index = x.m_index;
     m_key = x.m_key;
     m_message = std::move(x.m_message);
     
@@ -73,7 +77,8 @@ KeyedHelloWorld& KeyedHelloWorld::operator=(KeyedHelloWorld &&x)
 
 bool KeyedHelloWorld::operator==(const KeyedHelloWorld &x) const
 {
-    if(m_message == x.m_message &&
+    if(m_index == x.m_index &&
+            m_message == x.m_message &&
             m_key == x.m_key)
         return true;
 
@@ -99,6 +104,7 @@ size_t KeyedHelloWorld::getCdrSerializedSize(const KeyedHelloWorld& data, size_t
 void KeyedHelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_key;
+    scdr << m_index;
 
     if(m_message.length() <= 256)
     {
@@ -113,6 +119,7 @@ void KeyedHelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
 void KeyedHelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_key;
+    dcdr >> m_index;
     dcdr >> m_message;
 }
 

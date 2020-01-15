@@ -60,6 +60,7 @@ std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max)
     std::generate(returnedValue.begin(), returnedValue.end(), [&index]
     {
         KeyedHelloWorld hello;
+        hello.index(index);
         hello.key(index % 2);
         std::stringstream ss;
         ss << "HelloWorld " << index;

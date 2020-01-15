@@ -546,6 +546,18 @@ public:
         return *this;
     }
 
+    PubSubReader& resource_limits_max_instances(const int32_t max)
+    {
+        subscriber_attr_.topic.resourceLimitsQos.max_instances = max;
+        return *this;
+    }
+
+    PubSubReader& resource_limits_max_samples_per_instance(const int32_t max)
+    {
+        subscriber_attr_.topic.resourceLimitsQos.max_samples_per_instance = max;
+        return *this;
+    }
+
     PubSubReader& matched_writers_allocation(size_t initial, size_t maximum)
     {
         subscriber_attr_.matched_publisher_allocation.initial = initial;

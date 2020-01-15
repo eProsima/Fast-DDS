@@ -21,6 +21,12 @@ void default_receive_print(const HelloWorld& hello)
 }
 
 template<>
+void default_receive_print(const KeyedHelloWorld& hello)
+{
+    std::cout << "Received HelloWorld " << hello.index() << " with key " << hello.key() << std::endl;
+}
+
+template<>
 void default_receive_print(const FixedSized& hello)
 {
     std::cout << "Received FixedSized " << hello.index() << std::endl;
@@ -55,6 +61,12 @@ template<>
 void default_send_print(const HelloWorld& hello)
 {
     std::cout << "Sent HelloWorld " << hello.index() << std::endl;
+}
+
+template<>
+void default_send_print(const KeyedHelloWorld& hello)
+{
+    std::cout << "Sent HelloWorld " << hello.index() << " with key " << hello.key() << std::endl;
 }
 
 template<>
