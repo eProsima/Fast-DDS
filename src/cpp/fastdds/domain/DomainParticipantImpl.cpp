@@ -366,7 +366,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 
     for (auto it: topics_)
     {
-        if (delete_topic(std::get<0>(it.second)) != ReturnCode_t::RETCODE_OK)
+        if (delete_topic(it.first) != ReturnCode_t::RETCODE_OK)
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
@@ -1513,10 +1513,10 @@ Topic* DomainParticipantImpl::create_topic(
         listen = listener_;
     }
 
-    auto it = topics_.find(topic_name);
-    if (it != topics_.end())
+    auto it = topics_by_name_.find(topic_name);
+    if (it != topics_by_name_.end())
     {
-        Topic* t = std::get<0>(it->second);
+        Topic* t = it->second;
         if (strcmp(t->get_type_name(), type_name.c_str()) != 0)
         {
             return nullptr;
@@ -1549,7 +1549,8 @@ Topic* DomainParticipantImpl::create_topic(
     //SAVE THE TOPIC INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_types_);
     topics_by_handle_[topic_guid] = topic;
-    topics_[topic_name] = std::make_pair(topic, topic_description);
+    topics_by_name_[topic_name] = topic;
+    topics_[topic] = std::make_pair(topicimpl, topic_description);
 
     if (qos.auto_fill_type_object || qos.auto_fill_type_information)
     {
@@ -1580,7 +1581,8 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
 
     std::lock_guard<std::mutex> lock(mtx_types_);
     topics_by_handle_.erase(topics_by_handle_.find(topic->get_instance_handle()));
-    auto it = topics_.find(topic->get_name());
+    topics_by_name_.erase(topics_by_name_.find(topic->get_name()));
+    auto it = topics_.find(topic);
     delete std::get<0>(it->second);
     delete std::get<1>(it->second);
     topics_.erase(it);
@@ -1599,11 +1601,11 @@ Topic* DomainParticipantImpl::find_topic(
 
     cv_topic_.wait_for(lock, max_wait, [&]()
     {
-        auto it = topics_.find(topic_name);
+        auto it = topics_by_name_.find(topic_name);
 
-        if (it != topics_.end())
+        if (it != topics_by_name_.end())
         {
-            topic = std::get<0>(it->second);
+            topic = it->second;
         }
         return topic != nullptr;
 
@@ -1615,11 +1617,11 @@ TopicDescription* DomainParticipantImpl::lookup_topicdescription(
         const std::string& topic_name)
 {
     std::lock_guard<std::mutex> lock(mtx_types_);
-    auto it = topics_.find(topic_name);
+    auto it = topics_by_name_.find(topic_name);
 
-    if (it != topics_.end())
+    if (it != topics_by_name_.end())
     {
-        return std::get<1>(it->second);
+        return it->second;
     }
     return nullptr;
 }
@@ -1658,9 +1660,9 @@ ReturnCode_t DomainParticipantImpl::autoenable_entities()
             std::lock_guard<std::mutex> lock(mtx_types_);
             for (auto topic: topics_)
             {
-                if (!std::get<0>(topic.second)->is_enabled())
+                if (!topic.first->is_enabled())
                 {
-                    std::get<0>(topic.second)->enable();
+                    topic.first->enable();
                 }
             }
         }
