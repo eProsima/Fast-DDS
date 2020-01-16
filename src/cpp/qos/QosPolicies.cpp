@@ -290,7 +290,6 @@ bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 
 bool UserDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 {
-    (void) size;
     if (max_size_ != 0 && size > max_size_)
     {
         return false;

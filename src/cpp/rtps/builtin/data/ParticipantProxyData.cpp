@@ -398,14 +398,6 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_PROPERTY_LIST:
                 {
-                    if (m_properties.max_size() != 0 &&
-                            m_properties.max_size() < plength)
-                    {
-                        logError(RTPS_PDP,"User data too big "
-                                << "(size:" << plength
-                                << " max capacity: " << m_properties.max_size() << ")");
-                        return false;
-                    }
                     this->m_properties.length = plength;
                     uint32_t pos_ref = msg->pos;
                     valid &= m_properties.readFromCDRMessage(msg, plength);
