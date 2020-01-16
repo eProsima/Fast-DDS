@@ -218,8 +218,7 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
             +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/ &&
-            (mp_history->m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE ||
-                mp_history->m_att.memoryPolicy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE))
+            (mp_history->m_att.memoryPolicy != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE))
         {
             encrypt_payload_.data = (octet*)realloc(encrypt_payload_.data, change->serializedPayload.length +
                     // In future v2 changepool is in writer, and writer set this value to cachechagepool.
