@@ -337,7 +337,7 @@ public:
                 ret = global_port_->try_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
                         &are_listeners_active);
 
-                if (!are_listeners_active)
+                if (!ret || !are_listeners_active)
                 {
                     shared_mem_buffer->decrease_ref();
                 }
