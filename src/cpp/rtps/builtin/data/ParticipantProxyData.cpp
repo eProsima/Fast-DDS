@@ -503,7 +503,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                     IF_VALID_CALL()
 
                     this->security_attributes_ = p.security_attributes;
-                    this->plugin_security_attributes_ = p->plugin_security_attributes;
+                    this->plugin_security_attributes_ = p.plugin_security_attributes;
 #else
                     logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
 #endif

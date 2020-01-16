@@ -71,21 +71,6 @@ class ParameterList
                 uint32_t& qos_size);
 
         /**
-         * Read a parameterList from a CDRMessage
-         * @param[in] msg Reference to the message (the pos should be correct, otherwise the behaviour is undefined).
-         * @param[in] processor Function to process each of the parameters in the list.
-         * @param[in] use_encapsulation Wether encapsulation field should be read.
-         * @param[out] qos_size Number of bytes processed.
-         * @return true if parsing was correct, false otherwise.
-         */
-        static bool readParameterListfromCDRMsg(
-                rtps::CDRMessage_t& msg,
-                std::function<bool(const Parameter_t*)> processor,
-                bool use_encapsulation,
-                uint32_t& qos_size);
-
-
-        /**
          * Read change instanceHandle from the KEY_HASH or another specific PID parameter of a CDRMessage
          * @param[in,out] change Pointer to the cache change.
          * @param[in] pid Specific PID to search
