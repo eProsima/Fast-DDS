@@ -268,6 +268,7 @@ public:
     {
         return false;
     }
+
 #endif
     const fastdds::dds::SubscriptionMatchedStatus& update_subscription_matched_status(
             RTPSReader& reader,

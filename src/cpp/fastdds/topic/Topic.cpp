@@ -29,10 +29,10 @@ namespace dds {
 
 Topic::Topic(
         TopicImpl* impl,
-        TopicDescription* topic_description,
         const ::dds::core::status::StatusMask& mask)
     : DomainEntity(mask)
-    , TopicDescription(*topic_description)
+    , TopicDescription(impl->get_participant(), impl->get_topic_attributes().topicName.c_str(),
+            impl->get_topic_attributes().topicDataType.c_str())
     , impl_(impl)
 {
 }

@@ -64,6 +64,7 @@ EDP::EDP(
     , temp_writer_proxy_data_(
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+    , failing_policy_(0)
 {
 }
 

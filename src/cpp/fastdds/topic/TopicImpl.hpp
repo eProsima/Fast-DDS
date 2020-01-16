@@ -45,14 +45,17 @@ class DomainParticipantImpl;
 
 class TopicImpl
 {
-
-public:
+    friend class DomainParticipantImpl;
 
     RTPS_DllAPI TopicImpl(
             DomainParticipant* dp,
             fastrtps::TopicAttributes att,
             const TopicQos& qos,
             TopicListener* listener = nullptr);
+
+public:
+
+    virtual ~TopicImpl();
 
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
@@ -91,11 +94,11 @@ public:
     bool is_entity_already_checked(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
+    Topic* user_topic_;
+
 private:
 
     TopicListener* listener_;
-
-    Topic* user_topic_;
 
     TopicQos qos_;
 

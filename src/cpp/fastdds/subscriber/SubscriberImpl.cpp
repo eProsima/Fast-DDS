@@ -252,6 +252,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
                 topic_readers->erase(t_it);
             }
             it->second.erase(dr_it);
+            delete *dr_it;
             BuiltinSubscriber::get_instance()->delete_subscription_data(reader->get_instance_handle());
             if (it->second.empty())
             {

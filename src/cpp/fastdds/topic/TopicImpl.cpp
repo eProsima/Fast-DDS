@@ -29,11 +29,17 @@ TopicImpl::TopicImpl(
         fastrtps::TopicAttributes att,
         const TopicQos& qos,
         TopicListener* listener)
-    : listener_(listener)
+    : user_topic_(nullptr)
+    , listener_(listener)
     , qos_(qos)
     , topic_att_(att)
     , participant_(dp)
 {
+}
+
+TopicImpl::~TopicImpl()
+{
+    delete user_topic_;
 }
 
 fastrtps::TopicAttributes TopicImpl::get_topic_attributes() const

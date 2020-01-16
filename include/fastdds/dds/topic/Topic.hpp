@@ -63,7 +63,6 @@ public:
 
     RTPS_DllAPI Topic(
             TopicImpl* impl,
-            TopicDescription* topic_description,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 

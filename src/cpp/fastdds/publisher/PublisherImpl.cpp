@@ -278,6 +278,7 @@ ReturnCode_t PublisherImpl::delete_datawriter(
                 topic_writers->erase(t_it);
             }
             vit->second.erase(dw_it);
+            delete *dw_it;
             BuiltinSubscriber::get_instance()->delete_publication_data(writer->get_instance_handle());
             if (vit->second.empty())
             {

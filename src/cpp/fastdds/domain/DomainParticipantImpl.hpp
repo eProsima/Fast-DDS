@@ -387,7 +387,7 @@ private:
 
     //!TopicDataType map
     std::map<std::string, TypeSupport> types_;
-    std::map<Topic*, std::pair<TopicImpl*, TopicDescription*> > topics_;
+    std::map<Topic*, TopicImpl*> topics_;
     std::map<std::string, Topic*> topics_by_name_; //Indexed by topic name
     std::map<fastrtps::rtps::InstanceHandle_t, Topic*> topics_by_handle_;
     mutable std::mutex mtx_types_;

@@ -1532,9 +1532,8 @@ Topic* DomainParticipantImpl::create_topic(
     t_att.topicName = (fastrtps::string_255) topic_name;
     t_att.topicDataType = (fastrtps::string_255) type_name;
     TopicImpl* topicimpl = new TopicImpl(this->get_participant(), t_att, qos, listen);
-    TopicDescription* topic_description = new TopicDescription(this->get_participant(),
-                    topic_name.c_str(), type_name.c_str());
-    Topic* topic = new Topic(topicimpl, topic_description, mask);
+    Topic* topic = new Topic(topicimpl, mask);
+    topicimpl->user_topic_ = topic;
 
 
     // Create InstanceHandle for the new topic
@@ -1558,7 +1557,7 @@ Topic* DomainParticipantImpl::create_topic(
         std::lock_guard<std::mutex> lock(mtx_types_);
         topics_by_handle_[topic_guid] = topic;
         topics_by_name_[topic_name] = topic;
-        topics_[topic] = std::make_pair(topicimpl, topic_description);
+        topics_[topic] = topicimpl;
     }
 
     if (att.auto_fill_type_object || att.auto_fill_type_information)
@@ -1592,8 +1591,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
     topics_by_handle_.erase(topics_by_handle_.find(topic->get_instance_handle()));
     topics_by_name_.erase(topics_by_name_.find(topic->get_name()));
     auto it = topics_.find(topic);
-    delete std::get<0>(it->second);
-    delete std::get<1>(it->second);
+    delete it->second;
     topics_.erase(it);
 
     return ReturnCode_t::RETCODE_OK;
