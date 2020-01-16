@@ -1291,9 +1291,9 @@ public:
      * @param max_samples_per_instance the max_samples_per_instance value
      */
     ResourceLimits(
-            int32_t max_samples = dds::core::LENGTH_UNLIMITED,
-            int32_t max_instances = dds::core::LENGTH_UNLIMITED,
-            int32_t max_samples_per_instance = dds::core::LENGTH_UNLIMITED);
+            uint32_t max_samples = dds::core::LENGTH_UNLIMITED,
+            uint32_t max_instances = dds::core::LENGTH_UNLIMITED,
+            uint32_t max_samples_per_instance = dds::core::LENGTH_UNLIMITED);
 
     /**
      * Copies a ResourceLimits QoS instance

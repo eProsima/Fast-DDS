@@ -21,6 +21,8 @@
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
 
+#include <dds/core/LengthUnlimited.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
@@ -55,9 +57,17 @@ MemoryTestSubscriber::~MemoryTestSubscriber()
     Domain::removeParticipant(mp_participant);
 }
 
-bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
-        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types)
+bool MemoryTestSubscriber::init(
+        bool echo,
+        int nsam,
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
+        const PropertyPolicy& part_property_policy,
+        const PropertyPolicy& property_policy,
+        const std::string& sXMLConfigFile,
+        uint32_t data_size,
+        bool dynamic_types)
 {
     m_sXMLConfigFile = sXMLConfigFile;
     m_echo = echo;
@@ -73,9 +83,9 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED
-            ));
+                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED
+                    ));
         struct_type_builder->set_name("MemoryType");
 
         m_pDynType = struct_type_builder->build();
@@ -121,7 +131,9 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
     std::ostringstream st;
     st << "MemoryTest_";
     if (hostname)
+    {
         st << asio::ip::host_name() << "_";
+    }
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
     if (reliable)
@@ -155,7 +167,9 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
     std::ostringstream pct;
     pct << "MemoryTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_SUB2PUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -176,7 +190,9 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
     std::ostringstream sct;
     sct << "MemoryTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_PUB2SUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -201,18 +217,20 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
     return true;
 }
 
-void MemoryTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void MemoryTestSubscriber::DataSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Data Sub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Data Sub Matched " << C_DEF << endl;
         ++mp_up->disc_count_;
     }
     else
     {
-        cout << C_MAGENTA << "Data Sub unmatched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Data Sub unmatched " << C_DEF << endl;
         --mp_up->disc_count_;
     }
 
@@ -220,18 +238,20 @@ void MemoryTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*
     mp_up->disc_cond_.notify_one();
 }
 
-void MemoryTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void MemoryTestSubscriber::CommandPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
         ++mp_up->disc_count_;
     }
     else
     {
-        cout << C_MAGENTA << "Command Pub unmatched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Pub unmatched " << C_DEF << endl;
         --mp_up->disc_count_;
     }
 
@@ -239,18 +259,20 @@ void MemoryTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /
     mp_up->disc_cond_.notify_one();
 }
 
-void MemoryTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void MemoryTestSubscriber::CommandSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
         ++mp_up->disc_count_;
     }
     else
     {
-        cout << C_MAGENTA << "Command Sub unmatched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Sub unmatched " << C_DEF << endl;
         --mp_up->disc_count_;
     }
 
@@ -258,21 +280,22 @@ void MemoryTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber*
     mp_up->disc_cond_.notify_one();
 }
 
-void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
+void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     TestCommandType command;
-    if(subscriber->takeNextData(&command,&mp_up->m_sampleinfo))
+    if (subscriber->takeNextData(&command, &mp_up->m_sampleinfo))
     {
-        cout << "RCOMMAND: "<< command.m_command << endl;
-        if(command.m_command == READY)
+        cout << "RCOMMAND: " << command.m_command << endl;
+        if (command.m_command == READY)
         {
-            cout << "Publisher has new test ready..."<<endl;
+            cout << "Publisher has new test ready..." << endl;
             mp_up->mutex_.lock();
             ++mp_up->comm_count_;
             mp_up->mutex_.unlock();
             mp_up->comm_cond_.notify_one();
         }
-        else if(command.m_command == STOP)
+        else if (command.m_command == STOP)
         {
             cout << "Publisher has stopped the test" << endl;
             mp_up->mutex_.lock();
@@ -280,7 +303,7 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
             mp_up->mutex_.unlock();
             mp_up->data_cond_.notify_one();
         }
-        else if(command.m_command == STOP_ERROR)
+        else if (command.m_command == STOP_ERROR)
         {
             cout << "Publisher has canceled the test" << endl;
             mp_up->m_status = -1;
@@ -289,14 +312,15 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
             mp_up->mutex_.unlock();
             mp_up->data_cond_.notify_one();
         }
-        else if(command.m_command == DEFAULT)
+        else if (command.m_command == DEFAULT)
         {
             std::cout << "Something is wrong" << std::endl;
         }
     }
 }
 
-void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
+void MemoryTestSubscriber::DataSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     if (mp_up->dynamic_data)
     {
@@ -305,12 +329,12 @@ void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
         if (mp_up->m_echo)
         {
             std::cout << "Received data: " << mp_up->m_DynData->get_uint32_value(0)
-                << "(" << mp_up->n_received << ")" << std::endl;
+                      << "(" << mp_up->n_received << ")" << std::endl;
         }
     }
     else
     {
-        subscriber->takeNextData((void*)mp_up->mp_memory,&mp_up->m_sampleinfo);
+        subscriber->takeNextData((void*)mp_up->mp_memory, &mp_up->m_sampleinfo);
         ++mp_up->n_received;
         if (mp_up->m_echo)
         {
@@ -318,7 +342,6 @@ void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
         }
     }
 }
-
 
 void MemoryTestSubscriber::run()
 {
@@ -333,7 +356,8 @@ void MemoryTestSubscriber::run()
     test(m_data_size);
 }
 
-bool MemoryTestSubscriber::test(uint32_t datasize)
+bool MemoryTestSubscriber::test(
+        uint32_t datasize)
 {
     cout << "Preparing test with data size: " << datasize + 4 << endl;
 
@@ -346,11 +370,11 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
 
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum",
-            DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+                DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), datasize
-            ));
+                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), datasize
+                    ));
         struct_type_builder->set_name("MemoryType");
 
         m_pDynType = struct_type_builder->build();
@@ -375,10 +399,13 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
     });
     disc_lock.unlock();
 
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
+    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
 
     std::unique_lock<std::mutex> lock(mutex_);
-    if (comm_count_ == 0) comm_cond_.wait(lock);
+    if (comm_count_ == 0)
+    {
+        comm_cond_.wait(lock);
+    }
     --comm_count_;
     lock.unlock();
 

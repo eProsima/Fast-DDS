@@ -313,7 +313,7 @@ int32_t TransportPriority::value() const
 Lifespan::Lifespan(
         const dds::core::Duration& duration)
     : dds::core::Value<detail::Lifespan>(
-          eprosima::fastrtps::Duration_t(static_cast<int32_t>(duration.sec()), duration.nanosec()))
+        eprosima::fastrtps::Duration_t(static_cast<int32_t>(duration.sec()), duration.nanosec()))
 {
 }
 
@@ -341,7 +341,7 @@ const dds::core::Duration Lifespan::duration() const
 Deadline::Deadline(
         const dds::core::Duration& period)
     : dds::core::Value<detail::Deadline>(
-          eprosima::fastrtps::Duration_t(static_cast<int32_t>(period.sec()), period.nanosec()))
+        eprosima::fastrtps::Duration_t(static_cast<int32_t>(period.sec()), period.nanosec()))
 {
 }
 
@@ -369,7 +369,7 @@ const dds::core::Duration Deadline::period() const
 LatencyBudget::LatencyBudget(
         const dds::core::Duration& duration)
     : dds::core::Value<detail::LatencyBudget>(
-          eprosima::fastrtps::Duration_t(static_cast<int32_t>(duration.sec()), duration.nanosec()))
+        eprosima::fastrtps::Duration_t(static_cast<int32_t>(duration.sec()), duration.nanosec()))
 {
 }
 
@@ -396,7 +396,7 @@ const dds::core::Duration LatencyBudget::duration() const
 TimeBasedFilter::TimeBasedFilter(
         const dds::core::Duration& minimum_separation)
     : dds::core::Value<detail::TimeBasedFilter>(
-          eprosima::fastrtps::Duration_t(static_cast<int32_t>(minimum_separation.sec()), minimum_separation.nanosec()))
+        eprosima::fastrtps::Duration_t(static_cast<int32_t>(minimum_separation.sec()), minimum_separation.nanosec()))
 {
 }
 
@@ -501,16 +501,16 @@ eprosima::fastdds::dds::OwnershipQosPolicyKind Ownership::to_native(
         OwnershipKind::Type kind)
 {
     return kind == OwnershipKind::SHARED
-        ? eprosima::fastdds::dds::OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS
-        : eprosima::fastdds::dds::OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
+           ? eprosima::fastdds::dds::OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS
+           : eprosima::fastdds::dds::OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
 }
 
 OwnershipKind::Type Ownership::from_native(
         eprosima::fastdds::dds::OwnershipQosPolicyKind kind)
 {
     return kind == eprosima::fastdds::dds::OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS
-        ? OwnershipKind::SHARED
-        : OwnershipKind::EXCLUSIVE;
+           ? OwnershipKind::SHARED
+           : OwnershipKind::EXCLUSIVE;
 }
 
 //OwnershipStrength
@@ -582,9 +582,9 @@ ReaderDataLifecycle::ReaderDataLifecycle(
         const dds::core::Duration& autopurge_disposed_samples_delay)
     : dds::core::Value<detail::ReaderDataLifecycle>(
         eprosima::fastrtps::Duration_t(static_cast<int32_t>(autopurge_nowriter_samples_delay.sec()),
-            autopurge_nowriter_samples_delay.nanosec()),
+        autopurge_nowriter_samples_delay.nanosec()),
         eprosima::fastrtps::Duration_t(static_cast<int32_t>(autopurge_disposed_samples_delay.sec()),
-            autopurge_disposed_samples_delay.nanosec()))
+        autopurge_disposed_samples_delay.nanosec()))
 {
 }
 
@@ -597,7 +597,7 @@ ReaderDataLifecycle::ReaderDataLifecycle(
 const dds::core::Duration ReaderDataLifecycle::autopurge_nowriter_samples_delay() const
 {
     return Duration(this->delegate().autopurge_no_writer_samples_delay.seconds,
-                    this->delegate().autopurge_no_writer_samples_delay.nanosec);
+                   this->delegate().autopurge_no_writer_samples_delay.nanosec);
 }
 
 ReaderDataLifecycle& ReaderDataLifecycle::autopurge_nowriter_samples_delay(
@@ -612,7 +612,7 @@ ReaderDataLifecycle& ReaderDataLifecycle::autopurge_nowriter_samples_delay(
 const dds::core::Duration ReaderDataLifecycle::autopurge_disposed_samples_delay() const
 {
     return Duration(this->delegate().autopurge_disposed_samples_delay.seconds,
-                    this->delegate().autopurge_disposed_samples_delay.nanosec);
+                   this->delegate().autopurge_disposed_samples_delay.nanosec);
 }
 
 ReaderDataLifecycle& ReaderDataLifecycle::autopurge_disposed_samples_delay(
@@ -772,10 +772,10 @@ eprosima::fastdds::dds::PresentationQosPolicyAccessScopeKind Presentation::to_na
             result = eprosima::fastdds::dds::GROUP_PRESENTATION_QOS;
             break;
 #endif  // OMG_DDS_OBJECT_MODEL_SUPPORT
-		case policy::PresentationAccessScopeKind::INSTANCE:
-		default:
-			result = eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS;
-			break;
+        case policy::PresentationAccessScopeKind::INSTANCE:
+        default:
+            result = eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS;
+            break;
     }
     return result;
 }
@@ -794,10 +794,10 @@ PresentationAccessScopeKind::Type Presentation::from_native(
             result = PresentationAccessScopeKind::GROUP;
             break;
 #endif  // OMG_DDS_OBJECT_MODEL_SUPPORT
-		case eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS:
-		default:
-			result = PresentationAccessScopeKind::INSTANCE;
-			break;
+        case eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS:
+        default:
+            result = PresentationAccessScopeKind::INSTANCE;
+            break;
     }
     return result;
 }
@@ -852,8 +852,8 @@ Reliability::Reliability(
         dds::core::policy::ReliabilityKind::Type kind,
         const dds::core::Duration& max_blocking_time)
     :  dds::core::Value<detail::Reliability>(
-          Reliability::to_native(kind),
-          eprosima::fastrtps::Duration_t(static_cast<int32_t>(max_blocking_time.sec()), max_blocking_time.nanosec()))
+        Reliability::to_native(kind),
+        eprosima::fastrtps::Duration_t(static_cast<int32_t>(max_blocking_time.sec()), max_blocking_time.nanosec()))
 {
 }
 
@@ -892,16 +892,16 @@ ReliabilityKind::Type Reliability::from_native(
         eprosima::fastdds::dds::ReliabilityQosPolicyKind kind)
 {
     return kind == eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS
-        ? ReliabilityKind::RELIABLE
-        : ReliabilityKind::BEST_EFFORT;
+           ? ReliabilityKind::RELIABLE
+           : ReliabilityKind::BEST_EFFORT;
 }
 
 eprosima::fastdds::dds::ReliabilityQosPolicyKind Reliability::to_native(
         ReliabilityKind::Type kind)
 {
     return kind == ReliabilityKind::RELIABLE
-        ? eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS
-        : eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+           ? eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS
+           : eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
 }
 
 Reliability Reliability::Reliable(
@@ -1071,9 +1071,9 @@ HistoryKind::Type History::from_native(
 
 //ResourceLimits
 ResourceLimits::ResourceLimits(
-        int32_t max_samples,
-        int32_t max_instances,
-        int32_t max_samples_per_instance)
+        uint32_t max_samples,
+        uint32_t max_instances,
+        uint32_t max_samples_per_instance)
     :  dds::core::Value<detail::ResourceLimits>(max_samples, max_instances, max_samples_per_instance)
 {
 }
@@ -1125,8 +1125,8 @@ Liveliness::Liveliness(
         dds::core::policy::LivelinessKind::Type kind,
         const dds::core::Duration& lease_duration)
     : dds::core::Value<detail::Liveliness>(
-          Liveliness::to_native(kind),
-          eprosima::fastrtps::Duration_t(static_cast<int32_t>(lease_duration.sec()), lease_duration.nanosec()))
+        Liveliness::to_native(kind),
+        eprosima::fastrtps::Duration_t(static_cast<int32_t>(lease_duration.sec()), lease_duration.nanosec()))
 {
 }
 
@@ -1230,14 +1230,14 @@ DurabilityService::DurabilityService(
         int32_t max_instances,
         int32_t max_samples_per_instance)
     : dds::core::Value<detail::DurabilityService>(
-          eprosima::fastrtps::Duration_t(
-              static_cast<int32_t>(service_cleanup_delay.sec()),
-              service_cleanup_delay.nanosec()),
-          History::to_native(history_kind),
-          history_depth,
-          max_samples,
-          max_instances,
-          max_samples_per_instance)
+        eprosima::fastrtps::Duration_t(
+            static_cast<int32_t>(service_cleanup_delay.sec()),
+            service_cleanup_delay.nanosec()),
+        History::to_native(history_kind),
+        history_depth,
+        max_samples,
+        max_instances,
+        max_samples_per_instance)
 {
 }
 

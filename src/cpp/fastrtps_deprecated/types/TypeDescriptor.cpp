@@ -35,7 +35,9 @@ TypeDescriptor::TypeDescriptor()
 {
 }
 
-TypeDescriptor::TypeDescriptor(const std::string& name, TypeKind kind)
+TypeDescriptor::TypeDescriptor(
+        const std::string& name,
+        TypeKind kind)
     : kind_(kind)
     , name_(name)
     , base_type_(nullptr)
@@ -45,7 +47,8 @@ TypeDescriptor::TypeDescriptor(const std::string& name, TypeKind kind)
 {
 }
 
-TypeDescriptor::TypeDescriptor(const TypeDescriptor* other)
+TypeDescriptor::TypeDescriptor(
+        const TypeDescriptor* other)
     : kind_(0)
     , name_("")
     , base_type_(nullptr)
@@ -75,7 +78,8 @@ void TypeDescriptor::clean()
     key_element_type_ = nullptr;
 }
 
-ReturnCode_t TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
+ReturnCode_t TypeDescriptor::copy_from(
+        const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
@@ -110,12 +114,13 @@ ReturnCode_t TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
     }
 }
 
-bool TypeDescriptor::equals(const TypeDescriptor* descriptor) const
+bool TypeDescriptor::equals(
+        const TypeDescriptor* descriptor) const
 {
     return descriptor != nullptr && name_ == descriptor->name_ && kind_ == descriptor->kind_ &&
-        base_type_ == descriptor->base_type_ && discriminator_type_ == descriptor->discriminator_type_ &&
-        bound_ == descriptor->bound_ && element_type_ == descriptor->element_type_ &&
-        key_element_type_ == descriptor->key_element_type_;
+           base_type_ == descriptor->base_type_ && discriminator_type_ == descriptor->discriminator_type_ &&
+           bound_ == descriptor->bound_ && element_type_ == descriptor->element_type_ &&
+           key_element_type_ == descriptor->key_element_type_;
 }
 
 DynamicType_ptr TypeDescriptor::get_base_type() const
@@ -123,7 +128,8 @@ DynamicType_ptr TypeDescriptor::get_base_type() const
     return base_type_;
 }
 
-uint32_t TypeDescriptor::get_bounds(uint32_t index /*=0*/) const
+uint32_t TypeDescriptor::get_bounds(
+        uint32_t index /*=0*/) const
 {
     if (index < bound_.size())
     {
@@ -132,7 +138,7 @@ uint32_t TypeDescriptor::get_bounds(uint32_t index /*=0*/) const
     else
     {
         logError(DYN_TYPES, "Error getting bounds value. Index out of range.");
-        return static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED);
+        return dds::core::LENGTH_UNLIMITED;
     }
 }
 
@@ -177,7 +183,7 @@ uint32_t TypeDescriptor::get_total_bounds() const
         }
         return bounds;
     }
-    return static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED);
+    return dds::core::LENGTH_UNLIMITED;
 }
 
 bool TypeDescriptor::is_consistent() const
@@ -202,7 +208,7 @@ bool TypeDescriptor::is_consistent() const
 
     // These types need one bound with the length of the field.
     if (bound_.size() != 1 && (kind_ == TK_SEQUENCE || kind_ == TK_MAP || kind_ == TK_BITMASK ||
-        kind_ == TK_STRING8 || kind_ == TK_STRING16))
+            kind_ == TK_STRING8 || kind_ == TK_STRING16))
     {
         return false;
     }
@@ -215,7 +221,7 @@ bool TypeDescriptor::is_consistent() const
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
     if ((element_type_ == nullptr) == (kind_ == TK_ARRAY || kind_ == TK_SEQUENCE || kind_ == TK_STRING8 ||
-        kind_ == TK_STRING16 || kind_ == TK_MAP || kind_ == TK_BITMASK))
+            kind_ == TK_STRING16 || kind_ == TK_MAP || kind_ == TK_BITMASK))
     {
         return false;
     }
@@ -240,7 +246,8 @@ bool TypeDescriptor::is_consistent() const
     return true;
 }
 
-bool TypeDescriptor::is_type_name_consistent(const std::string& sName) const
+bool TypeDescriptor::is_type_name_consistent(
+        const std::string& sName) const
 {
     // The first letter must start with a letter ( uppercase or lowercase )
     if (sName.length() > 0 && std::isalpha(sName[0]))
@@ -258,18 +265,20 @@ bool TypeDescriptor::is_type_name_consistent(const std::string& sName) const
     return false;
 }
 
-
-void TypeDescriptor::set_kind(TypeKind kind)
+void TypeDescriptor::set_kind(
+        TypeKind kind)
 {
     kind_ = kind;
 }
 
-void TypeDescriptor::set_name(std::string name)
+void TypeDescriptor::set_name(
+        std::string name)
 {
     name_ = name;
 }
 
-ReturnCode_t TypeDescriptor::apply_annotation(AnnotationDescriptor& descriptor)
+ReturnCode_t TypeDescriptor::apply_annotation(
+        AnnotationDescriptor& descriptor)
 {
     if (descriptor.is_consistent())
     {
@@ -306,19 +315,20 @@ ReturnCode_t TypeDescriptor::apply_annotation(
     return ReturnCode_t::RETCODE_OK;
 }
 
-AnnotationDescriptor* TypeDescriptor::get_annotation(const std::string& name) const
+AnnotationDescriptor* TypeDescriptor::get_annotation(
+        const std::string& name) const
 {
     auto it = annotation_.begin();
 
-    for(; it != annotation_.end(); ++it)
+    for (; it != annotation_.end(); ++it)
     {
         AnnotationDescriptor* ann = *it;
         //if (ann->type()->get_name().compare(name) == 0)
         if (ann != nullptr
-            && ann->type() != nullptr
-            && ann->type()->kind_ > 0
-            && !ann->type()->get_name().empty()
-            && ann->type()->get_name().compare(name) == 0)
+                && ann->type() != nullptr
+                && ann->type()->kind_ > 0
+                && !ann->type()->get_name().empty()
+                && ann->type()->get_name().compare(name) == 0)
         {
             return ann;
         }
@@ -486,7 +496,8 @@ uint16_t TypeDescriptor::annotation_get_bit_bound() const
 }
 
 // Annotation setters
-void TypeDescriptor::annotation_set_extensibility(const std::string& extensibility)
+void TypeDescriptor::annotation_set_extensibility(
+        const std::string& extensibility)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
     if (ann == nullptr)
@@ -543,7 +554,8 @@ void TypeDescriptor::annotation_set_appendable()
     ann->set_value("value", CONST_TRUE);
 }
 
-void TypeDescriptor::annotation_set_nested(bool nested)
+void TypeDescriptor::annotation_set_nested(
+        bool nested)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
     if (ann == nullptr)
@@ -557,7 +569,8 @@ void TypeDescriptor::annotation_set_nested(bool nested)
     ann->set_value("value", nested ? CONST_TRUE : CONST_FALSE);
 }
 
-void TypeDescriptor::annotation_set_key(bool key)
+void TypeDescriptor::annotation_set_key(
+        bool key)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
     if (ann == nullptr)
@@ -571,7 +584,8 @@ void TypeDescriptor::annotation_set_key(bool key)
     ann->set_value("value", key ? CONST_TRUE : CONST_FALSE);
 }
 
-void TypeDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
+void TypeDescriptor::annotation_set_bit_bound(
+        uint16_t bit_bound)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
     if (ann == nullptr)
@@ -585,7 +599,8 @@ void TypeDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
     ann->set_value("value", std::to_string(bit_bound));
 }
 
-void TypeDescriptor::annotation_set_non_serialized(bool non_serialized)
+void TypeDescriptor::annotation_set_non_serialized(
+        bool non_serialized)
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
     if (ann == nullptr)
