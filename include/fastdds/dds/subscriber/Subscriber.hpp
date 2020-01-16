@@ -67,7 +67,7 @@ class TopicDescription;
  * DomainRTPSParticipant class should be used to correctly create this element.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI Subscriber : public DomainEntity
+class Subscriber : public DomainEntity
 {
     friend class SubscriberImpl;
     friend class DomainParticipantImpl;
@@ -93,20 +93,20 @@ class RTPS_DllAPI Subscriber : public DomainEntity
 
 public:
 
-    virtual ~Subscriber()
+    RTPS_DllAPI virtual ~Subscriber()
     {
     }
 
     /**
      * Allows accessing the Subscriber Qos.
      */
-    const SubscriberQos& get_qos() const;
+    RTPS_DllAPI const SubscriberQos& get_qos() const;
 
     /**
      * Retrieves the Subscriber Qos.
      * @return true
      */
-    ReturnCode_t get_qos(
+    RTPS_DllAPI ReturnCode_t get_qos(
             SubscriberQos& qos) const;
 
     /**
@@ -115,22 +115,22 @@ public:
      * @param qos
      * @return False if IMMUTABLE_POLICY or INCONSISTENT_POLICY occurs. True if updated.
      */
-    ReturnCode_t set_qos(
+    RTPS_DllAPI ReturnCode_t set_qos(
             const SubscriberQos& qos);
 
     /**
      * Retrieves the attached SubscriberListener.
      */
-    const SubscriberListener* get_listener() const;
+    RTPS_DllAPI const SubscriberListener* get_listener() const;
 
-    SubscriberListener* get_listener();
+    RTPS_DllAPI SubscriberListener* get_listener();
 
     /**
      * Modifies the SubscriberListener.
      * @param listener
      * @return if successfully set.
      */
-    ReturnCode_t set_listener(
+    RTPS_DllAPI ReturnCode_t set_listener(
             SubscriberListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -141,13 +141,13 @@ public:
      * @param listener
      * @return Pointer to the created DataReader. nullptr if failed.
      */
-    DataReader* create_datareader(
+    RTPS_DllAPI DataReader* create_datareader(
             const TopicDescription& topic_desc,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
-    DataReader* create_datareader(
+    RTPS_DllAPI DataReader* create_datareader(
             Topic* topic,
             const DataReaderQos& qos,
             DataReaderListener* listener,
@@ -161,7 +161,7 @@ public:
      * return false.
      * @param reader
      */
-    ReturnCode_t delete_datareader(
+    RTPS_DllAPI ReturnCode_t delete_datareader(
             DataReader* reader);
 
     /**
@@ -172,7 +172,7 @@ public:
      * one of them. It is not specified which one.
      * @param topic_name
      */
-    DataReader* lookup_datareader(
+    RTPS_DllAPI DataReader* lookup_datareader(
             const std::string& topic_name) const;
 
     /**
@@ -180,14 +180,14 @@ public:
      * @param readers
      * @return true
      */
-    ReturnCode_t get_datareaders(
+    RTPS_DllAPI ReturnCode_t get_datareaders(
             std::vector<DataReader*>& readers) const;
 
     /**
      * This operation checks if the subscriber has DataReaders
      * @return true if the subscriber has one or several DataReaders, false in other case
      */
-    bool has_datareaders() const;
+    RTPS_DllAPI bool has_datareaders() const;
 
     /* TODO
        bool begin_access();
@@ -205,9 +205,9 @@ public:
      * That way the SubscriberListener can delegate to the DataReaderListener objects the handling of the data.
      * @return
      */
-    ReturnCode_t notify_datareaders() const;
+    RTPS_DllAPI ReturnCode_t notify_datareaders() const;
 
-    ReturnCode_t delete_contained_entities();
+    RTPS_DllAPI ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataReader QoS policies which will be used for newly created
@@ -221,7 +221,7 @@ public:
      * if the set_default_datareader_qos operation had never been called.
      * @param qos
      */
-    ReturnCode_t set_default_datareader_qos(
+    RTPS_DllAPI ReturnCode_t set_default_datareader_qos(
             const DataReaderQos& qos);
 
     /**
@@ -233,7 +233,7 @@ public:
      * call to get_default_datareader_qos, or else, if the call was never made, the default values.
      * @return Current default DataReaderQos.
      */
-    const DataReaderQos& get_default_datareader_qos() const;
+    RTPS_DllAPI const DataReaderQos& get_default_datareader_qos() const;
 
     /**
      * This operation retrieves the default value of the DataReader QoS, that is, the QoS policies which will be
@@ -245,10 +245,10 @@ public:
      * @param qos Current default DataReaderQos.
      * @return Always true.
      */
-    ReturnCode_t get_default_datareader_qos(
+    RTPS_DllAPI ReturnCode_t get_default_datareader_qos(
             DataReaderQos& qos) const;
 
-    ReturnCode_t copy_from_topic_qos(
+    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
             DataReaderQos& reader_qos,
             const TopicQos& topic_qos) const;
 
@@ -257,21 +257,21 @@ public:
      * @param att Reference to a SubscriberAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
      */
-    bool set_attributes(
+    RTPS_DllAPI bool set_attributes(
             const fastrtps::SubscriberAttributes& att);
 
     /**
      * Get the Attributes of the Subscriber.
      * @return Attributes of the Subscriber.
      */
-    const fastrtps::SubscriberAttributes& get_attributes() const;
+    RTPS_DllAPI const fastrtps::SubscriberAttributes& get_attributes() const;
 
     /**
      * This operation returns the DomainParticipant to which the Subscriber belongs.
      */
-    DomainParticipant& get_participant() const;
+    RTPS_DllAPI DomainParticipant& get_participant() const;
 
-    ReturnCode_t enable();
+    RTPS_DllAPI ReturnCode_t enable();
 
 private:
 

@@ -26,35 +26,35 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class RTPS_DllAPI Condition
+class Condition
 {
 public:
 
-    Condition()
+    RTPS_DllAPI Condition()
         : is_attached_(false)
         , handler(nullptr)
     {
     }
 
-    Condition(
+    RTPS_DllAPI Condition(
             std::function<void()> functor)
         : is_attached_(false)
         , handler(functor)
     {
     }
 
-    bool get_trigger_value()
+    RTPS_DllAPI bool get_trigger_value()
     {
         return trigger_value_;
     }
 
-    void attached(
+    RTPS_DllAPI void attached(
             bool value)
     {
         is_attached_ = value;
     }
 
-    bool is_attached()
+    RTPS_DllAPI bool is_attached()
     {
         return is_attached_;
     }
@@ -63,7 +63,7 @@ public:
      * @brief set_handler Link a handler to the Condition
      * @param functor Handler that is going to be applied when the Condition is triggered
      */
-    void set_handler(
+    RTPS_DllAPI void set_handler(
             std::function<void()> functor)
     {
         handler = functor;
@@ -73,7 +73,7 @@ public:
      * @brief call_handler Called when the condition is triggered. It call the handler associated
      * to the Condition to manage the change in the application.
      */
-    void call_handler()
+    RTPS_DllAPI void call_handler()
     {
         handler();
     }
@@ -83,11 +83,10 @@ public:
      * @param obj
      * @return Always false as you cannot compare the base class
      */
-    virtual bool operator ==(
+    RTPS_DllAPI virtual bool operator ==(
             Condition* obj) const
     {
         (void) obj;
-        std::cout << "Condition operator" << std::endl;
         return false;
     }
 

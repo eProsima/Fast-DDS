@@ -35,7 +35,7 @@ DomainParticipant* find(
         uint32_t id)
 {
     return (dds::domain::DomainParticipant*) eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-           lookup_participant(id);
+           lookup_participant(static_cast<uint8_t>(id));
 }
 
 } //namespace domain

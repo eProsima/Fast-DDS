@@ -30,6 +30,8 @@
 
 #include <fastrtps/Domain.h>
 
+#include <dds/core/LengthUnlimited.hpp>
+
 #include <map>
 #include <fstream>
 #include <chrono>
@@ -69,7 +71,6 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
     throughput_publisher_.data_discovery_cv_.notify_one();
 }
 
-
 // *******************************************************************************************
 // ********************************** COMMAND SUB LISTENER ***********************************
 // *******************************************************************************************
@@ -103,7 +104,6 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
     throughput_publisher_.command_discovery_cv_.notify_one();
 }
 
-
 // *******************************************************************************************
 // ********************************** COMMAND PUB LISTENER ***********************************
 // *******************************************************************************************
@@ -118,8 +118,8 @@ ThroughputPublisher::CommandPubListener::~CommandPubListener()
 }
 
 void ThroughputPublisher::CommandPubListener::onPublicationMatched(
-    Publisher* /*pub*/,
-    MatchingInfo& info)
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(throughput_publisher_.command_mutex_);
     if (info.status == MATCHED_MATCHING)
@@ -176,7 +176,7 @@ ThroughputPublisher::ThroughputPublisher(
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED));
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED));
         struct_type_builder->set_name("ThroughputType");
         dynamic_type_ = struct_type_builder->build();
         dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
@@ -196,7 +196,7 @@ ThroughputPublisher::ThroughputPublisher(
     if (xml_config_file_.length() > 0)
     {
         if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-            eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                 participant_attributes))
         {
             ready_ = false;
@@ -294,7 +294,7 @@ ThroughputPublisher::ThroughputPublisher(
     command_subscriber_attrs.properties = property_policy;
 
     command_subscriber_ = Domain::createSubscriber(participant_, command_subscriber_attrs,
-        (SubscriberListener*)&this->command_sub_listener_);
+                    (SubscriberListener*)&this->command_sub_listener_);
 
     PublisherAttributes command_publisher_attrs;
     command_publisher_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -314,7 +314,7 @@ ThroughputPublisher::ThroughputPublisher(
     command_publisher_attrs.properties = property_policy;
 
     command_publisher_ = Domain::createPublisher(participant_, command_publisher_attrs,
-        (PublisherListener*)&this->command_pub_listener_);
+                    (PublisherListener*)&this->command_pub_listener_);
 
     // Calculate overhead
     t_start_ = std::chrono::steady_clock::now();
@@ -422,7 +422,7 @@ void ThroughputPublisher::run(
             {
                 // Ensure that the history depth is at least the demand
                 if (pub_attrs_.topic.historyQos.depth < 0 ||
-                    static_cast<uint32_t>(pub_attrs_.topic.historyQos.depth) < command.m_demand)
+                        static_cast<uint32_t>(pub_attrs_.topic.historyQos.depth) < command.m_demand)
                 {
                     logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << command.m_demand);
                     pub_attrs_.topic.resourceLimitsQos.max_samples = command.m_demand;
@@ -434,7 +434,7 @@ void ThroughputPublisher::run(
             {
                 // Ensure that the max samples is at least the demand
                 if (pub_attrs_.topic.resourceLimitsQos.max_samples < 0 ||
-                    static_cast<uint32_t>(pub_attrs_.topic.resourceLimitsQos.max_samples) < command.m_demand)
+                        static_cast<uint32_t>(pub_attrs_.topic.resourceLimitsQos.max_samples) < command.m_demand)
                 {
                     logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << command.m_demand);
                     pub_attrs_.topic.resourceLimitsQos.max_samples = command.m_demand;
@@ -488,7 +488,7 @@ bool ThroughputPublisher::test(
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), msg_size));
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), msg_size));
         struct_type_builder->set_name("ThroughputType");
         dynamic_type_ = struct_type_builder->build();
         dynamic_pub_sub_type_.CleanDynamicType();
@@ -498,7 +498,7 @@ bool ThroughputPublisher::test(
         dynamic_data_type_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
 
         MemberId id;
-        DynamicData *dynamic_data = dynamic_data_type_->loan_value(dynamic_data_type_->get_member_id_at_index(1));
+        DynamicData* dynamic_data = dynamic_data_type_->loan_value(dynamic_data_type_->get_member_id_at_index(1));
         for (uint32_t i = 0; i < msg_size; ++i)
         {
             dynamic_data->insert_sequence_data(id);
@@ -577,7 +577,7 @@ bool ThroughputPublisher::test(
             Else, go ahead with the next batch without time to recover.
             The previous is achieved with a call to sleep_for(). If the duration specified for sleep_for is negative,
             all implementations we know about return without setting the thread to sleep.
-        */
+         */
         std::this_thread::sleep_for(recovery_duration_ns - (t_end_ - batch_start));
 
         clock_overhead += t_overhead_ * 2; // We access the clock twice per batch.

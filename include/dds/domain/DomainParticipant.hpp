@@ -116,7 +116,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    DomainParticipant(
+    OMG_DDS_API DomainParticipant(
             uint32_t id,
             const dds::domain::qos::DomainParticipantQos& qos,
             dds::domain::DomainParticipantListener* listener = NULL,
@@ -154,7 +154,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void listener(
+    OMG_DDS_API void listener(
             Listener* listener,
             const ::dds::core::status::StatusMask& event_mask);
 
@@ -167,7 +167,7 @@ public:
      * @throws dds::core::NullReferenceError
      *                  The entity was not properly created and references to dds::core::null.
      */
-    Listener* listener() const;
+    OMG_DDS_API Listener* listener() const;
 
     /**
      * Gets the DomainParticipantQos setting for this instance.
@@ -183,7 +183,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    const qos::DomainParticipantQos& qos() const;
+    OMG_DDS_API const qos::DomainParticipantQos& qos() const;
 
     /**
      * Sets the DomainParticipantQos setting for this instance.
@@ -199,7 +199,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void qos(
+    OMG_DDS_API void qos(
             const qos::DomainParticipantQos& qos);
 
     /**
@@ -218,7 +218,7 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    uint32_t domain_id() const;
+    OMG_DDS_API uint32_t domain_id() const;
 
 
     /**
@@ -242,7 +242,7 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    void assert_liveliness();
+    OMG_DDS_API void assert_liveliness();
 
 
     /**
@@ -265,7 +265,7 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    bool contains_entity(
+    OMG_DDS_API bool contains_entity(
             const ::dds::core::InstanceHandle& handle);
 
     /**
@@ -281,14 +281,14 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    dds::core::Time current_time() const;
+    OMG_DDS_API dds::core::Time current_time() const;
 
     /** @copydoc dds::domain::DomainParticipant::qos(const dds::domain::qos::DomainParticipantQos& qos) */
-    DomainParticipant& operator <<(
+    OMG_DDS_API DomainParticipant& operator <<(
             const qos::DomainParticipantQos& qos);
 
     /** @copydoc dds::domain::DomainParticipant::qos() */
-    const DomainParticipant& operator >>(
+    OMG_DDS_API const DomainParticipant& operator >>(
             qos::DomainParticipantQos& qos) const;
 
     /**
@@ -314,7 +314,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    static qos::DomainParticipantQos default_participant_qos();
+    OMG_DDS_API static qos::DomainParticipantQos default_participant_qos();
 
     /**
      * Sets the default DomainParticipantQos.
@@ -334,7 +334,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    static void default_participant_qos(
+    OMG_DDS_API static void default_participant_qos(
             const qos::DomainParticipantQos& qos);
 
     /**
@@ -360,7 +360,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    dds::pub::qos::PublisherQos default_publisher_qos() const;
+    OMG_DDS_API dds::pub::qos::PublisherQos default_publisher_qos() const;
 
     /**
      * Sets the default PublisherQos of the DomainParticipant.
@@ -387,7 +387,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    DomainParticipant& default_publisher_qos(
+    OMG_DDS_API DomainParticipant& default_publisher_qos(
             const ::dds::pub::qos::PublisherQos& qos);
 
     /**
@@ -413,7 +413,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    dds::sub::qos::SubscriberQos default_subscriber_qos() const;
+    OMG_DDS_API dds::sub::qos::SubscriberQos default_subscriber_qos() const;
 
     /**
      * Sets the default SubscriberQos of the DomainParticipant.
@@ -440,7 +440,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    DomainParticipant& default_subscriber_qos(
+    OMG_DDS_API DomainParticipant& default_subscriber_qos(
             const ::dds::sub::qos::SubscriberQos& qos);
 
     /**
@@ -466,7 +466,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    dds::topic::qos::TopicQos OMG_DDS_API default_topic_qos() const;
+    OMG_DDS_API dds::topic::qos::TopicQos default_topic_qos() const;
 
     /**
      * Sets the default TopicQos of the DomainParticipant.
@@ -496,11 +496,11 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    DomainParticipant& default_topic_qos(
+    OMG_DDS_API DomainParticipant& default_topic_qos(
             const dds::topic::qos::TopicQos& qos);
 
 
-    dds::core::cond::StatusCondition* status_condition();
+    OMG_DDS_API dds::core::cond::StatusCondition* status_condition();
 
     //=============================================================================
 };

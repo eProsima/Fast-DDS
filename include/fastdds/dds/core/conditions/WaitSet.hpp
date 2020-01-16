@@ -37,24 +37,24 @@ namespace dds {
 
 using ConditionSeq = std::vector<Condition*>;
 
-class RTPS_DllAPI WaitSet
+class WaitSet
 {
 public:
 
-    ReturnCode_t attach_condition(
+    RTPS_DllAPI ReturnCode_t attach_condition(
             Condition* condition);
 
-    ReturnCode_t detach_condition(
+    RTPS_DllAPI ReturnCode_t detach_condition(
             Condition* condition);
 
-    ReturnCode_t wait(
+    RTPS_DllAPI ReturnCode_t wait(
             ConditionSeq& active_conditions,
             const fastrtps::Duration_t& timeout);
 
-    ReturnCode_t dispatch(
+    RTPS_DllAPI ReturnCode_t dispatch(
             const fastrtps::Duration_t& timeout);
 
-    ReturnCode_t get_conditions(
+    RTPS_DllAPI ReturnCode_t get_conditions(
             ConditionSeq& attached_conditions)
     {
         attached_conditions = attached_conditions_;

@@ -43,14 +43,14 @@ public:
     /**
      * Create an nil instance handle.
      */
-    InstanceHandle();
+    OMG_DDS_API InstanceHandle();
 
     /**
      * Create an nil instance handle.
      *
      * @param nullHandle placeholder
      */
-    InstanceHandle(
+    OMG_DDS_API InstanceHandle(
             const null_type& nullHandle);
 
 
@@ -59,11 +59,11 @@ public:
      *
      * @param other InstanceHandle to copy
      */
-    InstanceHandle(
+    OMG_DDS_API InstanceHandle(
             const InstanceHandle& other);
 
     /** @cond */
-    ~InstanceHandle();
+    OMG_DDS_API ~InstanceHandle();
     /** @endcond */
 
     /**
@@ -72,7 +72,7 @@ public:
      * from some other type. This function is intended for internal
      * usage.
      */
-    InstanceHandle(
+    OMG_DDS_API InstanceHandle(
             const detail::InstanceHandle& arg0);
     /** @endcond */
 
@@ -83,7 +83,7 @@ public:
      *
      * @param that The InstanceHandle to assign to this
      */
-    InstanceHandle& operator =(
+    OMG_DDS_API InstanceHandle& operator =(
             const InstanceHandle& that);
 
     /**
@@ -92,7 +92,7 @@ public:
      * @param that The InstanceHandle to compare
      * @return true if they match
      */
-    bool operator ==(
+    OMG_DDS_API bool operator ==(
             const InstanceHandle& that) const;
 
     /**
@@ -101,7 +101,7 @@ public:
      * @param that The InstanceHandle to compare
      * @return true if this is less than that
      */
-    bool operator <(
+    OMG_DDS_API bool operator <(
             const InstanceHandle& that) const;
 
     /**
@@ -110,7 +110,7 @@ public:
      * @param that The InstanceHandle to compare
      * @return true if this is greater than that
      */
-    bool operator >(
+    OMG_DDS_API bool operator >(
             const InstanceHandle& that) const;
 
 public:
@@ -120,14 +120,14 @@ public:
      *
      * @return a nil InstanceHandle
      */
-    static const InstanceHandle nil();
+    OMG_DDS_API static const InstanceHandle nil();
 
     /**
      * Check if the InstanceHandle is nil.
      *
      * @return true if the InstanceHandle is nil
      */
-    bool is_nil() const;
+    OMG_DDS_API bool is_nil() const;
 };
 
 typedef std::vector<InstanceHandle> InstanceHandleSeq;

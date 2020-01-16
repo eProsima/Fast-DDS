@@ -100,7 +100,7 @@ public:
         return send_always_;
     }
 
-    std::string search_qos_by_id(
+    RTPS_DllAPI std::string search_qos_by_id(
             QosPolicyId_t id);
 
 protected:
@@ -117,16 +117,19 @@ public:
     RTPS_DllAPI EntityFactoryQosPolicy()
         : QosPolicy(false, (QosPolicyId_t)15)
         , autoenable_created_entities(true)
-    {}
+    {
+    }
 
     RTPS_DllAPI EntityFactoryQosPolicy(
             bool autoenable)
         : QosPolicy(false, (QosPolicyId_t)15)
         , autoenable_created_entities(autoenable)
-    {}
+    {
+    }
 
     virtual RTPS_DllAPI ~EntityFactoryQosPolicy()
-    {}
+    {
+    }
 
     bool operator ==(
             const EntityFactoryQosPolicy& qos) const
@@ -186,11 +189,11 @@ public:
     {
         switch (kind)
         {
-        default:
-        case VOLATILE_DURABILITY_QOS: return fastrtps::rtps::VOLATILE;
-        case TRANSIENT_LOCAL_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT_LOCAL;
-        case TRANSIENT_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT;
-        case PERSISTENT_DURABILITY_QOS: return fastrtps::rtps::PERSISTENT;
+            default:
+            case VOLATILE_DURABILITY_QOS: return fastrtps::rtps::VOLATILE;
+            case TRANSIENT_LOCAL_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT_LOCAL;
+            case TRANSIENT_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT;
+            case PERSISTENT_DURABILITY_QOS: return fastrtps::rtps::PERSISTENT;
         }
     }
 
@@ -210,11 +213,11 @@ public:
     {
         switch (new_kind)
         {
-        default:
-        case fastrtps::rtps::VOLATILE: kind = VOLATILE_DURABILITY_QOS; break;
-        case fastrtps::rtps::TRANSIENT_LOCAL: kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
-        case fastrtps::rtps::TRANSIENT: kind = TRANSIENT_DURABILITY_QOS; break;
-        case fastrtps::rtps::PERSISTENT: kind = PERSISTENT_DURABILITY_QOS; break;
+            default:
+            case fastrtps::rtps::VOLATILE: kind = VOLATILE_DURABILITY_QOS; break;
+            case fastrtps::rtps::TRANSIENT_LOCAL: kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
+            case fastrtps::rtps::TRANSIENT: kind = TRANSIENT_DURABILITY_QOS; break;
+            case fastrtps::rtps::PERSISTENT: kind = PERSISTENT_DURABILITY_QOS; break;
         }
 
     }

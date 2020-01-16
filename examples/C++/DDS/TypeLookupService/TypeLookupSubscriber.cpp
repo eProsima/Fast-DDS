@@ -118,7 +118,7 @@ void TypeLookupSubscriber::SubListener::on_requested_incompatible_qos(
         DataReader*,
         const RequestedIncompatibleQosStatus& status)
 {
-    QosPolicy qos;
+    eprosima::fastdds::dds::QosPolicy qos;
     std::cout << "The Requested Qos is incompatible with the Offered one." << std::endl;
     std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
         status.last_policy_id) << "." << std::endl;

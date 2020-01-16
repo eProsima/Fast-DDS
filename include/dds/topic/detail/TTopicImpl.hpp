@@ -44,8 +44,8 @@ namespace topic {
 
 template<typename T>
 Topic<T>::Topic(
-        const ::dds::domain::DomainParticipant& dp,
-        const std::string& topic_name)
+        const ::dds::domain::DomainParticipant& /*dp*/,
+        const std::string& /*topic_name*/)
 //    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
 //                dp.delegate().get(),
 //                topic_name,
@@ -55,9 +55,9 @@ Topic<T>::Topic(
 
 template<typename T>
 Topic<T>::Topic(
-        const ::dds::domain::DomainParticipant& dp,
-        const std::string& topic_name,
-        const std::string& type_name)
+        const ::dds::domain::DomainParticipant& /*dp*/,
+        const std::string& /*topic_name*/,
+        const std::string& /*type_name*/)
 //    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
 //                dp.delegate().get(),
 //                topic_name,
@@ -68,11 +68,11 @@ Topic<T>::Topic(
 
 template<typename T>
 Topic<T>::Topic(
-        const ::dds::domain::DomainParticipant& dp,
-        const std::string& topic_name,
-        const dds::topic::qos::TopicQos& qos,
+        const ::dds::domain::DomainParticipant& /*dp*/,
+        const std::string& /*topic_name*/,
+        const dds::topic::qos::TopicQos& /*qos*/,
         dds::topic::TopicListener<T>* /*listener*/,
-        const ::dds::core::status::StatusMask& mask)
+        const ::dds::core::status::StatusMask& /*mask*/)
 //    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
 //                dp.delegate().get(),
 //                topic_name,
@@ -86,12 +86,12 @@ Topic<T>::Topic(
 
 template<typename T>
 Topic<T>::Topic(
-        const ::dds::domain::DomainParticipant& dp,
-        const std::string& topic_name,
-        const std::string& type_name,
-        const dds::topic::qos::TopicQos& qos,
+        const ::dds::domain::DomainParticipant& /*dp*/,
+        const std::string& /*topic_name*/,
+        const std::string& /*type_name*/,
+        const dds::topic::qos::TopicQos& /*qos*/,
         dds::topic::TopicListener<T>* /*listener*/,
-        const ::dds::core::status::StatusMask& mask)
+        const ::dds::core::status::StatusMask& /*mask*/)
 //    : ::dds::core::Reference<detail::Topic>(new detail::Topic(
 //                dp.delegate().get(),
 //                topic_name,

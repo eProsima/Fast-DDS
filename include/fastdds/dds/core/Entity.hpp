@@ -34,11 +34,11 @@ namespace dds {
  * a status condition.
  *
  */
-class RTPS_DllAPI Entity
+class Entity
 {
 public:
 
-    Entity(
+    RTPS_DllAPI Entity(
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
         : status_condition_(this)
         , enable_(false)
@@ -50,13 +50,13 @@ public:
      * @brief enable This operation enables the Entity
      * @return true
      */
-    virtual fastrtps::types::ReturnCode_t enable()
+    RTPS_DllAPI virtual fastrtps::types::ReturnCode_t enable()
     {
         enable_ = true;
         return fastrtps::types::ReturnCode_t::RETCODE_OK;
     }
 
-    void close()
+    RTPS_DllAPI void close()
     {
         enable_ = false;
     }
@@ -65,7 +65,7 @@ public:
      * @brief get_statuscondition Retrieves the StatusCondition associated to the Entity
      * @return Pointer to the StatusCondition
      */
-    StatusCondition* get_statuscondition()
+    RTPS_DllAPI StatusCondition* get_statuscondition()
     {
         return &status_condition_;
     }
@@ -74,7 +74,7 @@ public:
      * @brief get_status_mask Retrieves the set of relevant statuses for the Entity
      * @return Reference to the StatusMask with the relevant statuses set to 1
      */
-    const ::dds::core::status::StatusMask& get_status_mask() const
+    RTPS_DllAPI const ::dds::core::status::StatusMask& get_status_mask() const
     {
         return status_condition_.get_enabled_statuses();
     }
@@ -84,7 +84,7 @@ public:
      * the application read it
      * @return Reference to a StatusMask with the triggered status set to 1
      */
-    const ::dds::core::status::StatusMask& get_status_changes() const
+    RTPS_DllAPI const ::dds::core::status::StatusMask& get_status_changes() const
     {
         return status_condition_.get_triggered_status();
     }
@@ -93,7 +93,7 @@ public:
      * @brief get_instance_handle Retrieves the instance handler that represents the Entity
      * @return Reference to the InstanceHandle
      */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
+    RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
     {
         return instance_handle_;
     }
@@ -102,7 +102,7 @@ public:
      * @brief is_enabled Checks if the Entity is enabled
      * @return true if enabled, false if not
      */
-    bool is_enabled() const
+    RTPS_DllAPI bool is_enabled() const
     {
         if (enable_)
         {
@@ -111,7 +111,7 @@ public:
         return false;
     }
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const Entity& other) const
     {
         return (this->instance_handle_ == other.instance_handle_);
@@ -119,7 +119,7 @@ public:
 
 protected:
 
-    void set_instance_handle(
+    RTPS_DllAPI void set_instance_handle(
             const fastrtps::rtps::InstanceHandle_t& handle)
     {
         instance_handle_ = handle;
@@ -138,11 +138,11 @@ protected:
  * @brief The DomainEntity class Subclass of Entity created in order to differentiate between DomainParticipants
  * and the rest of Entities
  */
-class RTPS_DllAPI DomainEntity : public Entity
+class DomainEntity : public Entity
 {
 public:
 
-    DomainEntity(
+    RTPS_DllAPI DomainEntity(
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
         : Entity(mask)
     {

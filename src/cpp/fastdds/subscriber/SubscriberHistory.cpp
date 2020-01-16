@@ -358,7 +358,7 @@ void SubscriberHistory::deserialize_change(
         info->view_state = ::dds::sub::status::ViewState::new_view();
         info->publication_handle = change->writerGUID;
         info->source_timestamp = change->sourceTimestamp;
-        info->sample_rank = change->sequenceNumber.to64long();
+        info->sample_rank = static_cast<uint32_t>(change->sequenceNumber.to64long());
         info->valid_data = false;
         auto instance_it = instance_info_.find(change->instanceHandle);
         if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)

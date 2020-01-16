@@ -38,15 +38,15 @@ class Entity;
 /**
  * @brief The StatusCondition class
  */
-class RTPS_DllAPI StatusCondition : public Condition
+class StatusCondition : public Condition
 {
 public:
 
-    StatusCondition(
+    RTPS_DllAPI StatusCondition(
             Entity* entity);
 
 
-    StatusCondition(
+    RTPS_DllAPI StatusCondition(
             Entity* entity,
             std::function<void()> functor);
 
@@ -56,7 +56,7 @@ public:
      * @param mask New set of enabled statuses
      * @return true
      */
-    ReturnCode_t set_enabled_statuses(
+    RTPS_DllAPI ReturnCode_t set_enabled_statuses(
             const ::dds::core::status::StatusMask& mask);
 
     /**
@@ -64,7 +64,7 @@ public:
      * trigger_value
      * @return StatusMask with the relevant statuses set to 1
      */
-    const ::dds::core::status::StatusMask& get_enabled_statuses() const;
+    RTPS_DllAPI const ::dds::core::status::StatusMask& get_enabled_statuses() const;
 
 
     /**
@@ -72,19 +72,19 @@ public:
      * application read it
      * @return StatusMask with the triggered statuses set to 1
      */
-    const ::dds::core::status::StatusMask& get_triggered_status() const;
+    RTPS_DllAPI const ::dds::core::status::StatusMask& get_triggered_status() const;
 
     /**
      * @brief get_entity Retrieves the entity asociated with the StatusCondition
      * @return Pointer to the entity
      */
-    Entity* get_entity();
+    RTPS_DllAPI Entity* get_entity();
 
     /**
      * @brief notify_status_change Notifies to the StatusCondition of a status change within the application
      * @param mask StatusMask that indicates which status is changed
      */
-    void notify_status_change(
+    RTPS_DllAPI void notify_status_change(
             const ::dds::core::status::StatusMask& mask);
 
     /**
@@ -92,18 +92,18 @@ public:
      * to a concrete status
      * @param mask StatusMask that indicated which status is managed
      */
-    void set_status_as_read(
+    RTPS_DllAPI void set_status_as_read(
             const ::dds::core::status::StatusMask& mask);
 
-    inline bool operator ==(
+    RTPS_DllAPI inline bool operator ==(
             StatusCondition* obj) const;
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             Condition* obj) const override;
 
 private:
 
-    void set_trigger_value(
+    RTPS_DllAPI void set_trigger_value(
             bool value);
 
     //!Associated Entity

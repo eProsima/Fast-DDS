@@ -80,7 +80,7 @@ public:
     OwnershipQosPolicy ownership;
 
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const TopicQos& b) const
     {
         return (this->topic_data == b.topic_data) &&
@@ -98,7 +98,7 @@ public:
                (this->ownership == b.ownership);
     }
 
-    TopicQos& operator <<(
+    RTPS_DllAPI TopicQos& operator <<(
             const fastrtps::ReliabilityQosPolicy& qos)
     {
         reliability = qos;
@@ -126,7 +126,7 @@ public:
 
 };
 
-extern const TopicQos TOPIC_QOS_DEFAULT;
+RTPS_DllAPI extern const TopicQos TOPIC_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

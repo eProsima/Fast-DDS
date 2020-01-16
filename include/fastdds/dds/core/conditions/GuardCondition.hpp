@@ -35,16 +35,16 @@ namespace dds {
  * This is accomplished by attaching a GuarCondition to the WaitSet and then setting the trigger_value by
  * means of the set_trigger_value operation.
  */
-class RTPS_DllAPI GuardCondition : public Condition
+class GuardCondition : public Condition
 {
 public:
 
-    GuardCondition()
+    RTPS_DllAPI GuardCondition()
     {
         set_trigger_value(false);
     }
 
-    GuardCondition(
+    RTPS_DllAPI GuardCondition(
             std::function<void()> functor,
             bool trigger_value = false)
         : Condition(functor)
@@ -52,7 +52,7 @@ public:
         set_trigger_value(trigger_value);
     }
 
-    ReturnCode_t set_trigger_value(
+    RTPS_DllAPI ReturnCode_t set_trigger_value(
             bool value)
     {
         trigger_value_ = value;
@@ -64,7 +64,7 @@ public:
      * @param obj
      * @return Always true
      */
-    inline bool operator ==(
+    RTPS_DllAPI inline bool operator ==(
             GuardCondition* obj) const
     {
         (void) obj;

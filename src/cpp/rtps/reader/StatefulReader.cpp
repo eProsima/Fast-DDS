@@ -1081,9 +1081,9 @@ void StatefulReader::new_lost_sample(
 {
     if (seq_num > (low_mark + 1))
     {
-        int num_samples = (seq_num - (low_mark + 1)).to64long();
-        sample_lost_status_.total_count += num_samples;
-        sample_lost_status_.total_count_change += num_samples;
+        uint64_t num_samples = (seq_num - (low_mark + 1)).to64long();
+        sample_lost_status_.total_count += static_cast<uint32_t>(num_samples);
+        sample_lost_status_.total_count_change += static_cast<uint32_t>(num_samples);
         getListener()->on_sample_lost(this, sample_lost_status_);
     }
 }

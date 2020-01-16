@@ -35,27 +35,27 @@ namespace dds {
 /**
  * @brief The ReadCondition class
  */
-class RTPS_DllAPI ReadCondition : public Condition
+class ReadCondition : public Condition
 {
 public:
 
-    ReadCondition(
+    RTPS_DllAPI ReadCondition(
             DataReader* reader,
             const ::dds::sub::status::SampleState& sample_mask = ::dds::sub::status::SampleState::any(),
             const ::dds::sub::status::ViewState& view_mask = ::dds::sub::status::ViewState::any(),
             const ::dds::sub::status::InstanceState& instance_mask = ::dds::sub::status::InstanceState::any());
 
-    virtual ~ReadCondition();
+    RTPS_DllAPI virtual ~ReadCondition();
 
-    DataReader* get_datareader();
+    RTPS_DllAPI DataReader* get_datareader();
 
-    ::dds::sub::status::SampleState get_sample_state_mask();
+    RTPS_DllAPI ::dds::sub::status::SampleState get_sample_state_mask();
 
-    ::dds::sub::status::ViewState get_view_state_mask();
+    RTPS_DllAPI ::dds::sub::status::ViewState get_view_state_mask();
 
-    ::dds::sub::status::InstanceState get_instance_state_mask();
+    RTPS_DllAPI ::dds::sub::status::InstanceState get_instance_state_mask();
 
-    inline bool operator ==(
+    RTPS_DllAPI inline bool operator ==(
             ReadCondition* obj) const;
 
 private:
