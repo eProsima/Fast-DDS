@@ -774,7 +774,7 @@ bool ThroughputPublisher::load_recoveries()
             iss >> input_recovery;
             if (input_recovery < 0)
             {
-                std::cout << "Recovery times must be positive. " << recovery << " found" << std::endl;
+                std::cout << "Recovery times must be positive. " << input_recovery << " found" << std::endl;
                 return false;
             }
             recovery = static_cast<uint32_t>(input_recovery);
