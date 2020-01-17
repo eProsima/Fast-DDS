@@ -706,7 +706,9 @@ bool StatelessWriter::send(
         return false;
     }
 
-    return mp_RTPSParticipant->sendSync(message, Locators(fixed_locators_.begin()), Locators(fixed_locators_.end()), max_blocking_time_point);
+    return fixed_locators_.empty() ||
+       mp_RTPSParticipant->sendSync(message, Locators(fixed_locators_.begin()), Locators(
+                   fixed_locators_.end()), max_blocking_time_point);
 }
 
 } /* namespace rtps */
