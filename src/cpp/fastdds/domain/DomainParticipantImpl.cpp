@@ -114,6 +114,14 @@ void DomainParticipantImpl::disable()
             sub_it->second->disable();
         }
     }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+        for (auto topic_it = topics_.begin(); topic_it != topics_.end(); ++topic_it)
+        {
+            topic_it->second->disable();
+        }
+    }
 }
 
 DomainParticipantImpl::~DomainParticipantImpl()
@@ -137,6 +145,19 @@ DomainParticipantImpl::~DomainParticipantImpl()
         }
         subscribers_.clear();
         subscribers_by_handle_.clear();
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+
+        for (auto topic_it = topics_.begin(); topic_it != topics_.end(); ++topic_it)
+        {
+            delete topic_it->second;
+        }
+        topics_.clear();
+        topics_by_handle_.clear();
+        topics_by_name_.clear();
+
     }
 
     if (rtps_participant_ != nullptr)

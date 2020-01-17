@@ -93,9 +93,9 @@ public:
 
     RTPS_DllAPI DomainParticipant* get_participant() const;
 
-    RTPS_DllAPI std::vector<DataWriter*>* get_writers() const;
+    RTPS_DllAPI std::vector<DataWriter*>* get_writers();
 
-    RTPS_DllAPI std::vector<DataReader*>* get_readers() const;
+    RTPS_DllAPI std::vector<DataReader*>* get_readers();
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t set_instance_handle(
             const fastrtps::rtps::InstanceHandle_t& handle);

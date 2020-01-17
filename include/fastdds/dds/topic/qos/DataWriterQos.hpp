@@ -152,7 +152,7 @@ public:
 
 };
 
-extern const DataWriterQos DDS_DATAWRITER_QOS_DEFAULT;
+RTPS_DllAPI extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

@@ -37,6 +37,11 @@ TopicImpl::TopicImpl(
 {
 }
 
+void TopicImpl::disable()
+{
+    set_listener(nullptr);
+}
+
 TopicImpl::~TopicImpl()
 {
     delete user_topic_;
@@ -113,14 +118,14 @@ DomainParticipant* TopicImpl::get_participant() const
     return participant_;
 }
 
-std::vector<DataWriter*>* TopicImpl::get_writers() const
+std::vector<DataWriter*>* TopicImpl::get_writers()
 {
-    return const_cast<std::vector<DataWriter*>*>(&writers_);
+    return &writers_;
 }
 
-std::vector<DataReader*>* TopicImpl::get_readers() const
+std::vector<DataReader*>* TopicImpl::get_readers()
 {
-    return const_cast<std::vector<DataReader*>*>(&readers_);
+    return &readers_;
 }
 
 void TopicImpl::new_inconsistent_topic(

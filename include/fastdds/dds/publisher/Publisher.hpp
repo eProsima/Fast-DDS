@@ -22,6 +22,7 @@
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/TypesBase.h>
@@ -56,7 +57,6 @@ class PublisherImpl;
 class PublisherQos;
 class DataWriter;
 class DataWriterListener;
-class DataWriterQos;
 class Topic;
 class TopicQos;
 
@@ -133,15 +133,9 @@ public:
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
-            const DataWriterQos& writer_qos,
-            DataWriterListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
-
-    RTPS_DllAPI DataWriter* create_datawriter(
             Topic* topic,
-            const DataWriterQos& qos,
-            DataWriterListener* listener,
+            const DataWriterQos& qos = DATAWRITER_QOS_DEFAULT,
+            DataWriterListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**

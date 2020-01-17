@@ -86,14 +86,14 @@ class DataReader : public DomainEntity
     RTPS_DllAPI DataReader(
             const Subscriber* pub,
             Topic* topic,
-            const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
+            const DataReaderQos& qos = DATAREADER_QOS_DEFAULT,
             DataReaderListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     RTPS_DllAPI DataReader(
             const Subscriber* pub,
             const TopicDescription& topic_desc,
-            const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
+            const DataReaderQos& qos = DATAREADER_QOS_DEFAULT,
             DataReaderListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 

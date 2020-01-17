@@ -97,12 +97,12 @@ DomainParticipant* Topic::get_participant() const
     return impl_->get_participant();
 }
 
-std::vector<DataWriter*>* Topic::get_writers() const
+std::vector<DataWriter*>* Topic::get_writers()
 {
     return impl_->get_writers();
 }
 
-std::vector<DataReader*>* Topic::get_readers() const
+std::vector<DataReader*>* Topic::get_readers()
 {
     return impl_->get_readers();
 }

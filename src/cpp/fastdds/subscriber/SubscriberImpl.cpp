@@ -382,9 +382,9 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
-    if (&qos == &DDS_DATAREADER_QOS_DEFAULT)
+    if (&qos == &DATAREADER_QOS_DEFAULT)
     {
-        default_datareader_qos_.set_qos(DDS_DATAREADER_QOS_DEFAULT, true);
+        default_datareader_qos_.set_qos(DATAREADER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
     else if (qos.check_qos())

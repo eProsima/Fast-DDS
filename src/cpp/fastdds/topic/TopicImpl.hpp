@@ -35,6 +35,7 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
@@ -84,15 +85,18 @@ public:
 
     RTPS_DllAPI DomainParticipant* get_participant() const;
 
-    RTPS_DllAPI std::vector<DataWriter*>* get_writers() const;
+    RTPS_DllAPI std::vector<DataWriter*>* get_writers();
 
-    RTPS_DllAPI std::vector<DataReader*>* get_readers() const;
+    RTPS_DllAPI std::vector<DataReader*>* get_readers();
 
     void new_inconsistent_topic(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     bool is_entity_already_checked(
             const fastrtps::rtps::InstanceHandle_t& handle);
+
+    //! Remove all listeners in the hierarchy to allow a quiet destruction
+    void disable();
 
     Topic* user_topic_;
 

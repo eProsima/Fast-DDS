@@ -23,7 +23,7 @@
 
 using namespace eprosima::fastdds::dds;
 
-const DataReaderQos eprosima::fastdds::dds::DDS_DATAREADER_QOS_DEFAULT;
+RTPS_DllAPI const DataReaderQos eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
 
 
 void DataReaderQos::set_qos(

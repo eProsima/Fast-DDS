@@ -137,7 +137,7 @@ public:
 
 };
 
-extern const DataReaderQos DDS_DATAREADER_QOS_DEFAULT;
+RTPS_DllAPI extern const DataReaderQos DATAREADER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

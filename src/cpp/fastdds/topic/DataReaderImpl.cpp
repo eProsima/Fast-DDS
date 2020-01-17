@@ -59,7 +59,7 @@ DataReaderImpl::DataReaderImpl(
     , topic_att_(topic->get_topic_attributes(qos))
     , topic_(topic)
     , att_(att)
-    , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
+    , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
     , history_(topic_att_,
             type_.get(),
@@ -412,8 +412,6 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         const SubscriptionMatchedStatus& info)
 {
     bool matched = false;
-
-    std::cout << "Data Reader On Reader Matched" << std::endl;
 
     //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
     if (data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::subscription_matched())

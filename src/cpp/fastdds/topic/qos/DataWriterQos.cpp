@@ -23,7 +23,7 @@
 
 using namespace eprosima::fastdds::dds;
 
-const DataWriterQos eprosima::fastdds::dds::DDS_DATAWRITER_QOS_DEFAULT;
+RTPS_DllAPI const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
 
 DataWriterQos::DataWriterQos()

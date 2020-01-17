@@ -37,10 +37,15 @@ class ReaderQos
 {
 public:
 
-    RTPS_DllAPI ReaderQos() {}
-    RTPS_DllAPI virtual ~ReaderQos() {}
+    RTPS_DllAPI ReaderQos()
+    {
+    }
 
-    bool operator==(
+    RTPS_DllAPI virtual ~ReaderQos()
+    {
+    }
+
+    bool operator ==(
             const ReaderQos& b) const
     {
         return (this->m_durability == b.m_durability) &&
@@ -140,8 +145,6 @@ public:
     RTPS_DllAPI bool canQosBeUpdated(
             const ReaderQos& qos) const;
 };
-
-RTPS_DllAPI extern const ReaderQos DATAREADER_QOS_DEFAULT;
 
 } //namespace dds
 } //namespace fastdds
