@@ -1279,7 +1279,7 @@ bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t participant_guid) const
     uint16_t plength;
     uint32_t qos_size = 0;
 
-    uint32_t original_pos = cdr_pdata->pos;
+    uint32_t original_pos = msg->pos;
     while (!is_sentinel)
     {
         // Align to 4 byte boundary
@@ -1305,9 +1305,9 @@ bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t participant_guid) const
                         return false;
                     }
                     ParameterKey_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(&msg, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    iHandle2GUID(participant_guid, p->key);
+                    iHandle2GUID(participant_guid, p.key);
                     break;
                 }
                 case PID_PARTICIPANT_GUID:
@@ -1317,9 +1317,9 @@ bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t participant_guid) const
                         return false;
                     }
                     ParameterGuid_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(&msg, plength);
+                    valid &= p.readFromCDRMessage(msg, plength);
                     IF_VALID_CALL()
-                    participant_guid = p->guid;
+                    participant_guid = p.guid;
                     break;
                 }
                 case PID_SENTINEL:
@@ -1456,7 +1456,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
 
-    if(!readFromCDRMessage(cdr_pdata, participant_guid))
+    if(!readFromCDRMessage(&cdr_pdata, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1853,7 +1853,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
 
-    if (!readFromCDRMessage(cdr_pdata, participant_guid))
+    if (!readFromCDRMessage(&cdr_pdata, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
