@@ -756,6 +756,159 @@ TEST_F(SharedMemTests, simple_latency2)
 	thread_publisher.join();
 }
 
+TEST_F(SharedMemTests, simple_throughput)
+{
+    const size_t sample_size = 1024;
+    int num_samples_per_batch = 100000;
+
+    std::atomic<int> samples_received(0);
+
+    octet sample_data[sample_size];
+    memset(sample_data, 0, sizeof(sample_data));
+
+    Locator_t sub_locator;
+    sub_locator.kind = LOCATOR_KIND_SHMEM;
+    sub_locator.port = 0;
+
+    Locator_t pub_locator;
+    pub_locator.kind = LOCATOR_KIND_SHMEM;
+    pub_locator.port = 1;
+
+    SharedMemTransportDescriptor my_descriptor;
+
+    my_descriptor.port_queue_capacity = num_samples_per_batch;
+    my_descriptor.segment_size = sample_size * num_samples_per_batch;
+
+    // Subscriber
+
+    SharedMemTransport sub_transport(my_descriptor);
+    ASSERT_TRUE(sub_transport.init());
+
+    MockReceiverResource sub_receiver(sub_transport, sub_locator);
+    MockMessageReceiver* sub_msg_recv = dynamic_cast<MockMessageReceiver*>(sub_receiver.CreateMessageReceiver());
+
+    std::function<void()> sub_callback = [&]()
+        {
+            samples_received.fetch_add(1);
+        };
+
+    sub_msg_recv->setCallback(sub_callback);
+
+    // Publisher
+
+    SharedMemTransport pub_transport(my_descriptor);
+    ASSERT_TRUE(pub_transport.init());
+
+    LocatorList_t send_locators_list;
+    send_locators_list.push_back(sub_locator);
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(pub_transport.OpenOutputChannel(send_resource_list, sub_locator));
+
+    auto t0 = std::chrono::high_resolution_clock::now();
+
+    for (int i=0; i<num_samples_per_batch; i++)
+    {
+        Locators locators_begin(send_locators_list.begin());
+        Locators locators_end(send_locators_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(sample_data, sizeof(sample_data), &locators_begin, &locators_end,
+                (std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
+    }
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+
+    auto real_samples_received = samples_received.load();
+    printf("Samples [sent,received] [%d,%d] send_time_per_sample %.3f(us)\n"
+        , num_samples_per_batch
+        , real_samples_received
+        , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
+}
+
+// This test is linux only
+/*TEST_F(SharedMemTests, simple_throughput_inter)
+{
+    const size_t sample_size = 1024;
+    int num_samples_per_batch = 100000;
+
+    std::atomic<int> samples_received(0);
+
+    octet sample_data[sample_size];
+    memset(sample_data, 0, sizeof(sample_data));
+
+    Locator_t sub_locator;
+    sub_locator.kind = LOCATOR_KIND_SHMEM;
+    sub_locator.port = 0;
+
+    Locator_t pub_locator;
+    pub_locator.kind = LOCATOR_KIND_SHMEM;
+    pub_locator.port = 1;
+
+    SharedMemTransportDescriptor my_descriptor;
+
+    my_descriptor.port_queue_capacity = num_samples_per_batch;
+    my_descriptor.segment_size = sample_size * num_samples_per_batch;
+
+    // Child
+    if(fork() == 0)
+    {
+        Semaphore sem_end_subscriber;
+
+        // Subscriber
+        SharedMemTransport sub_transport(my_descriptor);
+        ASSERT_TRUE(sub_transport.init());
+
+        MockReceiverResource sub_receiver(sub_transport, sub_locator);
+        MockMessageReceiver* sub_msg_recv = dynamic_cast<MockMessageReceiver*>(sub_receiver.CreateMessageReceiver());
+
+        std::function<void()> sub_callback = [&]()
+            {
+                if(samples_received.fetch_add(1)+1 == num_samples_per_batch)
+                {
+                    sem_end_subscriber.post();
+                }
+            };
+
+        sub_msg_recv->setCallback(sub_callback);
+
+        sem_end_subscriber.wait();
+
+        printf("Samples [received] [%d]\n", samples_received.load());
+    }
+    else
+    {
+        // Give time to the subscriber to listen
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        // Publisher
+        SharedMemTransport pub_transport(my_descriptor);
+        ASSERT_TRUE(pub_transport.init());
+
+        LocatorList_t send_locators_list;
+        send_locators_list.push_back(sub_locator);
+
+        SendResourceList send_resource_list;
+        ASSERT_TRUE(pub_transport.OpenOutputChannel(send_resource_list, sub_locator));
+
+        auto t0 = std::chrono::high_resolution_clock::now();
+
+        for (int i=0; i<num_samples_per_batch; i++)
+        {
+            Locators locators_begin(send_locators_list.begin());
+            Locators locators_end(send_locators_list.end());
+
+            EXPECT_TRUE(send_resource_list.at(0)->send(sample_data, sizeof(sample_data), &locators_begin, &locators_end,
+                    (std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
+        }
+
+        auto t1 = std::chrono::high_resolution_clock::now();
+
+        printf("Samples [sent] [%d] send_time_per_sample %.3f(us)\n"
+            , num_samples_per_batch
+            , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
+    }
+}*/
+
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);
