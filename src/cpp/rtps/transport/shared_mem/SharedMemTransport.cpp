@@ -401,43 +401,46 @@ bool SharedMemTransport::send(
 
     bool ret = true;
 
-	std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
-
-	try
+	if(it != *destination_locators_end)
 	{
-		shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size);
+		std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
 
-		while (it != *destination_locators_end)
+		try
 		{
-			auto now = std::chrono::steady_clock::now();
-
-			if (now < max_blocking_time_point)
+			shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size);
+	
+			do
 			{
-				ret &=	send(shared_buffer, 
-							*it,
-							std::chrono::duration_cast<std::chrono::microseconds>(max_blocking_time_point - now));
+				auto now = std::chrono::steady_clock::now();
 
-				++it;
-			}
-			else // Time is out
+				if (now < max_blocking_time_point)
+				{
+					ret &=	send(shared_buffer, 
+								*it,
+								std::chrono::duration_cast<std::chrono::microseconds>(max_blocking_time_point - now));
+
+					++it;
+				}
+				else // Time is out
+				{
+					ret = false;
+					break;
+				}
+			}while (it != *destination_locators_end);
+		}
+		catch(const std::exception& e)
+		{
+			logWarning(RTPS_MSG_OUT, e.what());
+
+			// Segment overflow with discard policy doesn't return error.
+			if(!shared_buffer && configuration_.segment_overflow_policy == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
 			{
-				ret = false;
-				break;
+				ret = true;
 			}
-		}
-	}
-	catch(const std::exception& e)
-	{
-		logWarning(RTPS_MSG_OUT, e.what());
-
-		// Segment overflow with discard policy doesn't return error.
-		if(!shared_buffer && configuration_.segment_overflow_policy == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
-		{
-			ret = true;
-		}
-		else
-		{
-			ret = false;	
+			else
+			{
+				ret = false;	
+			}
 		}
 	}
 
