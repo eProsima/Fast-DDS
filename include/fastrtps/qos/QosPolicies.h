@@ -1865,7 +1865,7 @@ public:
             rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(
             rtps::CDRMessage_t* msg,
-            uint32_t size);
+            uint32_t size) override;
 };
 
 /**
@@ -1939,7 +1939,7 @@ public:
             rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(
             rtps::CDRMessage_t* msg,
-            uint32_t size);
+            uint32_t size) override;
 };
 
 }

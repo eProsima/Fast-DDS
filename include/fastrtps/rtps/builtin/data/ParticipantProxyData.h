@@ -21,8 +21,8 @@
 #define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../../../qos/ParameterList.h"
-#include "../../../qos/QosPolicies.h"
+#include "fastrtps/qos/ParameterList.h"
+#include "fastrtps/qos/QosPolicies.h"
 
 #include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include "../../attributes/WriterAttributes.h"
