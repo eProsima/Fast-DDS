@@ -23,7 +23,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/TopicAttributes.h"
-#include "../../../qos/ParameterList.h"
+#include "fastrtps/qos/ParameterList.h"
 #include "../../../qos/ReaderQos.h"
 
 #include "../../attributes/WriterAttributes.h"
