@@ -24,7 +24,7 @@
 
 #include "../../../qos/WriterQos.h"
 #include "../../../attributes/TopicAttributes.h"
-#include "../../../qos/ParameterList.h"
+#include "fastrtps/qos/ParameterList.h"
 
 #include "../../../utils/fixed_size_string.hpp"
 #include "../../attributes/RTPSParticipantAllocationAttributes.hpp"

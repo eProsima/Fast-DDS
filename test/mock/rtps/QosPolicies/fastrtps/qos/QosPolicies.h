@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/common/Types.h>
 #include <fastrtps/rtps/common/Time_t.h>
 #include <fastrtps/qos/ParameterTypes.h>
+#include <fastrtps/types/TypeObject.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -1650,7 +1651,7 @@ public:
 
     bool readFromCDRMessage(
             rtps::CDRMessage_t* /*msg*/,
-            uint32_t /*size*/)
+            uint32_t /*size*/) override
     {
         return true;
     }
