@@ -57,7 +57,6 @@ public:
         : segment_(boost::interprocess::create_only, name.c_str(), size + EXTRA_SEGMENT_SIZE)
         , name_(name)
     {
-
     }
 
     SharedMemSegment(
@@ -109,14 +108,24 @@ public:
     {
         try
         {
-            Id uuid;
-            boost::interprocess::managed_shared_memory 
-                    test_segment(boost::interprocess::create_only, uuid.to_string().c_str(), (std::max)((size_t)1024,allocation_alignment*4));
+            uint32_t extra_size;
 
-            auto m1 = test_segment.get_free_memory();
-            test_segment.allocate_aligned(1, allocation_alignment);
-            auto m2 = test_segment.get_free_memory();
-            return static_cast<uint32_t>(m1-m2);
+            Id uuid;
+            uuid.generate();
+                
+            {
+                boost::interprocess::managed_shared_memory 
+                        test_segment(boost::interprocess::create_only, uuid.to_string().c_str(), (std::max)((size_t)1024,allocation_alignment*4));
+
+                auto m1 = test_segment.get_free_memory();
+                test_segment.allocate_aligned(1, allocation_alignment);
+                auto m2 = test_segment.get_free_memory();
+                extra_size = static_cast<uint32_t>(m1-m2);
+            }
+
+            boost::interprocess::shared_memory_object::remove(uuid.to_string().c_str());
+
+            return extra_size;
 
         }
         catch(const std::exception&)

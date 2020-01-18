@@ -25,6 +25,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+using Log = fastdds::dds::Log;
+
 /**
  *  Provides functionality for the application to: 
  * 
@@ -40,6 +42,11 @@ private:
         std::atomic<uint32_t> ref_count;
         SharedMemSegment::offset data_offset;
         uint32_t data_size;
+    };
+
+    struct SegmentNode
+    {
+        std::atomic<uint32_t> ref_count;
     };
 
 public:
@@ -128,6 +135,7 @@ public:
         Segment(
                 uint32_t size)
             : segment_id_()
+            , overflows_count_(0)
         {
 			segment_id_.generate();
 
@@ -137,6 +145,25 @@ public:
 
             segment_ = std::unique_ptr<SharedMemSegment>(
                 new SharedMemSegment(boost::interprocess::create_only, segment_name.c_str(), size));
+
+            // Init the segment node
+            segment_node_ = segment_->get().construct<SegmentNode>("segment_node")();
+            segment_node_->ref_count.exchange(1);
+        }
+
+        ~Segment()
+        {
+            if(segment_node_->ref_count.fetch_sub(1) == 1)
+            {
+                segment_.reset();
+                SharedMemSegment::remove(segment_id_.to_string().c_str());
+            }
+
+            if(overflows_count_)
+            {
+                logWarning(RTPS_TRANSPORT_SHMEM, "Segment " << segment_id_.to_string().c_str()
+                            << " closed. It had " << "overflows_count " << overflows_count_);
+            }
         }
 
         SharedMemSegment::Id id()
@@ -180,6 +207,8 @@ public:
                     segment_->get().deallocate(data);
                 }
 
+                overflows_count_++;
+
                 throw;
             }
 
@@ -188,10 +217,12 @@ public:
 
     private:
 
+        SegmentNode* segment_node_;
         std::list<BufferNode*> allocated_nodes_;
         std::mutex alloc_mutex_;
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
+        uint64_t overflows_count_;
 
         void release_buffer(
                 BufferNode* buffer_node)
@@ -330,14 +361,14 @@ public:
             shared_mem_buffer->increase_ref();
 
             bool ret;
-            bool are_listeners_active;
+            bool are_listeners_active = false;
 
             try
             {
                 ret = global_port_->try_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
                         &are_listeners_active);
 
-                if (!ret || !are_listeners_active)
+                if (!are_listeners_active)
                 {
                     shared_mem_buffer->decrease_ref();
                 }
@@ -375,8 +406,8 @@ public:
     {
         // Every buffer allocated implies two internal allocations, node and payload.
         // Every internal allocation consumes 'per_allocation_extra_size_' bytes
-        uint32_t allocation_extra_size = max_allocations * 
-            ((sizeof(BufferNode) + per_allocation_extra_size_) + per_allocation_extra_size_);
+        uint32_t allocation_extra_size = sizeof(SegmentNode) + per_allocation_extra_size_ +
+            max_allocations * ((sizeof(BufferNode) + per_allocation_extra_size_) + per_allocation_extra_size_);
 
         return std::make_shared<Segment>(size + allocation_extra_size);
     }
@@ -391,14 +422,63 @@ public:
 
 private:
 
+    /**
+     * Controls life-cycle of a remote segment
+     */
+    class SegmentWrapper
+    {
+    public:
+        SegmentWrapper()
+        {
+
+        }
+        
+        SegmentWrapper(std::shared_ptr<SharedMemSegment> segment_,
+                SharedMemSegment::Id segment_id)
+            : segment_(segment_)
+            , segment_id_(segment_id)
+        {
+            segment_node_ = segment_->get().find<SegmentNode>("segment_node").first;
+            segment_node_->ref_count.fetch_add(1);
+        }
+
+        SegmentWrapper& operator=(SegmentWrapper&& other)
+        {
+            segment_ = other.segment_;
+            segment_id_ = other.segment_id_;
+            segment_node_ = other.segment_node_;
+
+            other.segment_.reset();
+
+            return *this;
+        }
+
+        ~SegmentWrapper()
+        {
+            if(segment_ != nullptr && segment_node_->ref_count.fetch_sub(1) == 1)
+            {
+                segment_.reset();
+                SharedMemSegment::remove(segment_id_.to_string().c_str());
+            }
+        }
+
+        std::shared_ptr<SharedMemSegment> segment() { return segment_; }
+
+    private:
+
+        std::shared_ptr<SharedMemSegment> segment_;
+        SharedMemSegment::Id segment_id_;
+        SegmentNode* segment_node_;
+    };
+
     uint32_t per_allocation_extra_size_;
 
-    std::unordered_map<SharedMemSegment::Id::type, std::shared_ptr<SharedMemSegment>,
+    std::unordered_map<SharedMemSegment::Id::type, SegmentWrapper,
             std::hash<SharedMemSegment::Id::type> > ids_segments_;
     std::mutex ids_segments_mutex_;
 
     SharedMemGlobal global_segment_;
-
+    
     std::shared_ptr<SharedMemSegment> find_segment(
             SharedMemSegment::Id id)
     {
@@ -410,12 +490,12 @@ private:
 
         try
         {
-            segment = ids_segments_.at(id.get());
+            segment = ids_segments_.at(id.get()).segment();
         }
         catch (std::out_of_range&)
         {
             segment = std::make_shared<SharedMemSegment>(boost::interprocess::open_only, id.to_string());
-            ids_segments_[id.get()] = segment;
+            ids_segments_[id.get()] = SegmentWrapper(segment, id);       
         }
 
         return segment;

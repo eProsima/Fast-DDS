@@ -155,7 +155,9 @@ public:
                         << " ref_counter == 0. " << segment_name.c_str() << " removed.");
 
                 port_segment_.reset();
+
                 SharedMemSegment::remove(segment_name.c_str());
+                SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
             }
         }
 
