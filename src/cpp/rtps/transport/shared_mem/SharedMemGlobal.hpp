@@ -94,7 +94,16 @@ public:
 
         std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>> buffer_;
 
+        uint64_t overflows_count_;
+
         bool was_check_thread_detached_;
+
+        std::thread thread_notify_;
+        std::mutex thread_notify_mutex_;
+        std::condition_variable thread_notify_cv_;
+        bool thread_notify_activate_;
+        bool thread_notify_kill_;
+
 
         bool check_all_waiting_threads_alive(uint32_t time_out_ms)
         {
@@ -132,6 +141,7 @@ public:
                 PortNode* node)
             : port_segment_(std::move(port_segment))
             , node_(node)
+            , overflows_count_(0)
         {
             auto buffer_base = static_cast<MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell*>(
                 port_segment_->get_address_from_offset(node_->buffer));
@@ -143,21 +153,60 @@ public:
                 new MultiProducerConsumerRingBuffer<BufferDescriptor>(buffer_base, buffer_node));
 
             node_->ref_counter.fetch_add(1);
+
+            thread_notify_kill_ = false;
+            thread_notify_activate_ = false;
+            thread_notify_ = std::thread(&Port::thread_notify, this);
         }
 
         ~Port()
         {
+            thread_notify_kill_ = true;
+            {
+                std::lock_guard<std::mutex> lock(thread_notify_mutex_);
+                thread_notify_activate_ = true;
+            }
+            thread_notify_cv_.notify_one();
+            thread_notify_.join();
+
             if (node_->ref_counter.fetch_sub(1) == 1)
             {
                 auto segment_name = port_segment_->name();
 
                 logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port " << node_->port_id 
-                        << " ref_counter == 0. " << segment_name.c_str() << " removed.");
+                        << segment_name.c_str() << " removed." << "overflows_count " << overflows_count_);
+
+                if(overflows_count_)
+                {
+                    logWarning(RTPS_TRANSPORT_SHMEM, "Port " << node_->port_id 
+                            << segment_name.c_str() << " had overflows_count " << overflows_count_);
+                }
 
                 port_segment_.reset();
 
                 SharedMemSegment::remove(segment_name.c_str());
                 SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
+            }
+        }
+
+        void thread_notify()
+        {
+            while (1)
+            {
+                {
+                    std::unique_lock<std::mutex> lock(thread_notify_mutex_);
+
+                    thread_notify_cv_.wait(lock,[this] {
+                        return thread_notify_activate_;
+                    });
+
+                    thread_notify_activate_ = false;
+                }
+
+                if(!thread_notify_kill_)
+                    node_->empty_cv.notify_all();
+                else
+                    break;
             }
         }
 
@@ -175,17 +224,27 @@ public:
             try
             {
                 *listeners_active = buffer_->push(buffer_descriptor);
-
+                bool has_to_notify = (node_->waiting_count > 0);
+    
                 lock_empty.unlock();
-                node_->empty_cv.notify_all();
 
+                if(has_to_notify)
+                {
+                    {
+                        std::lock_guard<std::mutex> lock(thread_notify_mutex_);
+                        thread_notify_activate_ = true;
+                    }
+
+                    thread_notify_cv_.notify_one();
+                }
+                    
                 return true;
             }
             catch (const std::exception&)
             {
                 lock_empty.unlock();
+                overflows_count_++;
             }
-
             return false;
         }
 
