@@ -59,6 +59,12 @@ bool KeysPublisher::init(
     eprosima::fastrtps::PublisherAttributes pub_att;
     pub_att.topic.topicDataType = "sample";
     pub_att.topic.topicName = "SampleTopic";
+    pub_att.topic.resourceLimitsQos.max_samples = 100;
+    pub_att.topic.resourceLimitsQos.allocated_samples = 100;
+    pub_att.topic.resourceLimitsQos.max_instances = 2;
+    pub_att.topic.resourceLimitsQos.max_samples_per_instance = 10;
+    pub_att.historyMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    pub_att.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
     pub_att.topic.topicKind = eprosima::fastrtps::rtps::WITH_KEY;
@@ -67,6 +73,7 @@ bool KeysPublisher::init(
 
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
+    qos.durability.kind = VOLATILE_DURABILITY_QOS;
 
     if (publisher_ == nullptr)
     {
@@ -139,8 +146,7 @@ void KeysPublisher::runThread(
             else
             {
                 std::cout << "Message with index: " << unsigned(hello_.index()) << " and key: " <<
-                    unsigned(hello_.key_value())
-                          << " SENT" << std::endl;
+                    unsigned(hello_.key_value()) << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
@@ -172,7 +178,14 @@ bool KeysPublisher::publish(
     if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
     {
         hello_.index(hello_.index() + 1);
-        hello_.key_value(1);
+        if (hello_.index() < 10)
+        {
+            hello_.key_value(1);
+        }
+        else
+        {
+            hello_.key_value(2);
+        }
         ReturnCode_t code = writer_->write(&hello_);
         if (code == ReturnCode_t::RETCODE_OK)
         {

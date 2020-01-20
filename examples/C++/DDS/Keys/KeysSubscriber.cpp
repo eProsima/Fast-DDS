@@ -56,6 +56,7 @@ bool KeysSubscriber::init(
 
     //CREATE THE SUBSCRIBER
     eprosima::fastrtps::SubscriberAttributes sub_att;
+    sub_att.historyMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
 
     if (subscriber_ == nullptr)
@@ -66,6 +67,13 @@ bool KeysSubscriber::init(
     // CREATE THE READER
     DataReaderQos rqos;
     rqos.reliability.kind = RELIABLE_RELIABILITY_QOS;
+    rqos.durability.kind = VOLATILE_DURABILITY_QOS;
+    rqos.history.kind = KEEP_ALL_HISTORY_QOS;
+    rqos.resource_limits.max_samples = 100;
+    rqos.resource_limits.allocated_samples = 100;
+    rqos.resource_limits.max_instances = 2;
+    rqos.resource_limits.max_samples_per_instance = 10;
+
 
     TopicDescription topic_desc(participant_, "SampleTopic", "sample");
     reader_ = subscriber_->create_datareader(topic_desc, rqos, &listener_);

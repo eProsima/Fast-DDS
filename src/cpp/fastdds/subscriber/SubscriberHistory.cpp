@@ -295,7 +295,7 @@ bool SubscriberHistory::add_received_change_with_key(
         {
             SampleInfo_t sample;
             sample.instance_state = a_change->kind;
-            most_recent_sample_[a_change->instanceHandle] = sample;
+            most_recent_sample_.insert(std::make_pair(a_change->instanceHandle, sample));
         }
 
         //ADD TO KEY VECTOR
