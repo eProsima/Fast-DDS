@@ -151,6 +151,7 @@ public:
     /**
      * Virtual method used to get the parameter from a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
      */
     RTPS_DllAPI virtual bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) = 0;
@@ -186,6 +187,7 @@ class ParameterKey_t:public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -236,6 +238,7 @@ class ParameterLocator_t: public Parameter_t
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -268,6 +271,7 @@ class ParameterString_t: public Parameter_t
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -301,6 +305,7 @@ class ParameterPort_t: public Parameter_t {
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -342,6 +347,7 @@ class ParameterGuid_t: public Parameter_t {
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -372,6 +378,7 @@ class ParameterProtocolVersion_t: public Parameter_t {
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -404,6 +411,7 @@ class ParameterVendorId_t:public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -434,6 +442,7 @@ class ParameterIP4Address_t :public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -466,6 +475,7 @@ class ParameterBool_t:public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -499,6 +509,7 @@ public:
     /**
      * Read the parameter from a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -529,6 +540,7 @@ class ParameterCount_t:public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -559,6 +571,7 @@ class ParameterEntityId_t:public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -589,6 +602,7 @@ class ParameterTime_t:public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -624,6 +638,7 @@ class ParameterBuiltinEndpointSet_t : public Parameter_t{
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -672,9 +687,9 @@ public:
     {
         uint32_t old_size = size();
 
-        uint32_t first_size = new_value.first.size() + 1;
+        uint32_t first_size = (uint32_t)new_value.first.size() + 1;
         uint32_t first_alignment = ((first_size + 3) & ~3) - first_size;
-        uint32_t second_size = new_value.second.size() + 1;
+        uint32_t second_size = (uint32_t)new_value.second.size() + 1;
         uint32_t second_alignment = ((second_size + 3) & ~3) - second_size;
         uint32_t new_size = first_size + first_alignment + second_size + second_alignment + 8;
 
@@ -701,7 +716,7 @@ public:
         return std::make_pair(std::string(first()), std::string(second()));
     }
 
-    size_t size() const
+    uint32_t size() const
     {
         //Size of the first element (with alignment)
         uint32_t size1 = ParameterProperty_t::element_size(data);
@@ -725,7 +740,7 @@ public:
     }
 
 private:
-    static size_t element_size(const rtps::octet* ptr)
+    static uint32_t element_size(const rtps::octet* ptr)
     {
         //Size of the element (with alignment)
         uint32_t size = *(uint32_t*)ptr;
@@ -742,7 +757,7 @@ class ParameterPropertyList_t : public Parameter_t {
     private:
 
         rtps::SerializedPayload_t properties_;
-        size_t Nproperties_ = 0;
+        uint32_t Nproperties_ = 0;
         bool limit_size_ = false;
 
     public:
@@ -834,7 +849,7 @@ public:
         /**
          * Constructor with a defined maximum size
          */
-        ParameterPropertyList_t(size_t size)
+        ParameterPropertyList_t(uint32_t size)
             : Parameter_t(PID_PROPERTY_LIST, 0)
             , properties_(size)
             , Nproperties_ (0)
@@ -901,10 +916,10 @@ public:
         {
 
             //Realloc if needed;
-            uint32_t size1 = p.first.length()+1;
+            uint32_t size1 = (uint32_t) p.first.length()+1;
             uint32_t alignment1 = ((size1 + 3) & ~3) - size1;
 
-            uint32_t size2 = p.second.length()+1;
+            uint32_t size2 = (uint32_t) p.second.length()+1;
             uint32_t alignment2 = ((size2 + 3) & ~3) - size2;
 
             if (limit_size_ && (properties_.max_size < properties_.length +
@@ -934,19 +949,19 @@ public:
             Nproperties_ = 0;
         }
 
-        size_t size() const
+        uint32_t size() const
         {
             return Nproperties_;
         }
 
-        void set_max_size (size_t size)
+        void set_max_size (uint32_t size)
         {
             properties_.reserve(size);
             limit_size_ = true;
         }
 
 
-        size_t max_size ()
+        uint32_t max_size ()
         {
             return (limit_size_ ? properties_.max_size : 0);
         }
@@ -961,6 +976,7 @@ public:
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -1013,6 +1029,7 @@ class ParameterSampleIdentity_t : public Parameter_t
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -1047,6 +1064,7 @@ class ParameterToken_t : public Parameter_t
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -1081,6 +1099,7 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
@@ -1117,6 +1136,7 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
         /**
          * Read the parameter from a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+         * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
         bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;

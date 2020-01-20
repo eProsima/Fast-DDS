@@ -153,6 +153,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -200,6 +201,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -247,6 +249,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -313,6 +316,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -373,6 +377,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -430,6 +435,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -488,6 +494,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -547,6 +554,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -651,6 +659,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -716,6 +725,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -768,6 +778,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -859,6 +870,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -949,6 +961,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1047,6 +1060,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1102,6 +1116,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1165,6 +1180,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1212,6 +1228,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1258,6 +1275,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1307,6 +1325,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1394,6 +1413,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1448,6 +1468,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1497,6 +1518,7 @@ public:
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
@@ -1576,6 +1598,12 @@ public:
         return true;
     }
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
+     * @return True if the parameter was correctly taken.
+     */
     bool readFromCDRMessage(
             rtps::CDRMessage_t* /*msg*/,
             uint32_t /*size*/)
@@ -1649,6 +1677,12 @@ public:
         return true;
     }
 
+    /**
+     * Reads QoS from the specified CDR message
+     * @param msg Message from where the QoS Policy has to be taken.
+     * @param size Size of the QoS Policy field to read
+     * @return True if the parameter was correctly taken.
+     */
     bool readFromCDRMessage(
             rtps::CDRMessage_t* /*msg*/,
             uint32_t /*size*/) override
