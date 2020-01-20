@@ -114,9 +114,9 @@ public:
             const SequenceNumber_t& seq_num) const;
 
     /**
-     * Check if a specific is marked to be sent to this reader.
+     * Check if a specific change is marked to be sent to this reader.
      * @param[in]  seq_num Sequence number of the change to be checked.
-     * @param[out] is_irrelevant Will be forced to false if change is relevant for this reader.
+     * @param[out] is_irrelevant Will be forced to true if change is irrelevant for this reader.
      * @return true when the change is marked to be sent, false otherwise.
      */
     bool change_is_unsent(
