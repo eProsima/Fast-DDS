@@ -53,7 +53,7 @@ using PortParameters = fastrtps::rtps::PortParameters;
 //*********************************************************
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor()
-    : TransportDescriptorInterface(SharedMemTransport::maximum_message_size, s_maximumInitialPeersRange)
+    : TransportDescriptorInterface(SharedMemTransport::default_segment_size, s_maximumInitialPeersRange)
 	, segment_size(SharedMemTransport::default_segment_size)
 	, port_queue_capacity(SharedMemTransport::default_port_queue_capacity)
 	, port_overflow_policy(SharedMemTransport::default_overflow_policy)
@@ -65,7 +65,7 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor()
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor(
         const SharedMemTransportDescriptor& t)
-    : TransportDescriptorInterface(t)
+    : TransportDescriptorInterface(t.segment_size, s_maximumInitialPeersRange)
 	, segment_size(t.segment_size)
 	, port_queue_capacity(t.port_queue_capacity)
 	, port_overflow_policy(t.port_overflow_policy)

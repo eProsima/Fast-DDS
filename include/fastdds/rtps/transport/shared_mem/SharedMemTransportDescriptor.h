@@ -45,6 +45,11 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 
 	enum class OverflowPolicy { DISCARD, FAIL };
 
+	uint32_t max_message_size() const override
+	{ 
+		return segment_size; 
+	}
+
 	OverflowPolicy port_overflow_policy;
 	OverflowPolicy segment_overflow_policy;
 	uint32_t healthy_check_timeout_ms;
