@@ -583,7 +583,7 @@ public:
     }
 
     /**
-     * @return the maximuim size of the user data
+     * @return the maximum size of the user data
      */
     size_t max_size () const
     {
@@ -764,6 +764,16 @@ public:
     {
     }
 
+    void max_size (uint32_t size)
+    {
+        max_size_ = size;
+    }
+
+    uint32_t max_size () const
+    {
+        return max_size_;
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -827,8 +837,8 @@ public:
 private:
 
     std::vector<std::string> names;
+    size_t max_size_ = 0;
 };
-
 
 /**
  * Class TopicDataQosPolicy, to indicate the Topic Data.
@@ -1606,7 +1616,7 @@ public:
      */
     bool readFromCDRMessage(
             rtps::CDRMessage_t* /*msg*/,
-            uint32_t /*size*/)
+            uint32_t /*size*/) override
     {
         return true;
     }
