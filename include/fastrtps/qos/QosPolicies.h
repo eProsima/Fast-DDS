@@ -1015,7 +1015,7 @@ public:
         max_size_ = size;
     }
 
-    uint32_t max_size ()
+    uint32_t max_size () const
     {
         return max_size_;
     }
