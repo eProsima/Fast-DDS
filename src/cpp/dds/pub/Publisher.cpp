@@ -37,7 +37,7 @@ Publisher::Publisher(
         new detail::Publisher(dp,
         dp.default_publisher_qos(),
         nullptr,
-        dds::core::status::StatusMask::all()))
+        dds::core::status::StatusMask::none()))
 {
 }
 

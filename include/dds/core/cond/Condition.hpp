@@ -76,7 +76,6 @@ public:
         TCondition,
         dds::sub::cond::detail::QueryCondition)
 
-
     /** @cond */
     ~TCondition();
     /** @endcond */

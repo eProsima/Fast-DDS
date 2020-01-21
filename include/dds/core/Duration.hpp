@@ -42,7 +42,6 @@ namespace core {
 class OMG_DDS_API Duration
 {
 public:
-
     /**
      * Create a Duration elapsing zero seconds.
      */
@@ -105,8 +104,7 @@ public:
      * Set number of seconds
      * @param s number of seconds
      */
-    void sec(
-            int64_t s);
+    void sec(int64_t s);
 
     /**
      * Get nanoseconds part of the Duration.
@@ -229,7 +227,6 @@ public:
      */
     const Duration operator -(
             const Duration& other) const;
-
     /**
      * Returns this Duration in milliseconds.
      *
@@ -252,7 +249,6 @@ public:
     double to_secs() const;
 
 private:
-
     int32_t sec_ = 0;
     uint32_t nsec_ = 0;
 };

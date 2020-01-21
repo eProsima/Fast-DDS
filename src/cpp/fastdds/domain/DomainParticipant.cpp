@@ -270,11 +270,6 @@ bool DomainParticipant::contains_entity(
     return impl_->contains_entity(handle, recursive);
 }
 
-bool DomainParticipant::has_active_entities()
-{
-    return impl_->has_active_entities();
-}
-
 ReturnCode_t DomainParticipant::get_current_time(
         fastrtps::Time_t& current_time) const
 {

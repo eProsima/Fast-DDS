@@ -41,7 +41,7 @@ bool HelloWorldSubscriber::init(
         return false;
     }
 
-    waitset_.attach_condition(*participant_.status_condition());
+    waitset_.attach_condition(participant_.status_condition());
 
     //REGISTER THE TYPE
     type_.register_type(participant_.delegate().get(), type_.get_type_name());
@@ -60,7 +60,7 @@ bool HelloWorldSubscriber::init(
         subscriber_.status_condition()->set_status_as_read(StatusMask::data_on_readers());
     });
 
-    waitset_.attach_condition(*subscriber_.status_condition());
+    waitset_.attach_condition(subscriber_.status_condition());
 
     // TopicQos
     dds::topic::qos::TopicQos topicQos
@@ -83,7 +83,7 @@ bool HelloWorldSubscriber::init(
         }
     });
 
-    waitset_.attach_condition(*topic_.status_condition());
+    waitset_.attach_condition(topic_.status_condition());
 
     dds::sub::qos::DataReaderQos drqos = topicQos;
 
@@ -129,9 +129,7 @@ bool HelloWorldSubscriber::init(
 
     });
 
-    std::cout << "Reader Condition " << reader_.status_condition() << std::endl;
-
-    waitset_.attach_condition(*reader_.status_condition());
+    waitset_.attach_condition(reader_.status_condition());
 
     return true;
 }
@@ -147,12 +145,14 @@ void HelloWorldSubscriber::run()
     ConditionSeq active_conditions;
     while (true)
     {
-        waitset_.wait(active_conditions, dds::core::Duration(0, 0));
-
-        for (auto cond: active_conditions)
+        if (waitset_.wait(active_conditions, Duration_t(0, 0)) != ReturnCode_t::RETCODE_TIMEOUT)
         {
-            cond->call_handler();
+            for (auto cond: active_conditions)
+            {
+                cond->call_handler();
+            }
         }
+        //waitset_.dispatch(Duration_t(0, 0));
     }
 }
 

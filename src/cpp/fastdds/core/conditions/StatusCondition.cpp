@@ -78,7 +78,6 @@ Entity* StatusCondition::get_entity()
 void StatusCondition::notify_status_change(
         const ::dds::core::status::StatusMask& mask)
 {
-
     status_change_flag_ |= mask;
 
     if (!entity_->is_enabled())

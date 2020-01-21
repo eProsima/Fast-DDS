@@ -33,14 +33,6 @@ namespace core {
 namespace cond {
 
 template<typename DELEGATE>
-TCondition<DELEGATE>::TCondition(
-        const detail::StatusCondition& h)
-    : dds::core::Reference<detail::Condition>(
-        new detail::StatusCondition(h))
-{
-}
-
-template<typename DELEGATE>
 TCondition<DELEGATE>::~TCondition()
 {
 }
@@ -53,7 +45,10 @@ template<typename Functor>
 void TCondition<DELEGATE>::handler(
         Functor& func)
 {
-    this->delegate()->set_handler(func);
+    //To implement
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->set_handler(func);
+
 }
 
 template<typename DELEGATE>
@@ -61,9 +56,10 @@ template<typename Functor>
 void TCondition<DELEGATE>::handler(
         const Functor& func)
 {
-    this->delegate()->set_handler(func);
+    //To implement
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //        this->delegate()->set_handler(func);
 }
-
 /** @endcond */
 
 template<typename DELEGATE>

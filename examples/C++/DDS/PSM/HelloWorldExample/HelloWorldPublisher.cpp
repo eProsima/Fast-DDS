@@ -58,11 +58,6 @@ bool HelloWorldPublisher::init()
 
     topic_ = dds::topic::Topic<HelloWorld>(participant_, "HelloWorldTopic", "HelloWorld", topicQos);
 
-    if (topic_ == dds::core::null)
-    {
-        return false;
-    }
-
     //CREATE THE PUBLISHER
     publisher_ = ::dds::pub::Publisher(participant_);
 

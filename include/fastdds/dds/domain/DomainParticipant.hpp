@@ -383,8 +383,6 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle,
             bool recursive = true) const;
 
-    RTPS_DllAPI bool has_active_entities();
-
     /**
      * This operation returns the current value of the time that the service uses to time-stamp data-writes
      * and to set the reception-timestamp for the data-updates it receives.

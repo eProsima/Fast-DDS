@@ -102,18 +102,16 @@ template<typename DELEGATE>
 class TWaitSet : public Reference<DELEGATE>
 {
 public:
-
-    typedef detail::ConditionSeq ConditionSeq;
+    typedef std::vector<Condition> ConditionSeq;
 
 public:
-
     OMG_DDS_REF_TYPE_NO_DC(
-        TWaitSet,
-        Reference,
-        DELEGATE)
+            TWaitSet,
+            Reference,
+            DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-        TWaitSet)
+            TWaitSet)
 
     /**
      * Create a WaitSet instance.
@@ -418,12 +416,10 @@ public:
             ConditionSeq& conds) const;
 };
 
-typedef TWaitSet<detail::WaitSet> WaitSet;
+typedef dds::core::cond::detail::WaitSet WaitSet;
 
 } //namespace cond
 } //namespace core
 } //namespace dds
-
-#include <dds/core/cond/detail/TWaitSetImpl.hpp>
 
 #endif //OMG_DDS_CORE_DETAIL_WAITSET_HPP_

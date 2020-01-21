@@ -65,6 +65,8 @@ private:
 
     bool firstConnected_ = false;
 
+    bool enable_ = true;
+
     void runThread(
             uint32_t number,
             uint32_t sleep);
