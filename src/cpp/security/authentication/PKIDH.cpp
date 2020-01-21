@@ -1271,7 +1271,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 }
 
 
-bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t participant_guid) const
+bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t& participant_guid) const
 {
     bool is_sentinel = false;
     bool valid = true;
