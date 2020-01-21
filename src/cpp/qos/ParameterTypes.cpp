@@ -310,25 +310,25 @@ bool ParameterPropertyList_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t siz
 
     for(size_t i = 0; i < num_properties; ++i)
     {
-        uint32_t size, alignment;
+        uint32_t property_size, alignment;
 
-        valid &= CDRMessage::readUInt32(msg,&size);
+        valid &= CDRMessage::readUInt32(msg,&property_size);
         if (!valid)
         {
             return false;
         }
-        alignment = ((size + 3) & ~3) - size;
-        push_back_helper (&msg->buffer[msg->pos], size, alignment);
-        msg->pos += (size + alignment);
+        alignment = ((property_size + 3) & ~3) - property_size;
+        push_back_helper (&msg->buffer[msg->pos], property_size, alignment);
+        msg->pos += (property_size + alignment);
 
-        valid &= CDRMessage::readUInt32(msg,&size);
+        valid &= CDRMessage::readUInt32(msg,&property_size);
         if (!valid)
         {
             return false;
         }
-        alignment = ((size + 3) & ~3) - size;
-        push_back_helper (&msg->buffer[msg->pos], size, alignment);
-        msg->pos += (size + alignment);
+        alignment = ((property_size + 3) & ~3) - property_size;
+        push_back_helper (&msg->buffer[msg->pos], property_size, alignment);
+        msg->pos += (property_size + alignment);
     }
     Nproperties_ = num_properties;
     return valid;
