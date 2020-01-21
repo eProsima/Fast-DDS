@@ -63,8 +63,8 @@ WriterProxyData::WriterProxyData(
         const VariableLengthDataLimits& data_limits)
     : WriterProxyData(max_unicast_locators, max_multicast_locators)
 {
-    m_qos.m_userData.max_size(data_limits.max_user_data);
-    m_qos.m_partition.max_size(data_limits.max_partitions);
+    m_qos.m_userData.max_size((uint32_t)data_limits.max_user_data);
+    m_qos.m_partition.max_size((uint32_t)data_limits.max_partitions);
 }
 
 WriterProxyData::WriterProxyData(
@@ -841,8 +841,8 @@ void WriterProxyData::clear()
     m_topicName = "";
     m_userDefinedId = 0;
     //clear user data but keep max size on qos
-    size_t max_user_data = m_qos.m_userData.max_size();
-    size_t max_partition = m_qos.m_partition.max_size();
+    uint32_t max_user_data = m_qos.m_userData.max_size();
+    uint32_t max_partition = m_qos.m_partition.max_size();
     m_qos = WriterQos();
     m_qos.m_userData.max_size(max_user_data);
     m_qos.m_partition.max_size(max_partition);

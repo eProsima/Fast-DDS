@@ -255,17 +255,17 @@ bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
     for(size_t i = 0; i < num_partitions; ++i)
     {
-        uint32_t size, alignment;
+        uint32_t partition_size, alignment;
 
-        valid &= CDRMessage::readUInt32(msg,&size);
+        valid &= CDRMessage::readUInt32(msg,&partition_size);
         if (!valid)
         {
             return false;
         }
 
         push_back ((const char*)&msg->buffer[msg->pos]);
-        alignment = ((size + 3) & ~3) - size;
-        msg->pos += (size + alignment);
+        alignment = ((partition_size + 3) & ~3) - partition_size;
+        msg->pos += (partition_size + alignment);
     }
     Npartitions_ = num_partitions;
     return valid;
@@ -274,7 +274,7 @@ bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    uint32_t size = dataVec_.size();
+    uint32_t size = (uint32_t)dataVec_.size();
     uint32_t align = ((size + 3) & ~3) - size;
     this->length = (uint16_t)(4 + size + align);
     valid &= CDRMessage::addUInt16(msg, this->length);

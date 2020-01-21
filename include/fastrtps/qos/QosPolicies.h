@@ -1044,7 +1044,7 @@ public:
             const char* name)
     {
         //Realloc if needed;
-        uint32_t size = strlen(name)+1;
+        uint32_t size = (uint32_t)strlen(name)+1;
         uint32_t alignment = ((size + 3) & ~3) - size;
 
         if (max_size_ != 0 && (partitions_.max_size < partitions_.length +
