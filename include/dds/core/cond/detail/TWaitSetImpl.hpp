@@ -15,9 +15,6 @@
  *
  */
 
-#ifndef EPROSIMA_DDS_CORE_COND_TWAITSET_HPP_
-#define EPROSIMA_DDS_CORE_COND_TWAITSET_HPP_
-
 /**
  * @file
  */
@@ -40,7 +37,7 @@ TWaitSet<DELEGATE>::~TWaitSet()
 
 template<typename DELEGATE>
 const typename TWaitSet<DELEGATE>::ConditionSeq TWaitSet<DELEGATE>::wait(
-        const dds::core::Duration& timeout)
+        const ::dds::core::Duration& timeout)
 {
     ConditionSeq triggered;
     return this->wait(triggered, timeout);
@@ -50,15 +47,16 @@ template<typename DELEGATE>
 const typename TWaitSet<DELEGATE>::ConditionSeq TWaitSet<DELEGATE>::wait()
 {
     ConditionSeq triggered;
-    return this->wait(triggered, dds::core::Duration::infinite());
+    return this->wait(triggered, ::dds::core::Duration::infinite());
 }
 
 template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
     ConditionSeq & triggered,
-    const dds::core::Duration& timeout)
+    const ::dds::core::Duration& timeout)
 {
-    this->delegate()->wait(triggered, timeout);
+    eprosima::fastrtps::Duration_t e_timeout(timeout.sec(), timeout.nanosec());
+    this->delegate()->wait(triggered, e_timeout);
     return triggered;
 }
 
@@ -66,21 +64,22 @@ template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
     ConditionSeq & triggered)
 {
-    this->wait(triggered, dds::core::Duration::infinite());
+    this->wait(triggered, ::dds::core::Duration::infinite());
     return triggered;
 }
 
 template<typename DELEGATE>
 void TWaitSet<DELEGATE>::dispatch()
 {
-    this->dispatch(dds::core::Duration::infinite());
+    this->dispatch(::dds::core::Duration::infinite());
 }
 
 template<typename DELEGATE>
 void TWaitSet<DELEGATE>::dispatch(
-        const dds::core::Duration& timeout)
+        const ::dds::core::Duration& timeout)
 {
-    this->delegate()->dispatch(timeout);
+    eprosima::fastrtps::Duration_t e_timeout(timeout.sec(), timeout.nanosec());
+    this->delegate()->dispatch(e_timeout);
 }
 
 template<typename DELEGATE>
@@ -103,7 +102,7 @@ template<typename DELEGATE>
 TWaitSet<DELEGATE>& TWaitSet<DELEGATE>::attach_condition(
         const Condition& cond)
 {
-    this->delegate()->attach_condition(cond);
+    this->delegate()->attach_condition(cond.delegate().get());
     return *this;
 }
 
@@ -137,6 +136,3 @@ typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::conditions(
 } //namespace cond
 } //namespace core
 } //namespace dds
-
-
-#endif //EPROSIMA_DDS_CORE_COND_TWAITSET_HPP_

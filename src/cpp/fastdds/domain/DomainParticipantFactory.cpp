@@ -131,7 +131,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
     using PartVectorIt = std::vector<DomainParticipantImpl*>::iterator;
     using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*> >::iterator;
 
-    if (part->contains_entity(part->get_instance_handle()))
+    if (part->has_active_entities())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -167,13 +167,6 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         }
     }
     return ReturnCode_t::RETCODE_ERROR;
-}
-
-void DomainParticipantFactory::delete_participant(
-        ::dds::domain::DomainParticipant& part)
-{
-    DomainParticipant* participant = part.delegate().get();
-    delete_participant(participant);
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(

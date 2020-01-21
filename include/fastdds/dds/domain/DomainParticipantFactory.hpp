@@ -128,9 +128,6 @@ public:
     RTPS_DllAPI ReturnCode_t delete_participant(
             DomainParticipant* part);
 
-    void delete_participant(
-            ::dds::domain::DomainParticipant& part);
-
     /**
      * Load profiles from XML file.
      * @param xml_profile_file XML profile file.

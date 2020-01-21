@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_DETAIL_WAITSET_HPP_
 #define EPROSIMA_DDS_CORE_COND_DETAIL_WAITSET_HPP_
@@ -30,6 +30,8 @@ namespace cond {
 namespace detail {
 
 using WaitSet = eprosima::fastdds::dds::WaitSet;
+
+using ConditionSeq = eprosima::fastdds::dds::ConditionSeq;
 
 } //namespace detail
 } //namespace cond

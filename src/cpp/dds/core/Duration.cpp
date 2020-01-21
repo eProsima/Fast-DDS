@@ -53,6 +53,7 @@ Duration::Duration(
     , nsec_(nanosec)
 {
 }
+
 #endif
 
 const Duration Duration::from_microsecs(
@@ -283,8 +284,8 @@ double Duration::to_secs() const
 }
 
 const Duration OMG_DDS_API operator *(
-    uint64_t lhs,
-    const Duration& rhs)
+        uint64_t lhs,
+        const Duration& rhs)
 {
     Duration result(rhs);
     result *= lhs;
@@ -292,8 +293,8 @@ const Duration OMG_DDS_API operator *(
 }
 
 const Duration OMG_DDS_API operator *(
-    const Duration& lhs,
-    uint64_t rhs)
+        const Duration& lhs,
+        uint64_t rhs)
 {
     Duration result(lhs);
     result *= rhs;
@@ -301,8 +302,8 @@ const Duration OMG_DDS_API operator *(
 }
 
 const Duration OMG_DDS_API operator /(
-    const Duration& lhs,
-    uint64_t rhs)
+        const Duration& lhs,
+        uint64_t rhs)
 {
     return Duration(static_cast<int64_t>(lhs.sec() / static_cast<int64_t>(rhs)), lhs.nanosec() / (uint32_t) rhs);
 }

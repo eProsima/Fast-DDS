@@ -566,6 +566,23 @@ bool DomainParticipantImpl::contains_entity(
     return false;
 }
 
+bool DomainParticipantImpl::has_active_entities()
+{
+    if (!publishers_.empty())
+    {
+        return true;
+    }
+    if (!subscribers_.empty())
+    {
+        return true;
+    }
+    if (!topics_.empty())
+    {
+        return true;
+    }
+    return false;
+}
+
 ReturnCode_t DomainParticipantImpl::get_current_time(
         fastrtps::Time_t& current_time) const
 {

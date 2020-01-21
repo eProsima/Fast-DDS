@@ -74,7 +74,7 @@ bool HelloWorldPublisher::init(
         }
     });
 
-    waitset_.attach_condition(topic_.status_condition());
+    waitset_.attach_condition(*topic_.status_condition());
 
     //CREATE THE PUBLISHER
     publisher_ = ::dds::pub::Publisher(participant_);
@@ -115,7 +115,7 @@ bool HelloWorldPublisher::init(
         }
     });
 
-    waitset_.attach_condition(writer_.status_condition());
+    waitset_.attach_condition(*writer_.status_condition());
 
     return true;
 }
@@ -132,7 +132,7 @@ void HelloWorldPublisher::check_reader_matched()
 
     while (matched_ == 0)
     {
-        waitset_.wait(active_conditions, Duration_t(0, 500));
+        waitset_.wait(active_conditions, dds::core::Duration(0, 500));
         for (auto cond: active_conditions)
         {
             cond->call_handler();

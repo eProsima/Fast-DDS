@@ -23,6 +23,7 @@
 #include <dds/topic/detail/Topic.hpp>
 #include <dds/topic/AnyTopic.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/topic/TopicListener.hpp>
 
 namespace dds {
 namespace topic {
@@ -61,6 +62,7 @@ template<typename T>
 class Topic : public TAnyTopic<detail::Topic>
 {
 public:
+
     /**
      * Convenience typedef for the type of the data sample.
      */
@@ -72,19 +74,19 @@ public:
     typedef TopicListener<T> Listener;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            Topic,
-            TAnyTopic,
-            detail::Topic)
+        Topic,
+        TAnyTopic,
+        detail::Topic)
     /*
-    OMG_DDS_REF_TYPE_PROTECTED_DC_T(
+       OMG_DDS_REF_TYPE_PROTECTED_DC_T(
             Topic,
             TAnyTopic,
             T,
             DELEGATE)
-    */
+     */
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            Topic)
+        Topic)
 
     /** @cond */
     virtual ~Topic();
@@ -253,7 +255,7 @@ public:
             const std::string& topic_name,
             const dds::topic::qos::TopicQos& qos,
             dds::topic::TopicListener<T>* listener = nullptr,
-            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::all());
 
     /**
      * Create a new Topic.
@@ -323,8 +325,9 @@ public:
             const std::string& topic_name,
             const std::string& type_name,
             const dds::topic::qos::TopicQos& qos,
+            const eprosima::fastrtps::TopicAttributes& att = eprosima::fastrtps::TopicAttributes(),
             dds::topic::TopicListener<T>* listener = nullptr,
-            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::all());
 
     #if defined (OMG_DDS_X_TYPE_DYNAMIC_TYPES_SUPPORT)
     /**

@@ -59,7 +59,7 @@ DomainParticipant::~DomainParticipant()
 
 void DomainParticipant::delete_participant()
 {
-    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(*this);
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(this->delegate().get());
 }
 
 void DomainParticipant::listener(

@@ -253,6 +253,8 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle,
             bool recursive = true) const;
 
+    bool has_active_entities();
+
     ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 

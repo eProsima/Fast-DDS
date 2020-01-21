@@ -27,6 +27,22 @@ using ReturnCode_t = fastrtps::types::ReturnCode_t;
 namespace fastdds {
 namespace dds {
 
+
+Topic::Topic(
+        const DomainParticipant* dp,
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        const fastrtps::TopicAttributes& att,
+        TopicListener* listener,
+        const ::dds::core::status::StatusMask& mask)
+    : DomainEntity(mask)
+    , TopicDescription((const_cast<DomainParticipant*>(dp)), topic_name.c_str(), type_name.c_str())
+    , impl_(
+        (const_cast<DomainParticipant*>(dp))->create_topic(topic_name, type_name, qos, att, listener, mask)->impl_)
+{
+}
+
 Topic::Topic(
         TopicImpl* impl,
         const ::dds::core::status::StatusMask& mask)
