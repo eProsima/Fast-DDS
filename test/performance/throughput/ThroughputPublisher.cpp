@@ -760,7 +760,8 @@ bool ThroughputPublisher::load_recoveries()
     std::string line;
     size_t start;
     size_t end;
-    int32_t recovery;
+    uint32_t recovery;
+    int32_t input_recovery;
     bool more = true;
     while (std::getline(fi, line))
     {
@@ -770,12 +771,13 @@ bool ThroughputPublisher::load_recoveries()
         while (more)
         {
             std::istringstream iss(line.substr(start, end - start));
-            iss >> recovery;
-            if (recovery < 0)
+            iss >> input_recovery;
+            if (input_recovery < 0)
             {
-                std::cout << "Recovery times must be positive. " << recovery << " found" << std::endl;
+                std::cout << "Recovery times must be positive. " << input_recovery << " found" << std::endl;
                 return false;
             }
+            recovery = static_cast<uint32_t>(input_recovery);
             // Only add if it was not there already
             if (std::find(recovery_times_.begin(), recovery_times_.end(), recovery) == recovery_times_.end())
             {
