@@ -24,14 +24,16 @@ public:
 
     void SetUp()
     {
-        service_.init_thread();
+        service_ = new eprosima::fastrtps::rtps::ResourceEvent();
+        service_->init_thread();
     }
 
     void TearDown()
     {
+        delete service_;
     }
 
-    eprosima::fastrtps::rtps::ResourceEvent service_;
+    eprosima::fastrtps::rtps::ResourceEvent* service_;
 };
 
 TimedEventEnvironment* const env =
@@ -45,7 +47,7 @@ TimedEventEnvironment* const env =
  */
 TEST(TimedEvent, Event_SuccessEvents)
 {
-    MockEvent event(env->service_, 100, false);
+    MockEvent event(*env->service_, 100, false);
 
     for (int i = 0; i < 10; ++i)
     {
@@ -67,7 +69,7 @@ TEST(TimedEvent, Event_SuccessEvents)
  */
 TEST(TimedEvent, Event_CancelEvents)
 {
-    MockEvent event(env->service_, 100, false);
+    MockEvent event(*env->service_, 100, false);
 
     for (int i = 0; i < 10; ++i)
     {
@@ -88,7 +90,7 @@ TEST(TimedEvent, Event_CancelEvents)
  */
 TEST(TimedEvent, Event_RestartEvents)
 {
-    MockEvent event(env->service_, 100, false);
+    MockEvent event(*env->service_, 100, false);
 
     for (int i = 0; i < 10; ++i)
     {
@@ -116,7 +118,7 @@ TEST(TimedEvent, Event_RestartEvents)
  */
 TEST(TimedEvent, Event_QuickCancelEvents)
 {
-    MockEvent event(env->service_, 1, false);
+    MockEvent event(*env->service_, 1, false);
 
     // Cancel ten times.
     for (int i = 0; i < 10; ++i)
@@ -147,7 +149,7 @@ TEST(TimedEvent, Event_QuickCancelEvents)
  */
 TEST(TimedEvent, Event_QuickRestartEvents)
 {
-    MockEvent event(env->service_, 1, false);
+    MockEvent event(*env->service_, 1, false);
 
     for (int i = 0; i < 10; ++i)
     {
@@ -169,7 +171,7 @@ TEST(TimedEvent, Event_QuickRestartEvents)
  */
 TEST(TimedEvent, Event_AutoRestart)
 {
-    MockEvent event(env->service_, 10, true);
+    MockEvent event(*env->service_, 10, true);
 
     for (unsigned int i = 0; i < 100; ++i)
     {
@@ -195,7 +197,7 @@ TEST(TimedEvent, Event_AutoRestartAndDeleteRandomly)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(10, 100);
 
-    MockEvent event(env->service_, 2, true);
+    MockEvent event(*env->service_, 2, true);
 
     event.event().restart_timer();
     std::this_thread::sleep_for(std::chrono::milliseconds(dis(gen)));
@@ -258,7 +260,7 @@ TEST(TimedEventMultithread, Event_TwoStartTwoCancel)
     std::thread* thr1 = nullptr, * thr2 = nullptr,
             * thr3 = nullptr, * thr4 = nullptr;
 
-    MockEvent event(env->service_, 3, false);
+    MockEvent event(*env->service_, 3, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 100ms between each one.
@@ -304,7 +306,7 @@ TEST(TimedEventMultithread, Event_FourAutoRestart)
     std::thread* thr1 = nullptr, * thr2 = nullptr,
             * thr3 = nullptr, * thr4 = nullptr;
 
-    MockEvent event(env->service_, 2, true);
+    MockEvent event(*env->service_, 2, true);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> AutoRestart 100 times waiting 2ms between each one.
