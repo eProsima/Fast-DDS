@@ -139,7 +139,11 @@ ReturnCode_t DataReaderImpl::read_next_sample(
         SampleInfo_t *info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
+#if HAVE_STRICT_REALTIME
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
+#else
+        std::chrono::hours(24);
+#endif
     if (history_.readNextData(data, info, max_blocking_time))
     {
         return ReturnCode_t::RETCODE_OK;
@@ -152,7 +156,11 @@ ReturnCode_t DataReaderImpl::take_next_sample(
         SampleInfo_t *info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
+#if HAVE_STRICT_REALTIME
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
+#else
+        std::chrono::hours(24);
+#endif
     if (history_.takeNextData(data, info, max_blocking_time))
     {
         return ReturnCode_t::RETCODE_OK;
