@@ -437,7 +437,7 @@ bool SubscriberHistory::remove_change_sub(
         }
         if (!found)
         {
-            logWarning(SUBSCRIBER, "Change not found, something is wrong");
+            logError(RTPS_HISTORY, "Change not found on this key, something is wrong");
         }
     }
 
