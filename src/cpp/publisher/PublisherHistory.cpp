@@ -96,7 +96,11 @@ bool PublisherHistory::add_pub_change(
     //NO KEY HISTORY
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
+#if HAVE_STRICT_REALTIME
         if(this->add_change_(change, wparams, max_blocking_time))
+#else
+        if (this->add_change_(change, wparams))
+#endif
         {
             returnedValue = true;
         }
@@ -138,7 +142,11 @@ bool PublisherHistory::add_pub_change(
             if(add)
             {
                 vit->second.cache_changes.push_back(change);
+#if HAVE_STRICT_REALTIME
                 if(this->add_change_(change, wparams, max_blocking_time))
+#else
+                if (this->add_change_(change, wparams))
+#endif
                 {
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
