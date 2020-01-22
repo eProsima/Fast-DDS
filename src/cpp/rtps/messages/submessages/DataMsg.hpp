@@ -44,13 +44,13 @@ bool RTPSMessageCreator::addMessageData(
 }
 
 bool RTPSMessageCreator::addSubmessageData(
-    CDRMessage_t* msg,
-    const CacheChange_t* change,
-    TopicKind_t topicKind,
-    const EntityId_t& readerId,
-    bool expectsInlineQos,
-    InlineQosWriter* inlineQos,
-    bool* is_big_submessage)
+        CDRMessage_t* msg,
+        const CacheChange_t* change,
+        TopicKind_t topicKind,
+        const EntityId_t& readerId,
+        bool expectsInlineQos,
+        InlineQosWriter* inlineQos,
+        bool* is_big_submessage)
 {
     octet flags = 0x0;
     //Find out flags

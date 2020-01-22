@@ -148,16 +148,6 @@ CONSTEXPR uint32_t info_dst_message_length = 16;
 CONSTEXPR uint32_t info_ts_message_length = 12;
 CONSTEXPR uint32_t data_frag_submessage_header_length = 36;
 
-uint32_t RTPSWriter::get_max_fragment_payload_size()
-{
-    constexpr uint32_t data_frag_header_size = 28;
-    constexpr uint32_t max_inline_qos_size = 32;
-    // Max fragment is 64KBytes_max - header - inlineqos - 4(for better alignment)
-    constexpr uint32_t max_fragment_size = std::numeric_limits<uint16_t>::max() - data_frag_header_size - max_inline_qos_size - 4;
-    
-    return max_fragment_size;
-}
-
 uint32_t RTPSWriter::getMaxDataSize()
 {
     return calculateMaxDataSize(mp_RTPSParticipant->getMaxMessageSize());
