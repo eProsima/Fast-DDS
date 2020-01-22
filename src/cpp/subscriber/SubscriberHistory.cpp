@@ -415,37 +415,34 @@ bool SubscriberHistory::remove_change_sub(
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    if (mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
-        if (remove_change(change))
-        {
-            m_isHistoryFull = false;
-            return true;
-        }
-        return false;
-    }
-    else
-    {
+        bool found = false;
         t_m_Inst_Caches::iterator vit;
-        if (!find_key(change, &vit))
+        if (find_key(change, &vit))
         {
-            return false;
-        }
-
-        for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
-        {
-            if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)
+            for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
             {
-                if (remove_change(change))
+                if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)
                 {
                     vit->second.cache_changes.erase(chit);
-                    m_isHistoryFull = false;
-                    return true;
+                    found = true;
+                    break;
                 }
             }
         }
-        logError(SUBSCRIBER, "Change not found, something is wrong");
+        if (!found)
+        {
+            logWarning(SUBSCRIBER, "Change not found, something is wrong");
+        }
     }
+
+    if (remove_change(change))
+    {
+        m_isHistoryFull = false;
+        return true;
+    }
+
     return false;
 }
 

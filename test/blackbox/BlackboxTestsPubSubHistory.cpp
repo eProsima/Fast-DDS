@@ -472,6 +472,94 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     ASSERT_EQ(received.index(), 3u);
 }
 
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKey)
+{
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    uint32_t keys = 2;
+
+    reader.resource_limits_max_instances(keys).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+    key(true).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.resource_limits_max_instances(keys).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    key(true).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator();
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all();
+    reader.stopReception();
+}
+
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
+{
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    uint32_t keys = 2;
+    uint32_t depth = 2;
+
+    reader.history_depth(depth).
+    resource_limits_max_samples(keys*depth).
+    resource_limits_allocated_samples(keys*depth).
+    resource_limits_max_instances(keys).
+    resource_limits_max_samples_per_instance(depth).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+    key(true).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(depth).
+    resource_limits_max_samples(keys*depth).
+    resource_limits_allocated_samples(keys*depth).
+    resource_limits_max_instances(keys).
+    resource_limits_max_samples_per_instance(depth).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    key(true).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    //We want the number of messages to be multiple of keys*depth
+    auto data = default_keyedhelloworld_data_generator(3*keys*depth);
+    while(data.size() > 1)
+    {
+        auto expected_data(data);
+
+        // Send data
+        writer.send(data);
+        ASSERT_TRUE(data.empty());
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        reader.startReception(expected_data);
+        size_t current_received = reader.block_for_at_least(keys*depth);
+        reader.stopReception();
+        ASSERT_EQ(current_received, keys*depth);
+
+        data = reader.data_not_received();
+    }
+}
+
 INSTANTIATE_TEST_CASE_P(PubSubHistory,
         PubSubHistory,
         testing::Values(false, true),
