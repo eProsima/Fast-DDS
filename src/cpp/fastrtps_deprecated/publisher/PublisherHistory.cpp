@@ -60,10 +60,9 @@ PublisherHistory::~PublisherHistory()
 {
 }
 
-
 bool PublisherHistory::add_pub_change(
         CacheChange_t* change,
-        WriteParams &wparams,
+        WriteParams& wparams,
         std::unique_lock<RecursiveTimedMutex>& lock,
         std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
@@ -120,7 +119,7 @@ bool PublisherHistory::add_pub_change(
                 }
                 else
                 {
-                    logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance"<<endl;);
+                    logWarning(RTPS_HISTORY, "Change not added due to maximum number of samples per instance");
                 }
             }
             else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
@@ -147,8 +146,9 @@ bool PublisherHistory::add_pub_change(
                 if (this->add_change_(change, wparams))
 #endif
                 {
-                    logInfo(RTPS_HISTORY, topic_att_.getTopicDataType() << " Change "
-                            << change->sequenceNumber << " added with key: " << change->instanceHandle
+                    logInfo(RTPS_HISTORY,
+                            topic_att_.getTopicDataType() 
+                            << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
                             << " and " << change->serializedPayload.length << " bytes");
                     returnedValue =  true;
                 }
@@ -188,13 +188,13 @@ bool PublisherHistory::find_key(
                 return true;
             }
         }
-        logWarning(PUBLISHER, "History has reached the maximum number of instances" << endl;)
+        logWarning(PUBLISHER, "History has reached the maximum number of instances");
     }
     return false;
 }
 
-
-bool PublisherHistory::removeAllChange(size_t* removed)
+bool PublisherHistory::removeAllChange(
+        size_t* removed)
 {
 
     size_t rem = 0;
@@ -222,7 +222,6 @@ bool PublisherHistory::removeAllChange(size_t* removed)
     return false;
 }
 
-
 bool PublisherHistory::removeMinChange()
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -239,7 +238,8 @@ bool PublisherHistory::removeMinChange()
     return false;
 }
 
-bool PublisherHistory::remove_change_pub(CacheChange_t* change)
+bool PublisherHistory::remove_change_pub(
+        CacheChange_t* change)
 {
 
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -262,12 +262,12 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
     else
     {
         t_m_Inst_Caches::iterator vit;
-        if (!this->find_key(change,&vit))
+        if (!this->find_key(change, &vit))
         {
             return false;
         }
 
-        for(auto chit = vit->second.cache_changes.begin(); chit!= vit->second.cache_changes.end(); ++chit)
+        for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
         {
             if (((*chit)->sequenceNumber == change->sequenceNumber) && ((*chit)->writerGUID == change->writerGUID))
             {
@@ -284,7 +284,8 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
     return false;
 }
 
-bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
+bool PublisherHistory::remove_change_g(
+        CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
 }
@@ -320,8 +321,8 @@ bool PublisherHistory::set_next_deadline(
 }
 
 bool PublisherHistory::get_next_deadline(
-        InstanceHandle_t &handle,
-        std::chrono::steady_clock::time_point &next_deadline_us)
+        InstanceHandle_t& handle,
+        std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -332,14 +333,15 @@ bool PublisherHistory::get_next_deadline(
 
     if (topic_att_.getTopicKind() == WITH_KEY)
     {
-        auto min = std::min_element(keyed_changes_.begin(),
-                                    keyed_changes_.end(),
-                                    [](
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
-                                        {
-                                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-                                        });
+        auto min = std::min_element(
+            keyed_changes_.begin(),
+            keyed_changes_.end(),
+            [](
+                    const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                    const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+            {
+                return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+            });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
