@@ -217,7 +217,8 @@ void RTPSMessageGroup::check_and_maybe_flush(
 }
 
 bool RTPSMessageGroup::insert_submessage(
-        const GuidPrefix_t& destination_guid_prefix)
+        const GuidPrefix_t& destination_guid_prefix,
+        bool is_big_submessage)
 {
     if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
     {
@@ -237,6 +238,12 @@ bool RTPSMessageGroup::insert_submessage(
             logError(RTPS_WRITER,"Cannot add RTPS submesage to the CDRMessage. Buffer too small");
             return false;
         }
+    }
+
+    // Messages with a submessage bigger than 64KB cannot have more submessages and should be flushed
+    if (is_big_submessage)
+    {
+        flush();
     }
 
     return true;
@@ -330,9 +337,9 @@ bool RTPSMessageGroup::add_data(
     const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
 
     // TODO (Ricardo). Check to create special wrapper.
-
+    bool is_big_submessage;
     if(!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change, endpoint_->getAttributes().topicKind,
-                readerId, expectsInlineQos, inlineQos))
+                readerId, expectsInlineQos, inlineQos, &is_big_submessage))
     {
         logError(RTPS_WRITER, "Cannot add DATA submsg to the CDRMessage. Buffer too small");
         return false;
@@ -364,7 +371,7 @@ bool RTPSMessageGroup::add_data(
     }
 #endif
 
-    return insert_submessage();
+    return insert_submessage(is_big_submessage);
 }
 
 bool RTPSMessageGroup::add_data_frag(
@@ -461,7 +468,7 @@ bool RTPSMessageGroup::add_data_frag(
     }
 #endif
 
-    return insert_submessage();
+    return insert_submessage(false);
 }
 
 bool RTPSMessageGroup::add_heartbeat(
@@ -512,7 +519,7 @@ bool RTPSMessageGroup::add_heartbeat(
     }
 #endif
 
-    return insert_submessage();
+    return insert_submessage(false);
 }
 
 // TODO (Ricardo) Check with standard 8.3.7.4.5
@@ -544,7 +551,7 @@ bool RTPSMessageGroup::add_gap(
         return false;
     }
 
-    return insert_submessage();
+    return insert_submessage(false);
 }
 
 bool RTPSMessageGroup::add_gap(
@@ -562,7 +569,7 @@ bool RTPSMessageGroup::add_gap(
         return false;
     }
 
-    return insert_submessage(reader_guid.guidPrefix);
+    return insert_submessage(reader_guid.guidPrefix, false);
 }
 
 bool RTPSMessageGroup::create_gap_submessage(
@@ -662,7 +669,7 @@ bool RTPSMessageGroup::add_acknack(
     }
 #endif
 
-    return insert_submessage();
+    return insert_submessage(false);
 }
 
 bool RTPSMessageGroup::add_nackfrag(
@@ -712,7 +719,7 @@ bool RTPSMessageGroup::add_nackfrag(
     }
 #endif
 
-    return insert_submessage();
+    return insert_submessage(false);
 }
 
 } /* namespace rtps */

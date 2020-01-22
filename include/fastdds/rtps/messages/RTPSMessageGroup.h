@@ -193,13 +193,14 @@ class RTPSMessageGroup_t;
         void check_and_maybe_flush(
                 const GuidPrefix_t& destination_guid_prefix);
 
-        bool insert_submessage()
+        bool insert_submessage(bool is_big_submessage)
         {
-            return insert_submessage(sender_.destination_guid_prefix());
+            return insert_submessage(sender_.destination_guid_prefix(), is_big_submessage);
         }
 
         bool insert_submessage(
-                const GuidPrefix_t& destination_guid_prefix);
+                const GuidPrefix_t& destination_guid_prefix,
+                bool is_big_submessage);
 
         bool add_info_dst_in_buffer(
                 CDRMessage_t* buffer,
@@ -224,9 +225,9 @@ class RTPSMessageGroup_t;
 
         GuidPrefix_t current_dst_;
 
+#if HAVE_SECURITY
         RTPSParticipantImpl* participant_;
 
-#if HAVE_SECURITY
         CDRMessage_t* encrypt_msg_;
 #endif
 

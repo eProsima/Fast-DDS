@@ -37,8 +37,6 @@
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <functional>
-
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 using namespace std::chrono;
@@ -201,8 +199,8 @@ bool PublisherImpl::create_new_change_with_params(
             {
                 /// Fragment the data.
                 // Set the fragment size to the cachechange.
-                // Note: high_mark will always be a value that can be casted to uint16_t)
-                ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
+                ch->setFragmentSize(static_cast<uint16_t>(
+                    (std::min)(final_high_mark_for_frag, RTPSWriter::get_max_fragment_payload_size())));
             }
 
             InstanceHandle_t change_handle = ch->instanceHandle;
