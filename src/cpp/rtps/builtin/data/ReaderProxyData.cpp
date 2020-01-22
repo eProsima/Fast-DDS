@@ -836,8 +836,8 @@ void ReaderProxyData::clear()
     m_isAlive = true;
     m_topicKind = NO_KEY;
     //clear user data but keep max size on qos
-    uint32_t max_user_data = m_qos.m_userData.max_size();
-    uint32_t max_partitions = m_qos.m_partition.max_size();
+    uint32_t max_user_data = (uint32_t)m_qos.m_userData.max_size();
+    uint32_t max_partitions = (uint32_t)m_qos.m_partition.max_size();
     m_qos = ReaderQos();
     m_qos.m_userData.max_size(max_user_data);
     m_qos.m_partition.max_size(max_partitions);
