@@ -837,7 +837,7 @@ public:
 private:
 
     std::vector<std::string> names;
-    size_t max_size_ = 0;
+    uint32_t max_size_ = 0;
 };
 
 /**

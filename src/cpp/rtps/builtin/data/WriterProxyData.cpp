@@ -841,8 +841,8 @@ void WriterProxyData::clear()
     m_topicName = "";
     m_userDefinedId = 0;
     //clear user data but keep max size on qos
-    uint32_t max_user_data = m_qos.m_userData.max_size();
-    uint32_t max_partition = m_qos.m_partition.max_size();
+    uint32_t max_user_data = (uint32_t)m_qos.m_userData.max_size();
+    uint32_t max_partition = (uint32_t)m_qos.m_partition.max_size();
     m_qos = WriterQos();
     m_qos.m_userData.max_size(max_user_data);
     m_qos.m_partition.max_size(max_partition);
