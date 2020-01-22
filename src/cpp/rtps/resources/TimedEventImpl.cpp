@@ -69,20 +69,20 @@ bool TimedEventImpl::update(
         std::chrono::steady_clock::time_point cancel_time)
 {
     StateCode expected = StateCode::READY;
-    bool ret_val = state_.compare_exchange_strong(expected, StateCode::WAITING);
+    bool set_time = state_.compare_exchange_strong(expected, StateCode::WAITING);
 
-    if (ret_val)
+    if (set_time)
     {
         std::unique_lock<std::mutex> lock(mutex_);
         next_trigger_time_ = current_time + interval_microsec_;
     }
-    else
+    else if (expected == StateCode::INACTIVE)
     {
         std::unique_lock<std::mutex> lock(mutex_);
         next_trigger_time_ = cancel_time;
     }
 
-    return ret_val;
+    return expected != StateCode::INACTIVE;
 }
 
 void TimedEventImpl::trigger(
