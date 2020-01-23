@@ -78,7 +78,7 @@ class BuiltinProtocols
      * @param nf NetworkFactory used to make the translation
      */
     void transform_server_remote_locators(
-        NetworkFactory & nf);
+            NetworkFactory & nf);
 
     //!BuiltinAttributes of the builtin protocols.
     BuiltinAttributes m_att;
