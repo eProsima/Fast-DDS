@@ -71,7 +71,7 @@ public:
             Endpoint* endpoint,
             const RTPSMessageSenderInterface& msg_sender,
             std::chrono::steady_clock::time_point max_blocking_time_point =
-            std::chrono::steady_clock::now() + std::chrono::hours(24));
+                std::chrono::steady_clock::now() + std::chrono::hours(24));
 
     ~RTPSMessageGroup() noexcept(false);
 
@@ -167,7 +167,10 @@ public:
             FragmentNumberSet_t fn_state,
             int32_t count);
 
-    uint32_t get_current_bytes_processed() { return currentBytesSent_ + full_msg_->length; }
+    inline uint32_t get_current_bytes_processed() const
+    { 
+        return currentBytesSent_ + full_msg_->length; 
+    }
 
     /**
      * To be used whenever destination locators/guids change between two add_xxx calls.
@@ -238,10 +241,12 @@ private:
 
     GuidPrefix_t current_dst_;
 
-#if HAVE_SECURITY
     RTPSParticipantImpl* participant_;
 
+#if HAVE_SECURITY
+    
     CDRMessage_t* encrypt_msg_;
+    
 #endif
 
     std::chrono::steady_clock::time_point max_blocking_time_point_;
