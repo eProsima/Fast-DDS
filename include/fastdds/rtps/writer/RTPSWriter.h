@@ -171,13 +171,6 @@ public:
     uint32_t calculateMaxDataSize(
             uint32_t length);
 
-    //! Maximum fragment size minus the headers
-    static inline constexpr uint32_t get_max_fragment_payload_size()
-    {
-        // Max fragment is 64KBytes - header - inlineqos - 4(for better alignment)
-        return std::numeric_limits<uint16_t>::max() - 28 - 32 - 4;
-    }
-
     /**
      * Get listener
      * @return Listener

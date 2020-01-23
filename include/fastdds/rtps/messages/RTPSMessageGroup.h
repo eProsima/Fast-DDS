@@ -177,8 +177,18 @@ class RTPSMessageGroup_t;
          */
         void flush_and_reset();
 
+        //! Maximum fragment size minus the headers
+        static inline constexpr uint32_t get_max_fragment_payload_size()
+        {
+            // Max fragment is 64KBytes_max - header - inlineqos - 3(for better alignment)
+            return std::numeric_limits<uint16_t>::max() - data_frag_header_size_ - max_inline_qos_size_ - 3;
+        }
+
     private:
 
+        static constexpr uint32_t data_frag_header_size_ = 28;
+        static constexpr uint32_t max_inline_qos_size_ = 32;
+        
         void reset_to_header();
 
         void flush();

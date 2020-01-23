@@ -200,7 +200,7 @@ bool PublisherImpl::create_new_change_with_params(
                 /// Fragment the data.
                 // Set the fragment size to the cachechange.
                 ch->setFragmentSize(static_cast<uint16_t>(
-                    (std::min)(final_high_mark_for_frag, RTPSWriter::get_max_fragment_payload_size())));
+                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
             }
 
             InstanceHandle_t change_handle = ch->instanceHandle;
