@@ -331,10 +331,11 @@ bool StatelessWriter::is_acked_by_all(
     return true;
 }
 
-void StatelessWriter::update_unsent_changes(
+bool StatelessWriter::update_unsent_changes(
         const SequenceNumber_t& seq_num,
         const FragmentNumber_t& frag_num)
 {
+    bool has_to_wake_async_thread = false;
     auto find_by_seq_num = [seq_num](const ChangeForReader_t& unsent_change)
             {
                 return seq_num == unsent_change.getSequenceNumber();
@@ -355,7 +356,13 @@ void StatelessWriter::update_unsent_changes(
         {
             unsent_changes_.remove_if(find_by_seq_num);
         }
+        else
+        {
+            has_to_wake_async_thread = true;
+        }
     }
+
+    return has_to_wake_async_thread;
 }
 
 void StatelessWriter::send_any_unsent_changes()
@@ -410,7 +417,10 @@ void StatelessWriter::send_any_unsent_changes()
 
                 // Remove the messages selected for sending from the original list,
                 // and update those that were fragmented with the new sent index
-                update_unsent_changes(changeToSend.sequenceNumber, changeToSend.fragmentNumber);
+                if (update_unsent_changes(changeToSend.sequenceNumber, changeToSend.fragmentNumber))
+                {
+                    mp_RTPSParticipant->async_thread().wake_up(this);
+                }
 
                 // Notify the controllers
                 FlowController::NotifyControllersChangeSent(changeToSend.cacheChange);

@@ -114,7 +114,7 @@ public:
     bool set_fixed_locators(
             const LocatorList_t& locator_list);
 
-    void update_unsent_changes(
+    bool update_unsent_changes(
             const SequenceNumber_t& seq_num,
             const FragmentNumber_t& frag_num);
 
