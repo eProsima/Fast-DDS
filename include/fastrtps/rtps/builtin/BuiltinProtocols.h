@@ -70,7 +70,7 @@ class BuiltinProtocols
      * @return True on success
      */
     bool updateMetatrafficLocators(
-        LocatorList_t& loclist);
+            LocatorList_t& loclist);
 
     /**
      * Traverses the list of discover servers translating from remote to local locators
