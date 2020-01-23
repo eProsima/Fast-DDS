@@ -140,14 +140,14 @@ bool BuiltinProtocols::initBuiltinProtocols(
 }
 
 bool BuiltinProtocols::updateMetatrafficLocators(
-    LocatorList_t& loclist)
+        LocatorList_t& loclist)
 {
     m_metatrafficUnicastLocatorList = loclist;
     return true;
 }
 
 void BuiltinProtocols::transform_server_remote_locators(
-    NetworkFactory & nf)
+        NetworkFactory & nf)
 {
     for(RemoteServerAttributes & rs : m_DiscoveryServers)
     {
