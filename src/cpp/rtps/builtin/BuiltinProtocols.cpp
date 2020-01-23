@@ -156,7 +156,8 @@ bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
     return true;
 }
 
-void BuiltinProtocols::transform_server_remote_locators(NetworkFactory & nf)
+void BuiltinProtocols::transform_server_remote_locators(
+        NetworkFactory & nf)
 {
     for(RemoteServerAttributes & rs : m_DiscoveryServers)
     {
