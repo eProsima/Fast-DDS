@@ -91,7 +91,7 @@ bool SubscriberHistory::received_change(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -255,7 +255,7 @@ bool SubscriberHistory::find_key_for_change(
 {
     if (!a_change->instanceHandle.isDefined() && mp_subImpl->getType() != nullptr)
     {
-        logInfo(RTPS_HISTORY, "Getting Key of change with no Key transmitted")
+        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted")
         mp_subImpl->getType()->deserialize(&a_change->serializedPayload, mp_getKeyObject);
         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -268,7 +268,7 @@ bool SubscriberHistory::find_key_for_change(
     }
     else if (!a_change->instanceHandle.isDefined())
     {
-        logWarning(RTPS_HISTORY, "NO KEY in topic: " << mp_subImpl->getAttributes().topic.topicName
+        logWarning(SUBSCRIBER, "NO KEY in topic: " << mp_subImpl->getAttributes().topic.topicName
             << " and no method to obtain it";);
         return false;
     }
@@ -276,7 +276,7 @@ bool SubscriberHistory::find_key_for_change(
     return find_key(a_change, &map_it);
 }
 
-void SubscriberHistory::deserialize_change(
+bool SubscriberHistory::deserialize_change(
         CacheChange_t* change,
         uint32_t ownership_strength,
         void* data,
@@ -284,7 +284,11 @@ void SubscriberHistory::deserialize_change(
 {
     if (change->kind == ALIVE)
     {
-        mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
+        if (!mp_subImpl->getType()->deserialize(&change->serializedPayload, data))
+        {
+            logError(SUBSCRIBER, "Deserialization of data failed");
+            return false;
+        }
     }
 
     if (info != nullptr)
@@ -307,6 +311,8 @@ void SubscriberHistory::deserialize_change(
         info->iHandle = change->instanceHandle;
         info->related_sample_identity = change->write_params.sample_identity();
     }
+
+    return true;
 }
 
 bool SubscriberHistory::readNextData(
@@ -316,7 +322,7 @@ bool SubscriberHistory::readNextData(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -331,8 +337,7 @@ bool SubscriberHistory::readNextData(
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
             uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                 wp->ownership_strength() : 0;
-            deserialize_change(change, ownership, data, info);
-            return true;
+            return deserialize_change(change, ownership, data, info);
         }
     }
     return false;
@@ -346,7 +351,7 @@ bool SubscriberHistory::takeNextData(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -362,9 +367,9 @@ bool SubscriberHistory::takeNextData(
                     " from writer: " << change->writerGUID);
             uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                 wp->ownership_strength() : 0;
-            deserialize_change(change, ownership, data, info);
-            remove_change_sub(change);
-            return true;
+            bool deserialized = deserialize_change(change, ownership, data, info);
+            bool removed = remove_change_sub(change);
+            return (deserialized && removed);
         }
     }
 
@@ -404,13 +409,12 @@ bool SubscriberHistory::find_key(
     return false;
 }
 
-
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -433,7 +437,7 @@ bool SubscriberHistory::remove_change_sub(
         }
         if (!found)
         {
-            logWarning(SUBSCRIBER, "Change not found, something is wrong");
+            logError(SUBSCRIBER, "Change not found on this key, something is wrong");
         }
     }
 
@@ -452,7 +456,7 @@ bool SubscriberHistory::set_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
@@ -482,7 +486,7 @@ bool SubscriberHistory::get_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
