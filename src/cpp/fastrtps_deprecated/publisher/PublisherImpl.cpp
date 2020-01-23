@@ -197,7 +197,7 @@ bool PublisherImpl::create_new_change_with_params(
             // If it is big data, fragment it.
             if (ch->serializedPayload.length > final_high_mark_for_frag)
             {
-                /// Fragment the data.
+                // Fragment the data.
                 // Set the fragment size to the cachechange.
                 ch->setFragmentSize(static_cast<uint16_t>(
                     (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
