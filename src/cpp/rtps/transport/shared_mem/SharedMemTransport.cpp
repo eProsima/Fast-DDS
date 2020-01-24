@@ -401,46 +401,50 @@ bool SharedMemTransport::send(
 
     bool ret = true;
 
-	if(it != *destination_locators_end)
-	{
-		std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
+	std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
 
-		try
+	try
+	{
+		while (it != *destination_locators_end)
 		{
-			shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size);
-	
-			do
+			if (IsLocatorSupported(*it))
 			{
+				// Only copy the first time
+				if (shared_buffer == nullptr)
+				{
+					shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size);
+				}
+
 				auto now = std::chrono::steady_clock::now();
 
 				if (now < max_blocking_time_point)
 				{
-					ret &=	send(shared_buffer, 
-								*it,
-								std::chrono::duration_cast<std::chrono::microseconds>(max_blocking_time_point - now));
-
-					++it;
+					ret &= send(shared_buffer,
+						*it,
+						std::chrono::duration_cast<std::chrono::microseconds>(max_blocking_time_point - now));
 				}
 				else // Time is out
 				{
 					ret = false;
 					break;
 				}
-			}while (it != *destination_locators_end);
-		}
-		catch(const std::exception& e)
-		{
-			logWarning(RTPS_MSG_OUT, e.what());
+			}
 
-			// Segment overflow with discard policy doesn't return error.
-			if(!shared_buffer && configuration_.segment_overflow_policy == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
-			{
-				ret = true;
-			}
-			else
-			{
-				ret = false;	
-			}
+			++it;
+		}
+	}
+	catch(const std::exception& e)
+	{
+		logWarning(RTPS_MSG_OUT, e.what());
+
+		// Segment overflow with discard policy doesn't return error.
+		if(!shared_buffer && configuration_.segment_overflow_policy == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
+		{
+			ret = true;
+		}
+		else
+		{
+			ret = false;	
 		}
 	}
 
