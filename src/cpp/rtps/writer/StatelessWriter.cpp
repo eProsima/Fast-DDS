@@ -178,20 +178,17 @@ void StatelessWriter::unsent_change_added_to_history(
                         {
                             RTPSMessageGroup group(mp_RTPSParticipant, this, it, max_blocking_time);
 
-                            if (change->getFragmentCount() > 0)
+                            uint32_t n_fragments = change->getFragmentCount();
+                            if (n_fragments > 0)
                             {
-                                ChangeForReader_t change_for_reader(change);
-                                change_for_reader.getUnsentFragments().for_each([this, &group,
-                                        change](FragmentNumber_t fragment_number)
-                                            {
-                                                if (!group.add_data_frag(*change, fragment_number,
-                                                is_inline_qos_expected_))
-                                                {
-                                                    logError(RTPS_WRITER,
-                                                    "Error sending fragment (" << change->sequenceNumber <<
-                                                    ", " << fragment_number << ")");
-                                                }
-                                            });
+                                for (uint32_t frag = 1; frag <= n_fragments; frag++)
+                                {
+                                    if (!group.add_data_frag(*change, frag, is_inline_qos_expected_))
+                                    {
+                                        logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber
+                                            << ", " << frag << ")");
+                                    }
+                                }
                             }
                             else
                             {
@@ -217,20 +214,17 @@ void StatelessWriter::unsent_change_added_to_history(
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
 
-                        if (change->getFragmentCount() > 0)
+                        uint32_t n_fragments = change->getFragmentCount();
+                        if (n_fragments > 0)
                         {
-                            ChangeForReader_t change_for_reader(change);
-                            change_for_reader.getUnsentFragments().for_each([this, &group,
-                                    change](FragmentNumber_t fragment_number)
-                                        {
-                                            if (!group.add_data_frag(*change, fragment_number,
-                                            is_inline_qos_expected_))
-                                            {
-                                                logError(RTPS_WRITER,
-                                                "Error sending fragment (" << change->sequenceNumber <<
-                                                ", " << fragment_number << ")");
-                                            }
-                                        });
+                            for (uint32_t frag = 1; frag <= n_fragments; frag++)
+                            {
+                                if (!group.add_data_frag(*change, frag, is_inline_qos_expected_))
+                                {
+                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber
+                                        << ", " << frag << ")");
+                                }
+                            }
                         }
                         else
                         {
