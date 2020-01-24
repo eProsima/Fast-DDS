@@ -225,13 +225,12 @@ void StatefulWriter::unsent_change_added_to_history(
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
 
-                        if (change->getFragmentCount() > 0)
+                        uint32_t n_fragments = change->getFragmentCount();
+                        if (n_fragments > 0)
                         {
-                            ChangeForReader_t change_for_reader(change);
-                            change_for_reader.getUnsentFragments().for_each([&](FragmentNumber_t fragment_number)
+                            for (uint32_t frag = 1; frag <= n_fragments; frag++)
                             {
-                                if (group.add_data_frag(*change, fragment_number,
-                                        expectsInlineQos))
+                                if (group.add_data_frag(*change, frag, expectsInlineQos))
                                 {
                                     for (ReaderProxy* it : matched_readers_)
                                     {
@@ -239,18 +238,18 @@ void StatefulWriter::unsent_change_added_to_history(
                                         {
                                             bool allFragmentsSent = false;
                                             it->mark_fragment_as_sent_for_change(
-                                                        change->sequenceNumber,
-                                                        fragment_number,
-                                                        allFragmentsSent);
+                                                change->sequenceNumber,
+                                                frag,
+                                                allFragmentsSent);
                                         }
                                     }
                                 }
                                 else
                                 {
                                     logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
-                                        ", " << fragment_number << ")");
+                                        ", " << frag << ")");
                                 }
-                            });
+                            }
                         }
                         else
                         {
@@ -293,18 +292,17 @@ void StatefulWriter::unsent_change_added_to_history(
                             RTPSMessageGroup group(mp_RTPSParticipant, this, it->message_sender(),
                                     max_blocking_time);
 
-                            if (change->getFragmentCount() > 0)
+                            uint32_t n_fragments = change->getFragmentCount();
+                            if (n_fragments > 0)
                             {
-                                ChangeForReader_t change_for_reader(change);
-                                change_for_reader.getUnsentFragments().for_each([&](FragmentNumber_t fragment_number)
+                                for (uint32_t frag = 1; frag <= n_fragments; frag++)
                                 {
-                                    if (!group.add_data_frag(*change, fragment_number,
-                                            it->expects_inline_qos()))
+                                    if (!group.add_data_frag(*change, frag, it->expects_inline_qos()))
                                     {
                                         logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
-                                            ", " << fragment_number << ")");
+                                            ", " << frag << ")");
                                     }
-                                });
+                                }
                             }
                             else
                             {
