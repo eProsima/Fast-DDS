@@ -49,75 +49,123 @@ public:
         }
     }
 
+protected:
+
+    void do_fragment_test(
+            const std::string& topic_name,
+            std::list<Data1mb>& data,
+            bool asynchronous,
+            bool reliable,
+            bool small_fragments)
+    {
+        PubSubReader<Data1mbType> reader(topic_name);
+        PubSubWriter<Data1mbType> writer(topic_name);
+
+        reader
+            .socket_buffer_size(1048576)    // accomodate large and fast fragments
+            .history_depth(static_cast<int32_t>(data.size()))
+            .reliability(reliable ?
+                eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
+                eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .init();
+
+        ASSERT_TRUE(reader.isInitialized());
+
+        if (small_fragments)
+        {
+            auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
+            testTransport->sendBufferSize = 1024;
+            testTransport->maxMessageSize = 1024;
+            testTransport->receiveBufferSize = 65536;
+            writer.disable_builtin_transport();
+            writer.add_user_transport_to_pparams(testTransport);
+        }
+
+        if (asynchronous)
+        {
+            writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
+        }
+
+        writer
+            .history_depth(static_cast<int32_t>(data.size()))
+            .reliability(reliable ?
+                eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
+                eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Because its volatile the durability
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        reader.startReception(data);
+        // Send data
+        writer.send(data, reliable ? 0u : 10u);
+        ASSERT_TRUE(data.empty());
+
+        // Block reader until reception finished or timeout.
+        if (reliable)
+        {
+            reader.block_for_all();
+        }
+        else
+        {
+            reader.block_for_at_least(2);
+        }
+    }
 };
 
 TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
 {
-    // Mutes an expected error
-    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
-
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
-
-    //Increasing reception buffer to accomodate large and fast fragments
-    reader.socket_buffer_size(1048576).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
     auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, false, false, false);
+}
 
-    reader.startReception(data);
-    // Send data
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
+TEST_P(PubSubFragments, PubSubAsNonReliableData300kbSmallFragments)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, false, false, true);
 }
 
 TEST_P(PubSubFragments, PubSubAsReliableData300kb)
 {
-    // Mutes an expected error
-    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
-
-    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
-
-    reader.history_depth(10).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.history_depth(10).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
     auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, false, true, false);
+}
 
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
+TEST_P(PubSubFragments, PubSubAsReliableData300kbSmallFragments)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, false, true, true);
 }
 
 TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, true, false, false);
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kbSmallFragments)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, true, false, true);
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kb)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, true, true, false);
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kbSmallFragments)
+{
+    auto data = default_data300kb_data_generator();
+    do_fragment_test(TEST_TOPIC_NAME, data, true, true, true);
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kbWithFlowControl)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -154,7 +202,7 @@ TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)
     reader.block_for_at_least(2);
 }
 
-TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kb)
+TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kbWithFlowControl)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
