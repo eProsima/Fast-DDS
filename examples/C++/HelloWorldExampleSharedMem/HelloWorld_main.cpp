@@ -28,6 +28,8 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
+    //Log::SetVerbosity(Log::Warning);
+
     std::cout << "Starting "<< std::endl;
     int type = 1;
     int count = 10;
@@ -48,10 +50,12 @@ int main(int argc, char** argv)
         }
         else if(strcmp(argv[1],"subscriber")==0)
             type = 2;
+        else if (strcmp(argv[1], "both") == 0)
+            type = 3;
     }
     else
     {
-        std::cout << "publisher OR subscriber argument needed" << std::endl;
+        std::cout << "publisher, subscriber or both argument needed" << std::endl;
         Log::Reset();
         return 0;
     }
@@ -76,6 +80,33 @@ int main(int argc, char** argv)
                 }
                 break;
             }
+        case 3:
+        {
+            std::thread thread_sub([]
+                {
+                    HelloWorldSubscriber mysub;
+                    if (mysub.init())
+                    {
+                        mysub.run();
+                    }
+                });
+
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+
+            std::thread thread_pub([&]
+                {
+                    HelloWorldPublisher mypub;
+                    if (mypub.init())
+                    {
+                        mypub.run(count, sleep);
+                    }
+                });
+
+            thread_pub.join();
+            thread_sub.join();
+
+            break;
+        }
     }
     Domain::stopAll();
     Log::Reset();

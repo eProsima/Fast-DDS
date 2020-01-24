@@ -39,8 +39,9 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 bool HelloWorldPublisher::init()
 {
-    m_Hello.index(0);
-    m_Hello.message("HelloWorld");
+    m_Hello = std::make_shared<HelloWorld>();
+    m_Hello->index(0);
+    m_Hello->message("HelloWorld");
     ParticipantAttributes PParam;
     PParam.rtps.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
@@ -48,11 +49,13 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+
     PParam.rtps.setName("Participant_pub");
 
     // SharedMem transport configuration
     PParam.rtps.useBuiltinTransports = false;
 	auto sm_transport = std::make_shared<SharedMemTransportDescriptor>();
+    sm_transport->segment_size = 2*1024*1024;
     PParam.rtps.userTransports.push_back(sm_transport);
 
     mp_participant = Domain::createParticipant(PParam);
@@ -112,7 +115,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
         {
             if(publish(false))
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
@@ -125,7 +128,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 --i;
             else
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
@@ -153,8 +156,13 @@ bool HelloWorldPublisher::publish(bool waitForListener)
 {
     if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
-        m_Hello.index(m_Hello.index()+1);
-        mp_publisher->write((void*)&m_Hello);
+        m_Hello->index(m_Hello->index()+1);
+        size_t data_size = m_Hello->data().size();
+        std::string s = "BigData" + std::to_string(m_Hello->index() % 10);
+        strcpy(&m_Hello->data()[data_size - s.length() -1], s.c_str());
+        
+        mp_publisher->write((void*)m_Hello.get());
+
         return true;
     }
     return false;

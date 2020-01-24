@@ -49,11 +49,11 @@ public:
 	class SubListener:public eprosima::fastrtps::SubscriberListener
 	{
 	public:
-		SubListener():n_matched(0),n_samples(0){};
+		SubListener() :n_matched(0), n_samples(0) { m_Hello = std::make_shared<HelloWorld>(); };
 		~SubListener(){};
 		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-		HelloWorld m_Hello;
+		std::shared_ptr<HelloWorld> m_Hello;
 		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		uint32_t n_samples;

@@ -40,7 +40,7 @@ public:
 	//!Run for number samples
 	void run(uint32_t number, uint32_t sleep);
 private:
-	HelloWorld m_Hello;
+	std::shared_ptr<HelloWorld> m_Hello;
 	eprosima::fastrtps::Participant* mp_participant;
 	eprosima::fastrtps::Publisher* mp_publisher;
 	bool stop;
