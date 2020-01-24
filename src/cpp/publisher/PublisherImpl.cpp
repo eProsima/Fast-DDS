@@ -43,10 +43,6 @@ using namespace eprosima::fastrtps;
 using namespace ::rtps;
 using namespace std::chrono;
 
-using namespace std::chrono;
-
-using namespace std::chrono;
-
 PublisherImpl::PublisherImpl(
         ParticipantImpl* p,
         TopicDataType* pdatatype,
@@ -76,18 +72,18 @@ PublisherImpl::PublisherImpl(
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-                    [&]() -> bool
-    {
-        return deadline_missed();
-    },
-                    att.qos.m_deadline.period.to_ns() * 1e-6);
+            [&]() -> bool
+            {
+                return deadline_missed();
+            },
+            att.qos.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-                    [&]() -> bool
-    {
-        return lifespan_expired();
-    },
-                    m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+            [&]() -> bool
+            {
+                return lifespan_expired();
+            },
+            m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }
 
 PublisherImpl::~PublisherImpl()
@@ -146,8 +142,8 @@ bool PublisherImpl::create_new_change_with_params(
     }
 
     // Block lowlevel writer
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    auto max_blocking_time = steady_clock::now() +
+            microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
 
 #if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
@@ -178,7 +174,7 @@ bool PublisherImpl::create_new_change_with_params(
                         mp_writer->calculateMaxDataSize(m_att.throughputController.bytesPerPeriod);
                 uint32_t participant_throughput_controller_bytes =
                         mp_writer->calculateMaxDataSize(
-                    mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
+                            mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
 
                 high_mark_for_frag_ =
                         max_data_size > writer_throughput_controller_bytes ?
@@ -236,7 +232,7 @@ bool PublisherImpl::create_new_change_with_params(
 
             if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
             {
-                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000> >(
+                lifespan_duration_us_ = duration<double, std::ratio<1, 1000000> >(
                     m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
                 lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
                 lifespan_timer_->restart_timer();

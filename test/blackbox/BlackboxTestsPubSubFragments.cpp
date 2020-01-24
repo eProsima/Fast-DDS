@@ -63,7 +63,7 @@ protected:
 
         reader
             .socket_buffer_size(1048576)    // accomodate large and fast fragments
-            .history_depth(data.size())
+            .history_depth(static_cast<int32_t>(data.size()))
             .reliability(reliable ?
                 eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
                 eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
@@ -87,7 +87,7 @@ protected:
         }
 
         writer
-            .history_depth(data.size())
+            .history_depth(static_cast<int32_t>(data.size()))
             .reliability(reliable ?
                 eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
                 eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
