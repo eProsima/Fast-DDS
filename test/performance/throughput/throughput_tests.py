@@ -173,7 +173,7 @@ if __name__ == '__main__':
         # Manage security
         if security is True:
             pub_command.append(
-                './measurements_{}_security.csv'.format(
+                './measurements_interprocess_{}_security.csv'.format(
                     reliability
                 )
             )
@@ -181,7 +181,7 @@ if __name__ == '__main__':
             sub_command += security_options
         else:
             pub_command.append(
-                './measurements_{}.csv'.format(
+                './measurements_interprocess_{}.csv'.format(
                     reliability
                 )
             )
@@ -226,14 +226,14 @@ if __name__ == '__main__':
         # Manage security
         if security is True:
             command.append(
-                './measurements_{}_security.csv'.format(
+                './measurements_intraprocess_{}_security.csv'.format(
                     reliability,
                 )
             )
             command += security_options
         else:
             command.append(
-                './measurements_{}.csv'.format(
+                './measurements_intraprocess_{}.csv'.format(
                     reliability,
                 )
             )
