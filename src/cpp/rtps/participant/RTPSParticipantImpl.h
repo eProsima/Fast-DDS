@@ -46,6 +46,9 @@
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
+#include "../messages/RTPSMessageGroup_t.hpp"
+#include "../messages/SendBuffersManager.hpp"
+
 #if HAVE_SECURITY
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -61,7 +64,9 @@ class TopicAttributes;
 class MessageReceiver;
 
 namespace rtps
-{ class RTPSParticipant;
+{
+
+class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
 struct CDRMessage_t;
@@ -298,6 +303,9 @@ public:
     RTPSWriter* find_local_writer(
             const GUID_t& writer_guid);
 
+    std::unique_ptr<RTPSMessageGroup_t> get_send_buffer();
+    void return_send_buffer(std::unique_ptr <RTPSMessageGroup_t>&& buffer);
+
 private:
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;
@@ -328,6 +336,8 @@ private:
     NetworkFactory m_network_Factory;
     //!Async writer thread
     AsyncWriterThread async_thread_;
+    //!Pool of send buffers
+    std::unique_ptr<SendBuffersManager> send_buffers_;
 
 #if HAVE_SECURITY
     // Security manager

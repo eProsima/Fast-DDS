@@ -134,6 +134,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     mp_userParticipant->mp_impl = this;
     mp_event_thr.init_thread();
 
+    if (!networkFactoryHasRegisteredTransports())
+    {
+        return;
+    }
+
     // Throughput controller, if the descriptor has valid values
     if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
     {
@@ -237,11 +242,32 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     createReceiverResources(m_att.defaultUnicastLocatorList, true);
     createReceiverResources(m_att.defaultMulticastLocatorList, true);
 
+    bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
+    size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
+    if(num_send_buffers == 0)
+    {
+        // Three buffers (user, events and async writer threads)
+        num_send_buffers = 3;
+        // Add one buffer per reception thread
+        num_send_buffers += m_receiverResourcelist.size();
+    }
+
+    // Create buffer pool
+    send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers));
+
 #if HAVE_SECURITY
     // Start security
     // TODO(Ricardo) Get returned value in future.
     m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
+    if (!m_security_manager_initialized)
+    {
+        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
+        return;
+    }
 #endif
+
+    // Allocate all pending send buffers
+    send_buffers_->init(this);
 
     mp_builtinProtocols = new BuiltinProtocols();
 
@@ -305,8 +331,6 @@ const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
     disable();
-
-    delete mp_builtinProtocols;
 
 #if HAVE_SECURITY
     m_security_manager.destroy();
@@ -1232,6 +1256,16 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(const Endpoint
     return ret_val != nullptr ?
         ret_val :
         PersistenceFactory::create_persistence_service(m_att.properties);
+}
+
+std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
+{
+    return send_buffers_->get_buffer(this);
+}
+
+void RTPSParticipantImpl::return_send_buffer(std::unique_ptr <RTPSMessageGroup_t>&& buffer)
+{
+    send_buffers_->return_buffer(std::move(buffer));
 }
 
 } /* namespace rtps */
