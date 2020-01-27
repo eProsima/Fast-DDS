@@ -222,9 +222,9 @@ class RTPSMessageGroup_t;
 
         GuidPrefix_t current_dst_;
 
-#if HAVE_SECURITY
         RTPSParticipantImpl* participant_;
 
+#if HAVE_SECURITY
         CDRMessage_t* encrypt_msg_;
 #endif
 
