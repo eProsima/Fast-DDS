@@ -20,9 +20,9 @@
 
 #include <thread>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSWriter;
 class RTPSParticipantImpl;
@@ -35,33 +35,47 @@ class RTPSParticipantImpl;
  */
 class ThroughputController : public FlowController
 {
-    public:
-        ThroughputController(const ThroughputControllerDescriptor&, RTPSWriter* associatedWriter);
-        ThroughputController(const ThroughputControllerDescriptor&, RTPSParticipantImpl* associatedParticipant);
+public:
 
-        virtual void operator()(RTPSWriterCollector<ReaderLocator*>& changesToSend) override;
-        virtual void operator()(RTPSWriterCollector<ReaderProxy*>& changesToSend) override;
+    ThroughputController(
+            const ThroughputControllerDescriptor&,
+            RTPSWriter* associatedWriter);
+    ThroughputController(
+            const ThroughputControllerDescriptor&,
+            RTPSParticipantImpl* associatedParticipant);
 
-        virtual void disable() override;
+    virtual void operator ()(
+            RTPSWriterCollector<ReaderLocator*>& changesToSend) override;
+    virtual void operator ()(
+            RTPSWriterCollector<ReaderProxy*>& changesToSend) override;
 
-    private:
+    virtual void disable() override;
 
-        bool process_change_nts_(CacheChange_t* change, const SequenceNumber_t& seqNum,
-                const FragmentNumber_t fragNum);
+private:
 
-        uint32_t mBytesPerPeriod;
-        uint32_t mAccumulatedPayloadSize;
-        uint32_t mPeriodMillisecs;
-        std::recursive_mutex mThroughputControllerMutex;
+    template<typename Collector>
+    void process_nts(Collector& changesToSend);
 
-        RTPSParticipantImpl* mAssociatedParticipant;
-        RTPSWriter* mAssociatedWriter;
+    bool process_change_nts_(
+            CacheChange_t* change,
+            const SequenceNumber_t& seqNum,
+            const FragmentNumber_t fragNum,
+            uint32_t* accumulated_size);
 
-        /*
-         * Schedules the filter to be refreshed in period ms. When it does, its capacity
-         * will be partially restored, by "sizeToRestore" bytes.
-         */
-        void ScheduleRefresh(uint32_t sizeToRestore);
+    uint32_t mBytesPerPeriod;
+    uint32_t mAccumulatedPayloadSize;
+    uint32_t mPeriodMillisecs;
+    std::recursive_mutex mThroughputControllerMutex;
+
+    RTPSParticipantImpl* mAssociatedParticipant;
+    RTPSWriter* mAssociatedWriter;
+
+    /*
+     * Schedules the filter to be refreshed in period ms. When it does, its capacity
+     * will be partially restored, by "sizeToRestore" bytes.
+     */
+    void ScheduleRefresh(
+            uint32_t sizeToRestore);
 };
 
 } // namespace rtps
