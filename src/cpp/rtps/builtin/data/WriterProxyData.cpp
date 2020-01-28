@@ -245,7 +245,7 @@ uint32_t WriterProxyData::get_serialized_size(
     {
         ret_val += m_qos.m_topicData.cdr_serialized_size();
     }
-    if (m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_topicData.hasChanged)
+    if (m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_disablePositiveACKs.hasChanged)
     {
         ret_val += m_qos.m_disablePositiveACKs.cdr_serialized_size();
     }
