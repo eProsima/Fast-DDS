@@ -60,11 +60,13 @@ void RTPSDomain::stopAll()
     while (m_RTPSParticipants.size() > 0)
     {
         RTPSDomain::t_p_RTPSParticipant participant = m_RTPSParticipants.back();
-        m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+        RTPSParticipantImpl* impl = participant.second;
+        m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(impl->getRTPSParticipantID()));
         m_RTPSParticipants.pop_back();
 
         lock.unlock();
-        RTPSDomain::removeRTPSParticipant_nts(participant);
+        impl->disable();
+        delete impl;
         lock.lock();
     }
     logInfo(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
@@ -228,22 +230,18 @@ bool RTPSDomain::removeRTPSParticipant(
             if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
             {
                 RTPSDomain::t_p_RTPSParticipant participant = *it;
+                RTPSParticipantImpl* impl = participant.second;
                 m_RTPSParticipants.erase(it);
-                m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+                m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(impl->getRTPSParticipantID()));
                 lock.unlock();
-                removeRTPSParticipant_nts(participant);
+                impl->disable();
+                delete impl;
                 return true;
             }
         }
     }
     logError(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
     return false;
-}
-
-void RTPSDomain::removeRTPSParticipant_nts(
-        RTPSDomain::t_p_RTPSParticipant& participant)
-{
-    delete(participant.second);
 }
 
 RTPSWriter* RTPSDomain::createRTPSWriter(
@@ -258,9 +256,10 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         if (it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
         {
             t_p_RTPSParticipant participant = *it;
+            RTPSParticipantImpl* impl = participant.second;
             lock.unlock();
             RTPSWriter* writ;
-            if (participant.second->createWriter(&writ, watt, hist, listen))
+            if (impl->createWriter(&writ, watt, hist, listen))
             {
                 return writ;
             }
@@ -281,8 +280,9 @@ bool RTPSDomain::removeRTPSWriter(
             if (it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
             {
                 t_p_RTPSParticipant participant = *it;
+                RTPSParticipantImpl* impl = participant.second;
                 lock.unlock();
-                return participant.second->deleteUserEndpoint((Endpoint*)writer);
+                return impl->deleteUserEndpoint((Endpoint*)writer);
             }
         }
     }
@@ -301,9 +301,10 @@ RTPSReader* RTPSDomain::createRTPSReader(
         if (it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
         {
             t_p_RTPSParticipant participant = *it;
+            RTPSParticipantImpl* impl = participant.second;
             lock.unlock();
             RTPSReader* reader;
-            if (participant.second->createReader(&reader, ratt, rhist, rlisten))
+            if (impl->createReader(&reader, ratt, rhist, rlisten))
             {
                 return reader;
             }
@@ -325,8 +326,9 @@ bool RTPSDomain::removeRTPSReader(
             if (it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
             {
                 t_p_RTPSParticipant participant = *it;
+                RTPSParticipantImpl* impl = participant.second;
                 lock.unlock();
-                return participant.second->deleteUserEndpoint((Endpoint*)reader);
+                return impl->deleteUserEndpoint((Endpoint*)reader);
             }
         }
     }
@@ -339,10 +341,11 @@ RTPSReader* RTPSDomainImpl::find_local_reader(
     std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
     for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
     {
-        if (participant.second->getGuid().guidPrefix == reader_guid.guidPrefix)
+        RTPSParticipantImpl* impl = participant.second;
+        if (impl->getGuid().guidPrefix == reader_guid.guidPrefix)
         {
             // Participant found, forward the query
-            return participant.second->find_local_reader(reader_guid);
+            return impl->find_local_reader(reader_guid);
         }
     }
 
@@ -355,10 +358,11 @@ RTPSWriter* RTPSDomainImpl::find_local_writer(
     std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
     for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
     {
-        if (participant.second->getGuid().guidPrefix == writer_guid.guidPrefix)
+        RTPSParticipantImpl* impl = participant.second;
+        if (impl->getGuid().guidPrefix == writer_guid.guidPrefix)
         {
             // Participant found, forward the query
-            return participant.second->find_local_writer(writer_guid);
+            return impl->find_local_writer(writer_guid);
         }
     }
 

@@ -143,12 +143,12 @@ private:
 
     typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
 
-    RTPSDomain();
+    RTPSDomain() = delete;
 
     /**
      * DomainRTPSParticipant destructor
      */
-    ~RTPSDomain();
+    ~RTPSDomain() = delete;
 
     /**
      * @brief Get Id to create a RTPSParticipant.
@@ -158,9 +158,6 @@ private:
     {
         return m_maxRTPSParticipantID++;
     }
-
-    static void removeRTPSParticipant_nts(
-            t_p_RTPSParticipant&);
 
     static std::mutex m_mutex;
 
