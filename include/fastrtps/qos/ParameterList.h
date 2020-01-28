@@ -47,18 +47,6 @@ class ParameterList
         static bool writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg);
 
         /**
-         * Update the CDRMessage of a parameterList.
-         * @param msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
-         * @param plist Pointer to the parameterList.
-         * @param use_encapsulation Flag to apply encapsulation.
-         * @return True if correct.
-         */
-        static bool writeParameterListToCDRMsg(
-                rtps::CDRMessage_t* msg,
-                ParameterList* plist,
-                bool use_encapsulation);
-
-        /**
          * Update the information of a cache change parsing the inline qos from a CDRMessage
          * @param[inout] change Reference to the cache change to be updated.
          * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
