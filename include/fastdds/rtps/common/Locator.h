@@ -203,6 +203,11 @@ inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
         }
         output << ":" << loc.port;
     }
+    else if (loc.kind == LOCATOR_KIND_SHMEM)
+    {
+        output << "SHM:" << loc.port;
+    }
+
     return output;
 }
 

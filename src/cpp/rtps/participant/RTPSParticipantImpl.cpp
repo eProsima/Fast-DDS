@@ -37,6 +37,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 #include <fastdds/rtps/RTPSDomain.h>
 
@@ -112,6 +113,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_userParticipant(par)
     , mp_mutex(new std::recursive_mutex())
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
+    , has_shm_transport_(false)
 {
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
@@ -147,6 +149,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     for (const auto& transportDescriptor : PParam.userTransports)
     {
         m_network_Factory.RegisterTransport(transportDescriptor.get());
+
+        has_shm_transport_ |= (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
     }
 
     mp_userParticipant->mp_impl = this;

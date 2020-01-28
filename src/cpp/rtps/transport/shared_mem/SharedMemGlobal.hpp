@@ -448,7 +448,7 @@ public:
                     << port_node->port_id << " (" << port_node->uuid.to_string() << ") Opened");
 
 			}
-			catch (std::exception& e)
+			catch (std::exception&)
 			{
 				auto port_uuid = port_node->uuid.to_string();
 

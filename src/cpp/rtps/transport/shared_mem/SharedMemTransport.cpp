@@ -172,6 +172,8 @@ bool SharedMemTransport::OpenInputChannel(
 		}
 		catch (std::exception& e)
 		{
+			(void)e;
+
 			logInfo(RTPS_MSG_OUT, std::string("CreateInputChannelResource failed for port ") 
 				<< locator.port << " msg: " << e.what());
 			return false;

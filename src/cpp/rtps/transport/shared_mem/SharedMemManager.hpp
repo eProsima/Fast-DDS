@@ -284,7 +284,7 @@ public:
 
             SharedMemGlobal::PortCell* head_cell = nullptr;
             
-            while ( !is_closed_.load() && !(head_cell = global_listener_->head()) )
+            while ( !is_closed_.load() && nullptr != (head_cell = global_listener_->head()) )
             {
                 // Wait until threre's data to pop
                 global_port_->wait_pop(*global_listener_, is_closed_);

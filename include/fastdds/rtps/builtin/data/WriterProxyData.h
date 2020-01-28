@@ -414,7 +414,8 @@ public:
     //!Read a parameter list from a CDRMessage_t.
     RTPS_DllAPI bool readFromCDRMessage(
             CDRMessage_t* msg,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool is_shm_transport_possible);
 
 private:
 

@@ -365,9 +365,15 @@ bool ParticipantProxyData::writeToCDRMessage(
 bool ParticipantProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         bool use_encapsulation,
-        const NetworkFactory& network)
+        const NetworkFactory& network,
+        bool is_shm_transport_possible)
 {
-    auto param_process = [this, &network](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+    bool are_shm_metatraffic_locators_present = false;
+    bool are_shm_default_locators_present = false;
+
+    auto param_process = [this, &network, &is_shm_transport_possible, 
+        &are_shm_metatraffic_locators_present, 
+        &are_shm_default_locators_present](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)
                 {
@@ -446,7 +452,28 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
-                            metatraffic_locators.add_multicast_locator(temp_locator);
+                            if (is_shm_transport_possible)
+                            {
+                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                {
+                                    // First SHM locator
+                                    if (!are_shm_metatraffic_locators_present)
+                                    {
+                                        // Remove previously added locators from other transports
+                                        metatraffic_locators.unicast.clear();
+                                        metatraffic_locators.multicast.clear();
+                                        are_shm_metatraffic_locators_present = true;
+                                    }
+                                    metatraffic_locators.add_multicast_locator(temp_locator);
+                                }
+                            }
+                            else
+                            {
+                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                {
+                                    metatraffic_locators.add_multicast_locator(temp_locator);
+                                }
+                            }
                         }
                         break;
                     }
@@ -461,7 +488,28 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
-                            metatraffic_locators.add_unicast_locator(temp_locator);
+                            if (is_shm_transport_possible)
+                            {
+                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                {
+                                    // First SHM locator
+                                    if (!are_shm_metatraffic_locators_present)
+                                    {
+                                        // Remove previously added locators from other transports
+                                        metatraffic_locators.unicast.clear();
+                                        metatraffic_locators.multicast.clear();
+                                        are_shm_metatraffic_locators_present = true;
+                                    }
+                                    metatraffic_locators.add_unicast_locator(temp_locator);
+                                }
+                            }
+                            else
+                            {
+                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                {
+                                    metatraffic_locators.add_unicast_locator(temp_locator);
+                                }
+                            }
                         }
                         break;
                     }
@@ -476,7 +524,28 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
-                            default_locators.add_unicast_locator(temp_locator);
+                            if (is_shm_transport_possible)
+                            {
+                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                {
+                                    // First SHM locator
+                                    if (!are_shm_default_locators_present)
+                                    {
+                                        // Remove previously added locators from other transports
+                                        default_locators.unicast.clear();
+                                        default_locators.multicast.clear();
+                                        are_shm_default_locators_present = true;
+                                    }
+                                    default_locators.add_unicast_locator(temp_locator);
+                                }
+                            }
+                            else
+                            {
+                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                {
+                                    default_locators.add_unicast_locator(temp_locator);
+                                }
+                            }
                         }
                         break;
                     }
@@ -491,7 +560,29 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
-                            default_locators.add_multicast_locator(temp_locator);
+                            if (is_shm_transport_possible)
+                            {
+                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                {
+                                    // First SHM locator
+                                    if (!are_shm_default_locators_present)
+                                    {
+                                        // Remove previously added locators from other transports
+                                        default_locators.unicast.clear();
+                                        default_locators.multicast.clear();
+                                        are_shm_default_locators_present = true;
+                                    }
+
+                                    default_locators.add_multicast_locator(temp_locator);
+                                }
+                            }
+                            else
+                            {
+                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                {
+                                    default_locators.add_multicast_locator(temp_locator);
+                                }
+                            }
                         }
                         break;
                     }

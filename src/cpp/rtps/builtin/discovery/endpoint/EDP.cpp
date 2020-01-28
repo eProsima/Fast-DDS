@@ -912,7 +912,7 @@ bool EDP::pairingReader(
 #else
                 if (R->matched_writer_add(*wdatait))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << writer_guid);
+                    logInfo(RTPS_EDP_MATCH, "WP:" << wdatait->guid() << " match R:" << R->getGuid() << ". RLoc:" << wdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if (R->getListener() != nullptr)
                     {
@@ -994,7 +994,7 @@ bool EDP::pairingWriter(
 #else
                 if (W->matched_reader_add(*rdatait))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to readerProxy: " << reader_guid);
+                    logInfo(RTPS_EDP_MATCH, "RP:" << rdatait->guid() << " match W:" << W->getGuid() << ". WLoc:" << rdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if (W->getListener() != nullptr)
                     {
@@ -1072,7 +1072,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 #else
                 if ((*wit)->matched_reader_add(*rdata))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
+                    logInfo(RTPS_EDP_MATCH, "RP:" << rdata->guid() << " match W:" << (*wit)->getGuid() << ". RLoc:" << rdata->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*wit)->getListener() != nullptr)
                     {
@@ -1252,7 +1252,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 #else
                 if ((*rit)->matched_writer_add(*wdata))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
+                    logInfo(RTPS_EDP_MATCH, "WP:" << wdata->guid() << " match R:" << (*rit)->getGuid() << ". WLoc:" << wdata->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*rit)->getListener() != nullptr)
                     {
