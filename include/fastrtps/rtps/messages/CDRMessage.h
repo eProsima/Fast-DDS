@@ -28,8 +28,6 @@
 
 #include "../security/common/ParticipantGenericMessage.h"
 
-
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -59,11 +57,10 @@ namespace CDRMessage{
             octet* o,
             uint32_t length);
 
-    inline bool readArray(
+    inline bool read_array_with_max_size(
             CDRMessage_t*msg,
             octet* arr,
-            size_t size);
-
+            size_t max_size);
 
     inline bool readDataReversed(
             CDRMessage_t* msg,
@@ -183,7 +180,6 @@ namespace CDRMessage{
             CDRMessage_t* first,
             CDRMessage_t* second);
 
-
     /** @name Add to a CDRMessage_t.
      * Methods to add different data types to a CDR message. Pointers to the message and to the data types are provided.
      * The write position is updated in the message. It fails if you attempt to write outside the
@@ -259,11 +255,15 @@ namespace CDRMessage{
             CDRMessage_t*msg,
             ParameterId_t pid);
 
-    inline bool addString(
+    inline bool add_string(
+            CDRMessage_t*msg,
+            const char* in_str);
+
+    inline bool add_string(
             CDRMessage_t*msg,
             const std::string& in_str);
 
-    inline bool addString(
+    inline bool add_string(
             CDRMessage_t*msg,
             const string_255& in_str);
 
