@@ -65,7 +65,7 @@ public:
             const WriterTimes& times,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
             const VariableLengthDataLimits& limits,
-           StatefulWriter* writer);
+            StatefulWriter* writer);
 
     /**
      * Activate this proxy associating it to a remote reader.
