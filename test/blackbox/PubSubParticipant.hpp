@@ -281,19 +281,19 @@ public:
     void pub_wait_liveliness_lost(unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
-        pub_liveliness_cv_.wait(lock, [&]() { return pub_times_liveliness_lost_ == times; });
+        pub_liveliness_cv_.wait(lock, [&]() { return pub_times_liveliness_lost_ >= times; });
     }
 
     void sub_wait_liveliness_recovered(unsigned int num_recovered)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_recovered_ == num_recovered; });
+        sub_liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_recovered_ >= num_recovered; });
     }
 
     void sub_wait_liveliness_lost(unsigned int num_lost)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_lost_ == num_lost;  });
+        sub_liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_lost_ >= num_lost;  });
     }
 
     PubSubParticipant& pub_topic_name(std::string topicName)

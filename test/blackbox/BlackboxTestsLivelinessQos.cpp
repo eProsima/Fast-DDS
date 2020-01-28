@@ -1055,7 +1055,7 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_BestEffo
     for (count = 0; count < num_samples; count++)
     {
         writer.assert_liveliness();
-        std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 2));
+        writer.wait_liveliness_lost(num_samples + count + 1);
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
