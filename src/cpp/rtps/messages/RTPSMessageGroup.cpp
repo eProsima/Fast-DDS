@@ -104,8 +104,8 @@ RTPSMessageGroup::RTPSMessageGroup(
     , full_msg_(nullptr)
     , submessage_msg_(nullptr)
     , currentBytesSent_(0)
-#if HAVE_SECURITY
     , participant_(participant)
+#if HAVE_SECURITY
     , encrypt_msg_(nullptr)
 #endif
     , max_blocking_time_point_(max_blocking_time_point)
