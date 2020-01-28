@@ -64,7 +64,7 @@ bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
         rest = 4 - rest; //how many you have to add
     this->length = (uint16_t)(str_siz + 4 + rest);
     valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addString(msg, this->m_string);
+    valid &= CDRMessage::add_string(msg, this->m_string);
     return valid;
 }
 
@@ -284,8 +284,8 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
             it!=this->end();++it)
     {
         //it is a custom iterator with no operator-> overload
-        valid &= CDRMessage::addString(msg,(*it).first());
-        valid &= CDRMessage::addString(msg,(*it).second());
+        valid &= CDRMessage::add_string(msg,(*it).first());
+        valid &= CDRMessage::add_string(msg,(*it).second());
     }
     uint16_t pos_param_end = (uint16_t)msg->pos;
     this->length = pos_param_end-pos_str-2;
