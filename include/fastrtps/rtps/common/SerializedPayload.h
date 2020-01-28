@@ -82,7 +82,7 @@ namespace eprosima{
                 {
                     return ((encapsulation == other.encapsulation) &&
                             (length == other.length) &&
-                            (memcmp(data, other.data, length)));
+                            (0 == memcmp(data, other.data, length)));
                 }
 
                 /*!
