@@ -142,6 +142,69 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
     return true;
 }
 
+bool ParameterList::readParameterListfromCDRMsg(
+        rtps::CDRMessage_t& msg,
+        std::function<bool(rtps::CDRMessage_t*, const ParameterId_t, uint16_t)> processor,
+        bool use_encapsulation,
+        uint32_t& qos_size)
+{
+    qos_size = 0;
+
+    if (use_encapsulation)
+    {
+        // Read encapsulation
+        msg.pos += 1;
+        octet encapsulation = 0;
+        CDRMessage::readOctet(&msg, &encapsulation);
+        if (encapsulation == PL_CDR_BE)
+        {
+            msg.msg_endian = BIGEND;
+        }
+        else if (encapsulation == PL_CDR_LE)
+        {
+            msg.msg_endian = LITTLEEND;
+        }
+        else
+        {
+            return false;
+        }
+        // Skip encapsulation options
+        msg.pos += 2;
+    }
+
+    uint32_t original_pos = msg.pos;
+    bool is_sentinel = false;
+    while (!is_sentinel)
+    {
+        msg.pos = original_pos + qos_size;
+
+        ParameterId_t pid;
+        uint16_t plength;
+        bool valid = true;
+        valid &= CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+        valid &= CDRMessage::readUInt16(&msg, &plength);
+        qos_size += (4 + plength);
+
+        // Align to 4 byte boundary and prepare for next iteration
+        qos_size = (qos_size + 3) & ~3;
+
+        if (!valid || ((msg.pos + plength) > msg.length))
+        {
+            return false;
+        }
+
+        if (pid == PID_SENTINEL)
+        {
+            is_sentinel = true;
+        }
+        else if (!processor(&msg, pid, plength))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const uint16_t search_pid)
 {
     assert(change != nullptr);

@@ -218,297 +218,251 @@ bool ParticipantProxyData::readFromCDRMessage(
         bool use_encapsulation,
         const NetworkFactory& network)
 {
-    clear();
-
-    bool is_sentinel = false;
-    bool valid = true;
-    ParameterId_t pid;
-    uint16_t plength;
-    uint32_t qos_size = 0;
-
-    if (use_encapsulation)
-    {
-        // Read encapsulation
-        msg->pos += 1;
-        octet encapsulation = 0;
-        CDRMessage::readOctet(msg, &encapsulation);
-        if (encapsulation == PL_CDR_BE)
+    auto param_process = [this, &network](CDRMessage_t* msg, const ParameterId_t &pid, uint16_t plength)
         {
-            msg->msg_endian = BIGEND;
-        }
-        else if (encapsulation == PL_CDR_LE)
-        {
-            msg->msg_endian = LITTLEEND;
-        }
-        else
-        {
-            return false;
-        }
-        // Skip encapsulation options
-        msg->pos += 2;
-    }
-
-    uint32_t original_pos = msg->pos;
-    while (!is_sentinel)
-    {
-        msg->pos = original_pos + qos_size;
-
-        valid = true;
-        valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
-        valid &= CDRMessage::readUInt16(msg, &plength);
-        qos_size += (4 + plength);
-
-        // Align to 4 byte boundary and prepare for next iteration
-        qos_size = (qos_size + 3) & ~3;
-
-        if (!valid || ((msg->pos + plength) > msg->length))
-        {
-            return false;
-        }
-        try
-        {
-            switch (pid)
+            try
             {
-                case PID_DEFAULT_UNICAST_LOCATOR:
+                switch (pid)
                 {
-                    ParameterLocator_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_DEFAULT_UNICAST_LOCATOR:
                     {
-                        return false;
-                    }
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    Locator_t temp_locator;
-                    if (network.transform_remote_locator(p.locator, temp_locator))
-                    {
-                        default_locators.add_unicast_locator(temp_locator);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            default_locators.add_unicast_locator(temp_locator);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case PID_METATRAFFIC_UNICAST_LOCATOR:
-                {
-                    ParameterLocator_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_METATRAFFIC_UNICAST_LOCATOR:
                     {
-                        return false;
-                    }
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    Locator_t temp_locator;
-                    if (network.transform_remote_locator(p.locator, temp_locator))
-                    {
-                        metatraffic_locators.add_unicast_locator(temp_locator);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            metatraffic_locators.add_unicast_locator(temp_locator);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case PID_DEFAULT_MULTICAST_LOCATOR:
-                {
-                    ParameterLocator_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_DEFAULT_MULTICAST_LOCATOR:
                     {
-                        return false;
-                    }
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    Locator_t temp_locator;
-                    if (network.transform_remote_locator(p.locator, temp_locator))
-                    {
-                        default_locators.add_multicast_locator(temp_locator);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            default_locators.add_multicast_locator(temp_locator);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case PID_METATRAFFIC_MULTICAST_LOCATOR:
-                {
-                    ParameterLocator_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_METATRAFFIC_MULTICAST_LOCATOR:
                     {
-                        return false;
-                    }
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    Locator_t temp_locator;
-                    if (network.transform_remote_locator(p.locator, temp_locator))
-                    {
-                        metatraffic_locators.add_multicast_locator(temp_locator);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            metatraffic_locators.add_multicast_locator(temp_locator);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case PID_PROTOCOL_VERSION:
-                {
-                    ParameterProtocolVersion_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_PROTOCOL_VERSION:
                     {
-                        return false;
-                    }
+                        ParameterProtocolVersion_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    if (p.protocolVersion.m_major < c_ProtocolVersion.m_major)
-                    {
-                        return false;
+                        if (p.protocolVersion.m_major < c_ProtocolVersion.m_major)
+                        {
+                            return false;
+                        }
+                        this->m_protocolVersion = p.protocolVersion;
+                        break;
                     }
-                    this->m_protocolVersion = p.protocolVersion;
-                    break;
-                }
-                case PID_EXPECTS_INLINE_QOS:
-                {
-                    ParameterBool_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_EXPECTS_INLINE_QOS:
                     {
-                        return false;
-                    }
+                        ParameterBool_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->m_expectsInlineQos = p.value;
-                    break;
-                }
-                case PID_VENDORID:
-                {
-                    ParameterVendorId_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
+                        this->m_expectsInlineQos = p.value;
+                        break;
                     }
+                    case PID_VENDORID:
+                    {
+                        ParameterVendorId_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->m_VendorId[0] = p.vendorId[0];
-                    this->m_VendorId[1] = p.vendorId[1];
-                    break;
-                }
-                case PID_PARTICIPANT_GUID:
-                {
-                    ParameterGuid_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
+                        this->m_VendorId[0] = p.vendorId[0];
+                        this->m_VendorId[1] = p.vendorId[1];
+                        break;
                     }
+                    case PID_PARTICIPANT_GUID:
+                    {
+                        ParameterGuid_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->m_guid = p.guid;
-                    this->m_key = p.guid;
-                    break;
-                }
-                case PID_ENTITY_NAME:
-                {
-                    ParameterString_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
+                        this->m_guid = p.guid;
+                        this->m_key = p.guid;
+                        break;
                     }
+                    case PID_ENTITY_NAME:
+                    {
+                        ParameterString_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->m_participantName = p.getName();
-                    break;
-                }
-                case PID_PROPERTY_LIST:
-                {
-                    if (!m_properties.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
+                        this->m_participantName = p.getName();
+                        break;
                     }
-                    break;
-                }
-                case PID_KEY_HASH:
-                {
-                    ParameterKey_t p(PID_KEY_HASH, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_PROPERTY_LIST:
                     {
-                        return false;
+                        if (!m_properties.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
                     }
+                    case PID_KEY_HASH:
+                    {
+                        ParameterKey_t p(PID_KEY_HASH, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    GUID_t guid;
-                    iHandle2GUID(guid, p.key);
-                    this->m_guid = guid;
-                    this->m_key = p.key;
-                    break;
-                }
-                case PID_SENTINEL:
-                {
-                    is_sentinel = true;
-                    break;
-                }
-                case PID_USER_DATA:
-                {
-                    if (!m_userData.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
+                        GUID_t guid;
+                        iHandle2GUID(guid, p.key);
+                        this->m_guid = guid;
+                        this->m_key = p.key;
+                        break;
                     }
-                    break;
-                }
-                case PID_BUILTIN_ENDPOINT_SET:
-                {
-                    ParameterBuiltinEndpointSet_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_USER_DATA:
                     {
-                        return false;
+                        if (!m_userData.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
                     }
+                    case PID_BUILTIN_ENDPOINT_SET:
+                    {
+                        ParameterBuiltinEndpointSet_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->m_availableBuiltinEndpoints = p.endpointSet;
-                    break;
-                }
-                case PID_PARTICIPANT_LEASE_DURATION:
-                {
-                    ParameterTime_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
+                        this->m_availableBuiltinEndpoints = p.endpointSet;
+                        break;
                     }
+                    case PID_PARTICIPANT_LEASE_DURATION:
+                    {
+                        ParameterTime_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->m_leaseDuration = p.time.to_duration_t();
-                    lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
-                    break;
-                }
-                case PID_IDENTITY_TOKEN:
-                {
+                        this->m_leaseDuration = p.time.to_duration_t();
+                        lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
+                        break;
+                    }
+                    case PID_IDENTITY_TOKEN:
+                    {
 #if HAVE_SECURITY
-                    ParameterToken_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
-                    }
+                        ParameterToken_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->identity_token_ = std::move(p.token);
+                        this->identity_token_ = std::move(p.token);
 #else
-                    logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+                        logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
 #endif
-                    break;
-                }
-               case PID_PERMISSIONS_TOKEN:
-                {
+                        break;
+                    }
+                   case PID_PERMISSIONS_TOKEN:
+                    {
 #if HAVE_SECURITY
-                    ParameterToken_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
+                        ParameterToken_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        this->permissions_token_ = std::move(p.token);
+#else
+                        logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+#endif
+                        break;
                     }
 
-                    this->permissions_token_ = std::move(p.token);
-#else
-                    logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
-#endif
-                    break;
-                }
-
-                case PID_PARTICIPANT_SECURITY_INFO:
-                {
+                    case PID_PARTICIPANT_SECURITY_INFO:
+                    {
 #if HAVE_SECURITY
-                    ParameterParticipantSecurityInfo_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
-                    }
+                        ParameterParticipantSecurityInfo_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                    this->security_attributes_ = p.security_attributes;
-                    this->plugin_security_attributes_ = p.plugin_security_attributes;
+                        this->security_attributes_ = p.security_attributes;
+                        this->plugin_security_attributes_ = p.plugin_security_attributes;
 #else
-                    logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+                        logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
 #endif
-                    break;
-                }
-
-                default:
-                {
-                    break;
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
                 }
             }
-        }
-        catch (std::bad_alloc& ba)
-        {
-            std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-            return false;
-        }
-    }
-    return true;
+            catch (std::bad_alloc& ba)
+            {
+                std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+                return false;
+            }
+
+            return true;
+        };
+
+    uint32_t qos_size;
+    clear();
+    return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
 }
 
 void ParticipantProxyData::clear()
