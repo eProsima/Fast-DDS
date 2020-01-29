@@ -466,6 +466,10 @@ bool ParticipantProxyData::readFromCDRMessage(
                                     }
                                     metatraffic_locators.add_multicast_locator(temp_locator);
                                 }
+                                else if (!are_shm_metatraffic_locators_present)
+                                {
+                                    metatraffic_locators.add_multicast_locator(temp_locator);
+                                }
                             }
                             else
                             {
@@ -500,6 +504,10 @@ bool ParticipantProxyData::readFromCDRMessage(
                                         metatraffic_locators.multicast.clear();
                                         are_shm_metatraffic_locators_present = true;
                                     }
+                                    metatraffic_locators.add_unicast_locator(temp_locator);
+                                }
+                                else if (!are_shm_metatraffic_locators_present)
+                                {
                                     metatraffic_locators.add_unicast_locator(temp_locator);
                                 }
                             }
@@ -538,6 +546,10 @@ bool ParticipantProxyData::readFromCDRMessage(
                                     }
                                     default_locators.add_unicast_locator(temp_locator);
                                 }
+                                else if (!are_shm_default_locators_present)
+                                {
+                                    default_locators.add_unicast_locator(temp_locator);
+                                }
                             }
                             else
                             {
@@ -572,7 +584,10 @@ bool ParticipantProxyData::readFromCDRMessage(
                                         default_locators.multicast.clear();
                                         are_shm_default_locators_present = true;
                                     }
-
+                                    default_locators.add_multicast_locator(temp_locator);
+                                }
+                                else if (!are_shm_default_locators_present)
+                                {
                                     default_locators.add_multicast_locator(temp_locator);
                                 }
                             }

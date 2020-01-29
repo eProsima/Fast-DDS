@@ -741,6 +741,10 @@ bool ReaderProxyData::readFromCDRMessage(
                                     }
                                     remote_locators_.add_unicast_locator(temp_locator);
                                 }
+                                else if (!are_shm_default_locators_present)
+                                {
+                                    remote_locators_.add_unicast_locator(temp_locator);
+                                }
                             }
                             else
                             {
@@ -775,6 +779,10 @@ bool ReaderProxyData::readFromCDRMessage(
                                         remote_locators_.multicast.clear();
                                         are_shm_default_locators_present = true;
                                     }
+                                    remote_locators_.add_multicast_locator(temp_locator);
+                                }
+                                else if (!are_shm_default_locators_present)
+                                {
                                     remote_locators_.add_multicast_locator(temp_locator);
                                 }
                             }
