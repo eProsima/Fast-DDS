@@ -17,6 +17,7 @@
  *
  */
 
+#include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
