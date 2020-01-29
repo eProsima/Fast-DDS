@@ -213,6 +213,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_add_chang
     fill_participant_key(participant_data.m_guid);
     ASSERT_FALSE(manager_.discovered_participant(participant_data));
 
+    manager_.destroy();
+
     delete change;
 }
 
@@ -245,6 +247,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(request_message_change)).Times(1).
         WillOnce(Return(true));
     stateless_writer_->history_->wait_for_more_samples_than(1);
+
+    manager_.destroy();
 
     delete request_message_change;
 }
@@ -301,6 +305,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
+    manager_.destroy();
+
     delete change;
 }
 
@@ -335,6 +341,8 @@ TEST_F(SecurityTest, discovered_participant_ok)
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
+
+    manager_.destroy();
 
     delete change;
 }
@@ -380,6 +388,8 @@ TEST_F(SecurityTest, discovered_participant_validate_remote_fail_and_then_ok)
     EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
+
+    manager_.destroy();
 
     delete change;
 }
