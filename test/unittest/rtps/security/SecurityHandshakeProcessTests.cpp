@@ -61,6 +61,8 @@ TEST_F(SecurityTest, discovered_participant_begin_handshake_request_fail_and_the
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
+    manager_.destroy();
+
     delete change;
 }
 
@@ -483,6 +485,8 @@ TEST_F(SecurityTest, discovered_participant_process_message_add_change_fail)
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
+    manager_.destroy();
+
     delete change2;
 }
 
@@ -515,6 +519,8 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(reply_message_change)).Times(1).
         WillOnce(Return(true));
     stateless_writer_->history_->wait_for_more_samples_than(1);
+
+    manager_.destroy();
 
     delete reply_message_change;
 }
@@ -605,6 +611,8 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+
+    manager_.destroy();
 
     delete change2;
 }
@@ -858,6 +866,8 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
+    manager_.destroy();
+
     delete change2;
 }
 
@@ -926,6 +936,8 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
         WillOnce(Return(true));
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+
+    manager_.destroy();
 
     delete final_message_change;
 }
