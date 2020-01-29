@@ -29,14 +29,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-#define IF_VALID_CALL() {                                        \
-                            if(!valid)                           \
-                            {                                    \
-                                return false;                    \
-                            }                                    \
-                            qos_size += plength;                 \
-                        }
-
 
 WriterProxyData::WriterProxyData(
         const size_t max_unicast_locators,
@@ -434,14 +426,16 @@ bool WriterProxyData::readFromCDRMessage(
     uint32_t original_pos = msg->pos;
     while (!is_sentinel)
     {
-        // Align to 4 byte boundary
-        qos_size = (qos_size + 3) & ~3;
         msg->pos = original_pos + qos_size;
 
         valid = true;
         valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
         valid &= CDRMessage::readUInt16(msg, &plength);
-        qos_size += 4;
+        qos_size += (4 + plength);
+
+        // Align to 4 byte boundary and prepare for next iteration
+        qos_size = (qos_size + 3) & ~3;
+
         if (!valid || ((msg->pos + plength) > msg->length))
         {
             return false;
@@ -452,10 +446,12 @@ bool WriterProxyData::readFromCDRMessage(
             {
                 case PID_UNICAST_LOCATOR:
                 {
-                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
                     ParameterLocator_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
+
                     Locator_t temp_locator;
                     if (network.transform_remote_locator(p.locator, temp_locator))
                     {
@@ -465,10 +461,12 @@ bool WriterProxyData::readFromCDRMessage(
                 }
                 case PID_MULTICAST_LOCATOR:
                 {
-                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
                     ParameterLocator_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
+
                     Locator_t temp_locator;
                     if (network.transform_remote_locator(p.locator, temp_locator))
                     {
@@ -478,13 +476,12 @@ bool WriterProxyData::readFromCDRMessage(
                 }
                 case PID_PARTICIPANT_GUID:
                 {
-                    if (plength != PARAMETER_GUID_LENGTH)
+                    ParameterGuid_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterGuid_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+
                     for (uint8_t i = 0; i < 16; ++i)
                     {
                         if (i < 12)
@@ -500,13 +497,12 @@ bool WriterProxyData::readFromCDRMessage(
                 }
                 case PID_ENDPOINT_GUID:
                 {
-                    if (plength != PARAMETER_GUID_LENGTH)
+                    ParameterGuid_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterGuid_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+
                     for (uint8_t i = 0; i < 16; ++i)
                     {
                         if (i < 12)
@@ -522,49 +518,45 @@ bool WriterProxyData::readFromCDRMessage(
                 }
                 case PID_PERSISTENCE_GUID:
                 {
-                    if (plength != PARAMETER_GUID_LENGTH)
+                    ParameterGuid_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterGuid_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+
                     persistence_guid_ = p.guid;
                     break;
                 }
                 case PID_TOPIC_NAME:
                 {
-                    if (plength > 256)
+                    ParameterString_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterString_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+
                     m_topicName = p.getName();
                     break;
                 }
                 case PID_TYPE_NAME:
                 {
-                    if (plength > 256)
+                    ParameterString_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterString_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+
                     m_typeName = p.getName();
                     break;
                 }
                 case PID_KEY_HASH:
                 {
-                    if (plength != PARAMETER_KEY_LENGTH)
+                    ParameterKey_t p(PID_KEY_HASH, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterKey_t p(PID_KEY_HASH, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+
                     m_key = p.key;
                     iHandle2GUID(m_guid, m_key);
                     break;
@@ -576,181 +568,140 @@ bool WriterProxyData::readFromCDRMessage(
                 }
                 case PID_DURABILITY:
                 {
-                    if (plength != PARAMETER_KIND_LENGTH)
+                    if (!m_qos.m_durability.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_durability.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_DEADLINE:
                 {
-                    if (plength != PARAMETER_TIME_LENGTH)
+                    if (!m_qos.m_deadline.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_deadline.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_LATENCY_BUDGET:
                 {
-                    if (plength != PARAMETER_TIME_LENGTH)
+                    if (!m_qos.m_latencyBudget.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_latencyBudget.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_LIVELINESS:
                 {
-                    if (plength != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
+                    if (!m_qos.m_liveliness.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_liveliness.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_OWNERSHIP:
                 {
-                    if (plength != PARAMETER_KIND_LENGTH)
+                    if (!m_qos.m_ownership.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_ownership.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_RELIABILITY:
                 {
-                    if (plength != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
+                    if (!m_qos.m_reliability.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_reliability.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_DESTINATION_ORDER:
                 {
-                    if (plength != PARAMETER_KIND_LENGTH)
+                    if (!m_qos.m_destinationOrder.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_destinationOrder.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_USER_DATA:
                 {
-                    m_qos.m_userData.length = plength;
-                    uint32_t pos_ref = msg->pos;
-                    valid &= m_qos.m_userData.readFromCDRMessage(msg, plength);
-                    uint32_t length_diff = msg->pos - pos_ref;
-                    if (plength != length_diff)
+                    if (!m_qos.m_userData.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_TIME_BASED_FILTER:
                 {
-                    if (plength != PARAMETER_TIME_LENGTH)
+                    if (!m_qos.m_timeBasedFilter.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_timeBasedFilter.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_PRESENTATION:
                 {
-                    if (plength != PARAMETER_PRESENTATION_LENGTH)
+                    if (!m_qos.m_presentation.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_presentation.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_PARTITION:
                 {
-                    m_qos.m_partition.length = plength;
-                    uint32_t pos_ref = msg->pos;
-                    valid &= m_qos.m_partition.readFromCDRMessage(msg, plength);
-                    uint32_t length_diff = msg->pos - pos_ref;
-                    if (plength != length_diff)
+                    if (!m_qos.m_partition.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_TOPIC_DATA:
                 {
-                    m_qos.m_topicData.length = plength;
-                    uint32_t pos_ref = msg->pos;
-                    valid &= m_qos.m_topicData.readFromCDRMessage(msg, plength);
-                    uint32_t length_diff = msg->pos - pos_ref;
-                    if (plength != length_diff)
+                    if (!m_qos.m_topicData.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_GROUP_DATA:
                 {
-                    m_qos.m_groupData.length = plength;
-                    uint32_t pos_ref = msg->pos;
-                    valid &= m_qos.m_groupData.readFromCDRMessage(msg, plength);
-                    uint32_t length_diff = msg->pos - pos_ref;
-                    if (plength != length_diff)
+                    if (!m_qos.m_groupData.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_DURABILITY_SERVICE:
                 {
-                    if (plength != PARAMETER_TIME_LENGTH + PARAMETER_KIND_LENGTH + 16)
+                    if (!m_qos.m_durabilityService.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_durabilityService.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_LIFESPAN:
                 {
-                    if (plength != PARAMETER_TIME_LENGTH)
+                    if (!m_qos.m_lifespan.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_lifespan.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_OWNERSHIP_STRENGTH:
                 {
-                    if (plength != 4)
+                    if (!m_qos.m_ownershipStrength.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_ownershipStrength.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
                 case PID_TYPE_IDV1:
                 {
                     TypeIdV1 p;
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
+
                     type_id(p);
                     m_topicDiscoveryKind = MINIMAL;
                     if (m_type_id->m_type_identifier._d() == types::EK_COMPLETE)
@@ -762,8 +713,11 @@ bool WriterProxyData::readFromCDRMessage(
                 case PID_TYPE_OBJECTV1:
                 {
                     TypeObjectV1 p;
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
+
                     if (m_type == nullptr)
                     {
                         m_type = new TypeObjectV1();
@@ -780,13 +734,12 @@ bool WriterProxyData::readFromCDRMessage(
 #if HAVE_SECURITY
                 case PID_ENDPOINT_SECURITY_INFO:
                 {
-                    if (plength != PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
+                    ParameterEndpointSecurityInfo_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterEndpointSecurityInfo_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+
                     security_attributes_ = p.security_attributes;
                     plugin_security_attributes_ = p.plugin_security_attributes;
                     break;
@@ -794,19 +747,16 @@ bool WriterProxyData::readFromCDRMessage(
 #endif
                 case PID_DISABLE_POSITIVE_ACKS:
                 {
-                    if (plength != PARAMETER_BOOL_LENGTH)
+                    if (!m_qos.m_disablePositiveACKs.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    valid &= m_qos.m_disablePositiveACKs.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     break;
                 }
 
                 case PID_PAD:
                 default:
                 {
-                    qos_size += plength;
                     break;
                 }
             }

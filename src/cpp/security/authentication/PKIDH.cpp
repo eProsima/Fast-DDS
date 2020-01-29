@@ -49,15 +49,6 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
 
-#define IF_VALID_CALL() {                                        \
-                            if(!valid)                           \
-                            {                                    \
-                                return false;                    \
-                            }                                    \
-                            qos_size += plength;                 \
-                        }
-
-
 static const unsigned char* BN_deserialize_raw(BIGNUM** bn, const unsigned char* raw_pointer,
     size_t length, SecurityException& exception)
 {
@@ -1282,14 +1273,16 @@ bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t& participant_guid) cons
     uint32_t original_pos = msg->pos;
     while (!is_sentinel)
     {
-        // Align to 4 byte boundary
-        qos_size = (qos_size + 3) & ~3;
         msg->pos = original_pos + qos_size;
 
         valid = true;
         valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
         valid &= CDRMessage::readUInt16(msg, &plength);
-        qos_size += 4;
+        qos_size += (4 + plength);
+
+        // Align to 4 byte boundary and prepare for next iteration
+        qos_size = (qos_size + 3) & ~3;
+
         if (!valid || ((msg->pos + plength) > msg->length))
         {
             return false;
@@ -1300,25 +1293,21 @@ bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t& participant_guid) cons
             {
                 case PID_KEY_HASH:
                 {
-                    if (plength != PARAMETER_KEY_LENGTH)
+                    ParameterKey_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterKey_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     iHandle2GUID(participant_guid, p.key);
                     break;
                 }
                 case PID_PARTICIPANT_GUID:
                 {
-                    if (plength != PARAMETER_GUID_LENGTH)
+                    ParameterGuid_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterGuid_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
                     participant_guid = p.guid;
                     break;
                 }
@@ -1329,7 +1318,6 @@ bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t& participant_guid) cons
                 }
                 default:
                 {
-                    qos_size += plength;
                     break;
                 }
             }
