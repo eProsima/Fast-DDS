@@ -75,6 +75,8 @@ public:
         uint32_t check_awaken_count;
         uint32_t check_id;
         bool is_port_ok;
+        bool is_opened_read_exclusive;
+        bool is_opened_for_reading;
     };
 
     /**
@@ -135,6 +137,17 @@ public:
         }
 
     public:
+
+        /**
+         * Defines open sharing mode of a shared-memory port:
+         *
+         * ReadShared (multiple listeners / multiple writers): Once a port is opened ReadShared cannot be opened ReadExclusive.
+         *       
+         * ReadExclusive (one listener / multipler writers): Once a port is opened ReadExclusive cannot be opened ReadShared.
+         *
+         * Write (multipler writers): A port can always be opened for writing.
+         */
+        enum class OpenMode { ReadShared, ReadExclusive, Write };
 
         Port(
                 std::unique_ptr<SharedMemSegment>&& port_segment,
@@ -401,7 +414,8 @@ public:
     std::shared_ptr<Port> open_port(
             uint32_t port_id,
             uint32_t max_buffer_descriptors,
-            uint32_t healthy_check_timeout_ms)
+            uint32_t healthy_check_timeout_ms,
+            Port::OpenMode open_mode = Port::OpenMode::ReadShared)
     {
         std::shared_ptr<Port> port;
 
@@ -440,13 +454,26 @@ public:
 				throw;
             }
 
-			try
-            {   
-				port->healthy_check(healthy_check_timeout_ms);
+            try
+            {
+                port->healthy_check(healthy_check_timeout_ms);
 
-                logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
-                    << port_node->port_id << " (" << port_node->uuid.to_string() << ") Opened");
+                if ( (port_node->is_opened_read_exclusive && open_mode != Port::OpenMode::Write) ||
+                     (port_node->is_opened_for_reading && open_mode == Port::OpenMode::ReadExclusive))
+                {
+                    logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Couln't open Port "
+                        << port_node->port_id << " (" << port_node->uuid.to_string() << ") for reading because is exclusive");
 
+                    port.reset();
+                }
+                else
+                {
+                    port_node->is_opened_read_exclusive = (open_mode == Port::OpenMode::ReadExclusive);
+                    port_node->is_opened_for_reading |= (open_mode == Port::OpenMode::ReadShared);
+
+                    logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port "
+                        << port_node->port_id << " (" << port_node->uuid.to_string() << ") Opened");
+                }
 			}
 			catch (std::exception&)
 			{
@@ -491,7 +518,12 @@ public:
             memset(payload, 0, segment_size);
             port_segment->get().deallocate(payload);
 
-            port = init_port(port_id, port_segment, max_buffer_descriptors);
+            port = init_port(port_id, port_segment, max_buffer_descriptors, open_mode);
+        }
+
+        if (port == nullptr)
+        {
+            throw std::runtime_error("Coulnd't open port ");
         }
 
         return port;
@@ -504,7 +536,8 @@ private:
     std::shared_ptr<Port> init_port(
             uint32_t port_id,
             std::unique_ptr<SharedMemSegment>& segment,
-            uint32_t max_buffer_descriptors)
+            uint32_t max_buffer_descriptors,
+            Port::OpenMode open_mode)
     {
         std::shared_ptr<Port> port;
         PortNode* port_node = nullptr;
@@ -520,6 +553,8 @@ private:
             port_node->waiting_count = 0;
             port_node->check_awaken_count = 0;
             port_node->check_id = 0;
+            port_node->is_opened_read_exclusive = (open_mode == Port::OpenMode::ReadExclusive);
+            port_node->is_opened_for_reading = (open_mode != Port::OpenMode::Write);
 
             // Buffer cells allocation
             port_node->buffer =

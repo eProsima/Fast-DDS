@@ -151,25 +151,25 @@ public:
      * @brief This function copies the value in member data
      * @param _data New value to be copied in member data
      */
-    eProsima_user_DllExport void data(const std::array<char, 1024*1024> &_data);
+    eProsima_user_DllExport void data(const std::array<char, 1024> &_data);
 
     /*!
      * @brief This function moves the value in member data
      * @param _data New value to be moved in member data
      */
-    eProsima_user_DllExport void data(std::array<char, 1024*1024> &&_data);
+    eProsima_user_DllExport void data(std::array<char, 1024> &&_data);
 
     /*!
      * @brief This function returns a constant reference to member data
      * @return Constant reference to member data
      */
-    eProsima_user_DllExport const std::array<char, 1024*1024>& data() const;
+    eProsima_user_DllExport const std::array<char, 1024>& data() const;
 
     /*!
      * @brief This function returns a reference to member data
      * @return Reference to member data
      */
-    eProsima_user_DllExport std::array<char, 1024*1024>& data();
+    eProsima_user_DllExport std::array<char, 1024>& data();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -224,7 +224,7 @@ public:
 private:
     uint32_t m_index;
     std::string m_message;
-    std::array<char, 1024*1024> m_data;
+    std::array<char, 1024> m_data;
 };
 
 #endif // _HELLOWORLD_H_

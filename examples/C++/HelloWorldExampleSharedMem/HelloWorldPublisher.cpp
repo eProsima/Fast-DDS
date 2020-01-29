@@ -24,6 +24,7 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 #include <thread>
 
@@ -47,16 +48,22 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.domainId = 66;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
 
     PParam.rtps.setName("Participant_pub");
 
     // SharedMem transport configuration
     PParam.rtps.useBuiltinTransports = false;
-	auto sm_transport = std::make_shared<SharedMemTransportDescriptor>();
-    sm_transport->segment_size = 2*1024*1024;
-    PParam.rtps.userTransports.push_back(sm_transport);
+
+	auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+    shm_transport->segment_size = 2*1024*1024;
+    PParam.rtps.userTransports.push_back(shm_transport);
+
+    // UDP
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    //udp_transport->interfaceWhiteList.push_back("127.0.0.1");
+    PParam.rtps.userTransports.push_back(udp_transport);
 
     mp_participant = Domain::createParticipant(PParam);
 
@@ -69,8 +76,8 @@ bool HelloWorldPublisher::init()
     //CREATE THE PUBLISHER
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
-    Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "HelloWorldTopic";
+    Wparam.topic.topicDataType = "HelloWorldSharedMem";
+    Wparam.topic.topicName = "HelloWorldSharedMemTopic";
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;

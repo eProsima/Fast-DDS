@@ -129,6 +129,8 @@ void PDPListener::onNewCacheChangeAdded(
                     reader->getMutex().unlock();
                     lock.unlock();
 
+                    logInfo(RTPS_PDP_DISCOVERY, "New participant " << pdata->m_guid << " at " << "MTTLoc: " << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
+
                     parent_pdp_->announceParticipantState(false);
                     parent_pdp_->assignRemoteEndpoints(pdata);
                 }
@@ -139,6 +141,8 @@ void PDPListener::onNewCacheChangeAdded(
                 pdata->isAlive = true;
                 reader->getMutex().unlock();
                 lock.unlock();
+
+                logInfo(RTPS_PDP_DISCOVERY, "Update participant " << pdata->m_guid << " at " << "MTTLoc: " << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
 
                 if (parent_pdp_->updateInfoMatchesEDP())
                 {

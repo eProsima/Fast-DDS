@@ -110,6 +110,7 @@ bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
     locator.kind = LOCATOR_KIND_SHMEM;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
     locator.set_Invalid_Address();
+	locator.address[0] = 'M';
     locators.push_back(locator);
     return true;
 }
@@ -305,11 +306,17 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
 		TransportReceiverInterface* receiver)
 {
 	(void) maxMsgSize;
+
+	// Multicast locators implies ReadShared (Multiple readers) ports.
+	auto open_mode = locator.address[0] == 'M' ? SharedMemGlobal::Port::OpenMode::ReadShared :
+		SharedMemGlobal::Port::OpenMode::ReadExclusive;
+
 	return new SharedMemChannelResource(this, 
 				shared_mem_manager_->open_port(
 					locator.port,
 					configuration_.port_queue_capacity,
-					configuration_.healthy_check_timeout_ms)->create_listener(), 
+					configuration_.healthy_check_timeout_ms,
+					open_mode)->create_listener(),
 				locator, 
 				receiver);
 }
@@ -463,7 +470,8 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(uint32_t p
 	{
 		// The port is not opened
 		std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->
-			open_port(port_id, configuration_.port_queue_capacity, configuration_.healthy_check_timeout_ms);
+			open_port(port_id, configuration_.port_queue_capacity, configuration_.healthy_check_timeout_ms, 
+				SharedMemGlobal::Port::OpenMode::Write);
 		opened_ports_[port_id] = port;
 
 		return port;

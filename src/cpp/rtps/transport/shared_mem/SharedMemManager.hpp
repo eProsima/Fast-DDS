@@ -284,7 +284,7 @@ public:
 
             SharedMemGlobal::PortCell* head_cell = nullptr;
             
-            while ( !is_closed_.load() && nullptr != (head_cell = global_listener_->head()) )
+            while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
             {
                 // Wait until threre's data to pop
                 global_port_->wait_pop(*global_listener_, is_closed_);
@@ -415,9 +415,10 @@ public:
     std::shared_ptr<Port> open_port(
             uint32_t port_id,
             uint32_t max_descriptors,
-            uint32_t healthy_check_timeout_ms)
+            uint32_t healthy_check_timeout_ms,
+            SharedMemGlobal::Port::OpenMode open_mode = SharedMemGlobal::Port::OpenMode::ReadShared)
     {
-        return std::make_shared<Port>(*this, global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms));
+        return std::make_shared<Port>(*this, global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms, open_mode));
     }
 
 private:

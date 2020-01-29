@@ -24,6 +24,7 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -41,15 +42,21 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.domainId = 66;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
 
     // SharedMem transport configuration
     PParam.rtps.useBuiltinTransports = false;
+
 	auto sm_transport = std::make_shared<SharedMemTransportDescriptor>();
     sm_transport->segment_size = 2*1024*1024;
     PParam.rtps.userTransports.push_back(sm_transport);
+
+    // UDP
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    //udp_transport->interfaceWhiteList.push_back("127.0.0.1");
+    PParam.rtps.userTransports.push_back(udp_transport);
 
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant==nullptr)
@@ -57,12 +64,13 @@ bool HelloWorldSubscriber::init()
 
     //REGISTER THE TYPE
 
+
     Domain::registerType(mp_participant,&m_type);
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
-    Rparam.topic.topicDataType = "HelloWorld";
-    Rparam.topic.topicName = "HelloWorldTopic";
+    Rparam.topic.topicDataType = "HelloWorldSharedMem";
+    Rparam.topic.topicName = "HelloWorldSharedMemTopic";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;

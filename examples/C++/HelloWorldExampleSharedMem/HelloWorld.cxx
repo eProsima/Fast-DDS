@@ -39,7 +39,7 @@ HelloWorld::HelloWorld()
     // m_message com.eprosima.idl.parser.typecode.StringTypeCode@67784306
     m_message ="";
     // m_data com.eprosima.idl.parser.typecode.ArrayTypeCode@335eadca
-    memset(&m_data, 0, (1024*1024) * 1);
+    memset(&m_data, 0, (1024) * 1);
 
 }
 
@@ -94,7 +94,7 @@ size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
-    current_alignment += ((1024*1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += ((1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
 
@@ -112,7 +112,7 @@ size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_a
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
-    current_alignment += ((1024*1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += ((1024) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
     return current_alignment - initial_alignment;
@@ -202,7 +202,7 @@ std::string& HelloWorld::message()
  * @brief This function copies the value in member data
  * @param _data New value to be copied in member data
  */
-void HelloWorld::data(const std::array<char, 1024*1024> &_data)
+void HelloWorld::data(const std::array<char, 1024> &_data)
 {
 m_data = _data;
 }
@@ -211,7 +211,7 @@ m_data = _data;
  * @brief This function moves the value in member data
  * @param _data New value to be moved in member data
  */
-void HelloWorld::data(std::array<char, 1024*1024> &&_data)
+void HelloWorld::data(std::array<char, 1024> &&_data)
 {
 m_data = std::move(_data);
 }
@@ -220,7 +220,7 @@ m_data = std::move(_data);
  * @brief This function returns a constant reference to member data
  * @return Constant reference to member data
  */
-const std::array<char, 1024*1024>& HelloWorld::data() const
+const std::array<char, 1024>& HelloWorld::data() const
 {
     return m_data;
 }
@@ -229,7 +229,7 @@ const std::array<char, 1024*1024>& HelloWorld::data() const
  * @brief This function returns a reference to member data
  * @return Reference to member data
  */
-std::array<char, 1024*1024>& HelloWorld::data()
+std::array<char, 1024>& HelloWorld::data()
 {
     return m_data;
 }

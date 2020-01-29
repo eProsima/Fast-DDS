@@ -28,7 +28,9 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-    //Log::SetVerbosity(Log::Warning);
+    Log::SetVerbosity(Log::Info);
+    Log::SetCategoryFilter(std::regex("RTPS_EDP_MATCH|RTPS_PDP_DISCOVERY|RTPS_PARTICIPANT_LISTEN"));
+    
 
     std::cout << "Starting "<< std::endl;
     int type = 1;
