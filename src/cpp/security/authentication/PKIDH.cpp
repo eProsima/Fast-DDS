@@ -1264,71 +1264,49 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 
 bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t& participant_guid) const
 {
-    bool is_sentinel = false;
-    bool valid = true;
-    ParameterId_t pid;
-    uint16_t plength;
-    uint32_t qos_size = 0;
-
-    uint32_t original_pos = msg->pos;
-    while (!is_sentinel)
-    {
-        msg->pos = original_pos + qos_size;
-
-        valid = true;
-        valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
-        valid &= CDRMessage::readUInt16(msg, &plength);
-        qos_size += (4 + plength);
-
-        // Align to 4 byte boundary and prepare for next iteration
-        qos_size = (qos_size + 3) & ~3;
-
-        if (!valid || ((msg->pos + plength) > msg->length))
+    auto param_process = [& participant_guid](CDRMessage_t* msg, const ParameterId_t &pid, uint16_t plength)
         {
-            return false;
-        }
-        try
-        {
-            switch (pid)
+            try
             {
-                case PID_KEY_HASH:
+                switch (pid)
                 {
-                    ParameterKey_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_KEY_HASH:
                     {
-                        return false;
+                        ParameterKey_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+                        iHandle2GUID(participant_guid, p.key);
+                        break;
                     }
-                    iHandle2GUID(participant_guid, p.key);
-                    break;
-                }
-                case PID_PARTICIPANT_GUID:
-                {
-                    ParameterGuid_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_PARTICIPANT_GUID:
                     {
-                        return false;
+                        ParameterGuid_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+                        participant_guid = p.guid;
+                        break;
                     }
-                    participant_guid = p.guid;
-                    break;
-                }
-                case PID_SENTINEL:
-                {
-                    is_sentinel = true;
-                    break;
-                }
-                default:
-                {
-                    break;
+                    default:
+                    {
+                        break;
+                    }
                 }
             }
-        }
-        catch (std::bad_alloc& ba)
-        {
-            std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-            return false;
-        }
-    }
-    return true;
+            catch (std::bad_alloc& ba)
+            {
+                std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+                return false;
+            }
+
+            return true;
+        };
+
+    uint32_t qos_size;
+    return (ParameterList::readParameterListfromCDRMsg(*msg, param_process, false, qos_size));
 }
 
 ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_handle,
@@ -1841,7 +1819,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
 
-    if (!readFromCDRMessage(&cdr_pdata, participant_guid))
+    if(!readFromCDRMessage(&cdr_pdata, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
