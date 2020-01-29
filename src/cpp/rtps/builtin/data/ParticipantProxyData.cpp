@@ -39,14 +39,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-#define IF_VALID_CALL() {                                        \
-                            if(!valid)                           \
-                            {                                    \
-                                return false;                    \
-                            }                                    \
-                            qos_size += plength;                 \
-                        }
-
 
 ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation)
     : m_protocolVersion(c_ProtocolVersion)
@@ -259,14 +251,16 @@ bool ParticipantProxyData::readFromCDRMessage(
     uint32_t original_pos = msg->pos;
     while (!is_sentinel)
     {
-        // Align to 4 byte boundary
-        qos_size = (qos_size + 3) & ~3;
         msg->pos = original_pos + qos_size;
 
         valid = true;
         valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
         valid &= CDRMessage::readUInt16(msg, &plength);
-        qos_size += 4;
+        qos_size += (4 + plength);
+
+        // Align to 4 byte boundary and prepare for next iteration
+        qos_size = (qos_size + 3) & ~3;
+
         if (!valid || ((msg->pos + plength) > msg->length))
         {
             return false;
@@ -277,10 +271,11 @@ bool ParticipantProxyData::readFromCDRMessage(
             {
                 case PID_DEFAULT_UNICAST_LOCATOR:
                 {
-                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
                     ParameterLocator_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     Locator_t temp_locator;
                     if (network.transform_remote_locator(p.locator, temp_locator))
@@ -291,10 +286,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_METATRAFFIC_UNICAST_LOCATOR:
                 {
-                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
                     ParameterLocator_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     Locator_t temp_locator;
                     if (network.transform_remote_locator(p.locator, temp_locator))
@@ -305,10 +301,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_DEFAULT_MULTICAST_LOCATOR:
                 {
-                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
                     ParameterLocator_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     Locator_t temp_locator;
                     if (network.transform_remote_locator(p.locator, temp_locator))
@@ -319,10 +316,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_METATRAFFIC_MULTICAST_LOCATOR:
                 {
-                    valid &= (plength == PARAMETER_LOCATOR_LENGTH);
                     ParameterLocator_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     Locator_t temp_locator;
                     if (network.transform_remote_locator(p.locator, temp_locator))
@@ -333,10 +331,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_PROTOCOL_VERSION:
                 {
-                    valid &= (plength == PARAMETER_PROTOCOL_LENGTH);
                     ParameterProtocolVersion_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     if (p.protocolVersion.m_major < c_ProtocolVersion.m_major)
                     {
@@ -347,23 +346,22 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_EXPECTS_INLINE_QOS:
                 {
-                    if (plength != PARAMETER_BOOL_LENGTH)
+                    ParameterBool_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterBool_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     this->m_expectsInlineQos = p.value;
                     break;
                 }
                 case PID_VENDORID:
                 {
-                    valid &= (plength == PARAMETER_VENDOR_LENGTH);
                     ParameterVendorId_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     this->m_VendorId[0] = p.vendorId[0];
                     this->m_VendorId[1] = p.vendorId[1];
@@ -371,13 +369,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_PARTICIPANT_GUID:
                 {
-                    if (plength != PARAMETER_GUID_LENGTH)
+                    ParameterGuid_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterGuid_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     this->m_guid = p.guid;
                     this->m_key = p.guid;
@@ -385,36 +381,30 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_ENTITY_NAME:
                 {
-                    if (plength > 256)
+                    ParameterString_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterString_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     this->m_participantName = p.getName();
                     break;
                 }
                 case PID_PROPERTY_LIST:
                 {
-                    this->m_properties.length = plength;
-                    uint32_t pos_ref = msg->pos;
-                    valid &= m_properties.readFromCDRMessage(msg, plength);
-                    uint32_t length_diff = msg->pos - pos_ref;
-                    valid &= (plength == length_diff);
-                    IF_VALID_CALL()
+                    if (!m_properties.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
                     break;
                 }
                 case PID_KEY_HASH:
                 {
-                    if (plength != PARAMETER_KEY_LENGTH)
+                    ParameterKey_t p(PID_KEY_HASH, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterKey_t p(PID_KEY_HASH, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     GUID_t guid;
                     iHandle2GUID(guid, p.key);
@@ -429,36 +419,30 @@ bool ParticipantProxyData::readFromCDRMessage(
                 }
                 case PID_USER_DATA:
                 {
-                    m_userData.length = plength;
-                    uint32_t pos_ref = msg->pos;
-                    valid &= m_userData.readFromCDRMessage(msg, plength);
-                    uint32_t length_diff = msg->pos - pos_ref;
-                    valid &= (plength == length_diff);
-                    IF_VALID_CALL()
+                    if (!m_userData.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
                     break;
                 }
                 case PID_BUILTIN_ENDPOINT_SET:
                 {
-                    if (plength != 4)
+                    ParameterBuiltinEndpointSet_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterBuiltinEndpointSet_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     this->m_availableBuiltinEndpoints = p.endpointSet;
                     break;
                 }
                 case PID_PARTICIPANT_LEASE_DURATION:
                 {
-                    if (plength != PARAMETER_TIME_LENGTH)
+                    ParameterTime_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterTime_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     this->m_leaseDuration = p.time.to_duration_t();
                     lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
@@ -468,8 +452,10 @@ bool ParticipantProxyData::readFromCDRMessage(
                 {
 #if HAVE_SECURITY
                     ParameterToken_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     this->identity_token_ = std::move(p.token);
 #else
@@ -481,8 +467,10 @@ bool ParticipantProxyData::readFromCDRMessage(
                 {
 #if HAVE_SECURITY
                     ParameterToken_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
+                    if (!p.readFromCDRMessage(msg, plength))
+                    {
+                        return false;
+                    }
 
                     this->permissions_token_ = std::move(p.token);
 #else
@@ -494,13 +482,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                 case PID_PARTICIPANT_SECURITY_INFO:
                 {
 #if HAVE_SECURITY
-                    if (plength != PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
+                    ParameterParticipantSecurityInfo_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterParticipantSecurityInfo_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     this->security_attributes_ = p.security_attributes;
                     this->plugin_security_attributes_ = p.plugin_security_attributes;
@@ -512,7 +498,6 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                 default:
                 {
-                    qos_size += plength;
                     break;
                 }
             }
