@@ -28,14 +28,6 @@ namespace fastrtps {
 
 using namespace rtps;
 
-#define IF_VALID_CALL() {                                        \
-                            if(!valid)                           \
-                            {                                    \
-                                return false;                    \
-                            }                                    \
-                            qos_size += plength;                 \
-                        }
-
 
 bool ParameterList::writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg)
 {
@@ -63,14 +55,16 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
     uint32_t original_pos = msg->pos;
     while (!is_sentinel)
     {
-        // Align to 4 byte boundary
-        qos_size = (qos_size + 3) & ~3;
         msg->pos = original_pos + qos_size;
 
         valid = true;
         valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
         valid &= CDRMessage::readUInt16(msg, &plength);
-        qos_size += 4;
+        qos_size += (4 + plength);
+
+        // Align to 4 byte boundary and prepare for next iteration
+        qos_size = (qos_size + 3) & ~3;
+
         if (!valid || ((msg->pos + plength) > msg->length))
         {
             return false;
@@ -81,13 +75,11 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
             {
                 case PID_STATUS_INFO:
                 {
-                    if (plength != PARAMETER_STATUS_INFO_LENGTH)
+                    ParameterStatusInfo_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterStatusInfo_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     if (p.status == 1)
                     {
@@ -105,13 +97,11 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
                 }
                 case PID_KEY_HASH:
                 {
-                    if (plength != PARAMETER_KEY_LENGTH)
+                    ParameterKey_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    ParameterKey_t p(pid, plength);
-                    valid &= p.readFromCDRMessage(msg, plength);
-                    IF_VALID_CALL()
 
                     change.instanceHandle = p.key;
                     break;
@@ -123,27 +113,22 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
                 }
                 case PID_RELATED_SAMPLE_IDENTITY:
                 {
-                    if (plength == 24)
+                    if (plength < 24)
                     {
-                        ParameterSampleIdentity_t p(pid, plength);
-                        valid &= p.readFromCDRMessage(msg, plength);
-                        IF_VALID_CALL()
-
-                        change.write_params.sample_identity(p.sample_id);
+                        continue;
                     }
-                    else if (plength > 24)
+
+                    ParameterSampleIdentity_t p(pid, plength);
+                    if (!p.readFromCDRMessage(msg, plength))
                     {
                         return false;
                     }
-                    else
-                    {
-                        qos_size += plength;
-                    }
+
+                    change.write_params.sample_identity(p.sample_id);
                     break;
                 }
                 default:
                 {
-                    qos_size += plength;
                     break;
                 }
             }
