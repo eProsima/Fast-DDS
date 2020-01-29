@@ -563,13 +563,15 @@ private:
     std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
 
     /** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating
-      some and updating the list. DOES NOT associate endpoints with it.
-      @param Locator_list - Locator list to be used to create the ReceiverResources
-      @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
-      */
+     * some and updating the list. DOES NOT associate endpoints with it.
+     * @param Locator_list - Locator list to be used to create the ReceiverResources
+     * @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
+     * @param RegisterReceiver - True if we want the receiver to be registered. Useful for receivers created after participant is enabled.
+     */
     void createReceiverResources(
             LocatorList_t& Locator_list,
-            bool ApplyMutation);
+            bool ApplyMutation,
+            bool RegisterReceiver);
     
     void createSenderResources(
             const LocatorList_t& locator_list);
