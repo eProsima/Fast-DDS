@@ -612,6 +612,9 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
 
+    // Ensure liveliness is not recovered due to participant announcements
+    unsigned int participant_announcement_period_ms = 50000;
+
     reader.reliability(RELIABLE_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -620,6 +623,7 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
+    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -667,6 +671,9 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
 
+    // Ensure liveliness is not recovered due to participant announcements
+    unsigned int participant_announcement_period_ms = 50000;
+
     reader.reliability(RELIABLE_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -675,6 +682,7 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
+    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -728,6 +736,9 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
 
+    // Ensure liveliness is not recovered due to participant announcements
+    unsigned int participant_announcement_period_ms = 50000;
+
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -736,6 +747,7 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
+    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -784,6 +796,9 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
 
+    // Ensure liveliness is not recovered due to participant announcements
+    unsigned int participant_announcement_period_ms = 50000;
+
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -792,6 +807,7 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
+    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -844,6 +860,9 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
 
+    // Ensure liveliness is not recovered due to participant announcements
+    unsigned int participant_announcement_period_ms = 50000;
+
     reader.reliability(RELIABLE_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -852,6 +871,7 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
     .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
+    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -903,6 +923,9 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
 
+    // Ensure liveliness is not recovered due to participant announcements
+    unsigned int participant_announcement_period_ms = 50000;
+
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
@@ -911,6 +934,7 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
     .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
+    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
