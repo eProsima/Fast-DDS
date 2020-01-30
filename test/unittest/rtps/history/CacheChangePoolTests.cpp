@@ -256,7 +256,7 @@ INSTANTIATE_TEST_CASE_P(
             Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
                    MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                    MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE,
-                   MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)) );
+                   MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)), );
 
 int main(int argc, char **argv)
 {
