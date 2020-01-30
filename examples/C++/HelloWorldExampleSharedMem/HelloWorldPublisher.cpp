@@ -63,7 +63,7 @@ bool HelloWorldPublisher::init()
     // UDP
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
     //udp_transport->interfaceWhiteList.push_back("127.0.0.1");
-    PParam.rtps.userTransports.push_back(udp_transport);
+    //PParam.rtps.userTransports.push_back(udp_transport);
 
     mp_participant = Domain::createParticipant(PParam);
 
@@ -85,6 +85,7 @@ bool HelloWorldPublisher::init()
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;
