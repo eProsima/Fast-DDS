@@ -37,7 +37,7 @@ bool DurabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool DurabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool DurabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH)
     {
@@ -58,7 +58,7 @@ bool DeadlineQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool DeadlineQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool DeadlineQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -80,7 +80,7 @@ bool LatencyBudgetQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool LatencyBudgetQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool LatencyBudgetQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -106,7 +106,7 @@ bool LivelinessQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool LivelinessQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool LivelinessQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
     {
@@ -132,7 +132,7 @@ bool OwnershipQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool OwnershipQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool OwnershipQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH)
     {
@@ -156,7 +156,7 @@ bool ReliabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool ReliabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ReliabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
     {
@@ -182,7 +182,7 @@ bool DestinationOrderQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool DestinationOrderQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool DestinationOrderQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH)
     {
@@ -202,7 +202,7 @@ bool TimeBasedFilterQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool TimeBasedFilterQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool TimeBasedFilterQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -232,7 +232,7 @@ bool PresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool PresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool PresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_PRESENTATION_LENGTH)
     {
@@ -278,9 +278,9 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
-    if (max_size_ != 0 && partitions_.max_size < size - 4)
+    if (max_size_ != 0 && size > partitions_.max_size + 4)
     {
         return false;
     }
@@ -329,7 +329,7 @@ bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool UserDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool UserDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (max_size_ != 0 && size > max_size_)
     {
@@ -352,7 +352,7 @@ bool TopicDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool TopicDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool TopicDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     length = size;
 
@@ -370,7 +370,7 @@ bool GroupDataQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool GroupDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool GroupDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     length = size;
 
@@ -392,7 +392,7 @@ bool HistoryQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool HistoryQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool HistoryQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH + 4)
     {
@@ -421,7 +421,7 @@ bool DurabilityServiceQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool DurabilityServiceQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool DurabilityServiceQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH + PARAMETER_KIND_LENGTH + 16)
     {
@@ -449,7 +449,7 @@ bool LifespanQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool LifespanQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool LifespanQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -471,7 +471,7 @@ bool OwnershipStrengthQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool OwnershipStrengthQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool OwnershipStrengthQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != 4)
     {
@@ -491,7 +491,7 @@ bool ResourceLimitsQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool ResourceLimitsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ResourceLimitsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != 12)
     {
@@ -511,7 +511,7 @@ bool TransportPriorityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool TransportPriorityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool TransportPriorityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != 4)
     {
@@ -528,7 +528,7 @@ bool DataRepresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     return valid;
 }
 
-bool DataRepresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool DataRepresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     length = size;
 
@@ -560,7 +560,7 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size < 2)
     {
@@ -632,7 +632,7 @@ bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return true;
 }
 
-bool DisablePositiveACKsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool DisablePositiveACKsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_BOOL_LENGTH)
     {
@@ -668,7 +668,7 @@ bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
     return valid & CDRMessage::addData(msg, payload.data, payload.length);
 }
 
-bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     length = size;
     SerializedPayload_t payload(size);
@@ -717,7 +717,7 @@ bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
     return valid & CDRMessage::addData(msg, payload.data, payload.length);
 }
 
-bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     length = size;
     SerializedPayload_t payload(size);

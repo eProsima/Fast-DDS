@@ -179,7 +179,7 @@ bool ParameterList::readParameterListfromCDRMsg(
         msg.pos = original_pos + qos_size;
 
         ParameterId_t pid;
-        uint16_t plength;
+        uint16_t plength = 0;
         bool valid = true;
         valid &= CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
         valid &= CDRMessage::readUInt16(&msg, &plength);

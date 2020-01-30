@@ -157,7 +157,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -205,7 +205,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -253,7 +253,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -320,7 +320,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -381,7 +381,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -439,7 +439,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -498,7 +498,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -558,7 +558,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -663,7 +663,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -729,7 +729,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -792,7 +792,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -884,7 +884,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -975,7 +975,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1074,7 +1074,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1130,7 +1130,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1194,7 +1194,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1242,7 +1242,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1289,7 +1289,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1339,7 +1339,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1427,7 +1427,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1482,7 +1482,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1532,7 +1532,7 @@ public:
      * @return True if the parameter was correctly taken.
      */
     bool readFromCDRMessage(
-            rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/) override
+            rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
     {
         return true;
     }
@@ -1616,7 +1616,7 @@ public:
      */
     bool readFromCDRMessage(
             rtps::CDRMessage_t* /*msg*/,
-            uint32_t /*size*/) override
+            uint16_t /*size*/) override
     {
         return true;
     }
@@ -1695,7 +1695,7 @@ public:
      */
     bool readFromCDRMessage(
             rtps::CDRMessage_t* /*msg*/,
-            uint32_t /*size*/) override
+            uint16_t /*size*/) override
     {
         return true;
     }

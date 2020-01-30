@@ -154,7 +154,7 @@ public:
      * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
      */
-    RTPS_DllAPI virtual bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) = 0;
+    RTPS_DllAPI virtual bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) = 0;
 
 public:
     //!Parameter ID
@@ -190,7 +190,7 @@ class ParameterKey_t:public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 
 };
 #define PARAMETER_KEY_LENGTH 16
@@ -241,7 +241,7 @@ class ParameterLocator_t: public Parameter_t
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
@@ -274,7 +274,7 @@ class ParameterString_t: public Parameter_t
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
         inline const char* getName()const { return m_string.c_str(); };
         inline void setName(const char* name){ m_string = name; };
     private:
@@ -308,7 +308,7 @@ class ParameterPort_t: public Parameter_t {
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_PORT_LENGTH 4
@@ -350,7 +350,7 @@ class ParameterGuid_t: public Parameter_t {
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_GUID_LENGTH 16
@@ -381,7 +381,7 @@ class ParameterProtocolVersion_t: public Parameter_t {
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_PROTOCOL_LENGTH 4
@@ -414,7 +414,7 @@ class ParameterVendorId_t:public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
@@ -445,7 +445,7 @@ class ParameterIP4Address_t :public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
         void setIP4Address(rtps::octet o1, rtps::octet o2, rtps::octet o3, rtps::octet o4);
 };
 
@@ -478,7 +478,7 @@ class ParameterBool_t:public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_BOOL_LENGTH 4
@@ -512,7 +512,7 @@ public:
      * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_STATUS_INFO_LENGTH 4
@@ -543,7 +543,7 @@ class ParameterCount_t:public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_COUNT_LENGTH 4
@@ -574,7 +574,7 @@ class ParameterEntityId_t:public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_ENTITYID_LENGTH 4
@@ -605,7 +605,7 @@ class ParameterTime_t:public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_TIME_LENGTH 8
@@ -641,7 +641,7 @@ class ParameterBuiltinEndpointSet_t : public Parameter_t{
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
@@ -979,7 +979,7 @@ public:
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 
 protected:
 
@@ -1032,7 +1032,7 @@ class ParameterSampleIdentity_t : public Parameter_t
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #if HAVE_SECURITY
@@ -1067,7 +1067,7 @@ class ParameterToken_t : public Parameter_t
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 class ParameterParticipantSecurityInfo_t : public Parameter_t
@@ -1102,7 +1102,7 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
@@ -1139,7 +1139,7 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
          * @param size Size of the parameter field to read
          * @return True if the parameter was correctly taken.
          */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size) override;
+        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 };
 
 #define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
