@@ -204,6 +204,7 @@ bool SharedMemTransport::is_local_locator(
         const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_SHM);
+	(void)locator;
 
     return true;
 }
