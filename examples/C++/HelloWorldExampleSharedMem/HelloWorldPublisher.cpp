@@ -63,7 +63,7 @@ bool HelloWorldPublisher::init()
     // UDP
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
     //udp_transport->interfaceWhiteList.push_back("127.0.0.1");
-    //PParam.rtps.userTransports.push_back(udp_transport);
+    PParam.rtps.userTransports.push_back(udp_transport);
 
     mp_participant = Domain::createParticipant(PParam);
 
