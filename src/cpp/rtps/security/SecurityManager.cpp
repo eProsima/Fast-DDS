@@ -277,36 +277,11 @@ bool SecurityManager::init(
             {
                 // Should be activated here, to enable encription buffer on created entities
                 security_activated = true;
-
-                // Create RTPS entities
-                if (create_entities())
-                {
-                    logInfo(SECURITY, "Initialized security manager for participant " << participant_->getGuid());
-                    return true;
-                }
-
-                // Deactivate security if there is an error while creating entities
-                security_activated = false;
+                return true;
             }
 
-            if (local_participant_crypto_handle_ != nullptr)
-            {
-                crypto_plugin_->cryptokeyfactory()->unregister_participant(local_participant_crypto_handle_, exception);
-            }
-
-            if (crypto_plugin_ != nullptr)
-            {
-                delete crypto_plugin_;
-                crypto_plugin_ = nullptr;
-            }
-
-            //TODO(Ricardo) Return local_permissions
-
-            if (access_plugin_ != nullptr)
-            {
-                delete access_plugin_;
-                access_plugin_ = nullptr;
-            }
+            cancel_init();
+            return false;
         }
         else
         {
@@ -320,10 +295,36 @@ bool SecurityManager::init(
     }
     else
     {
-        logInfo(SECURITY, "Authentication plugin not configured. Security will be disable");
+        logInfo(SECURITY, "Authentication plugin not configured. Security will be disabled");
     }
 
     return true;
+}
+
+void SecurityManager::cancel_init()
+{
+    SecurityException exception;
+    if (local_participant_crypto_handle_ != nullptr)
+    {
+        crypto_plugin_->cryptokeyfactory()->unregister_participant(local_participant_crypto_handle_, exception);
+    }
+
+    if (crypto_plugin_ != nullptr)
+    {
+        delete crypto_plugin_;
+        crypto_plugin_ = nullptr;
+    }
+
+    //TODO(Ricardo) Return local_permissions
+
+    if (access_plugin_ != nullptr)
+    {
+        delete access_plugin_;
+        access_plugin_ = nullptr;
+    }
+
+    delete authentication_plugin_;
+    authentication_plugin_ = nullptr;
 }
 
 void SecurityManager::destroy()
@@ -878,6 +879,7 @@ bool SecurityManager::create_entities()
         delete_participant_stateless_message_entities();
     }
 
+    cancel_init();
     return false;
 }
 

@@ -264,12 +264,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultMulticastLocatorList.clear();
     }
     
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
-
-    createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
-    createReceiverResources(m_att.defaultMulticastLocatorList, true, false);
-
     bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
     size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
     if (num_send_buffers == 0)
@@ -295,8 +289,27 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif
 
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
+
+    createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
+    createReceiverResources(m_att.defaultMulticastLocatorList, true, false);
+
     // Allocate all pending send buffers
     send_buffers_->init(this);
+
+#if HAVE_SECURITY
+    if (m_is_security_active)
+    {
+        m_is_security_active = m_security_manager.create_entities();
+        if (!m_is_security_active)
+        {
+            // Participant will be deleted, no need to create builtin endpoints
+            m_security_manager_initialized = false;
+            return;
+        }
+    }
+#endif
 
     mp_builtinProtocols = new BuiltinProtocols();
 

@@ -38,6 +38,7 @@ void SecurityTest::initialization_ok()
         WillOnce(DoAll(SetArgPointee<0>(volatile_reader_), Return(true)));
 
     ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
+    ASSERT_TRUE(!security_activated_ || manager_.create_entities());
 }
 
 void SecurityTest::initialization_auth_ok()
@@ -58,6 +59,7 @@ void SecurityTest::initialization_auth_ok()
         WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true)));
 
     ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
+    ASSERT_TRUE(!security_activated_ || manager_.create_entities());
 }
 
 void SecurityTest::request_process_ok(CacheChange_t** request_message_change)
