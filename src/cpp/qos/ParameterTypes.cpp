@@ -33,7 +33,7 @@ bool ParameterLocator_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterLocator_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterLocator_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_LOCATOR_LENGTH)
     {
@@ -49,7 +49,7 @@ bool ParameterKey_t::addToCDRMessage(CDRMessage_t* msg)
     return CDRMessage::addParameterKey(msg,&this->key);
 }
 
-bool ParameterKey_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterKey_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_KEY_LENGTH)
     {
@@ -76,7 +76,7 @@ bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterString_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterString_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size > 256)
     {
@@ -98,7 +98,7 @@ bool ParameterPort_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterPort_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterPort_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_PORT_LENGTH)
     {
@@ -118,7 +118,7 @@ bool ParameterGuid_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterGuid_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterGuid_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_GUID_LENGTH)
     {
@@ -141,7 +141,7 @@ bool ParameterProtocolVersion_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterProtocolVersion_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterProtocolVersion_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_PROTOCOL_LENGTH)
     {
@@ -164,7 +164,7 @@ bool ParameterVendorId_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterVendorId_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterVendorId_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_VENDOR_LENGTH)
     {
@@ -186,7 +186,7 @@ bool ParameterIP4Address_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterIP4Address_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterIP4Address_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_IP4_LENGTH)
     {
@@ -213,7 +213,7 @@ bool ParameterBool_t::addToCDRMessage(CDRMessage_t* msg){
     return valid;
 }
 
-bool ParameterBool_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterBool_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_BOOL_LENGTH)
     {
@@ -235,7 +235,7 @@ bool ParameterStatusInfo_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterStatusInfo_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterStatusInfo_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_STATUS_INFO_LENGTH)
     {
@@ -259,7 +259,7 @@ bool ParameterCount_t::addToCDRMessage(CDRMessage_t* msg){
     return valid;
 }
 
-bool ParameterCount_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterCount_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_COUNT_LENGTH)
     {
@@ -277,7 +277,7 @@ bool ParameterEntityId_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterEntityId_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterEntityId_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_ENTITYID_LENGTH)
     {
@@ -296,7 +296,7 @@ bool ParameterTime_t::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterTime_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterTime_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -320,7 +320,7 @@ bool ParameterBuiltinEndpointSet_t::addToCDRMessage(CDRMessage_t*msg)
     return valid;
 }
 
-bool ParameterBuiltinEndpointSet_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterBuiltinEndpointSet_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_BUILTINENDPOINTSET_LENGTH)
     {
@@ -352,9 +352,9 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
     return valid;
 }
 
-bool ParameterPropertyList_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterPropertyList_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
-    if (limit_size_ && properties_.max_size < size - 4)
+    if (limit_size_ && size > properties_.max_size + 4)
     {
         return false;
     }
@@ -406,7 +406,7 @@ bool ParameterSampleIdentity_t::addToCDRMessage(CDRMessage_t*msg)
     return valid;
 }
 
-bool ParameterSampleIdentity_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterSampleIdentity_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != 24)
     {
@@ -442,7 +442,7 @@ bool ParameterToken_t::addToCDRMessage(CDRMessage_t*msg)
     return valid;
 }
 
-bool ParameterToken_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterToken_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
 
     length = size;
@@ -462,7 +462,7 @@ bool ParameterParticipantSecurityInfo_t::addToCDRMessage(CDRMessage_t*msg)
     return valid;
 }
 
-bool ParameterParticipantSecurityInfo_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterParticipantSecurityInfo_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
     {
@@ -483,7 +483,7 @@ bool ParameterEndpointSecurityInfo_t::addToCDRMessage(CDRMessage_t*msg)
     return valid;
 }
 
-bool ParameterEndpointSecurityInfo_t::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool ParameterEndpointSecurityInfo_t::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
 {
     if (size != PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
     {
