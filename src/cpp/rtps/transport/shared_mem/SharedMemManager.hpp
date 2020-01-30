@@ -161,7 +161,7 @@ public:
 
             if(overflows_count_)
             {
-                logWarning(RTPS_TRANSPORT_SHMEM, "Segment " << segment_id_.to_string().c_str()
+                logWarning(RTPS_TRANSPORT_SHM, "Segment " << segment_id_.to_string().c_str()
                             << " closed. It had " << "overflows_count " << overflows_count_);
             }
         }

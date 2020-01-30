@@ -29,7 +29,7 @@ using namespace rtps;
 int main(int argc, char** argv)
 {
     Log::SetVerbosity(Log::Warning);
-    //Log::SetCategoryFilter(std::regex("RTPS_EDP_MATCH|RTPS_PDP_DISCOVERY|RTPS_PARTICIPANT_LISTEN|SHMEM"));
+    //Log::SetCategoryFilter(std::regex("RTPS_EDP_MATCH|RTPS_PDP_DISCOVERY|RTPS_PARTICIPANT_LISTEN|SHM"));
     
 
     std::cout << "Starting "<< std::endl;

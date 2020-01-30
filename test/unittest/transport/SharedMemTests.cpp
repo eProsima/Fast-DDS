@@ -81,7 +81,7 @@ TEST_F(SharedMemTests, locators_with_kind_16_supported)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t supportedLocator;
-    supportedLocator.kind = LOCATOR_KIND_SHMEM;
+    supportedLocator.kind = LOCATOR_KIND_SHM;
     Locator_t unsupportedLocatorTcpv4;
     unsupportedLocatorTcpv4.kind = LOCATOR_KIND_TCPv4;
     Locator_t unsupportedLocatorTcpv6;
@@ -106,7 +106,7 @@ TEST_F(SharedMemTests, opening_and_closing_input_channel)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t genericInputChannelLocator;
-    genericInputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    genericInputChannelLocator.kind = LOCATOR_KIND_SHM;
     genericInputChannelLocator.port = g_input_port; // listen port
 
     // Then
@@ -125,11 +125,11 @@ TEST_F(SharedMemTests, closing_input_channel_leaves_other_channels_unclosed)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t genericInputChannelLocator;
-    genericInputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    genericInputChannelLocator.kind = LOCATOR_KIND_SHM;
     genericInputChannelLocator.port = g_input_port; // listen port
 
     Locator_t otherInputChannelLocator;
-    otherInputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    otherInputChannelLocator.kind = LOCATOR_KIND_SHM;
     otherInputChannelLocator.port = g_input_port + 1; // listen port
 
     // Then
@@ -155,7 +155,7 @@ TEST_F(SharedMemTests, RemoteToMainLocal_returns_input_locator)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t remote_locator;
-    remote_locator.kind = LOCATOR_KIND_SHMEM;
+    remote_locator.kind = LOCATOR_KIND_SHM;
     remote_locator.port = g_default_port;
 
     // When
@@ -172,7 +172,7 @@ TEST_F(SharedMemTests, transform_remote_locator_returns_input_locator)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t remote_locator;
-    remote_locator.kind = LOCATOR_KIND_SHMEM;
+    remote_locator.kind = LOCATOR_KIND_SHM;
     remote_locator.port = g_default_port;
 
     // Then
@@ -188,7 +188,7 @@ TEST_F(SharedMemTests, all_shared_mem_locators_are_local)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t shared_mem_locator;
-    shared_mem_locator.kind = LOCATOR_KIND_SHMEM;
+    shared_mem_locator.kind = LOCATOR_KIND_SHM;
     shared_mem_locator.port = g_default_port;
 
     // Then
@@ -202,11 +202,11 @@ TEST_F(SharedMemTests, match_if_port_AND_address_matches)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t locatorAlpha;
-    locatorAlpha.kind = LOCATOR_KIND_SHMEM;
+    locatorAlpha.kind = LOCATOR_KIND_SHM;
     locatorAlpha.port = g_default_port;
 
     Locator_t locatorBeta;
-    locatorBeta.kind = LOCATOR_KIND_SHMEM;
+    locatorBeta.kind = LOCATOR_KIND_SHM;
     locatorBeta.port = g_default_port;
 
     // Then
@@ -223,11 +223,11 @@ TEST_F(SharedMemTests, send_and_receive_between_ports)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t unicastLocator;
-    unicastLocator.kind = LOCATOR_KIND_SHMEM;
+    unicastLocator.kind = LOCATOR_KIND_SHM;
     unicastLocator.port = g_default_port;
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    outputChannelLocator.kind = LOCATOR_KIND_SHM;
     outputChannelLocator.port = g_default_port + 1;
 
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
@@ -277,7 +277,7 @@ TEST_F(SharedMemTests, port_and_segment_overflow_fail)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t unicastLocator;
-    unicastLocator.kind = LOCATOR_KIND_SHMEM;
+    unicastLocator.kind = LOCATOR_KIND_SHM;
     unicastLocator.port = g_default_port;
 
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
@@ -293,7 +293,7 @@ TEST_F(SharedMemTests, port_and_segment_overflow_fail)
     msg_recv->setCallback(recCallback);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    outputChannelLocator.kind = LOCATOR_KIND_SHM;
     outputChannelLocator.port = g_default_port + 1;
 
     SendResourceList send_resource_list;
@@ -370,7 +370,7 @@ TEST_F(SharedMemTests, port_and_segment_overflow_discard)
     ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t unicastLocator;
-    unicastLocator.kind = LOCATOR_KIND_SHMEM;
+    unicastLocator.kind = LOCATOR_KIND_SHM;
     unicastLocator.port = g_default_port;
 
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
@@ -386,7 +386,7 @@ TEST_F(SharedMemTests, port_and_segment_overflow_discard)
     msg_recv->setCallback(recCallback);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    outputChannelLocator.kind = LOCATOR_KIND_SHM;
     outputChannelLocator.port = g_default_port + 1;
 
     SendResourceList send_resource_list;
@@ -638,11 +638,11 @@ TEST_F(SharedMemTests, simple_latency2)
 	octet data[16] = { "" };
 
 	Locator_t sub_locator;
-	sub_locator.kind = LOCATOR_KIND_SHMEM;
+	sub_locator.kind = LOCATOR_KIND_SHM;
 	sub_locator.port = 0;
 
 	Locator_t pub_locator;
-	pub_locator.kind = LOCATOR_KIND_SHMEM;
+	pub_locator.kind = LOCATOR_KIND_SHM;
 	pub_locator.port = 1;
 
 	SharedMemTransportDescriptor my_descriptor;
@@ -767,11 +767,11 @@ TEST_F(SharedMemTests, simple_throughput)
     memset(sample_data, 0, sizeof(sample_data));
 
     Locator_t sub_locator;
-    sub_locator.kind = LOCATOR_KIND_SHMEM;
+    sub_locator.kind = LOCATOR_KIND_SHM;
     sub_locator.port = 0;
 
     Locator_t pub_locator;
-    pub_locator.kind = LOCATOR_KIND_SHMEM;
+    pub_locator.kind = LOCATOR_KIND_SHM;
     pub_locator.port = 1;
 
     SharedMemTransportDescriptor my_descriptor;
@@ -837,11 +837,11 @@ TEST_F(SharedMemTests, simple_throughput)
     memset(sample_data, 0, sizeof(sample_data));
 
     Locator_t sub_locator;
-    sub_locator.kind = LOCATOR_KIND_SHMEM;
+    sub_locator.kind = LOCATOR_KIND_SHM;
     sub_locator.port = 0;
 
     Locator_t pub_locator;
-    pub_locator.kind = LOCATOR_KIND_SHMEM;
+    pub_locator.kind = LOCATOR_KIND_SHM;
     pub_locator.port = 1;
 
     SharedMemTransportDescriptor my_descriptor;

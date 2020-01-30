@@ -186,12 +186,12 @@ public:
             {
                 auto segment_name = port_segment_->name();
 
-                logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port " << node_->port_id 
+                logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port " << node_->port_id 
                         << segment_name.c_str() << " removed." << "overflows_count " << overflows_count_);
 
                 if(overflows_count_)
                 {
-                    logWarning(RTPS_TRANSPORT_SHMEM, "Port " << node_->port_id 
+                    logWarning(RTPS_TRANSPORT_SHM, "Port " << node_->port_id 
                             << segment_name.c_str() << " had overflows_count " << overflows_count_);
                 }
 
@@ -421,7 +421,7 @@ public:
 
         auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
 
-        logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Opening " << port_segment_name);
+        logInfo(RTPS_TRANSPORT_SHM, THREADID << "Opening " << port_segment_name);
         
         std::unique_ptr<SharedMemSegment::named_mutex> port_mutex = 
                 SharedMemSegment::open_or_create_and_lock_named_mutex(port_segment_name + "_mutex");
@@ -443,12 +443,12 @@ public:
             }
             catch(std::exception&)
             {
-                logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
+                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port " 
                     << port_id << " Couldn't find port_node ");
 
                 SharedMemSegment::remove(port_segment_name.c_str());
 
-                logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
+                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port " 
                     << port_id << " Removed.");
 
 				throw;
@@ -461,7 +461,7 @@ public:
                 if ( (port_node->is_opened_read_exclusive && open_mode != Port::OpenMode::Write) ||
                      (port_node->is_opened_for_reading && open_mode == Port::OpenMode::ReadExclusive))
                 {
-                    logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Couln't open Port "
+                    logInfo(RTPS_TRANSPORT_SHM, THREADID << "Couln't open Port "
                         << port_node->port_id << " (" << port_node->uuid.to_string() << ") for reading because is exclusive");
 
                     port.reset();
@@ -471,7 +471,7 @@ public:
                     port_node->is_opened_read_exclusive = (open_mode == Port::OpenMode::ReadExclusive);
                     port_node->is_opened_for_reading |= (open_mode == Port::OpenMode::ReadShared);
 
-                    logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port "
+                    logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
                         << port_node->port_id << " (" << port_node->uuid.to_string() << ") Opened");
                 }
 			}
@@ -486,18 +486,18 @@ public:
 					// Release owership
 					port_segment.release();
 
-					logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Existing Port "
+					logWarning(RTPS_TRANSPORT_SHM, THREADID << "Existing Port "
 						<< port_id << " (" << port_uuid << ") NOT Healthy (check_thread detached).");
                 }
                 else
                 {
-                    logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Existing Port " 
+                    logWarning(RTPS_TRANSPORT_SHM, THREADID << "Existing Port " 
                     << port_id << " (" << port_uuid << ") NOT Healthy.");
                 }
                 
 				SharedMemSegment::remove(port_segment_name.c_str());
 
-                logWarning(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
+                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port " 
                     << port_id << " (" << port_uuid << ") Removed.");
 
 				throw;
@@ -572,7 +572,7 @@ private:
 
             port = std::make_shared<Port>(std::move(segment), port_node);
 
-            logInfo(RTPS_TRANSPORT_SHMEM, THREADID << "Port " 
+            logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port " 
                     << port_node->port_id << " (" << port_node->uuid.to_string() << ") Created.");
         }
         catch (const std::exception&)

@@ -454,7 +454,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             if (is_shm_transport_possible)
                             {
-                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind == LOCATOR_KIND_SHM)
                                 {
                                     // First SHM locator
                                     if (!are_shm_metatraffic_locators_present)
@@ -473,7 +473,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             }
                             else
                             {
-                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind != LOCATOR_KIND_SHM)
                                 {
                                     metatraffic_locators.add_multicast_locator(temp_locator);
                                 }
@@ -494,7 +494,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             if (is_shm_transport_possible)
                             {
-                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind == LOCATOR_KIND_SHM)
                                 {
                                     // First SHM locator
                                     if (!are_shm_metatraffic_locators_present)
@@ -513,7 +513,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             }
                             else
                             {
-                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind != LOCATOR_KIND_SHM)
                                 {
                                     metatraffic_locators.add_unicast_locator(temp_locator);
                                 }
@@ -534,7 +534,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             if (is_shm_transport_possible)
                             {
-                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind == LOCATOR_KIND_SHM)
                                 {
                                     // First SHM locator
                                     if (!are_shm_default_locators_present)
@@ -553,7 +553,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             }
                             else
                             {
-                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind != LOCATOR_KIND_SHM)
                                 {
                                     default_locators.add_unicast_locator(temp_locator);
                                 }
@@ -574,7 +574,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         {
                             if (is_shm_transport_possible)
                             {
-                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind == LOCATOR_KIND_SHM)
                                 {
                                     // First SHM locator
                                     if (!are_shm_default_locators_present)
@@ -593,7 +593,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             }
                             else
                             {
-                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind != LOCATOR_KIND_SHM)
                                 {
                                     default_locators.add_multicast_locator(temp_locator);
                                 }

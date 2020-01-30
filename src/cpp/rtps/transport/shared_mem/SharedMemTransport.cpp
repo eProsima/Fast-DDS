@@ -31,7 +31,7 @@
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 
-#define SHMEM_MANAGER_DOMAIN ("fastrtps")
+#define SHM_MANAGER_DOMAIN ("fastrtps")
 
 using namespace std;
 
@@ -86,14 +86,14 @@ TransportInterface* SharedMemTransportDescriptor::create_transport() const
 
 SharedMemTransport::SharedMemTransport(
         const SharedMemTransportDescriptor& descriptor)
-    : TransportInterface(LOCATOR_KIND_SHMEM)
+    : TransportInterface(LOCATOR_KIND_SHM)
     , configuration_(descriptor)
 {
     
 }
 
 SharedMemTransport::SharedMemTransport()
-    : TransportInterface(LOCATOR_KIND_SHMEM)
+    : TransportInterface(LOCATOR_KIND_SHM)
 {
 }
 
@@ -107,7 +107,7 @@ bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
         uint32_t metatraffic_multicast_port) const
 {
     Locator_t locator;
-    locator.kind = LOCATOR_KIND_SHMEM;
+    locator.kind = LOCATOR_KIND_SHM;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
     locator.set_Invalid_Address();
 	locator.address[0] = 'M';
@@ -120,7 +120,7 @@ bool SharedMemTransport::getDefaultMetatrafficUnicastLocators(
         uint32_t metatraffic_unicast_port) const
 {
     Locator_t locator;
-    locator.kind = LOCATOR_KIND_SHMEM;
+    locator.kind = LOCATOR_KIND_SHM;
     locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
     locator.set_Invalid_Address();
     locators.push_back(locator);
@@ -133,7 +133,7 @@ bool SharedMemTransport::getDefaultUnicastLocators(
         uint32_t unicast_port) const
 {
     Locator_t locator;
-    locator.kind = LOCATOR_KIND_SHMEM;
+    locator.kind = LOCATOR_KIND_SHM;
     locator.set_Invalid_Address();
     fillUnicastLocator(locator, unicast_port);
     locators.push_back(locator);
@@ -203,7 +203,7 @@ LocatorList_t SharedMemTransport::NormalizeLocator(
 bool SharedMemTransport::is_local_locator(
         const Locator_t& locator) const
 {
-    assert(locator.kind == LOCATOR_KIND_SHMEM);
+    assert(locator.kind == LOCATOR_KIND_SHM);
 
     return true;
 }
@@ -267,7 +267,7 @@ bool SharedMemTransport::init()
 			throw std::runtime_error("unknown port_overflow_policy");
 		}
 
-		shared_mem_manager_ = std::make_shared<SharedMemManager>(SHMEM_MANAGER_DOMAIN);
+		shared_mem_manager_ = std::make_shared<SharedMemManager>(SHM_MANAGER_DOMAIN);
 		shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size, configuration_.port_queue_capacity);
 
 		// Memset the whole segment to zero in order to forze physical map of the buffer
