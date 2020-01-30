@@ -125,6 +125,11 @@ class MockTransport : public TransportInterface
             Locator_t &,
             uint32_t) const override { return true; }
 
+        virtual uint32_t max_recv_buffer_size() const override
+        {
+            return 0x8FFF;
+        }
+
         //Helpers and message record
         typedef struct
         {
@@ -137,6 +142,8 @@ class MockTransport : public TransportInterface
         std::vector<MockMessage> mockMessagesSent;
 
         // For the mock, port + direction tuples will have a 1:1 relatonship with channels
+
+        
 
         typedef uint32_t Port;
         std::vector<Port> mockOpenInputChannels;

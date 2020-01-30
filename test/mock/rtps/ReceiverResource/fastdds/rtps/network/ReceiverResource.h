@@ -66,9 +66,9 @@ public:
     bool checkReaders(EntityId_t) { return false; }
 protected:
     ReceiverResource(TransportInterface& transport,
-        const Locator_t& locator, uint32_t maxMsgSize)
+        const Locator_t& locator)
         : mValid(false)
-        , m_maxMsgSize(maxMsgSize)
+        , m_maxMsgSize(transport.max_recv_buffer_size())
     {
         mValid = transport.OpenInputChannel(locator, this, m_maxMsgSize);
         if (!mValid)

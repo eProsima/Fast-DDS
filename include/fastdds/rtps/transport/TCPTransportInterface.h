@@ -384,6 +384,11 @@ public:
         fastrtps::rtps::Locator_t &locator,
         uint32_t well_known_port) const override;
 
+    virtual uint32_t max_recv_buffer_size() const override
+    {
+        return configuration()->maxMessageSize;
+    }
+
     void DeleteSocket(TCPChannelResource *channelResource);
 
     virtual const TCPTransportDescriptor* configuration() const = 0;

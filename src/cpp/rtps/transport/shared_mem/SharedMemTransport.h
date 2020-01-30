@@ -183,6 +183,12 @@ public:
 	bool fillUnicastLocator(
 			fastrtps::rtps::Locator_t& locator, 
 			uint32_t well_known_port) const override;
+
+	uint32_t max_recv_buffer_size() const override 
+	{ 
+		return (std::numeric_limits<uint32_t>::max)();
+	}
+
 private:
 
 	//! Constructor with no descriptor is necessary for implementations derived from this class.
