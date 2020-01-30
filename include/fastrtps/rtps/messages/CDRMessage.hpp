@@ -786,13 +786,12 @@ inline bool CDRMessage::add_string(
         CDRMessage_t* msg,
         const char* in_str)
 {
-    uint32_t str_siz = (uint32_t)strlen(in_str) + 1;
-    int rest = ((str_siz + 3) & ~3) - str_siz;
+    uint32_t str_siz = static_cast<uint32_t>(strlen(in_str) + 1);
 
     bool valid = CDRMessage::addUInt32(msg, str_siz);
     valid &= CDRMessage::addData(msg, (unsigned char*) in_str, str_siz);
     octet oc = '\0';
-    for (int i = 0; i < rest; ++i)
+    for (; str_siz & 3; ++str_siz)
     {
         valid &= CDRMessage::addOctet(msg, oc);
     }
