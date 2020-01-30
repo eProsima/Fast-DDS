@@ -50,6 +50,22 @@ public:
         }
     }
 
+protected:
+
+
+    template<typename WriterType, typename ReaderType>
+    void config_pdp(
+            WriterType& writer,
+            ReaderType& reader)
+    {
+        constexpr unsigned int participant_announcement_period_ms = 50000;
+
+        writer.lease_duration(
+            participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3);
+        reader.lease_duration(
+            participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3);
+    }
+
 };
 
 //! Tests that when kind is automatic liveliness is never lost, even if the writer never sends data
@@ -57,6 +73,8 @@ TEST_P(LivelinessQos, Liveliness_Automatic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Liveliness lease duration and announcement period
     unsigned int lease_duration_ms = 1000;
@@ -93,6 +111,8 @@ TEST_P(LivelinessQos, Liveliness_Automatic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Liveliness lease duration and announcement period
     unsigned int lease_duration_ms = 1000;
@@ -131,6 +151,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Number of samples to write
     unsigned int num_samples = 2;
@@ -194,6 +216,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
@@ -256,6 +280,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
@@ -313,6 +339,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
@@ -369,6 +397,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Number of samples to write
     unsigned int num_samples = 2;
@@ -430,6 +460,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
@@ -490,6 +522,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
@@ -546,6 +580,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Number of samples to write
     unsigned int num_samples = 2;
@@ -604,6 +640,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Write rate in milliseconds and number of samples to write
     unsigned int num_samples = 2;
 
@@ -611,9 +649,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
     unsigned int sleep_ms = 10;
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
-
-    // Ensure liveliness is not recovered due to participant announcements
-    unsigned int participant_announcement_period_ms = 50000;
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -623,7 +658,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
-    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -664,15 +698,14 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
     // Liveliness lease duration and announcement period, in milliseconds
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
-
-    // Ensure liveliness is not recovered due to participant announcements
-    unsigned int participant_announcement_period_ms = 50000;
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -682,7 +715,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
-    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -728,6 +760,8 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
@@ -735,9 +769,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
     unsigned int sleep_ms = 10;
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
-
-    // Ensure liveliness is not recovered due to participant announcements
-    unsigned int participant_announcement_period_ms = 50000;
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -747,7 +778,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
-    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -789,15 +819,14 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
     // Liveliness lease duration and announcement period, in milliseconds
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
-
-    // Ensure liveliness is not recovered due to participant announcements
-    unsigned int participant_announcement_period_ms = 50000;
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -807,7 +836,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
-    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -853,15 +881,14 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of samples to write
     unsigned int num_samples = 2;
 
     // Liveliness lease duration and announcement period, in milliseconds
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
-
-    // Ensure liveliness is not recovered due to participant announcements
-    unsigned int participant_announcement_period_ms = 50000;
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -871,7 +898,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
     .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
-    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -916,15 +942,14 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Number of times to assert liveliness
     unsigned int num_samples = 2;
 
     // Liveliness lease duration and announcement period, in milliseconds
     unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
-
-    // Ensure liveliness is not recovered due to participant announcements
-    unsigned int participant_announcement_period_ms = 50000;
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
     .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -934,7 +959,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
     .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
     .liveliness_announcement_period(announcement_period_ms * 1e-3)
     .liveliness_lease_duration(lease_duration_ms * 1e-3)
-    .lease_duration(participant_announcement_period_ms * 3e-3, participant_announcement_period_ms * 1e-3)
     .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -978,6 +1002,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_Reliable
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Number of samples to write
     unsigned int num_samples = 2;
@@ -1037,6 +1063,8 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_BestEffo
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Write rate in milliseconds and number of samples to write
     unsigned int num_samples = 2;
@@ -1441,6 +1469,8 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Liveliness lease duration and announcement period, in milliseconds
     unsigned int lease_duration_ms = 100;
     unsigned int announcement_period_ms = 10;
@@ -1496,6 +1526,8 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
+    config_pdp(writer, reader);
+
     // Liveliness lease duration and announcement period, in milliseconds
     unsigned int lease_duration_ms = 100;
     unsigned int announcement_period_ms = 10;
@@ -1546,6 +1578,8 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    config_pdp(writer, reader);
 
     // Liveliness lease duration and announcement period, in milliseconds
     unsigned int lease_duration_ms = 100;
