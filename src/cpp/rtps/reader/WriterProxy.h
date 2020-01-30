@@ -69,7 +69,6 @@ public:
     WriterProxy(
             StatefulReader* reader,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
-            const VariableLengthDataLimits& limits,
             const ResourceLimitedContainerConfig& changes_allocation);
 
     /**
@@ -379,8 +378,6 @@ private:
     GUID_t persistence_guid_;
     //! Taken from proxy data
     LocatorSelectorEntry locators_entry_;
-    //! Taken from proxy data
-    VariableLengthDataLimits data_limits_;
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 
