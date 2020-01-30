@@ -61,11 +61,11 @@ namespace fastrtps{
 class WriterQos;
 class ReaderQos;
 class TopicAttributes;
-class MessageReceiver;
 
 namespace rtps
 {
 
+class MessageReceiver;
 class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
