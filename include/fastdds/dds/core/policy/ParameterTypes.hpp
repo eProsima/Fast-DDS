@@ -216,6 +216,8 @@ public:
             fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
+#define PARAMETER_KEY_HASH_LENGTH 16
+
 /**
  *
  */
