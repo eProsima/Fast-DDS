@@ -75,10 +75,12 @@ class NetworkFactory
          * from the given locator, and returns a vector of Receiver Resources for this goal.
          * @param local Locator from which to listen.
          * @param returned_resources_list List that will be filled with the created ReceiverResources.
+         * @param receiver_max_message_size Max message size allowed by the message receiver.
          */
         bool BuildReceiverResources(
                 Locator_t& local,
-                std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list);
+                std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list,
+                uint32_t receiver_max_message_size);
 
         void NormalizeLocators(LocatorList_t& locators);
 

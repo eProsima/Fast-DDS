@@ -50,7 +50,8 @@ bool NetworkFactory::build_send_resources(
 }
 
 bool NetworkFactory::BuildReceiverResources(Locator_t& local,
-    std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
+    std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list,
+    uint32_t receiver_max_message_size)
 {
     bool returnedValue = false;
     for (auto& transport : mRegisteredTransports)
@@ -59,8 +60,12 @@ bool NetworkFactory::BuildReceiverResources(Locator_t& local,
         {
             if (!transport->IsInputChannelOpen(local))
             {
+                uint32_t max_recv_buffer_size = (std::min)(
+                    transport->max_recv_buffer_size(),
+                    receiver_max_message_size);
+
                 std::shared_ptr<ReceiverResource> newReceiverResource = std::shared_ptr<ReceiverResource>(
-                    new ReceiverResource(*transport, local));
+                    new ReceiverResource(*transport, local, max_recv_buffer_size));
 
                 if (newReceiverResource->mValid)
                 {

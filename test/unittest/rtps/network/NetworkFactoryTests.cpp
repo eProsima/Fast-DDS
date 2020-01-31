@@ -83,7 +83,7 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_c
 
    // When
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator, resources, 0x8FFF);
 
    // Then
    ASSERT_TRUE(ret);
@@ -102,7 +102,7 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_multiple_resources_if_multipl
 
    // When
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports, resources, 0x8FFF);
 
    // Then
    ASSERT_TRUE(ret);
@@ -158,7 +158,7 @@ TEST_F(NetworkTests, creating_receive_resource_from_locator_opens_channels_mappe
 
    // When
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
 
    ASSERT_TRUE(ret);
 
@@ -199,7 +199,7 @@ TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mappe
    locator.kind = ArbitraryKind;
 
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
    ASSERT_TRUE(ret);
 
    // When
@@ -261,7 +261,7 @@ TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_
    Locator_t locator;
    locator.kind = ArbitraryKind;
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
    ASSERT_TRUE(ret);
    auto& resource = resources.back();
 

@@ -959,9 +959,18 @@ void RTPSParticipantImpl::createReceiverResources(
 {
     std::vector<std::shared_ptr<ReceiverResource> > newItemsBuffer;
 
+#if HAVE_SECURITY
+    // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
+    // that impose a limit in the received messages size even if the transport allows (uint32_t) messages size.
+    uint32_t max_receiver_buffer_size = 
+        is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
+#else
+    uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
+#endif
+
     for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
     {
-        bool ret = m_network_Factory.BuildReceiverResources(*it_loc, newItemsBuffer);
+        bool ret = m_network_Factory.BuildReceiverResources(*it_loc, newItemsBuffer, max_receiver_buffer_size);
         if (!ret && ApplyMutation)
         {
             uint32_t tries = 0;
@@ -969,7 +978,7 @@ void RTPSParticipantImpl::createReceiverResources(
             {
                 tries++;
                 *it_loc = applyLocatorAdaptRule(*it_loc);
-                ret = m_network_Factory.BuildReceiverResources(*it_loc, newItemsBuffer);
+                ret = m_network_Factory.BuildReceiverResources(*it_loc, newItemsBuffer, max_receiver_buffer_size);
             }
         }
 
@@ -1214,7 +1223,19 @@ void RTPSParticipantImpl::assert_remote_participant_liveliness(
 
 uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 {
-    return m_network_Factory.get_max_message_size_between_transports();
+#if HAVE_SECURITY
+    // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
+    // that impose a limit in the received messages size even if the transport allows (uint32_t) messages size.
+    // So the sender limits also its size.
+    uint32_t max_receiver_buffer_size = 
+        is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
+#else
+    uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
+#endif
+
+    return (std::min)(
+        m_network_Factory.get_max_message_size_between_transports(),
+        max_receiver_buffer_size);
 }
 
 uint32_t RTPSParticipantImpl::getMaxDataSize()

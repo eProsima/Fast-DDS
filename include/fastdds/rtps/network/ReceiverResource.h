@@ -91,7 +91,7 @@ private:
     ReceiverResource(const ReceiverResource&) = delete;
     ReceiverResource& operator=(const ReceiverResource&) = delete;
 
-    ReceiverResource(fastdds::rtps::TransportInterface&, const Locator_t&);
+    ReceiverResource(fastdds::rtps::TransportInterface&, const Locator_t&, uint32_t);
     std::function<void()> Cleanup;
     std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
     bool mValid; // Post-construction validity check for the NetworkFactory

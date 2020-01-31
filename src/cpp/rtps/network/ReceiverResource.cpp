@@ -26,13 +26,16 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator)
+ReceiverResource::ReceiverResource(
+			TransportInterface& transport,
+			const Locator_t& locator,
+			uint32_t max_recv_buffer_size)
         : Cleanup(nullptr)
         , LocatorMapsToManagedChannel(nullptr)
         , mValid(false)
         , mtx()
         , receiver(nullptr)
-        , max_message_size_(transport.max_recv_buffer_size())
+        , max_message_size_(max_recv_buffer_size)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenInputChannel(locator, this, max_message_size_);

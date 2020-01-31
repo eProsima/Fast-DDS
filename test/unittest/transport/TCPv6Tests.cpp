@@ -149,7 +149,7 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
     NetworkFactory factory;
     factory.RegisterTransport<TCPv6Transport, TCPv6TransportDescriptor>(descriptor);
     std::vector<std::shared_ptr<ReceiverResource>> receivers;
-    factory.BuildReceiverResources(multicastFilterLocator, receivers);
+    factory.BuildReceiverResources(multicastFilterLocator, receivers, 0x8FFF);
     ReceiverResource* receiver = receivers.back().get();
 
     // Then
