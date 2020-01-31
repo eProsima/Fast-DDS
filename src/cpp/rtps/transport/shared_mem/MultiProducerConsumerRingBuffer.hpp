@@ -170,7 +170,7 @@ public:
         : cells_(cells_base)
         , is_node_owned_(true)
     {
-        if (total_cells > (1 << 31))
+        if (total_cells > (1u << 31u))
         {
             throw std::runtime_error("total_cells out of range");
         }
