@@ -32,7 +32,6 @@ TEST(ReaderProxyTests, find_change_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    VariableLengthDataLimits limits;
     ReaderProxy rproxy(wTimes, alloc, &writerMock);
 
     rproxy.add_change(ChangeForReader_t(SequenceNumber_t(0, 1)), false);
@@ -85,7 +84,6 @@ TEST(ReaderProxyTests, find_change_removed_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    VariableLengthDataLimits limits;
     ReaderProxy rproxy(wTimes, alloc, &writerMock);
 
     rproxy.add_change(ChangeForReader_t(SequenceNumber_t(0, 1)), false);
@@ -118,7 +116,6 @@ TEST(ReaderProxyTests, are_there_gaps)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    VariableLengthDataLimits limits;
     ReaderProxy rproxy(wTimes, alloc, &writerMock);
 
     ASSERT_FALSE(rproxy.are_there_gaps());
