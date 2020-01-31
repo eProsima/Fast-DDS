@@ -20,6 +20,7 @@
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
+#include "../../../src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp"
 
 #include <memory>
 #include <gtest/gtest.h>
@@ -52,21 +53,18 @@ uint16_t get_port(uint16_t offset)
     return port;
 }
 
-class SharedMemTests: public ::testing::Test
+class SharedMemTransportTests: public ::testing::Test
 {
     public:
-        SharedMemTests()
+        SharedMemTransportTests()
         {
             Log::SetVerbosity(Log::Kind::Info);
-            HELPER_SetDescriptorDefaults();
         }
 
-        ~SharedMemTests()
+        ~SharedMemTransportTests()
         {
             Log::KillThread();
         }
-
-        void HELPER_SetDescriptorDefaults();
 
         SharedMemTransportDescriptor descriptor;
         std::unique_ptr<std::thread> senderThread;
@@ -74,7 +72,262 @@ class SharedMemTests: public ::testing::Test
         std::unique_ptr<std::thread> timeoutThread;
 };
 
-TEST_F(SharedMemTests, locators_with_kind_16_supported)
+class SharedMemRingBuffer : public ::testing::Test
+{
+protected:
+
+    struct MyData
+    {
+        uint32_t thread_number;
+        uint32_t counter;
+    };
+
+    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]> cells_;
+    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> > ring_buffer_;
+    uint32_t buffer_size_;
+
+    SharedMemRingBuffer()
+        : buffer_size_(std::max((unsigned int) 4, std::thread::hardware_concurrency()))
+    {
+    }
+
+    void SetUp() override
+    {
+        cells_ = std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]>(
+            new MultiProducerConsumerRingBuffer<MyData>::Cell[buffer_size_]);
+
+        ring_buffer_ =
+                std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> >(new MultiProducerConsumerRingBuffer<MyData>(
+                            cells_.get(), buffer_size_));
+    }
+
+    void TearDown() override
+    {
+        ring_buffer_.reset();
+        cells_.reset();
+    }
+};
+
+class SharedMemRingBufferMultiThread
+    :   public SharedMemRingBuffer,
+    public testing::WithParamInterface<std::tuple<uint32_t, uint32_t, uint32_t> >
+{
+
+};
+
+TEST_F(SharedMemRingBuffer, test_read_write_bounds)
+{
+    auto listener = ring_buffer_->register_listener();
+
+    for (uint32_t i = 0; i<buffer_size_; i++){
+        ring_buffer_->push({0,i});
+    }
+
+    ASSERT_THROW(ring_buffer_->push({0,std::numeric_limits<uint32_t>::max()}), std::exception);
+
+    for (uint32_t i = 0; i<buffer_size_; i++)
+    {
+        EXPECT_EQ(listener->head()->data().counter, i);
+        listener->pop();
+    }
+
+    ASSERT_THROW(listener->pop(), std::exception);
+}
+
+TEST_F(SharedMemRingBuffer, circular_pointer)
+{
+    uint32_t r = 0;
+    uint32_t w = 0;
+    uint32_t i = 0;
+
+    auto listener = ring_buffer_->register_listener();
+
+    // Buffer full
+    for (; i<buffer_size_; i++){
+        ring_buffer_->push({0,w++});
+    }
+
+    i = (i % buffer_size_);
+    ASSERT_EQ(i, 0);
+
+    // Another cicle
+    for (; i<buffer_size_; i++)
+    {
+        ASSERT_EQ(listener->head()->data().counter, r++);
+        listener->pop();
+        ring_buffer_->push({0,w++});
+    }
+
+    i = (i % buffer_size_);
+    ASSERT_EQ(i, 0);
+
+    // Flush the buffer
+    for (; i<buffer_size_; i++)
+    {
+        ASSERT_EQ(listener->head()->data().counter, r++);
+        listener->pop();
+    }
+
+    // Is empty
+    ASSERT_THROW(listener->pop(), std::exception);
+}
+
+TEST_F(SharedMemRingBuffer, one_listener_reads_all)
+{
+    auto listener1 = ring_buffer_->register_listener();
+    auto listener2 = ring_buffer_->register_listener();
+
+    for (uint32_t i=0; i<buffer_size_; i++)
+    {
+        ring_buffer_->push({0,i});
+    }
+
+    for (uint32_t i=0; i<buffer_size_; i++)
+    {
+        listener1->pop();
+    }
+
+    ASSERT_EQ(listener1->head(), nullptr);
+}
+
+TEST_F(SharedMemRingBuffer, listeners_register_unregister)
+{
+    // 0 Must be discarted because no listeners
+    ring_buffer_->push({0,0});
+
+    auto listener1 = ring_buffer_->register_listener();
+    // 1 Must be only read by listener1
+    ring_buffer_->push({0,1});
+
+    auto listener2 = ring_buffer_->register_listener();
+    // 2 Must be read by listener1 and listener 2
+    ring_buffer_->push({0,2});
+
+    // 3
+    ring_buffer_->push({0,3});
+
+    ASSERT_EQ(listener1->head()->data().counter, 1);
+    ASSERT_EQ(listener2->head()->data().counter, 2);
+
+    listener1->pop(); // 1:1
+    ASSERT_EQ(listener1->head()->data().counter, 2);
+
+    listener2->pop(); // 2:2
+
+    // Listener 1 must decrease ref_counter of 2 and 3 in its destructor
+    listener1.reset();
+
+    // 4
+    ring_buffer_->push({0,4});
+
+    ASSERT_EQ(listener2->head()->data().counter, 3);
+    listener2->pop(); // 3
+
+    ASSERT_EQ(listener2->head()->data().counter, 4);
+    listener2->pop();
+}
+
+TEST_P(SharedMemRingBufferMultiThread, multiple_writers_listeners)
+{
+    const uint32_t elements_to_push = buffer_size_ * std::get<1>(GetParam());
+    std::vector<std::thread> threads;
+    std::atomic<uint32_t> ready_listeners;
+    ready_listeners.store(0);
+
+    uint32_t num_listeners_writters = std::get<0>(GetParam());
+    uint32_t num_register_unregister = std::get<2>(GetParam());
+
+    for (uint32_t i = 0; i < num_listeners_writters; i++)
+    {
+        // Listeners
+        threads.emplace_back(
+            std::thread(
+                [&]()
+        {
+            std::vector<int> read_counters(num_listeners_writters, -1);
+            MultiProducerConsumerRingBuffer<MyData>::Cell* cell;
+
+            auto listener = ring_buffer_->register_listener();
+            ready_listeners.fetch_add(1);
+
+            do
+            {
+                // poll until there's data
+                while (!(cell = listener->head()));
+
+                ASSERT_EQ(++read_counters[cell->data().thread_number], cell->data().counter);
+
+                listener->pop();
+
+            } while (cell->data().counter != elements_to_push-1);
+
+        }));
+    }
+
+    // Wait until all listeners ready
+    while (ready_listeners.load(std::memory_order_relaxed) != num_listeners_writters)
+    {
+        std::this_thread::yield();
+    }
+
+    for (uint32_t i = 0; i < num_listeners_writters; i++)
+    {
+        // Writers
+        threads.emplace_back(
+            std::thread(
+                [&](uint32_t thread_number)
+        {
+            for (uint32_t c = 0; c < elements_to_push; c++)
+            {
+                bool success = false;
+                while (!success)
+                {
+                    try
+                    {
+                        ring_buffer_->push({thread_number, c});
+                        success = true;
+                    }
+                    catch (const std::exception&)
+                    {
+                    }
+                }
+            }
+        }, i));
+    }
+
+    for (uint32_t i = 0; i < num_register_unregister; i++)
+    {
+        // Register-Unregister
+        threads.emplace_back(
+            std::thread(
+                [&]()
+        {
+            auto listener = ring_buffer_->register_listener();
+
+            // Reads two times the size values
+            for (uint32_t i=0; i<buffer_size_*2; i++)
+            {
+                // poll until there's data
+                while (!listener->head());
+                listener->pop();
+            }
+
+            // Unregister
+            listener.reset();
+
+        }));
+    }
+
+    for (auto& thread : threads)
+    {
+        if (thread.joinable())
+        {
+            thread.join();
+        }
+    }
+}
+
+TEST_F(SharedMemTransportTests, locators_with_kind_16_supported)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
@@ -99,7 +352,7 @@ TEST_F(SharedMemTests, locators_with_kind_16_supported)
     ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorUdpv6));
 }
 
-TEST_F(SharedMemTests, opening_and_closing_input_channel)
+TEST_F(SharedMemTransportTests, opening_and_closing_input_channel)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
@@ -118,7 +371,7 @@ TEST_F(SharedMemTests, opening_and_closing_input_channel)
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(genericInputChannelLocator));
 }
 
-TEST_F(SharedMemTests, closing_input_channel_leaves_other_channels_unclosed)
+TEST_F(SharedMemTransportTests, closing_input_channel_leaves_other_channels_unclosed)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
@@ -148,7 +401,7 @@ TEST_F(SharedMemTests, closing_input_channel_leaves_other_channels_unclosed)
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(otherInputChannelLocator));
 }
 
-TEST_F(SharedMemTests, RemoteToMainLocal_returns_input_locator)
+TEST_F(SharedMemTransportTests, RemoteToMainLocal_returns_input_locator)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
@@ -165,7 +418,7 @@ TEST_F(SharedMemTests, RemoteToMainLocal_returns_input_locator)
     ASSERT_EQ(mainLocalLocator, remote_locator);
 }
 
-TEST_F(SharedMemTests, transform_remote_locator_returns_input_locator)
+TEST_F(SharedMemTransportTests, transform_remote_locator_returns_input_locator)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
@@ -181,7 +434,7 @@ TEST_F(SharedMemTests, transform_remote_locator_returns_input_locator)
     ASSERT_EQ(otherLocator, remote_locator);
 }
 
-TEST_F(SharedMemTests, all_shared_mem_locators_are_local)
+TEST_F(SharedMemTransportTests, all_shared_mem_locators_are_local)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
@@ -195,7 +448,7 @@ TEST_F(SharedMemTests, all_shared_mem_locators_are_local)
     ASSERT_TRUE(transportUnderTest.is_local_locator(shared_mem_locator));
 }
 
-TEST_F(SharedMemTests, match_if_port_AND_address_matches)
+TEST_F(SharedMemTransportTests, match_if_port_AND_address_matches)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
@@ -217,7 +470,7 @@ TEST_F(SharedMemTests, match_if_port_AND_address_matches)
     ASSERT_FALSE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
 
-TEST_F(SharedMemTests, send_and_receive_between_ports)
+TEST_F(SharedMemTransportTests, send_and_receive_between_ports)
 {
     SharedMemTransport transportUnderTest(descriptor);
     ASSERT_TRUE(transportUnderTest.init());
@@ -264,7 +517,7 @@ TEST_F(SharedMemTests, send_and_receive_between_ports)
     senderThread->join();
 }
 
-TEST_F(SharedMemTests, port_and_segment_overflow_fail)
+TEST_F(SharedMemTransportTests, port_and_segment_overflow_fail)
 {
     SharedMemTransportDescriptor my_descriptor;
 
@@ -357,7 +610,7 @@ TEST_F(SharedMemTests, port_and_segment_overflow_fail)
         
 }
 
-TEST_F(SharedMemTests, port_and_segment_overflow_discard)
+TEST_F(SharedMemTransportTests, port_and_segment_overflow_discard)
 {
     SharedMemTransportDescriptor my_descriptor;
 
@@ -449,14 +702,9 @@ TEST_F(SharedMemTests, port_and_segment_overflow_discard)
     sem.disable();
 }
 
-void SharedMemTests::HELPER_SetDescriptorDefaults()
+TEST_F(SharedMemTransportTests, port_mutex_deadlock_recover)
 {
-    
-}
-
-TEST_F(SharedMemTests, port_mutex_deadlock_recover)
-{
-    const std::string domain_name("SharedMemTests");
+    const std::string domain_name("SharedMemTransportTests");
 
     SharedMemGlobal shared_mem_global(domain_name);
     MockPortSharedMemGlobal port_mocker;
@@ -491,9 +739,9 @@ TEST_F(SharedMemTests, port_mutex_deadlock_recover)
 	thread_locker.join();
 }
 
-TEST_F(SharedMemTests, empty_cv_mutex_deadlocked_try_push)
+TEST_F(SharedMemTransportTests, empty_cv_mutex_deadlocked_try_push)
 {
-    const std::string domain_name("SharedMemTests");
+    const std::string domain_name("SharedMemTransportTests");
 
     SharedMemGlobal shared_mem_global(domain_name);
     MockPortSharedMemGlobal port_mocker;
@@ -526,9 +774,9 @@ TEST_F(SharedMemTests, empty_cv_mutex_deadlocked_try_push)
 	thread_locker.join();
 }
 
-TEST_F(SharedMemTests, dead_listener_port_recover)
+TEST_F(SharedMemTransportTests, dead_listener_port_recover)
 {
-    const std::string domain_name("SharedMemTests");
+    const std::string domain_name("SharedMemTransportTests");
 
     SharedMemGlobal shared_mem_global(domain_name);
     auto deadlocked_port = shared_mem_global.open_port(0, 1, 1000);
@@ -561,14 +809,14 @@ TEST_F(SharedMemTests, dead_listener_port_recover)
     thread_wait_deadlock.join();
 }
 
-TEST_F(SharedMemTests, simple_latency)
+TEST_F(SharedMemTransportTests, simple_latency)
 {
 	int num_samples = 1000;
 	char data[16] = { "" };
 
 	std::thread thread_subscriber([&]
 		{
-			SharedMemManager shared_mem_manager("SharedMemTests");
+			SharedMemManager shared_mem_manager("SharedMemTransportTests");
 			auto port_pub_to_sub = shared_mem_manager.open_port(0, 64, 1000);
 			auto port_sub_to_pub = shared_mem_manager.open_port(1, 64, 1000);
 			auto listener_sub = port_pub_to_sub->create_listener();
@@ -588,7 +836,7 @@ TEST_F(SharedMemTests, simple_latency)
 
 	std::thread thread_publisher([&]
 		{
-			SharedMemManager shared_mem_manager("SharedMemTests");
+			SharedMemManager shared_mem_manager("SharedMemTransportTests");
 			auto port_pub_to_sub = shared_mem_manager.open_port(0, 64, 1000);
 			auto port_sub_to_pub = shared_mem_manager.open_port(1, 64, 1000);
 			auto listener_pub = port_sub_to_pub->create_listener();
@@ -632,7 +880,7 @@ TEST_F(SharedMemTests, simple_latency)
 	thread_publisher.join();
 }
 
-TEST_F(SharedMemTests, simple_latency2)
+TEST_F(SharedMemTransportTests, simple_latency2)
 {
 	int num_samples = 1000;
 	octet data[16] = { "" };
@@ -756,7 +1004,7 @@ TEST_F(SharedMemTests, simple_latency2)
 	thread_publisher.join();
 }
 
-TEST_F(SharedMemTests, simple_throughput)
+TEST_F(SharedMemTransportTests, simple_throughput)
 {
     const size_t sample_size = 1024;
     int num_samples_per_batch = 100000;
@@ -826,7 +1074,7 @@ TEST_F(SharedMemTests, simple_throughput)
 }
 
 // This test is linux only
-/*TEST_F(SharedMemTests, simple_throughput_inter)
+/*TEST_F(SharedMemTransportTests, simple_throughput_inter)
 {
     const size_t sample_size = 1024;
     int num_samples_per_batch = 100000;
@@ -908,6 +1156,21 @@ TEST_F(SharedMemTests, simple_throughput)
             , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
     }
 }*/
+
+INSTANTIATE_TEST_CASE_P(
+    concurrency,
+    SharedMemRingBufferMultiThread,
+    testing::Values(
+        std::make_tuple(
+            std::max((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, 0),
+        std::make_tuple(
+            std::max((unsigned int)1, std::thread::hardware_concurrency())*2, 100,0),
+        std::make_tuple(
+            std::max((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, std::thread::hardware_concurrency()/2),
+        std::make_tuple(
+            std::max((unsigned int)1, std::thread::hardware_concurrency())*2, 100,std::thread::hardware_concurrency())
+    )
+);
 
 int main(int argc, char **argv)
 {
