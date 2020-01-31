@@ -509,7 +509,7 @@ TEST_F(SharedMemTransportTests, send_and_receive_between_ports)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
     senderThread.reset(new std::thread(sendThreadFunction));
 
@@ -565,7 +565,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_fail)
         octet message_big[4096] = { 'H','e','l','l'};
 
         EXPECT_FALSE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
     // At least 4 msgs of 4 bytes are allowed
@@ -576,7 +576,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_fail)
 
         // At least 4 msgs of 4 bytes are allowed
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
     // Wait until the receiver get the first message
@@ -594,7 +594,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_fail)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     } 
 
     // Push a 5th will cause port overflow
@@ -603,7 +603,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_fail)
         Locators locators_end(locator_list.end());
 
         EXPECT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     } 
 
     sem.disable();
@@ -658,7 +658,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_discard)
         octet message_big[4096] = { 'H','e','l','l'};
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
     // At least 4 msgs of 4 bytes are allowed
@@ -669,7 +669,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_discard)
 
         // At least 4 msgs of 4 bytes are allowed
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
     // Wait until the receiver get the first message
@@ -687,7 +687,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     } 
 
     // Push a 5th will not cause overflow
@@ -696,7 +696,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::milliseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     } 
 
     sem.disable();
