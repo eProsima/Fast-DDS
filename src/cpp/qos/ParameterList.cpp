@@ -46,78 +46,29 @@ bool ParameterList::writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg)
 
 bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMessage_t* msg, uint32_t& qos_size)
 {
-    bool is_sentinel = false;
-    bool valid = true;
-    ParameterId_t pid;
-    uint16_t plength;
-    qos_size = 0;
-
-    uint32_t original_pos = msg->pos;
-    while (!is_sentinel)
-    {
-        msg->pos = original_pos + qos_size;
-
-        valid = true;
-        valid &= CDRMessage::readUInt16(msg, (uint16_t*)&pid);
-        valid &= CDRMessage::readUInt16(msg, &plength);
-        qos_size += (4 + plength);
-
-        // Align to 4 byte boundary and prepare for next iteration
-        qos_size = (qos_size + 3) & ~3;
-
-        if (!valid || ((msg->pos + plength) > msg->length))
-        {
-            return false;
-        }
-        try
-        {
-            switch (pid)
+    auto parameter_process = [&](
+            CDRMessage_t* msg,
+            const ParameterId_t pid,
+            uint16_t plength)
+    {	
+        switch (pid)	
+        {	
+            case PID_KEY_HASH:	
             {
-                case PID_STATUS_INFO:
+                ParameterKey_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
                 {
-                    ParameterStatusInfo_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
-                    }
-
-                    if (p.status == 1)
-                    {
-                        change.kind = NOT_ALIVE_DISPOSED;
-                    }
-                    else if (p.status == 2)
-                    {
-                        change.kind = NOT_ALIVE_UNREGISTERED;
-                    }
-                    else if (p.status == 3)
-                    {
-                        change.kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
-                    }
-                    break;
+                    return false;
                 }
-                case PID_KEY_HASH:
-                {
-                    ParameterKey_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
-                    {
-                        return false;
-                    }
 
-                    change.instanceHandle = p.key;
-                    break;
-                }
-                case PID_SENTINEL:
-                {
-                    is_sentinel = true;
-                    break;
-                }
-                case PID_RELATED_SAMPLE_IDENTITY:
-                {
-                    if (plength < 24)
-                    {
-                        continue;
-                    }
+                change.instanceHandle = p.key;
+                break;
+            }
 
+            case PID_RELATED_SAMPLE_IDENTITY:	
+            {
+                if (plength >= 24)
+                {
                     ParameterSampleIdentity_t p(pid, plength);
                     if (!p.readFromCDRMessage(msg, plength))
                     {
@@ -125,21 +76,49 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
                     }
 
                     change.write_params.sample_identity(p.sample_id);
-                    break;
                 }
-                default:
-                {
-                    break;
-                }
+                break;
             }
-        }
-        catch (std::bad_alloc& ba)
-        {
-            std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-            return false;
-        }
+
+            case PID_STATUS_INFO:	
+            {
+                ParameterStatusInfo_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                if (p.status == 1)
+                {
+                    change.kind = NOT_ALIVE_DISPOSED;
+                }
+                else if (p.status == 2)
+                {
+                    change.kind = NOT_ALIVE_UNREGISTERED;
+                }
+                else if (p.status == 3)
+                {
+                    change.kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
+                }
+                break;
+            }
+
+            default:
+                break;	
+        }	
+
+        return true;	
+    };
+
+    try
+    {
+        return readParameterListfromCDRMsg(*msg, parameter_process, false, qos_size);
     }
-    return true;
+    catch (std::bad_alloc& ba)
+    {
+        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+        return false;
+    }
 }
 
 bool ParameterList::readParameterListfromCDRMsg(
@@ -262,7 +241,7 @@ bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const ui
             valid &= CDRMessage::readData(&msg, change->instanceHandle.value, 16);
             return valid;
         }
-        msg.pos += plength;
+        msg.pos += (plength + 3) & ~3;
     }
     return false;
 }
