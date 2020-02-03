@@ -171,7 +171,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -222,7 +224,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -273,7 +277,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -343,7 +349,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -407,7 +415,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -483,7 +493,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -545,7 +557,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -569,21 +583,22 @@ public:
     {
     }
 
-    RTPS_DllAPI UserDataQosPolicy(uint16_t in_length)
+    RTPS_DllAPI UserDataQosPolicy(
+            uint16_t in_length)
         : Parameter_t(PID_USER_DATA, in_length)
         , QosPolicy(false)
         , dataVec_{}
     {
     }
 
-
-    RTPS_DllAPI UserDataQosPolicy(const UserDataQosPolicy& data)
+    RTPS_DllAPI UserDataQosPolicy(
+            const UserDataQosPolicy& data)
         : Parameter_t(PID_USER_DATA, data.length)
         , QosPolicy(false)
         , max_size_(data.max_size_)
     {
-            dataVec_.reserve(max_size_);
-            dataVec_.assign(data.dataVec().begin(), data.dataVec().end());
+        dataVec_.reserve(max_size_);
+        dataVec_.assign(data.dataVec().begin(), data.dataVec().end());
     }
 
     virtual RTPS_DllAPI ~UserDataQosPolicy()
@@ -619,7 +634,8 @@ public:
      * Set the maximum size of the user data and reserves memory for that much.
      * @param size new maximum size of the user data
      */
-    void max_size (size_t size)
+    void max_size (
+            size_t size)
     {
         max_size_ = size;
         dataVec_.reserve(max_size_);
@@ -641,7 +657,6 @@ public:
         dataVec_.clear();
     }
 
-
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -656,7 +671,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
     /**
      * Returns raw data vector.
@@ -681,6 +698,7 @@ public:
     }
 
 private:
+
     std::vector<rtps::octet> dataVec_;
     size_t max_size_ = 0;
 };
@@ -729,7 +747,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -798,7 +818,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -809,23 +831,26 @@ public:
 
 
 
-class Partition_t {
+class Partition_t
+{
 
     friend class PartitionQosPolicy;
-
 
 private:
 
     const char* partition_;
 
 private:
+
     Partition_t()
     {
         partition_ = nullptr;
     }
 
 public:
-    explicit Partition_t(const void* ptr)
+
+    explicit Partition_t(
+            const void* ptr)
     {
         partition_ = (char*)ptr;
     }
@@ -852,6 +877,7 @@ public:
     {
         return partition_ + 4;
     }
+
 };
 
 /**
@@ -866,65 +892,72 @@ public:
 
     class const_iterator
     {
-        public:
-            typedef const_iterator self_type;
-            typedef const Partition_t value_type;
-            typedef const Partition_t reference;
-            typedef const Partition_t* pointer;
-            typedef size_t difference_type;
-            typedef std::forward_iterator_tag iterator_category;
+public:
 
-            const_iterator(const rtps::octet* ptr)
+        typedef const_iterator self_type;
+        typedef const Partition_t value_type;
+        typedef const Partition_t reference;
+        typedef const Partition_t* pointer;
+        typedef size_t difference_type;
+        typedef std::forward_iterator_tag iterator_category;
+
+        const_iterator(
+                const rtps::octet* ptr)
             : ptr_(ptr)
             , value_ (ptr_)
-            { }
+        {
+        }
 
-            self_type operator++()
-            {
-                self_type tmp = *this;
-                advance();
-                return tmp;
-            }
+        self_type operator ++()
+        {
+            self_type tmp = *this;
+            advance();
+            return tmp;
+        }
 
-            self_type operator++(int)
-            {
-                advance();
-                return *this;
-            }
+        self_type operator ++(
+                int)
+        {
+            advance();
+            return *this;
+        }
 
-            reference operator*()
-            {
-                return value_;
-            }
+        reference operator *()
+        {
+            return value_;
+        }
 
-            pointer operator->()
-            {
-                return &value_;
-            }
+        pointer operator ->()
+        {
+            return &value_;
+        }
 
-            bool operator==(const self_type& rhs)
-            {
-                return ptr_ == rhs.ptr_;
-            }
+        bool operator ==(
+                const self_type& rhs)
+        {
+            return ptr_ == rhs.ptr_;
+        }
 
-            bool operator!=(const self_type& rhs)
-            {
-                return ptr_ != rhs.ptr_;
-            }
+        bool operator !=(
+                const self_type& rhs)
+        {
+            return ptr_ != rhs.ptr_;
+        }
 
-        protected:
+protected:
 
-            void advance()
-            {
-                //Size of the element (with alignment)
-                uint32_t size = *(uint32_t*)ptr_;
-                ptr_ += (4 + ((size + 3) & ~3));
-                value_ = Partition_t(ptr_);
-            }
+        void advance()
+        {
+            //Size of the element (with alignment)
+            uint32_t size = *(uint32_t*)ptr_;
+            ptr_ += (4 + ((size + 3) & ~3));
+            value_ = Partition_t(ptr_);
+        }
 
-        private:
-            const rtps::octet* ptr_;
-            Partition_t value_;
+private:
+
+        const rtps::octet* ptr_;
+        Partition_t value_;
 
     };
 
@@ -938,7 +971,8 @@ public:
     {
     }
 
-    RTPS_DllAPI PartitionQosPolicy(uint16_t in_length)
+    RTPS_DllAPI PartitionQosPolicy(
+            uint16_t in_length)
         : Parameter_t(PID_PARTITION, in_length)
         , QosPolicy(false)
         , max_size_ (in_length)
@@ -947,7 +981,8 @@ public:
     {
     }
 
-    RTPS_DllAPI PartitionQosPolicy(const PartitionQosPolicy& b)
+    RTPS_DllAPI PartitionQosPolicy(
+            const PartitionQosPolicy& b)
         : Parameter_t(b)
         , QosPolicy(b)
         , max_size_ (b.max_size_)
@@ -959,7 +994,6 @@ public:
         partitions_.copy(&b.partitions_, b.max_size_ != 0);
     }
 
-
     virtual RTPS_DllAPI ~PartitionQosPolicy()
     {
     }
@@ -970,8 +1004,8 @@ public:
         return (this->max_size_ == b.max_size_) &&
                (this->Npartitions_ == b.Npartitions_) &&
                (this->partitions_ == b.partitions_) &&
-               Parameter_t::operator==(b) &&
-               QosPolicy::operator==(b);
+               Parameter_t::operator ==(b) &&
+               QosPolicy::operator ==(b);
     }
 
     PartitionQosPolicy& operator =(
@@ -980,8 +1014,8 @@ public:
         length = b.length;
         max_size_ = b.max_size_;
         partitions_.reserve(max_size_ != 0 ?
-                            b.partitions_.max_size :
-                            b.partitions_.length);
+                b.partitions_.max_size :
+                b.partitions_.length);
         partitions_.copy(&b.partitions_, b.max_size_ != 0);
         Npartitions_ = b.Npartitions_;
         hasChanged = true;
@@ -1009,7 +1043,8 @@ public:
         return Npartitions_ == 0;
     }
 
-    void max_size (uint32_t size)
+    void max_size (
+            uint32_t size)
     {
         partitions_.reserve(size);
         max_size_ = size;
@@ -1034,7 +1069,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
     /**
      * Appends a name to the list of partition names.
@@ -1044,7 +1081,7 @@ public:
             const char* name)
     {
         //Realloc if needed;
-        uint32_t size = (uint32_t)strlen(name)+1;
+        uint32_t size = (uint32_t)strlen(name) + 1;
         uint32_t alignment = ((size + 3) & ~3) - size;
 
         if (max_size_ != 0 && (partitions_.max_size < partitions_.length +
@@ -1115,6 +1152,7 @@ public:
     }
 
 private:
+
     uint32_t max_size_;
     rtps::SerializedPayload_t partitions_;
     uint32_t Npartitions_;
@@ -1137,7 +1175,8 @@ public:
     {
     }
 
-    RTPS_DllAPI TopicDataQosPolicy(uint16_t in_length)
+    RTPS_DllAPI TopicDataQosPolicy(
+            uint16_t in_length)
         : Parameter_t(PID_TOPIC_DATA, in_length)
         , QosPolicy(false)
         , value{}
@@ -1170,7 +1209,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
     /**
      * Appends topic data.
@@ -1230,7 +1271,8 @@ public:
     {
     }
 
-    RTPS_DllAPI GroupDataQosPolicy(uint16_t in_length)
+    RTPS_DllAPI GroupDataQosPolicy(
+            uint16_t in_length)
         : Parameter_t(PID_GROUP_DATA, in_length)
         , QosPolicy(false)
         , value{}
@@ -1263,7 +1305,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
     /**
      * Appends group data.
@@ -1362,7 +1406,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -1416,7 +1462,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 
@@ -1478,7 +1526,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -1534,7 +1584,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -1584,7 +1636,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 
@@ -1630,7 +1684,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 /**
@@ -1704,7 +1760,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 enum TypeConsistencyKind : uint16_t
@@ -1759,7 +1817,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 /**
@@ -1806,7 +1866,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 
 public:
 

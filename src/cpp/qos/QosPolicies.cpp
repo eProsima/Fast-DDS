@@ -23,21 +23,26 @@
 #include <fastrtps/log/Log.h>
 #include <fastcdr/Cdr.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastrtps {
 
-bool DurabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+using namespace rtps;
+
+bool DurabilityQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctet(msg,kind);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
+    valid &= CDRMessage::addOctet(msg, kind);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
     return valid;
 }
 
-bool DurabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool DurabilityQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH)
     {
@@ -49,16 +54,19 @@ bool DurabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool DeadlineQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+bool DeadlineQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addInt32(msg,period.seconds);
-    valid &= CDRMessage::addUInt32(msg,period.fraction());
+    valid &= CDRMessage::addInt32(msg, period.seconds);
+    valid &= CDRMessage::addUInt32(msg, period.fraction());
     return valid;
 }
 
-bool DeadlineQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool DeadlineQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -72,15 +80,19 @@ bool DeadlineQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool LatencyBudgetQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool LatencyBudgetQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addInt32(msg,duration.seconds);
-    valid &= CDRMessage::addUInt32(msg,duration.fraction());
+    valid &= CDRMessage::addInt32(msg, duration.seconds);
+    valid &= CDRMessage::addUInt32(msg, duration.fraction());
     return valid;
 }
 
-bool LatencyBudgetQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool LatencyBudgetQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -94,19 +106,23 @@ bool LatencyBudgetQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size
     return valid;
 }
 
-bool LivelinessQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool LivelinessQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctet(msg,kind);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addInt32(msg,lease_duration.seconds);
-    valid &= CDRMessage::addUInt32(msg,lease_duration.fraction());
+    valid &= CDRMessage::addOctet(msg, kind);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addInt32(msg, lease_duration.seconds);
+    valid &= CDRMessage::addUInt32(msg, lease_duration.fraction());
     return valid;
 }
 
-bool LivelinessQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool LivelinessQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
     {
@@ -122,17 +138,21 @@ bool LivelinessQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool OwnershipQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool OwnershipQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctet(msg,kind);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
+    valid &= CDRMessage::addOctet(msg, kind);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
     return valid;
 }
 
-bool OwnershipQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool OwnershipQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH)
     {
@@ -144,19 +164,23 @@ bool OwnershipQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool ReliabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool ReliabilityQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctet(msg,kind);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addInt32(msg,max_blocking_time.seconds);
-    valid &= CDRMessage::addUInt32(msg,max_blocking_time.fraction());
+    valid &= CDRMessage::addOctet(msg, kind);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addInt32(msg, max_blocking_time.seconds);
+    valid &= CDRMessage::addUInt32(msg, max_blocking_time.fraction());
     return valid;
 }
 
-bool ReliabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool ReliabilityQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
     {
@@ -172,17 +196,21 @@ bool ReliabilityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool DestinationOrderQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool DestinationOrderQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctet(msg,kind);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
+    valid &= CDRMessage::addOctet(msg, kind);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
     return valid;
 }
 
-bool DestinationOrderQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool DestinationOrderQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH)
     {
@@ -194,15 +222,19 @@ bool DestinationOrderQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t s
     return valid;
 }
 
-bool TimeBasedFilterQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool TimeBasedFilterQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addInt32(msg,minimum_separation.seconds);
-    valid &= CDRMessage::addUInt32(msg,minimum_separation.fraction());
+    valid &= CDRMessage::addInt32(msg, minimum_separation.seconds);
+    valid &= CDRMessage::addUInt32(msg, minimum_separation.fraction());
     return valid;
 }
 
-bool TimeBasedFilterQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool TimeBasedFilterQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -216,23 +248,27 @@ bool TimeBasedFilterQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t si
     return valid;
 }
 
-bool PresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool PresentationQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, PARAMETER_PRESENTATION_LENGTH);//this->length);
-    valid &= CDRMessage::addOctet(msg,access_scope);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
+    valid &= CDRMessage::addOctet(msg, access_scope);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
 
-    valid &= CDRMessage::addOctet(msg,(octet)coherent_access);
-    valid &= CDRMessage::addOctet(msg,(octet)ordered_access);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
+    valid &= CDRMessage::addOctet(msg, (octet)coherent_access);
+    valid &= CDRMessage::addOctet(msg, (octet)ordered_access);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
 
     return valid;
 }
 
-bool PresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool PresentationQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_PRESENTATION_LENGTH)
     {
@@ -247,38 +283,41 @@ bool PresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+bool PartitionQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     //Obtain Length:
     uint16_t pos_str = (uint16_t)msg->pos;
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addUInt32(msg,(uint32_t)this->size());
+    valid &= CDRMessage::addUInt32(msg, (uint32_t)this->size());
 
-    for(PartitionQosPolicy::const_iterator it = this->begin();
+    for (PartitionQosPolicy::const_iterator it = this->begin();
             it != this->end(); ++it)
     {
         uint32_t size = it->size(); //Already accounts for null char
-        valid &= CDRMessage::addUInt32(msg,size);
-        valid &= CDRMessage::addData(msg,(unsigned char*)it->name(),size);
+        valid &= CDRMessage::addUInt32(msg, size);
+        valid &= CDRMessage::addData(msg, (unsigned char*)it->name(), size);
         uint32_t align = ((size + 3) & ~3) - size;
-        for(uint32_t count = 0; count < align; ++count)
+        for (uint32_t count = 0; count < align; ++count)
         {
             valid &= CDRMessage::addOctet(msg, 0);
         }
     }
 
     uint16_t pos_param_end = (uint16_t)msg->pos;
-    this->length = pos_param_end-pos_str-2;
+    this->length = pos_param_end - pos_str - 2;
     msg->pos = pos_str;
     valid &= CDRMessage::addUInt16(msg, this->length);
     msg->pos = pos_param_end;
-    msg->length-=2;
+    msg->length -= 2;
 
     return valid;
 }
 
-bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool PartitionQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (max_size_ != 0 && size > partitions_.max_size + 4)
     {
@@ -291,11 +330,11 @@ bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     bool valid = CDRMessage::readUInt32(msg, &num_partitions);
     partitions_.reserve(size - 4);
 
-    for(size_t i = 0; i < num_partitions; ++i)
+    for (size_t i = 0; i < num_partitions; ++i)
     {
         uint32_t partition_size, alignment;
 
-        valid &= CDRMessage::readUInt32(msg,&partition_size);
+        valid &= CDRMessage::readUInt32(msg, &partition_size);
         if (!valid)
         {
             return false;
@@ -312,7 +351,8 @@ bool PartitionQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+bool UserDataQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     uint32_t size = (uint32_t)dataVec_.size();
@@ -320,8 +360,8 @@ bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     this->length = (uint16_t)(4 + size + align);
     valid &= CDRMessage::addUInt16(msg, this->length);
     valid &= CDRMessage::addUInt32(msg, size);
-    valid &= CDRMessage::addData(msg,this->dataVec_.data(),size);
-    for(uint32_t count = 0; count < align; ++count)
+    valid &= CDRMessage::addData(msg, this->dataVec_.data(), size);
+    for (uint32_t count = 0; count < align; ++count)
     {
         valid &= CDRMessage::addOctet(msg, 0);
     }
@@ -329,7 +369,9 @@ bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool UserDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool UserDataQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (max_size_ != 0 && size > max_size_)
     {
@@ -344,33 +386,18 @@ bool UserDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool TopicDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+bool TopicDataQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctetVector(msg,&value);
+    valid &= CDRMessage::addOctetVector(msg, &value);
     return valid;
 }
 
-bool TopicDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
-{
-    length = size;
-
-    uint32_t pos_ref = msg->pos;
-    bool valid = CDRMessage::readOctetVector(msg, &value);
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
-    return valid;
-}
-
-bool GroupDataQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
-    bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctetVector(msg,&value);
-    return valid;
-}
-
-bool GroupDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool TopicDataQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     length = size;
 
@@ -381,18 +408,44 @@ bool GroupDataQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool HistoryQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool GroupDataQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addOctet(msg,kind);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addInt32(msg,depth);
+    valid &= CDRMessage::addOctetVector(msg, &value);
     return valid;
 }
 
-bool HistoryQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool GroupDataQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
+{
+    length = size;
+
+    uint32_t pos_ref = msg->pos;
+    bool valid = CDRMessage::readOctetVector(msg, &value);
+    uint32_t length_diff = msg->pos - pos_ref;
+    valid &= (size == length_diff);
+    return valid;
+}
+
+bool HistoryQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+    valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+    valid &= CDRMessage::addOctet(msg, kind);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addInt32(msg, depth);
+    return valid;
+}
+
+bool HistoryQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_KIND_LENGTH + 4)
     {
@@ -405,23 +458,27 @@ bool HistoryQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool DurabilityServiceQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool DurabilityServiceQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addInt32(msg,service_cleanup_delay.seconds);
-    valid &= CDRMessage::addUInt32(msg,service_cleanup_delay.fraction());
-    valid &= CDRMessage::addOctet(msg,history_kind);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addOctet(msg,0);
-    valid &= CDRMessage::addInt32(msg,history_depth);
-    valid &= CDRMessage::addInt32(msg,max_samples);
-    valid &= CDRMessage::addInt32(msg,max_instances);
-    valid &= CDRMessage::addInt32(msg,max_samples_per_instance);
+    valid &= CDRMessage::addInt32(msg, service_cleanup_delay.seconds);
+    valid &= CDRMessage::addUInt32(msg, service_cleanup_delay.fraction());
+    valid &= CDRMessage::addOctet(msg, history_kind);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addOctet(msg, 0);
+    valid &= CDRMessage::addInt32(msg, history_depth);
+    valid &= CDRMessage::addInt32(msg, max_samples);
+    valid &= CDRMessage::addInt32(msg, max_instances);
+    valid &= CDRMessage::addInt32(msg, max_samples_per_instance);
     return valid;
 }
 
-bool DurabilityServiceQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool DurabilityServiceQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH + PARAMETER_KIND_LENGTH + 16)
     {
@@ -441,15 +498,19 @@ bool DurabilityServiceQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t 
     return valid;
 }
 
-bool LifespanQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool LifespanQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addInt32(msg,duration.seconds);
-    valid &= CDRMessage::addUInt32(msg,duration.fraction());
+    valid &= CDRMessage::addInt32(msg, duration.seconds);
+    valid &= CDRMessage::addUInt32(msg, duration.fraction());
     return valid;
 }
 
-bool LifespanQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool LifespanQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_TIME_LENGTH)
     {
@@ -463,15 +524,18 @@ bool LifespanQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return valid;
 }
 
-bool OwnershipStrengthQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+bool OwnershipStrengthQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-    valid &= CDRMessage::addUInt32(msg,value);
+    valid &= CDRMessage::addUInt32(msg, value);
     return valid;
 }
 
-bool OwnershipStrengthQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool OwnershipStrengthQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != 4)
     {
@@ -481,17 +545,21 @@ bool OwnershipStrengthQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t 
     return CDRMessage::readUInt32(msg, &value);
 }
 
-bool ResourceLimitsQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool ResourceLimitsQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 
-    valid &= CDRMessage::addInt32(msg,max_samples);
-    valid &= CDRMessage::addInt32(msg,max_instances);
-    valid &= CDRMessage::addInt32(msg,max_samples_per_instance);
+    valid &= CDRMessage::addInt32(msg, max_samples);
+    valid &= CDRMessage::addInt32(msg, max_instances);
+    valid &= CDRMessage::addInt32(msg, max_samples_per_instance);
     return valid;
 }
 
-bool ResourceLimitsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool ResourceLimitsQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != 12)
     {
@@ -504,14 +572,18 @@ bool ResourceLimitsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t siz
     return valid;
 }
 
-bool TransportPriorityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool TransportPriorityQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addUInt32(msg, value);
     return valid;
 }
 
-bool TransportPriorityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool TransportPriorityQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != 4)
     {
@@ -521,14 +593,20 @@ bool TransportPriorityQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t 
     return CDRMessage::readUInt32(msg, &value);
 }
 
-bool DataRepresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
+bool DataRepresentationQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt32(msg, (uint32_t)m_value.size());
     for (std::vector<DataRepresentationId_t>::iterator it = m_value.begin(); it != m_value.end(); ++it)
+    {
         valid &= CDRMessage::addUInt16(msg, *it);
+    }
     return valid;
 }
 
-bool DataRepresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool DataRepresentationQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     length = size;
 
@@ -546,7 +624,8 @@ bool DataRepresentationQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t
     return valid;
 }
 
-bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);
@@ -560,7 +639,9 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
-bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size < 2)
     {
@@ -616,7 +697,8 @@ bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(CDRMessage_t* msg, 
     return valid;
 }
 
-bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+bool DisablePositiveACKsQosPolicy::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     if (enabled)
     {
@@ -632,7 +714,9 @@ bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return true;
 }
 
-bool DisablePositiveACKsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool DisablePositiveACKsQosPolicy::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     if (size != PARAMETER_BOOL_LENGTH)
     {
@@ -646,7 +730,8 @@ bool DisablePositiveACKsQosPolicy::readFromCDRMessage(CDRMessage_t* msg, uint16_
     return valid;
 }
 
-bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
+bool TypeIdV1::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     size_t size = types::TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
@@ -668,7 +753,9 @@ bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
     return valid & CDRMessage::addData(msg, payload.data, payload.length);
 }
 
-bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool TypeIdV1::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     length = size;
     SerializedPayload_t payload(size);
@@ -687,7 +774,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     {
         m_type_identifier.deserialize(deser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -695,7 +782,8 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     return true;
 }
 
-bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
+bool TypeObjectV1::addToCDRMessage(
+        CDRMessage_t* msg)
 {
     size_t size = types::TypeObject::getCdrSerializedSize(m_type_object) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
@@ -717,7 +805,9 @@ bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
     return valid & CDRMessage::addData(msg, payload.data, payload.length);
 }
 
-bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
+bool TypeObjectV1::readFromCDRMessage(
+        CDRMessage_t* msg,
+        uint16_t size)
 {
     length = size;
     SerializedPayload_t payload(size);
@@ -736,10 +826,13 @@ bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint16_t size)
     {
         m_type_object.deserialize(deser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
 
     return true;
 }
+
+}  // namespace fastrtps
+}  // namespace eprosima
