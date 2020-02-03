@@ -294,6 +294,12 @@ void RTPSParticipantImpl::enable()
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
     }
+
+    //Start reception
+    for(auto& receiver : m_receiverResourcelist)
+    {
+        receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
+    }
 }
 
 void RTPSParticipantImpl::disable()
