@@ -329,6 +329,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_transport_ok)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     auto shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    shm_transport->segment_size = 1024*1024;
     reader.disable_builtin_transport();
     reader.add_user_transport_to_pparams(shm_transport);
     writer.disable_builtin_transport();
@@ -391,7 +393,79 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_transport_ok)
     reader.block_for_at_least(2);
 }
 
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_udp_transport_ok)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    shm_transport->segment_size = 1024*1024;
+    reader.disable_builtin_transport();
+    reader.add_user_transport_to_pparams(shm_transport);
+    reader.add_user_transport_to_pparams(udp_transport);
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(shm_transport);
+    writer.add_user_transport_to_pparams(udp_transport);
+
+    PropertyPolicy pub_property_policy, sub_property_policy;
+
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+        "builtin.PKI-DH"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+        "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+        "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+        "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+        "builtin.AES-GCM-GMAC"));
+    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+
+    reader.history_depth(10).
+        property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+        "builtin.PKI-DH"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+        "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+        "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+        "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+        "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+
+    writer.history_depth(10).
+        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+        property_policy(pub_property_policy).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for authorization
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
+}
+
+TEST(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
