@@ -14,11 +14,13 @@
 
 /**
  * @file ParameterTypes.h
-*/
+ */
 
 #ifndef PARAMETERTYPES_H_
 #define PARAMETERTYPES_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "../rtps/common/all_common.h"
 #include "../rtps/common/Token.h"
 
@@ -35,7 +37,7 @@
 namespace eprosima {
 namespace fastrtps {
 
-namespace rtps{
+namespace rtps {
 struct CDRMessage_t;
 }
 
@@ -46,7 +48,7 @@ struct CDRMessage_t;
  * @{
  */
 
-enum ParameterId_t	: uint16_t
+enum ParameterId_t  : uint16_t
 {
     PID_PAD = 0x0000,
     PID_SENTINEL = 0x0001,
@@ -124,18 +126,31 @@ class Parameter_t
 {
 public:
 
-    RTPS_DllAPI Parameter_t() : Pid(PID_PAD), length(0) { }
+    RTPS_DllAPI Parameter_t()
+        : Pid(PID_PAD)
+        , length(0)
+    {
+    }
 
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
      * @param length Its associated length
      */
-    RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length) : Pid(pid), length(length) {}
+    RTPS_DllAPI Parameter_t(
+            ParameterId_t pid,
+            uint16_t length)
+        : Pid(pid)
+        , length(length)
+    {
+    }
 
-    virtual RTPS_DllAPI ~Parameter_t() { }
+    virtual RTPS_DllAPI ~Parameter_t()
+    {
+    }
 
-    bool operator==(const Parameter_t& b) const
+    bool operator ==(
+            const Parameter_t& b) const
     {
         return (this->Pid == b.Pid) &&
                (this->length == b.length);
@@ -146,7 +161,8 @@ public:
      * @param[in,out] msg Pointer to the message where the parameter should be added.
      * @return True if the parameter was correctly added.
      */
-    RTPS_DllAPI virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
+    RTPS_DllAPI virtual bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) = 0;
 
     /**
      * Virtual method used to get the parameter from a CDRMessage_t message.
@@ -154,9 +170,12 @@ public:
      * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
      */
-    RTPS_DllAPI virtual bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) = 0;
+    RTPS_DllAPI virtual bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) = 0;
 
 public:
+
     //!Parameter ID
     ParameterId_t Pid;
     //!Parameter length
@@ -166,345 +185,43 @@ public:
 /**
  *@ingroup PARAMETER_MODULE
  */
-class ParameterKey_t:public Parameter_t{
-    public:
-        rtps::InstanceHandle_t key;
-        ParameterKey_t(){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterKey_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        ParameterKey_t(ParameterId_t pid,uint16_t in_length,rtps::InstanceHandle_t& ke):Parameter_t(pid,in_length),key(ke){};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-
-};
-#define PARAMETER_KEY_LENGTH 16
-
-/**
- *
- */
-class ParameterLocator_t: public Parameter_t
-{
-    public:
-        rtps::Locator_t locator;
-
-        ParameterLocator_t()
-        {
-        }
-
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterLocator_t(
-                ParameterId_t pid,
-                uint16_t in_length)
-            : Parameter_t(pid,in_length)
-        {
-        }
-
-        ParameterLocator_t(
-                ParameterId_t pid,
-                uint16_t in_length,
-                const rtps::Locator_t& loc)
-            : Parameter_t(pid,in_length)
-            , locator(loc)
-        {
-        }
-
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-};
-#define PARAMETER_LOCATOR_LENGTH 24
-
-
-/**
- *
- */
-class ParameterString_t: public Parameter_t
-{
-    public:
-        ParameterString_t(){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        ParameterString_t(ParameterId_t pid,uint16_t in_length,const string_255& strin):Parameter_t(pid,in_length),m_string(strin){}
-
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-        inline const char* getName()const { return m_string.c_str(); };
-        inline void setName(const char* name){ m_string = name; };
-    private:
-        string_255 m_string;
-};
-
-/**
- *
- */
-class ParameterPort_t: public Parameter_t {
-    public:
-        uint32_t port;
-        ParameterPort_t():port(0){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterPort_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),port(0){};
-        ParameterPort_t(ParameterId_t pid,uint16_t in_length,uint32_t po):Parameter_t(pid,in_length),port(po){};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-};
-
-#define PARAMETER_PORT_LENGTH 4
-
-/**
- *
- */
-class ParameterGuid_t: public Parameter_t {
-    public:
-        rtps::GUID_t guid;
-        ParameterGuid_t(){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        ParameterGuid_t(ParameterId_t pid,uint16_t in_length,rtps::GUID_t guidin):Parameter_t(pid,in_length),guid(guidin){};
-        ParameterGuid_t(ParameterId_t pid,uint16_t in_length,rtps::InstanceHandle_t& iH):Parameter_t(pid,in_length)
-        {
-            for(uint8_t i =0;i<16;++i)
-            {
-                if(i<12)
-                    guid.guidPrefix.value[i] = iH.value[i];
-                else
-                    guid.entityId.value[i-12] = iH.value[i];
-            }
-        };
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-};
-
-#define PARAMETER_GUID_LENGTH 16
-
-/**
- *
- */
-class ParameterProtocolVersion_t: public Parameter_t {
-    public:
-        rtps::ProtocolVersion_t protocolVersion;
-        ParameterProtocolVersion_t(){protocolVersion = rtps::c_ProtocolVersion;};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterProtocolVersion_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){protocolVersion = rtps::c_ProtocolVersion;};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-};
-
-#define PARAMETER_PROTOCOL_LENGTH 4
-
-/**
- *
- */
-class ParameterVendorId_t:public Parameter_t{
-    public:
-        rtps::VendorId_t vendorId;
-        ParameterVendorId_t() : vendorId(rtps::c_VendorId_eProsima) {}
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterVendorId_t(ParameterId_t pid,uint16_t in_length) :
-              Parameter_t(pid,in_length)
-            , vendorId(rtps::c_VendorId_eProsima) {}
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-};
-
-#define PARAMETER_VENDOR_LENGTH 4
-
-/**
- *
- */
-class ParameterIP4Address_t :public Parameter_t{
-    public:
-		rtps::octet address[4];
-        ParameterIP4Address_t(){this->setIP4Address(0,0,0,0);};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterIP4Address_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){this->setIP4Address(0,0,0,0);};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-        void setIP4Address(rtps::octet o1, rtps::octet o2, rtps::octet o3, rtps::octet o4);
-};
-
-#define PARAMETER_IP4_LENGTH 4
-
-/**
- *
- */
-class ParameterBool_t:public Parameter_t{
-    public:
-        bool value;
-        ParameterBool_t():value(false){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterBool_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),value(false){};
-        ParameterBool_t(ParameterId_t pid,uint16_t in_length,bool inbool):Parameter_t(pid,in_length),value(inbool){};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
-};
-
-#define PARAMETER_BOOL_LENGTH 4
-
-/**
-*
-*/
-class ParameterStatusInfo_t :public Parameter_t
+class ParameterKey_t : public Parameter_t
 {
 public:
-    uint8_t status;
-    ParameterStatusInfo_t() :status(0) {}
+
+    rtps::InstanceHandle_t key;
+    ParameterKey_t()
+    {
+    }
 
     /**
-    * Constructor using a parameter PID and the parameter length
-    * @param pid Pid of the parameter
-    * @param in_length Its associated length
-    */
-    ParameterStatusInfo_t(ParameterId_t pid, uint16_t in_length) :Parameter_t(pid, in_length), status(0) {}
-    ParameterStatusInfo_t(ParameterId_t pid, uint16_t in_length, uint8_t instatus) :Parameter_t(pid, in_length), status(instatus) {}
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterKey_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+    ParameterKey_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            rtps::InstanceHandle_t& ke)
+        : Parameter_t(pid, in_length)
+        , key(ke)
+    {
+    }
+
     /**
-    * Add the parameter to a CDRMessage_t message.
-    * @param[in,out] msg Pointer to the message where the parameter should be added.
-    * @return True if the parameter was correctly added.
-    */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -512,7 +229,516 @@ public:
      * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+
+};
+#define PARAMETER_KEY_LENGTH 16
+
+/**
+ *
+ */
+class ParameterLocator_t : public Parameter_t
+{
+public:
+
+    rtps::Locator_t locator;
+
+    ParameterLocator_t()
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterLocator_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+    ParameterLocator_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            const rtps::Locator_t& loc)
+        : Parameter_t(pid, in_length)
+        , locator(loc)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+};
+#define PARAMETER_LOCATOR_LENGTH 24
+
+
+/**
+ *
+ */
+class ParameterString_t : public Parameter_t
+{
+public:
+
+    ParameterString_t()
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterString_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+    ParameterString_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            const string_255& strin)
+        : Parameter_t(pid, in_length)
+        , m_string(strin)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+    inline const char* getName()const
+    {
+        return m_string.c_str();
+    }
+
+    inline void setName(
+            const char* name)
+    {
+        m_string = name;
+    }
+
+private:
+
+    string_255 m_string;
+};
+
+/**
+ *
+ */
+class ParameterPort_t : public Parameter_t
+{
+public:
+
+    uint32_t port;
+    ParameterPort_t()
+        : port(0)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterPort_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , port(0)
+    {
+    }
+
+    ParameterPort_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            uint32_t po)
+        : Parameter_t(pid, in_length)
+        , port(po)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+};
+
+#define PARAMETER_PORT_LENGTH 4
+
+/**
+ *
+ */
+class ParameterGuid_t : public Parameter_t
+{
+public:
+
+    rtps::GUID_t guid;
+    ParameterGuid_t()
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterGuid_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+    ParameterGuid_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            rtps::GUID_t guidin)
+        : Parameter_t(pid, in_length)
+        , guid(guidin)
+    {
+    }
+
+    ParameterGuid_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            rtps::InstanceHandle_t& iH)
+        : Parameter_t(pid, in_length)
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            if (i < 12)
+            {
+                guid.guidPrefix.value[i] = iH.value[i];
+            }
+            else
+            {
+                guid.entityId.value[i - 12] = iH.value[i];
+            }
+        }
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+};
+
+#define PARAMETER_GUID_LENGTH 16
+
+/**
+ *
+ */
+class ParameterProtocolVersion_t : public Parameter_t
+{
+public:
+
+    rtps::ProtocolVersion_t protocolVersion;
+    ParameterProtocolVersion_t()
+    {
+        protocolVersion = rtps::c_ProtocolVersion;
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterProtocolVersion_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+        protocolVersion = rtps::c_ProtocolVersion;
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+};
+
+#define PARAMETER_PROTOCOL_LENGTH 4
+
+/**
+ *
+ */
+class ParameterVendorId_t : public Parameter_t
+{
+public:
+
+    rtps::VendorId_t vendorId;
+    ParameterVendorId_t()
+        : vendorId(rtps::c_VendorId_eProsima)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterVendorId_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , vendorId(rtps::c_VendorId_eProsima)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+};
+
+#define PARAMETER_VENDOR_LENGTH 4
+
+/**
+ *
+ */
+class ParameterIP4Address_t : public Parameter_t
+{
+public:
+
+    rtps::octet address[4];
+    ParameterIP4Address_t()
+    {
+        this->setIP4Address(0, 0, 0, 0);
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterIP4Address_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+        this->setIP4Address(0, 0, 0, 0);
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+    void setIP4Address(
+            rtps::octet o1,
+            rtps::octet o2,
+            rtps::octet o3,
+            rtps::octet o4);
+};
+
+#define PARAMETER_IP4_LENGTH 4
+
+/**
+ *
+ */
+class ParameterBool_t : public Parameter_t
+{
+public:
+
+    bool value;
+    ParameterBool_t()
+        : value(false)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterBool_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , value(false)
+    {
+    }
+
+    ParameterBool_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            bool inbool)
+        : Parameter_t(pid, in_length)
+        , value(inbool)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+};
+
+#define PARAMETER_BOOL_LENGTH 4
+
+/**
+ *
+ */
+class ParameterStatusInfo_t : public Parameter_t
+{
+public:
+
+    uint8_t status;
+    ParameterStatusInfo_t()
+        : status(0)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterStatusInfo_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , status(0)
+    {
+    }
+
+    ParameterStatusInfo_t(
+            ParameterId_t pid,
+            uint16_t in_length,
+            uint8_t instatus)
+        : Parameter_t(pid, in_length)
+        , status(instatus)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #define PARAMETER_STATUS_INFO_LENGTH 4
@@ -520,30 +746,46 @@ public:
 /**
  *
  */
-class ParameterCount_t:public Parameter_t{
-    public:
-		rtps::Count_t count;
-        ParameterCount_t():count(0){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterCount_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),count(0){};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+class ParameterCount_t : public Parameter_t
+{
+public:
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    rtps::Count_t count;
+    ParameterCount_t()
+        : count(0)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterCount_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , count(0)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #define PARAMETER_COUNT_LENGTH 4
@@ -551,30 +793,46 @@ class ParameterCount_t:public Parameter_t{
 /**
  *
  */
-class ParameterEntityId_t:public Parameter_t{
-    public:
-		rtps::EntityId_t entityId;
-        ParameterEntityId_t():entityId(ENTITYID_UNKNOWN){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterEntityId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),entityId(ENTITYID_UNKNOWN){};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+class ParameterEntityId_t : public Parameter_t
+{
+public:
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    rtps::EntityId_t entityId;
+    ParameterEntityId_t()
+        : entityId(ENTITYID_UNKNOWN)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterEntityId_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , entityId(ENTITYID_UNKNOWN)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #define PARAMETER_ENTITYID_LENGTH 4
@@ -582,30 +840,44 @@ class ParameterEntityId_t:public Parameter_t{
 /**
  *
  */
-class ParameterTime_t:public Parameter_t{
-    public:
-		rtps::Time_t time;
-        ParameterTime_t(){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterTime_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+class ParameterTime_t : public Parameter_t
+{
+public:
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    rtps::Time_t time;
+    ParameterTime_t()
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterTime_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #define PARAMETER_TIME_LENGTH 8
@@ -613,44 +885,55 @@ class ParameterTime_t:public Parameter_t{
 /**
  *
  */
-class ParameterBuiltinEndpointSet_t : public Parameter_t{
-    public:
-		rtps::BuiltinEndpointSet_t endpointSet;
-        ParameterBuiltinEndpointSet_t():endpointSet(0){};
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterBuiltinEndpointSet_t(
-                ParameterId_t pid,
-                uint16_t in_length)
-            : Parameter_t(pid, in_length)
-            , endpointSet(0)
-        {};
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+class ParameterBuiltinEndpointSet_t : public Parameter_t
+{
+public:
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    rtps::BuiltinEndpointSet_t endpointSet;
+    ParameterBuiltinEndpointSet_t()
+        : endpointSet(0)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterBuiltinEndpointSet_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , endpointSet(0)
+    {
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
 
-class ParameterProperty_t {
+class ParameterProperty_t
+{
 
     friend class ParameterPropertyList_t;
-
 
 private:
 
@@ -663,7 +946,8 @@ public:
         data = nullptr;
     }
 
-    explicit ParameterProperty_t(void* ptr)
+    explicit ParameterProperty_t(
+            void* ptr)
     {
         data = (rtps::octet*)ptr;
     }
@@ -683,7 +967,8 @@ public:
         return std::string((char*)data + size1 + 4);
     }
 
-    bool modify(const std::pair<std::string, std::string> &new_value)
+    bool modify(
+            const std::pair<std::string, std::string>& new_value)
     {
         uint32_t old_size = size();
 
@@ -730,7 +1015,7 @@ public:
             const ParameterProperty_t& b) const
     {
         return (first() == b.first()) &&
-                (second() == b.second());
+               (second() == b.second());
     }
 
     bool operator !=(
@@ -740,266 +1025,349 @@ public:
     }
 
 private:
-    static uint32_t element_size(const rtps::octet* ptr)
+
+    static uint32_t element_size(
+            const rtps::octet* ptr)
     {
         //Size of the element (with alignment)
         uint32_t size = *(uint32_t*)ptr;
         return (4 + ((size + 3) & ~3));
     }
+
 };
 
 
 /**
  *
  */
-class ParameterPropertyList_t : public Parameter_t {
+class ParameterPropertyList_t : public Parameter_t
+{
 
-    private:
+private:
 
-        rtps::SerializedPayload_t properties_;
-        uint32_t Nproperties_ = 0;
-        bool limit_size_ = false;
-
-    public:
-
-        class iterator
-        {
-            public:
-                typedef iterator self_type;
-                typedef ParameterProperty_t value_type;
-                typedef ParameterProperty_t reference;
-                typedef ParameterProperty_t* pointer;
-                typedef size_t difference_type;
-                typedef std::forward_iterator_tag iterator_category;
-
-                iterator(rtps::octet* ptr) : ptr_(ptr), value_(ptr) { }
-                self_type operator++() { self_type i = *this; advance(); return i; }
-                self_type operator++(int) { advance(); return *this; }
-                reference operator*() { return value_; }
-                pointer operator->() { return &value_; }
-                bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
-                bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
-
-            protected:
-
-                void advance()
-                {
-                    ptr_ += value_.size();
-                    value_ = ParameterProperty_t(ptr_);
-                }
-
-                rtps::octet* address() const
-                {
-                    return ptr_;
-                }
-
-
-            private:
-                rtps::octet* ptr_;
-                ParameterProperty_t value_;
-        };
-
-        class const_iterator
-        {
-            public:
-                typedef const_iterator self_type;
-                typedef const ParameterProperty_t value_type;
-                typedef const ParameterProperty_t reference;
-                typedef const ParameterProperty_t* pointer;
-                typedef size_t difference_type;
-                typedef std::forward_iterator_tag iterator_category;
-
-                const_iterator(const rtps::octet* ptr) : ptr_(ptr), value_(const_cast<rtps::octet*>(ptr)) { }
-                self_type operator++() { self_type i = *this; advance(); return i; }
-                self_type operator++(int) { advance(); return *this; }
-                reference operator*() { return value_; }
-                pointer operator->() { return &value_; }
-                bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
-                bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
-
-            protected:
-
-                void advance()
-                {
-                    ptr_ += value_.size();
-                    value_ = ParameterProperty_t(const_cast<rtps::octet*>(ptr_));
-                }
-
-                const rtps::octet* address() const
-                {
-                    return ptr_;
-                }
-
-            private:
-                const rtps::octet* ptr_;
-                ParameterProperty_t value_;
-        };
-
-
+    rtps::SerializedPayload_t properties_;
+    uint32_t Nproperties_ = 0;
+    bool limit_size_ = false;
 
 public:
 
-        ParameterPropertyList_t()
-            : Parameter_t(PID_PROPERTY_LIST, 0)
-            , Nproperties_ (0)
-            , limit_size_ (false)
+    class iterator
+    {
+public:
+
+        typedef iterator self_type;
+        typedef ParameterProperty_t value_type;
+        typedef ParameterProperty_t reference;
+        typedef ParameterProperty_t* pointer;
+        typedef size_t difference_type;
+        typedef std::forward_iterator_tag iterator_category;
+
+        iterator(
+                rtps::octet* ptr)
+            : ptr_(ptr)
+            , value_(ptr)
         {
         }
 
-        /**
-         * Constructor with a defined maximum size
-         */
-        ParameterPropertyList_t(uint32_t size)
-            : Parameter_t(PID_PROPERTY_LIST, 0)
-            , properties_(size)
-            , Nproperties_ (0)
-            , limit_size_ (size == 0 ? false : true)
+        self_type operator ++()
         {
+            self_type i = *this; advance(); return i;
         }
 
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param in_length Its associated length
-         */
-        ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length)
-            : Parameter_t(PID_PROPERTY_LIST, in_length)
-            , Nproperties_ (0)
-            , limit_size_ (false)
+        self_type operator ++(
+                int)
         {
+            advance(); return *this;
         }
 
-        ParameterPropertyList_t(const ParameterPropertyList_t &parameter_properties)
-            : Parameter_t(PID_PROPERTY_LIST, parameter_properties.length)
-            , properties_(parameter_properties.limit_size_ ?
-                    parameter_properties.properties_.max_size :
-                    parameter_properties.properties_.length)
-            , Nproperties_ (parameter_properties.Nproperties_)
-            , limit_size_ (parameter_properties.limit_size_)
+        reference operator *()
         {
-            properties_.copy(&parameter_properties.properties_, parameter_properties.limit_size_);
+            return value_;
         }
 
-        ParameterPropertyList_t& operator= (const ParameterPropertyList_t &parameter_properties)
+        pointer operator ->()
         {
-            length = parameter_properties.length;
-            limit_size_ = parameter_properties.limit_size_;
-            properties_.reserve(limit_size_ ?
-                                parameter_properties.properties_.max_size :
-                                parameter_properties.properties_.length);
-            properties_.copy(&parameter_properties.properties_, parameter_properties.limit_size_);
-            Nproperties_ = parameter_properties.Nproperties_;
-            return *this;
+            return &value_;
         }
 
-        iterator begin()
+        bool operator ==(
+                const self_type& rhs)
         {
-            return iterator(properties_.data);
+            return ptr_ == rhs.ptr_;
         }
 
-        iterator end()
+        bool operator !=(
+                const self_type& rhs)
         {
-            return iterator(properties_.data + properties_.length);
+            return ptr_ != rhs.ptr_;
         }
-
-        const_iterator begin() const
-        {
-            return const_iterator(properties_.data);
-        }
-
-        const_iterator end() const
-        {
-            return const_iterator(properties_.data + properties_.length);
-        }
-
-
-        bool push_back(std::pair<std::string, std::string> p)
-        {
-
-            //Realloc if needed;
-            uint32_t size1 = (uint32_t) p.first.length()+1;
-            uint32_t alignment1 = ((size1 + 3) & ~3) - size1;
-
-            uint32_t size2 = (uint32_t) p.second.length()+1;
-            uint32_t alignment2 = ((size2 + 3) & ~3) - size2;
-
-            if (limit_size_ && (properties_.max_size < properties_.length +
-                    size1 + alignment1 + 4 +
-                    size2 + alignment2 + 4))
-            {
-                return false;
-            }
-            properties_.reserve(properties_.length +
-                    size1 + alignment1 + 4 +
-                    size2 + alignment2 + 4);
-
-            push_back_helper((rtps::octet*)p.first.c_str(), size1, alignment1);
-            push_back_helper((rtps::octet*)p.second.c_str(), size2, alignment2);
-            ++Nproperties_;
-            return true;
-        }
-
-        bool set_property (iterator pos, const std::pair<std::string, std::string> &new_value)
-        {
-            return pos->modify(new_value);
-        }
-
-        void clear()
-        {
-            properties_.length = 0;
-            Nproperties_ = 0;
-        }
-
-        uint32_t size() const
-        {
-            return Nproperties_;
-        }
-
-        void set_max_size (uint32_t size)
-        {
-            properties_.reserve(size);
-            limit_size_ = true;
-        }
-
-
-        uint32_t max_size ()
-        {
-            return (limit_size_ ? properties_.max_size : 0);
-        }
-
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
 
 protected:
 
-        void push_back_helper (const rtps::octet* data, uint32_t size, uint32_t alignment)
+        void advance()
         {
-            rtps::octet* o = (rtps::octet*)&size;
-            memcpy(properties_.data + properties_.length,
-                    o, 4);
-            properties_.length += 4;
-
-            memcpy(properties_.data + properties_.length,
-                    data, size);
-            properties_.length += size;
-
-            for (uint32_t i = 0; i < alignment; ++i)
-            {
-                properties_.data[properties_.length + i] = '\0';
-            }
-            properties_.length += alignment;
+            ptr_ += value_.size();
+            value_ = ParameterProperty_t(ptr_);
         }
+
+        rtps::octet* address() const
+        {
+            return ptr_;
+        }
+
+private:
+
+        rtps::octet* ptr_;
+        ParameterProperty_t value_;
+    };
+
+    class const_iterator
+    {
+public:
+
+        typedef const_iterator self_type;
+        typedef const ParameterProperty_t value_type;
+        typedef const ParameterProperty_t reference;
+        typedef const ParameterProperty_t* pointer;
+        typedef size_t difference_type;
+        typedef std::forward_iterator_tag iterator_category;
+
+        const_iterator(
+                const rtps::octet* ptr)
+            : ptr_(ptr)
+            , value_(const_cast<rtps::octet*>(ptr))
+        {
+        }
+
+        self_type operator ++()
+        {
+            self_type i = *this; advance(); return i;
+        }
+
+        self_type operator ++(
+                int)
+        {
+            advance(); return *this;
+        }
+
+        reference operator *()
+        {
+            return value_;
+        }
+
+        pointer operator ->()
+        {
+            return &value_;
+        }
+
+        bool operator ==(
+                const self_type& rhs)
+        {
+            return ptr_ == rhs.ptr_;
+        }
+
+        bool operator !=(
+                const self_type& rhs)
+        {
+            return ptr_ != rhs.ptr_;
+        }
+
+protected:
+
+        void advance()
+        {
+            ptr_ += value_.size();
+            value_ = ParameterProperty_t(const_cast<rtps::octet*>(ptr_));
+        }
+
+        const rtps::octet* address() const
+        {
+            return ptr_;
+        }
+
+private:
+
+        const rtps::octet* ptr_;
+        ParameterProperty_t value_;
+    };
+
+public:
+
+    ParameterPropertyList_t()
+        : Parameter_t(PID_PROPERTY_LIST, 0)
+        , Nproperties_ (0)
+        , limit_size_ (false)
+    {
+    }
+
+    /**
+     * Constructor with a defined maximum size
+     */
+    ParameterPropertyList_t(
+            uint32_t size)
+        : Parameter_t(PID_PROPERTY_LIST, 0)
+        , properties_(size)
+        , Nproperties_ (0)
+        , limit_size_ (size == 0 ? false : true)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param in_length Its associated length
+     */
+    ParameterPropertyList_t(
+            ParameterId_t /*pid*/,
+            uint16_t in_length)
+        : Parameter_t(PID_PROPERTY_LIST, in_length)
+        , Nproperties_ (0)
+        , limit_size_ (false)
+    {
+    }
+
+    ParameterPropertyList_t(
+            const ParameterPropertyList_t& parameter_properties)
+        : Parameter_t(PID_PROPERTY_LIST, parameter_properties.length)
+        , properties_(parameter_properties.limit_size_ ?
+                parameter_properties.properties_.max_size :
+                parameter_properties.properties_.length)
+        , Nproperties_ (parameter_properties.Nproperties_)
+        , limit_size_ (parameter_properties.limit_size_)
+    {
+        properties_.copy(&parameter_properties.properties_, parameter_properties.limit_size_);
+    }
+
+    ParameterPropertyList_t& operator = (
+            const ParameterPropertyList_t& parameter_properties)
+    {
+        length = parameter_properties.length;
+        limit_size_ = parameter_properties.limit_size_;
+        properties_.reserve(limit_size_ ?
+                parameter_properties.properties_.max_size :
+                parameter_properties.properties_.length);
+        properties_.copy(&parameter_properties.properties_, parameter_properties.limit_size_);
+        Nproperties_ = parameter_properties.Nproperties_;
+        return *this;
+    }
+
+    iterator begin()
+    {
+        return iterator(properties_.data);
+    }
+
+    iterator end()
+    {
+        return iterator(properties_.data + properties_.length);
+    }
+
+    const_iterator begin() const
+    {
+        return const_iterator(properties_.data);
+    }
+
+    const_iterator end() const
+    {
+        return const_iterator(properties_.data + properties_.length);
+    }
+
+    bool push_back(
+            std::pair<std::string, std::string> p)
+    {
+
+        //Realloc if needed;
+        uint32_t size1 = (uint32_t) p.first.length() + 1;
+        uint32_t alignment1 = ((size1 + 3) & ~3) - size1;
+
+        uint32_t size2 = (uint32_t) p.second.length() + 1;
+        uint32_t alignment2 = ((size2 + 3) & ~3) - size2;
+
+        if (limit_size_ && (properties_.max_size < properties_.length +
+                size1 + alignment1 + 4 +
+                size2 + alignment2 + 4))
+        {
+            return false;
+        }
+        properties_.reserve(properties_.length +
+                size1 + alignment1 + 4 +
+                size2 + alignment2 + 4);
+
+        push_back_helper((rtps::octet*)p.first.c_str(), size1, alignment1);
+        push_back_helper((rtps::octet*)p.second.c_str(), size2, alignment2);
+        ++Nproperties_;
+        return true;
+    }
+
+    bool set_property (
+            iterator pos,
+            const std::pair<std::string, std::string>& new_value)
+    {
+        return pos->modify(new_value);
+    }
+
+    void clear()
+    {
+        properties_.length = 0;
+        Nproperties_ = 0;
+    }
+
+    uint32_t size() const
+    {
+        return Nproperties_;
+    }
+
+    void set_max_size (
+            uint32_t size)
+    {
+        properties_.reserve(size);
+        limit_size_ = true;
+    }
+
+    uint32_t max_size ()
+    {
+        return (limit_size_ ? properties_.max_size : 0);
+    }
+
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
+
+protected:
+
+    void push_back_helper (
+            const rtps::octet* data,
+            uint32_t size,
+            uint32_t alignment)
+    {
+        rtps::octet* o = (rtps::octet*)&size;
+        memcpy(properties_.data + properties_.length,
+                o, 4);
+        properties_.length += 4;
+
+        memcpy(properties_.data + properties_.length,
+                data, size);
+        properties_.length += size;
+
+        for (uint32_t i = 0; i < alignment; ++i)
+        {
+            properties_.data[properties_.length + i] = '\0';
+        }
+        properties_.length += alignment;
+    }
+
 };
 
 /**
@@ -1007,32 +1375,45 @@ protected:
  */
 class ParameterSampleIdentity_t : public Parameter_t
 {
-    public:
-		rtps::SampleIdentity sample_id;
+public:
 
-        ParameterSampleIdentity_t() : sample_id(rtps::SampleIdentity::unknown()) {}
+    rtps::SampleIdentity sample_id;
 
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterSampleIdentity_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid,in_length), sample_id(rtps::SampleIdentity::unknown()) {}
+    ParameterSampleIdentity_t()
+        : sample_id(rtps::SampleIdentity::unknown())
+    {
+    }
 
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterSampleIdentity_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , sample_id(rtps::SampleIdentity::unknown())
+    {
+    }
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #if HAVE_SECURITY
@@ -1042,104 +1423,131 @@ class ParameterSampleIdentity_t : public Parameter_t
  */
 class ParameterToken_t : public Parameter_t
 {
-    public:
-		rtps::Token token;
+public:
 
-        ParameterToken_t() {}
+    rtps::Token token;
 
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param in_length Its associated length
-         */
-        ParameterToken_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid,in_length) {}
+    ParameterToken_t()
+    {
+    }
 
-        /**
-         * Add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterToken_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 class ParameterParticipantSecurityInfo_t : public Parameter_t
 {
-    public:
-        rtps::security::ParticipantSecurityAttributesMask security_attributes;
-        rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
+public:
 
-        ParameterParticipantSecurityInfo_t() : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, 0)
-        {
-        }
+    rtps::security::ParticipantSecurityAttributesMask security_attributes;
+    rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
 
-        /**
-        * Constructor using a parameter PID and the parameter length
-        * @param pid Pid of the parameter
-        * @param in_length Its associated length
-        */
-        ParameterParticipantSecurityInfo_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid, in_length)
-        {
-        }
+    ParameterParticipantSecurityInfo_t()
+        : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, 0)
+    {
+    }
 
-        /**
-        * Add the parameter to a CDRMessage_t message.
-        * @param[in,out] msg Pointer to the message where the parameter should be added.
-        * @return True if the parameter was correctly added.
-        */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterParticipantSecurityInfo_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
 
 class ParameterEndpointSecurityInfo_t : public Parameter_t
 {
-    public:
-        rtps::security::EndpointSecurityAttributesMask security_attributes;
-        rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
+public:
 
-        ParameterEndpointSecurityInfo_t() : Parameter_t(PID_ENDPOINT_SECURITY_INFO, 0)
-        {
-        }
+    rtps::security::EndpointSecurityAttributesMask security_attributes;
+    rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
 
-        /**
-        * Constructor using a parameter PID and the parameter length
-        * @param pid Pid of the parameter
-        * @param in_length Its associated length
-        */
-        ParameterEndpointSecurityInfo_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid, in_length)
-        {
-        }
+    ParameterEndpointSecurityInfo_t()
+        : Parameter_t(PID_ENDPOINT_SECURITY_INFO, 0)
+    {
+    }
 
-        /**
-        * Add the parameter to a CDRMessage_t message.
-        * @param[in,out] msg Pointer to the message where the parameter should be added.
-        * @return True if the parameter was correctly added.
-        */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterEndpointSecurityInfo_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
 
-        /**
-         * Read the parameter from a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-         * @param size Size of the parameter field to read
-         * @return True if the parameter was correctly taken.
-         */
-        bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint16_t size) override;
+    /**
+     * Add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    bool addToCDRMessage(
+            rtps::CDRMessage_t* msg) override;
+
+    /**
+     * Read the parameter from a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param size Size of the parameter field to read
+     * @return True if the parameter was correctly taken.
+     */
+    bool readFromCDRMessage(
+            rtps::CDRMessage_t* msg,
+            uint16_t size) override;
 };
 
 #define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
