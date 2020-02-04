@@ -19,6 +19,7 @@
 #ifndef PARAM_LIST_T_H_
 #define PARAM_LIST_T_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "ParameterTypes.h"
 #include "../rtps/messages/RTPS_messages.h"
 #include "../rtps/common/CDRMessage_t.h"
@@ -73,17 +74,30 @@ class ParameterList
                 uint32_t& qos_size);
 
         /**
+         * Read guid from the KEY_HASH or another specific PID parameter of a CDRMessage
+         * @param[in,out] msg Reference to the message (pos should be correct, otherwise the behaviour is undefined).
+         * @param[in] search_pid Specific PID to search
+         * @param[out] guid Reference where the guid will be written.
+         * @return true if a guid is returned, false otherwise.
+         */
+        static bool read_guid_from_cdr_msg(
+                rtps::CDRMessage_t& msg,
+                uint16_t search_pid,
+                rtps::GUID_t& guid);
+
+        /**
          * Read change instanceHandle from the KEY_HASH or another specific PID parameter of a CDRMessage
          * @param[in,out] change Pointer to the cache change.
-         * @param[in] pid Specific PID to search
+         * @param[in] search_pid Specific PID to search
          * @return True when instanceHandle is updated.
          */
         static bool readInstanceHandleFromCDRMsg(
                 rtps::CacheChange_t* change,
-                const uint16_t pid);
+                const uint16_t search_pid);
 };
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* PARAMLISTT_H_ */
