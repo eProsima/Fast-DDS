@@ -246,10 +246,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-    createReceiverResources(m_att.defaultUnicastLocatorList, true);
-    createReceiverResources(m_att.defaultMulticastLocatorList, true);
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
+    createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
+    createReceiverResources(m_att.defaultMulticastLocatorList, true, false);
 
 #if HAVE_SECURITY
     if (m_is_security_active)
@@ -269,6 +269,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
+    }
+
+    //Start reception
+    for(auto& receiver : m_receiverResourcelist)
+    {
+        receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
     }
 
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
@@ -763,8 +769,8 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
         //Default unicast
         pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
     }
-    createReceiverResources(pend->getAttributes().unicastLocatorList, false);
-    createReceiverResources(pend->getAttributes().multicastLocatorList, false);
+    createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
+    createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
 
     // Associate the Endpoint with ReceiverControlBlock
     assignEndpointListenResources(pend);
@@ -828,7 +834,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
     return true;
 }
 
-void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation)
+void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation, bool RegisterReceiver)
 {
     std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
 
@@ -856,7 +862,10 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
             auto mr = new MessageReceiver(this, size);
             m_receiverResourcelist.back().mp_receiver = mr;
             //Start reception
-            m_receiverResourcelist.back().Receiver->RegisterReceiver(mr);
+            if (RegisterReceiver)
+            {
+                m_receiverResourcelist.back().Receiver->RegisterReceiver(mr);
+            }
         }
         newItemsBuffer.clear();
     }
