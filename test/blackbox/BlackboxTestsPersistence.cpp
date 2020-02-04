@@ -16,14 +16,15 @@
 
 #if HAVE_SQLITE3
 
+#include <cstring>
+#include <thread>
+
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
 #include <gtest/gtest.h>
-
-#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -112,9 +113,10 @@ protected:
         db_file_name_ = ss.str();
 
         // Fill guid prefix
-        int32_t* p_value = (int32_t*)guid_prefix_.value;
-        *p_value++ = info->line();
-        *p_value = GET_PID();
+        const int32_t info_line = info->line();
+        memcpy(guid_prefix_.value, &info_line, sizeof(info_line));
+        const int32_t pid = GET_PID();
+        memcpy(guid_prefix_.value + 4, &pid, sizeof(pid));
         guid_prefix_.value[8] = HAVE_SECURITY;
         guid_prefix_.value[9] = 3; //PREALLOCATED_MEMORY_MODE
         eprosima::fastrtps::rtps::LocatorList_t loc;

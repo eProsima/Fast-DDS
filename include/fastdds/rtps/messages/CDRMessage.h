@@ -49,7 +49,7 @@ namespace CDRMessage{
     /// @{
     inline bool readEntityId(
             CDRMessage_t* msg,
-            const EntityId_t*id);
+            EntityId_t*id);
 
     inline bool readData(
             CDRMessage_t* msg,

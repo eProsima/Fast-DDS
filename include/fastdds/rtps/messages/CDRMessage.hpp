@@ -20,6 +20,7 @@
  */
 
 #include <cassert>
+#include <cstring>
 #include <algorithm>
 #include <vector>
 
@@ -66,12 +67,10 @@ inline bool CDRMessage::appendMsg(CDRMessage_t*first, CDRMessage_t*second) {
 }
 
 
-inline bool CDRMessage::readEntityId(CDRMessage_t* msg,const EntityId_t* id) {
+inline bool CDRMessage::readEntityId(CDRMessage_t* msg, EntityId_t* id) {
     if(msg->pos+4>msg->length)
         return false;
-    uint32_t* aux1 = (uint32_t*) id->value;
-    uint32_t* aux2 = (uint32_t*) &msg->buffer[msg->pos];
-    *aux1 = *aux2;
+    memcpy(id->value, &msg->buffer[msg->pos], id->size);
     msg->pos+=4;
     return true;
 }
@@ -509,11 +508,7 @@ inline bool CDRMessage::addEntityId(CDRMessage_t* msg, const EntityId_t*ID) {
     {
         return false;
     }
-    int* aux1;
-    int* aux2;
-    aux1 = (int*)(&msg->buffer[msg->pos]);
-    aux2 = (int*) ID->value;
-    *aux1 = *aux2;
+    memcpy(&msg->buffer[msg->pos], ID->value, ID->size);
     msg->pos +=4;
     msg->length+=4;
     return true;
