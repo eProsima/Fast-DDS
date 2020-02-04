@@ -117,7 +117,11 @@ class TimedConditionVariable
                 std::function<bool()> predicate)
         {
             bool ret_value = true;
-            std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
+            auto now = std::chrono::steady_clock::now();
+            if (now > max_blocking_time) {
+                return predicate();
+            }
+            std::chrono::nanoseconds nsecs = max_blocking_time - now;
             struct timespec max_wait = { 0, 0 };
             clock_gettime(CLOCK_REALTIME, &max_wait);
             nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
@@ -138,7 +142,11 @@ class TimedConditionVariable
                 std::unique_lock<Mutex>& lock,
                 const std::chrono::steady_clock::time_point& max_blocking_time)
         {
-            std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
+            auto now = std::chrono::steady_clock::now();
+            if (now > max_blocking_time) {
+                return false;
+            }
+            std::chrono::nanoseconds nsecs = max_blocking_time - now;
             struct timespec max_wait = { 0, 0 };
             clock_gettime(CLOCK_REALTIME, &max_wait);
             nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
