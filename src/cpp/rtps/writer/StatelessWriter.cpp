@@ -405,6 +405,10 @@ void StatelessWriter::send_any_unsent_changes()
             logError(RTPS_WRITER, "Max blocking time reached");
         }
     }
+    else
+    {
+        unsent_changes_.clear();
+    }
 
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
