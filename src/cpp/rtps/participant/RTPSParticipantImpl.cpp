@@ -398,8 +398,8 @@ bool RTPSParticipantImpl::createWriter(
         const EntityId_t& entityId,
         bool isBuiltin)
 {
-    logInfo(RTPS_PARTICIPANT, (param.endpoint.reliabilityKind == RELIABLE) ? 
-        "Creating writer of type RELIABLE" : "Creating writer of type BEST_EFFORT");
+    logInfo(RTPS_PARTICIPANT, ((param.endpoint.reliabilityKind == RELIABLE) ? 
+        "Creating writer of type RELIABLE" : "Creating writer of type BEST_EFFORT"));
 
     EntityId_t entId;
     if (entityId == c_EntityId_Unknown)
@@ -560,8 +560,8 @@ bool RTPSParticipantImpl::createReader(
         bool isBuiltin,
         bool enable)
 {
-    logInfo(RTPS_PARTICIPANT, (param.endpoint.reliabilityKind == RELIABLE) ?
-        "Creating reader of type RELIABLE" : "Creating writer of type BEST_EFFORT");
+    logInfo(RTPS_PARTICIPANT, ((param.endpoint.reliabilityKind == RELIABLE) ?
+        "Creating reader of type RELIABLE" : "Creating writer of type BEST_EFFORT"));
 
     EntityId_t entId;
     if (entityId == c_EntityId_Unknown)
