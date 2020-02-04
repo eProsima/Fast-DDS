@@ -58,10 +58,12 @@ public:
 class EDPBasePUBListener : public EDPListener
 {
 public:
-    EDPBasePUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation)
+    EDPBasePUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation,
+            const VariableLengthDataLimits& data_limits)
         : temp_writer_data_(
             locators_allocation.max_unicast_locators,
-            locators_allocation.max_multicast_locators)
+            locators_allocation.max_multicast_locators,
+            data_limits)
     {
     }
 
@@ -85,10 +87,12 @@ protected:
 class EDPBaseSUBListener : public EDPListener
 {
 public:
-    EDPBaseSUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation)
+    EDPBaseSUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation,
+            const VariableLengthDataLimits& data_limits)
         : temp_reader_data_(
             locators_allocation.max_unicast_locators,
-            locators_allocation.max_multicast_locators)
+            locators_allocation.max_multicast_locators,
+            data_limits)
     {
     }
 
@@ -118,7 +122,8 @@ class EDPSimplePUBListener : public EDPBasePUBListener
          * @param sedp Pointer to the EDPSimple associated with this listener.
          */
         EDPSimplePUBListener(EDPSimple* sedp)
-            : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+            : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
+                    sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
             , sedp_(sedp) 
         {}
 
@@ -163,7 +168,8 @@ class EDPSimpleSUBListener : public EDPBaseSUBListener
          * @param sedp Pointer to the EDPSimple associated with this listener.
          */
         EDPSimpleSUBListener(EDPSimple* sedp) 
-            : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+            : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
+                    sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
             , sedp_(sedp)
         {
         }
