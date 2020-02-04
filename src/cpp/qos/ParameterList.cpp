@@ -184,6 +184,40 @@ bool ParameterList::readParameterListfromCDRMsg(
     return true;
 }
 
+bool ParameterList::read_guid_from_cdr_msg(
+        rtps::CDRMessage_t& msg,
+        uint16_t search_pid,
+        rtps::GUID_t& guid)
+{
+    bool valid = false;
+    uint16_t pid;
+    uint16_t plength;
+    while (msg.pos < msg.length)
+    {
+        valid = true;
+        valid &= CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+        valid &= CDRMessage::readUInt16(&msg, &plength);
+        if ((pid == PID_SENTINEL) || !valid)
+        {
+            break;
+        }
+        if (pid == PID_KEY_HASH)
+        {
+            valid &= CDRMessage::readData(&msg, guid.guidPrefix.value, GuidPrefix_t::size);
+            valid &= CDRMessage::readData(&msg, guid.entityId.value, EntityId_t::size);
+            return valid;
+        }
+        if (pid == search_pid)
+        {
+            valid &= CDRMessage::readData(&msg, guid.guidPrefix.value, GuidPrefix_t::size);
+            valid &= CDRMessage::readData(&msg, guid.entityId.value, EntityId_t::size);
+            return valid;
+        }
+        msg.pos += (plength + 3) & ~3;
+    }
+    return false;
+}
+
 bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const uint16_t search_pid)
 {
     assert(change != nullptr);
