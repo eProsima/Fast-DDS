@@ -26,7 +26,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
         const size_t max_multicast_locators)
@@ -49,10 +48,21 @@ ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
         const size_t max_multicast_locators,
         const VariableLengthDataLimits& data_limits)
-    : ReaderProxyData(max_unicast_locators, max_multicast_locators)
+    : m_expectsInlineQos(false)
+#if HAVE_SECURITY
+    , security_attributes_(0UL)
+    , plugin_security_attributes_(0UL)
+#endif
+    , remote_locators_(max_unicast_locators, max_multicast_locators)
+    , m_userDefinedId(0)
+    , m_isAlive(true)
+    , m_topicKind(NO_KEY)
+    , m_topicDiscoveryKind(NO_CHECK)
+    , m_type_id(nullptr)
+    , m_type(nullptr)
 {
-    m_qos.m_userData.max_size((uint32_t)data_limits.max_user_data);
-    m_qos.m_partition.max_size((uint32_t)data_limits.max_partitions);
+    m_qos.m_userData.max_size(static_cast<uint32_t>(data_limits.max_user_data));
+    m_qos.m_partition.max_size(static_cast<uint32_t>(data_limits.max_partitions));
 }
 
 ReaderProxyData::~ReaderProxyData()
@@ -60,7 +70,7 @@ ReaderProxyData::~ReaderProxyData()
     delete m_type;
     delete m_type_id;
 
-    logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << this->m_guid; );
+    logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << m_guid);
 }
 
 ReaderProxyData::ReaderProxyData(
@@ -364,7 +374,7 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 
 #if HAVE_SECURITY
-    if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
+    if ((security_attributes_ != 0UL) || (plugin_security_attributes_ != 0UL))
     {
         ParameterEndpointSecurityInfo_t p;
         p.security_attributes = security_attributes_;
@@ -383,350 +393,350 @@ bool ReaderProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         const NetworkFactory& network)
 {
-    auto param_process = [this, &network](CDRMessage_t* msg, const ParameterId_t &pid, uint16_t plength)
+    auto param_process = [this, &network](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+    {
+        switch (pid)
         {
-            try
+            case PID_DURABILITY:
             {
-                switch (pid)
+                if (!m_qos.m_durability.readFromCDRMessage(msg, plength))
                 {
-                    case PID_UNICAST_LOCATOR:
-                    {
-                        ParameterLocator_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
+                    return false;
+                }
+                break;
+            }
+            case PID_DURABILITY_SERVICE:
+            {
+                if (!m_qos.m_durabilityService.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_DEADLINE:
+            {
+                if (!m_qos.m_deadline.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_LATENCY_BUDGET:
+            {
+                if (!m_qos.m_latencyBudget.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_LIVELINESS:
+            {
+                if (!m_qos.m_liveliness.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_RELIABILITY:
+            {
+                if (!m_qos.m_reliability.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_LIFESPAN:
+            {
+                if (!m_qos.m_lifespan.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_USER_DATA:
+            {
+                if (!m_qos.m_userData.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_TIME_BASED_FILTER:
+            {
+                if (!m_qos.m_timeBasedFilter.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_OWNERSHIP:
+            {
+                if (!m_qos.m_ownership.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_DESTINATION_ORDER:
+            {
+                if (!m_qos.m_destinationOrder.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_PRESENTATION:
+            {
+                if (!m_qos.m_presentation.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_PARTITION:
+            {
+                if (!m_qos.m_partition.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_TOPIC_DATA:
+            {
+                if (!m_qos.m_topicData.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_GROUP_DATA:
+            {
+                if (!m_qos.m_groupData.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_TOPIC_NAME:
+            {
+                ParameterString_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
 
-                        Locator_t temp_locator;
-                        if (network.transform_remote_locator(p.locator, temp_locator))
-                        {
-                            remote_locators_.add_unicast_locator(temp_locator);
-                        }
-                        break;
-                    }
-                    case PID_MULTICAST_LOCATOR:
-                    {
-                        ParameterLocator_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
+                m_topicName = p.getName();
+                break;
+            }
+            case PID_TYPE_NAME:
+            {
+                ParameterString_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
 
-                        Locator_t temp_locator;
-                        if (network.transform_remote_locator(p.locator, temp_locator))
-                        {
-                            remote_locators_.add_multicast_locator(temp_locator);
-                        }
-                        break;
-                    }
-                    case PID_EXPECTS_INLINE_QOS:
-                    {
-                        ParameterBool_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
+                m_typeName = p.getName();
+                break;
+            }
+            case PID_PARTICIPANT_GUID:
+            {
+                ParameterGuid_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
 
-                        m_expectsInlineQos = p.value;
-                        break;
-                    }
-                    case PID_PARTICIPANT_GUID:
+                for (uint8_t i = 0; i < 16; ++i)
+                {
+                    if (i < 12)
                     {
-                        ParameterGuid_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_RTPSParticipantKey.value[i] = p.guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_RTPSParticipantKey.value[i] = p.guid.entityId.value[i - 12];
-                            }
-                        }
-                        break;
+                        m_RTPSParticipantKey.value[i] = p.guid.guidPrefix.value[i];
                     }
-                    case PID_ENDPOINT_GUID:
+                    else
                     {
-                        ParameterGuid_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        m_guid = p.guid;
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_key.value[i] = p.guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_key.value[i] = p.guid.entityId.value[i - 12];
-                            }
-                        }
-                        break;
-                    }
-                    case PID_TOPIC_NAME:
-                    {
-                        ParameterString_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        m_topicName = p.getName();
-                        break;
-                    }
-                    case PID_TYPE_NAME:
-                    {
-                        ParameterString_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        m_typeName = p.getName();
-                        break;
-                    }
-                    case PID_KEY_HASH:
-                    {
-                        ParameterKey_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        m_key = p.key;
-                        iHandle2GUID(m_guid, m_key);
-                        break;
-                    }
-                    case PID_DURABILITY:
-                    {
-                        if (!m_qos.m_durability.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_DEADLINE:
-                    {
-                        if (!m_qos.m_deadline.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_LATENCY_BUDGET:
-                    {
-                        if (!m_qos.m_latencyBudget.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_LIVELINESS:
-                    {
-                        if (!m_qos.m_liveliness.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_OWNERSHIP:
-                    {
-                        if (!m_qos.m_ownership.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_RELIABILITY:
-                    {
-                        if (!m_qos.m_reliability.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_DESTINATION_ORDER:
-                    {
-                        if (!m_qos.m_destinationOrder.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_USER_DATA:
-                    {
-                        if (!m_qos.m_userData.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_TIME_BASED_FILTER:
-                    {
-                        if (!m_qos.m_timeBasedFilter.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_PRESENTATION:
-                    {
-                        if (!m_qos.m_presentation.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_PARTITION:
-                    {
-                        if (!m_qos.m_partition.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_TOPIC_DATA:
-                    {
-                        if (!m_qos.m_topicData.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_GROUP_DATA:
-                    {
-                        if (!m_qos.m_groupData.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_DURABILITY_SERVICE:
-                    {
-                        if (!m_qos.m_durabilityService.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_LIFESPAN:
-                    {
-                        if (!m_qos.m_lifespan.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_DATA_REPRESENTATION:
-                    {
-                        if (!m_qos.m_dataRepresentation.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_TYPE_CONSISTENCY_ENFORCEMENT:
-                    {
-                        if (!m_qos.m_typeConsistency.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case PID_TYPE_IDV1:
-                    {
-                        TypeIdV1 p;
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        type_id(p);
-                        m_topicDiscoveryKind = MINIMAL;
-                        if (m_type_id->m_type_identifier._d() == types::EK_COMPLETE)
-                        {
-                            m_topicDiscoveryKind = COMPLETE;
-                        }
-                        break;
-                    }
-                    case PID_TYPE_OBJECTV1:
-                    {
-                        TypeObjectV1 p;
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        type(p);
-                        m_topicDiscoveryKind = MINIMAL;
-                        if (m_type->m_type_object._d() == types::EK_COMPLETE)
-                        {
-                            m_topicDiscoveryKind = COMPLETE;
-                        }
-                        break;
-                    }
-#if HAVE_SECURITY
-                    case PID_ENDPOINT_SECURITY_INFO:
-                    {
-                        ParameterEndpointSecurityInfo_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-
-                        security_attributes_ = p.security_attributes;
-                        plugin_security_attributes_ = p.plugin_security_attributes;
-                        break;
-                    }
-#endif
-                    case PID_DISABLE_POSITIVE_ACKS:
-                    {
-                        if (!m_qos.m_disablePositiveACKs.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    default:
-                    {
-                        break;
+                        m_RTPSParticipantKey.value[i] = p.guid.entityId.value[i - 12];
                     }
                 }
+                break;
             }
-            catch (std::bad_alloc& ba)
+            case PID_ENDPOINT_GUID:
             {
-                std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-                return false;
+                ParameterGuid_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                m_guid = p.guid;
+                for (uint8_t i = 0; i < 16; ++i)
+                {
+                    if (i < 12)
+                    {
+                        m_key.value[i] = p.guid.guidPrefix.value[i];
+                    }
+                    else
+                    {
+                        m_key.value[i] = p.guid.entityId.value[i - 12];
+                    }
+                }
+                break;
             }
+            case PID_UNICAST_LOCATOR:
+            {
+                ParameterLocator_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
 
-            return true;
-        };
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p.locator, temp_locator))
+                {
+                    remote_locators_.add_unicast_locator(temp_locator);
+                }
+                break;
+            }
+            case PID_MULTICAST_LOCATOR:
+            {
+                ParameterLocator_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
 
-    uint32_t qos_size;
-    clear();
-    if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
-    {
-        if (m_guid.entityId.value[3] == 0x04)
-        {
-            m_topicKind = NO_KEY;
-        }
-        else if (m_guid.entityId.value[3] == 0x07)
-        {
-            m_topicKind = WITH_KEY;
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p.locator, temp_locator))
+                {
+                    remote_locators_.add_multicast_locator(temp_locator);
+                }
+                break;
+            }
+            case PID_EXPECTS_INLINE_QOS:
+            {
+                ParameterBool_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                m_expectsInlineQos = p.value;
+                break;
+            }
+            case PID_KEY_HASH:
+            {
+                ParameterKey_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                m_key = p.key;
+                iHandle2GUID(m_guid, m_key);
+                break;
+            }
+            case PID_DATA_REPRESENTATION:
+            {
+                if (!m_qos.m_dataRepresentation.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+            {
+                if (!m_qos.m_typeConsistency.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case PID_TYPE_IDV1:
+            {
+                TypeIdV1 p;
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                type_id(p);
+                m_topicDiscoveryKind = MINIMAL;
+                if (m_type_id->m_type_identifier._d() == types::EK_COMPLETE)
+                {
+                    m_topicDiscoveryKind = COMPLETE;
+                }
+                break;
+            }
+            case PID_TYPE_OBJECTV1:
+            {
+                TypeObjectV1 p;
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                type(p);
+                m_topicDiscoveryKind = MINIMAL;
+                if (m_type->m_type_object._d() == types::EK_COMPLETE)
+                {
+                    m_topicDiscoveryKind = COMPLETE;
+                }
+                break;
+            }
+            case PID_DISABLE_POSITIVE_ACKS:
+            {
+                if (!m_qos.m_disablePositiveACKs.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+#if HAVE_SECURITY
+            case PID_ENDPOINT_SECURITY_INFO:
+            {
+                ParameterEndpointSecurityInfo_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                security_attributes_ = p.security_attributes;
+                plugin_security_attributes_ = p.plugin_security_attributes;
+                break;
+            }
+#endif
+            default:
+            {
+                break;
+            }
         }
 
         return true;
+    };
+
+    uint32_t qos_size;
+    clear();
+    try
+    {
+        if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
+        {
+            if (m_guid.entityId.value[3] == 0x04)
+            {
+                m_topicKind = NO_KEY;
+            }
+            else if (m_guid.entityId.value[3] == 0x07)
+            {
+                m_topicKind = WITH_KEY;
+            }
+
+            return true;
+        }
     }
+    catch (std::bad_alloc& ba)
+    {
+        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+    }
+
     return false;
 }
 
@@ -748,8 +758,8 @@ void ReaderProxyData::clear()
     m_isAlive = true;
     m_topicKind = NO_KEY;
     //clear user data but keep max size on qos
-    uint32_t max_user_data = (uint32_t)m_qos.m_userData.max_size();
-    uint32_t max_partitions = (uint32_t)m_qos.m_partition.max_size();
+    uint32_t max_user_data = static_cast<uint32_t>(m_qos.m_userData.max_size());
+    uint32_t max_partitions = static_cast<uint32_t>(m_qos.m_partition.max_size());
     m_qos = ReaderQos();
     m_qos.m_userData.max_size(max_user_data);
     m_qos.m_partition.max_size(max_partitions);
