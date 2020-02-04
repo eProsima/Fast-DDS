@@ -28,7 +28,7 @@ try_compile(IS_THIRDPARTY_BOOST_OK
     )
 
 if(NOT IS_THIRDPARTY_BOOST_OK)
-    message(FATAL_ERROR "Couln't compile thirdparty/boost with current configuration!!!\n" ${OUT})
+    message(FATAL_ERROR "Couldn't compile thirdparty/boost with current configuration!!!\n" ${OUT})
 else()
     message(STATUS "Thirdparty/boost compiled OK")
     mark_as_advanced(THIRDPARTY_BOOST_INCLUDE_DIR)
