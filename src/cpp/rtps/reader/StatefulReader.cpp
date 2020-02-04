@@ -1068,7 +1068,7 @@ void StatefulReader::send_acknack(
 
 bool StatefulReader::send_sync_nts(
         CDRMessage_t* message,
-		const Locators& locators_begin,
+        const Locators& locators_begin,
         const Locators& locators_end,
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
