@@ -1261,54 +1261,6 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     return ValidationResult_t::VALIDATION_FAILED;
 }
 
-
-bool PKIDH::readFromCDRMessage(CDRMessage_t* msg, GUID_t& participant_guid) const
-{
-    auto param_process = [& participant_guid](CDRMessage_t* msg, const ParameterId_t &pid, uint16_t plength)
-        {
-            try
-            {
-                switch (pid)
-                {
-                    case PID_KEY_HASH:
-                    {
-                        ParameterKey_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        iHandle2GUID(participant_guid, p.key);
-                        break;
-                    }
-                    case PID_PARTICIPANT_GUID:
-                    {
-                        ParameterGuid_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
-                        {
-                            return false;
-                        }
-                        participant_guid = p.guid;
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
-                }
-            }
-            catch (std::bad_alloc& ba)
-            {
-                std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-                return false;
-            }
-
-            return true;
-        };
-
-    uint32_t qos_size;
-    return (ParameterList::readParameterListfromCDRMsg(*msg, param_process, false, qos_size));
-}
-
 ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_handle,
         HandshakeMessageToken** handshake_message_out,
         HandshakeMessageToken&& handshake_message_in,
@@ -1422,7 +1374,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
 
-    if(!readFromCDRMessage(&cdr_pdata, participant_guid))
+    if(!ParameterList::read_guid_from_cdr_msg(cdr_pdata, PID_PARTICIPANT_GUID, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1819,7 +1771,7 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
 
-    if(!readFromCDRMessage(&cdr_pdata, participant_guid))
+    if(!ParameterList::read_guid_from_cdr_msg(cdr_pdata, PID_PARTICIPANT_GUID, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
