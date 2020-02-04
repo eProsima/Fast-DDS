@@ -58,12 +58,12 @@ class SharedMemTransportTests: public ::testing::Test
     public:
         SharedMemTransportTests()
         {
-            Log::SetVerbosity(Log::Kind::Info);
+            eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
         }
 
         ~SharedMemTransportTests()
         {
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         SharedMemTransportDescriptor descriptor;
@@ -486,7 +486,7 @@ TEST_F(SharedMemTransportTests, send_and_receive_between_ports)
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    SendResourceList send_resource_list;
+    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
@@ -549,7 +549,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_fail)
     outputChannelLocator.kind = LOCATOR_KIND_SHM;
     outputChannelLocator.port = g_default_port + 1;
 
-    SendResourceList send_resource_list;
+    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     octet message[4] = { 'H','e','l','l'};
@@ -642,7 +642,7 @@ TEST_F(SharedMemTransportTests, port_and_segment_overflow_discard)
     outputChannelLocator.kind = LOCATOR_KIND_SHM;
     outputChannelLocator.port = g_default_port + 1;
 
-    SendResourceList send_resource_list;
+    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     octet message[4] = { 'H','e','l','l'};
@@ -910,7 +910,7 @@ TEST_F(SharedMemTransportTests, simple_latency2)
 			LocatorList_t send_locators_list;
 			send_locators_list.push_back(pub_locator);
 
-			SendResourceList send_resource_list;
+            eprosima::fastrtps::rtps::SendResourceList send_resource_list;
 			ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, pub_locator));
 
 			std::function<void()> sub_callback = [&]()
@@ -947,7 +947,7 @@ TEST_F(SharedMemTransportTests, simple_latency2)
 			LocatorList_t send_locators_list;
 			send_locators_list.push_back(sub_locator);
 
-			SendResourceList send_resource_list;
+            eprosima::fastrtps::rtps::SendResourceList send_resource_list;
 			ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, sub_locator));
 
 			std::chrono::high_resolution_clock::rep total_times = 0;
@@ -1050,7 +1050,7 @@ TEST_F(SharedMemTransportTests, simple_throughput)
     LocatorList_t send_locators_list;
     send_locators_list.push_back(sub_locator);
 
-    SendResourceList send_resource_list;
+    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(pub_transport.OpenOutputChannel(send_resource_list, sub_locator));
 
     auto t0 = std::chrono::high_resolution_clock::now();
@@ -1174,7 +1174,7 @@ INSTANTIATE_TEST_CASE_P(
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port(4000);
     g_output_port = get_port(5000);
     g_input_port = get_port(5010);
