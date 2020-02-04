@@ -87,7 +87,7 @@ protected:
     uint32_t buffer_size_;
 
     SharedMemRingBuffer()
-        : buffer_size_(std::max((unsigned int) 4, std::thread::hardware_concurrency()))
+        : buffer_size_((std::max)((unsigned int) 4, std::thread::hardware_concurrency()))
     {
     }
 
@@ -123,7 +123,7 @@ TEST_F(SharedMemRingBuffer, test_read_write_bounds)
         ring_buffer_->push({0,i});
     }
 
-    ASSERT_THROW(ring_buffer_->push({0,std::numeric_limits<uint32_t>::max()}), std::exception);
+    ASSERT_THROW(ring_buffer_->push({0,(std::numeric_limits<uint32_t>::max)()}), std::exception);
 
     for (uint32_t i = 0; i<buffer_size_; i++)
     {
@@ -148,7 +148,7 @@ TEST_F(SharedMemRingBuffer, circular_pointer)
     }
 
     i = (i % buffer_size_);
-    ASSERT_EQ(i, 0);
+    ASSERT_EQ(i, 0u);
 
     // Another cicle
     for (; i<buffer_size_; i++)
@@ -159,7 +159,7 @@ TEST_F(SharedMemRingBuffer, circular_pointer)
     }
 
     i = (i % buffer_size_);
-    ASSERT_EQ(i, 0);
+    ASSERT_EQ(i, 0u);
 
     // Flush the buffer
     for (; i<buffer_size_; i++)
@@ -206,11 +206,11 @@ TEST_F(SharedMemRingBuffer, listeners_register_unregister)
     // 3
     ring_buffer_->push({0,3});
 
-    ASSERT_EQ(listener1->head()->data().counter, 1);
-    ASSERT_EQ(listener2->head()->data().counter, 2);
+    ASSERT_EQ(listener1->head()->data().counter, 1u);
+    ASSERT_EQ(listener2->head()->data().counter, 2u);
 
     listener1->pop(); // 1:1
-    ASSERT_EQ(listener1->head()->data().counter, 2);
+    ASSERT_EQ(listener1->head()->data().counter, 2u);
 
     listener2->pop(); // 2:2
 
@@ -220,10 +220,10 @@ TEST_F(SharedMemRingBuffer, listeners_register_unregister)
     // 4
     ring_buffer_->push({0,4});
 
-    ASSERT_EQ(listener2->head()->data().counter, 3);
+    ASSERT_EQ(listener2->head()->data().counter, 3u);
     listener2->pop(); // 3
 
-    ASSERT_EQ(listener2->head()->data().counter, 4);
+    ASSERT_EQ(listener2->head()->data().counter, 4u);
     listener2->pop();
 }
 
@@ -244,7 +244,7 @@ TEST_P(SharedMemRingBufferMultiThread, multiple_writers_listeners)
             std::thread(
                 [&]()
         {
-            std::vector<int> read_counters(num_listeners_writters, -1);
+            std::vector<uint32_t> read_counters(num_listeners_writters, (std::numeric_limits<uint32_t>::max)());
             MultiProducerConsumerRingBuffer<MyData>::Cell* cell;
 
             auto listener = ring_buffer_->register_listener();
@@ -253,7 +253,7 @@ TEST_P(SharedMemRingBufferMultiThread, multiple_writers_listeners)
             do
             {
                 // poll until there's data
-                while (!(cell = listener->head()));
+                while (nullptr == (cell = listener->head()));
 
                 ASSERT_EQ(++read_counters[cell->data().thread_number], cell->data().counter);
 
@@ -1162,13 +1162,13 @@ INSTANTIATE_TEST_CASE_P(
     SharedMemRingBufferMultiThread,
     testing::Values(
         std::make_tuple(
-            std::max((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, 0),
+            (std::max)((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, 0),
         std::make_tuple(
-            std::max((unsigned int)1, std::thread::hardware_concurrency())*2, 100,0),
+            (std::max)((unsigned int)1, std::thread::hardware_concurrency())*2, 100,0),
         std::make_tuple(
-            std::max((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, std::thread::hardware_concurrency()/2),
+            (std::max)((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, std::thread::hardware_concurrency()/2),
         std::make_tuple(
-            std::max((unsigned int)1, std::thread::hardware_concurrency())*2, 100,std::thread::hardware_concurrency())
+            (std::max)((unsigned int)1, std::thread::hardware_concurrency())*2, 100,std::thread::hardware_concurrency())
     )
 );
 

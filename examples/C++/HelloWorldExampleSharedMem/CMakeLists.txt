@@ -49,6 +49,10 @@ message(STATUS "Configuring HelloWorld example...")
 file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 
+if(WIN32)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 add_executable(HelloWorldExampleSharedMem ${HELLOWORLD_EXAMPLE_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_SOURCES_CPP})
 target_link_libraries(HelloWorldExampleSharedMem fastrtps fastcdr foonathan_memory)
 install(TARGETS HelloWorldExampleSharedMem
