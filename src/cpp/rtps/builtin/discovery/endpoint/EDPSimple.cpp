@@ -59,12 +59,10 @@ EDPSimple::EDPSimple(
     , subscriptions_listener_(nullptr)
     , temp_reader_proxy_data_(
             part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            part->getRTPSParticipantAttributes().allocation.data_limits)
+            part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
     , temp_writer_proxy_data_(
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        part->getRTPSParticipantAttributes().allocation.data_limits)
+        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
 }
 

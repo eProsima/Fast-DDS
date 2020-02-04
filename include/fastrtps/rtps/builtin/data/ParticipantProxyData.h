@@ -21,8 +21,7 @@
 #define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/qos/ParameterList.h"
-#include "fastrtps/qos/QosPolicies.h"
+#include "../../../qos/ParameterList.h"
 
 #include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include "../../attributes/WriterAttributes.h"
@@ -124,7 +123,7 @@ class ParticipantProxyData
         //!
         ParameterPropertyList_t m_properties;
         //!
-        UserDataQosPolicy m_userData;
+        std::vector<octet> m_userData;
         //!
         TimedEvent* lease_duration_event;
         //!

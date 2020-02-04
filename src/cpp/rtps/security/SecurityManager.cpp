@@ -93,20 +93,16 @@ SecurityManager::SecurityManager(RTPSParticipantImpl *participant)
     , crypto_last_sequence_number_(1)
     , temp_stateless_reader_proxy_data_(
             participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.data_limits)
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
     , temp_stateless_writer_proxy_data_(
             participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.data_limits)
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
     , temp_volatile_reader_proxy_data_(
             participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.data_limits)
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
     , temp_volatile_writer_proxy_data_(
             participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            participant->getRTPSParticipantAttributes().allocation.data_limits)
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
     assert(participant != nullptr);
 }

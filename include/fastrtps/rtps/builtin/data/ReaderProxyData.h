@@ -23,11 +23,10 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/TopicAttributes.h"
-#include "fastrtps/qos/ParameterList.h"
+#include "../../../qos/ParameterList.h"
 #include "../../../qos/ReaderQos.h"
 
 #include "../../attributes/WriterAttributes.h"
-#include "../../attributes/RTPSParticipantAllocationAttributes.hpp"
 
 #if HAVE_SECURITY
 #include "../../security/accesscontrol/EndpointSecurityAttributes.h"
@@ -54,11 +53,6 @@ public:
     RTPS_DllAPI ReaderProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators);
-
-    RTPS_DllAPI ReaderProxyData(
-            const size_t max_unicast_locators,
-            const size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits);
 
     RTPS_DllAPI virtual ~ReaderProxyData();
 

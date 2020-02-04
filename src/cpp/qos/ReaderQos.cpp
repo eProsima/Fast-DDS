@@ -61,7 +61,7 @@ void ReaderQos::setQos(const ReaderQos& qos, bool first_time)
         m_destinationOrder = qos.m_destinationOrder;
         m_destinationOrder.hasChanged = true;
     }
-    if (m_userData.dataVec() != qos.m_userData.dataVec())
+    if (m_userData.getDataVec() != qos.m_userData.getDataVec())
     {
         m_userData = qos.m_userData;
         m_userData.hasChanged = true;

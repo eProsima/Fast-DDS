@@ -74,12 +74,10 @@ WLP::WLP(BuiltinProtocols* p)
 #endif
     , temp_reader_proxy_data_(
             p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits)
+            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
     , temp_writer_proxy_data_(
             p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits)
+            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
     automatic_instance_handle_ = p->mp_participantImpl->getGuid();
     automatic_instance_handle_.value[12] = automatic_instance_handle_.value[13] = automatic_instance_handle_.value[14] = 0;
