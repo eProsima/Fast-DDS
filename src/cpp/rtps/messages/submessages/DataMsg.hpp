@@ -400,9 +400,10 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     // TODO(Ricardo) This should be on cachechange.
     // Align submessage to rtps alignment (4).
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    uint32_t align = (4 - msg->pos % 4) & 3;
-    for (uint32_t count = 0; count < align; ++count)
+    for (; submessage_size & 3; ++submessage_size)
+    {
         added_no_error &= CDRMessage::addOctet(msg, 0);
+    }
 
     //TODO(Ricardo) Improve.
     octet* o= reinterpret_cast<octet*>(&submessage_size);
