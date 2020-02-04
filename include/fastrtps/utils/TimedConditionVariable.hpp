@@ -24,7 +24,7 @@ NOTE: Windows implementation temporary disabled due to aleatory high CPU consump
 calling _Cnd_timedwait function, making some tests to fail and very poor performance.
 Related task: #6274
 
-#if defined(_WIN32)
+#if HAVE_STRICT_REALTIME && defined(_WIN32)
 #include <thr/xthreads.h>
 
 #define CLOCK_REALTIME 0
@@ -36,9 +36,9 @@ Related task: #6274
 #define CV_T_ _Cnd_t
 
 extern int clock_gettime(int, struct timespec* tv);
-#elif defined(__linux__)
+#elif HAVE_STRICT_REALTIME && defined(__linux__)
 */
-#if defined(__linux__)
+#if HAVE_STRICT_REALTIME && defined(__linux__)
 #include <pthread.h>
 
 #define CV_INIT_(x) pthread_cond_init(x, NULL);
@@ -58,7 +58,7 @@ extern int clock_gettime(int, struct timespec* tv);
 namespace eprosima {
 namespace fastrtps {
 
-#if /*defined(_WIN32) ||*/ defined(__linux__)
+#if HAVE_STRICT_REALTIME && (/*defined(_WIN32) ||*/ defined(__linux__))
 
 class TimedConditionVariable
 {
@@ -159,7 +159,7 @@ class TimedConditionVariable
 using TimedConditionVariable = std::condition_variable_any;
 #endif // /*defined(_WIN32)*/ || defined(__linux__)
 
-}
-}
+}  // namsepace fastrtps
+}  // namespace eprosima
 
 #endif // _UTILS_TIMEDCONDITIONVARIABLE_HPP_
