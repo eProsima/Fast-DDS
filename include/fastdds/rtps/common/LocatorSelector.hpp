@@ -428,6 +428,11 @@ public:
             return !(*this == other);
         }
 
+        pointer operator->() const
+        {
+            return current_.locator;
+        }
+
         reference operator*() const
         {
             return *current_.locator;

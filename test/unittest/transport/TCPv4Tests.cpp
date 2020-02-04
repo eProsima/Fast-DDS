@@ -221,7 +221,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
         }
         EXPECT_TRUE(sent);
     };
-//std::this_thread::sleep_for(std::chrono::seconds(1));
+
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
@@ -431,10 +431,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                     bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                     while (!bFinish && !sent)
                     {
-                        Locators input_begin(locator_list.begin());
-                        Locators input_end(locator_list.end());
+                        Locators input_begin2(locator_list.begin());
+                        Locators input_end2(locator_list.end());
 
-                        sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                        sent = send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_TRUE(sent);
@@ -1182,10 +1182,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
             bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             while (!bFinish && !sent)
             {
-                Locators input_begin(locator_list.begin());
-                Locators input_end(locator_list.end());
+                Locators input_begin2(locator_list.begin());
+                Locators input_end2(locator_list.end());
 
-                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                sent = send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -1275,10 +1275,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                     bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                     while (!bFinished && !sent)
                     {
-                        Locators input_begin(locator_list.begin());
-                        Locators input_end(locator_list.end());
+                        Locators input_begin2(locator_list.begin());
+                        Locators input_end2(locator_list.end());
                         
-                        sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                        sent = send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_FALSE(sent);
