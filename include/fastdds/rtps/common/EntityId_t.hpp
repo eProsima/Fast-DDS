@@ -81,8 +81,7 @@ struct RTPS_DllAPI EntityId_t
     EntityId_t(
             uint32_t id)
     {
-        uint32_t* aux = (uint32_t*)(value);
-        *aux = id;
+        memcpy(value, &id, size);
 #if !__BIG_ENDIAN__
         reverse();
 #endif
@@ -127,8 +126,7 @@ struct RTPS_DllAPI EntityId_t
     EntityId_t& operator =(
             uint32_t id)
     {
-        uint32_t* aux = (uint32_t*)(value);
-        *aux = id;
+        memcpy(value, &id, size);
 #if !__BIG_ENDIAN__
         reverse();
 #endif
@@ -169,16 +167,7 @@ inline bool operator ==(
 #if !__BIG_ENDIAN__
     id1.reverse();
 #endif
-    uint32_t* aux1 = (uint32_t*)(id1.value);
-    bool result = true;
-    if (*aux1 == id2)
-    {
-        result = true;
-    }
-    else
-    {
-        result = false;
-    }
+    const bool result = 0 == memcmp(id1.value, &id2, sizeof(id2));
 #if !__BIG_ENDIAN__
     id1.reverse();
 #endif

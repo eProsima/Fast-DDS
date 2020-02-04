@@ -38,6 +38,8 @@
 #include <net/if.h>
 #endif
 
+#include <cstddef>
+#include <cstring>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -173,14 +175,14 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                 freeifaddrs(ifaddr);
                 exit(EXIT_FAILURE);
             }
-            struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
             info_IP info;
             info.type = IP6;
             info.name = std::string(host);
             info.dev = std::string(ifa->ifa_name);
             if(parseIP6(info))
             {
-                info.scope_id = so->sin6_scope_id;
+                const int offset = offsetof(sockaddr_in6, sin6_scope_id);
+                memcpy(&info.scope_id, ifa->ifa_addr + offset, sizeof(info.scope_id));
 
                 if (return_loopback || info.type != IP6_LOCAL)
                     vec_name->push_back(info);
