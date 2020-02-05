@@ -84,6 +84,28 @@ inline bool CDRMessage::readData(CDRMessage_t* msg, octet* o, uint32_t length) {
     return true;
 }
 
+inline bool CDRMessage::read_array_with_max_size(
+        CDRMessage_t* msg,
+        octet* arr,
+        size_t max_size)
+{
+    if (msg->pos + 4 > msg->length)
+    {
+        return false;
+    }
+    uint32_t datasize;
+    bool valid = CDRMessage::readUInt32(msg, &datasize);
+    if (max_size < datasize)
+    {
+        return false;
+    }
+    valid &= CDRMessage::readData(msg, arr, datasize);
+    int rest = (datasize) % 4;
+    rest = rest == 0 ? 0 : 4 - rest;
+    msg->pos += rest;
+    return valid;
+}
+
 inline bool CDRMessage::readDataReversed(CDRMessage_t* msg, octet* o, uint32_t length) {
     for(uint32_t i=0;i<length;i++)
     {
@@ -632,23 +654,31 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
     return true;
 }
 
-inline bool CDRMessage::addString(CDRMessage_t*msg, const std::string& in_str)
+inline bool CDRMessage::add_string(CDRMessage_t*msg, const char* in_str)
 {
-    auto data = in_str.c_str();
-    uint32_t str_siz = (uint32_t)strlen(data);
-    int rest = (str_siz+1) % 4;
-    if (rest != 0)
-        rest = 4 - rest; //how many you have to add
-
-    bool valid = CDRMessage::addUInt32(msg, str_siz+1);
-    valid &= CDRMessage::addData(msg, (unsigned char*) data, str_siz+1);
-    if (rest != 0) {
-        octet oc = '\0';
-        for (int i = 0; i < rest; i++) {
+    uint32_t str_siz = static_cast<uint32_t>(strlen(in_str) + 1);
+    bool valid = CDRMessage::addUInt32(msg, str_siz);
+    valid &= CDRMessage::addData(msg, (unsigned char*) in_str, str_siz+1);
+    octet oc = '\0';
+    for (; str_siz & 3; ++str_siz)
+    {
             valid &= CDRMessage::addOctet(msg, oc);
-        }
     }
     return valid;
+}
+
+inline bool CDRMessage::add_string(
+        CDRMessage_t* msg,
+        const std::string& in_str)
+{
+    return add_string(msg, in_str.c_str());
+}
+
+inline bool CDRMessage::add_string(
+        CDRMessage_t* msg,
+        const string_255& in_str)
+{
+    return add_string(msg, in_str.c_str());
 }
 
 inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id)
@@ -673,9 +703,9 @@ inline bool CDRMessage::addProperty(CDRMessage_t* msg, const Property& property)
 
     if(property.propagate())
     {
-        if(!CDRMessage::addString(msg, property.name()))
+        if(!CDRMessage::add_string(msg, property.name()))
             return false;
-        if(!CDRMessage::addString(msg, property.value()))
+        if(!CDRMessage::add_string(msg, property.value()))
             return false;
     }
 
@@ -700,7 +730,7 @@ inline bool CDRMessage::addBinaryProperty(CDRMessage_t* msg, const BinaryPropert
 
     if(binary_property.propagate())
     {
-        if(!CDRMessage::addString(msg, binary_property.name()))
+        if(!CDRMessage::add_string(msg, binary_property.name()))
             return false;
         if (!CDRMessage::addOctetVector(msg, &binary_property.value(), add_final_padding))
             return false;
@@ -844,7 +874,7 @@ inline bool CDRMessage::addDataHolder(CDRMessage_t* msg, const DataHolder& data_
 {
     assert(msg);
 
-    if(!CDRMessage::addString(msg, data_holder.class_id()))
+    if(!CDRMessage::add_string(msg, data_holder.class_id()))
         return false;
     if(!CDRMessage::addPropertySeq(msg, data_holder.properties()))
         return false;
@@ -952,7 +982,7 @@ inline bool CDRMessage::addParticipantGenericMessage(CDRMessage_t* msg, const se
         return false;
     if(!CDRMessage::addData(msg, message.source_endpoint_key().entityId.value, EntityId_t::size))
         return false;
-    if(!CDRMessage::addString(msg, message.message_class_id()))
+    if(!CDRMessage::add_string(msg, message.message_class_id()))
         return false;
     if(!CDRMessage::addDataHolderSeq(msg, message.message_data()))
         return false;

@@ -1512,39 +1512,14 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     }
 
     GUID_t participant_guid;
-    auto param_process = [&participant_guid](const Parameter_t* param)
-            {
-                switch (param->Pid)
-                {
-                    case fastdds::dds::PID_KEY_HASH:
-                    {
-                        const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                        assert(p != nullptr);
-                        iHandle2GUID(participant_guid, p->key);
-                        break;
-                    }
-                    case fastdds::dds::PID_PARTICIPANT_GUID:
-                    {
-                        const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                        assert(p != nullptr);
-                        participant_guid = p->guid;
-                        break;
-                    }
-
-                    default: break;
-                }
-
-                return true;
-            };
-
     CDRMessage_t cdr_pdata(0);
     cdr_pdata.wraps = true;
     cdr_pdata.msg_endian = BIGEND;
     cdr_pdata.length = (uint32_t)pdata->size();
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
-    uint32_t qos_size;
-    if (!ParameterList::readParameterListfromCDRMsg(cdr_pdata, param_process, false, qos_size))
+
+    if (!ParameterList::read_guid_from_cdr_msg(cdr_pdata, fastdds::dds::PID_PARTICIPANT_GUID, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
@@ -1958,39 +1933,14 @@ ValidationResult_t PKIDH::process_handshake_request(
     }
 
     GUID_t participant_guid;
-    auto param_process = [&participant_guid](const Parameter_t* param)
-            {
-                switch (param->Pid)
-                {
-                    case fastdds::dds::PID_KEY_HASH:
-                    {
-                        const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                        assert(p != nullptr);
-                        iHandle2GUID(participant_guid, p->key);
-                        break;
-                    }
-                    case fastdds::dds::PID_PARTICIPANT_GUID:
-                    {
-                        const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                        assert(p != nullptr);
-                        participant_guid = p->guid;
-                        break;
-                    }
-
-                    default: break;
-                }
-
-                return true;
-            };
-
     CDRMessage_t cdr_pdata(0);
     cdr_pdata.wraps = true;
     cdr_pdata.msg_endian = BIGEND;
     cdr_pdata.length = (uint32_t)pdata->size();
     cdr_pdata.max_size = (uint32_t)pdata->size();
     cdr_pdata.buffer = (octet*)pdata->data();
-    uint32_t qos_size;
-    if (!ParameterList::readParameterListfromCDRMsg(cdr_pdata, param_process, false, qos_size))
+
+    if (!ParameterList::read_guid_from_cdr_msg(cdr_pdata, fastdds::dds::PID_PARTICIPANT_GUID, participant_guid))
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;

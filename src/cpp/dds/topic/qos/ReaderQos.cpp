@@ -205,6 +205,28 @@ bool ReaderQos::canQosBeUpdated(
     return updatable;
 }
 
+void ReaderQos::clear()
+{
+    m_durability.clear();
+    m_deadline.clear();
+    m_latencyBudget.clear();
+    m_liveliness.clear();
+    m_reliability.clear();
+    m_ownership.clear();
+    m_destinationOrder.clear();
+    m_userData.clear();
+    m_timeBasedFilter.clear();
+    m_presentation.clear();
+    m_partition.clear();
+    m_topicData.clear();
+    m_groupData.clear();
+    m_durabilityService.clear();
+    m_lifespan.clear();
+    m_disablePositiveACKs.clear();
+    representation.clear();
+    type_consistency.clear();
+}
+
 } //namespace dds
 } //namespace fastdds
 } //namespace eprosima

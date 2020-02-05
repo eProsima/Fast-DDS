@@ -28,7 +28,7 @@
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 /**
@@ -55,6 +55,11 @@ namespace CDRMessage{
             CDRMessage_t* msg,
             octet* o,
             uint32_t length);
+
+    inline bool read_array_with_max_size(
+            CDRMessage_t* msg,
+            octet* arr,
+            size_t max_size);
 
     inline bool readDataReversed(
             CDRMessage_t* msg,
@@ -249,9 +254,17 @@ namespace CDRMessage{
             CDRMessage_t*msg,
             ParameterId_t pid);
 
-    inline bool addString(
+    inline bool add_string(
+            CDRMessage_t*msg,
+            const char* in_str);
+
+    inline bool add_string(
             CDRMessage_t*msg,
             const std::string& in_str);
+
+    inline bool add_string(
+            CDRMessage_t*msg,
+            const string_255& in_str);
 
     inline bool addOctetVector(
             CDRMessage_t*msg,

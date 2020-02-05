@@ -48,13 +48,31 @@ ReaderProxyData::ReaderProxyData (
     m_qos.type_consistency.m_kind = DISALLOW_TYPE_COERCION;
 }
 
+ReaderProxyData::ReaderProxyData (
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators,
+        const VariableLengthDataLimits& data_limits)
+    : m_expectsInlineQos(false)
+#if HAVE_SECURITY
+    , security_attributes_(0UL)
+    , plugin_security_attributes_(0UL)
+#endif
+    , remote_locators_(max_unicast_locators, max_multicast_locators)
+    , m_userDefinedId(0)
+    , m_isAlive(true)
+    , m_topicKind(NO_KEY)
+{
+    m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
+    m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
+}
+
 ReaderProxyData::~ReaderProxyData()
 {
     delete m_type;
     delete m_type_id;
     delete m_type_information;
 
-    logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << this->m_guid; );
+    logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << m_guid; );
 }
 
 ReaderProxyData::ReaderProxyData(
@@ -369,7 +387,7 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 
 #if HAVE_SECURITY
-    if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
+    if ((security_attributes_ != 0UL) || (plugin_security_attributes_ != 0UL))
     {
         ParameterEndpointSecurityInfo_t p;
         p.security_attributes = security_attributes_;
@@ -411,279 +429,341 @@ bool ReaderProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         const NetworkFactory& network)
 {
-    auto param_process = [this, &network](const Parameter_t* param)
+    auto param_process = [this, &network](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+    {
+        switch (pid)
+        {
+            case fastdds::dds::PID_DURABILITY:
             {
-                switch (param->Pid)
+                if (!m_qos.m_durability.readFromCDRMessage(msg, plength))
                 {
-                    case fastdds::dds::PID_DURABILITY:
-                    {
-                        const DurabilityQosPolicy* p = dynamic_cast<const DurabilityQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_durability = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_DURABILITY_SERVICE:
-                    {
-                        const DurabilityServiceQosPolicy* p = dynamic_cast<const DurabilityServiceQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_durabilityService = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_DEADLINE:
-                    {
-                        const DeadlineQosPolicy* p = dynamic_cast<const DeadlineQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_deadline = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_LATENCY_BUDGET:
-                    {
-                        const LatencyBudgetQosPolicy* p = dynamic_cast<const LatencyBudgetQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_latencyBudget = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_LIVELINESS:
-                    {
-                        const LivelinessQosPolicy* p = dynamic_cast<const LivelinessQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_liveliness = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_RELIABILITY:
-                    {
-                        const ReliabilityQosPolicy* p = dynamic_cast<const ReliabilityQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_reliability = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_LIFESPAN:
-                    {
-                        const LifespanQosPolicy* p = dynamic_cast<const LifespanQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_lifespan = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_USER_DATA:
-                    {
-                        const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_userData = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_TIME_BASED_FILTER:
-                    {
-                        const TimeBasedFilterQosPolicy* p = dynamic_cast<const TimeBasedFilterQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_timeBasedFilter = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_OWNERSHIP:
-                    {
-                        const OwnershipQosPolicy* p = dynamic_cast<const OwnershipQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_ownership = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_DESTINATION_ORDER:
-                    {
-                        const DestinationOrderQosPolicy* p = dynamic_cast<const DestinationOrderQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_destinationOrder = *p;
-                        break;
-                    }
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_DURABILITY_SERVICE:
+            {
+                if (!m_qos.m_durabilityService.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_DEADLINE:
+            {
+                if (!m_qos.m_deadline.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_LATENCY_BUDGET:
+            {
+                if (!m_qos.m_latencyBudget.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_LIVELINESS:
+            {
+                if (!m_qos.m_liveliness.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_RELIABILITY:
+            {
+                if (!m_qos.m_reliability.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_LIFESPAN:
+            {
+                if (!m_qos.m_lifespan.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_USER_DATA:
+            {
+                if (!m_qos.m_userData.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_TIME_BASED_FILTER:
+            {
+                if (!m_qos.m_timeBasedFilter.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_OWNERSHIP:
+            {
+                if (!m_qos.m_ownership.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_DESTINATION_ORDER:
+            {
+                if (!m_qos.m_destinationOrder.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_PRESENTATION:
+            {
+                if (!m_qos.m_presentation.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_PARTITION:
+            {
+                if (!m_qos.m_partition.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_TOPIC_DATA:
+            {
+                if (!m_qos.m_topicData.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_GROUP_DATA:
+            {
+                if (!m_qos.m_groupData.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_TOPIC_NAME:
+            {
+                ParameterString_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
 
-                    case fastdds::dds::PID_PRESENTATION:
+                m_topicName = p.getName();
+                break;
+            }
+            case fastdds::dds::PID_TYPE_NAME:
+            {
+                ParameterString_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                m_typeName = p.getName();
+                break;
+            }
+            case fastdds::dds::PID_PARTICIPANT_GUID:
+            {
+                ParameterGuid_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                for (uint8_t i = 0; i < 16; ++i)
+                {
+                    if (i < 12)
                     {
-                        const PresentationQosPolicy* p = dynamic_cast<const PresentationQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_presentation = *p;
-                        break;
+                        m_RTPSParticipantKey.value[i] = p.guid.guidPrefix.value[i];
                     }
-                    case fastdds::dds::PID_PARTITION:
+                    else
                     {
-                        const PartitionQosPolicy* p = dynamic_cast<const PartitionQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_partition = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_TOPIC_DATA:
-                    {
-                        const TopicDataQosPolicy* p = dynamic_cast<const TopicDataQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_topicData = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_GROUP_DATA:
-                    {
-                        const GroupDataQosPolicy* p = dynamic_cast<const GroupDataQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_groupData = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_TOPIC_NAME:
-                    {
-                        const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
-                        assert(p != nullptr);
-                        m_topicName = p->getName();
-                        break;
-                    }
-                    case fastdds::dds::PID_TYPE_NAME:
-                    {
-                        const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
-                        assert(p != nullptr);
-                        m_typeName = p->getName();
-                        break;
-                    }
-                    case fastdds::dds::PID_PARTICIPANT_GUID:
-                    {
-                        const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                        assert(p != nullptr);
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
-                            }
-                        }
-                        break;
-                    }
-                    case fastdds::dds::PID_ENDPOINT_GUID:
-                    {
-                        const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                        assert(p != nullptr);
-                        m_guid = p->guid;
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_key.value[i] = p->guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_key.value[i] = p->guid.entityId.value[i - 12];
-                            }
-                        }
-                        break;
-                    }
-                    case fastdds::dds::PID_UNICAST_LOCATOR:
-                    {
-                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                        assert(p != nullptr);
-                        Locator_t temp_locator;
-                        if (network.transform_remote_locator(p->locator, temp_locator))
-                        {
-                            remote_locators_.add_unicast_locator(temp_locator);
-                        }
-                        break;
-                    }
-                    case fastdds::dds::PID_MULTICAST_LOCATOR:
-                    {
-                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                        assert(p != nullptr);
-                        Locator_t temp_locator;
-                        if (network.transform_remote_locator(p->locator, temp_locator))
-                        {
-                            remote_locators_.add_multicast_locator(temp_locator);
-                        }
-                        break;
-                    }
-                    case fastdds::dds::PID_EXPECTS_INLINE_QOS:
-                    {
-                        const ParameterBool_t* p = dynamic_cast<const ParameterBool_t*>(param);
-                        assert(p != nullptr);
-                        m_expectsInlineQos = p->value;
-                        break;
-                    }
-                    case fastdds::dds::PID_KEY_HASH:
-                    {
-                        const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                        assert(p != nullptr);
-                        m_key = p->key;
-                        iHandle2GUID(m_guid, m_key);
-                        break;
-                    }
-                    case fastdds::dds::PID_DATA_REPRESENTATION:
-                    {
-                        const DataRepresentationQosPolicy* p = dynamic_cast<const DataRepresentationQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.representation = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT:
-                    {
-                        const TypeConsistencyEnforcementQosPolicy* p =
-                                dynamic_cast<const TypeConsistencyEnforcementQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.type_consistency = *p;
-                        break;
-                    }
-                    case fastdds::dds::PID_TYPE_IDV1:
-                    {
-                        const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
-                        assert(p != nullptr);
-                        type_id(*p);
-                        break;
-                    }
-                    case fastdds::dds::PID_TYPE_OBJECTV1:
-                    {
-                        const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
-                        assert(p != nullptr);
-                        type(*p);
-                        break;
-                    }
-                    case fastdds::dds::PID_TYPE_INFORMATION:
-                    {
-                        const xtypes::TypeInformation* p = dynamic_cast<const xtypes::TypeInformation*>(param);
-                        assert(p != nullptr);
-                        type_information(*p);
-                        break;
-                    }
-                    case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
-                    {
-                        const DisablePositiveACKsQosPolicy* p =
-                                dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);
-                        assert(p != nullptr);
-                        m_qos.m_disablePositiveACKs = *p;
-                        break;
-                    }
-#if HAVE_SECURITY
-                    case fastdds::dds::PID_ENDPOINT_SECURITY_INFO:
-                    {
-                        const ParameterEndpointSecurityInfo_t* p =
-                                dynamic_cast<const ParameterEndpointSecurityInfo_t*>(param);
-                        assert(p != nullptr);
-                        security_attributes_ = p->security_attributes;
-                        plugin_security_attributes_ = p->plugin_security_attributes;
-                    }
-#endif
-                    default:
-                    {
-                        //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(param)->Pid << " NOT CONSIDERED");
-                        break;
+                        m_RTPSParticipantKey.value[i] = p.guid.entityId.value[i - 12];
                     }
                 }
-                return true;
-            };
+                break;
+            }
+            case fastdds::dds::PID_ENDPOINT_GUID:
+            {
+                ParameterGuid_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
 
-    uint32_t qos_size;
-    clear();
-    if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
-    {
-        if (m_guid.entityId.value[3] == 0x04)
-        {
-            m_topicKind = NO_KEY;
-        }
-        else if (m_guid.entityId.value[3] == 0x07)
-        {
-            m_topicKind = WITH_KEY;
+                m_guid = p.guid;
+                for (uint8_t i = 0; i < 16; ++i)
+                {
+                    if (i < 12)
+                    {
+                        m_key.value[i] = p.guid.guidPrefix.value[i];
+                    }
+                    else
+                    {
+                        m_key.value[i] = p.guid.entityId.value[i - 12];
+                    }
+                }
+                break;
+            }
+            case fastdds::dds::PID_UNICAST_LOCATOR:
+            {
+                ParameterLocator_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p.locator, temp_locator))
+                {
+                    remote_locators_.add_unicast_locator(temp_locator);
+                }
+                break;
+            }
+            case fastdds::dds::PID_MULTICAST_LOCATOR:
+            {
+                ParameterLocator_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p.locator, temp_locator))
+                {
+                    remote_locators_.add_multicast_locator(temp_locator);
+                }
+                break;
+            }
+            case fastdds::dds::PID_EXPECTS_INLINE_QOS:
+            {
+                ParameterBool_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                m_expectsInlineQos = p.value;
+                break;
+            }
+            case fastdds::dds::PID_KEY_HASH:
+            {
+                ParameterKey_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                m_key = p.key;
+                iHandle2GUID(m_guid, m_key);
+                break;
+            }
+            case fastdds::dds::PID_DATA_REPRESENTATION:
+            {
+                if (!m_qos.representation.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT:
+            {
+                if (!m_qos.type_consistency.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_TYPE_IDV1:
+            {
+                if (!type_id().readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_TYPE_OBJECTV1:
+            {
+                if (!type().readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+            case fastdds::dds::PID_TYPE_INFORMATION:
+            {
+                if (!type_information().readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+
+            case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
+            {
+                if (!m_qos.m_disablePositiveACKs.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+                break;
+            }
+#if HAVE_SECURITY
+            case fastdds::dds::PID_ENDPOINT_SECURITY_INFO:
+            {
+                ParameterEndpointSecurityInfo_t p(pid, plength);
+                if (!p.readFromCDRMessage(msg, plength))
+                {
+                    return false;
+                }
+
+                security_attributes_ = p.security_attributes;
+                plugin_security_attributes_ = p.plugin_security_attributes;
+                break;
+            }
+#endif
+            default:
+            {
+                break;
+            }
         }
 
         return true;
+    };
+
+    uint32_t qos_size;
+    clear();
+    try
+    {
+        if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
+        {
+            if (m_guid.entityId.value[3] == 0x04)
+            {
+                m_topicKind = NO_KEY;
+            }
+            else if (m_guid.entityId.value[3] == 0x07)
+            {
+                m_topicKind = WITH_KEY;
+            }
+
+            return true;
+        }
+    }
+    catch (std::bad_alloc& ba)
+    {
+        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
     }
 
     return false;
@@ -706,7 +786,7 @@ void ReaderProxyData::clear()
     m_userDefinedId = 0;
     m_isAlive = true;
     m_topicKind = NO_KEY;
-    m_qos = ReaderQos();
+    m_qos.clear();
 
     if (m_type_id)
     {

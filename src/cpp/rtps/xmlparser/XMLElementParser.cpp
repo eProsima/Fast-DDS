@@ -38,12 +38,16 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
                 <xs:element name="total_readers" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="total_writers" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="send_buffers" type="sendBuffersAllocationConfigType" minOccurs="0"/>
+                <xs:element name="max_propertiess" type="uint32Type" minOccurs="0"/>
+                <xs:element name="max_user_data" type="uint32Type" minOccurs="0"/>
+                <xs:element name="max_partitions" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
+    uint32_t tmp;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
@@ -86,6 +90,33 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
             {
                 return XMLP_ret::XML_ERROR;
             }
+        }
+        else if (strcmp(name, MAX_PROPERTIES) == 0)
+        {
+            // max number of properties in incomming message - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.data_limits.max_properties = tmp;
+        }
+        else if (strcmp(name, MAX_USER_DATA) == 0)
+        {
+            // max number of user data in incomming message - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.data_limits.max_user_data = tmp;
+        }
+        else if (strcmp(name, MAX_PARTITIONS) == 0)
+        {
+            // max number of user data in incomming message - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.data_limits.max_partitions = tmp;
         }
         else
         {

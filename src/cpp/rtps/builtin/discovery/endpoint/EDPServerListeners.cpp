@@ -41,7 +41,8 @@ namespace fastrtps{
 namespace rtps {
 
 EDPServerPUBListener::EDPServerPUBListener(EDPServer* sedp)
-    : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+    : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
+            sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
     , sedp_(sedp)
 {
 }
@@ -105,7 +106,8 @@ void EDPServerPUBListener::onWriterChangeReceivedByAll(
 }
 
 EDPServerSUBListener::EDPServerSUBListener(EDPServer* sedp)
-    : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+    : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
+            sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
     , sedp_(sedp)
 {
 }

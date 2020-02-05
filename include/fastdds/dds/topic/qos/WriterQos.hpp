@@ -138,6 +138,8 @@ public:
 
     RTPS_DllAPI bool canQosBeUpdated(
             const WriterQos& qos) const;
+
+    void clear();
 };
 
 RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;

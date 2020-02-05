@@ -139,6 +139,8 @@ public:
      */
     RTPS_DllAPI bool canQosBeUpdated(
             const ReaderQos& qos) const;
+
+    void clear();
 };
 
 RTPS_DllAPI extern const ReaderQos DATAREADER_QOS_DEFAULT;
