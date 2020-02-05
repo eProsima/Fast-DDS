@@ -809,7 +809,7 @@ TEST_F(SharedMemTransportTests, dead_listener_port_recover)
     thread_wait_deadlock.join();
 }
 
-TEST_F(SharedMemTransportTests, simple_latency)
+/*TEST_F(SharedMemTransportTests, simple_latency)
 {
 	int num_samples = 1000;
 	char data[16] = { "" };
@@ -878,9 +878,9 @@ TEST_F(SharedMemTransportTests, simple_latency)
 
 	thread_subscriber.join();
 	thread_publisher.join();
-}
+}*/
 
-TEST_F(SharedMemTransportTests, simple_latency2)
+/*TEST_F(SharedMemTransportTests, simple_latency2)
 {
 	int num_samples = 1000;
 	octet data[16] = { "" };
@@ -1002,9 +1002,9 @@ TEST_F(SharedMemTransportTests, simple_latency2)
 
 	thread_subscriber.join();
 	thread_publisher.join();
-}
+}*/
 
-TEST_F(SharedMemTransportTests, simple_throughput)
+/*TEST_F(SharedMemTransportTests, simple_throughput)
 {
     const size_t sample_size = 1024;
     int num_samples_per_batch = 100000;
@@ -1071,7 +1071,7 @@ TEST_F(SharedMemTransportTests, simple_throughput)
         , num_samples_per_batch
         , real_samples_received
         , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
-}
+}*/
 
 // This test is linux only
 /*TEST_F(SharedMemTransportTests, simple_throughput_inter)
@@ -1157,8 +1157,8 @@ TEST_F(SharedMemTransportTests, simple_throughput)
     }
 }*/
 
-INSTANTIATE_TEST_CASE_P(
-    concurrency,
+/*INSTANTIATE_TEST_CASE_P(
+    SharedMemTransportTests,
     SharedMemRingBufferMultiThread,
     testing::Values(
         std::make_tuple(
@@ -1170,7 +1170,7 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple(
             (std::max)((unsigned int)1, std::thread::hardware_concurrency())*2, 100,std::thread::hardware_concurrency())
     )
-);
+);*/
 
 int main(int argc, char **argv)
 {
