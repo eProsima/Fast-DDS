@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/common/Time_t.h>
 #include "ParameterTypes.h"
 #include <fastrtps/types/TypeObject.h>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -570,16 +571,17 @@ public:
 /**
  * Class UserDataQosPolicy, to transmit user data during the discovery phase.
  */
-class UserDataQosPolicy : public Parameter_t, public QosPolicy
+class UserDataQosPolicy : public Parameter_t, public QosPolicy, public ResourceLimitedVector<rtps::octet>
 {
     friend class ParameterList;
+    using ResourceLimitedOctetVector = ResourceLimitedVector<rtps::octet>;
 
 public:
 
     RTPS_DllAPI UserDataQosPolicy()
         : Parameter_t(PID_USER_DATA, 0)
         , QosPolicy(false)
-        , dataVec_{}
+        , ResourceLimitedOctetVector()
     {
     }
 
@@ -587,58 +589,112 @@ public:
             uint16_t in_length)
         : Parameter_t(PID_USER_DATA, in_length)
         , QosPolicy(false)
-        , dataVec_{}
+        , ResourceLimitedOctetVector()
     {
     }
 
+    /**
+     * Construct from another UserDataQosPolicy.
+     *
+     * The resulting UserDataQosPolicy will have the same size limits
+     * as the input attribute
+     *
+     * @param data data to copy in the newly created object
+     */
     RTPS_DllAPI UserDataQosPolicy(
             const UserDataQosPolicy& data)
         : Parameter_t(PID_USER_DATA, data.length)
         , QosPolicy(false)
-        , max_size_(data.max_size_)
+        , ResourceLimitedOctetVector(data)
     {
-        dataVec_.reserve(max_size_);
-        dataVec_.assign(data.dataVec().begin(), data.dataVec().end());
+    }
+
+    /**
+     * Construct from underlying collection type.
+     *
+     * Useful to easy integration on old APIs where a traditional container was used.
+     * The resulting UserDataQosPolicy will always be unlimited in size
+     *
+     * @param data data to copy in the newly created object
+     */
+    RTPS_DllAPI UserDataQosPolicy(
+            const collection_type& data)
+        : Parameter_t(PID_USER_DATA, 0)
+        , QosPolicy(false)
+        , ResourceLimitedOctetVector()
+    {
+        assign(data.begin(), data.end());
     }
 
     virtual RTPS_DllAPI ~UserDataQosPolicy()
     {
     }
 
-    bool operator ==(
-            const UserDataQosPolicy& b) const
-    {
-        return (dataVec_ == b.dataVec()) &&
-               Parameter_t::operator ==(b) &&
-               QosPolicy::operator ==(b);
-    }
-
+    /**
+     * Copies data from underlying collection type.
+     *
+     * Useful to easy integration on old APIs where a traditional container was used.
+     * The resulting UserDataQosPolicy will keep the current size limit.
+     * If the input data is larger than the current limit size, the elements exceeding
+     * that maximum will be silently discarded.
+     *
+     * @param b object to be copied
+     * @return reference to the current object.
+     */
     UserDataQosPolicy& operator =(
-            const UserDataQosPolicy& b)
+            const collection_type& b)
     {
-        max_size_ = b.max_size_;
-        dataVec_.reserve(max_size_);
-        dataVec_.assign(b.dataVec().begin(), b.dataVec().end());
+        //If the object is size limited, already has max_size() allocated
+        //assign() will always stop copying when reaching max_size()
+        assign(b.begin(), b.end());
         return *this;
     }
 
     /**
-     * @return the maximum size of the user data
+     * Copies another UserDataQosPolicy.
+     *
+     * The resulting UserDataQosPolicy will have the same size limit
+     * as the input parameter, so all data in the input will be copied.
+     *
+     * @param b object to be copied
+     * @return reference to the current object.
      */
-    size_t max_size () const
+    UserDataQosPolicy& operator =(
+            const UserDataQosPolicy& b)
     {
-        return max_size_;
+        QosPolicy::operator=(b);
+        Parameter_t::operator=(b);
+        configuration_ = b.configuration_;
+        collection_.reserve(b.collection_.capacity());
+        collection_.assign(b.collection_.begin(), b.collection_.end());
+        return *this;
+    }
+
+    bool operator ==(
+            const UserDataQosPolicy& b) const
+    {
+        return configuration_ == b.configuration_ &&
+               collection_ == b.collection_ &&
+               Parameter_t::operator ==(b) &&
+               QosPolicy::operator ==(b);
     }
 
     /**
      * Set the maximum size of the user data and reserves memory for that much.
-     * @param size new maximum size of the user data
+     * @param size new maximum size of the user data. Zero for unlimited size
      */
-    void max_size (
+    void set_max_size (
             size_t size)
     {
-        max_size_ = size;
-        dataVec_.reserve(max_size_);
+        if (size > 0)
+        {
+            configuration_ = ResourceLimitedContainerConfig::fixed_size_configuration(size);
+            collection_.reserve(configuration_.maximum);
+        }
+        else
+        {
+            configuration_ = ResourceLimitedContainerConfig::dynamic_allocation_configuration();
+        }
     }
 
     /**
@@ -646,15 +702,7 @@ public:
      * */
     inline const std::vector<rtps::octet>& dataVec() const
     {
-        return dataVec_;
-    }
-
-    /**
-     * clears the data.
-     * */
-    inline void clear()
-    {
-        dataVec_.clear();
+        return collection_;
     }
 
     /**
@@ -681,7 +729,7 @@ public:
      * */
     RTPS_DllAPI inline std::vector<rtps::octet> getDataVec() const
     {
-        return dataVec_;
+        return collection_;
     }
 
     /**
@@ -691,16 +739,8 @@ public:
     RTPS_DllAPI inline void setDataVec(
             const std::vector<rtps::octet>& vec)
     {
-        if (max_size_ == 0 || vec.size() < max_size_)
-        {
-            dataVec_.assign(vec.begin(), vec.end());
-        }
+        assign(vec.begin(), vec.end());
     }
-
-private:
-
-    std::vector<rtps::octet> dataVec_;
-    size_t max_size_ = 0;
 };
 
 /**
@@ -1043,7 +1083,7 @@ public:
         return Npartitions_ == 0;
     }
 
-    void max_size (
+    void set_max_size (
             uint32_t size)
     {
         partitions_.reserve(size);

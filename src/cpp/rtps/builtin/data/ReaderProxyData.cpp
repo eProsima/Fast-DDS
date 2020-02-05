@@ -61,8 +61,8 @@ ReaderProxyData::ReaderProxyData (
     , m_type_id(nullptr)
     , m_type(nullptr)
 {
-    m_qos.m_userData.max_size(static_cast<uint32_t>(data_limits.max_user_data));
-    m_qos.m_partition.max_size(static_cast<uint32_t>(data_limits.max_partitions));
+    m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
+    m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
 }
 
 ReaderProxyData::~ReaderProxyData()
@@ -761,8 +761,8 @@ void ReaderProxyData::clear()
     uint32_t max_user_data = static_cast<uint32_t>(m_qos.m_userData.max_size());
     uint32_t max_partitions = static_cast<uint32_t>(m_qos.m_partition.max_size());
     m_qos = ReaderQos();
-    m_qos.m_userData.max_size(max_user_data);
-    m_qos.m_partition.max_size(max_partitions);
+    m_qos.m_userData.set_max_size(max_user_data);
+    m_qos.m_partition.set_max_size(max_partitions);
     m_topicDiscoveryKind = NO_CHECK;
     if (m_type_id)
     {

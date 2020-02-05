@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/common/Time_t.h>
 #include <fastrtps/qos/ParameterTypes.h>
 #include <fastrtps/types/TypeObject.h>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -509,35 +510,65 @@ public:
 /**
  * Class UserDataQosPolicy, to transmit user data during the discovery phase.
  */
-class UserDataQosPolicy : public Parameter_t, public QosPolicy
+class UserDataQosPolicy : public Parameter_t, public QosPolicy, public ResourceLimitedVector<rtps::octet>
 {
     friend class ParameterList;
+    using ResourceLimitedOctetVector = ResourceLimitedVector<rtps::octet>;
+    using collection_type = std::vector<rtps::octet>;
 
 public:
 
     RTPS_DllAPI UserDataQosPolicy()
         : Parameter_t(PID_USER_DATA, 0)
         , QosPolicy(false)
+        , ResourceLimitedOctetVector()
     {
     }
 
     RTPS_DllAPI UserDataQosPolicy(uint16_t in_length)
         : Parameter_t(PID_USER_DATA, in_length)
         , QosPolicy(false)
-        , dataVec_{}
+        , ResourceLimitedOctetVector()
     {
     }
 
     RTPS_DllAPI UserDataQosPolicy(const UserDataQosPolicy& data)
         : Parameter_t(PID_USER_DATA, data.length)
         , QosPolicy(false)
-        , dataVec_(data.dataVec())
-        , max_size_(data.max_size())
+        , ResourceLimitedOctetVector(data)
     {
+    }
+
+    RTPS_DllAPI UserDataQosPolicy(
+            const collection_type& data)
+        : Parameter_t(PID_USER_DATA, 0)
+        , QosPolicy(false)
+        , ResourceLimitedOctetVector()
+    {
+        assign(data.begin(), data.end());
     }
 
     virtual RTPS_DllAPI ~UserDataQosPolicy()
     {
+    }
+
+    UserDataQosPolicy& operator =(
+            const collection_type& b)
+    {
+        assign(b.begin(), b.end());
+        return *this;
+    }
+
+    /**
+     * Const cast to underlying collection.
+     *
+     * Useful to easy integration on old APIs where a traditional container was used.
+     *
+     * @return const reference to the underlying collection.
+     */
+    operator const collection_type& () const noexcept
+    {
+        return collection_;
     }
 
     /**
@@ -569,7 +600,7 @@ public:
      * */
     RTPS_DllAPI inline std::vector<rtps::octet> getDataVec() const
     {
-        return dataVec_;
+        return collection_;
     }
 
     /**
@@ -579,24 +610,16 @@ public:
     RTPS_DllAPI inline void setDataVec(
             const std::vector<rtps::octet>& vec)
     {
-        dataVec_ = vec;
-    }
-
-    /**
-     * @return the maximum size of the user data
-     */
-    size_t max_size () const
-    {
-        return max_size_;
+        collection_ = vec;
     }
 
     /**
      * Set the maximum size of the user data and reserves memory for that much.
      * @param size new maximum size of the user data
      */
-    void max_size (size_t size)
+    void set_max_size (size_t size)
     {
-        max_size_ = size;
+        configuration_.maximum = size;
     }
 
     /**
@@ -604,22 +627,9 @@ public:
      * */
     inline const std::vector<rtps::octet>& dataVec() const
     {
-        return dataVec_;
+        return collection_;
     }
 
-    /**
-     * clears the data.
-     * */
-    inline void clear()
-    {
-        dataVec_.clear();
-    }
-
-
-public:
-
-    std::vector<rtps::octet> dataVec_;
-    size_t max_size_ = 0;
 };
 
 /**
@@ -764,7 +774,7 @@ public:
     {
     }
 
-    void max_size (uint32_t size)
+    void set_max_size (uint32_t size)
     {
         max_size_ = size;
     }

@@ -326,7 +326,7 @@ public:
      */
     operator const collection_type& () const noexcept { return collection_; }
 
-private:
+protected:
     configuration_type configuration_;
     collection_type collection_;
 

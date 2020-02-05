@@ -55,8 +55,8 @@ WriterProxyData::WriterProxyData(
         const VariableLengthDataLimits& data_limits)
     : WriterProxyData(max_unicast_locators, max_multicast_locators)
 {
-    m_qos.m_userData.max_size(static_cast<uint32_t>(data_limits.max_user_data));
-    m_qos.m_partition.max_size(static_cast<uint32_t>(data_limits.max_partitions));
+    m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
+    m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
 }
 
 WriterProxyData::WriterProxyData(
@@ -751,8 +751,8 @@ void WriterProxyData::clear()
     uint32_t max_user_data = static_cast<uint32_t>(m_qos.m_userData.max_size());
     uint32_t max_partition = static_cast<uint32_t>(m_qos.m_partition.max_size());
     m_qos = WriterQos();
-    m_qos.m_userData.max_size(max_user_data);
-    m_qos.m_partition.max_size(max_partition);
+    m_qos.m_userData.set_max_size(max_user_data);
+    m_qos.m_partition.set_max_size(max_partition);
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
