@@ -43,8 +43,8 @@ class WriterProxyData
                 size_t max_multicast_locators) 
             : remote_locators_(max_unicast_locators, max_multicast_locators)
         {
-            m_qos.m_userData.max_size(0);
-            m_qos.m_partition.max_size(0);
+            m_qos.m_userData.set_max_size(0);
+            m_qos.m_partition.set_max_size(0);
         }
 
         WriterProxyData(
@@ -53,8 +53,8 @@ class WriterProxyData
                 const VariableLengthDataLimits& data_limits)
             : remote_locators_(max_unicast_locators, max_multicast_locators)
         {
-            m_qos.m_userData.max_size((uint32_t)data_limits.max_user_data);
-            m_qos.m_partition.max_size((uint32_t)data_limits.max_partitions);
+            m_qos.m_userData.set_max_size((uint32_t)data_limits.max_user_data);
+            m_qos.m_partition.set_max_size((uint32_t)data_limits.max_partitions);
         }
 
         const GUID_t& guid() const { return m_guid; }

@@ -58,7 +58,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
-        m_userData.max_size((uint32_t)allocation.data_limits.max_user_data);
+        m_userData.set_max_size((uint32_t)allocation.data_limits.max_user_data);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)

@@ -354,13 +354,13 @@ bool PartitionQosPolicy::readFromCDRMessage(
 bool UserDataQosPolicy::addToCDRMessage(
         CDRMessage_t* msg)
 {
-    bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    uint32_t size = (uint32_t)dataVec_.size();
-    uint32_t align = ((size + 3) & ~3) - size;
-    this->length = (uint16_t)(4 + size + align);
-    valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addUInt32(msg, size);
-    valid &= CDRMessage::addData(msg, this->dataVec_.data(), size);
+    bool valid = CDRMessage::addUInt16(msg, Pid);
+    uint32_t siz = (uint32_t)size();
+    uint32_t align = ((siz + 3) & ~3) - siz;
+    length = (uint16_t)(4 + siz + align);
+    valid &= CDRMessage::addUInt16(msg, length);
+    valid &= CDRMessage::addUInt32(msg, siz);
+    valid &= CDRMessage::addData(msg, collection_.data(), siz);
     for (uint32_t count = 0; count < align; ++count)
     {
         valid &= CDRMessage::addOctet(msg, 0);
@@ -373,14 +373,16 @@ bool UserDataQosPolicy::readFromCDRMessage(
         CDRMessage_t* msg,
         uint16_t size)
 {
-    if (max_size_ != 0 && size > max_size_)
+    if (size > max_size())
     {
         return false;
     }
     length = size;
 
+    //Either the data is size limited and already has max_size() allocated
+    // or it is not limited and readOctedVector will resize if needed
     uint32_t pos_ref = msg->pos;
-    bool valid = CDRMessage::readOctetVector(msg, &dataVec_);
+    bool valid = CDRMessage::readOctetVector(msg, &collection_);
     uint32_t length_diff = msg->pos - pos_ref;
     valid &= (size == length_diff);
     return valid;
