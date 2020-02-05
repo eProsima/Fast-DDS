@@ -36,7 +36,7 @@ public:
                 // No cleanup is required
             };
 
-        send_lambda_ = [this, &transport] (
+        send_lambda_ = [&transport] (
                 const fastrtps::rtps::octet* data,
                 uint32_t dataSize,
                 fastrtps::rtps::LocatorsIterator* destination_locators_begin,
