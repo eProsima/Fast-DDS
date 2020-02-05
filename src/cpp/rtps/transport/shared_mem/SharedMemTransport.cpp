@@ -312,8 +312,8 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
 	auto open_mode = locator.address[0] == 'M' ? SharedMemGlobal::Port::OpenMode::ReadShared :
 		SharedMemGlobal::Port::OpenMode::ReadExclusive;
 
-	return new SharedMemChannelResource(this, 
-				shared_mem_manager_->open_port(
+	return new SharedMemChannelResource(
+					shared_mem_manager_->open_port(
 					locator.port,
 					configuration_.port_queue_capacity,
 					configuration_.healthy_check_timeout_ms,

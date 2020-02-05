@@ -62,7 +62,8 @@ public:
     class Buffer
     {
     public:
-
+        virtual ~Buffer() = default;
+        
         virtual void* data() = 0;
         virtual uint32_t size() = 0;
     };
@@ -82,7 +83,7 @@ public:
             increase_ref();
         }
 
-        ~SharedMemBuffer()
+        ~SharedMemBuffer() override
         {
             decrease_ref();
         }
@@ -143,9 +144,19 @@ public:
 
             SharedMemSegment::remove(segment_name.c_str());
 
-            segment_ = std::unique_ptr<SharedMemSegment>(
+            try
+            {
+                segment_ = std::unique_ptr<SharedMemSegment>(
                 new SharedMemSegment(boost::interprocess::create_only, segment_name.c_str(), size));
+            }
+            catch (const std::exception& e)
+            {
+                logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << segment_name
+                    << ": " << e.what());
 
+                throw;
+            }
+            
             // Init the segment node
             segment_node_ = segment_->get().construct<SegmentNode>("segment_node")();
             segment_node_->ref_count.exchange(1);

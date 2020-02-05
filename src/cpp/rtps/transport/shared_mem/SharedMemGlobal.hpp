@@ -27,8 +27,6 @@ namespace eprosima{
 namespace fastdds{
 namespace rtps{
 
-using Log = fastdds::dds::Log;
-
 /**
  * This class defines the global resources for shared-memory communication.
  * Mainly the shared-memory ports and its operations.
@@ -510,15 +508,25 @@ public:
             uint32_t extra = 512;
             uint32_t segment_size = sizeof(PortNode) + sizeof(PortCell) * max_buffer_descriptors;
 
-            auto port_segment = std::unique_ptr<SharedMemSegment>(
-                            new SharedMemSegment(boost::interprocess::create_only, port_segment_name.c_str(), segment_size + extra));
+            try
+            {
+                auto port_segment = std::unique_ptr<SharedMemSegment>(
+                                new SharedMemSegment(boost::interprocess::create_only, port_segment_name.c_str(), segment_size + extra));
 
-            // Memset the whole segment to zero in order to forze physical map of the buffer
-            auto payload = port_segment->get().allocate(segment_size);
-            memset(payload, 0, segment_size);
-            port_segment->get().deallocate(payload);
+                // Memset the whole segment to zero in order to forze physical map of the buffer
+                auto payload = port_segment->get().allocate(segment_size);
+                memset(payload, 0, segment_size);
+                port_segment->get().deallocate(payload);
 
-            port = init_port(port_id, port_segment, max_buffer_descriptors, open_mode);
+                port = init_port(port_id, port_segment, max_buffer_descriptors, open_mode);
+            }
+            catch (std::exception& e)
+            {
+                logError(RTPS_TRANSPORT_SHM, "Failed to create port segment " << port_segment_name
+                    << ": " << e.what());
+
+                throw;
+            }
         }
 
         if (port == nullptr)

@@ -33,7 +33,6 @@ public:
     using Log = fastdds::dds::Log;
 
 	SharedMemChannelResource(
-		SharedMemTransport* transport,
 		std::shared_ptr<SharedMemManager::Listener> listener,
         const fastrtps::rtps::Locator_t& locator,
         TransportReceiverInterface* receiver)
@@ -41,7 +40,6 @@ public:
     , message_receiver_(receiver)
     , listener_(listener)
     , only_multicast_purpose_(false)
-    , transport_(transport)
     , locator_(locator)
     {
         thread(std::thread(&SharedMemChannelResource::perform_listen_operation, this, locator));
@@ -164,7 +162,6 @@ private:
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
 	std::shared_ptr<SharedMemManager::Listener> listener_;
     bool only_multicast_purpose_;
-    SharedMemTransport* transport_;
     fastrtps::rtps::Locator_t locator_;
 
     SharedMemChannelResource(const SharedMemChannelResource&) = delete;

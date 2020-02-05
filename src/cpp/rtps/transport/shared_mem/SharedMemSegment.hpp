@@ -28,6 +28,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+using Log = fastdds::dds::Log;
+
 /**
  * Provides shared memory functionallity abstrating from
  * lower level layers
@@ -106,16 +108,17 @@ public:
      */
     static uint32_t compute_per_allocation_extra_size(size_t allocation_alignment)
     {
+        Id uuid;
+        uuid.generate();
+            
         try
         {
             uint32_t extra_size;
-
-            Id uuid;
-            uuid.generate();
-                
+                    
             {
                 boost::interprocess::managed_shared_memory 
-                        test_segment(boost::interprocess::create_only, uuid.to_string().c_str(), (std::max)((size_t)1024,allocation_alignment*4));
+                    test_segment(boost::interprocess::create_only, uuid.to_string().c_str(), 
+                        (std::max)((size_t)1024,allocation_alignment*4));
 
                 auto m1 = test_segment.get_free_memory();
                 test_segment.allocate_aligned(1, allocation_alignment);
@@ -128,9 +131,12 @@ public:
             return extra_size;
 
         }
-        catch(const std::exception&)
+        catch(const std::exception& e)
         {
-            return 48; // This has been meaured in Ubuntu 64-bit app
+            logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
+                        << ": " << e.what());
+
+            throw;
         }
     }
 

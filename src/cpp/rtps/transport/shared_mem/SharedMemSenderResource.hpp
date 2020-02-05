@@ -31,7 +31,7 @@ public:
         : fastrtps::rtps::SenderResource(transport.kind())
     {
         // Implementation functions are bound to the right transport parameters
-        clean_up = [this, &transport]()
+        clean_up = []()
             {
                 // No cleanup is required
             };
