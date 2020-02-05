@@ -63,6 +63,7 @@ class SharedMemTransportTests: public ::testing::Test
 
         ~SharedMemTransportTests()
         {
+            eprosima::fastdds::dds::Log::Flush();
             eprosima::fastdds::dds::Log::KillThread();
         }
 
