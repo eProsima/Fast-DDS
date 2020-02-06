@@ -673,10 +673,16 @@ public:
     bool operator ==(
             const UserDataQosPolicy& b) const
     {
-        return configuration_ == b.configuration_ &&
-               collection_ == b.collection_ &&
+        return collection_ == b.collection_ &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
+    }
+
+
+    bool operator ==(
+            const collection_type& b) const
+    {
+        return collection_ == b;
     }
 
     /**
