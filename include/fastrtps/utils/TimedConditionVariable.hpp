@@ -129,6 +129,18 @@ class TimedConditionVariable
             return ret_value;
         }
 
+        template<typename Mutex>
+        bool wait_until(
+                std::unique_lock<Mutex>& lock,
+                const std::chrono::steady_clock::time_point& max_blocking_time)
+        {
+            auto secs = std::chrono::time_point_cast<std::chrono::seconds>(max_blocking_time);
+            auto ns = std::chrono::time_point_cast<std::chrono::nanoseconds>(max_blocking_time) -
+                std::chrono::time_point_cast<std::chrono::nanoseconds>(secs);
+            struct timespec max_wait = { secs.time_since_epoch().count(), ns.count() };
+            return (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait) == 0);
+        }
+
         void notify_one()
         {
             CV_SIGNAL_(cv_);
