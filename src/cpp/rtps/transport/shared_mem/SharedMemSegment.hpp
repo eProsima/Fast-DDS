@@ -113,20 +113,23 @@ public:
             
         try
         {
-            uint32_t extra_size;
+            static uint32_t extra_size = 0;
                     
+            if (extra_size == 0)
             {
-                boost::interprocess::managed_shared_memory 
-                    test_segment(boost::interprocess::create_only, uuid.to_string().c_str(), 
-                        (std::max)((size_t)1024,allocation_alignment*4));
+                {
+                    boost::interprocess::managed_shared_memory
+                        test_segment(boost::interprocess::create_only, uuid.to_string().c_str(),
+                        (std::max)((size_t)1024, allocation_alignment * 4));
 
-                auto m1 = test_segment.get_free_memory();
-                test_segment.allocate_aligned(1, allocation_alignment);
-                auto m2 = test_segment.get_free_memory();
-                extra_size = static_cast<uint32_t>(m1-m2);
+                    auto m1 = test_segment.get_free_memory();
+                    test_segment.allocate_aligned(1, allocation_alignment);
+                    auto m2 = test_segment.get_free_memory();
+                    extra_size = static_cast<uint32_t>(m1 - m2);
+                }
+
+                boost::interprocess::shared_memory_object::remove(uuid.to_string().c_str());
             }
-
-            boost::interprocess::shared_memory_object::remove(uuid.to_string().c_str());
 
             return extra_size;
 

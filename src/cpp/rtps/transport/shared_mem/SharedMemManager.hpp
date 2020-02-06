@@ -61,8 +61,11 @@ public:
 
     class Buffer
     {
+    protected:
+
+        ~Buffer() = default;
+
     public:
-        virtual ~Buffer() = default;
         
         virtual void* data() = 0;
         virtual uint32_t size() = 0;
@@ -83,7 +86,7 @@ public:
             increase_ref();
         }
 
-        ~SharedMemBuffer() override
+        ~SharedMemBuffer()
         {
             decrease_ref();
         }
