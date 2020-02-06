@@ -357,7 +357,7 @@ bool UserDataQosPolicy::addToCDRMessage(
     bool valid = CDRMessage::addUInt16(msg, Pid);
     uint32_t siz = (uint32_t)size();
     uint32_t align = ((siz + 3) & ~3) - siz;
-    length = (uint16_t)(4 + siz + align);
+    length = (uint16_t)(4 + siz);
     valid &= CDRMessage::addUInt16(msg, length);
     valid &= CDRMessage::addUInt32(msg, siz);
     valid &= CDRMessage::addData(msg, collection_.data(), siz);
@@ -381,11 +381,7 @@ bool UserDataQosPolicy::readFromCDRMessage(
 
     //Either the data is size limited and already has max_size() allocated
     // or it is not limited and readOctedVector will resize if needed
-    uint32_t pos_ref = msg->pos;
-    bool valid = CDRMessage::readOctetVector(msg, &collection_);
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
-    return valid;
+    return CDRMessage::readOctetVector(msg, &collection_);
 }
 
 bool TopicDataQosPolicy::addToCDRMessage(

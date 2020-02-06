@@ -104,6 +104,8 @@ public:
         collection_.assign(other.collection_.begin(), other.collection_.end());
     }
 
+    virtual ~ResourceLimitedVector () = default;
+
     ResourceLimitedVector& operator = (const ResourceLimitedVector& other)
     {
         clear();
