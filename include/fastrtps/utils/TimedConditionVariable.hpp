@@ -24,7 +24,7 @@ NOTE: Windows implementation temporary disabled due to aleatory high CPU consump
 calling _Cnd_timedwait function, making some tests to fail and very poor performance.
 Related task: #6274
 
-#if defined(_WIN32)
+#if HAVE_STRICT_REALTIME && defined(_WIN32)
 #include <thr/xthreads.h>
 
 #define CLOCK_REALTIME 0
@@ -36,9 +36,9 @@ Related task: #6274
 #define CV_T_ _Cnd_t
 
 extern int clock_gettime(int, struct timespec* tv);
-#elif defined(__linux__)
+#elif HAVE_STRICT_REALTIME && defined(__linux__)
 */
-#if defined(__linux__)
+#if HAVE_STRICT_REALTIME && defined(__linux__)
 #include <pthread.h>
 
 #define CV_INIT_(x) pthread_cond_init(x, NULL);
@@ -58,7 +58,7 @@ extern int clock_gettime(int, struct timespec* tv);
 namespace eprosima {
 namespace fastrtps {
 
-#if /*defined(_WIN32) ||*/ defined(__linux__)
+#if HAVE_STRICT_REALTIME && (/*defined(_WIN32) ||*/ defined(__linux__))
 
 class TimedConditionVariable
 {
@@ -116,15 +116,11 @@ class TimedConditionVariable
                 const std::chrono::steady_clock::time_point& max_blocking_time,
                 std::function<bool()> predicate)
         {
+            auto secs = std::chrono::time_point_cast<std::chrono::seconds>(max_blocking_time);
+            auto ns = std::chrono::time_point_cast<std::chrono::nanoseconds>(max_blocking_time) -
+                std::chrono::time_point_cast<std::chrono::nanoseconds>(secs);
+            struct timespec max_wait = { secs.time_since_epoch().count(), ns.count() };
             bool ret_value = true;
-            std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
-            struct timespec max_wait = { 0, 0 };
-            clock_gettime(CLOCK_REALTIME, &max_wait);
-            nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
-            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-            nsecs -= secs;
-            max_wait.tv_sec += secs.count();
-            max_wait.tv_nsec = (long)nsecs.count();
             while (ret_value && false == (ret_value = predicate()))
             {
                 ret_value = (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait) == 0);
@@ -138,14 +134,10 @@ class TimedConditionVariable
                 std::unique_lock<Mutex>& lock,
                 const std::chrono::steady_clock::time_point& max_blocking_time)
         {
-            std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
-            struct timespec max_wait = { 0, 0 };
-            clock_gettime(CLOCK_REALTIME, &max_wait);
-            nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
-            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-            nsecs -= secs;
-            max_wait.tv_sec += secs.count();
-            max_wait.tv_nsec = (long)nsecs.count();
+            auto secs = std::chrono::time_point_cast<std::chrono::seconds>(max_blocking_time);
+            auto ns = std::chrono::time_point_cast<std::chrono::nanoseconds>(max_blocking_time) -
+                std::chrono::time_point_cast<std::chrono::nanoseconds>(secs);
+            struct timespec max_wait = { secs.time_since_epoch().count(), ns.count() };
             return (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait) == 0);
         }
 
@@ -167,7 +159,7 @@ class TimedConditionVariable
 using TimedConditionVariable = std::condition_variable_any;
 #endif // /*defined(_WIN32)*/ || defined(__linux__)
 
-}
-}
+}  // namsepace fastrtps
+}  // namespace eprosima
 
 #endif // _UTILS_TIMEDCONDITIONVARIABLE_HPP_
