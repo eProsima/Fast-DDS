@@ -67,6 +67,8 @@ public:
         return m_sendAlways;
     }
 
+    virtual inline void clear() = 0;
+
 protected:
 
     bool m_sendAlways;
@@ -140,6 +142,12 @@ public:
 
     }
 
+    inline void clear() override
+    {
+        DurabilityQosPolicy reset = DurabilityQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -188,6 +196,14 @@ public:
     }
 
     Duration_t period;
+
+
+    inline void clear() override
+    {
+        DeadlineQosPolicy reset = DeadlineQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -236,6 +252,14 @@ public:
     }
 
     Duration_t duration;
+
+
+    inline void clear() override
+    {
+        LatencyBudgetQosPolicy reset = LatencyBudgetQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -303,6 +327,14 @@ public:
     LivelinessQosPolicyKind kind;
     Duration_t lease_duration;
     Duration_t announcement_period;
+
+
+    inline void clear() override
+    {
+        LivelinessQosPolicy reset = LivelinessQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -364,6 +396,14 @@ public:
 
     ReliabilityQosPolicyKind kind;
     Duration_t max_blocking_time;
+
+
+    inline void clear() override
+    {
+        ReliabilityQosPolicy reset = ReliabilityQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -422,6 +462,14 @@ public:
     }
 
     OwnershipQosPolicyKind kind;
+
+
+    inline void clear() override
+    {
+        OwnershipQosPolicy reset = OwnershipQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -479,6 +527,12 @@ public:
 
     virtual RTPS_DllAPI ~DestinationOrderQosPolicy()
     {
+    }
+
+    inline void clear() override
+    {
+        DestinationOrderQosPolicy reset = DestinationOrderQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -571,6 +625,11 @@ public:
         return collection_;
     }
 
+    inline void clear() override
+    {
+        ResourceLimitedOctetVector::clear();
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -655,6 +714,13 @@ public:
     }
 
     Duration_t minimum_separation;
+
+    inline void clear() override
+    {
+        TimeBasedFilterQosPolicy reset = TimeBasedFilterQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -719,6 +785,12 @@ public:
 
     virtual RTPS_DllAPI ~PresentationQosPolicy()
     {
+    }
+
+    inline void clear() override
+    {
+        PresentationQosPolicy reset = PresentationQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -820,7 +892,7 @@ public:
     /**
      * Clears list of partition names
      */
-    RTPS_DllAPI inline void clear()
+    RTPS_DllAPI inline void clear() override
     {
         names.clear();
     }
@@ -912,7 +984,7 @@ public:
     /**
      * Clears all topic data.
      */
-    RTPS_DllAPI inline void clear()
+    RTPS_DllAPI inline void clear() override
     {
         value.clear();
     }
@@ -1003,7 +1075,7 @@ public:
     /**
      * Clears all group data.
      */
-    RTPS_DllAPI inline void clear()
+    RTPS_DllAPI inline void clear() override
     {
         value.clear();
     }
@@ -1066,6 +1138,12 @@ public:
     {
     }
 
+    inline void clear() override
+    {
+        HistoryQosPolicy reset = HistoryQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -1120,6 +1198,12 @@ public:
 
     virtual RTPS_DllAPI ~ResourceLimitsQosPolicy()
     {
+    }
+
+    inline void clear() override
+    {
+        ResourceLimitsQosPolicy reset = ResourceLimitsQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -1186,6 +1270,12 @@ public:
     {
     }
 
+    inline void clear() override
+    {
+        DurabilityServiceQosPolicy reset = DurabilityServiceQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -1234,6 +1324,14 @@ public:
     }
 
     Duration_t duration;
+
+
+    inline void clear() override
+    {
+        LifespanQosPolicy reset = LifespanQosPolicy();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -1279,6 +1377,12 @@ public:
 
     virtual RTPS_DllAPI ~OwnershipStrengthQosPolicy()
     {
+    }
+
+    inline void clear() override
+    {
+        OwnershipStrengthQosPolicy reset = OwnershipStrengthQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -1329,6 +1433,12 @@ public:
 
     virtual RTPS_DllAPI ~TransportPriorityQosPolicy()
     {
+    }
+
+    inline void clear() override
+    {
+        TransportPriorityQosPolicy reset = TransportPriorityQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -1389,6 +1499,11 @@ public:
         return other.kind == kind;
     }
 
+    inline void clear() override
+    {
+        PublishModeQosPolicy reset = PublishModeQosPolicy();
+        std::swap(*this, reset);
+    }
 };
 
 /**
@@ -1417,6 +1532,12 @@ public:
 
     virtual RTPS_DllAPI ~DataRepresentationQosPolicy()
     {
+    }
+
+    inline void clear() override
+    {
+        DataRepresentationQosPolicy reset = DataRepresentationQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -1468,10 +1589,22 @@ public:
 
     RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
     {
+        m_kind = ALLOW_TYPE_COERCION;
+        m_ignore_sequence_bounds = true;
+        m_ignore_string_bounds = true;
+        m_ignore_member_names = false;
+        m_prevent_type_widening = false;
+        m_force_type_validation = false;
     }
 
     virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy()
     {
+    }
+
+    inline void clear() override
+    {
+        TypeConsistencyEnforcementQosPolicy reset = TypeConsistencyEnforcementQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -1521,6 +1654,12 @@ public:
             const DisablePositiveACKsQosPolicy& b) const
     {
         return enabled == b.enabled;
+    }
+
+    inline void clear() override
+    {
+        DisablePositiveACKsQosPolicy reset = DisablePositiveACKsQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -1607,6 +1746,12 @@ public:
     {
     }
 
+    inline void clear() override
+    {
+        TypeIdV1 reset = TypeIdV1();
+        std::swap(*this, reset);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -1684,6 +1829,12 @@ public:
 
     virtual RTPS_DllAPI ~TypeObjectV1()
     {
+    }
+
+    inline void clear() override
+    {
+        TypeObjectV1 reset = TypeObjectV1();
+        std::swap(*this, reset);
     }
 
     /**

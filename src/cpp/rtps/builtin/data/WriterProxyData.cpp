@@ -747,12 +747,7 @@ void WriterProxyData::clear()
     m_typeName = "";
     m_topicName = "";
     m_userDefinedId = 0;
-    //clear user data but keep max size on qos
-    uint32_t max_user_data = static_cast<uint32_t>(m_qos.m_userData.max_size());
-    uint32_t max_partition = static_cast<uint32_t>(m_qos.m_partition.max_size());
-    m_qos = WriterQos();
-    m_qos.m_userData.set_max_size(max_user_data);
-    m_qos.m_partition.set_max_size(max_partition);
+    m_qos.clear();
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
