@@ -27,7 +27,8 @@ namespace fastdds {
 namespace dds {
 
 
-bool ParameterList::writeEncapsulationToCDRMsg(fastrtps::rtps::CDRMessage_t* msg)
+bool ParameterList::writeEncapsulationToCDRMsg(
+        fastrtps::rtps::CDRMessage_t* msg)
 {
     bool valid = fastrtps::rtps::CDRMessage::addOctet(msg, 0);
     if (msg->msg_endian == fastrtps::rtps::Endianness_t::BIGEND)
@@ -42,68 +43,71 @@ bool ParameterList::writeEncapsulationToCDRMsg(fastrtps::rtps::CDRMessage_t* msg
     return valid;
 }
 
-bool ParameterList::updateCacheChangeFromInlineQos(fastrtps::rtps::CacheChange_t& change, fastrtps::rtps::CDRMessage_t* msg, uint32_t& qos_size)
+bool ParameterList::updateCacheChangeFromInlineQos(
+        fastrtps::rtps::CacheChange_t& change,
+        fastrtps::rtps::CDRMessage_t* msg,
+        uint32_t& qos_size)
 {
     auto parameter_process = [&](fastrtps::rtps::CDRMessage_t* msg, const ParameterId_t pid, uint16_t plength)
-    {
-        switch (pid)
-        {
-            case PID_KEY_HASH:
             {
-                ParameterKey_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
+                switch (pid)
                 {
-                    return false;
-                }
-
-                change.instanceHandle = p.key;
-                break;
-            }
-
-            case PID_RELATED_SAMPLE_IDENTITY:
-            {
-                if (plength >= 24)
-                {
-                    ParameterSampleIdentity_t p(pid, plength);
-                    if (!p.readFromCDRMessage(msg, plength))
+                    case PID_KEY_HASH:
                     {
-                        return false;
+                        ParameterKey_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        change.instanceHandle = p.key;
+                        break;
                     }
 
-                    change.write_params.sample_identity(p.sample_id);
-                }
-                break;
-            }
+                    case PID_RELATED_SAMPLE_IDENTITY:
+                    {
+                        if (plength >= 24)
+                        {
+                            ParameterSampleIdentity_t p(pid, plength);
+                            if (!p.readFromCDRMessage(msg, plength))
+                            {
+                                return false;
+                            }
 
-            case PID_STATUS_INFO:
-            {
-                ParameterStatusInfo_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
+                            change.write_params.sample_identity(p.sample_id);
+                        }
+                        break;
+                    }
+
+                    case PID_STATUS_INFO:
+                    {
+                        ParameterStatusInfo_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        if (p.status == 1)
+                        {
+                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
+                        }
+                        else if (p.status == 2)
+                        {
+                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
+                        }
+                        else if (p.status == 3)
+                        {
+                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
+                        }
+                        break;
+                    }
+
+                    default:
+                        break;
                 }
 
-                if (p.status == 1)
-                {
-                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
-                }
-                else if (p.status == 2)
-                {
-                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
-                }
-                else if (p.status == 3)
-                {
-                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
-                }
-                break;
-            }
-
-            default:
-                break;
-        }
-
-        return true;
-    };
+                return true;
+            };
     try
     {
         return readParameterListfromCDRMsg(*msg, parameter_process, false, qos_size);
@@ -196,13 +200,15 @@ bool ParameterList::read_guid_from_cdr_msg(
         }
         if (pid == PID_KEY_HASH)
         {
-            valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value, fastrtps::rtps::GuidPrefix_t::size);
+            valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,
+                            fastrtps::rtps::GuidPrefix_t::size);
             valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.entityId.value, fastrtps::rtps::EntityId_t::size);
             return valid;
         }
         if (pid == search_pid)
         {
-            valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value, fastrtps::rtps::GuidPrefix_t::size);
+            valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,
+                            fastrtps::rtps::GuidPrefix_t::size);
             valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.entityId.value, fastrtps::rtps::EntityId_t::size);
             return valid;
         }
@@ -211,7 +217,9 @@ bool ParameterList::read_guid_from_cdr_msg(
     return false;
 }
 
-bool ParameterList::readInstanceHandleFromCDRMsg(fastrtps::rtps::CacheChange_t* change, const uint16_t search_pid)
+bool ParameterList::readInstanceHandleFromCDRMsg(
+        fastrtps::rtps::CacheChange_t* change,
+        const uint16_t search_pid)
 {
     assert(change != nullptr);
 

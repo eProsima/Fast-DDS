@@ -259,11 +259,13 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(strcmp(name, IGNORE_PARTICIPANT_FLAGS) == 0)
+        else if (strcmp(name, IGNORE_PARTICIPANT_FLAGS) == 0)
         {
             // ignoreParticipantFlags - ParticipantFlags
-            if(XMLP_ret::XML_OK != getXMLEnum(p_aux0, &settings.ignoreParticipantFlags, ident))
+            if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &settings.ignoreParticipantFlags, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, _EDP) == 0)
         {
@@ -3094,7 +3096,10 @@ XMLP_ret XMLParser::getXMLEnum(
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringFlags_t * e, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        ParticipantFilteringFlags_t* e,
+        uint8_t /*ident*/)
 {
     /*
         <xs:simpleType name="ParticipantFlags">
@@ -3102,16 +3107,16 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
                 <xs:pattern value="((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS)(\||\s)*)*" />
             </xs:restriction>
         </xs:simpleType>
-    */
+     */
 
     const char* text = nullptr;
 
-    if(nullptr == elem || nullptr == e)
+    if (nullptr == elem || nullptr == e)
     {
         logError(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if(nullptr == (text = elem->GetText()))
+    else if (nullptr == (text = elem->GetText()))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3120,7 +3125,7 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
     // First we check if it matches the schema pattern
     std::regex schema("((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)*(\\||\\s)*)*");
 
-    if(!std::regex_match(text, schema))
+    if (!std::regex_match(text, schema))
     {
         logError(XMLPARSER, "provided flags doesn't match expected ParticipantFilteringFlags!");
         return XMLP_ret::XML_ERROR;
@@ -3128,22 +3133,22 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
 
     // Lets parse the flags, we assume the flags argument has been already flushed
     std::regex flags("FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS");
-    std::cregex_iterator it(text,text+strlen(text),flags);
+    std::cregex_iterator it(text, text + strlen(text), flags);
     uint32_t newflags = *e;
 
-    while(it != std::cregex_iterator())
+    while (it != std::cregex_iterator())
     {
         std::string flag(it++->str());
 
-        if(flag == FILTER_DIFFERENT_HOST )
+        if (flag == FILTER_DIFFERENT_HOST )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST;
         }
-        else if(flag == FILTER_DIFFERENT_PROCESS )
+        else if (flag == FILTER_DIFFERENT_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS;
         }
-        else if(flag == FILTER_SAME_PROCESS )
+        else if (flag == FILTER_SAME_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_SAME_PROCESS;
         }

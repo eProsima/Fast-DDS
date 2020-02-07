@@ -894,7 +894,7 @@ bool EDP::pairingReader(
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(auto & pair : *(*pit)->m_writers)
+        for (auto& pair : *(*pit)->m_writers)
         {
             WriterProxyData* wdatait = pair.second;
             bool valid = validMatching(&rdata, wdatait);
@@ -972,7 +972,7 @@ bool EDP::pairingWriter(
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(auto & pair : *(*pit)->m_readers)
+        for (auto& pair : *(*pit)->m_readers)
         {
             ReaderProxyData* rdatait = pair.second;
             const GUID_t& reader_guid = rdatait->guid();
@@ -1005,7 +1005,7 @@ bool EDP::pairingWriter(
 
                         const GUID_t& writer_guid = W->getGuid();
                         const PublicationMatchedStatus& pub_info =
-                            update_publication_matched_status(reader_guid, writer_guid, 1);
+                                update_publication_matched_status(reader_guid, writer_guid, 1);
                         W->getListener()->onWriterMatched(W, pub_info);
                     }
                 }

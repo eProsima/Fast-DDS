@@ -474,6 +474,7 @@ bool DurabilityServiceQosPolicy::addToCDRMessage(
     valid &= CDRMessage::addInt32(msg, max_samples_per_instance);
     return valid;
 }
+
 bool DurabilityServiceQosPolicy::readFromCDRMessage(
         CDRMessage_t* msg,
         uint16_t size)

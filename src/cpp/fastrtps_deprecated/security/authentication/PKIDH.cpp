@@ -159,7 +159,7 @@ static X509_STORE* load_identity_ca(
             {
                 if (BIO_read_filename(in, identity_ca.substr(7).c_str()) > 0)
                 {
-                    STACK_OF(X509_INFO)* inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
+                    STACK_OF(X509_INFO) * inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
 
                     if (inf != nullptr)
                     {
@@ -597,7 +597,6 @@ static bool check_sign_sha256(
 
     return returnedValue;
 }
-
 
 static X509_CRL* load_crl(
         const std::string& identity_crl,

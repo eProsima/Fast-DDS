@@ -64,7 +64,6 @@ ParticipantProxyData::ParticipantProxyData(
     m_userData.set_max_size(static_cast<uint32_t>(allocation.data_limits.max_user_data));
 }
 
-
 ParticipantProxyData::ParticipantProxyData(
         const ParticipantProxyData& pdata)
     : m_protocolVersion(pdata.m_protocolVersion)
@@ -98,15 +97,14 @@ ParticipantProxyData::ParticipantProxyData(
 {
 }
 
-
 ParticipantProxyData::~ParticipantProxyData()
 {
     logInfo(RTPS_PARTICIPANT, m_guid);
 
-    // delete all reader proxies 
-    if(m_readers)
+    // delete all reader proxies
+    if (m_readers)
     {
-        for(ProxyHashTable<ReaderProxyData>::value_type val : *m_readers)
+        for (ProxyHashTable<ReaderProxyData>::value_type val : *m_readers)
         {
             delete val.second;
         }
@@ -115,9 +113,9 @@ ParticipantProxyData::~ParticipantProxyData()
     }
 
     // delete all writers proxies
-    if(m_writers)
+    if (m_writers)
     {
-        for(ProxyHashTable<WriterProxyData>::value_type val : *m_writers)
+        for (ProxyHashTable<WriterProxyData>::value_type val : *m_writers)
         {
             delete val.second;
         }
@@ -125,7 +123,7 @@ ParticipantProxyData::~ParticipantProxyData()
         delete m_writers;
     }
 
-    if(lease_duration_event != nullptr)
+    if (lease_duration_event != nullptr)
     {
         delete lease_duration_event;
     }
@@ -291,241 +289,241 @@ bool ParticipantProxyData::readFromCDRMessage(
         const NetworkFactory& network)
 {
     auto param_process = [this, &network](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
-    {
-        switch (pid)
-        {
-            case fastdds::dds::PID_KEY_HASH:
             {
-                ParameterKey_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
+                switch (pid)
                 {
-                    return false;
-                }
+                    case fastdds::dds::PID_KEY_HASH:
+                    {
+                        ParameterKey_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                GUID_t guid;
-                iHandle2GUID(guid, p.key);
-                m_guid = guid;
-                m_key = p.key;
-                break;
-            }
-            case fastdds::dds::PID_PROTOCOL_VERSION:
-            {
-                ParameterProtocolVersion_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        GUID_t guid;
+                        iHandle2GUID(guid, p.key);
+                        m_guid = guid;
+                        m_key = p.key;
+                        break;
+                    }
+                    case fastdds::dds::PID_PROTOCOL_VERSION:
+                    {
+                        ParameterProtocolVersion_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                if (p.protocolVersion.m_major < c_ProtocolVersion.m_major)
-                {
-                    return false;
-                }
-                m_protocolVersion = p.protocolVersion;
-                break;
-            }
-            case fastdds::dds::PID_VENDORID:
-            {
-                ParameterVendorId_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        if (p.protocolVersion.m_major < c_ProtocolVersion.m_major)
+                        {
+                            return false;
+                        }
+                        m_protocolVersion = p.protocolVersion;
+                        break;
+                    }
+                    case fastdds::dds::PID_VENDORID:
+                    {
+                        ParameterVendorId_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                m_VendorId[0] = p.vendorId[0];
-                m_VendorId[1] = p.vendorId[1];
-                break;
-            }
-            case fastdds::dds::PID_EXPECTS_INLINE_QOS:
-            {
-                ParameterBool_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        m_VendorId[0] = p.vendorId[0];
+                        m_VendorId[1] = p.vendorId[1];
+                        break;
+                    }
+                    case fastdds::dds::PID_EXPECTS_INLINE_QOS:
+                    {
+                        ParameterBool_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                m_expectsInlineQos = p.value;
-                break;
-            }
-            case fastdds::dds::PID_PARTICIPANT_GUID:
-            {
-                ParameterGuid_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        m_expectsInlineQos = p.value;
+                        break;
+                    }
+                    case fastdds::dds::PID_PARTICIPANT_GUID:
+                    {
+                        ParameterGuid_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                m_guid = p.guid;
-                m_key = p.guid;
-                break;
-            }
-            case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
-            {
-                ParameterLocator_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        m_guid = p.guid;
+                        m_key = p.guid;
+                        break;
+                    }
+                    case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
+                    {
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p.locator, temp_locator))
-                {
-                    metatraffic_locators.add_multicast_locator(temp_locator);
-                }
-                break;
-            }
-            case fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR:
-            {
-                ParameterLocator_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            metatraffic_locators.add_multicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR:
+                    {
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p.locator, temp_locator))
-                {
-                    metatraffic_locators.add_unicast_locator(temp_locator);
-                }
-                break;
-            }
-            case fastdds::dds::PID_DEFAULT_UNICAST_LOCATOR:
-            {
-                ParameterLocator_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            metatraffic_locators.add_unicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_DEFAULT_UNICAST_LOCATOR:
+                    {
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p.locator, temp_locator))
-                {
-                    default_locators.add_unicast_locator(temp_locator);
-                }
-                break;
-            }
-            case fastdds::dds::PID_DEFAULT_MULTICAST_LOCATOR:
-            {
-                ParameterLocator_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            default_locators.add_unicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_DEFAULT_MULTICAST_LOCATOR:
+                    {
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p.locator, temp_locator))
-                {
-                    default_locators.add_multicast_locator(temp_locator);
-                }
-                break;
-            }
-            case fastdds::dds::PID_PARTICIPANT_LEASE_DURATION:
-            {
-                ParameterTime_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        {
+                            default_locators.add_multicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_PARTICIPANT_LEASE_DURATION:
+                    {
+                        ParameterTime_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                m_leaseDuration = p.time.to_duration_t();
-                lease_duration_ =
-                        std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(
-                                    m_leaseDuration));
-                break;
-            }
-            case fastdds::dds::PID_BUILTIN_ENDPOINT_SET:
-            {
-                ParameterBuiltinEndpointSet_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        m_leaseDuration = p.time.to_duration_t();
+                        lease_duration_ =
+                                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(
+                                            m_leaseDuration));
+                        break;
+                    }
+                    case fastdds::dds::PID_BUILTIN_ENDPOINT_SET:
+                    {
+                        ParameterBuiltinEndpointSet_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                m_availableBuiltinEndpoints = p.endpointSet;
-                break;
-            }
-            case fastdds::dds::PID_ENTITY_NAME:
-            {
-                ParameterString_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        m_availableBuiltinEndpoints = p.endpointSet;
+                        break;
+                    }
+                    case fastdds::dds::PID_ENTITY_NAME:
+                    {
+                        ParameterString_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                m_participantName = p.getName();
-                break;
-            }
-            case fastdds::dds::PID_PROPERTY_LIST:
-            {
-                if (!m_properties.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
-                break;
-            }
-            case fastdds::dds::PID_USER_DATA:
-            {
-                if (!m_userData.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
-                break;
-            }
-            case fastdds::dds::PID_IDENTITY_TOKEN:
-            {
+                        m_participantName = p.getName();
+                        break;
+                    }
+                    case fastdds::dds::PID_PROPERTY_LIST:
+                    {
+                        if (!m_properties.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_USER_DATA:
+                    {
+                        if (!m_userData.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_IDENTITY_TOKEN:
+                    {
 #if HAVE_SECURITY
-                ParameterToken_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        ParameterToken_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                identity_token_ = std::move(p.token);
+                        identity_token_ = std::move(p.token);
 #else
-                logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+                        logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
 #endif
-                break;
-            }
-            case fastdds::dds::PID_PERMISSIONS_TOKEN:
-            {
+                        break;
+                    }
+                    case fastdds::dds::PID_PERMISSIONS_TOKEN:
+                    {
 #if HAVE_SECURITY
-                ParameterToken_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
-                }
+                        ParameterToken_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
 
-                permissions_token_ = std::move(p.token);
+                        permissions_token_ = std::move(p.token);
 #else
-                logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+                        logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
 #endif
-                break;
-            }
+                        break;
+                    }
 
-            case fastdds::dds::PID_PARTICIPANT_SECURITY_INFO:
-            {
+                    case fastdds::dds::PID_PARTICIPANT_SECURITY_INFO:
+                    {
 #if HAVE_SECURITY
-                ParameterParticipantSecurityInfo_t p(pid, plength);
-                if (!p.readFromCDRMessage(msg, plength))
-                {
-                    return false;
+                        ParameterParticipantSecurityInfo_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        security_attributes_ = p.security_attributes;
+                        plugin_security_attributes_ = p.plugin_security_attributes;
+#else
+                        logWarning(RTPS_PARTICIPANT,
+                                "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+#endif
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
                 }
 
-                security_attributes_ = p.security_attributes;
-                plugin_security_attributes_ = p.plugin_security_attributes;
-#else
-                logWarning(RTPS_PARTICIPANT,
-                        "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
-#endif
-                break;
-            }
-            default:
-            {
-                break;
-            }
-        }
-
-        return true;
-    };
+                return true;
+            };
 
     uint32_t qos_size;
     clear();
@@ -679,12 +677,12 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
     GUID_t persistent(c_Guid_Unknown);
 
     ParameterPropertyList_t::const_iterator it = std::find_if(
-            m_properties.begin(),
-            m_properties.end(),
-            [](const fastdds::dds::ParameterProperty_t p)
-            {
-                return "PID_PERSISTENCE_GUID" == p.first();
-            });
+        m_properties.begin(),
+        m_properties.end(),
+        [](const fastdds::dds::ParameterProperty_t p)
+                {
+                    return "PID_PERSISTENCE_GUID" == p.first();
+                });
 
     if (it != m_properties.end())
     {

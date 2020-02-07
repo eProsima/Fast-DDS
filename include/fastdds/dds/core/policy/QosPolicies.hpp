@@ -615,7 +615,8 @@ public:
 /**
  * Class UserDataQosPolicy, to transmit user data during the discovery phase.
  */
-class UserDataQosPolicy : public Parameter_t, public QosPolicy, public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
+class UserDataQosPolicy : public Parameter_t, public QosPolicy,
+    public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
 {
     friend class ParameterList;
     using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>;
@@ -706,8 +707,8 @@ public:
     UserDataQosPolicy& operator =(
             const UserDataQosPolicy& b)
     {
-        QosPolicy::operator=(b);
-        Parameter_t::operator=(b);
+        QosPolicy::operator =(b);
+        Parameter_t::operator =(b);
         configuration_ = b.configuration_;
         collection_.reserve(b.collection_.capacity());
         collection_.assign(b.collection_.begin(), b.collection_.end());
@@ -795,6 +796,7 @@ public:
     {
         assign(vec.begin(), vec.end());
     }
+
 };
 
 /**
@@ -1260,7 +1262,8 @@ private:
 
     uint32_t max_size_;
     fastrtps::rtps::SerializedPayload_t partitions_;
-    uint32_t Npartitions_;};
+    uint32_t Npartitions_;
+};
 
 
 /**
@@ -2062,7 +2065,6 @@ public:
     bool readFromCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg,
             uint16_t size) override;
-
 
 public:
 

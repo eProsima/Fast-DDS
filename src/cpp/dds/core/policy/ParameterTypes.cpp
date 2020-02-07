@@ -106,7 +106,7 @@ bool ParameterString_t::readFromCDRMessage(
     return valid;
 }
 
-        // PARAMETER_ PORT
+// PARAMETER_ PORT
 bool ParameterPort_t::addToCDRMessage(
         CDRMessage_t* msg)
 {

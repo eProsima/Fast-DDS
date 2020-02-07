@@ -336,7 +336,7 @@ public:
      */
     bool addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
-    inline const char* getName()const
+    inline const char* getName() const
     {
         return string_.c_str();
     }
@@ -1105,12 +1105,14 @@ public:
             return &value_;
         }
 
-        bool operator ==( const self_type& rhs)
+        bool operator ==(
+                const self_type& rhs)
         {
             return ptr_ == rhs.ptr_;
         }
 
-        bool operator !=( const self_type& rhs)
+        bool operator !=(
+                const self_type& rhs)
         {
             return ptr_ != rhs.ptr_;
         }
