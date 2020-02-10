@@ -688,9 +688,13 @@ public:
     UserDataQosPolicy& operator =(
             const collection_type& b)
     {
-        //If the object is size limited, already has max_size() allocated
-        //assign() will always stop copying when reaching max_size()
-        assign(b.begin(), b.end());
+        if (collection_ != b)
+        {
+            //If the object is size limited, already has max_size() allocated
+            //assign() will always stop copying when reaching max_size()
+            assign(b.begin(), b.end());
+            hasChanged = true;
+        }
         return *this;
     }
 
@@ -1119,7 +1123,8 @@ public:
     PartitionQosPolicy& operator =(
             const PartitionQosPolicy& b)
     {
-        length = b.length;
+        QosPolicy::operator=(b);
+        Parameter_t::operator=(b);
         max_size_ = b.max_size_;
         partitions_.reserve(max_size_ != 0 ?
                 b.partitions_.max_size :

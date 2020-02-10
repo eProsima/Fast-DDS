@@ -609,7 +609,11 @@ public:
     UserDataQosPolicy& operator =(
             const collection_type& b)
     {
-        assign(b.begin(), b.end());
+        if (collection_ != b)
+        {
+            assign(b.begin(), b.end());
+            hasChanged = true;
+        }
         return *this;
     }
 
