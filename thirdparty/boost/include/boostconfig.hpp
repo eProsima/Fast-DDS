@@ -22,34 +22,84 @@
 #ifdef _MSC_VER
 
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdexcept>
 
 //#define BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
-#define BOOST_INTERPROCESS_SHARED_DIR_PATH "C:\\ProgramData\\fastrtps_interprocess"
+
+// TODO(Adolfo): This will fail if windows system without program data in C: drive
+#define BOOST_INTERPROCESS_SHARED_DIR_PATH "C:\\ProgramData\\eprosima\\fastrtps_interprocess"
 
 #include <boost/interprocess/detail/workaround.hpp>
 #if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
 #error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
 #endif
 
-class SharedDirCreator
-{
-public:
-
-    SharedDirCreator();
-    void forzeConstruct();
-    static void clean() {
-        system("del " BOOST_INTERPROCESS_SHARED_DIR_PATH "\\*.* /Q");
-    }
-
-private:
-
-    bool created_;
-};
-
-extern SharedDirCreator g_shared_dir_creator;
 #define BOOST_INTERPROCESS_USE_WINDOWS
 //#define BOOST_INTERPROCESS_BOOTSTAMP_IS_SESSION_MANAGER_BASED
 
 #endif // _MSC_VER_
+
+/**
+ * This singleton class performs some necesary system dependent initializations 
+ * before start working with shared-memory
+ */
+class SharedMemEnvironment
+{
+public:
+
+    SharedMemEnvironment()
+        : is_init_done_(false)
+    {
+    }
+
+    /** 
+     * @return the singleton instance
+     */
+    static SharedMemEnvironment& get()
+    {
+        static SharedMemEnvironment singleton_instance;
+        return singleton_instance;
+    }
+
+    /**
+     * Perform the initializacion, only the first time is called.
+     */
+    void init()
+    {
+#ifdef _MSC_VER
+        if (!is_init_done_)
+        {
+            get().create_shared_dir_if_doesnt_exist();
+            is_init_done_ = true;
+        }
+#endif
+    }
+
+private:
+
+    bool is_init_done_;
+
+    static void create_shared_dir_if_doesnt_exist()
+    {
+        struct stat info;
+
+        // Cannot access shared_dir_path, we assume it doesn't exist
+        if (stat(BOOST_INTERPROCESS_SHARED_DIR_PATH, &info) != 0)
+        {
+            // Try to create it
+            if (system(("mkdir " BOOST_INTERPROCESS_SHARED_DIR_PATH)) != 0)
+            {
+                throw std::runtime_error("couldn't access nor create " BOOST_INTERPROCESS_SHARED_DIR_PATH);
+            }
+        }
+    }
+
+    void clean()
+    {
+        system("del " BOOST_INTERPROCESS_SHARED_DIR_PATH "\\*.* /Q");
+    }
+};
 
 #endif // _FASTDDS_THIRDPARTYBOOST_BOOSTCONFIG_H_

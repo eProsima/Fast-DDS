@@ -109,7 +109,6 @@ public:
     static uint32_t compute_per_allocation_extra_size(size_t allocation_alignment)
     {
         Id uuid;
-        uuid.generate();
             
         try
         {
@@ -117,7 +116,11 @@ public:
                     
             if (extra_size == 0)
             {
-                {
+                uuid.generate();
+
+                SharedMemEnvironment::get().init();
+
+                {                  
                     boost::interprocess::managed_shared_memory
                         test_segment(boost::interprocess::create_only, uuid.to_string().c_str(),
                         (std::max)((size_t)1024, allocation_alignment * 4));
@@ -241,6 +244,15 @@ public:
 
 private:
 
+    class EnvironmentInitializer
+    {
+    public:
+        EnvironmentInitializer()
+        {
+            SharedMemEnvironment::get().init();
+        }
+    } shared_mem_environment_initializer_;
+   
     boost::interprocess::managed_shared_memory segment_;
 
     std::string name_;
