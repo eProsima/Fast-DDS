@@ -72,8 +72,10 @@ public:
         if (!is_init_done_)
         {
             get().create_shared_dir_if_doesnt_exist();
-            is_init_done_ = true;
+            
         }
+
+        is_init_done_ = true;
 #endif
     }
 
@@ -81,6 +83,7 @@ private:
 
     bool is_init_done_;
 
+#ifdef _MSC_VER
     static void create_shared_dir_if_doesnt_exist()
     {
         struct stat info;
@@ -100,6 +103,8 @@ private:
     {
         system("del " BOOST_INTERPROCESS_SHARED_DIR_PATH "\\*.* /Q");
     }
+#endif
+
 };
 
 #endif // _FASTDDS_THIRDPARTYBOOST_BOOSTCONFIG_H_
