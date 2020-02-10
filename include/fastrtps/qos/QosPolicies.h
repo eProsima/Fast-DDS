@@ -758,7 +758,7 @@ public:
     inline void clear() override
     {
         ResourceLimitedOctetVector::clear();
-        hasChanged = true;
+        hasChanged = false;
     }
 
     /**
@@ -1126,7 +1126,6 @@ public:
                 b.partitions_.length);
         partitions_.copy(&b.partitions_, b.max_size_ != 0);
         Npartitions_ = b.Npartitions_;
-        hasChanged = true;
 
         return *this;
     }
@@ -1224,7 +1223,7 @@ public:
     {
         partitions_.length = 0;
         Npartitions_ = 0;
-        hasChanged = true;
+        hasChanged = false;
     }
 
     /**
