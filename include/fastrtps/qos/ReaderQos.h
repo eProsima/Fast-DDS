@@ -110,6 +110,8 @@ public:
      * @return True if they can be updated.
      */
     RTPS_DllAPI bool canQosBeUpdated(const ReaderQos& qos) const;
+
+    void clear();
 };
 
 

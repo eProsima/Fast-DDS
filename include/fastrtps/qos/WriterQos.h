@@ -110,6 +110,8 @@ public:
     RTPS_DllAPI bool checkQos() const;
 
     RTPS_DllAPI bool canQosBeUpdated(const WriterQos& qos) const;
+
+    void clear();
 };
 
 

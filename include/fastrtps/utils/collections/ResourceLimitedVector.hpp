@@ -104,6 +104,8 @@ public:
         collection_.assign(other.collection_.begin(), other.collection_.end());
     }
 
+    virtual ~ResourceLimitedVector () = default;
+
     ResourceLimitedVector& operator = (const ResourceLimitedVector& other)
     {
         clear();
@@ -326,7 +328,7 @@ public:
      */
     operator const collection_type& () const noexcept { return collection_; }
 
-private:
+protected:
     configuration_type configuration_;
     collection_type collection_;
 

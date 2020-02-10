@@ -61,7 +61,7 @@ void ReaderQos::setQos(const ReaderQos& qos, bool first_time)
         m_destinationOrder = qos.m_destinationOrder;
         m_destinationOrder.hasChanged = true;
     }
-    if (m_userData.getDataVec() != qos.m_userData.getDataVec())
+    if (m_userData.dataVec() != qos.m_userData.dataVec())
     {
         m_userData = qos.m_userData;
         m_userData.hasChanged = true;
@@ -180,6 +180,28 @@ bool ReaderQos::canQosBeUpdated(const ReaderQos& qos) const
         logWarning(RTPS_QOS_CHECK,"Destination order Kind cannot be changed after the creation of a subscriber.");
     }
     return updatable;
+}
+
+void ReaderQos::clear()
+{
+    m_durability.clear();
+    m_deadline.clear();
+    m_latencyBudget.clear();
+    m_liveliness.clear();
+    m_reliability.clear();
+    m_ownership.clear();
+    m_destinationOrder.clear();
+    m_userData.clear();
+    m_timeBasedFilter.clear();
+    m_presentation.clear();
+    m_partition.clear();
+    m_topicData.clear();
+    m_groupData.clear();
+    m_durabilityService.clear();
+    m_lifespan.clear();
+    m_disablePositiveACKs.clear();
+    m_dataRepresentation.clear();
+    m_typeConsistency.clear();
 }
 
 } /* namespace pubsub */
