@@ -690,8 +690,12 @@ bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(
         m_force_type_validation = temp == 0 ? false : true;
     }
 
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
+    //Ignore the rest
+    if (valid && size >= 8)
+    {
+        msg->pos = pos_ref + size;
+    }
+
     return valid;
 }
 
