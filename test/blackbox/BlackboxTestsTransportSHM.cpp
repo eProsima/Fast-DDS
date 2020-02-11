@@ -76,7 +76,7 @@ TEST(BlackBox, SHM300KFragmentation)
     auto data_size = data.front().data().size();
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
-    shm_transport->segment_size = (data_size*3/4);
+    shm_transport->segment_size = static_cast<uint32_t>(data_size*3/4);
     
     writer
         .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
@@ -111,7 +111,7 @@ TEST(BlackBox, SHM300KFragmentation)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    ASSERT_EQ(big_buffers_count, 2);
+    ASSERT_EQ(big_buffers_count, 2u);
 
     // Destroy the writer participant.
     writer.destroy();
@@ -139,7 +139,7 @@ TEST(BlackBox, SHM300KNoFragmentation)
         .init();
 
     uint32_t big_buffers_count = 0;
-    shm_transport->big_buffer_size_ = data_size;
+    shm_transport->big_buffer_size_ = static_cast<uint32_t>(data_size);
     shm_transport->big_buffer_size_count_ = &big_buffers_count;
 
     reader
@@ -164,7 +164,7 @@ TEST(BlackBox, SHM300KNoFragmentation)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    ASSERT_EQ(big_buffers_count, 1);
+    ASSERT_EQ(big_buffers_count, 1u);
 
     // Destroy the writer participant.
     writer.destroy();
@@ -280,7 +280,7 @@ TEST(BlackBox, UDPvsSHM_UDP)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    ASSERT_EQ(big_buffers_count, 0);
+    ASSERT_EQ(big_buffers_count, 0u);
 
     // Destroy the writer participant.
     writer.destroy();

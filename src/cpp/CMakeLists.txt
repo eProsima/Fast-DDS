@@ -26,6 +26,8 @@ file(GLOB_RECURSE ALL_HEADERS
     ${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
     )
 
+add_definitions(-DNOMINMAX)
+
 endif(WIN32)
 
 set(${PROJECT_NAME}_source_files
