@@ -187,8 +187,6 @@ void PDPServerListener::onNewCacheChangeAdded(
 
     //Remove change form history.
     parent_pdp_->mp_PDPReaderHistory->remove_change(change);
-
-    return;
 }
 
 

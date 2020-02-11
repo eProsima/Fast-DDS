@@ -129,13 +129,13 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
     }
     else
     {
-        //Removing change from history
-        reader_history->remove_change(change);
-
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
         GUID_t writer_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeWriterProxyData(writer_guid);
+
+        //Removing change from history
+        reader_history->remove_change(change);
     }
 }
 
@@ -230,14 +230,13 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
     }
     else
     {
-        // Remove change from history.
-        reader_history->remove_change(change);
-
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
-
         GUID_t reader_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeReaderProxyData(reader_guid);
+
+        // Remove change from history.
+        reader_history->remove_change(change);
     }
 }
 
