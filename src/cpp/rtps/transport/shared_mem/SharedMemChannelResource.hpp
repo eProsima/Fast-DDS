@@ -136,10 +136,12 @@ private:
         message_receiver(nullptr);
     }
 
+protected:
+
     /**
     * Blocking Receive from the specified channel.
     */
-    std::shared_ptr<SharedMemManager::Buffer> Receive(
+    virtual std::shared_ptr<SharedMemManager::Buffer> Receive(
             fastrtps::rtps::Locator_t& remote_locator)
     {
         (void)remote_locator;
@@ -160,7 +162,13 @@ private:
 private:
 
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
+
+protected:
+
 	std::shared_ptr<SharedMemManager::Listener> listener_;
+
+private:
+
     bool only_multicast_purpose_;
     fastrtps::rtps::Locator_t locator_;
 

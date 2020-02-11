@@ -50,7 +50,9 @@ class SharedMemEnvironment
 public:
 
     SharedMemEnvironment()
+#ifdef _MSC_VER
         : is_init_done_(false)
+#endif
     {
     }
 
@@ -81,9 +83,11 @@ public:
 
 private:
 
+#ifdef _MSC_VER
+
     bool is_init_done_;
 
-#ifdef _MSC_VER
+
     static void create_shared_dir_if_doesnt_exist()
     {
         struct stat info;

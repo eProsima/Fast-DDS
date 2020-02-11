@@ -63,7 +63,7 @@ public:
     {
     protected:
 
-        ~Buffer() = default;
+        virtual ~Buffer() = default;
 
     public:
         
@@ -86,7 +86,7 @@ public:
             increase_ref();
         }
 
-        ~SharedMemBuffer()
+        ~SharedMemBuffer() override
         {
             decrease_ref();
         }

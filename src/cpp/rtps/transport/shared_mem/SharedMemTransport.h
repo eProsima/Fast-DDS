@@ -143,7 +143,7 @@ public:
 	* @param only_multicast_purpose
 	* @param timeout Maximum time this function will block
 	*/
-	bool send(
+	virtual bool send(
 			const fastrtps::rtps::octet* send_buffer,
 			uint32_t send_buffer_size,
 			fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -194,20 +194,28 @@ private:
 	//! Constructor with no descriptor is necessary for implementations derived from this class.
     SharedMemTransport();
 	
-    SharedMemTransportDescriptor configuration_;
-
-	std::map<uint32_t, std::shared_ptr<SharedMemManager::Port>> opened_ports_;
+    SharedMemTransportDescriptor configuration_;	
 
     //! Checks for whether locator is allowed.
     bool is_locator_allowed(const fastrtps::rtps::Locator_t&) const override;
 
-    mutable std::recursive_mutex input_channels_mutex_;
-	std::vector<SharedMemChannelResource*> input_channels_;
+protected:
 
 	std::shared_ptr<SharedMemManager> shared_mem_manager_;
+
+private:
+
+	std::map<uint32_t, std::shared_ptr<SharedMemManager::Port>> opened_ports_;
+
+	mutable std::recursive_mutex input_channels_mutex_;
+
+	std::vector<SharedMemChannelResource*> input_channels_;
+
 	std::shared_ptr<SharedMemManager::Segment> shared_mem_segment_;
 
 	friend class SharedMemChannelResource;
+
+protected:
 
 	/**
 	 * Creates an input channel
@@ -215,10 +223,12 @@ private:
 	 * @param max_msg_size Maximum message size supported by the channel
 	 * @throw std::exception& If the channel cannot be created
 	 */
-    SharedMemChannelResource* CreateInputChannelResource(
+    virtual SharedMemChannelResource* CreateInputChannelResource(
         const fastrtps::rtps::Locator_t& locator,
         uint32_t max_msg_size,
         TransportReceiverInterface* receiver);
+
+private:
 
 	std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
         const fastrtps::rtps::octet* send_buffer,

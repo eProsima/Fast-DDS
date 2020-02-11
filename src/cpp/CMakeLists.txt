@@ -120,6 +120,7 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/UDPv6Transport.cpp
     rtps/transport/TCPv6Transport.cpp
     rtps/transport/test_UDPv4Transport.cpp
+    rtps/transport/shared_mem/test_SharedMemTransport.cpp
     rtps/transport/tcp/TCPControlMessage.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp
 
