@@ -24,6 +24,7 @@
 #include <chrono>
 #include <vector>
 #include <mutex>
+#include <array>
 
 namespace eprosima{
 namespace fastdds{
