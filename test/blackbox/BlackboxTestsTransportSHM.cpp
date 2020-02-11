@@ -23,8 +23,9 @@
 #include "../cpp/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h"
 
 using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastdds::rtps;
+
+using SharedMemTransportDescriptor = eprosima::fastdds::rtps::SharedMemTransportDescriptor;
+using test_SharedMemTransportDescriptor = eprosima::fastdds::rtps::test_SharedMemTransportDescriptor;
 
 TEST(BlackBox, SHMTransportPubSub)
 {

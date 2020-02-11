@@ -214,10 +214,14 @@ public:
                     thread_notify_activate_ = false;
                 }
 
-                if(!thread_notify_kill_)
+                if (!thread_notify_kill_)
+                {
                     node_->empty_cv.notify_all();
+                }
                 else
+                {
                     break;
+                }
             }
         }
 

@@ -19,6 +19,10 @@
 #define BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
 #define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 1000
 
+#ifdef __APPLE__
+#define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
+#endif
+
 #ifdef _MSC_VER
 
 #include <stdlib.h>
@@ -32,11 +36,13 @@
 #define BOOST_INTERPROCESS_SHARED_DIR_PATH "C:\\ProgramData\\eprosima\\fastrtps_interprocess"
 
 #include <boost/interprocess/detail/workaround.hpp>
-#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
+#define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
+/*#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
 #error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
-#endif
+#endif*/
 
-#define BOOST_INTERPROCESS_USE_WINDOWS
+// Todo(Adolfo): BlackBox.SHMTransportPubSub fail with BOOST_INTERPROCESS_USE_WINDOWS
+//#define BOOST_INTERPROCESS_USE_WINDOWS
 //#define BOOST_INTERPROCESS_BOOTSTAMP_IS_SESSION_MANAGER_BASED
 
 #endif // _MSC_VER_
