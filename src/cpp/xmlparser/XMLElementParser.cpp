@@ -43,9 +43,9 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
                 <xs:element name="max_partitions" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     uint32_t tmp;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -140,9 +140,9 @@ XMLP_ret XMLParser::getXMLRemoteLocatorsAllocationAttributes(
                 <xs:element name="max_multicast_locators" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     uint32_t tmp;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -225,7 +225,10 @@ XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::DiscoverySettings& settings, uint8_t ident)
+XMLP_ret XMLParser::getXMLDiscoverySettings(
+        tinyxml2::XMLElement* elem,
+        rtps::DiscoverySettings& settings,
+        uint8_t ident)
 {
     /*
     <xs:complexType name="discoverySettingsType">
@@ -252,13 +255,17 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
         {
             // discoveryProtocol - DiscoveryProtocol
             if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &settings.discoveryProtocol, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
-        else if(strcmp(name, IGNORE_PARTICIPANT_FLAGS) == 0)
+        else if (strcmp(name, IGNORE_PARTICIPANT_FLAGS) == 0)
         {
             // ignoreParticipantFlags - ParticipantFlags
-            if(XMLP_ret::XML_OK != getXMLEnum(p_aux0, &settings.ignoreParticipantFlags, ident))
+            if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &settings.ignoreParticipantFlags, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, _EDP) == 0)
         {
@@ -269,7 +276,7 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
                         <xs:enumeration value="STATIC"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -296,13 +303,17 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
         {
             // leaseDuration - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, settings.leaseDuration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LEASE_ANNOUNCE) == 0)
         {
             // leaseAnnouncement - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, settings.leaseDuration_announcementperiod, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, INITIAL_ANNOUNCEMENTS) == 0)
         {
@@ -322,14 +333,22 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
                 if (strcmp(name, PUBWRITER_SUBREADER) == 0)
                 {
                     // PUBWRITER_SUBREADER - boolType
-                    if (XMLP_ret::XML_OK != getXMLBool(p_aux1, &settings.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, ident + 1))
+                    if (XMLP_ret::XML_OK !=
+                            getXMLBool(p_aux1, &settings.m_simpleEDP.use_PublicationWriterANDSubscriptionReader,
+                            ident + 1))
+                    {
                         return XMLP_ret::XML_ERROR;
+                    }
                 }
                 else if (strcmp(name, PUBREADER_SUBWRITER) == 0)
                 {
                     // PUBREADER_SUBWRITER - boolType
-                    if (XMLP_ret::XML_OK != getXMLBool(p_aux1, &settings.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, ident + 1))
+                    if (XMLP_ret::XML_OK !=
+                            getXMLBool(p_aux1, &settings.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter,
+                            ident + 1))
+                    {
                         return XMLP_ret::XML_ERROR;
+                    }
                 }
                 else
                 {
@@ -342,20 +361,26 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
         {
             // clientAnnouncementPeriod - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, settings.discoveryServer_client_syncperiod, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, SERVER_LIST) == 0)
         {
             // discoverServersList - DiscoveryServerList
             if (XMLP_ret::XML_OK != getXMLList(p_aux0, settings.m_DiscoveryServers, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, STATIC_ENDPOINT_XML) == 0)
         {
             // staticEndpointXMLFilename - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             settings.setStaticEndpointXMLFilename(s.c_str());
         }
         else
@@ -369,10 +394,13 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
 
 }
 
-XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
+XMLP_ret XMLParser::getXMLBuiltinAttributes(
+        tinyxml2::XMLElement* elem,
+        BuiltinAttributes& builtin,
+        uint8_t ident)
 {
     /*
-    <xs:complexType name="builtinAttributesType">
+       <xs:complexType name="builtinAttributesType">
         <xs:all minOccurs="0">
             <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
@@ -384,10 +412,10 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="mutation_tries" type="uint32Type" minOccurs="0"/>
         </xs:all>
-    </xs:complexType>
-    */
+       </xs:complexType>
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -396,55 +424,89 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         {
             // discovery_config - DiscoverySettings
             if (XMLP_ret::XML_OK != getXMLDiscoverySettings(p_aux0, builtin.discovery_config, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, WRITER_LVESS_PROTOCOL) == 0)
         {
             // use_WriterLivelinessProtocol - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.use_WriterLivelinessProtocol, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DOMAIN_ID) == 0)
         {
             // domainId - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.domainId, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, META_UNI_LOC_LIST) == 0)
         {
             // metatrafficUnicastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, builtin.metatrafficUnicastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, META_MULTI_LOC_LIST) == 0)
         {
             // metatrafficMulticastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, builtin.metatrafficMulticastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, INIT_PEERS_LIST) == 0)
         {
             // initialPeersList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, builtin.initialPeersList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, READER_HIST_MEM_POLICY) == 0)
         {
             // readerhistoryMemoryPolicy
             if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, builtin.readerHistoryMemoryPolicy, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, WRITER_HIST_MEM_POLICY) == 0)
         {
             // writerhistoryMemoryPolicy
             if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, builtin.writerHistoryMemoryPolicy, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, READER_PAYLOAD_SIZE) == 0)
+        {
+            // readerPayloadSize
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.readerPayloadSize, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, WRITER_PAYLOAD_SIZE) == 0)
+        {
+            // readerPayloadSize
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.writerPayloadSize, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MUTATION_TRIES) == 0)
         {
             // mutation_tries - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.mutation_tries, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, AVOID_BUILTIN_MULTICAST) == 0)
         {
@@ -465,9 +527,9 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
 }
 
 XMLP_ret XMLParser::getXMLInitialAnnouncementsConfig(
-    tinyxml2::XMLElement* elem,
-    InitialAnnouncementConfig& config,
-    uint8_t ident)
+        tinyxml2::XMLElement* elem,
+        InitialAnnouncementConfig& config,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="initialAnnouncementsType">
@@ -476,8 +538,8 @@ XMLP_ret XMLParser::getXMLInitialAnnouncementsConfig(
                 <xs:element name="period" type="durationType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -486,13 +548,17 @@ XMLP_ret XMLParser::getXMLInitialAnnouncementsConfig(
         {
             // portBase - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &config.count, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PERIOD) == 0)
         {
             // domainIDGain - uint16Type
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, config.period, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -503,8 +569,10 @@ XMLP_ret XMLParser::getXMLInitialAnnouncementsConfig(
     return XMLP_ret::XML_OK;
 }
 
-
-XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParameters &port, uint8_t ident)
+XMLP_ret XMLParser::getXMLPortParameters(
+        tinyxml2::XMLElement* elem,
+        PortParameters& port,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="portType">
@@ -518,9 +586,9 @@ XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParamet
                 <xs:element name="offsetd3" type="uint16Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -529,43 +597,57 @@ XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParamet
         {
             // portBase - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.portBase, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DOMAIN_ID_GAIN) == 0)
         {
             // domainIDGain - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.domainIDGain, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PARTICIPANT_ID_GAIN) == 0)
         {
             // participantIDGain - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.participantIDGain, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD0) == 0)
         {
             // offsetd0 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd0, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD1) == 0)
         {
             // offsetd1 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd1, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD2) == 0)
         {
             // offsetd2 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd2, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD3) == 0)
         {
             // offsetd3 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd3, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -576,8 +658,10 @@ XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParamet
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLTransports(tinyxml2::XMLElement *elem,
-    std::vector<std::shared_ptr<TransportDescriptorInterface>> &transports, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLTransports(
+        tinyxml2::XMLElement* elem,
+        std::vector<std::shared_ptr<TransportDescriptorInterface> >& transports,
+        uint8_t /*ident*/)
 {
     /*
         <xs:complexType name="stringListType">
@@ -585,9 +669,9 @@ XMLP_ret XMLParser::getXMLTransports(tinyxml2::XMLElement *elem,
                 <xs:element name="id" type="stringType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     p_aux0 = elem->FirstChildElement(TRANSPORT_ID);
     if (nullptr == p_aux0)
     {
@@ -622,9 +706,10 @@ XMLP_ret XMLParser::getXMLTransports(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLThroughputController(tinyxml2::XMLElement *elem,
-                                                      ThroughputControllerDescriptor &throughputController,
-                                                      uint8_t ident)
+XMLP_ret XMLParser::getXMLThroughputController(
+        tinyxml2::XMLElement* elem,
+        ThroughputControllerDescriptor& throughputController,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="throughputControllerType">
@@ -633,9 +718,9 @@ XMLP_ret XMLParser::getXMLThroughputController(tinyxml2::XMLElement *elem,
                 <xs:element name="periodMillisecs" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -644,13 +729,17 @@ XMLP_ret XMLParser::getXMLThroughputController(tinyxml2::XMLElement *elem,
         {
             // bytesPerPeriod - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &throughputController.bytesPerPeriod, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PERIOD_MILLISECS) == 0)
         {
             // periodMillisecs - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &throughputController.periodMillisecs, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -661,7 +750,10 @@ XMLP_ret XMLParser::getXMLThroughputController(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttributes &topic, uint8_t ident)
+XMLP_ret XMLParser::getXMLTopicAttributes(
+        tinyxml2::XMLElement* elem,
+        TopicAttributes& topic,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="topicAttributesType">
@@ -673,8 +765,8 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
                 <xs:element name="resourceLimitsQos" type="resourceLimitsQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -689,7 +781,7 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
                         <xs:enumeration value="WITH_KEY"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -697,9 +789,13 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, _NO_KEY) == 0)
+            {
                 topic.topicKind = TopicKind_t::NO_KEY;
+            }
             else if (strcmp(text, _WITH_KEY) == 0)
+            {
                 topic.topicKind = TopicKind_t::WITH_KEY;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -732,13 +828,17 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
         {
             // historyQos
             if (XMLP_ret::XML_OK != getXMLHistoryQosPolicy(p_aux0, topic.historyQos, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, RES_LIMITS_QOS) == 0)
         {
             // resourceLimitsQos
             if (XMLP_ret::XML_OK != getXMLResourceLimitsQos(p_aux0, topic.resourceLimitsQos, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -749,9 +849,10 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLResourceLimitsQos(tinyxml2::XMLElement *elem,
-                                                   ResourceLimitsQosPolicy &resourceLimitsQos,
-                                                   uint8_t ident)
+XMLP_ret XMLParser::getXMLResourceLimitsQos(
+        tinyxml2::XMLElement* elem,
+        ResourceLimitsQosPolicy& resourceLimitsQos,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="resourceLimitsQosPolicyType">
@@ -762,9 +863,9 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(tinyxml2::XMLElement *elem,
                 <xs:element name="allocated_samples" type="int32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -773,25 +874,33 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(tinyxml2::XMLElement *elem,
         {
             // max_samples - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.max_samples, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_INSTANCES) == 0)
         {
             // max_instances - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.max_instances, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_SAMPLES_INSTANCE) == 0)
         {
             // max_samples_per_instance - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.max_samples_per_instance, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ALLOCATED_SAMPLES) == 0)
         {
             // allocated_samples - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.allocated_samples, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -804,8 +913,8 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(tinyxml2::XMLElement *elem,
 }
 
 XMLP_ret XMLParser::getXMLContainerAllocationConfig(
-        tinyxml2::XMLElement *elem,
-        ResourceLimitedContainerConfig &allocation_config,
+        tinyxml2::XMLElement* elem,
+        ResourceLimitedContainerConfig& allocation_config,
         uint8_t ident)
 {
     /*
@@ -816,14 +925,14 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
                 <xs:element name="increment" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     // First set default values
     allocation_config = ResourceLimitedContainerConfig();
 
     // Then parse XML
     uint32_t aux_value;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -832,22 +941,28 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
         {
             // initial - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation_config.initial = static_cast<size_t>(aux_value);
         }
         else if (strcmp(name, MAXIMUM) == 0)
         {
             // maximum - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation_config.maximum = (aux_value == 0u) ?
-                std::numeric_limits<size_t>::max() : static_cast<size_t>(aux_value);
+                    std::numeric_limits<size_t>::max() : static_cast<size_t>(aux_value);
         }
         else if (strcmp(name, INCREMENT) == 0)
         {
             // increment - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation_config.increment = static_cast<size_t>(aux_value);
         }
         else
@@ -860,10 +975,11 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
     // Check results
     if (allocation_config.initial > allocation_config.maximum)
     {
-        logError(XMLPARSER, "Parsing 'containerAllocationConfigType': Field 'initial' cannot be greater than 'maximum'.");
+        logError(XMLPARSER,
+                "Parsing 'containerAllocationConfigType': Field 'initial' cannot be greater than 'maximum'.");
         return XMLP_ret::XML_ERROR;
     }
-    else if((allocation_config.increment == 0) && (allocation_config.initial != allocation_config.maximum))
+    else if ((allocation_config.increment == 0) && (allocation_config.initial != allocation_config.maximum))
     {
         logError(XMLPARSER, "Parsing 'containerAllocationConfigType': Field 'increment' cannot be zero.");
         return XMLP_ret::XML_ERROR;
@@ -872,7 +988,10 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQosPolicy &historyQos, uint8_t ident)
+XMLP_ret XMLParser::getXMLHistoryQosPolicy(
+        tinyxml2::XMLElement* elem,
+        HistoryQosPolicy& historyQos,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="historyQosPolicyType">
@@ -881,9 +1000,9 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQo
                 <xs:element name="depth" type="int32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -898,7 +1017,7 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQo
                         <xs:enumeration value="KEEP_ALL"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -906,9 +1025,13 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQo
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, KEEP_LAST) == 0)
+            {
                 historyQos.kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
+            }
             else if (strcmp(text, KEEP_ALL) == 0)
+            {
                 historyQos.kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -919,7 +1042,9 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQo
         {
             // depth - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &historyQos.depth, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -931,7 +1056,10 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQo
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQos &qos, uint8_t ident)
+XMLP_ret XMLParser::getXMLWriterQosPolicies(
+        tinyxml2::XMLElement* elem,
+        WriterQos& qos,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="writerQosPoliciesType">
@@ -955,9 +1083,9 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
                 <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -966,31 +1094,41 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
         {
             // durability
             if (XMLP_ret::XML_OK != getXMLDurabilityQos(p_aux0, qos.m_durability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LIVELINESS) == 0)
         {
             // liveliness
             if (XMLP_ret::XML_OK != getXMLLivelinessQos(p_aux0, qos.m_liveliness, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, RELIABILITY) == 0)
         {
             // reliability
             if (XMLP_ret::XML_OK != getXMLReliabilityQos(p_aux0, qos.m_reliability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PARTITION) == 0)
         {
             // partition
             if (XMLP_ret::XML_OK != getXMLPartitionQos(p_aux0, qos.m_partition, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PUB_MODE) == 0)
         {
             // publishMode
             if (XMLP_ret::XML_OK != getXMLPublishModeQos(p_aux0, qos.m_publishMode, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DEADLINE) == 0)
         {
@@ -1017,10 +1155,10 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
             }
         }
         else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, LATENCY_BUDGET) == 0 ||
-                 strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
-                 strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
-                 strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
-                 strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
+                strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
+                strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
+                strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
+                strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
@@ -1044,7 +1182,10 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQos &qos, uint8_t ident)
+XMLP_ret XMLParser::getXMLReaderQosPolicies(
+        tinyxml2::XMLElement* elem,
+        ReaderQos& qos,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="readerQosPoliciesType">
@@ -1066,9 +1207,9 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -1077,25 +1218,33 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
         {
             // durability
             if (XMLP_ret::XML_OK != getXMLDurabilityQos(p_aux0, qos.m_durability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LIVELINESS) == 0)
         {
             // liveliness
             if (XMLP_ret::XML_OK != getXMLLivelinessQos(p_aux0, qos.m_liveliness, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, RELIABILITY) == 0)
         {
             // reliability
             if (XMLP_ret::XML_OK != getXMLReliabilityQos(p_aux0, qos.m_reliability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PARTITION) == 0)
         {
             // partition
             if (XMLP_ret::XML_OK != getXMLPartitionQos(p_aux0, qos.m_partition, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DEADLINE) == 0)
         {
@@ -1121,10 +1270,10 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
             }
         }
         else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, LATENCY_BUDGET) == 0 ||
-                 strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
-                 strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
-                 strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
-                 strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
+                strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
+                strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
+                strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
+                strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
@@ -1147,7 +1296,10 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDurabilityQos(tinyxml2::XMLElement *elem, DurabilityQosPolicy &durability, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLDurabilityQos(
+        tinyxml2::XMLElement* elem,
+        DurabilityQosPolicy& durability,
+        uint8_t /*ident*/)
 {
     /*
         <xs:complexType name="durabilityQosPolicyType">
@@ -1155,9 +1307,9 @@ XMLP_ret XMLParser::getXMLDurabilityQos(tinyxml2::XMLElement *elem, DurabilityQo
                 <xs:element name="kind" type="durabilityQosKindType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     bool bKindDefined = false;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1175,7 +1327,7 @@ XMLP_ret XMLParser::getXMLDurabilityQos(tinyxml2::XMLElement *elem, DurabilityQo
                         <xs:enumeration value="PERSISTENT"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -1184,13 +1336,21 @@ XMLP_ret XMLParser::getXMLDurabilityQos(tinyxml2::XMLElement *elem, DurabilityQo
             }
             bKindDefined = true;
             if (strcmp(text, _VOLATILE) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
+            }
             else if (strcmp(text, _TRANSIENT_LOCAL) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
+            }
             else if (strcmp(text, _TRANSIENT) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS;
+            }
             else if (strcmp(text, _PERSISTENT) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1212,9 +1372,10 @@ XMLP_ret XMLParser::getXMLDurabilityQos(tinyxml2::XMLElement *elem, DurabilityQo
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
-                                                      DurabilityServiceQosPolicy &durabilityService,
-                                                      uint8_t ident)
+XMLP_ret XMLParser::getXMLDurabilityServiceQos(
+        tinyxml2::XMLElement* elem,
+        DurabilityServiceQosPolicy& durabilityService,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="durabilityServiceQosPolicyType">
@@ -1227,9 +1388,9 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
                 <xs:element name="max_samples_per_instance" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -1238,7 +1399,9 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
         {
             // service_cleanup_delay - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, durabilityService.service_cleanup_delay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HISTORY_KIND) == 0)
         {
@@ -1250,7 +1413,7 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
                         <xs:enumeration value="KEEP_ALL"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -1258,9 +1421,13 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, KEEP_LAST) == 0)
+            {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
+            }
             else if (strcmp(text, KEEP_ALL) == 0)
+            {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << HISTORY_KIND << "' with bad content");
@@ -1271,25 +1438,33 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
         {
             // history_depth - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.history_depth, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_SAMPLES) == 0)
         {
             // max_samples - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.max_samples, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_INSTANCES) == 0)
         {
             // max_instances - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.max_instances, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_SAMPLES_INSTANCE) == 0)
         {
             // max_samples_per_instance - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.max_samples_per_instance, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1300,7 +1475,10 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDeadlineQos(tinyxml2::XMLElement *elem, DeadlineQosPolicy &deadline, uint8_t ident)
+XMLP_ret XMLParser::getXMLDeadlineQos(
+        tinyxml2::XMLElement* elem,
+        DeadlineQosPolicy& deadline,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="deadlineQosPolicyType">
@@ -1308,8 +1486,8 @@ XMLP_ret XMLParser::getXMLDeadlineQos(tinyxml2::XMLElement *elem, DeadlineQosPol
                 <xs:element name="period" type="durationType"/>
             </xs:all>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     bool bPeriodDefined = false;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1319,7 +1497,9 @@ XMLP_ret XMLParser::getXMLDeadlineQos(tinyxml2::XMLElement *elem, DeadlineQosPol
         {
             bPeriodDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, deadline.period, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1337,7 +1517,10 @@ XMLP_ret XMLParser::getXMLDeadlineQos(tinyxml2::XMLElement *elem, DeadlineQosPol
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLatencyBudgetQos(tinyxml2::XMLElement *elem, LatencyBudgetQosPolicy &latencyBudget, uint8_t ident)
+XMLP_ret XMLParser::getXMLLatencyBudgetQos(
+        tinyxml2::XMLElement* elem,
+        LatencyBudgetQosPolicy& latencyBudget,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="latencyBudgetQosPolicyType">
@@ -1345,9 +1528,9 @@ XMLP_ret XMLParser::getXMLLatencyBudgetQos(tinyxml2::XMLElement *elem, LatencyBu
                 <xs:element name="duration" type="durationType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     bool bDurationDefined = false;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1357,7 +1540,9 @@ XMLP_ret XMLParser::getXMLLatencyBudgetQos(tinyxml2::XMLElement *elem, LatencyBu
         {
             bDurationDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, latencyBudget.duration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1374,7 +1559,10 @@ XMLP_ret XMLParser::getXMLLatencyBudgetQos(tinyxml2::XMLElement *elem, LatencyBu
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQosPolicy &liveliness, uint8_t ident)
+XMLP_ret XMLParser::getXMLLivelinessQos(
+        tinyxml2::XMLElement* elem,
+        LivelinessQosPolicy& liveliness,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="livelinessQosPolicyType">
@@ -1384,9 +1572,9 @@ XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQo
                 <xs:element name="announcement_period" type="durationType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -1402,7 +1590,7 @@ XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQo
                         <xs:enumeration value="MANUAL_BY_TOPIC"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -1410,11 +1598,17 @@ XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQo
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, AUTOMATIC) == 0)
+            {
                 liveliness.kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+            }
             else if (strcmp(text, MANUAL_BY_PARTICIPANT) == 0)
+            {
                 liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+            }
             else if (strcmp(text, MANUAL_BY_TOPIC) == 0)
+            {
                 liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1425,13 +1619,17 @@ XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQo
         {
             // lease_duration
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, liveliness.lease_duration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ANNOUNCE_PERIOD) == 0)
         {
             // announcement_period
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, liveliness.announcement_period, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1443,7 +1641,10 @@ XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQo
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, ReliabilityQosPolicy &reliability, uint8_t ident)
+XMLP_ret XMLParser::getXMLReliabilityQos(
+        tinyxml2::XMLElement* elem,
+        ReliabilityQosPolicy& reliability,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="reliabilityQosPolicyType">
@@ -1452,9 +1653,9 @@ XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, Reliability
                 <xs:element name="max_blocking_time" type="durationType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -1469,7 +1670,7 @@ XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, Reliability
                         <xs:enumeration value="RELIABLE"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -1477,9 +1678,13 @@ XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, Reliability
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, _BEST_EFFORT) == 0)
+            {
                 reliability.kind = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+            }
             else if (strcmp(text, _RELIABLE) == 0)
+            {
                 reliability.kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1490,7 +1695,9 @@ XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, Reliability
         {
             // max_blocking_time
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, reliability.max_blocking_time, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1501,7 +1708,10 @@ XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, Reliability
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLifespanQos(tinyxml2::XMLElement *elem, LifespanQosPolicy &lifespan, uint8_t ident)
+XMLP_ret XMLParser::getXMLLifespanQos(
+        tinyxml2::XMLElement* elem,
+        LifespanQosPolicy& lifespan,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="lifespanQosPolicyType">
@@ -1509,9 +1719,9 @@ XMLP_ret XMLParser::getXMLLifespanQos(tinyxml2::XMLElement *elem, LifespanQosPol
                 <xs:element name="duration" type="durationType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bDurationDefined = false;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1521,7 +1731,9 @@ XMLP_ret XMLParser::getXMLLifespanQos(tinyxml2::XMLElement *elem, LifespanQosPol
         {
             bDurationDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, lifespan.duration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1551,9 +1763,9 @@ XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
                 <xs:element name="duration" type="durationType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -1582,9 +1794,10 @@ XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLTimeBasedFilterQos(tinyxml2::XMLElement *elem,
-                                                    TimeBasedFilterQosPolicy &timeBasedFilter,
-                                                    uint8_t ident)
+XMLP_ret XMLParser::getXMLTimeBasedFilterQos(
+        tinyxml2::XMLElement* elem,
+        TimeBasedFilterQosPolicy& timeBasedFilter,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="timeBasedFilterQosPolicyType">
@@ -1592,9 +1805,9 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(tinyxml2::XMLElement *elem,
                 <xs:element name="minimum_separation" type="durationType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bSeparationDefined = false;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1604,7 +1817,9 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(tinyxml2::XMLElement *elem,
         {
             bSeparationDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, timeBasedFilter.minimum_separation, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1621,7 +1836,10 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLOwnershipQos(tinyxml2::XMLElement *elem, OwnershipQosPolicy &ownership, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLOwnershipQos(
+        tinyxml2::XMLElement* elem,
+        OwnershipQosPolicy& ownership,
+        uint8_t /*ident*/)
 {
     /*
         <xs:complexType name="ownershipQosPolicyType">
@@ -1629,8 +1847,8 @@ XMLP_ret XMLParser::getXMLOwnershipQos(tinyxml2::XMLElement *elem, OwnershipQosP
                 <xs:element name="kind" type="ownershipQosKindType"/>
             </xs:all>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bKindDefined = false;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1645,7 +1863,7 @@ XMLP_ret XMLParser::getXMLOwnershipQos(tinyxml2::XMLElement *elem, OwnershipQosP
                         <xs:enumeration value="EXCLUSIVE"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             bKindDefined = true;
             const char* text = p_aux0->GetText();
             if (nullptr == text)
@@ -1654,9 +1872,13 @@ XMLP_ret XMLParser::getXMLOwnershipQos(tinyxml2::XMLElement *elem, OwnershipQosP
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, SHARED) == 0)
+            {
                 ownership.kind = OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
+            }
             else if (strcmp(text, EXCLUSIVE) == 0)
+            {
                 ownership.kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1679,9 +1901,10 @@ XMLP_ret XMLParser::getXMLOwnershipQos(tinyxml2::XMLElement *elem, OwnershipQosP
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLOwnershipStrengthQos(tinyxml2::XMLElement *elem,
-                                                      OwnershipStrengthQosPolicy &ownershipStrength,
-                                                      uint8_t ident)
+XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
+        tinyxml2::XMLElement* elem,
+        OwnershipStrengthQosPolicy& ownershipStrength,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="ownershipStrengthQosPolicyType">
@@ -1689,8 +1912,8 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(tinyxml2::XMLElement *elem,
                 <xs:element name="value" type="uint32Type"/>
             </xs:all>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bValueDefined = false;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1700,7 +1923,9 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(tinyxml2::XMLElement *elem,
         {
             bValueDefined = true;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &ownershipStrength.value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1718,9 +1943,10 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDestinationOrderQos(tinyxml2::XMLElement *elem,
-                                                     DestinationOrderQosPolicy &destinationOrder,
-                                                     uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLDestinationOrderQos(
+        tinyxml2::XMLElement* elem,
+        DestinationOrderQosPolicy& destinationOrder,
+        uint8_t /*ident*/)
 {
     /*
         <xs:complexType name="destinationOrderQosPolicyType">
@@ -1728,9 +1954,9 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(tinyxml2::XMLElement *elem,
                 <xs:element name="kind" type="destinationOrderQosKindType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bKindDefined = false;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1745,7 +1971,7 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(tinyxml2::XMLElement *elem,
                         <xs:enumeration value="BY_SOURCE_TIMESTAMP"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             bKindDefined = true;
             const char* text = p_aux0->GetText();
             if (nullptr == text)
@@ -1754,9 +1980,13 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(tinyxml2::XMLElement *elem,
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, BY_RECEPTION_TIMESTAMP) == 0)
+            {
                 destinationOrder.kind = DestinationOrderQosPolicyKind::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
+            }
             else if (strcmp(text, BY_SOURCE_TIMESTAMP) == 0)
+            {
                 destinationOrder.kind = DestinationOrderQosPolicyKind::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' bad content");
@@ -1779,7 +2009,10 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, PresentationQosPolicy &presentation, uint8_t ident)
+XMLP_ret XMLParser::getXMLPresentationQos(
+        tinyxml2::XMLElement* elem,
+        PresentationQosPolicy& presentation,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="presentationQosPolicyType">
@@ -1789,9 +2022,9 @@ XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, Presentati
                 <xs:element name="ordered_access" type="boolType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -1807,7 +2040,7 @@ XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, Presentati
                         <xs:enumeration value="GROUP"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -1815,11 +2048,17 @@ XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, Presentati
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, INSTANCE) == 0)
+            {
                 presentation.access_scope = PresentationQosPolicyAccessScopeKind::INSTANCE_PRESENTATION_QOS;
+            }
             else if (strcmp(text, TOPIC) == 0)
+            {
                 presentation.access_scope = PresentationQosPolicyAccessScopeKind::TOPIC_PRESENTATION_QOS;
+            }
             else if (strcmp(text, GROUP) == 0)
+            {
                 presentation.access_scope = PresentationQosPolicyAccessScopeKind::GROUP_PRESENTATION_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << ACCESS_SCOPE << "' bad content");
@@ -1830,13 +2069,17 @@ XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, Presentati
         {
             // coherent_access - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &presentation.coherent_access, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ORDERED_ACCESS) == 0)
         {
             // ordered_access - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &presentation.ordered_access, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1847,7 +2090,10 @@ XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, Presentati
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPartitionQos(tinyxml2::XMLElement *elem, PartitionQosPolicy &partition, uint8_t ident)
+XMLP_ret XMLParser::getXMLPartitionQos(
+        tinyxml2::XMLElement* elem,
+        PartitionQosPolicy& partition,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="partitionQosPolicyType">
@@ -1855,9 +2101,9 @@ XMLP_ret XMLParser::getXMLPartitionQos(tinyxml2::XMLElement *elem, PartitionQosP
                 <xs:element name="names" type="nameVectorType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr, * p_aux1 = nullptr;
     bool bNamesDefined = false;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1878,7 +2124,10 @@ XMLP_ret XMLParser::getXMLPartitionQos(tinyxml2::XMLElement *elem, PartitionQosP
             while (nullptr != p_aux1)
             {
                 std::string sName = "";
-                if (XMLP_ret::XML_OK != getXMLString(p_aux1, &sName, ident)) return XMLP_ret::XML_ERROR;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux1, &sName, ident))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
                 names.push_back(sName);
                 p_aux1 = p_aux1->NextSiblingElement(NAME);
             }
@@ -1900,7 +2149,10 @@ XMLP_ret XMLParser::getXMLPartitionQos(tinyxml2::XMLElement *elem, PartitionQosP
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishModeQosPolicy &publishMode, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLPublishModeQos(
+        tinyxml2::XMLElement* elem,
+        PublishModeQosPolicy& publishMode,
+        uint8_t /*ident*/)
 {
     /*
         <xs:complexType name="publishModeQosPolicyType">
@@ -1908,8 +2160,8 @@ XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishMode
                 <xs:element name="kind" type="publishModeQosKindType"/>
             </xs:all>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bKindDefined = false;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -1924,7 +2176,7 @@ XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishMode
                         <xs:enumeration value="ASYNCHRONOUS"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             bKindDefined = true;
             const char* text = p_aux0->GetText();
             if (nullptr == text)
@@ -1933,9 +2185,13 @@ XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishMode
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, SYNCHRONOUS) == 0)
+            {
                 publishMode.kind = PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
+            }
             else if (strcmp(text, ASYNCHRONOUS) == 0)
+            {
                 publishMode.kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' bad content");
@@ -1958,7 +2214,10 @@ XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishMode
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &duration, uint8_t ident)
+XMLP_ret XMLParser::getXMLDuration(
+        tinyxml2::XMLElement* elem,
+        Duration_t& duration,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="durationType">
@@ -1967,9 +2226,9 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                 <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -1982,7 +2241,7 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                         <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_SEC|([0-9])*)?"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -1990,9 +2249,13 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, DURATION_INFINITY) == 0)
+            {
                 duration = c_TimeInfinite;
+            }
             else if (strcmp(text, DURATION_INFINITE_SEC) == 0)
+            {
                 duration.seconds = c_TimeInfinite.seconds;
+            }
             else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
             {
                 logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
@@ -2007,7 +2270,7 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                         <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_NSEC|([0-9])*)?"/>
                     </xs:restriction>
                 </xs:simpleType>
-            */
+             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -2015,9 +2278,13 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, DURATION_INFINITY) == 0)
+            {
                 duration = c_TimeInfinite;
+            }
             else if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
+            {
                 duration.nanosec = c_TimeInfinite.nanosec;
+            }
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
             {
                 logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
@@ -2033,7 +2300,10 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLWriterTimes(tinyxml2::XMLElement *elem, WriterTimes &times, uint8_t ident)
+XMLP_ret XMLParser::getXMLWriterTimes(
+        tinyxml2::XMLElement* elem,
+        WriterTimes& times,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="writerTimesType">
@@ -2044,8 +2314,8 @@ XMLP_ret XMLParser::getXMLWriterTimes(tinyxml2::XMLElement *elem, WriterTimes &t
                 <xs:element name="nackSupressionDuration" type="durationType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2054,25 +2324,33 @@ XMLP_ret XMLParser::getXMLWriterTimes(tinyxml2::XMLElement *elem, WriterTimes &t
         {
             // initialHeartbeatDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initialHeartbeatDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HEARTB_PERIOD) == 0)
         {
             // heartbeatPeriod
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeatPeriod, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, NACK_RESP_DELAY) == 0)
         {
             // nackResponseDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nackResponseDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, NACK_SUPRESSION) == 0)
         {
             // nackSupressionDuration
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nackSupressionDuration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -2084,7 +2362,10 @@ XMLP_ret XMLParser::getXMLWriterTimes(tinyxml2::XMLElement *elem, WriterTimes &t
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLReaderTimes(tinyxml2::XMLElement *elem, ReaderTimes &times, uint8_t ident)
+XMLP_ret XMLParser::getXMLReaderTimes(
+        tinyxml2::XMLElement* elem,
+        ReaderTimes& times,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="readerTimesType">
@@ -2093,9 +2374,9 @@ XMLP_ret XMLParser::getXMLReaderTimes(tinyxml2::XMLElement *elem, ReaderTimes &t
                 <xs:element name="heartbeatResponseDelay" type="durationType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2104,13 +2385,17 @@ XMLP_ret XMLParser::getXMLReaderTimes(tinyxml2::XMLElement *elem, ReaderTimes &t
         {
             // initialAcknackDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initialAcknackDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HEARTB_RESP_DELAY) == 0)
         {
             // heartbeatResponseDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeatResponseDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -2122,7 +2407,10 @@ XMLP_ret XMLParser::getXMLReaderTimes(tinyxml2::XMLElement *elem, ReaderTimes &t
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+XMLP_ret XMLParser::getXMLLocatorUDPv4(
+        tinyxml2::XMLElement* elem,
+        rtps::Locator_t& locator,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="udpv4LocatorType">
@@ -2131,10 +2419,10 @@ XMLP_ret XMLParser::getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator
                 <xs:element name="address" type="stringType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     locator.kind = LOCATOR_KIND_UDPv4;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2143,14 +2431,18 @@ XMLP_ret XMLParser::getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator
         {
             // port - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ADDRESS) == 0)
         {
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv4(locator, s);
         }
         else
@@ -2162,7 +2454,10 @@ XMLP_ret XMLParser::getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+XMLP_ret XMLParser::getXMLLocatorUDPv6(
+        tinyxml2::XMLElement* elem,
+        rtps::Locator_t& locator,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="udpv6LocatorType">
@@ -2171,10 +2466,10 @@ XMLP_ret XMLParser::getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator
                 <xs:element name="address" type="stringType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     locator.kind = LOCATOR_KIND_UDPv6;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2183,14 +2478,18 @@ XMLP_ret XMLParser::getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator
         {
             // port - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ADDRESS) == 0)
         {
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv6(locator, s);
         }
         else
@@ -2202,7 +2501,10 @@ XMLP_ret XMLParser::getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+XMLP_ret XMLParser::getXMLLocatorTCPv4(
+        tinyxml2::XMLElement* elem,
+        rtps::Locator_t& locator,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="tcpv4LocatorType">
@@ -2214,10 +2516,10 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
                 <xs:element name="unique_lan_id" type="stringType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     locator.kind = LOCATOR_KIND_TCPv4;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2227,7 +2529,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setLogicalPort(locator, port);
         }
         else if (strcmp(name, PHYSICAL_PORT) == 0)
@@ -2235,7 +2539,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // physical_port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setPhysicalPort(locator, port);
         }
         else if (strcmp(name, ADDRESS) == 0)
@@ -2243,7 +2549,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv4(locator, s);
         }
         else if (strcmp(name, WAN_ADDRESS) == 0)
@@ -2251,7 +2559,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setWan(locator, s);
         }
         else if (strcmp(name, UNIQUE_LAN_ID) == 0)
@@ -2259,7 +2569,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setLanID(locator, s);
         }
         else
@@ -2271,7 +2583,10 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+XMLP_ret XMLParser::getXMLLocatorTCPv6(
+        tinyxml2::XMLElement* elem,
+        rtps::Locator_t& locator,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="tcpv6LocatorType">
@@ -2281,10 +2596,10 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
                 <xs:element name="address" type="stringType" minOccurs="0"/>
             </xs:choice>
         </xs:complexType>
-    */
+     */
 
     locator.kind = LOCATOR_KIND_TCPv6;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2294,7 +2609,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
             // port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setLogicalPort(locator, port);
         }
         else if (strcmp(name, PHYSICAL_PORT) == 0)
@@ -2302,7 +2619,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
             // physical_port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setPhysicalPort(locator, port);
         }
         else if (strcmp(name, ADDRESS) == 0)
@@ -2310,7 +2629,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv6(locator, s);
         }
         else
@@ -2322,7 +2643,10 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t &locatorList, uint8_t ident)
+XMLP_ret XMLParser::getXMLLocatorList(
+        tinyxml2::XMLElement* elem,
+        LocatorList_t& locatorList,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="locatorListType">
@@ -2330,8 +2654,8 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
                 <xs:element name="locator" type="locatorType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
-    */
-    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr, * p_aux1 = nullptr;
     p_aux0 = elem->FirstChildElement(LOCATOR);
     if (nullptr == p_aux0)
     {
@@ -2350,27 +2674,35 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
                     <xs:element name="tcpv6" type="tcpv6LocatorType"/>
                 </xs:choice>
             </xs:complexType>
-        */
+         */
         Locator_t loc;
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(UDPv4_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorUDPv4(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(UDPv6_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorUDPv6(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(TCPv4_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorTCPv4(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(TCPv6_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorTCPv6(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement()))
         {
@@ -2385,8 +2717,10 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(tinyxml2::XMLElement *elem,
-    MemoryManagementPolicy_t &historyMemoryPolicy, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(
+        tinyxml2::XMLElement* elem,
+        MemoryManagementPolicy_t& historyMemoryPolicy,
+        uint8_t /*ident*/)
 {
     /*
         <xs:simpleType name="historyMemoryPolicyType">
@@ -2396,7 +2730,7 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(tinyxml2::XMLElement *elem,
                 <xs:enumeration value="DYNAMIC"/>
             </xs:restriction>
         </xs:simpleType>
-    */
+     */
     const char* text = elem->GetText();
     if (nullptr == text)
     {
@@ -2404,13 +2738,21 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(tinyxml2::XMLElement *elem,
         return XMLP_ret::XML_ERROR;
     }
     if (strcmp(text, PREALLOCATED) == 0)
+    {
         historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE;
+    }
     else if (strcmp(text, PREALLOCATED_WITH_REALLOC) == 0)
+    {
         historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
     else if (strcmp(text, DYNAMIC) == 0)
+    {
         historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE;
+    }
     else if (strcmp(text, DYNAMIC_REUSABLE) == 0)
+    {
         historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE;
+    }
     else
     {
         logError(XMLPARSER, "Node '" << KIND << "' bad content");
@@ -2420,7 +2762,10 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyPolicy &propertiesPolicy, uint8_t ident)
+XMLP_ret XMLParser::getXMLPropertiesPolicy(
+        tinyxml2::XMLElement* elem,
+        PropertyPolicy& propertiesPolicy,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="propertyPolicyType">
@@ -2429,9 +2774,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                 <xs:element name="binary_properties" type="binaryPropertyVectorType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr, *p_aux2 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr, * p_aux1 = nullptr, * p_aux2 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2455,7 +2800,7 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                             <xs:element name="propagate" type="boolType"/>
                         </xs:all>
                     </xs:complexType>
-                */
+                 */
 
                 const char* sub_name = nullptr;
                 Property prop;
@@ -2467,7 +2812,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // name - stringType
                         std::string s = "";
                         if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         prop.name(s);
                     }
                     else if (strcmp(sub_name, VALUE) == 0)
@@ -2475,7 +2822,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // value - stringType
                         std::string s = "";
                         if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         prop.value(s);
                     }
                     else if (strcmp(sub_name, PROPAGATE) == 0)
@@ -2483,7 +2832,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // propagate - boolType
                         bool b = false;
                         if (XMLP_ret::XML_OK != getXMLBool(p_aux2, &b, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         prop.propagate(b);
                     }
                 }
@@ -2511,7 +2862,7 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                             <xs:element name="propagate" type="boolType"/>
                         </xs:all>
                     </xs:complexType>
-                */
+                 */
                 const char* sub_name = nullptr;
                 BinaryProperty bin_prop;
                 for (p_aux2 = p_aux1->FirstChildElement(); p_aux2 != NULL; p_aux2 = p_aux2->NextSiblingElement())
@@ -2522,7 +2873,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // name - stringType
                         std::string s = "";
                         if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         bin_prop.name(s);
                     }
                     else if (strcmp(sub_name, VALUE) == 0)
@@ -2531,15 +2884,17 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // value - stringType
                         logError(XMLPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
                         /*std::string s = "";
-                        if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::XML_ERROR;
-                        bin_prop.value(s);*/
+                           if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::XML_ERROR;
+                           bin_prop.value(s);*/
                     }
                     else if (strcmp(sub_name, PROPAGATE) == 0)
                     {
                         // propagate - boolType
                         bool b = false;
                         if (XMLP_ret::XML_OK != getXMLBool(p_aux2, &b, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         bin_prop.propagate(b);
                     }
                 }
@@ -2552,14 +2907,20 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
 }
 
 // TODO
-XMLP_ret XMLParser::getXMLOctetVector(tinyxml2::XMLElement *elem, std::vector<octet> &/*octetVector*/, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLOctetVector(
+        tinyxml2::XMLElement* elem,
+        std::vector<octet>& /*octetVector*/,
+        uint8_t /*ident*/)
 {
     (void)(elem);
     logError(XMLPARSER, "Tag '" << elem->Value() << "' octetVector do not supported for now");
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLInt(tinyxml2::XMLElement *elem, int *in, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLInt(
+        tinyxml2::XMLElement* elem,
+        int* in,
+        uint8_t /*ident*/)
 {
     if (nullptr == elem || nullptr == in)
     {
@@ -2574,7 +2935,10 @@ XMLP_ret XMLParser::getXMLInt(tinyxml2::XMLElement *elem, int *in, uint8_t /*ide
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLUint(
+        tinyxml2::XMLElement* elem,
+        unsigned int* ui,
+        uint8_t /*ident*/)
 {
     if (nullptr == elem || nullptr == ui)
     {
@@ -2589,7 +2953,10 @@ XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, unsigned int *ui, uin
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLUint(
+        tinyxml2::XMLElement* elem,
+        uint16_t* ui16,
+        uint8_t /*ident*/)
 {
     unsigned int ui = 0u;
     if (nullptr == elem || nullptr == ui16)
@@ -2598,7 +2965,7 @@ XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8
         return XMLP_ret::XML_ERROR;
     }
     else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
-        ui >= 65536)
+            ui >= 65536)
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -2607,7 +2974,10 @@ XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLBool(
+        tinyxml2::XMLElement* elem,
+        bool* b,
+        uint8_t /*ident*/)
 {
     if (nullptr == elem || nullptr == b)
     {
@@ -2622,7 +2992,10 @@ XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*id
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, IntraprocessDeliveryType * e, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        IntraprocessDeliveryType* e,
+        uint8_t /*ident*/)
 {
     //<xs:simpleType name="IntraprocessDeliveryType">
     //    <xs:restriction base="xs:string">
@@ -2665,7 +3038,10 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, IntraprocessDeliveryT
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, DiscoveryProtocol_t * e, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        DiscoveryProtocol_t* e,
+        uint8_t /*ident*/)
 {
     /*
         <xs:simpleType name="DiscoveryProtocol">
@@ -2677,7 +3053,7 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, DiscoveryProtocol_t *
                 <xs:enumeration value="BACKUP"/>
             </xs:restriction>
         </xs:simpleType>
-    */
+     */
 
     const char* text = nullptr;
 
@@ -2720,7 +3096,10 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, DiscoveryProtocol_t *
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringFlags_t * e, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        ParticipantFilteringFlags_t* e,
+        uint8_t /*ident*/)
 {
     /*
         <xs:simpleType name="ParticipantFlags">
@@ -2728,16 +3107,16 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
                 <xs:pattern value="((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS)(\||\s)*)*" />
             </xs:restriction>
         </xs:simpleType>
-    */
+     */
 
     const char* text = nullptr;
 
-    if(nullptr == elem || nullptr == e)
+    if (nullptr == elem || nullptr == e)
     {
         logError(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if(nullptr == (text = elem->GetText()))
+    else if (nullptr == (text = elem->GetText()))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -2746,7 +3125,7 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
     // First we check if it matches the schema pattern
     std::regex schema("((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)*(\\||\\s)*)*");
 
-    if(!std::regex_match(text, schema))
+    if (!std::regex_match(text, schema))
     {
         logError(XMLPARSER, "provided flags doesn't match expected ParticipantFilteringFlags!");
         return XMLP_ret::XML_ERROR;
@@ -2754,22 +3133,22 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
 
     // Lets parse the flags, we assume the flags argument has been already flushed
     std::regex flags("FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS");
-    std::cregex_iterator it(text,text+strlen(text),flags);
+    std::cregex_iterator it(text, text + strlen(text), flags);
     uint32_t newflags = *e;
 
-    while(it != std::cregex_iterator())
+    while (it != std::cregex_iterator())
     {
         std::string flag(it++->str());
 
-        if(flag == FILTER_DIFFERENT_HOST )
+        if (flag == FILTER_DIFFERENT_HOST )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST;
         }
-        else if(flag == FILTER_DIFFERENT_PROCESS )
+        else if (flag == FILTER_DIFFERENT_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS;
         }
-        else if(flag == FILTER_SAME_PROCESS )
+        else if (flag == FILTER_SAME_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_SAME_PROCESS;
         }
@@ -2780,7 +3159,10 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerAttributes & server, uint8_t ident)
+XMLP_ret XMLParser::getXMLRemoteServer(
+        tinyxml2::XMLElement* elem,
+        RemoteServerAttributes& server,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="RemoteServerAttributes">
@@ -2790,10 +3172,10 @@ XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerA
             </xs:all>
             <xs:attribute name="guidPrefix" type="guid" use="required"/>
         </xs:complexType>
-    */
+     */
 
     const char* Prefix = nullptr;
-    tinyxml2::XMLElement * pLU = nullptr, * pLM = nullptr;
+    tinyxml2::XMLElement* pLU = nullptr, * pLM = nullptr;
 
     if (nullptr == elem )
     {
@@ -2803,18 +3185,18 @@ XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerA
     else if (nullptr == (Prefix = elem->Attribute(PREFIX)))
     {
         logError(XMLPARSER, "nullptr when getXMLRemoteServer try to recover server's guidPrefix XML_ERROR!");
-            return XMLP_ret::XML_ERROR;
+        return XMLP_ret::XML_ERROR;
     }
     else if (!server.ReadguidPrefix(Prefix))
     {
         logError(XMLPARSER, "getXMLRemoteServer found an invalid server's guidPrefix XML_ERROR!");
-            return XMLP_ret::XML_ERROR;
+        return XMLP_ret::XML_ERROR;
     }
 
     pLU = elem->FirstChildElement(META_UNI_LOC_LIST);
     pLM = elem->FirstChildElement(META_MULTI_LOC_LIST);
 
-    if ( pLU == nullptr && pLM ==nullptr )
+    if ( pLU == nullptr && pLM == nullptr )
     {
         logError(XMLPARSER, "getXMLRemoteServer couldn't find any server's locator XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -2822,20 +3204,25 @@ XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerA
 
     if (pLU && XMLP_ret::XML_OK != getXMLLocatorList(pLU, server.metatrafficUnicastLocatorList, ident))
     {
-        logError(XMLPARSER, "getXMLRemoteServer was given a misformatted server's " << META_UNI_LOC_LIST << " XML_ERROR!");
+        logError(XMLPARSER,
+                "getXMLRemoteServer was given a misformatted server's " << META_UNI_LOC_LIST << " XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
 
     if (pLM && XMLP_ret::XML_OK != getXMLLocatorList(pLM, server.metatrafficMulticastLocatorList, ident))
     {
-        logError(XMLPARSER, "getXMLRemoteServer was given a misformatted server's " << META_MULTI_LOC_LIST << " XML_ERROR!");
+        logError(XMLPARSER,
+                "getXMLRemoteServer was given a misformatted server's " << META_MULTI_LOC_LIST << " XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLList(tinyxml2::XMLElement* elem, RemoteServerList_t & list, uint8_t ident)
+XMLP_ret XMLParser::getXMLList(
+        tinyxml2::XMLElement* elem,
+        RemoteServerList_t& list,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="DiscoveryServerList">
@@ -2843,9 +3230,9 @@ XMLP_ret XMLParser::getXMLList(tinyxml2::XMLElement* elem, RemoteServerList_t & 
                 <xs:element name="RemoteServer" type="RemoteServerAttributes" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement * pS = nullptr;
+    tinyxml2::XMLElement* pS = nullptr;
 
     if (nullptr == elem)
     {
@@ -2875,7 +3262,10 @@ XMLP_ret XMLParser::getXMLList(tinyxml2::XMLElement* elem, RemoteServerList_t & 
 
 }
 
-XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLString(
+        tinyxml2::XMLElement* elem,
+        std::string* s,
+        uint8_t /*ident*/)
 {
     const char* text = nullptr;
 
@@ -2893,7 +3283,10 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLguidPrefix(tinyxml2::XMLElement *elem, GuidPrefix_t &prefix, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLguidPrefix(
+        tinyxml2::XMLElement* elem,
+        GuidPrefix_t& prefix,
+        uint8_t /*ident*/)
 {
     const char* text = nullptr;
 

@@ -45,8 +45,8 @@ namespace rtps {
 // Default configuration values for EDP entities.
 static const Duration_t edp_heartbeat_period{1, 0}; // 1 second
 static const Duration_t edp_nack_response_delay{0, 100 * 1000 }; // 100 milliseconds
-static const Duration_t edp_nack_supression_duration{0, 10*1000}; // 10 milliseconds
-static const Duration_t edp_heartbeat_response_delay{0, 10*1000}; // 10 milliseconds
+static const Duration_t edp_nack_supression_duration{0, 10 * 1000}; // 10 milliseconds
+static const Duration_t edp_heartbeat_response_delay{0, 10 * 1000}; // 10 milliseconds
 
 static const int32_t edp_initial_reserved_caches = 20;
 
@@ -54,13 +54,13 @@ static const int32_t edp_initial_reserved_caches = 20;
 EDPSimple::EDPSimple(
         PDP* p,
         RTPSParticipantImpl* part)
-    : EDP(p,part)
+    : EDP(p, part)
     , publications_listener_(nullptr)
     , subscriptions_listener_(nullptr)
     , temp_reader_proxy_data_(
-            part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-            part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-            part->getRTPSParticipantAttributes().allocation.data_limits)
+        part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+        part->getRTPSParticipantAttributes().allocation.data_limits)
     , temp_writer_proxy_data_(
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
@@ -71,79 +71,79 @@ EDPSimple::EDPSimple(
 EDPSimple::~EDPSimple()
 {
 #if HAVE_SECURITY
-    if(this->publications_secure_writer_.first !=nullptr)
+    if (this->publications_secure_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_secure_writer_.first);
         delete(publications_secure_writer_.second);
     }
 
-    if(this->publications_secure_reader_.first !=nullptr)
+    if (this->publications_secure_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_secure_reader_.first);
         delete(publications_secure_reader_.second);
     }
 
-    if(this->subscriptions_secure_writer_.first !=nullptr)
+    if (this->subscriptions_secure_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_secure_writer_.first);
         delete(subscriptions_secure_writer_.second);
     }
 
-    if(this->subscriptions_secure_reader_.first !=nullptr)
+    if (this->subscriptions_secure_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_secure_reader_.first);
         delete(subscriptions_secure_reader_.second);
     }
 #endif
 
-    if(this->publications_reader_.first !=nullptr)
+    if (this->publications_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_reader_.first);
         delete(publications_reader_.second);
     }
-    if(this->subscriptions_reader_.first !=nullptr)
+    if (this->subscriptions_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_reader_.first);
         delete(subscriptions_reader_.second);
     }
-    if(this->publications_writer_.first !=nullptr)
+    if (this->publications_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_writer_.first);
         delete(publications_writer_.second);
     }
-    if(this->subscriptions_writer_.first !=nullptr)
+    if (this->subscriptions_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_writer_.first);
         delete(subscriptions_writer_.second);
     }
 
-    if(nullptr != publications_listener_)
+    if (nullptr != publications_listener_)
     {
         delete(publications_listener_);
     }
 
-    if(nullptr != subscriptions_listener_)
+    if (nullptr != subscriptions_listener_)
     {
         delete(subscriptions_listener_);
     }
 }
 
-
-bool EDPSimple::initEDP(BuiltinAttributes& attributes)
+bool EDPSimple::initEDP(
+        BuiltinAttributes& attributes)
 {
-    logInfo(RTPS_EDP,"Beginning Simple Endpoint Discovery Protocol");
+    logInfo(RTPS_EDP, "Beginning Simple Endpoint Discovery Protocol");
     m_discovery = attributes;
 
-    if(!createSEDPEndpoints())
+    if (!createSEDPEndpoints())
     {
-        logError(RTPS_EDP,"Problem creation SimpleEDP endpoints");
+        logError(RTPS_EDP, "Problem creation SimpleEDP endpoints");
         return false;
     }
 
 #if HAVE_SECURITY
-    if(mp_RTPSParticipant->is_secure() && !create_sedp_secure_endpoints())
+    if (mp_RTPSParticipant->is_secure() && !create_sedp_secure_endpoints())
     {
-        logError(RTPS_EDP,"Problem creation SimpleEDP endpoints");
+        logError(RTPS_EDP, "Problem creation SimpleEDP endpoints");
         return false;
     }
 #endif
@@ -151,25 +151,28 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
     return true;
 }
 
-void EDPSimple::set_builtin_reader_history_attributes(HistoryAttributes& attributes)
+void EDPSimple::set_builtin_reader_history_attributes(
+        HistoryAttributes& attributes)
 {
     attributes.initialReservedCaches = edp_initial_reserved_caches;
-    attributes.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+    attributes.payloadMaxSize = mp_PDP->builtin_attributes().readerPayloadSize;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().readerHistoryMemoryPolicy;
 }
 
-void EDPSimple::set_builtin_writer_history_attributes(HistoryAttributes& attributes)
+void EDPSimple::set_builtin_writer_history_attributes(
+        HistoryAttributes& attributes)
 {
     attributes.initialReservedCaches = edp_initial_reserved_caches;
-    attributes.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+    attributes.payloadMaxSize = mp_PDP->builtin_attributes().writerPayloadSize;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().writerHistoryMemoryPolicy;
 }
 
-void EDPSimple::set_builtin_reader_attributes(ReaderAttributes& attributes)
+void EDPSimple::set_builtin_reader_attributes(
+        ReaderAttributes& attributes)
 {
     // Matched writers will depend on total number of participants
     attributes.matched_writers_allocation =
-        mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes().allocation.participants;
+            mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes().allocation.participants;
 
     // As participants allocation policy includes the local participant, one has to be substracted
     if (attributes.matched_writers_allocation.initial > 1)
@@ -177,7 +180,7 @@ void EDPSimple::set_builtin_reader_attributes(ReaderAttributes& attributes)
         attributes.matched_writers_allocation.initial--;
     }
     if ((attributes.matched_writers_allocation.maximum > 1) &&
-        (attributes.matched_writers_allocation.maximum < std::numeric_limits<size_t>::max()))
+            (attributes.matched_writers_allocation.maximum < std::numeric_limits<size_t>::max()))
     {
         attributes.matched_writers_allocation.maximum--;
     }
@@ -206,11 +209,12 @@ void EDPSimple::set_builtin_reader_attributes(ReaderAttributes& attributes)
     attributes.expectsInlineQos = false;
 }
 
-void EDPSimple::set_builtin_writer_attributes(WriterAttributes& attributes)
+void EDPSimple::set_builtin_writer_attributes(
+        WriterAttributes& attributes)
 {
     // Matched readers will depend on total number of participants
     attributes.matched_readers_allocation =
-        mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes().allocation.participants;
+            mp_PDP->getRTPSParticipant()->getRTPSParticipantAttributes().allocation.participants;
 
     // As participants allocation policy includes the local participant, one has to be substracted
     if (attributes.matched_readers_allocation.initial > 1)
@@ -218,7 +222,7 @@ void EDPSimple::set_builtin_writer_attributes(WriterAttributes& attributes)
         attributes.matched_readers_allocation.initial--;
     }
     if ((attributes.matched_readers_allocation.maximum > 1) &&
-        (attributes.matched_readers_allocation.maximum < std::numeric_limits<size_t>::max()))
+            (attributes.matched_readers_allocation.maximum < std::numeric_limits<size_t>::max()))
     {
         attributes.matched_readers_allocation.maximum--;
     }
@@ -247,7 +251,7 @@ void EDPSimple::set_builtin_writer_attributes(WriterAttributes& attributes)
 
     // Set as asynchronous if there is a throughput controller installed
     if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-        mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+            mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
     {
         attributes.mode = ASYNCHRONOUS_WRITER;
     }
@@ -271,16 +275,16 @@ bool EDPSimple::createSEDPEndpoints()
     publications_listener_ = new EDPSimplePUBListener(this);
     subscriptions_listener_ = new EDPSimpleSUBListener(this);
 
-    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    if (m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         publications_writer_.second = new WriterHistory(writer_history_att);
-        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
-                publications_listener_, c_EntityId_SEDPPubWriter, true);
+        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
+                        publications_listener_, c_EntityId_SEDPPubWriter, true);
 
-        if(created)
+        if (created)
         {
             publications_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            logInfo(RTPS_EDP,"SEDP Publication Writer created");
+            logInfo(RTPS_EDP, "SEDP Publication Writer created");
         }
         else
         {
@@ -289,13 +293,13 @@ bool EDPSimple::createSEDPEndpoints()
         }
 
         subscriptions_reader_.second = new ReaderHistory(reader_history_att);
-        created &=this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
-                subscriptions_listener_, c_EntityId_SEDPSubReader, true);
+        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
+                        subscriptions_listener_, c_EntityId_SEDPSubReader, true);
 
-        if(created)
+        if (created)
         {
             subscriptions_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP,"SEDP Subscription Reader created");
+            logInfo(RTPS_EDP, "SEDP Subscription Reader created");
         }
         else
         {
@@ -303,16 +307,16 @@ bool EDPSimple::createSEDPEndpoints()
             subscriptions_reader_.second = nullptr;
         }
     }
-    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    if (m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         publications_reader_.second = new ReaderHistory(reader_history_att);
-        created &=this->mp_RTPSParticipant->createReader(&raux, ratt, publications_reader_.second,
-                publications_listener_, c_EntityId_SEDPPubReader, true);
+        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_reader_.second,
+                        publications_listener_, c_EntityId_SEDPPubReader, true);
 
-        if(created)
+        if (created)
         {
             publications_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP,"SEDP Publication Reader created");
+            logInfo(RTPS_EDP, "SEDP Publication Reader created");
 
         }
         else
@@ -322,13 +326,13 @@ bool EDPSimple::createSEDPEndpoints()
         }
 
         subscriptions_writer_.second = new WriterHistory(writer_history_att);
-        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_writer_.second,
-                subscriptions_listener_, c_EntityId_SEDPSubWriter, true);
+        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_writer_.second,
+                        subscriptions_listener_, c_EntityId_SEDPSubWriter, true);
 
-        if(created)
+        if (created)
         {
             subscriptions_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            logInfo(RTPS_EDP,"SEDP Subscription Writer created");
+            logInfo(RTPS_EDP, "SEDP Subscription Writer created");
 
         }
         else
@@ -337,7 +341,7 @@ bool EDPSimple::createSEDPEndpoints()
             subscriptions_writer_.second = nullptr;
         }
     }
-    logInfo(RTPS_EDP,"Creation finished");
+    logInfo(RTPS_EDP, "Creation finished");
     return created;
 }
 
@@ -372,29 +376,29 @@ bool EDPSimple::create_sedp_secure_endpoints()
         if (plugin_part_attr.is_discovery_encrypted)
         {
             ratt.endpoint.security_attributes().plugin_endpoint_attributes |=
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
             watt.endpoint.security_attributes().plugin_endpoint_attributes |=
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         }
         if (plugin_part_attr.is_discovery_origin_authenticated)
         {
             ratt.endpoint.security_attributes().plugin_endpoint_attributes |=
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
             watt.endpoint.security_attributes().plugin_endpoint_attributes |=
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+                    PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
         }
     }
 
-    if(m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
+    if (m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
         publications_secure_writer_.second = new WriterHistory(writer_history_att);
-        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, publications_secure_writer_.second,
-                publications_listener_, sedp_builtin_publications_secure_writer, true);
+        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_secure_writer_.second,
+                        publications_listener_, sedp_builtin_publications_secure_writer, true);
 
-        if(created)
+        if (created)
         {
             publications_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            logInfo(RTPS_EDP,"SEDP Publication Writer created");
+            logInfo(RTPS_EDP, "SEDP Publication Writer created");
         }
         else
         {
@@ -402,13 +406,13 @@ bool EDPSimple::create_sedp_secure_endpoints()
             publications_secure_writer_.second = nullptr;
         }
         subscriptions_secure_reader_.second = new ReaderHistory(reader_history_att);
-        created &=this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_secure_reader_.second,
-                subscriptions_listener_, sedp_builtin_subscriptions_secure_reader, true);
+        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_secure_reader_.second,
+                        subscriptions_listener_, sedp_builtin_subscriptions_secure_reader, true);
 
-        if(created)
+        if (created)
         {
             subscriptions_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP,"SEDP Subscription Reader created");
+            logInfo(RTPS_EDP, "SEDP Subscription Reader created");
         }
         else
         {
@@ -417,16 +421,16 @@ bool EDPSimple::create_sedp_secure_endpoints()
         }
     }
 
-    if(m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
+    if (m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
         publications_secure_reader_.second = new ReaderHistory(reader_history_att);
-        created &=this->mp_RTPSParticipant->createReader(&raux, ratt, publications_secure_reader_.second,
-                publications_listener_, sedp_builtin_publications_secure_reader, true);
+        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_secure_reader_.second,
+                        publications_listener_, sedp_builtin_publications_secure_reader, true);
 
-        if(created)
+        if (created)
         {
             publications_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP,"SEDP Publication Reader created");
+            logInfo(RTPS_EDP, "SEDP Publication Reader created");
 
         }
         else
@@ -436,13 +440,13 @@ bool EDPSimple::create_sedp_secure_endpoints()
         }
 
         subscriptions_secure_writer_.second = new WriterHistory(writer_history_att);
-        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_secure_writer_.second,
-            subscriptions_listener_, sedp_builtin_subscriptions_secure_writer, true);
+        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_secure_writer_.second,
+                        subscriptions_listener_, sedp_builtin_subscriptions_secure_writer, true);
 
-        if(created)
+        if (created)
         {
             subscriptions_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            logInfo(RTPS_EDP,"SEDP Subscription Writer created");
+            logInfo(RTPS_EDP, "SEDP Subscription Writer created");
 
         }
         else
@@ -451,32 +455,37 @@ bool EDPSimple::create_sedp_secure_endpoints()
             subscriptions_secure_writer_.second = nullptr;
         }
     }
-    logInfo(RTPS_EDP,"Creation finished");
+    logInfo(RTPS_EDP, "Creation finished");
     return created;
 }
+
 #endif
 
-bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProxyData* rdata)
+bool EDPSimple::processLocalReaderProxyData(
+        RTPSReader* local_reader,
+        ReaderProxyData* rdata)
 {
-    logInfo(RTPS_EDP,rdata->guid().entityId);
+    logInfo(RTPS_EDP, rdata->guid().entityId);
     (void)local_reader;
 
     auto* writer = &subscriptions_writer_;
 
 #if HAVE_SECURITY
-    if(local_reader->getAttributes().security_attributes().is_discovery_protected)
+    if (local_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
     }
 #endif
 
-    if(writer->first != nullptr)
+    if (writer->first != nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
-                ALIVE,rdata->key());
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
+                        return mp_PDP->builtin_attributes().writerPayloadSize;
+                    },
+                        ALIVE, rdata->key());
 
-        if(change !=nullptr)
+        if (change != nullptr)
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
@@ -493,9 +502,9 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
 
             {
                 std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
-                    if((*ch)->instanceHandle == change->instanceHandle)
+                    if ((*ch)->instanceHandle == change->instanceHandle)
                     {
                         writer->second->remove_change(*ch);
                         break;
@@ -514,7 +523,9 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     return true;
 }
 
-bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProxyData* wdata)
+bool EDPSimple::processLocalWriterProxyData(
+        RTPSWriter* local_writer,
+        WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP, wdata->guid().entityId);
     (void)local_writer;
@@ -522,17 +533,19 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
     auto* writer = &publications_writer_;
 
 #if HAVE_SECURITY
-    if(local_writer->getAttributes().security_attributes().is_discovery_protected)
+    if (local_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
     }
 #endif
 
-    if(writer->first !=nullptr)
+    if (writer->first != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
-                ALIVE, wdata->key());
-        if(change != nullptr)
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
+                        return mp_PDP->builtin_attributes().writerPayloadSize;
+                    },
+                        ALIVE, wdata->key());
+        if (change != nullptr)
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
@@ -549,9 +562,9 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
 
             {
                 std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
-                    if((*ch)->instanceHandle == change->instanceHandle)
+                    if ((*ch)->instanceHandle == change->instanceHandle)
                     {
                         writer->second->remove_change(*ch);
                         break;
@@ -568,32 +581,35 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
     return true;
 }
 
-bool EDPSimple::removeLocalWriter(RTPSWriter* W)
+bool EDPSimple::removeLocalWriter(
+        RTPSWriter* W)
 {
-    logInfo(RTPS_EDP,W->getGuid().entityId);
+    logInfo(RTPS_EDP, W->getGuid().entityId);
 
     auto* writer = &publications_writer_;
 
 #if HAVE_SECURITY
-    if(W->getAttributes().security_attributes().is_discovery_protected)
+    if (W->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
     }
 #endif
 
-    if(writer->first!=nullptr)
+    if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
-                NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
-        if(change != nullptr)
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
+                        return mp_PDP->builtin_attributes().writerPayloadSize;
+                    },
+                        NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        if (change != nullptr)
         {
             {
                 std::lock_guard<RecursiveTimedMutex> guard(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
-                    if((*ch)->instanceHandle == change->instanceHandle)
+                    if ((*ch)->instanceHandle == change->instanceHandle)
                     {
                         writer->second->remove_change(*ch);
                         break;
@@ -608,32 +624,35 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
     return mp_PDP->removeWriterProxyData(W->getGuid());
 }
 
-bool EDPSimple::removeLocalReader(RTPSReader* R)
+bool EDPSimple::removeLocalReader(
+        RTPSReader* R)
 {
-    logInfo(RTPS_EDP,R->getGuid().entityId);
+    logInfo(RTPS_EDP, R->getGuid().entityId);
 
     auto* writer = &subscriptions_writer_;
 
 #if HAVE_SECURITY
-    if(R->getAttributes().security_attributes().is_discovery_protected)
+    if (R->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
     }
 #endif
 
-    if(writer->first!=nullptr)
+    if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
-                NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
-        if(change != nullptr)
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
+                        return mp_PDP->builtin_attributes().writerPayloadSize;
+                    },
+                        NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        if (change != nullptr)
         {
             {
                 std::lock_guard<RecursiveTimedMutex> guard(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
-                    if((*ch)->instanceHandle == change->instanceHandle)
+                    if ((*ch)->instanceHandle == change->instanceHandle)
                     {
                         writer->second->remove_change(*ch);
                         break;
@@ -647,15 +666,16 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
     return mp_PDP->removeReaderProxyData(R->getGuid());
 }
 
-void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
+void EDPSimple::assignRemoteEndpoints(
+        const ParticipantProxyData& pdata)
 {
-    logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints");
+    logInfo(RTPS_EDP, "New DPD received, adding remote endpoints to our SimpleEDP endpoints");
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     bool use_multicast_locators = !mp_PDP->getRTPSParticipant()->getAttributes().builtin.avoid_builtin_multicast ||
-                                  pdata.metatraffic_locators.unicast.empty();
-    auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+            pdata.metatraffic_locators.unicast.empty();
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
 
@@ -675,20 +695,20 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && publications_reader_.first!=nullptr) //Exist Pub Writer and i have pub reader
+    if (auxendp != 0 && publications_reader_.first != nullptr) //Exist Pub Writer and i have pub reader
     {
-        logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
+        logInfo(RTPS_EDP, "Adding SEDP Pub Writer to my Pub Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPPubWriter;
         temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPPubWriter);
         publications_reader_.first->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;
-    auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && publications_writer_.first!=nullptr) //Exist Pub Detector
+    if (auxendp != 0 && publications_writer_.first != nullptr) //Exist Pub Detector
     {
-        logInfo(RTPS_EDP,"Adding SEDP Pub Reader to my Pub Writer");
+        logInfo(RTPS_EDP, "Adding SEDP Pub Reader to my Pub Writer");
         temp_reader_proxy_data_.guid().entityId = c_EntityId_SEDPPubReader;
         publications_writer_.first->matched_reader_add(temp_reader_proxy_data_);
     }
@@ -696,9 +716,9 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && subscriptions_reader_.first!=nullptr) //Exist Pub Announcer
+    if (auxendp != 0 && subscriptions_reader_.first != nullptr) //Exist Pub Announcer
     {
-        logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
+        logInfo(RTPS_EDP, "Adding SEDP Sub Writer to my Sub Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPSubWriter;
         temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPSubWriter);
         subscriptions_reader_.first->matched_writer_add(temp_writer_proxy_data_);
@@ -707,9 +727,9 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && subscriptions_writer_.first!=nullptr) //Exist Pub Announcer
+    if (auxendp != 0 && subscriptions_writer_.first != nullptr) //Exist Pub Announcer
     {
-        logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
+        logInfo(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
         temp_reader_proxy_data_.guid().entityId = c_EntityId_SEDPSubReader;
         subscriptions_writer_.first->matched_reader_add(temp_reader_proxy_data_);
     }
@@ -719,12 +739,12 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && publications_secure_reader_.first != nullptr)
+    if (auxendp != 0 && publications_secure_reader_.first != nullptr)
     {
         temp_writer_proxy_data_.guid().entityId = sedp_builtin_publications_secure_writer;
         temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_publications_secure_writer);
 
-        if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
+        if (!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     publications_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     publications_secure_reader_.first->getAttributes().security_attributes()))
         {
@@ -737,10 +757,10 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && publications_secure_writer_.first!=nullptr)
+    if (auxendp != 0 && publications_secure_writer_.first != nullptr)
     {
         temp_reader_proxy_data_.guid().entityId = sedp_builtin_publications_secure_reader;
-        if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
+        if (!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     publications_secure_writer_.first->getGuid(), pdata.m_guid, temp_reader_proxy_data_,
                     publications_secure_writer_.first->getAttributes().security_attributes()))
         {
@@ -753,12 +773,12 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
+    if (auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
     {
         temp_writer_proxy_data_.guid().entityId = sedp_builtin_subscriptions_secure_writer;
         temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_subscriptions_secure_writer);
 
-        if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
+        if (!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     subscriptions_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     subscriptions_secure_reader_.first->getAttributes().security_attributes()))
         {
@@ -771,11 +791,11 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && subscriptions_secure_writer_.first!=nullptr)
+    if (auxendp != 0 && subscriptions_secure_writer_.first != nullptr)
     {
-        logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
+        logInfo(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
         temp_reader_proxy_data_.guid().entityId = sedp_builtin_subscriptions_secure_reader;
-        if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
+        if (!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     subscriptions_secure_writer_.first->getGuid(), pdata.m_guid, temp_reader_proxy_data_,
                     subscriptions_secure_writer_.first->getAttributes().security_attributes()))
         {
@@ -786,28 +806,29 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 #endif
 }
 
-void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
+void EDPSimple::removeRemoteEndpoints(
+        ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid);
+    logInfo(RTPS_EDP, "For RTPSParticipant: " << pdata->m_guid);
 
     GUID_t tmp_guid;
     tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
 
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
-    auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && publications_reader_.first!=nullptr) //Exist Pub Writer and i have pub reader
+    if (auxendp != 0 && publications_reader_.first != nullptr) //Exist Pub Writer and i have pub reader
     {
         tmp_guid.entityId = c_EntityId_SEDPPubWriter;
         publications_reader_.first->matched_writer_remove(tmp_guid);
     }
     auxendp = endp;
-    auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && publications_writer_.first!=nullptr) //Exist Pub Detector
+    if (auxendp != 0 && publications_writer_.first != nullptr) //Exist Pub Detector
     {
         tmp_guid.entityId = c_EntityId_SEDPPubReader;
         publications_writer_.first->matched_reader_remove(tmp_guid);
@@ -816,9 +837,9 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && subscriptions_reader_.first!=nullptr) //Exist Pub Announcer
+    if (auxendp != 0 && subscriptions_reader_.first != nullptr) //Exist Pub Announcer
     {
-        logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
+        logInfo(RTPS_EDP, "Adding SEDP Sub Writer to my Sub Reader");
         tmp_guid.entityId = c_EntityId_SEDPSubWriter;
         subscriptions_reader_.first->matched_writer_remove(tmp_guid);
     }
@@ -826,9 +847,9 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp!=0 && subscriptions_writer_.first!=nullptr) //Exist Pub Announcer
+    if (auxendp != 0 && subscriptions_writer_.first != nullptr) //Exist Pub Announcer
     {
-        logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
+        logInfo(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
         tmp_guid.entityId = c_EntityId_SEDPSubReader;
         subscriptions_writer_.first->matched_reader_remove(tmp_guid);
     }
@@ -838,13 +859,13 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && publications_secure_reader_.first != nullptr)
+    if (auxendp != 0 && publications_secure_reader_.first != nullptr)
     {
         tmp_guid.entityId = sedp_builtin_publications_secure_writer;
-        if(publications_secure_reader_.first->matched_writer_remove(tmp_guid))
+        if (publications_secure_reader_.first->matched_writer_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_writer(
-                    publications_secure_reader_.first->getGuid(), pdata->m_guid, tmp_guid);
+                publications_secure_reader_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
 
@@ -852,13 +873,13 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && publications_secure_writer_.first != nullptr)
+    if (auxendp != 0 && publications_secure_writer_.first != nullptr)
     {
         tmp_guid.entityId = sedp_builtin_publications_secure_reader;
-        if(publications_secure_writer_.first->matched_reader_remove(tmp_guid))
+        if (publications_secure_writer_.first->matched_reader_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_reader(
-                    publications_secure_writer_.first->getGuid(), pdata->m_guid, tmp_guid);
+                publications_secure_writer_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
 
@@ -866,34 +887,35 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
+    if (auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
     {
-        logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
+        logInfo(RTPS_EDP, "Adding SEDP Sub Writer to my Sub Reader");
         tmp_guid.entityId = sedp_builtin_subscriptions_secure_writer;
-        if(subscriptions_secure_reader_.first->matched_writer_remove(tmp_guid))
+        if (subscriptions_secure_reader_.first->matched_writer_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_writer(
-                    subscriptions_secure_reader_.first->getGuid(), pdata->m_guid, tmp_guid);
+                subscriptions_secure_reader_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
-    if(auxendp != 0 && subscriptions_secure_writer_.first!=nullptr)
+    if (auxendp != 0 && subscriptions_secure_writer_.first != nullptr)
     {
-        logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
+        logInfo(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
         tmp_guid.entityId = sedp_builtin_subscriptions_secure_reader;
-        if(subscriptions_secure_writer_.first->matched_reader_remove(tmp_guid))
+        if (subscriptions_secure_writer_.first->matched_reader_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_reader(
-                    subscriptions_secure_writer_.first->getGuid(), pdata->m_guid, tmp_guid);
+                subscriptions_secure_writer_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
 #endif
 }
 
-bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
+bool EDPSimple::areRemoteEndpointsMatched(
+        const ParticipantProxyData* pdata)
 {
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
 
@@ -906,7 +928,9 @@ bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
         wguid.entityId = c_EntityId_SEDPPubWriter;
 
         if (!publications_reader_.first->matched_writer_is_matched(wguid))
+        {
             return false;
+        }
     }
 
     auxendp = endp;
@@ -918,7 +942,9 @@ bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
         rguid.entityId = c_EntityId_SEDPPubReader;
 
         if (!publications_writer_.first->matched_reader_is_matched(rguid))
+        {
             return false;
+        }
     }
 
     auxendp = endp;
@@ -930,7 +956,9 @@ bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
         wguid.entityId = c_EntityId_SEDPSubWriter;
 
         if (!subscriptions_reader_.first->matched_writer_is_matched(wguid))
+        {
             return false;
+        }
     }
 
     auxendp = endp;
@@ -942,24 +970,27 @@ bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
         rguid.entityId = c_EntityId_SEDPSubReader;
 
         if (!subscriptions_writer_.first->matched_reader_is_matched(rguid))
+        {
             return false;
+        }
     }
 
     return true;
 }
 
 #if HAVE_SECURITY
-bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(const GUID_t& local_reader,
+bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(
+        const GUID_t& local_reader,
         const WriterProxyData& remote_writer_data)
 {
     bool returned_value = false;
 
-    if(local_reader.entityId == sedp_builtin_publications_secure_reader)
+    if (local_reader.entityId == sedp_builtin_publications_secure_reader)
     {
         publications_secure_reader_.first->matched_writer_add(remote_writer_data);
         returned_value = true;
     }
-    else if(local_reader.entityId == sedp_builtin_subscriptions_secure_reader)
+    else if (local_reader.entityId == sedp_builtin_subscriptions_secure_reader)
     {
         subscriptions_secure_reader_.first->matched_writer_add(remote_writer_data);
         returned_value = true;
@@ -968,17 +999,18 @@ bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(c
     return returned_value;
 }
 
-bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& local_writer,
+bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(
+        const GUID_t& local_writer,
         const ReaderProxyData& remote_reader_data)
 {
     bool returned_value = false;
 
-    if(local_writer.entityId == sedp_builtin_publications_secure_writer)
+    if (local_writer.entityId == sedp_builtin_publications_secure_writer)
     {
         publications_secure_writer_.first->matched_reader_add(remote_reader_data);
         returned_value = true;
     }
-    else if(local_writer.entityId == sedp_builtin_subscriptions_secure_writer)
+    else if (local_writer.entityId == sedp_builtin_subscriptions_secure_writer)
     {
         subscriptions_secure_writer_.first->matched_reader_add(remote_reader_data);
         returned_value = true;
@@ -986,6 +1018,7 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(c
 
     return returned_value;
 }
+
 #endif
 
 } /* namespace rtps */
