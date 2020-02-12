@@ -106,13 +106,15 @@ void RTPSReader::add_persistence_guid(const RemoteWriterAttributes& wdata)
 void RTPSReader::remove_persistence_guid(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    GUID_t persistence_guid = persistence_guid_map_[wdata.guid];
     persistence_guid_map_.erase(wdata.guid);
-    auto count = --persistence_guid_count_[wdata.endpoint.persistence_guid];
-    if (count == 0)
+    auto count = --persistence_guid_count_[persistence_guid];
+    if (count <= 0)
     {
         if (m_att.durabilityKind < TRANSIENT)
         {
-            history_record_.erase(wdata.endpoint.persistence_guid);
+            history_record_.erase(persistence_guid);
+            persistence_guid_count_.erase(persistence_guid);
         }
     }
 }
