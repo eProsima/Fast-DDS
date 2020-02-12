@@ -38,7 +38,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
                 <xs:element name="total_readers" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="total_writers" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="send_buffers" type="sendBuffersAllocationConfigType" minOccurs="0"/>
-                <xs:element name="max_propertiess" type="uint32Type" minOccurs="0"/>
+                <xs:element name="max_properties" type="uint32Type" minOccurs="0"/>
                 <xs:element name="max_user_data" type="uint32Type" minOccurs="0"/>
                 <xs:element name="max_partitions" type="uint32Type" minOccurs="0"/>
             </xs:all>

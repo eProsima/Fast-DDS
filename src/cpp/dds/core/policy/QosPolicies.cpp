@@ -617,7 +617,6 @@ bool DataRepresentationQosPolicy::readFromCDRMessage(
 {
     length = size;
 
-    uint32_t pos_ref = msg->pos;
     int16_t temp(0);
     uint32_t datasize(0);
     bool valid = CDRMessage::readUInt32(msg, &datasize);
@@ -626,8 +625,6 @@ bool DataRepresentationQosPolicy::readFromCDRMessage(
         valid &= CDRMessage::readInt16(msg, &temp);
         m_value.push_back(static_cast<DataRepresentationId_t>(temp));
     }
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
     return valid;
 }
 
@@ -655,9 +652,6 @@ bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(
         return false;
     }
 
-    length = size;
-
-    uint32_t pos_ref = msg->pos;
     uint16_t uKind(0);
     octet temp(0);
     m_ignore_sequence_bounds = false;
@@ -699,8 +693,6 @@ bool TypeConsistencyEnforcementQosPolicy::readFromCDRMessage(
         m_force_type_validation = temp == 0 ? false : true;
     }
 
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
     return valid;
 }
 
@@ -771,7 +763,6 @@ bool TypeIdV1::readFromCDRMessage(
         CDRMessage_t* msg,
         uint16_t size)
 {
-    length = size;
     SerializedPayload_t payload(size);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, size);
 
@@ -823,7 +814,6 @@ bool TypeObjectV1::readFromCDRMessage(
         CDRMessage_t* msg,
         uint16_t size)
 {
-    length = size;
     SerializedPayload_t payload(size);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, size);
 
@@ -875,7 +865,6 @@ bool xtypes::TypeInformation::readFromCDRMessage(
         CDRMessage_t* msg,
         uint16_t size)
 {
-    length = size;
     SerializedPayload_t payload(size);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, size);
 

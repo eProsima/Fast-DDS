@@ -771,7 +771,7 @@ inline bool CDRMessage::addParameterSentinel(
     {
         return false;
     }
-    CDRMessage::addUInt16(msg, fastdds::dds::PID_SENTINEL);
+    CDRMessage::addUInt16(msg, static_cast<uint16_t>(fastdds::dds::PID_SENTINEL));
     CDRMessage::addUInt16(msg, 0);
 
     return true;
@@ -783,7 +783,7 @@ inline bool CDRMessage::add_string(
 {
     uint32_t str_siz = static_cast<uint32_t>(strlen(in_str) + 1);
     bool valid = CDRMessage::addUInt32(msg, str_siz);
-    valid &= CDRMessage::addData(msg, (unsigned char*) in_str, str_siz + 1);
+    valid &= CDRMessage::addData(msg, (unsigned char*) in_str, str_siz);
     octet oc = '\0';
     for (; str_siz &3; ++str_siz)
     {

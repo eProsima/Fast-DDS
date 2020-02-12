@@ -689,9 +689,13 @@ public:
     UserDataQosPolicy& operator =(
             const collection_type& b)
     {
-        //If the object is size limited, already has max_size() allocated
-        //assign() will always stop copying when reaching max_size()
-        assign(b.begin(), b.end());
+        if (collection_ != b)
+        {
+            //If the object is size limited, already has max_size() allocated
+            //assign() will always stop copying when reaching max_size()
+            assign(b.begin(), b.end());
+            hasChanged = true;
+        }
         return *this;
     }
 
@@ -758,6 +762,7 @@ public:
     inline void clear() override
     {
         ResourceLimitedOctetVector::clear();
+        hasChanged = false;
     }
 
     /**
@@ -1118,14 +1123,14 @@ public:
     PartitionQosPolicy& operator =(
             const PartitionQosPolicy& b)
     {
-        length = b.length;
+        QosPolicy::operator=(b);
+        Parameter_t::operator=(b);
         max_size_ = b.max_size_;
         partitions_.reserve(max_size_ != 0 ?
                 b.partitions_.max_size :
                 b.partitions_.length);
         partitions_.copy(&b.partitions_, b.max_size_ != 0);
         Npartitions_ = b.Npartitions_;
-        hasChanged = true;
 
         return *this;
     }
@@ -1223,7 +1228,7 @@ public:
     {
         partitions_.length = 0;
         Npartitions_ = 0;
-        hasChanged = true;
+        hasChanged = false;
     }
 
     /**
@@ -2139,8 +2144,7 @@ public:
 
     inline void clear() override
     {
-        TypeIdV1 reset = TypeIdV1();
-        std::swap(*this, reset);
+        *this = TypeIdV1();
     }
 
     /**
@@ -2239,8 +2243,7 @@ public:
 
     inline void clear() override
     {
-        TypeObjectV1 reset = TypeObjectV1();
-        std::swap(*this, reset);
+        *this = TypeObjectV1();
     }
 
     /**
@@ -2344,8 +2347,7 @@ public:
 
     inline void clear() override
     {
-        TypeInformation reset = TypeInformation();
-        std::swap(*this, reset);
+        *this = TypeInformation();
     }
 
     /**

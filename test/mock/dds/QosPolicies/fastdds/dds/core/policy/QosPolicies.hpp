@@ -601,11 +601,17 @@ public:
     }
 
     UserDataQosPolicy& operator =(
-             const collection_type& b)
-     {
-         assign(b.begin(), b.end());
-         return *this;
-     }
+            const collection_type& b)
+    {
+        if (collection_ != b)
+        {
+            //If the object is size limited, already has max_size() allocated
+            //assign() will always stop copying when reaching max_size()
+            assign(b.begin(), b.end());
+            hasChanged = true;
+        }
+        return *this;
+    }
 
      /**
       * Const cast to underlying collection.

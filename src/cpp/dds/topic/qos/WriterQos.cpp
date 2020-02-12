@@ -246,6 +246,8 @@ void WriterQos::clear()
     m_publishMode.clear();
     representation.clear();
 
+    m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
 } //namespace dds
