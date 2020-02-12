@@ -381,12 +381,13 @@ void PDP::announceParticipantState(
             {
                 mp_PDPWriterHistory->remove_min_change();
             }
-            // TODO(Ricardo) Change mp_builtin->m_att.writerPayloadSize with getLocalParticipantProxyData()->size().
-            change = mp_PDPWriter->new_change([this]() -> uint32_t
-                        {
-                            return mp_builtin->m_att.writerPayloadSize;
-                        }
-                            , ALIVE, key);
+            uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
+            change = mp_PDPWriter->new_change(
+                [cdr_size]() -> uint32_t
+                {
+                    return cdr_size;
+                },
+                ALIVE, key);
 
             if (change != nullptr)
             {
@@ -424,11 +425,12 @@ void PDP::announceParticipantState(
         {
             mp_PDPWriterHistory->remove_min_change();
         }
-        change = mp_PDPWriter->new_change([this]() -> uint32_t
-                    {
-                        return mp_builtin->m_att.writerPayloadSize;
-                    }
-                        , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+        uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
+        change = mp_PDPWriter->new_change([cdr_size]() -> uint32_t
+            {
+                return cdr_size;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
 
         if (change != nullptr)
         {

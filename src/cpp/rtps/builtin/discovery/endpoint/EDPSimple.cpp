@@ -48,7 +48,8 @@ static const Duration_t edp_nack_response_delay{0, 100 * 1000 }; // 100 millisec
 static const Duration_t edp_nack_supression_duration{0, 10 * 1000}; // 10 milliseconds
 static const Duration_t edp_heartbeat_response_delay{0, 10 * 1000}; // 10 milliseconds
 
-static const int32_t edp_initial_reserved_caches = 20;
+static const int32_t edp_reader_initial_reserved_caches = 1;
+static const int32_t edp_writer_initial_reserved_caches = 20;
 
 
 EDPSimple::EDPSimple(
@@ -154,7 +155,7 @@ bool EDPSimple::initEDP(
 void EDPSimple::set_builtin_reader_history_attributes(
         HistoryAttributes& attributes)
 {
-    attributes.initialReservedCaches = edp_initial_reserved_caches;
+    attributes.initialReservedCaches = edp_reader_initial_reserved_caches;
     attributes.payloadMaxSize = mp_PDP->builtin_attributes().readerPayloadSize;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().readerHistoryMemoryPolicy;
 }
@@ -162,7 +163,7 @@ void EDPSimple::set_builtin_reader_history_attributes(
 void EDPSimple::set_builtin_writer_history_attributes(
         HistoryAttributes& attributes)
 {
-    attributes.initialReservedCaches = edp_initial_reserved_caches;
+    attributes.initialReservedCaches = edp_writer_initial_reserved_caches;
     attributes.payloadMaxSize = mp_PDP->builtin_attributes().writerPayloadSize;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().writerHistoryMemoryPolicy;
 }
@@ -476,51 +477,13 @@ bool EDPSimple::processLocalReaderProxyData(
         writer = &subscriptions_secure_writer_;
     }
 #endif
-
-    if (writer->first != nullptr)
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_proxy_data(*rdata, *writer, true, &change);
+    if (change != nullptr)
     {
-        // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        ALIVE, rdata->key());
-
-        if (change != nullptr)
-        {
-            CDRMessage_t aux_msg(change->serializedPayload);
-
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
-#endif
-
-            rdata->writeToCDRMessage(&aux_msg, true);
-            change->serializedPayload.length = (uint16_t)aux_msg.length;
-
-            {
-                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
-                {
-                    if ((*ch)->instanceHandle == change->instanceHandle)
-                    {
-                        writer->second->remove_change(*ch);
-                        break;
-                    }
-                }
-            }
-
-            writer->second->add_change(change);
-
-            return true;
-        }
-
-        return false;
+        writer->second->add_change(change);
     }
-
-    return true;
+    return ret_val;
 }
 
 bool EDPSimple::processLocalWriterProxyData(
@@ -539,12 +502,35 @@ bool EDPSimple::processLocalWriterProxyData(
     }
 #endif
 
-    if (writer->first != nullptr)
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_proxy_data(*wdata, *writer, true, &change);
+    if (change != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        ALIVE, wdata->key());
+        writer->second->add_change(change);
+    }
+    return ret_val;
+}
+
+template<typename ProxyData>
+bool EDPSimple::serialize_proxy_data(
+        const ProxyData& data,
+        const t_p_StatefulWriter& writer,
+        bool remove_same_instance,
+        CacheChange_t** created_change)
+{
+    assert(created_change != nullptr);
+    *created_change = nullptr;
+
+    if (writer.first != nullptr)
+    {
+        uint32_t cdr_size = data.get_serialized_size(true);
+        CacheChange_t* change =
+            writer.first->new_change(
+                [cdr_size]() -> uint32_t
+                {
+                    return cdr_size;
+                },
+                ALIVE, data.key());
         if (change != nullptr)
         {
             CDRMessage_t aux_msg(change->serializedPayload);
@@ -554,26 +540,25 @@ bool EDPSimple::processLocalWriterProxyData(
             aux_msg.msg_endian = BIGEND;
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
+            aux_msg.msg_endian = LITTLEEND;
 #endif
 
-            wdata->writeToCDRMessage(&aux_msg, true);
+            data.writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
+            if(remove_same_instance)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                std::unique_lock<RecursiveTimedMutex> lock(*writer.second->getMutex());
+                for (auto ch = writer.second->changesBegin(); ch != writer.second->changesEnd(); ++ch)
                 {
                     if ((*ch)->instanceHandle == change->instanceHandle)
                     {
-                        writer->second->remove_change(*ch);
+                        writer.second->remove_change(*ch);
                         break;
                     }
                 }
             }
-
-            writer->second->add_change(change);
-
+            *created_change = change;
             return true;
         }
         return false;

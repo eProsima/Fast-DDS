@@ -725,11 +725,11 @@ inline bool CDRMessage::addFragmentNumberSet(
 
 inline bool CDRMessage::addLocator(
         CDRMessage_t* msg,
-        Locator_t* loc)
+        const Locator_t& loc)
 {
-    addInt32(msg, loc->kind);
-    addUInt32(msg, loc->port);
-    addData(msg, loc->address, 16);
+    addInt32(msg, loc.kind);
+    addUInt32(msg, loc.port);
+    addData(msg, loc.address, 16);
     return true;
 }
 
@@ -772,7 +772,7 @@ inline bool CDRMessage::addParameterKey(
 inline bool CDRMessage::addParameterSentinel(
         CDRMessage_t* msg)
 {
-    if (msg->pos + 4 >= msg->max_size)
+    if (msg->pos + 4 > msg->max_size)
     {
         return false;
     }

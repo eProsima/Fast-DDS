@@ -28,11 +28,11 @@ using namespace rtps;
 
 // PARAMETER LOCATOR
 bool ParameterLocator_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, PARAMETER_LOCATOR_LENGTH);
-    valid &= CDRMessage::addLocator(msg, &this->locator);
+    valid &= CDRMessage::addLocator(msg, locator);
     return valid;
 }
 
@@ -50,7 +50,7 @@ bool ParameterLocator_t::readFromCDRMessage(
 
 //PARAMTERKEY
 bool ParameterKey_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     return CDRMessage::addParameterKey(msg, &this->key);
 }
@@ -68,8 +68,19 @@ bool ParameterKey_t::readFromCDRMessage(
 }
 
 // PARAMETER_ STRING
+uint32_t ParameterString_t::cdr_serialized_size(
+        const string_255& str)
+{
+    // Size including NUL char at the end
+    uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
+    // Align to next 4 byte
+    str_siz = (str_siz + 3) & ~3;
+    // p_id + p_length + str_length + str_data
+    return 2 + 2 + 4 + str_siz;
+}
+
 bool ParameterString_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     if (this->m_string.size() == 0)
     {
@@ -83,8 +94,8 @@ bool ParameterString_t::addToCDRMessage(
     {
         rest = 4 - rest; //how many you have to add
     }
-    this->length = (uint16_t)(str_siz + 4 + rest);
-    valid &= CDRMessage::addUInt16(msg, this->length);
+    uint16_t len = static_cast<uint16_t>(str_siz + 4 + rest);
+    valid &= CDRMessage::addUInt16(msg, len);
     valid &= CDRMessage::add_string(msg, this->m_string);
     return valid;
 }
@@ -106,10 +117,10 @@ bool ParameterString_t::readFromCDRMessage(
 
 // PARAMETER_ PORT
 bool ParameterPort_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_PORT_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_PORT_LENGTH);
     valid &= CDRMessage::addUInt32(msg, this->port);
     return valid;
 }
@@ -128,10 +139,10 @@ bool ParameterPort_t::readFromCDRMessage(
 
 //PARAMETER_ GUID
 bool ParameterGuid_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_GUID_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_GUID_LENGTH);
     valid &= CDRMessage::addData(msg, this->guid.guidPrefix.value, 12);
     valid &= CDRMessage::addData(msg, this->guid.entityId.value, 4);
     return valid;
@@ -153,10 +164,10 @@ bool ParameterGuid_t::readFromCDRMessage(
 
 //PARAMETER_ PROTOCOL VERSION
 bool ParameterProtocolVersion_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_PROTOCOL_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_PROTOCOL_LENGTH);
     valid &= CDRMessage::addOctet(msg, protocolVersion.m_major);
     valid &= CDRMessage::addOctet(msg, protocolVersion.m_minor);
     valid &= CDRMessage::addUInt16(msg, 0);
@@ -179,10 +190,10 @@ bool ParameterProtocolVersion_t::readFromCDRMessage(
 }
 
 bool ParameterVendorId_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_VENDOR_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_VENDOR_LENGTH);
     valid &= CDRMessage::addOctet(msg, vendorId[0]);
     valid &= CDRMessage::addOctet(msg, vendorId[1]);
     valid &= CDRMessage::addUInt16(msg, 0);
@@ -206,10 +217,10 @@ bool ParameterVendorId_t::readFromCDRMessage(
 
 //PARAMETER_ IP4ADDRESS
 bool ParameterIP4Address_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_IP4_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_IP4_LENGTH);
     valid &= CDRMessage::addData(msg, this->address, 4);
     return valid;
 }
@@ -239,10 +250,10 @@ void ParameterIP4Address_t::setIP4Address(
 }
 
 bool ParameterBool_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_BOOL_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_BOOL_LENGTH);
     octet val = value ? 1 : 0;
     valid &= CDRMessage::addOctet(msg, val);
     valid &= CDRMessage::addOctet(msg, 0);
@@ -265,10 +276,10 @@ bool ParameterBool_t::readFromCDRMessage(
 }
 
 bool ParameterStatusInfo_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_STATUS_INFO_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_STATUS_INFO_LENGTH);
     valid &= CDRMessage::addUInt16(msg, 0);
     valid &= CDRMessage::addOctet(msg, 0);
     valid &= CDRMessage::addOctet(msg, status);
@@ -295,10 +306,10 @@ bool ParameterStatusInfo_t::readFromCDRMessage(
 }
 
 bool ParameterCount_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_COUNT_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_COUNT_LENGTH);
     valid &= CDRMessage::addUInt32(msg, count);
     return valid;
 }
@@ -316,10 +327,10 @@ bool ParameterCount_t::readFromCDRMessage(
 }
 
 bool ParameterEntityId_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_ENTITYID_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_ENTITYID_LENGTH);
     valid &= CDRMessage::addEntityId(msg, &entityId);
     return valid;
 }
@@ -337,10 +348,10 @@ bool ParameterEntityId_t::readFromCDRMessage(
 }
 
 bool ParameterTime_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_TIME_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_TIME_LENGTH);
     valid &= CDRMessage::addInt32(msg, time.seconds());
     valid &= CDRMessage::addInt32(msg, time.fraction());
     return valid;
@@ -365,10 +376,10 @@ bool ParameterTime_t::readFromCDRMessage(
 }
 
 bool ParameterBuiltinEndpointSet_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_BUILTINENDPOINTSET_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_BUILTINENDPOINTSET_LENGTH);
     valid &= CDRMessage::addUInt32(msg, this->endpointSet);
     return valid;
 }
@@ -385,14 +396,35 @@ bool ParameterBuiltinEndpointSet_t::readFromCDRMessage(
     return CDRMessage::readUInt32(msg, &endpointSet);
 }
 
+uint32_t ParameterPropertyList_t::cdr_serialized_size(
+        const ParameterPropertyList_t& data)
+{
+    // p_id + p_length + n_properties
+    uint32_t ret_val = 2 + 2 + 4;
+    for (ParameterPropertyList_t::const_iterator it = data.begin();
+            it != data.end(); ++it)
+    {
+        // str_len + null_char + str_data
+        ret_val += 4 + 1 + static_cast<uint32_t>(strlen(it->first().c_str()));
+        // align
+        ret_val = (ret_val + 3) & ~3;
+        // str_len + null_char + str_data
+        ret_val += 4 + 1 + static_cast<uint32_t>(strlen(it->second().c_str()));
+        // align
+        ret_val = (ret_val + 3) & ~3;
+    }
+
+    return ret_val;
+}
+
 bool ParameterPropertyList_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     uint16_t pos_str = (uint16_t)msg->pos;
-    valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+    valid &= CDRMessage::addUInt16(msg, this->length);
     valid &= CDRMessage::addUInt32(msg, (uint32_t)this->size());
-    for (ParameterPropertyList_t::iterator it = this->begin();
+    for (ParameterPropertyList_t::const_iterator it = this->begin();
             it != this->end(); ++it)
     {
         //it is a custom iterator with no operator-> overload
@@ -400,9 +432,9 @@ bool ParameterPropertyList_t::addToCDRMessage(
         valid &= CDRMessage::add_string(msg, (*it).second());
     }
     uint16_t pos_param_end = (uint16_t)msg->pos;
-    this->length = pos_param_end - pos_str - 2;
+    uint16_t len = pos_param_end - pos_str - 2;
     msg->pos = pos_str;
-    valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+    valid &= CDRMessage::addUInt16(msg, len);
     msg->pos = pos_param_end;
     msg->length -= 2;
     return valid;
@@ -454,10 +486,10 @@ bool ParameterPropertyList_t::readFromCDRMessage(
 }
 
 bool ParameterSampleIdentity_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+    valid &= CDRMessage::addUInt16(msg, this->length);
     valid &= CDRMessage::addData(msg, sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
     valid &= CDRMessage::addData(msg, sample_id.writer_guid().entityId.value, EntityId_t::size);
     valid &= CDRMessage::addInt32(msg, sample_id.sequence_number().high);
@@ -483,8 +515,32 @@ bool ParameterSampleIdentity_t::readFromCDRMessage(
 
 #if HAVE_SECURITY
 
+uint32_t ParameterToken_t::cdr_serialized_size(
+        const rtps::Token& data)
+{
+    // p_id + p_length
+    uint32_t ret_val = 2 + 2;
+
+    // str_len + null_char + str_data
+    ret_val += 4 + 1 + static_cast<uint32_t>(strlen(data.class_id().c_str()));
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    // properties
+    ret_val += static_cast<uint32_t>(PropertyHelper::serialized_size(data.properties()));
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    // binary_properties
+    ret_val += static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(data.binary_properties()));
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    return ret_val;
+}
+
 bool ParameterToken_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     uint16_t pos_str = (uint16_t)msg->pos;
@@ -496,9 +552,9 @@ bool ParameterToken_t::addToCDRMessage(
         valid &= CDRMessage::addOctet(msg, 0);
     }
     uint16_t pos_param_end = (uint16_t)msg->pos;
-    this->length = pos_param_end - pos_str - 2;
+    uint16_t len = pos_param_end - pos_str - 2;
     msg->pos = pos_str;
-    valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+    valid &= CDRMessage::addUInt16(msg, len);
     msg->pos = pos_param_end;
     msg->length -= 2;
     return valid;
@@ -518,10 +574,10 @@ bool ParameterToken_t::readFromCDRMessage(
 }
 
 bool ParameterParticipantSecurityInfo_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH);
     valid &= CDRMessage::addUInt32(msg, this->security_attributes);
     valid &= CDRMessage::addUInt32(msg, this->plugin_security_attributes);
     return valid;
@@ -542,10 +598,10 @@ bool ParameterParticipantSecurityInfo_t::readFromCDRMessage(
 }
 
 bool ParameterEndpointSecurityInfo_t::addToCDRMessage(
-        CDRMessage_t* msg)
+        CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH);
     valid &= CDRMessage::addUInt32(msg, this->security_attributes);
     valid &= CDRMessage::addUInt32(msg, this->plugin_security_attributes);
     return valid;
