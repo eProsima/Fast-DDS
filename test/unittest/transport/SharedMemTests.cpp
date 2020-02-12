@@ -789,6 +789,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
         {
             MockPortSharedMemGlobal port_mocker;
             port_mocker.wait_pop_deadlock(*deadlocked_port, *deadlocked_listener, is_listener_closed);                
+            (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
         });
     
     // Assert the thread is waiting
