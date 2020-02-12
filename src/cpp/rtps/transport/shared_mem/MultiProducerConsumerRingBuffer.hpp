@@ -153,7 +153,7 @@ public:
     struct RegisterPushLock
     {
         uint32_t pushing_count;
-        bool registering_flag;
+        uint32_t registering_flag;
     };
 
     struct Node

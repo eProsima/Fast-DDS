@@ -449,7 +449,7 @@ TEST_F(SHMTransportTests, all_shared_mem_locators_are_local)
     ASSERT_TRUE(transportUnderTest.is_local_locator(shared_mem_locator));
 }
 
-TEST_F(SHMTransportTests, match_if_port_AND_address_matches)
+TEST_F(SHMTransportTests, match_if_port_and_address_matches)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
