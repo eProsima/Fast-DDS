@@ -39,9 +39,12 @@ private:
 
     struct BufferNode
     {
-        std::atomic<uint32_t> ref_count;
-        SharedMemSegment::offset data_offset;
-        uint32_t data_size;
+        struct
+        {
+            std::atomic<uint32_t> ref_count;
+            uint32_t data_size;
+        }header;
+        uint8_t data[1];
     };
 
     struct SegmentNode
@@ -96,12 +99,12 @@ public:
 
         void* data() override
         {
-            return segment_->get().get_address_from_handle(buffer_node_->data_offset);
+            return buffer_node_->data;
         }
 
         uint32_t size() override
         {
-            return buffer_node_->data_size;
+            return buffer_node_->header.data_size;
         }
 
         SharedMemSegment::offset node_offset()
@@ -116,15 +119,15 @@ public:
 
         void increase_ref()
         {
-            buffer_node_->ref_count.fetch_add(1);
+            buffer_node_->header.ref_count.fetch_add(1);
         }
 
         void decrease_ref()
         {
-            int32_t buffer_size = buffer_node_->data_size;
+            int32_t buffer_size = buffer_node_->header.data_size;
 
             // Last reference to the buffer
-            if (buffer_node_->ref_count.fetch_sub(1) == 1)
+            if (buffer_node_->header.ref_count.fetch_sub(1) == 1)
             {
                 // Anotate the new free space
                 segment_node_->free_bytes.fetch_add(buffer_size);
@@ -217,11 +220,12 @@ public:
 
             try
             {
-                data = segment_->get().allocate(size);
-                buffer_node = segment_->get().construct<BufferNode>(boost::interprocess::anonymous_instance)();
-                buffer_node->data_offset = segment_->get().get_handle_from_address(data);
-                buffer_node->data_size = size;
-                buffer_node->ref_count.store(0, std::memory_order_relaxed);
+                buffer_node = static_cast<BufferNode*>(
+                    segment_->get().allocate_aligned(sizeof(BufferNode) + size, 
+                        std::alignment_of<BufferNode>::value));
+
+                buffer_node->header.data_size = size;
+                buffer_node->header.ref_count.store(0, std::memory_order_relaxed);
 
                 // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                 new_buffer = std::make_shared<SharedMemBuffer>(segment_, segment_id_, buffer_node, segment_node_);
@@ -263,8 +267,7 @@ public:
         void release_buffer(
                 BufferNode* buffer_node)
         {
-            segment_->get().deallocate(segment_->get_address_from_offset(buffer_node->data_offset));
-            segment_->get().destroy_ptr(buffer_node);
+            segment_->get().deallocate(buffer_node);
         }
 
         void release_unused_buffers()
@@ -272,7 +275,7 @@ public:
             auto node_it = allocated_nodes_.begin();
             while (node_it != allocated_nodes_.end())
             {
-                if ((*node_it)->ref_count.load() == 0)
+                if ((*node_it)->header.ref_count.load() == 0)
                 {
                     release_buffer(*node_it);
 
@@ -375,7 +378,7 @@ public:
 
             if (was_cell_freed)
             {
-                buffer_node->ref_count.fetch_sub(1);
+                buffer_node->header.ref_count.fetch_sub(1);
             }
 
             return buffer_ref;

@@ -19,9 +19,9 @@
 #include <memory>
 #include <cstdlib>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
  * Ring buffer capable of multiple producers / multiple consumers.
@@ -30,7 +30,7 @@ namespace rtps{
  * Consumers (listeners) must be registered to access the cells.
  * When a Cell is pushed to the buffer, a counter for that cell is initialized with number
  * of listeners registered in the buffer in that moment. The Cell will be freed
- * when all listeners have poped the cell. 
+ * when all listeners have poped the cell.
  */
 template <class T>
 class MultiProducerConsumerRingBuffer
@@ -39,7 +39,7 @@ public:
 
     class Cell
     {
-    public:
+public:
 
         const T& data() const
         {
@@ -57,7 +57,7 @@ public:
             return ref_counter_.load(std::memory_order_relaxed);
         }
 
-    public:
+public:
 
         friend class MultiProducerConsumerRingBuffer<T>;
 
@@ -67,7 +67,7 @@ public:
 
     class Listener
     {
-    public:
+public:
 
         Listener(
                 MultiProducerConsumerRingBuffer<T>& buffer,
@@ -138,7 +138,7 @@ public:
             return (counter == 1);
         }
 
-    private:
+private:
 
         MultiProducerConsumerRingBuffer<T>& buffer_;
         uint32_t read_p_;
@@ -160,7 +160,7 @@ public:
     {
         std::atomic<Pointer> pointer_;
         uint32_t total_cells_;
-        
+
         uint32_t registered_listeners_;
         std::atomic<RegisterPushLock> register_push_lock_;
     };
