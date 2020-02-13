@@ -28,8 +28,8 @@ namespace rtps {
 using Log = fastdds::dds::Log;
 
 /**
- *  Provides functionality for the application to: 
- * 
+ *  Provides functionality for the application to:
+ *
  *  Open shared-memory ports.
  *  Create shared memory segments.
  */
@@ -56,8 +56,8 @@ public:
             const std::string& domain_name)
         : global_segment_(domain_name)
     {
-        per_allocation_extra_size_ = 
-            SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
+        per_allocation_extra_size_ =
+                SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
     }
 
     class Buffer
@@ -67,7 +67,7 @@ public:
         virtual ~Buffer() = default;
 
     public:
-        
+
         virtual void* data() = 0;
         virtual uint32_t size() = 0;
     };
@@ -124,7 +124,7 @@ public:
             int32_t buffer_size = buffer_node_->data_size;
 
             // Last reference to the buffer
-            if(buffer_node_->ref_count.fetch_sub(1) == 1)
+            if (buffer_node_->ref_count.fetch_sub(1) == 1)
             {
                 // Anotate the new free space
                 segment_node_->free_bytes.fetch_add(buffer_size);
@@ -154,7 +154,7 @@ public:
             , overflows_count_(0)
             , max_payload_size_(payload_size)
         {
-			segment_id_.generate();
+            segment_id_.generate();
 
             auto segment_name = segment_id_.to_string();
 
@@ -163,16 +163,16 @@ public:
             try
             {
                 segment_ = std::unique_ptr<SharedMemSegment>(
-                new SharedMemSegment(boost::interprocess::create_only, segment_name.c_str(), size));
+                    new SharedMemSegment(boost::interprocess::create_only, segment_name.c_str(), size));
             }
             catch (const std::exception& e)
             {
                 logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << segment_name
-                    << ": " << e.what());
+                                                                         << ": " << e.what());
 
                 throw;
             }
-            
+
             // Init the segment node
             segment_node_ = segment_->get().construct<SegmentNode>("segment_node")();
             segment_node_->ref_count.exchange(1);
@@ -181,16 +181,18 @@ public:
 
         ~Segment()
         {
-            if(segment_node_->ref_count.fetch_sub(1) == 1)
+            if (segment_node_->ref_count.fetch_sub(1) == 1)
             {
                 segment_.reset();
                 SharedMemSegment::remove(segment_id_.to_string().c_str());
             }
 
-            if(overflows_count_)
+            if (overflows_count_)
             {
-                logWarning(RTPS_TRANSPORT_SHM, "Segment " << segment_id_.to_string().c_str()
-                            << " closed. It had " << "overflows_count " << overflows_count_);
+                logWarning(RTPS_TRANSPORT_SHM,
+                        "Segment " << segment_id_.to_string().c_str()
+                                   << " closed. It had " << "overflows_count " 
+                                   << overflows_count_);
             }
         }
 
@@ -283,7 +285,8 @@ public:
             }
         }
 
-        void wait_for_avaible_space(uint32_t size,
+        void wait_for_avaible_space(
+                uint32_t size,
                 const std::chrono::steady_clock::time_point& max_blocking_time_point)
         {
             SharedMemSegment::spin_wait spin_wait;
@@ -292,18 +295,18 @@ public:
             while ( segment_node_->free_bytes.load(std::memory_order_relaxed) < size &&
                     std::chrono::steady_clock::now() < max_blocking_time_point )
             {
-                if(size > max_payload_size_)
+                if (size > max_payload_size_)
                 {
                     throw std::runtime_error("buffer bigger than whole segment size");
                 }
 
                 // Optimized active wait. We're in overflow with timeout case.
-                // Much higher throughput is achive with active wait over shared-memory 
+                // Much higher throughput is achive with active wait over shared-memory
                 // vs interprocess_mutex + interprocess_cv.
                 spin_wait.yield();
-            }  
+            }
 
-            if(segment_node_->free_bytes.load(std::memory_order_relaxed) < size)
+            if (segment_node_->free_bytes.load(std::memory_order_relaxed) < size)
             {
                 throw std::runtime_error("allocation timeout");
             }
@@ -315,7 +318,7 @@ public:
     class Port;
 
     /**
-     * Listen to descriptors pushed to a port. 
+     * Listen to descriptors pushed to a port.
      * Provides an interface to wait and access to the data referenced by the descriptors
      */
     class Listener
@@ -344,15 +347,17 @@ public:
             std::shared_ptr<Buffer> buffer_ref;
 
             SharedMemGlobal::PortCell* head_cell = nullptr;
-            
+
             while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
             {
                 // Wait until threre's data to pop
                 global_port_->wait_pop(*global_listener_, is_closed_);
             }
 
-            if(!head_cell)
+            if (!head_cell)
+            {
                 return nullptr;
+            }
 
             SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
 
@@ -362,7 +367,8 @@ public:
                     static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.buffer_node_offset));
 
             // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
-            buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id, buffer_node, segment_node);
+            buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id, buffer_node,
+                            segment_node);
 
             // If the cell has been read by all listeners
             global_port_->pop(*global_listener_, was_cell_freed);
@@ -415,7 +421,7 @@ public:
          * @returns false If the port's queue is full so buffer couldn't be enqueued.
          */
         bool try_push(
-            const std::shared_ptr<Buffer>& buffer)
+                const std::shared_ptr<Buffer>& buffer)
         {
             assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
 
@@ -427,15 +433,15 @@ public:
 
             try
             {
-                ret = global_port_->try_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
-                        &are_listeners_active);
+                ret = global_port_->try_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()},
+                                &are_listeners_active);
 
                 if (!are_listeners_active)
                 {
                     shared_mem_buffer->decrease_ref();
                 }
             }
-            catch(std::exception&)
+            catch (std::exception&)
             {
                 shared_mem_buffer->decrease_ref();
                 throw;
@@ -464,12 +470,13 @@ public:
      * @return A shared_ptr to the segment
      */
     std::shared_ptr<Segment> create_segment(
-            uint32_t size, uint32_t max_allocations)
+            uint32_t size,
+            uint32_t max_allocations)
     {
         // Every buffer allocated implies two internal allocations, node and payload.
         // Every internal allocation consumes 'per_allocation_extra_size_' bytes
         uint32_t allocation_extra_size = sizeof(SegmentNode) + per_allocation_extra_size_ +
-            max_allocations * ((sizeof(BufferNode) + per_allocation_extra_size_) + per_allocation_extra_size_);
+                max_allocations * ((sizeof(BufferNode) + per_allocation_extra_size_) + per_allocation_extra_size_);
 
         return std::make_shared<Segment>(size + allocation_extra_size, size);
     }
@@ -480,10 +487,11 @@ public:
             uint32_t healthy_check_timeout_ms,
             SharedMemGlobal::Port::OpenMode open_mode = SharedMemGlobal::Port::OpenMode::ReadShared)
     {
-        return std::make_shared<Port>(*this, global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms, open_mode));
+        return std::make_shared<Port>(*this,
+                       global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms, open_mode));
     }
 
-private:
+    private:
 
     /**
      * Controls life-cycle of a remote segment
@@ -491,12 +499,14 @@ private:
     class SegmentWrapper
     {
     public:
+
         SegmentWrapper()
         {
 
         }
-        
-        SegmentWrapper(std::shared_ptr<SharedMemSegment> segment_,
+
+        SegmentWrapper(
+                std::shared_ptr<SharedMemSegment> segment_,
                 SharedMemSegment::Id segment_id)
             : segment_(segment_)
             , segment_id_(segment_id)
@@ -505,7 +515,8 @@ private:
             segment_node_->ref_count.fetch_add(1);
         }
 
-        SegmentWrapper& operator=(SegmentWrapper&& other)
+        SegmentWrapper& operator=(
+                SegmentWrapper&& other)
         {
             segment_ = other.segment_;
             segment_id_ = other.segment_id_;
@@ -518,7 +529,7 @@ private:
 
         ~SegmentWrapper()
         {
-            if(segment_ != nullptr && segment_node_->ref_count.fetch_sub(1) == 1)
+            if (segment_ != nullptr && segment_node_->ref_count.fetch_sub(1) == 1)
             {
                 segment_.reset();
                 SharedMemSegment::remove(segment_id_.to_string().c_str());
@@ -542,7 +553,7 @@ private:
     std::mutex ids_segments_mutex_;
 
     SharedMemGlobal global_segment_;
-    
+
     std::shared_ptr<SharedMemSegment> find_segment(
             SharedMemSegment::Id id,
             SegmentNode** segment_node)
@@ -562,10 +573,10 @@ private:
         catch (std::out_of_range&)
         {
             segment = std::make_shared<SharedMemSegment>(boost::interprocess::open_only, id.to_string());
-            SegmentWrapper segment_wrapper(segment, id);       
+            SegmentWrapper segment_wrapper(segment, id);
 
             *segment_node = segment_wrapper.segment_node();
-            ids_segments_[id.get()] = std::move(segment_wrapper);       
+            ids_segments_[id.get()] = std::move(segment_wrapper);
         }
 
         return segment;

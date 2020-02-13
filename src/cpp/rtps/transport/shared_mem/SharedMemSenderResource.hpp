@@ -32,19 +32,20 @@ public:
     {
         // Implementation functions are bound to the right transport parameters
         clean_up = []()
-            {
-                // No cleanup is required
-            };
+                {
+                    // No cleanup is required
+                };
 
         send_lambda_ = [&transport] (
-                const fastrtps::rtps::octet* data,
-                uint32_t dataSize,
-                fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-                fastrtps::rtps::LocatorsIterator* destination_locators_end,
-                const std::chrono::steady_clock::time_point& max_blocking_time_point)-> bool
-            {
-                return transport.send(data, dataSize, destination_locators_begin, destination_locators_end, max_blocking_time_point);
-            };
+            const fastrtps::rtps::octet* data,
+            uint32_t dataSize,
+            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
+                {
+                    return transport.send(data, dataSize, destination_locators_begin, destination_locators_end,
+                                   max_blocking_time_point);
+                };
     }
 
     virtual ~SharedMemSenderResource()
@@ -55,7 +56,9 @@ public:
         }
     }
 
-    static SharedMemSenderResource* cast(TransportInterface& transport, SenderResource* sender_resource)
+    static SharedMemSenderResource* cast(
+            TransportInterface& transport,
+            SenderResource* sender_resource)
     {
         SharedMemSenderResource* returned_resource = nullptr;
 
@@ -71,9 +74,11 @@ private:
 
     SharedMemSenderResource() = delete;
 
-    SharedMemSenderResource(const SenderResource&) = delete;
+    SharedMemSenderResource(
+            const SenderResource&) = delete;
 
-    SharedMemSenderResource& operator=(const SenderResource&) = delete;
+    SharedMemSenderResource& operator=(
+            const SenderResource&) = delete;
 };
 
 } // namespace rtps

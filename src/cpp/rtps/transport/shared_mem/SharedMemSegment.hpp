@@ -109,24 +109,25 @@ public:
     /**
      * Estimates the extra segment' space required for an allocation
      */
-    static uint32_t compute_per_allocation_extra_size(size_t allocation_alignment)
+    static uint32_t compute_per_allocation_extra_size(
+            size_t allocation_alignment)
     {
         Id uuid;
-            
+
         try
         {
             static uint32_t extra_size = 0;
-                    
+
             if (extra_size == 0)
             {
                 uuid.generate();
 
                 SharedMemEnvironment::get().init();
 
-                {                  
+                {
                     boost::interprocess::managed_shared_memory
-                        test_segment(boost::interprocess::create_only, uuid.to_string().c_str(),
-                        (std::max)((size_t)1024, allocation_alignment * 4));
+                            test_segment(boost::interprocess::create_only, uuid.to_string().c_str(),
+                            (std::max)((size_t)1024, allocation_alignment* 4));
 
                     auto m1 = test_segment.get_free_memory();
                     test_segment.allocate_aligned(1, allocation_alignment);
@@ -140,17 +141,17 @@ public:
             return extra_size;
 
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
             logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
-                        << ": " << e.what());
+                                                                     << ": " << e.what());
 
             throw;
         }
     }
 
     static std::unique_ptr<SharedMemSegment::named_mutex> open_or_create_and_lock_named_mutex(
-        const std::string& mutex_name)
+            const std::string& mutex_name)
     {
         std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
 
@@ -161,7 +162,7 @@ public:
 
         boost::posix_time::ptime wait_time
             = boost::posix_time::microsec_clock::universal_time()
-            + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS*2);
+                + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS*2);
         if (!named_mutex->timed_lock(wait_time))
         {
             // Interprocess mutex timeout when locking. Possible deadlock: owner died without unlocking?
@@ -169,17 +170,19 @@ public:
             SharedMemSegment::named_mutex::remove(mutex_name.c_str());
 
             named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
-            new SharedMemSegment::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
+                new SharedMemSegment::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
 
             if (!named_mutex->try_lock())
+            {
                 throw std::runtime_error("Couldn't create name_mutex: " + mutex_name);
+            }
         }
-        
+
         return named_mutex;
     }
 
     static std::unique_ptr<SharedMemSegment::named_mutex> open_named_mutex(
-        const std::string& mutex_name)
+            const std::string& mutex_name)
     {
         std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
 
@@ -187,7 +190,7 @@ public:
 
         named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
             new SharedMemSegment::named_mutex(boost::interprocess::open_only, mutex_name.c_str()));
-        
+
         return named_mutex;
     }
 
@@ -196,7 +199,7 @@ public:
      */
     class Id
     {
-    public:
+public:
 
         typedef UUID<16> type;
 
@@ -204,27 +207,30 @@ public:
         {
         }
 
-		Id(const Id& other)
-		{
-			uuid_ = other.uuid_;
-		}
+        Id(
+                const Id& other)
+        {
+            uuid_ = other.uuid_;
+        }
 
-        Id(const type& uuid)
-		{
-			uuid_ = uuid;
-		}
+        Id(
+                const type& uuid)
+        {
+            uuid_ = uuid;
+        }
 
-		void generate()
-		{
-			type::generate(uuid_);
-		}
+        void generate()
+        {
+            type::generate(uuid_);
+        }
 
         const type& get() const
         {
             return uuid_;
         }
 
-        bool operator == (const Id& other) const
+        bool operator == (
+                const Id& other) const
         {
             return uuid_ == other.uuid_;
         }
@@ -239,7 +245,7 @@ public:
             return Id(type(type::null_t()));
         }
 
-    private:
+private:
 
         type uuid_;
 
@@ -249,13 +255,14 @@ private:
 
     class EnvironmentInitializer
     {
-    public:
+public:
+
         EnvironmentInitializer()
         {
             SharedMemEnvironment::get().init();
         }
     } shared_mem_environment_initializer_;
-   
+
     boost::interprocess::managed_shared_memory segment_;
 
     std::string name_;

@@ -26,9 +26,9 @@
 #include <mutex>
 #include <array>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
  * UUIDs Generator Singleton
@@ -38,7 +38,7 @@ class UUIDGen
 public:
 
     UUIDGen()
-    : last_gen_time_(0)
+        : last_gen_time_(0)
     {
 
     }
@@ -54,8 +54,10 @@ public:
      * @param uuid pointer to an array of bytes to store the uuid.
      * @param len lenght in bytes of the uuid.
      * @remarks Thread-safe.
-     */ 
-    void generate(uint8_t* uuid, size_t len)
+     */
+    void generate(
+            uint8_t* uuid,
+            size_t len)
     {
         uint64_t now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
@@ -63,7 +65,7 @@ public:
             // Two IDs cannot be generated in this process at the same exact time
             std::lock_guard<std::mutex> lock(gen_mutex_);
 
-            while(now == last_gen_time_)
+            while (now == last_gen_time_)
             {
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
                 now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
@@ -82,13 +84,13 @@ public:
         seq[1] = static_cast<uint32_t>(pid>>32);
         seq[2] = static_cast<uint32_t>(now);
         seq[3] = static_cast<uint32_t>(now>>32);
-        
+
         std::seed_seq seed_seq(seq.begin(), seq.end());
         gen.seed(seed_seq);
 
         std::uniform_int_distribution<> dis(0, 255);
 
-        for (size_t i = 0; i < len; i++) 
+        for (size_t i = 0; i < len; i++)
         {
             uuid[i] = static_cast<uint8_t>(dis(gen));
         }
@@ -117,27 +119,29 @@ public:
     struct null_t {};
     static constexpr null_t null = null_t();
 
-	UUID()
-	{
-	}
+    UUID()
+    {
+    }
 
-    UUID(const null_t&)
-    {    
+    UUID(
+            const null_t&)
+    {
         memset(uuid_, 0, SIZE);
     }
 
-	UUID& operator =(
-		const UUID& other)
-	{
-		memcpy(uuid_, other.uuid_, sizeof(uuid_));
+    UUID& operator =(
+            const UUID& other)
+    {
+        memcpy(uuid_, other.uuid_, sizeof(uuid_));
 
-		return *this;
-	}
+        return *this;
+    }
 
-	static void generate(UUID& other)
-	{
-		UUIDGen::instance().generate(other.uuid_, sizeof(other.uuid_));
-	}
+    static void generate(
+            UUID& other)
+    {
+        UUIDGen::instance().generate(other.uuid_, sizeof(other.uuid_));
+    }
 
     uint8_t* get()
     {
@@ -149,17 +153,17 @@ public:
         return sizeof(uuid_);
     }
 
-	size_t hash() const
-	{
-		return *reinterpret_cast<const size_t*>(uuid_);
-	}
+    size_t hash() const
+    {
+        return *reinterpret_cast<const size_t*>(uuid_);
+    }
 
     std::string to_string() const
     {
         // TODO(Adolfo): This function should be allocation free
         std::stringstream ss;
 
-        for(size_t i=0; i < sizeof(uuid_); i++ )
+        for (size_t i=0; i < sizeof(uuid_); i++ )
         {
             std::stringstream hex_ss;
             hex_ss << std::hex << static_cast<unsigned int>(uuid_[i]);
@@ -170,7 +174,8 @@ public:
         return ss.str();
     }
 
-    bool operator == (const UUID& other) const
+    bool operator == (
+            const UUID& other) const
     {
         return 0 == memcmp(uuid_, other.uuid_, sizeof(uuid_));
     }
@@ -187,12 +192,12 @@ private:
 
 namespace std {
 template <>
-struct hash<eprosima::fastdds::rtps::UUID<16>>
+struct hash<eprosima::fastdds::rtps::UUID<16> >
 {
     std::size_t operator()(
             const eprosima::fastdds::rtps::UUID<16>& k) const
     {
-		return k.hash();
+        return k.hash();
     }
 };
 

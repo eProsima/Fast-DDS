@@ -22,9 +22,9 @@
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class SharedMemChannelResource : public ChannelResource
 {
@@ -32,15 +32,15 @@ public:
 
     using Log = fastdds::dds::Log;
 
-	SharedMemChannelResource(
-		std::shared_ptr<SharedMemManager::Listener> listener,
-        const fastrtps::rtps::Locator_t& locator,
-        TransportReceiverInterface* receiver)
-    : ChannelResource()
-    , message_receiver_(receiver)
-    , listener_(listener)
-    , only_multicast_purpose_(false)
-    , locator_(locator)
+    SharedMemChannelResource(
+            std::shared_ptr<SharedMemManager::Listener> listener,
+            const fastrtps::rtps::Locator_t& locator,
+            TransportReceiverInterface* receiver)
+        : ChannelResource()
+        , message_receiver_(receiver)
+        , listener_(listener)
+        , only_multicast_purpose_(false)
+        , locator_(locator)
     {
         thread(std::thread(&SharedMemChannelResource::perform_listen_operation, this, locator));
     }
@@ -50,14 +50,16 @@ public:
         message_receiver_ = nullptr;
     }
 
-    SharedMemChannelResource& operator=(SharedMemChannelResource&& channelResource)
+    SharedMemChannelResource& operator=(
+            SharedMemChannelResource&& channelResource)
     {
         (void)channelResource;
-        
+
         return *this;
     }
 
-    void only_multicast_purpose(const bool value)
+    void only_multicast_purpose(
+            const bool value)
     {
         only_multicast_purpose_ = value;
     }
@@ -72,7 +74,8 @@ public:
         return only_multicast_purpose_;
     }
 
-    inline void message_receiver(TransportReceiverInterface* receiver)
+    inline void message_receiver(
+            TransportReceiverInterface* receiver)
     {
         message_receiver_ = receiver;
     }
@@ -87,10 +90,10 @@ public:
         ChannelResource::disable();
     }
 
-	const fastrtps::rtps::Locator_t& locator() const
-	{
-		return locator_;
-	}
+    const fastrtps::rtps::Locator_t& locator() const
+    {
+        return locator_;
+    }
 
     void release()
     {
@@ -103,7 +106,7 @@ private:
      * Function to be called from a new thread, which takes cares of performing a blocking receive
      * operation on the ReceiveResource
      * @param input_locator - Locator that triggered the creation of the resource
-    */
+     */
     void perform_listen_operation(
             fastrtps::rtps::Locator_t input_locator)
     {
@@ -114,7 +117,7 @@ private:
             // Blocking receive.
             std::shared_ptr<SharedMemManager::Buffer> message;
 
-            if (! (message = Receive(remote_locator)) )
+            if (!(message = Receive(remote_locator)) )
             {
                 continue;
             }
@@ -124,7 +127,7 @@ private:
             {
                 message_receiver()->OnDataReceived(
                     static_cast<fastrtps::rtps::octet*>(message->data()),
-                    message->size(), 
+                    message->size(),
                     input_locator, remote_locator);
             }
             else if (alive())
@@ -142,13 +145,13 @@ private:
 protected:
 
     /**
-    * Blocking Receive from the specified channel.
-    */
+     * Blocking Receive from the specified channel.
+     */
     virtual std::shared_ptr<SharedMemManager::Buffer> Receive(
             fastrtps::rtps::Locator_t& remote_locator)
     {
         (void)remote_locator;
-        
+
         try
         {
             return listener_->pop();
@@ -157,7 +160,7 @@ protected:
         {
             (void)error;
             logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
-                << " (" << this << ")");
+                                                              << " (" << this << ")");
             return nullptr;
         }
     }
@@ -168,15 +171,17 @@ private:
 
 protected:
 
-	std::shared_ptr<SharedMemManager::Listener> listener_;
+    std::shared_ptr<SharedMemManager::Listener> listener_;
 
 private:
 
     bool only_multicast_purpose_;
     fastrtps::rtps::Locator_t locator_;
 
-    SharedMemChannelResource(const SharedMemChannelResource&) = delete;
-    SharedMemChannelResource& operator=(const SharedMemChannelResource&) = delete;
+    SharedMemChannelResource(
+            const SharedMemChannelResource&) = delete;
+    SharedMemChannelResource& operator=(
+            const SharedMemChannelResource&) = delete;
 };
 
 } // namespace rtps

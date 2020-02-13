@@ -23,9 +23,9 @@
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
 #include <rtps/transport/shared_mem/SharedMemLog.hpp>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
  * This class defines the global resources for shared-memory communication.
@@ -44,7 +44,7 @@ public:
 
     ~SharedMemGlobal()
     {
-    
+
     }
 
     /**
@@ -86,27 +86,30 @@ public:
     {
         friend class MockPortSharedMemGlobal;
 
-    private:
+private:
 
         std::unique_ptr<SharedMemSegment> port_segment_;
 
         PortNode* node_;
 
-        std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>> buffer_;
+        std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor> > buffer_;
 
         uint64_t overflows_count_;
 
         bool was_check_thread_detached_;
 
-        bool check_all_waiting_threads_alive(uint32_t time_out_ms)
+        bool check_all_waiting_threads_alive(
+                uint32_t time_out_ms)
         {
             bool is_check_ok = false;
 
             {
                 std::lock_guard<SharedMemSegment::mutex> lock_empty(node_->empty_cv_mutex);
 
-                if(!node_->is_port_ok)
+                if (!node_->is_port_ok)
+                {
                     throw std::runtime_error("Previous check failed");
+                }
 
                 node_->check_id++;
                 node_->check_awaken_count = node_->waiting_count;
@@ -115,7 +118,7 @@ public:
             }
 
             auto start = std::chrono::high_resolution_clock::now();
-            
+
             do
             {
                 std::this_thread::yield();
@@ -127,9 +130,10 @@ public:
             return is_check_ok;
         }
 
-        inline void notify_unicast(bool was_buffer_empty_before_push)
+        inline void notify_unicast(
+                bool was_buffer_empty_before_push)
         {
-            if(was_buffer_empty_before_push)
+            if (was_buffer_empty_before_push)
             {
                 node_->empty_cv.notify_one();
             }
@@ -140,13 +144,13 @@ public:
             node_->empty_cv.notify_all();
         }
 
-    public:
+public:
 
         /**
          * Defines open sharing mode of a shared-memory port:
          *
          * ReadShared (multiple listeners / multiple writers): Once a port is opened ReadShared cannot be opened ReadExclusive.
-         *       
+         *
          * ReadExclusive (one listener / multipler writers): Once a port is opened ReadExclusive cannot be opened ReadShared.
          *
          * Write (multipler writers): A port can always be opened for writing.
@@ -178,13 +182,15 @@ public:
             {
                 auto segment_name = port_segment_->name();
 
-                logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port " << node_->port_id 
-                        << segment_name.c_str() << " removed." << "overflows_count " << overflows_count_);
+                logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port " << node_->port_id
+                        << segment_name.c_str() << " removed." << "overflows_count " 
+                        << overflows_count_);
 
-                if(overflows_count_)
+                if (overflows_count_)
                 {
-                    logWarning(RTPS_TRANSPORT_SHM, "Port " << node_->port_id 
-                            << segment_name.c_str() << " had overflows_count " << overflows_count_);
+                    logWarning(RTPS_TRANSPORT_SHM, "Port " << node_->port_id
+                        << segment_name.c_str() << " had overflows_count " 
+                        << overflows_count_);
                 }
 
                 port_segment_.reset();
@@ -204,7 +210,7 @@ public:
                 bool* listeners_active)
         {
             std::unique_lock<SharedMemSegment::mutex> lock_empty(node_->empty_cv_mutex);
-            
+
             try
             {
                 bool was_opened_as_unicast_port = node_->is_opened_read_exclusive;
@@ -212,12 +218,12 @@ public:
                 bool was_someone_listening = (node_->waiting_count > 0);
 
                 *listeners_active = buffer_->push(buffer_descriptor);
-                
+
                 lock_empty.unlock();
 
-                if(was_someone_listening)
+                if (was_someone_listening)
                 {
-                    if(was_opened_as_unicast_port)
+                    if (was_opened_as_unicast_port)
                     {
                         notify_unicast(was_buffer_empty_before_push);
                     }
@@ -226,7 +232,7 @@ public:
                         notify_multicast();
                     }
                 }
-                    
+
                 return true;
             }
             catch (const std::exception&)
@@ -245,7 +251,7 @@ public:
                 const std::atomic<bool>& is_listener_closed)
         {
             std::unique_lock<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
-            
+
             uint32_t check_id = node_->check_id;
 
             node_->waiting_count++;
@@ -253,15 +259,15 @@ public:
             do
             {
                 node_->empty_cv.wait(lock, [&] {
-                    return is_listener_closed.load() || listener.head() != nullptr || check_id != node_->check_id;
-                });
+                                return is_listener_closed.load() || listener.head() != nullptr || check_id != node_->check_id;
+                            });
 
                 if (check_id != node_->check_id)
                 {
                     node_->check_awaken_count--;
                     check_id = node_->check_id;
-                    
-                    if(listener.head())
+
+                    if (listener.head())
                     {
                         break;
                     }
@@ -270,7 +276,7 @@ public:
                 {
                     break;
                 }
-            }while(1);
+            } while (1);
 
             node_->waiting_count--;
         }
@@ -324,50 +330,51 @@ public:
          * When a process crash with a port opened the port can be leave inoperative.
          * @throw std::exception if the port is inoperative.
          */
-        void healthy_check(uint32_t healthy_check_timeout_ms)
+        void healthy_check(
+                uint32_t healthy_check_timeout_ms)
         {
-			std::shared_ptr<bool> is_check_ok = std::make_shared<bool>(false);
+            std::shared_ptr<bool> is_check_ok = std::make_shared<bool>(false);
 
             was_check_thread_detached_ = false;
 
             std::shared_ptr<std::mutex> notify_check_done_mutex = std::make_shared<std::mutex>();
-			std::shared_ptr<std::condition_variable> notify_check_done_cv = std::make_shared<std::condition_variable>();
-			std::shared_ptr<bool> is_check_done_received = std::make_shared<bool>(false);
+            std::shared_ptr<std::condition_variable> notify_check_done_cv = std::make_shared<std::condition_variable>();
+            std::shared_ptr<bool> is_check_done_received = std::make_shared<bool>(false);
 
-            std::thread check_thread([=] 
-            {
-                try
+            std::thread check_thread([=]
                 {
-                    *is_check_ok = check_all_waiting_threads_alive(healthy_check_timeout_ms);
-
+                    try
                     {
-                        std::lock_guard<std::mutex> lock_received(*notify_check_done_mutex);
-                        *is_check_done_received = true;
-                    }
+                        *is_check_ok = check_all_waiting_threads_alive(healthy_check_timeout_ms);
 
-                    notify_check_done_cv->notify_one();
-                } 
-                catch(std::exception&)
-                {
-                    *is_check_ok = false;
-                }
-            });
+                        {
+                            std::lock_guard<std::mutex> lock_received(*notify_check_done_mutex);
+                            *is_check_done_received = true;
+                        }
+
+                        notify_check_done_cv->notify_one();
+                    }
+                    catch (std::exception&)
+                    {
+                        *is_check_ok = false;
+                    }
+                });
 
             std::unique_lock<std::mutex> lock(*notify_check_done_mutex);
 
-			if (!notify_check_done_cv->wait_for(lock,
-				std::chrono::milliseconds(healthy_check_timeout_ms), 
-				[&] { return *is_check_done_received;}))
-			{
+            if (!notify_check_done_cv->wait_for(lock,
+                    std::chrono::milliseconds(healthy_check_timeout_ms),
+                    [&] { return *is_check_done_received; }))
+            {
                 node_->is_port_ok = false;
                 was_check_thread_detached_ = true;
                 check_thread.detach();
-				throw std::runtime_error("healthy_check timeout");
-			}
+                throw std::runtime_error("healthy_check timeout");
+            }
 
             check_thread.join();
 
-            if(!(*is_check_ok))
+            if (!(*is_check_ok))
             {
                 node_->is_port_ok = false;
                 throw std::runtime_error("healthy_check failed");
@@ -379,11 +386,11 @@ public:
     /**
      * Open a shared-memory port. If the port doesn't exist in the system a port with port_id is created,
      * otherwise the existing port is opened.
-     * 
-     * @param port_id 
-     * @param max_buffer_descriptors capacity of the port (only used if the port is created) 
+     *
+     * @param port_id
+     * @param max_buffer_descriptors capacity of the port (only used if the port is created)
      * @param healthy_check_timeout_ms timeout for healthy check test
-     * 
+     *
      * @remarks This function performs a test to validate whether the existing port is OK, if the test
      * goes wrong the existing port is removed from shared-memory and a new port is created.
      */
@@ -398,8 +405,8 @@ public:
         auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
 
         logInfo(RTPS_TRANSPORT_SHM, THREADID << "Opening " << port_segment_name);
-        
-        std::unique_ptr<SharedMemSegment::named_mutex> port_mutex = 
+
+        std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
                 SharedMemSegment::open_or_create_and_lock_named_mutex(port_segment_name + "_mutex");
 
         std::unique_lock<SharedMemSegment::named_mutex> port_lock(*port_mutex, std::adopt_lock);
@@ -408,7 +415,7 @@ public:
         {
             // Try to open
             auto port_segment = std::unique_ptr<SharedMemSegment>(
-                    new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
+                new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
 
             SharedMemGlobal::PortNode* port_node;
 
@@ -417,17 +424,17 @@ public:
                 port_node = port_segment->get().find<PortNode>("port_node").first;
                 port = std::make_shared<Port>(std::move(port_segment), port_node);
             }
-            catch(std::exception&)
+            catch (std::exception&)
             {
-                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port " 
-                    << port_id << " Couldn't find port_node ");
+                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                                                        << port_id << " Couldn't find port_node ");
 
                 SharedMemSegment::remove(port_segment_name.c_str());
 
-                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port " 
-                    << port_id << " Removed.");
+                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                                                        << port_id << " Removed.");
 
-				throw;
+                throw;
             }
 
             try
@@ -435,10 +442,11 @@ public:
                 port->healthy_check(healthy_check_timeout_ms);
 
                 if ( (port_node->is_opened_read_exclusive && open_mode != Port::OpenMode::Write) ||
-                     (port_node->is_opened_for_reading && open_mode == Port::OpenMode::ReadExclusive))
+                        (port_node->is_opened_for_reading && open_mode == Port::OpenMode::ReadExclusive))
                 {
                     logInfo(RTPS_TRANSPORT_SHM, THREADID << "Couln't open Port "
-                        << port_node->port_id << " (" << port_node->uuid.to_string() << ") for reading because is exclusive");
+                                                         << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                                        ") for reading because is exclusive");
 
                     port.reset();
                 }
@@ -448,36 +456,38 @@ public:
                     port_node->is_opened_for_reading |= (open_mode == Port::OpenMode::ReadShared);
 
                     logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                        << port_node->port_id << " (" << port_node->uuid.to_string() << ") Opened");
+                                                         << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                                        ") Opened");
                 }
-			}
-			catch (std::exception&)
-			{
-				auto port_uuid = port_node->uuid.to_string();
+            }
+            catch (std::exception&)
+            {
+                auto port_uuid = port_node->uuid.to_string();
 
                 // Healthy check leaved a thread blocked at port resources
                 // So we leave port_segment unmanaged, better to leak memory than a crash
-                if(port->was_check_thread_detached())
+                if (port->was_check_thread_detached())
                 {
-					// Release owership
-					port_segment.release();
+                    // Release owership
+                    port_segment.release();
 
-					logWarning(RTPS_TRANSPORT_SHM, THREADID << "Existing Port "
-						<< port_id << " (" << port_uuid << ") NOT Healthy (check_thread detached).");
+                    logWarning(RTPS_TRANSPORT_SHM, THREADID << "Existing Port "
+                                                            << port_id << " (" << port_uuid <<
+                                        ") NOT Healthy (check_thread detached).");
                 }
                 else
                 {
-                    logWarning(RTPS_TRANSPORT_SHM, THREADID << "Existing Port " 
-                    << port_id << " (" << port_uuid << ") NOT Healthy.");
+                    logWarning(RTPS_TRANSPORT_SHM, THREADID << "Existing Port "
+                                                            << port_id << " (" << port_uuid << ") NOT Healthy.");
                 }
-                
-				SharedMemSegment::remove(port_segment_name.c_str());
 
-                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port " 
-                    << port_id << " (" << port_uuid << ") Removed.");
+                SharedMemSegment::remove(port_segment_name.c_str());
 
-				throw;
-			}
+                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                                                        << port_id << " (" << port_uuid << ") Removed.");
+
+                throw;
+            }
         }
         catch (std::exception&)
         {
@@ -489,7 +499,8 @@ public:
             try
             {
                 auto port_segment = std::unique_ptr<SharedMemSegment>(
-                                new SharedMemSegment(boost::interprocess::create_only, port_segment_name.c_str(), segment_size + extra));
+                    new SharedMemSegment(boost::interprocess::create_only, port_segment_name.c_str(),
+                    segment_size + extra));
 
                 // Memset the whole segment to zero in order to forze physical map of the buffer
                 auto payload = port_segment->get().allocate(segment_size);
@@ -501,7 +512,7 @@ public:
             catch (std::exception& e)
             {
                 logError(RTPS_TRANSPORT_SHM, "Failed to create port segment " << port_segment_name
-                    << ": " << e.what());
+                                                                              << ": " << e.what());
 
                 throw;
             }
@@ -535,7 +546,7 @@ private:
             port_node = segment->get().construct<PortNode>("port_node")();
             port_node->port_id = port_id;
             port_node->is_port_ok = true;
-			UUID<8>::generate(port_node->uuid);
+            UUID<8>::generate(port_node->uuid);
             port_node->waiting_count = 0;
             port_node->check_awaken_count = 0;
             port_node->check_id = 0;
@@ -558,8 +569,9 @@ private:
 
             port = std::make_shared<Port>(std::move(segment), port_node);
 
-            logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port " 
-                    << port_node->port_id << " (" << port_node->uuid.to_string() << ") Created.");
+            logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                                                 << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                                ") Created.");
         }
         catch (const std::exception&)
         {
