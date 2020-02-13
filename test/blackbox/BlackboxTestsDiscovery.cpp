@@ -652,3 +652,70 @@ TEST(Discovery, TwentyParticipantsSeveralEndpoints)
         ps->destroy();
     }
 }
+
+//! Regression test for support case 7552 (CRM #353)
+TEST(Discovery, RepeatPubGuid)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
+
+    reader
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .participant_id(2)
+        .init();
+
+    writer
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .participant_id(1)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+
+    writer.destroy();
+    reader.wait_writer_undiscovery();
+    reader.wait_participant_undiscovery();
+
+    writer2
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .participant_id(1)
+        .init();
+
+    ASSERT_TRUE(writer2.isInitialized());
+
+    writer2.wait_discovery();
+    reader.wait_discovery();
+
+    data = default_helloworld_data_generator();
+    reader.startReception(data);
+
+    // Send data
+    writer2.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+

@@ -165,7 +165,7 @@ public:
 
 private:
 
-    bool acceptMsgFrom(GUID_t& entityId);
+    bool acceptMsgFrom(GUID_t& entityId, ChangeKind_t change_kind);
 
     bool thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq);
 
