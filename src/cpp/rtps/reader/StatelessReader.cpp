@@ -216,7 +216,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
-    if(acceptMsgFrom(change->writerGUID))
+    if (acceptMsgFrom(change->writerGUID, change->kind))
     {
         logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
@@ -317,7 +317,7 @@ bool StatelessReader::processDataFragMsg(
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
-    if (acceptMsgFrom(incomingChange->writerGUID))
+    if (acceptMsgFrom(incomingChange->writerGUID, incomingChange->kind))
     {
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
@@ -431,28 +431,33 @@ bool StatelessReader::processGapMsg(
     return true;
 }
 
-bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
+bool StatelessReader::acceptMsgFrom(
+        GUID_t& writerId,
+        ChangeKind_t change_kind)
 {
-    if(this->m_acceptMessagesFromUnknownWriters)
+    if (change_kind == ChangeKind_t::ALIVE)
     {
-        return true;
-    }
-    else
-    {
-        if(writerId.entityId == this->m_trustedWriterEntityId)
+        if(this->m_acceptMessagesFromUnknownWriters)
         {
             return true;
         }
-
-        for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+        else
         {
-            if((*it).guid == writerId)
+            if(writerId.entityId == this->m_trustedWriterEntityId)
             {
                 return true;
             }
         }
     }
 
+    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    {
+        if((*it).guid == writerId)
+        {
+            return true;
+        }
+    }
+    
     return false;
 }
 

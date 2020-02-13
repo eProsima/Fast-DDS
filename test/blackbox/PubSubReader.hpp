@@ -293,6 +293,7 @@ public:
         total_msgs_ = msgs;
         number_samples_expected_ = total_msgs_.size();
         current_received_count_ = 0;
+        last_seq = eprosima::fastrtps::rtps::SequenceNumber_t();
         mutex_.unlock();
 
         bool ret = false;
