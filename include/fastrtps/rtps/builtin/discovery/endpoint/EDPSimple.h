@@ -187,6 +187,36 @@ protected:
     virtual bool createSEDPEndpoints();
 
     /**
+     * Create a cache change on a builtin writer and serialize a WriterProxyData on it.
+     * @param [in] data The WriterProxyData object to be serialized.
+     * @param [in] writer The writer,history pair where the change should be added.
+     * @param [in] remove_same_instance Should previous changes with same key be removed?
+     * @param [out] created_change Where the pointer to the created change should be returned.
+     * @return false if data could not be serialized into the created change.
+     */
+    bool serialize_writer_proxy_data(
+            const WriterProxyData& data,
+            const t_p_StatefulWriter& writer,
+            bool remove_same_instance,
+            CacheChange_t** created_change);
+
+    /**
+     * Create a cache change on a builtin writer and serialize a ReaderProxyData on it.
+     * @param [in] data The ReaderProxyData object to be serialized.
+     * @param [in] writer The writer,history pair where the change should be added.
+     * @param [in] remove_same_instance Should previous changes with same key be removed?
+     * @param [out] created_change Where the pointer to the created change should be returned.
+     * @return false if data could not be serialized into the created change.
+     */
+    bool serialize_reader_proxy_data(
+            const ReaderProxyData& data,
+            const t_p_StatefulWriter& writer,
+            bool remove_same_instance,
+            CacheChange_t** created_change);
+
+private:
+
+    /**
      * Create a cache change on a builtin writer and serialize a ProxyData on it.
      * @param [in] data The ProxyData object to be serialized.
      * @param [in] writer The writer,history pair where the change should be added.
@@ -200,8 +230,6 @@ protected:
             const t_p_StatefulWriter& writer,
             bool remove_same_instance,
             CacheChange_t** created_change);
-
-private:
 
 #if HAVE_SECURITY
     bool create_sedp_secure_endpoints();
