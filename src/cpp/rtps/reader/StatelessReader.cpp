@@ -257,7 +257,7 @@ bool StatelessReader::processDataMsg(
 
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
-    if (acceptMsgFrom(change->writerGUID))
+    if (acceptMsgFrom(change->writerGUID, change->kind))
     {
         logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << m_guid);
 
@@ -466,15 +466,19 @@ bool StatelessReader::processGapMsg(
 }
 
 bool StatelessReader::acceptMsgFrom(
-        const GUID_t& writerId)
+        const GUID_t& writerId,
+        ChangeKind_t change_kind)
 {
-    if (m_acceptMessagesFromUnkownWriters)
+    if (change_kind == ChangeKind_t::ALIVE)
     {
-        return true;
-    }
-    else if (writerId.entityId == m_trustedWriterEntityId)
-    {
-        return true;
+        if (m_acceptMessagesFromUnkownWriters)
+        {
+            return true;
+        }
+        else if (writerId.entityId == m_trustedWriterEntityId)
+        {
+            return true;
+        }
     }
 
     return std::any_of(matched_writers_.begin(), matched_writers_.end(),

@@ -98,6 +98,7 @@ void PDPListener::onNewCacheChangeAdded(
 
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
+        temp_participant_data_.clear();
         if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
         {
             // After correctly reading it
