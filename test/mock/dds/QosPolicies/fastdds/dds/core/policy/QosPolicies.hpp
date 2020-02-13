@@ -1756,7 +1756,7 @@ public:
 
     bool readFromCDRMessage(
             fastrtps::rtps::CDRMessage_t* /*msg*/,
-            uint16_t /*size*/)
+            uint16_t /*size*/) override
     {
         return true;
     }
@@ -1835,7 +1835,7 @@ public:
 
     bool readFromCDRMessage(
             fastrtps::rtps::CDRMessage_t* /*msg*/,
-            uint16_t /*size*/)
+            uint16_t /*size*/) override
     {
         return true;
     }
@@ -1907,7 +1907,7 @@ public:
 
     bool readFromCDRMessage(
             fastrtps::rtps::CDRMessage_t*,
-            uint16_t /*size*/)
+            uint16_t /*size*/) override
     {
         return true;
     }
