@@ -199,7 +199,8 @@ private:
     };
 
     bool acceptMsgFrom(
-            const GUID_t& entityId);
+            const GUID_t& entityId,
+            ChangeKind_t change_kind);
 
     bool thereIsUpperRecordOf(
             const GUID_t& guid,
