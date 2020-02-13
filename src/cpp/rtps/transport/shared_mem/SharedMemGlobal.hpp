@@ -98,13 +98,6 @@ public:
 
         bool was_check_thread_detached_;
 
-        std::thread thread_notify_;
-        std::mutex thread_notify_mutex_;
-        std::condition_variable thread_notify_cv_;
-        bool thread_notify_activate_;
-        bool thread_notify_kill_;
-
-
         bool check_all_waiting_threads_alive(uint32_t time_out_ms)
         {
             bool is_check_ok = false;
@@ -132,6 +125,19 @@ public:
                     std::chrono::high_resolution_clock::now() < start + std::chrono::milliseconds(time_out_ms));
 
             return is_check_ok;
+        }
+
+        inline void notify_unicast(bool was_buffer_empty_before_push)
+        {
+            if(was_buffer_empty_before_push)
+            {
+                node_->empty_cv.notify_one();
+            }
+        }
+
+        inline void notify_multicast()
+        {
+            node_->empty_cv.notify_all();
         }
 
     public:
@@ -164,22 +170,10 @@ public:
                 new MultiProducerConsumerRingBuffer<BufferDescriptor>(buffer_base, buffer_node));
 
             node_->ref_counter.fetch_add(1);
-
-            thread_notify_kill_ = false;
-            thread_notify_activate_ = false;
-            thread_notify_ = std::thread(&Port::thread_notify, this);
         }
 
         ~Port()
         {
-            thread_notify_kill_ = true;
-            {
-                std::lock_guard<std::mutex> lock(thread_notify_mutex_);
-                thread_notify_activate_ = true;
-            }
-            thread_notify_cv_.notify_one();
-            thread_notify_.join();
-
             if (node_->ref_counter.fetch_sub(1) == 1)
             {
                 auto segment_name = port_segment_->name();
@@ -200,31 +194,6 @@ public:
             }
         }
 
-        void thread_notify()
-        {
-            while (1)
-            {
-                {
-                    std::unique_lock<std::mutex> lock(thread_notify_mutex_);
-
-                    thread_notify_cv_.wait(lock,[this] {
-                        return thread_notify_activate_;
-                    });
-
-                    thread_notify_activate_ = false;
-                }
-
-                if (!thread_notify_kill_)
-                {
-                    node_->empty_cv.notify_all();
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
         /**
          * Try to enqueue a buffer descriptor in the port.
          * If the port queue is full returns inmediatelly with false value.
@@ -238,19 +207,24 @@ public:
             
             try
             {
+                bool was_opened_as_unicast_port = node_->is_opened_read_exclusive;
+                bool was_buffer_empty_before_push = buffer_->is_buffer_empty();
+                bool was_someone_listening = (node_->waiting_count > 0);
+
                 *listeners_active = buffer_->push(buffer_descriptor);
-                bool has_to_notify = (node_->waiting_count > 0);
-    
+                
                 lock_empty.unlock();
 
-                if(has_to_notify)
+                if(was_someone_listening)
                 {
+                    if(was_opened_as_unicast_port)
                     {
-                        std::lock_guard<std::mutex> lock(thread_notify_mutex_);
-                        thread_notify_activate_ = true;
+                        notify_unicast(was_buffer_empty_before_push);
                     }
-
-                    thread_notify_cv_.notify_one();
+                    else
+                    {
+                        notify_multicast();
+                    }
                 }
                     
                 return true;
