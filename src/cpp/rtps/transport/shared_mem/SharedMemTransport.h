@@ -43,7 +43,7 @@ class SharedMemTransport : public TransportInterface
 public:
 
 	static const uint32_t maximum_message_size = (std::numeric_limits<uint32_t>::max)();
-	static const uint32_t default_segment_size = s_maximumMessageSize;
+	static const uint32_t default_segment_size = 262144;
 	static const uint32_t default_port_queue_capacity = 512;
 	static const SharedMemTransportDescriptor::OverflowPolicy default_overflow_policy =
         SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
@@ -232,7 +232,8 @@ private:
 
 	std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
         const fastrtps::rtps::octet* send_buffer,
-        uint32_t send_buffer_size);
+        uint32_t send_buffer_size,
+		const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
 	bool send(
 		const std::shared_ptr<SharedMemManager::Buffer>& buffer,

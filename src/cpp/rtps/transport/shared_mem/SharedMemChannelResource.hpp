@@ -131,6 +131,9 @@ private:
             {
                 logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
             }
+
+            // Forzes message release before waiting for the next
+            message.reset();
         }
 
         message_receiver(nullptr);

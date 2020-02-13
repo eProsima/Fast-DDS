@@ -538,11 +538,19 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     Semaphore sem;
-    bool is_first_message_received = false;
+    uint32_t messages_received = 0;
     std::function<void()> recCallback = [&]()
     {
-        is_first_message_received = true;
-        sem.wait();
+        // At the second message block
+        if(messages_received > 0)
+        {
+            messages_received++;
+            sem.wait();
+        }
+        else
+        {
+            messages_received++;
+        }
     };
     msg_recv->setCallback(recCallback);
 
@@ -581,7 +589,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
     }
 
     // Wait until the receiver get the first message
-    while(!is_first_message_received)
+    while(messages_received == 0)
     {
         std::this_thread::yield();
     }

@@ -272,7 +272,8 @@ bool SharedMemTransport::init()
 		shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size, configuration_.port_queue_capacity);
 
 		// Memset the whole segment to zero in order to forze physical map of the buffer
-		auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size);
+		auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size, 
+			(std::chrono::steady_clock::now()+std::chrono::milliseconds(100)));
 		memset(buffer->data(), 0, configuration_.segment_size);
 		buffer.reset();
 	}
@@ -389,11 +390,13 @@ bool SharedMemTransport::transform_remote_locator(
 
 std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buffer(
         const octet* send_buffer,
-        uint32_t send_buffer_size)
+        uint32_t send_buffer_size,
+		const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
 	assert(shared_mem_segment_);
 
-	std::shared_ptr<SharedMemManager::Buffer> shared_buffer = shared_mem_segment_->alloc_buffer(send_buffer_size);	
+	std::shared_ptr<SharedMemManager::Buffer> shared_buffer = 
+		shared_mem_segment_->alloc_buffer(send_buffer_size, max_blocking_time_point);	
 	
 	memcpy(shared_buffer->data(), send_buffer, send_buffer_size);
 
@@ -422,7 +425,7 @@ bool SharedMemTransport::send(
 				// Only copy the first time
 				if (shared_buffer == nullptr)
 				{
-					shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size);
+					shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size, max_blocking_time_point);
 				}
 
 				auto now = std::chrono::steady_clock::now();

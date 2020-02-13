@@ -6,15 +6,11 @@
             <transport_descriptor>
                 <transport_id>throughput_publisher_shm_transport</transport_id>
                 <type>SHM</type>
-                <segment_size>256000</segment_size>
-                <port_queue_capacity>2048</port_queue_capacity>
             </transport_descriptor>
 
             <transport_descriptor>
                 <transport_id>throughput_subscriber_shm_transport</transport_id>
                 <type>SHM</type>
-                <segment_size>256000</segment_size>
-                <port_queue_capacity>2048</port_queue_capacity>
             </transport_descriptor>
         </transport_descriptors>
 

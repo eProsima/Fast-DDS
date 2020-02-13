@@ -19,8 +19,10 @@
 #include <boost/interprocess/managed_shared_memory.hpp>
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
+#include <boost/interprocess/sync/spin/wait.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
+
 
 #include "SharedMemUUID.hpp"
 
@@ -42,6 +44,7 @@ public:
     typedef boost::interprocess::interprocess_condition condition_variable;
     typedef boost::interprocess::interprocess_mutex mutex;
     typedef boost::interprocess::named_mutex named_mutex;
+    typedef boost::interprocess::spin_wait spin_wait;
 
     static constexpr boost::interprocess::open_only_t open_only = boost::interprocess::open_only_t();
     static constexpr boost::interprocess::create_only_t create_only = boost::interprocess::create_only_t();
