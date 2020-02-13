@@ -478,7 +478,7 @@ bool EDPSimple::processLocalReaderProxyData(
     }
 #endif
     CacheChange_t* change = nullptr;
-    bool ret_val = serialize_proxy_data(*rdata, *writer, true, &change);
+    bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
     if (change != nullptr)
     {
         writer->second->add_change(change);
@@ -503,12 +503,30 @@ bool EDPSimple::processLocalWriterProxyData(
 #endif
 
     CacheChange_t* change = nullptr;
-    bool ret_val = serialize_proxy_data(*wdata, *writer, true, &change);
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
     if (change != nullptr)
     {
         writer->second->add_change(change);
     }
     return ret_val;
+}
+
+bool EDPSimple::serialize_writer_proxy_data(
+        const WriterProxyData& data,
+        const t_p_StatefulWriter& writer,
+        bool remove_same_instance,
+        CacheChange_t** created_change)
+{
+    return serialize_proxy_data(data, writer, remove_same_instance, created_change);
+}
+
+bool EDPSimple::serialize_reader_proxy_data(
+        const ReaderProxyData& data,
+        const t_p_StatefulWriter& writer,
+        bool remove_same_instance,
+        CacheChange_t** created_change)
+{
+    return serialize_proxy_data(data, writer, remove_same_instance, created_change);
 }
 
 template<typename ProxyData>
