@@ -159,3 +159,27 @@ std::list<Data1mb> default_data300kb_mix_data_generator(size_t max)
 
     return returnedValue;
 }
+
+const size_t data96kb_length = 96*1024;
+std::list<Data1mb> default_data96kb_data300kb_data_generator(size_t max)
+{
+    unsigned char index = 1;
+    size_t maximum = max ? max : 10;
+    std::list<Data1mb> returnedValue(maximum);
+
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index]
+        {
+            Data1mb data;
+            size_t length = index % 2 != 0 ? data96kb_length : data300kb_length;
+            data.data().resize(length);
+            data.data()[0] = index;
+            for (size_t i = 1; i < length; ++i)
+            {
+                data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+            }
+            ++index;
+            return data;
+        });
+
+    return returnedValue;
+}

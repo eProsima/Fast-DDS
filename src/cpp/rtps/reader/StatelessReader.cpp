@@ -369,7 +369,7 @@ bool StatelessReader::processDataFragMsg(
                     if (work_change->sequenceNumber < change_to_add->sequenceNumber)
                     {
                         // Pending change should be dropped. Check if it can be reused
-                        if (work_change->serializedPayload.max_size <= sampleSize)
+                        if (sampleSize <= work_change->serializedPayload.max_size)
                         {
                             // Sample fits inside pending change. Reuse it.
                             work_change->copy_not_memcpy(change_to_add);
