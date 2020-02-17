@@ -585,6 +585,7 @@ bool WriterProxyData::readFromCDRMessage(
                             return false;
                         }
 
+                        m_guid = p.guid;
                         for (uint8_t i = 0; i < 16; ++i)
                         {
                             if (i < 12)
