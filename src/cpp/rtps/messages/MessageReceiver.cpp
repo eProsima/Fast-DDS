@@ -20,167 +20,181 @@
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
-
 #include <fastrtps/rtps/reader/StatefulReader.h>
-
 #include <fastrtps/rtps/reader/ReaderListener.h>
-
-#include "../participant/RTPSParticipantImpl.h"
-
-#include <mutex>
-
-#include <limits>
-#include <cassert>
-
 
 #include <fastrtps/log/Log.h>
 
-#define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
+#include "../participant/RTPSParticipantImpl.h"
 
-using namespace eprosima::fastrtps;
+#include <cassert>
+#include <limits>
+#include <mutex>
+
+#define INFO_SRC_SUBMSG_LENGTH 20
+
+#define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
+MessageReceiver::MessageReceiver(
+        RTPSParticipantImpl* participant,
+        uint32_t rec_buffer_size)
+    : participant_(participant)
+    , source_version_(c_ProtocolVersion)
+    , source_vendor_id_(c_VendorId_Unknown)
+    , source_guid_prefix_(c_GuidPrefix_Unknown)
+    , dest_guid_prefix_(c_GuidPrefix_Unknown)
+    , have_timestamp_(false)
+    , timestamp_(c_TimeInvalid)
 #if HAVE_SECURITY
-    m_crypto_msg(rec_buffer_size),
+    , crypto_msg_(participant->is_secure() ? rec_buffer_size : 0)
 #endif
-    sourceVendorId(c_VendorId_Unknown), participant_(participant)
 {
-    init(rec_buffer_size);
-}
-
-void MessageReceiver::init(uint32_t rec_buffer_size){
-    destVersion = c_ProtocolVersion;
-    sourceVersion = c_ProtocolVersion;
-    sourceVendorId = c_VendorId_Unknown;
-    sourceGuidPrefix = c_GuidPrefix_Unknown;
-    destGuidPrefix = c_GuidPrefix_Unknown;
-    haveTimestamp = false;
-    timestamp = c_TimeInvalid;
-
-    logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<< rec_buffer_size);
-    mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
+    (void)rec_buffer_size;
+    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << rec_buffer_size);
 }
 
 MessageReceiver::~MessageReceiver()
 {
-    logInfo(RTPS_MSG_IN,"");
-    assert(AssociatedWriters.size() == 0);
-    assert(AssociatedReaders.size() == 0);
+    logInfo(RTPS_MSG_IN, "");
+    assert(associated_writers_.empty());
+    assert(associated_readers_.empty());
 }
 
-void MessageReceiver::associateEndpoint(Endpoint *to_add){
-    bool found = false;
-    std::lock_guard<std::mutex> guard(mtx);
-    if(to_add->getAttributes().endpointKind == WRITER)
+void MessageReceiver::associateEndpoint(
+        Endpoint* to_add)
+{
+    std::lock_guard<std::mutex> guard(mtx_);
+    if (to_add->getAttributes().endpointKind == WRITER)
     {
-        for(auto it = AssociatedWriters.begin(); it != AssociatedWriters.end(); ++it)
+        const auto writer = dynamic_cast<RTPSWriter*>(to_add);
+        for (const auto& it : associated_writers_)
         {
-            if( (*it) == (RTPSWriter*)to_add )
+            if (it == writer)
             {
-                found = true;
-                break;
+                return;
             }
         }
-        if(!found) AssociatedWriters.push_back((RTPSWriter*)to_add);
+
+        associated_writers_.push_back(writer);
     }
     else
     {
-        const auto reader = static_cast<RTPSReader*>(to_add);
+        const auto reader = dynamic_cast<RTPSReader*>(to_add);
         const auto entityId = reader->getGuid().entityId;
         // search for set of readers by entity ID
-        const auto readers = AssociatedReaders.find(entityId);
-        if (readers == AssociatedReaders.end()) {
+        const auto readers = associated_readers_.find(entityId);
+        if (readers == associated_readers_.end())
+        {
             auto vec = std::vector<RTPSReader*>();
             vec.push_back(reader);
-            AssociatedReaders.emplace(entityId, vec);
+            associated_readers_.emplace(entityId, vec);
         }
-        else {
-            for (const auto & it : readers->second) {
-                if (it == reader) {
-                    found = true;
-                    break;
+        else
+        {
+            for (const auto& it : readers->second)
+            {
+                if (it == reader)
+                {
+                    return;
                 }
             }
-            if (!found) readers->second.push_back(reader);
+
+            readers->second.push_back(reader);
         }
     }
-    return;
 }
-void MessageReceiver::removeEndpoint(Endpoint *to_remove){
 
-    std::lock_guard<std::mutex> guard(mtx);
-    if(to_remove->getAttributes().endpointKind == WRITER){
-        RTPSWriter* var = (RTPSWriter *)to_remove;
-        for(auto it=AssociatedWriters.begin(); it !=AssociatedWriters.end(); ++it){
-            if ((*it) == var){
-                AssociatedWriters.erase(it);
+void MessageReceiver::removeEndpoint(
+        Endpoint* to_remove)
+{
+    std::lock_guard<std::mutex> guard(mtx_);
+
+    if (to_remove->getAttributes().endpointKind == WRITER)
+    {
+        auto* var = dynamic_cast<RTPSWriter*>(to_remove);
+        for (auto it = associated_writers_.begin(); it != associated_writers_.end(); ++it)
+        {
+            if (*it == var)
+            {
+                associated_writers_.erase(it);
                 break;
             }
         }
-    }else{
-        auto readers = AssociatedReaders.find(to_remove->getGuid().entityId);
-        if (readers != AssociatedReaders.end()) {
-            RTPSReader *var = (RTPSReader *)to_remove;
-            for (auto it = readers->second.begin(); it != readers->second.end(); ++it) {
-                if (*it == var){
+    }
+    else
+    {
+        auto readers = associated_readers_.find(to_remove->getGuid().entityId);
+        if (readers != associated_readers_.end())
+        {
+            auto* var = dynamic_cast<RTPSReader*>(to_remove);
+            for (auto it = readers->second.begin(); it != readers->second.end(); ++it)
+            {
+                if (*it == var)
+                {
                     readers->second.erase(it);
-                    if (readers->second.empty()) AssociatedReaders.erase(readers);
+                    if (readers->second.empty())
+                    {
+                        associated_readers_.erase(readers);
+                    }
                     break;
                 }
             }
         }
     }
-    return;
 }
 
-
-void MessageReceiver::reset(){
-    destVersion = c_ProtocolVersion;
-    sourceVersion = c_ProtocolVersion;
-    sourceVendorId = c_VendorId_Unknown;
-    sourceGuidPrefix = c_GuidPrefix_Unknown;
-    destGuidPrefix = c_GuidPrefix_Unknown;
-    haveTimestamp = false;
-    timestamp = c_TimeInvalid;
+void MessageReceiver::reset()
+{
+    source_version_ = c_ProtocolVersion;
+    source_vendor_id_ = c_VendorId_Unknown;
+    source_guid_prefix_ = c_GuidPrefix_Unknown;
+    dest_guid_prefix_ = c_GuidPrefix_Unknown;
+    have_timestamp_ = false;
+    timestamp_ = c_TimeInvalid;
 }
 
-void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
+void MessageReceiver::processCDRMsg(
+        const Locator_t& loc,
+        CDRMessage_t* msg)
 {
     (void)loc;
 
-    if(msg->length < RTPSMESSAGE_HEADER_SIZE)
+    if (msg->length < RTPSMESSAGE_HEADER_SIZE)
     {
-        logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring");
+        logWarning(RTPS_MSG_IN, IDSTRING "Received message too short, ignoring");
         return;
     }
 
-    this->reset();
+    reset();
 
     GuidPrefix_t participantGuidPrefix = participant_->getGuid().guidPrefix;
-    destGuidPrefix = participantGuidPrefix;
+    dest_guid_prefix_ = participantGuidPrefix;
 
     msg->pos = 0; //Start reading at 0
 
     //Once everything is set, the reading begins:
-    if(!checkRTPSHeader(msg))
+    if (!checkRTPSHeader(msg))
     {
         return;
     }
 
 #if HAVE_SECURITY
-    CDRMessage_t* auxiliary_buffer = &m_crypto_msg;
+    security::SecurityManager& security = participant_->security_manager();
+    CDRMessage_t* auxiliary_buffer = &crypto_msg_;
     CDRMessage::initCDRMsg(auxiliary_buffer);
 
-    int decode_ret = participant_->security_manager().decode_rtps_message(*msg, *auxiliary_buffer, sourceGuidPrefix);
+    int decode_ret = security.decode_rtps_message(*msg, *auxiliary_buffer, source_guid_prefix_);
 
-    if(decode_ret < 0)
+    if (decode_ret < 0)
+    {
         return;
-    else if(decode_ret == 0)
+    }
+
+    if (decode_ret == 0)
     {
         // Swap
         std::swap(msg, auxiliary_buffer);
@@ -191,142 +205,144 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
     bool valid;
     int count = 0;
     SubmessageHeader_t submsgh; //Current submessage header
-    //Pointers to different types of messages:
 
-    while(msg->pos < msg->length)// end of the message
+    while (msg->pos < msg->length)// end of the message
     {
         CDRMessage_t* submessage = msg;
 
 #if HAVE_SECURITY
         CDRMessage::initCDRMsg(auxiliary_buffer);
-        decode_ret = participant_->security_manager().decode_rtps_submessage(*msg, *auxiliary_buffer, sourceGuidPrefix);
+        decode_ret = security.decode_rtps_submessage(*msg, *auxiliary_buffer, source_guid_prefix_);
 
-        if(decode_ret < 0)
+        if (decode_ret < 0)
         {
             return;
         }
-        else if(decode_ret == 0)
+
+        if (decode_ret == 0)
         {
             submessage = auxiliary_buffer;
         }
 #endif
 
         //First 4 bytes must contain: ID | flags | octets to next header
-        if(!readSubmessageHeader(submessage, &submsgh))
+        if (!readSubmessageHeader(submessage, &submsgh))
+        {
             return;
+        }
 
         valid = true;
         count++;
         uint32_t next_msg_pos = submessage->pos;
-        next_msg_pos += (submsgh.submessageLength + 3) & ~3;
-        switch(submsgh.submessageId)
+        next_msg_pos += (submsgh.submessageLength + 3u) & ~3u;
+        switch (submsgh.submessageId)
         {
             case DATA:
+            {
+                if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    if(this->destGuidPrefix != participantGuidPrefix)
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg ignored, DST is another RTPSParticipant");
-                    }
-                    else
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg received, processing.");
-                        valid = proc_Submsg_Data(submessage, &submsgh);
-                    }
-                    break;
-                }
-            case DATA_FRAG:
-                if (this->destGuidPrefix != participantGuidPrefix)
-                {
-                    logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg ignored, DST is another RTPSParticipant");
+                    logInfo(RTPS_MSG_IN, IDSTRING "Data Submsg ignored, DST is another RTPSParticipant");
                 }
                 else
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg received, processing.");
+                    logInfo(RTPS_MSG_IN, IDSTRING "Data Submsg received, processing.");
+                    valid = proc_Submsg_Data(submessage, &submsgh);
+                }
+                break;
+            }
+            case DATA_FRAG:
+                if (dest_guid_prefix_ != participantGuidPrefix)
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING "DataFrag Submsg ignored, DST is another RTPSParticipant");
+                }
+                else
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING "DataFrag Submsg received, processing.");
                     valid = proc_Submsg_DataFrag(submessage, &submsgh);
                 }
                 break;
             case GAP:
+            {
+                if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    if(this->destGuidPrefix != participantGuidPrefix)
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg ignored, DST is another RTPSParticipant...");
-                    }
-                    else
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg received, processing...");
-                        valid = proc_Submsg_Gap(submessage, &submsgh);
-                    }
-                    break;
+                    logInfo(RTPS_MSG_IN, IDSTRING "Gap Submsg ignored, DST is another RTPSParticipant...");
                 }
+                else
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING "Gap Submsg received, processing...");
+                    valid = proc_Submsg_Gap(submessage, &submsgh);
+                }
+                break;
+            }
             case ACKNACK:
+            {
+                if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    if(this->destGuidPrefix != participantGuidPrefix)
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg ignored, DST is another RTPSParticipant...");
-                    }
-                    else
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg received, processing...");
-                        valid = proc_Submsg_Acknack(submessage, &submsgh);
-                    }
-                    break;
+                    logInfo(RTPS_MSG_IN, IDSTRING "Acknack Submsg ignored, DST is another RTPSParticipant...");
                 }
+                else
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING "Acknack Submsg received, processing...");
+                    valid = proc_Submsg_Acknack(submessage, &submsgh);
+                }
+                break;
+            }
             case NACK_FRAG:
+            {
+                if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    if (this->destGuidPrefix != participantGuidPrefix)
-                    {
-                        logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg ignored, DST is another RTPSParticipant...");
-                    }
-                    else
-                    {
-                        logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg received, processing...");
-                        valid = proc_Submsg_NackFrag(submessage, &submsgh);
-                    }
-                    break;
+                    logInfo(RTPS_MSG_IN, IDSTRING "NackFrag Submsg ignored, DST is another RTPSParticipant...");
                 }
+                else
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING "NackFrag Submsg received, processing...");
+                    valid = proc_Submsg_NackFrag(submessage, &submsgh);
+                }
+                break;
+            }
             case HEARTBEAT:
+            {
+                if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    if(this->destGuidPrefix != participantGuidPrefix)
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"HB Submsg ignored, DST is another RTPSParticipant...");
-                    }
-                    else
-                    {
-                        logInfo(RTPS_MSG_IN,IDSTRING"Heartbeat Submsg received, processing...");
-                        valid = proc_Submsg_Heartbeat(submessage, &submsgh);
-                    }
-                    break;
+                    logInfo(RTPS_MSG_IN, IDSTRING "HB Submsg ignored, DST is another RTPSParticipant...");
                 }
+                else
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING "Heartbeat Submsg received, processing...");
+                    valid = proc_Submsg_Heartbeat(submessage, &submsgh);
+                }
+                break;
+            }
             case HEARTBEAT_FRAG:
+            {
+                if (dest_guid_prefix_ != participantGuidPrefix)
                 {
-                    if (this->destGuidPrefix != participantGuidPrefix)
-                    {
-                        logInfo(RTPS_MSG_IN, IDSTRING"HBFrag Submsg ignored, DST is another RTPSParticipant...");
-                    }
-                    else
-                    {
-                        logInfo(RTPS_MSG_IN, IDSTRING"HeartbeatFrag Submsg received, processing...");
-                        valid = proc_Submsg_HeartbeatFrag(submessage, &submsgh);
-                    }
-                    break;
+                    logInfo(RTPS_MSG_IN, IDSTRING "HBFrag Submsg ignored, DST is another RTPSParticipant...");
                 }
+                else
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING "HeartbeatFrag Submsg received, processing...");
+                    valid = proc_Submsg_HeartbeatFrag(submessage, &submsgh);
+                }
+                break;
+            }
             case PAD:
-                logWarning(RTPS_MSG_IN,IDSTRING"PAD messages not yet implemented, ignoring");
+                logWarning(RTPS_MSG_IN, IDSTRING "PAD messages not yet implemented, ignoring");
                 break;
             case INFO_DST:
-                logInfo(RTPS_MSG_IN,IDSTRING"InfoDST message received, processing...");
+                logInfo(RTPS_MSG_IN, IDSTRING "InfoDST message received, processing...");
                 valid = proc_Submsg_InfoDST(submessage, &submsgh);
                 break;
             case INFO_SRC:
-                logInfo(RTPS_MSG_IN,IDSTRING"InfoSRC message received, processing...");
+                logInfo(RTPS_MSG_IN, IDSTRING "InfoSRC message received, processing...");
                 valid = proc_Submsg_InfoSRC(submessage, &submsgh);
                 break;
             case INFO_TS:
-                {
-                    logInfo(RTPS_MSG_IN,IDSTRING"InfoTS Submsg received, processing...");
-                    valid = proc_Submsg_InfoTS(submessage, &submsgh);
-                    break;
-                }
+            {
+                logInfo(RTPS_MSG_IN, IDSTRING "InfoTS Submsg received, processing...");
+                valid = proc_Submsg_InfoTS(submessage, &submsgh);
+                break;
+            }
             case INFO_REPLY:
                 break;
             case INFO_REPLY_IP4:
@@ -335,7 +351,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 break;
         }
 
-        if(!valid || submsgh.is_last)
+        if (!valid || submsgh.is_last)
         {
             break;
         }
@@ -343,62 +359,70 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
         submessage->pos = next_msg_pos;
     }
 
-
-    participant_->assert_remote_participant_liveliness(sourceGuidPrefix);
+    participant_->assert_remote_participant_liveliness(source_guid_prefix_);
 }
 
-bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
+bool MessageReceiver::checkRTPSHeader(
+        CDRMessage_t* msg)
 {
-
-    if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
+    //check and proccess the RTPS Header
+    if (msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
             msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"Msg received with no RTPS in header, ignoring...");
+        logInfo(RTPS_MSG_IN, IDSTRING "Msg received with no RTPS in header, ignoring...");
         return false;
     }
 
-    msg->pos+=4;
+    msg->pos += 4;
 
     //CHECK AND SET protocol version
-    if(msg->buffer[msg->pos] <= destVersion.m_major)
+    if (msg->buffer[msg->pos] <= c_ProtocolVersion.m_major)
     {
-        sourceVersion.m_major = msg->buffer[msg->pos];msg->pos++;
-        sourceVersion.m_minor = msg->buffer[msg->pos];msg->pos++;
+        source_version_.m_major = msg->buffer[msg->pos];
+        msg->pos++;
+        source_version_.m_minor = msg->buffer[msg->pos];
+        msg->pos++;
     }
     else
     {
-        logWarning(RTPS_MSG_IN,IDSTRING"Major RTPS Version not supported");
+        logWarning(RTPS_MSG_IN, IDSTRING "Major RTPS Version not supported");
         return false;
     }
 
     //Set source vendor id
-    sourceVendorId[0] = msg->buffer[msg->pos];msg->pos++;
-    sourceVendorId[1] = msg->buffer[msg->pos];msg->pos++;
+    source_vendor_id_[0] = msg->buffer[msg->pos];
+    msg->pos++;
+    source_vendor_id_[1] = msg->buffer[msg->pos];
+    msg->pos++;
     //set source guid prefix
-    memcpy(sourceGuidPrefix.value,&msg->buffer[msg->pos],12);
-    msg->pos+=12;
-    haveTimestamp = false;
+    CDRMessage::readData(msg, source_guid_prefix_.value, GuidPrefix_t::size);
+    have_timestamp_ = false;
     return true;
 }
 
-
-bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t* smh)
+bool MessageReceiver::readSubmessageHeader(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    if(msg->length - msg->pos < 4)
+    if (msg->length - msg->pos < 4)
     {
-        logWarning(RTPS_MSG_IN,IDSTRING"SubmessageHeader too short");
+        logWarning(RTPS_MSG_IN, IDSTRING "SubmessageHeader too short");
         return false;
     }
-    smh->submessageId = msg->buffer[msg->pos];msg->pos++;
-    smh->flags = msg->buffer[msg->pos];msg->pos++;
+
+    smh->submessageId = msg->buffer[msg->pos];
+    msg->pos++;
+    smh->flags = msg->buffer[msg->pos];
+    msg->pos++;
+
     //Set endianness of message
-    msg->msg_endian = smh->flags & BIT(0) ? LITTLEEND : BIGEND;
+    msg->msg_endian = (smh->flags & BIT(0)) != 0 ? LITTLEEND : BIGEND;
     uint16_t length = 0;
-    CDRMessage::readUInt16(msg,&length);
+    CDRMessage::readUInt16(msg, &length);
     if (msg->pos + length > msg->length)
     {
-        logWarning(RTPS_MSG_IN, IDSTRING"SubMsg of invalid length (" << length
-            << ") with current msg position/length (" << msg->pos << "/" << msg->length << ")");
+        logWarning(RTPS_MSG_IN, IDSTRING "SubMsg of invalid length (" << length <<
+                ") with current msg position/length (" << msg->pos << "/" << msg->length << ")");
         return false;
     }
 
@@ -420,23 +444,23 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t
 bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         const EntityId_t& readerID)
 {
-    if(AssociatedReaders.empty())
+    if (associated_readers_.empty())
     {
-        logWarning(RTPS_MSG_IN,IDSTRING"Data received when NO readers are listening");
+        logWarning(RTPS_MSG_IN, IDSTRING "Data received when NO readers are listening");
         return false;
     }
 
     if (readerID != c_EntityId_Unknown)
     {
-        const auto readers = AssociatedReaders.find(readerID);
-        if (readers != AssociatedReaders.end())
+        const auto readers = associated_readers_.find(readerID);
+        if (readers != associated_readers_.end())
         {
             return true;
         }
     }
     else
     {
-        for(const auto& readers : AssociatedReaders)
+        for (const auto& readers : associated_readers_)
         {
             if (readers.second.empty())
             {
@@ -453,7 +477,7 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         }
     }
 
-    logWarning(RTPS_MSG_IN, IDSTRING"No Reader accepts this message (directed to: " <<readerID << ")");
+    logWarning(RTPS_MSG_IN, IDSTRING "No Reader accepts this message (directed to: " << readerID << ")");
     return false;
 }
 
@@ -464,8 +488,8 @@ void MessageReceiver::findAllReaders(
 {
     if (readerID != c_EntityId_Unknown)
     {
-        const auto readers = AssociatedReaders.find(readerID);
-        if (readers != AssociatedReaders.end())
+        const auto readers = associated_readers_.find(readerID);
+        if (readers != associated_readers_.end())
         {
             for (const auto& it : readers->second)
             {
@@ -475,7 +499,7 @@ void MessageReceiver::findAllReaders(
     }
     else
     {
-        for (const auto& readers : AssociatedReaders)
+        for (const auto& readers : associated_readers_)
         {
             for (const auto& it : readers.second)
             {
@@ -488,180 +512,38 @@ void MessageReceiver::findAllReaders(
     }
 }
 
-bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh)
+bool MessageReceiver::proc_Submsg_Data(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    std::lock_guard<std::mutex> guard(mtx);
-
-    //READ and PROCESS
-    if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
-    {
-        logInfo(RTPS_MSG_IN,IDSTRING"Too short submessage received, ignoring");
-        return false;
-    }
-    //Fill flags bool values
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
-    bool inlineQosFlag = smh->flags & BIT(1) ? true : false;
-    bool dataFlag = smh->flags & BIT(2) ? true : false;
-    bool keyFlag = smh->flags & BIT(3) ? true : false;
-    if(keyFlag && dataFlag)
-    {
-        logWarning(RTPS_MSG_IN,IDSTRING"Message received with Data and Key Flag set, ignoring");
-        return false;
-    }
-
-    //Assign message endianness
-    if(endiannessFlag)
-        msg->msg_endian = LITTLEEND;
-    else
-        msg->msg_endian = BIGEND;
-
-    //Extra flags don't matter now. Avoid those bytes
-    msg->pos+=2;
-
-    bool valid = true;
-    int16_t octetsToInlineQos;
-    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
-
-    //reader and writer ID
-    EntityId_t readerID;
-    valid &= CDRMessage::readEntityId(msg,&readerID);
-
-    //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-    if (!willAReaderAcceptMsgDirectedTo(readerID))
-    {
-        return false;
-    }
-
-    //FOUND THE READER.
-    //We ask the reader for a cachechange to store the information.
-    CacheChange_t ch;
-    ch.kind = ALIVE;
-    ch.serializedPayload.max_size = mMaxPayload_;
-    ch.writerGUID.guidPrefix = sourceGuidPrefix;
-    valid &= CDRMessage::readEntityId(msg,&ch.writerGUID.entityId);
-
-    //Get sequence number
-    valid &= CDRMessage::readSequenceNumber(msg,&ch.sequenceNumber);
-
-    if (!valid){
-        return false;
-    }
-
-    if(ch.sequenceNumber <= SequenceNumber_t(0, 0) || (ch.sequenceNumber.high == -1 && ch.sequenceNumber.low == 0)) //message invalid //TODO make faster
-    {
-        logWarning(RTPS_MSG_IN,IDSTRING"Invalid message received, bad sequence Number");
-        return false;
-    }
-
-    //Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
-    if(octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
-    {
-        msg->pos += (octetsToInlineQos - RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
-        if (msg->pos > msg->length)
-        {
-            logWarning(RTPS_MSG_IN, IDSTRING "Invalid jump through msg, msg->pos " << msg->pos << " > msg->length " << msg->length);
-            return false;
-        }
-    }
-
-    uint32_t inlineQosSize = 0;
-
-    if(inlineQosFlag)
-    {
-        if(false == ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize) )
-        {
-            logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
-            return false;
-        }
-
-    }
-
-    if(dataFlag || keyFlag)
-    {
-        uint32_t payload_size;
-        payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
-
-        if(dataFlag)
-        {
-            if(ch.serializedPayload.max_size >= payload_size && payload_size > 0)
-            {
-                ch.serializedPayload.data = &msg->buffer[msg->pos];
-                ch.serializedPayload.length = payload_size;
-                msg->pos += payload_size;
-            }
-            else
-            {
-                logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload value invalid or larger than maximum allowed size"
-                        "(" <<payload_size <<"/"<< ch.serializedPayload.max_size<<")");
-                return false;
-            }
-        }
-        else if(keyFlag)
-        {
-            if (payload_size <= 0)
-            {
-                logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload value invalid (" << payload_size << ")");
-                return false;
-            }
-
-            if (payload_size <= 16)
-            {
-                memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
-            }
-            else
-            {
-                logWarning(RTPS_MSG_IN, IDSTRING"Ignoring Serialized Payload for too large key-only data"
-                    "(" << payload_size << ")");
-            }
-            msg->pos += payload_size;
-        }
-    }
-
-    // Set sourcetimestamp
-    if(haveTimestamp)
-    {
-        ch.sourceTimestamp = this->timestamp;
-    }
-
-
-    //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-    logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReader entities: "
-        << AssociatedReaders.size());
-    //Look for the correct reader to add the change
-    findAllReaders(readerID, [
-            &ch
-        ] (RTPSReader* reader) {
-            reader->processDataMsg(&ch);
-        });
-
-    //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
-    ch.serializedPayload.data = nullptr;
-
-    logInfo(RTPS_MSG_IN,IDSTRING"Sub Message DATA processed");
-    return true;
-}
-
-bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t* smh)
-{
-    std::lock_guard<std::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx_);
 
     //READ and PROCESS
     if (smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
     {
-        logInfo(RTPS_MSG_IN, IDSTRING"Too short submessage received, ignoring");
+        logInfo(RTPS_MSG_IN, IDSTRING "Too short submessage received, ignoring");
+        return false;
+    }
+    //Fill flags bool values
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool inlineQosFlag = (smh->flags & BIT(1)) != 0;
+    bool dataFlag = (smh->flags & BIT(2)) != 0;
+    bool keyFlag = (smh->flags & BIT(3)) != 0;
+    if (keyFlag && dataFlag)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Message received with Data and Key Flag set, ignoring");
         return false;
     }
 
-    //Fill flags bool values
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
-    bool inlineQosFlag = smh->flags & BIT(1) ? true : false;
-    bool keyFlag = smh->flags & BIT(2) ? true : false;
-
     //Assign message endianness
     if (endiannessFlag)
+    {
         msg->msg_endian = LITTLEEND;
+    }
     else
+    {
         msg->msg_endian = BIGEND;
+    }
 
     //Extra flags don't matter now. Avoid those bytes
     msg->pos += 2;
@@ -675,13 +557,171 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-    if (!willAReaderAcceptMsgDirectedTo(readerID)) return false;
+    if (!willAReaderAcceptMsgDirectedTo(readerID))
+    {
+        return false;
+    }
 
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
     CacheChange_t ch;
-    ch.serializedPayload.max_size = mMaxPayload_;
-    ch.writerGUID.guidPrefix = sourceGuidPrefix;
+    ch.kind = ALIVE;
+    ch.writerGUID.guidPrefix = source_guid_prefix_;
+    valid &= CDRMessage::readEntityId(msg, &ch.writerGUID.entityId);
+
+    //Get sequence number
+    valid &= CDRMessage::readSequenceNumber(msg, &ch.sequenceNumber);
+
+    if (!valid)
+    {
+        return false;
+    }
+
+    if (ch.sequenceNumber <= SequenceNumber_t())
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
+        return false;
+    }
+
+    //Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
+    if (octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
+    {
+        msg->pos += (octetsToInlineQos - RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
+        if (msg->pos > msg->length)
+        {
+            logWarning(RTPS_MSG_IN,
+                    IDSTRING "Invalid jump through msg, msg->pos " << msg->pos << " > msg->length " << msg->length);
+            return false;
+        }
+    }
+
+    uint32_t inlineQosSize = 0;
+
+    if (inlineQosFlag)
+    {
+        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize) )
+        {
+            logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
+            return false;
+        }
+    }
+
+    if (dataFlag || keyFlag)
+    {
+        uint32_t payload_size;
+        payload_size = smh->submessageLength -
+                (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
+
+        if (dataFlag)
+        {
+            uint32_t next_pos = msg->pos + payload_size;
+            if (msg->length >= next_pos && payload_size > 0)
+            {
+                ch.serializedPayload.data = &msg->buffer[msg->pos];
+                ch.serializedPayload.length = payload_size;
+                ch.serializedPayload.max_size = payload_size;
+                msg->pos = next_pos;
+            }
+            else
+            {
+                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
+                        "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
+                return false;
+            }
+        }
+        else if (keyFlag)
+        {
+            if (payload_size <= 0)
+            {
+                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid (" << payload_size << ")");
+                return false;
+            }
+
+            if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
+            {
+                memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
+            }
+            else
+            {
+                logWarning(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
+                    payload_size << ")");
+            }
+            msg->pos += payload_size;
+        }
+    }
+
+    // Set sourcetimestamp
+    if (have_timestamp_)
+    {
+        ch.sourceTimestamp = timestamp_;
+    }
+
+    logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+        associated_readers_.size());
+
+    //Look for the correct reader to add the change
+    findAllReaders(readerID, 
+        [&ch] (RTPSReader* reader)
+        {
+            reader->processDataMsg(&ch);
+        });
+
+    //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
+    ch.serializedPayload.data = nullptr;
+
+    logInfo(RTPS_MSG_IN, IDSTRING "Sub Message DATA processed");
+    return true;
+}
+
+bool MessageReceiver::proc_Submsg_DataFrag(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
+{
+    std::lock_guard<std::mutex> guard(mtx_);
+
+    //READ and PROCESS
+    if (smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
+    {
+        logInfo(RTPS_MSG_IN, IDSTRING "Too short submessage received, ignoring");
+        return false;
+    }
+
+    //Fill flags bool values
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool inlineQosFlag = (smh->flags & BIT(1)) != 0;
+    bool keyFlag = (smh->flags & BIT(2)) != 0;
+
+    //Assign message endianness
+    if (endiannessFlag)
+    {
+        msg->msg_endian = LITTLEEND;
+    }
+    else
+    {
+        msg->msg_endian = BIGEND;
+    }
+
+    //Extra flags don't matter now. Avoid those bytes
+    msg->pos += 2;
+
+    bool valid = true;
+    int16_t octetsToInlineQos;
+    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+
+    //reader and writer ID
+    EntityId_t readerID;
+    valid &= CDRMessage::readEntityId(msg, &readerID);
+
+    //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
+    if (!willAReaderAcceptMsgDirectedTo(readerID))
+    {
+        return false;
+    }
+
+    //FOUND THE READER.
+    //We ask the reader for a cachechange to store the information.
+    CacheChange_t ch;
+    ch.writerGUID.guidPrefix = source_guid_prefix_;
     valid &= CDRMessage::readEntityId(msg, &ch.writerGUID.entityId);
 
     //Get sequence number
@@ -689,7 +729,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (ch.sequenceNumber <= SequenceNumber_t())
     {
-        logWarning(RTPS_MSG_IN, IDSTRING"Invalid message received, bad sequence Number");
+        logWarning(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
         return false;
     }
 
@@ -709,7 +749,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     uint32_t sampleSize;
     valid &= CDRMessage::readUInt32(msg, &sampleSize);
 
-    if(!valid){
+    if (!valid)
+    {
         return false;
     }
 
@@ -719,7 +760,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         msg->pos += (octetsToInlineQos - RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
         if (msg->pos > msg->length)
         {
-            logWarning(RTPS_MSG_IN, IDSTRING "Invalid jump through msg, msg->pos " << msg->pos << " > msg->length " << msg->length);
+            logWarning(RTPS_MSG_IN,
+                    IDSTRING "Invalid jump through msg, msg->pos " << msg->pos << " > msg->length " << msg->length);
             return false;
         }
     }
@@ -728,9 +770,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (inlineQosFlag)
     {
-        if (false == ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
+        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
         {
-            logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
+            logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
         }
     }
@@ -742,21 +784,21 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
     if (!keyFlag)
     {
-        if (ch.serializedPayload.max_size >= payload_size && payload_size > 0)
+        uint32_t next_pos = msg->pos + payload_size;
+        if (msg->length >= next_pos && payload_size > 0)
         {
-            ch.serializedPayload.length = payload_size;
-
-            ch.setFragmentSize(fragmentSize);
+            ch.kind = ALIVE;
             ch.serializedPayload.data = &msg->buffer[msg->pos];
             ch.serializedPayload.length = payload_size;
-            msg->pos += payload_size;
+            ch.serializedPayload.max_size = payload_size;
+            ch.setFragmentSize(fragmentSize);
 
-            ch.kind = ALIVE;
+            msg->pos = next_pos;
         }
         else
         {
-            logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload value invalid or larger than maximum allowed size "
-                    "(" << payload_size << "/" << ch.serializedPayload.max_size << ")");
+            logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size "
+                    "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
             return false;
         }
     }
@@ -773,226 +815,274 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
            logError(RTPS_MSG_IN, IDSTRING"Bad encapsulation for KeyHash and status parameter list");
            return false;
            }
-        //uint32_t param_size;
-        if (ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false) <= 0)
-        {
-        logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
-        return false;
-        }
-        msg->msg_endian = previous_endian;
-        */
+           //uint32_t param_size;
+           if (ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false) <= 0)
+           {
+           logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
+           return false;
+           }
+           msg->msg_endian = previous_endian;
+         */
     }
 
     // Set sourcetimestamp
-    if (haveTimestamp)
-        ch.sourceTimestamp = this->timestamp;
+    if (have_timestamp_)
+    {
+        ch.sourceTimestamp = timestamp_;
+    }
 
     //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-    logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch.writerGUID << "; possible RTPSReader entities: "
-        << AssociatedReaders.size());
+    logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+        associated_readers_.size());
+
     //Look for the correct reader to add the change
-    findAllReaders(readerID, [
-            &ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage
-        ] (RTPSReader* reader) {
+    findAllReaders(readerID,
+        [&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage] (RTPSReader* reader)
+        {
             reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
         });
 
     ch.serializedPayload.data = nullptr;
 
-    logInfo(RTPS_MSG_IN, IDSTRING"Sub Message DATA_FRAG processed");
+    logInfo(RTPS_MSG_IN, IDSTRING "Sub Message DATA_FRAG processed");
 
     return true;
 }
 
-
-bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t* smh)
+bool MessageReceiver::proc_Submsg_Heartbeat(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
-    bool finalFlag = smh->flags & BIT(1) ? true : false;
-    bool livelinessFlag = smh->flags & BIT(2) ? true : false;
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool finalFlag = (smh->flags & BIT(1)) != 0;
+    bool livelinessFlag = (smh->flags & BIT(2)) != 0;
     //Assign message endianness
-    if(endiannessFlag)
-        msg->msg_endian = LITTLEEND;
-    else
-        msg->msg_endian = BIGEND;
-
-    GUID_t readerGUID, writerGUID;
-    readerGUID.guidPrefix = destGuidPrefix;
-    CDRMessage::readEntityId(msg,&readerGUID.entityId);
-    writerGUID.guidPrefix = sourceGuidPrefix;
-    CDRMessage::readEntityId(msg,&writerGUID.entityId);
-    SequenceNumber_t firstSN, lastSN;
-    CDRMessage::readSequenceNumber(msg,&firstSN);
-    CDRMessage::readSequenceNumber(msg,&lastSN);
-    if(lastSN < firstSN && lastSN != firstSN-1)
+    if (endiannessFlag)
     {
-        logWarning(RTPS_MSG_IN, IDSTRING"Invalid Heartbeat received (" << firstSN << ") - (" <<
+        msg->msg_endian = LITTLEEND;
+    }
+    else
+    {
+        msg->msg_endian = BIGEND;
+    }
+
+    GUID_t readerGUID;
+    GUID_t writerGUID;
+    readerGUID.guidPrefix = dest_guid_prefix_;
+    CDRMessage::readEntityId(msg, &readerGUID.entityId);
+    writerGUID.guidPrefix = source_guid_prefix_;
+    CDRMessage::readEntityId(msg, &writerGUID.entityId);
+    SequenceNumber_t firstSN;
+    SequenceNumber_t lastSN;
+    CDRMessage::readSequenceNumber(msg, &firstSN);
+    CDRMessage::readSequenceNumber(msg, &lastSN);
+    if (lastSN < firstSN && lastSN != firstSN - 1)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Invalid Heartbeat received (" << firstSN << ") - (" <<
                 lastSN << "), ignoring");
         return false;
     }
     uint32_t HBCount;
-    CDRMessage::readUInt32(msg,&HBCount);
+    CDRMessage::readUInt32(msg, &HBCount);
 
-    std::lock_guard<std::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx_);
     //Look for the correct reader and writers:
-    findAllReaders(readerGUID.entityId, [
-            &writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag
-        ] (RTPSReader* reader) {
+    findAllReaders(readerGUID.entityId,
+        [&writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag] (RTPSReader* reader)
+        {
             reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
         });
 
     return true;
 }
 
-
-bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* smh)
+bool MessageReceiver::proc_Submsg_Acknack(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
-    bool finalFlag = smh->flags & BIT(1) ? true: false;
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool finalFlag = (smh->flags & BIT(1)) != 0;
     //Assign message endianness
-    if(endiannessFlag)
+    if (endiannessFlag)
+    {
         msg->msg_endian = LITTLEEND;
+    }
     else
+    {
         msg->msg_endian = BIGEND;
-    GUID_t readerGUID,writerGUID;
-    readerGUID.guidPrefix = sourceGuidPrefix;
-    CDRMessage::readEntityId(msg,&readerGUID.entityId);
-    writerGUID.guidPrefix = destGuidPrefix;
-    CDRMessage::readEntityId(msg,&writerGUID.entityId);
+    }
+    GUID_t readerGUID;
+    GUID_t writerGUID;
+    readerGUID.guidPrefix = source_guid_prefix_;
+    CDRMessage::readEntityId(msg, &readerGUID.entityId);
+    writerGUID.guidPrefix = dest_guid_prefix_;
+    CDRMessage::readEntityId(msg, &writerGUID.entityId);
 
 
     SequenceNumberSet_t SNSet = CDRMessage::readSequenceNumberSet(msg);
     uint32_t Ackcount;
-    CDRMessage::readUInt32(msg,&Ackcount);
+    CDRMessage::readUInt32(msg, &Ackcount);
 
-    std::lock_guard<std::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx_);
     //Look for the correct writer to use the acknack
-    for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
-            it != AssociatedWriters.end(); ++it)
+    for (RTPSWriter* it : associated_writers_)
     {
         bool result;
-        if ((*it)->process_acknack(writerGUID, readerGUID, Ackcount, SNSet, finalFlag, result))
+        if (it->process_acknack(writerGUID, readerGUID, Ackcount, SNSet, finalFlag, result))
         {
             if (!result)
             {
-                logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ");
+                logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
             }
             return result;
         }
     }
-    logInfo(RTPS_MSG_IN,IDSTRING"Acknack msg to UNKNOWN writer (I loooked through "
-            << AssociatedWriters.size() << " writers in this ListenResource)");
+    logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I loooked through "
+            << associated_writers_.size() << " writers in this ListenResource)");
     return false;
 }
 
-
-
-bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh)
+bool MessageReceiver::proc_Submsg_Gap(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
     //Assign message endianness
-    if(endiannessFlag)
+    if (endiannessFlag)
+    {
         msg->msg_endian = LITTLEEND;
+    }
     else
+    {
         msg->msg_endian = BIGEND;
+    }
 
-    GUID_t writerGUID,readerGUID;
-    readerGUID.guidPrefix = destGuidPrefix;
-    CDRMessage::readEntityId(msg,&readerGUID.entityId);
-    writerGUID.guidPrefix = sourceGuidPrefix;
-    CDRMessage::readEntityId(msg,&writerGUID.entityId);
+    GUID_t writerGUID;
+    GUID_t readerGUID;
+    readerGUID.guidPrefix = dest_guid_prefix_;
+    CDRMessage::readEntityId(msg, &readerGUID.entityId);
+    writerGUID.guidPrefix = source_guid_prefix_;
+    CDRMessage::readEntityId(msg, &writerGUID.entityId);
     SequenceNumber_t gapStart;
-    CDRMessage::readSequenceNumber(msg,&gapStart);
+    CDRMessage::readSequenceNumber(msg, &gapStart);
     SequenceNumberSet_t gapList = CDRMessage::readSequenceNumberSet(msg);
-    if(gapStart <= SequenceNumber_t(0, 0))
+    if (gapStart <= SequenceNumber_t(0, 0))
+    {
         return false;
+    }
 
-    std::lock_guard<std::mutex> guard(mtx);
-    findAllReaders(readerGUID.entityId, [
-            &writerGUID, &gapStart, &gapList
-        ] (RTPSReader* reader) {
+    std::lock_guard<std::mutex> guard(mtx_);
+    findAllReaders(readerGUID.entityId,
+        [&writerGUID, &gapStart, &gapList] (RTPSReader* reader)
+        {
             reader->processGapMsg(writerGUID, gapStart, gapList);
         });
 
     return true;
 }
 
-bool MessageReceiver::proc_Submsg_InfoTS(CDRMessage_t* msg,SubmessageHeader_t* smh)
+bool MessageReceiver::proc_Submsg_InfoTS(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
-    bool timeFlag = smh->flags & BIT(1) ? true : false;
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool timeFlag = (smh->flags & BIT(1)) != 0;
     //Assign message endianness
-    if(endiannessFlag)
-        msg->msg_endian = LITTLEEND;
-    else
-        msg->msg_endian = BIGEND;
-    if(!timeFlag)
+    if (endiannessFlag)
     {
-        haveTimestamp = true;
-        CDRMessage::readTimestamp(msg,&timestamp);
+        msg->msg_endian = LITTLEEND;
     }
     else
-        haveTimestamp = false;
+    {
+        msg->msg_endian = BIGEND;
+    }
+    if (!timeFlag)
+    {
+        have_timestamp_ = true;
+        CDRMessage::readTimestamp(msg, &timestamp_);
+    }
+    else
+    {
+        have_timestamp_ = false;
+    }
 
     return true;
 }
 
-bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* smh)
+bool MessageReceiver::proc_Submsg_InfoDST(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0u;
     //bool timeFlag = smh->flags & BIT(1) ? true : false;
     //Assign message endianness
-    if(endiannessFlag)
+    if (endiannessFlag)
+    {
         msg->msg_endian = LITTLEEND;
+    }
     else
+    {
         msg->msg_endian = BIGEND;
+    }
     GuidPrefix_t guidP;
-    CDRMessage::readData(msg,guidP.value,12);
-    if(guidP != c_GuidPrefix_Unknown)
+    CDRMessage::readData(msg, guidP.value, GuidPrefix_t::size);
+    if (guidP != c_GuidPrefix_Unknown)
     {
-        this->destGuidPrefix = guidP;
-        logInfo(RTPS_MSG_IN,IDSTRING"DST RTPSParticipant is now: "<< this->destGuidPrefix);
+        dest_guid_prefix_ = guidP;
+        logInfo(RTPS_MSG_IN, IDSTRING "DST RTPSParticipant is now: " << dest_guid_prefix_);
     }
     return true;
 }
 
-bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* smh)
+bool MessageReceiver::proc_Submsg_InfoSRC(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
 {
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
     //bool timeFlag = smh->flags & BIT(1) ? true : false;
     //Assign message endianness
-    if(endiannessFlag)
+    if (endiannessFlag)
+    {
         msg->msg_endian = LITTLEEND;
+    }
     else
+    {
         msg->msg_endian = BIGEND;
-    if(smh->submessageLength == 20)
+    }
+    if (smh->submessageLength == INFO_SRC_SUBMSG_LENGTH)
     {
         //AVOID FIRST 4 BYTES:
-        msg->pos+=4;
-        CDRMessage::readOctet(msg,&this->sourceVersion.m_major);
-        CDRMessage::readOctet(msg,&this->sourceVersion.m_minor);
-        CDRMessage::readData(msg,&this->sourceVendorId[0],2);
-        CDRMessage::readData(msg,this->sourceGuidPrefix.value,12);
-        logInfo(RTPS_MSG_IN,IDSTRING"SRC RTPSParticipant is now: "<<this->sourceGuidPrefix);
+        msg->pos += 4;
+        CDRMessage::readOctet(msg, &source_version_.m_major);
+        CDRMessage::readOctet(msg, &source_version_.m_minor);
+        CDRMessage::readData(msg, &source_vendor_id_[0], 2);
+        CDRMessage::readData(msg, source_guid_prefix_.value, GuidPrefix_t::size);
+        logInfo(RTPS_MSG_IN, IDSTRING "SRC RTPSParticipant is now: " << source_guid_prefix_);
         return true;
     }
     return false;
 }
 
-bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t* smh) {
-
-
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+bool MessageReceiver::proc_Submsg_NackFrag(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
+{
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
     //Assign message endianness
     if (endiannessFlag)
+    {
         msg->msg_endian = LITTLEEND;
+    }
     else
+    {
         msg->msg_endian = BIGEND;
+    }
 
-    GUID_t readerGUID, writerGUID;
-    readerGUID.guidPrefix = sourceGuidPrefix;
+    GUID_t readerGUID;
+    GUID_t writerGUID;
+    readerGUID.guidPrefix = source_guid_prefix_;
     CDRMessage::readEntityId(msg, &readerGUID.entityId);
-    writerGUID.guidPrefix = destGuidPrefix;
+    writerGUID.guidPrefix = dest_guid_prefix_;
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
 
     SequenceNumber_t writerSN;
@@ -1004,46 +1094,52 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
     uint32_t Ackcount;
     CDRMessage::readUInt32(msg, &Ackcount);
 
-    std::lock_guard<std::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mtx_);
     //Look for the correct writer to use the acknack
-    for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
-            it != AssociatedWriters.end(); ++it)
+    for (RTPSWriter* it : associated_writers_)
     {
         bool result;
-        if ((*it)->process_nack_frag(writerGUID, readerGUID, Ackcount, writerSN, fnState, result))
+        if (it->process_nack_frag(writerGUID, readerGUID, Ackcount, writerSN, fnState, result))
         {
             if (!result)
             {
-                logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ");
+                logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
             }
             return result;
         }
     }
-    logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I looked through "
-            << AssociatedWriters.size() << " writers in this ListenResource)");
+    logInfo(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
+            << associated_writers_.size() << " writers in this ListenResource)");
     return false;
 }
 
-bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh) {
-
-    bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+bool MessageReceiver::proc_Submsg_HeartbeatFrag(
+        CDRMessage_t* msg,
+        SubmessageHeader_t* smh)
+{
+    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
     //Assign message endianness
     if (endiannessFlag)
+    {
         msg->msg_endian = LITTLEEND;
+    }
     else
+    {
         msg->msg_endian = BIGEND;
+    }
 
-    GUID_t readerGUID, writerGUID;
-    readerGUID.guidPrefix = destGuidPrefix;
+    GUID_t readerGUID;
+    GUID_t writerGUID;
+    readerGUID.guidPrefix = dest_guid_prefix_;
     CDRMessage::readEntityId(msg, &readerGUID.entityId);
-    writerGUID.guidPrefix = sourceGuidPrefix;
+    writerGUID.guidPrefix = source_guid_prefix_;
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
 
     SequenceNumber_t writerSN;
     CDRMessage::readSequenceNumber(msg, &writerSN);
 
     FragmentNumber_t lastFN;
-    CDRMessage::readUInt32(msg, (uint32_t*)&lastFN);
+    CDRMessage::readUInt32(msg, static_cast<uint32_t*>(&lastFN));
 
     uint32_t HBCount;
     CDRMessage::readUInt32(msg, &HBCount);
@@ -1052,20 +1148,19 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHead
 
     //Look for the correct reader and writers:
     /* XXX TODO
-    std::lock_guard<std::mutex> guard(mtx);
-    for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
-            it != AssociatedReaders.end(); ++it)
-    {
+       std::lock_guard<std::mutex> guard(mtx_);
+       for (std::vector<RTPSReader*>::iterator it = associated_readers_.begin();
+            it != associated_readers_.end(); ++it)
+       {
            if ((*it)->acceptMsgDirectedTo(readerGUID.entityId))
            {
            (*it)->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
            }
-    }
-    */
+       }
+     */
     return true;
 }
 
-
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

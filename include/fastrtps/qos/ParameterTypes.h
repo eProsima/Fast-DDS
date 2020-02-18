@@ -241,6 +241,8 @@ public:
 };
 #define PARAMETER_KEY_LENGTH 16
 
+#define PARAMETER_KEY_HASH_LENGTH 16
+
 /**
  *
  */

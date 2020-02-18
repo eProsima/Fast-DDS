@@ -89,23 +89,23 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #endif
 
-typedef unsigned char octet;
+using octet = unsigned char;
 //typedef unsigned int uint;
 //typedef unsigned short ushort;
-typedef unsigned char SubmessageFlag;
-typedef uint32_t BuiltinEndpointSet_t;
-typedef uint32_t Count_t;
+using SubmessageFlag = unsigned char;
+using BuiltinEndpointSet_t = uint32_t;
+using Count_t = uint32_t;
 
-#define BIT0 0x1
-#define BIT1 0x2
-#define BIT2 0x4
-#define BIT3 0x8
-#define BIT4 0x10
-#define BIT5 0x20
-#define BIT6 0x40
-#define BIT7 0x80
+#define BIT0 0x1u
+#define BIT1 0x2u
+#define BIT2 0x4u
+#define BIT3 0x8u
+#define BIT4 0x10u
+#define BIT5 0x20u
+#define BIT6 0x40u
+#define BIT7 0x80u
 
-#define BIT(i) ((i==0) ? BIT0 : (i==1) ? BIT1 :(i==2)?BIT2:(i==3)?BIT3:(i==4)?BIT4:(i==5)?BIT5:(i==6)?BIT6:(i==7)?BIT7:0x0)
+#define BIT(i) (1U << static_cast<unsigned>(i))
 
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
 struct RTPS_DllAPI ProtocolVersion_t

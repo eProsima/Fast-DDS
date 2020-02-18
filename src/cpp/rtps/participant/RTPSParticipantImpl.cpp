@@ -264,6 +264,18 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultMulticastLocatorList.clear();
     }
     
+#if HAVE_SECURITY
+    // Start security
+    // TODO(Ricardo) Get returned value in future.
+    m_security_manager_initialized =
+        m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
+    if (!m_security_manager_initialized)
+    {
+        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
+        return;
+    }
+#endif
+
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
 
@@ -282,21 +294,20 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     // Create buffer pool
     send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers));
+    send_buffers_->init(this);
 
 #if HAVE_SECURITY
-    // Start security
-    // TODO(Ricardo) Get returned value in future.
-    m_security_manager_initialized =
-        m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
-    if (!m_security_manager_initialized)
+    if (m_is_security_active)
     {
-        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
-        return;
+        m_is_security_active = m_security_manager.create_entities();
+        if (!m_is_security_active)
+        {
+            // Participant will be deleted, no need to create builtin endpoints
+            m_security_manager_initialized = false;
+            return;
+        }
     }
 #endif
-
-    // Allocate all pending send buffers
-    send_buffers_->init(this);
 
     mp_builtinProtocols = new BuiltinProtocols();
 

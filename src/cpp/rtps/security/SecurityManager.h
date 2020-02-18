@@ -70,6 +70,8 @@ public:
             const PropertyPolicy& participant_properties,
             bool& security_activated);
 
+    bool create_entities();
+
     void destroy();
 
     bool discovered_participant(
@@ -416,6 +418,8 @@ private:
             SecurityManager &manager_;
     } participant_volatile_message_secure_listener_;
 
+    void cancel_init();
+
     void remove_discovered_participant_info(
             DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
 
@@ -423,7 +427,6 @@ private:
             const GUID_t& remote_participant_key,
             DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
 
-    bool create_entities();
     void delete_entities();
     bool create_participant_stateless_message_entities();
     void delete_participant_stateless_message_entities();
