@@ -2073,7 +2073,7 @@ void TypeObjectFactory::apply_type_annotations(
         AnnotationDescriptor anno_desc;
         anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
-        for (const AppliedAnnotationParameter a_param : anno_params)
+        for (const AppliedAnnotationParameter& a_param : anno_params)
         {
             std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
             anno_desc.set_value(param_key, a_param.value().to_string());
@@ -2098,7 +2098,7 @@ void TypeObjectFactory::apply_member_annotations(
         AnnotationDescriptor anno_desc;
         anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
-        for (const AppliedAnnotationParameter a_param : anno_params)
+        for (const AppliedAnnotationParameter& a_param : anno_params)
         {
             std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
             anno_desc.set_value(param_key, a_param.value().to_string());
