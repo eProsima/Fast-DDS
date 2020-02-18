@@ -68,9 +68,6 @@ class SHMTransportTests: public ::testing::Test
         }
 
         SharedMemTransportDescriptor descriptor;
-        std::unique_ptr<std::thread> senderThread;
-        std::unique_ptr<std::thread> receiverThread;
-        std::unique_ptr<std::thread> timeoutThread;
 };
 
 class SHMRingBuffer : public ::testing::Test
@@ -484,6 +481,7 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     outputChannelLocator.kind = LOCATOR_KIND_SHM;
     outputChannelLocator.port = g_default_port + 1;
 
+    Semaphore sem;
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
@@ -493,7 +491,6 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
-    Semaphore sem;
     std::function<void()> recCallback = [&]()
     {
         EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
@@ -512,10 +509,12 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
         EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
             (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
-    senderThread.reset(new std::thread(sendThreadFunction));
+
+    std::unique_ptr<std::thread> sender_thread;
+    sender_thread.reset(new std::thread(sendThreadFunction));
 
     sem.wait();
-    senderThread->join();
+    sender_thread->join();
 }
 
 TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
@@ -534,10 +533,10 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
     unicastLocator.kind = LOCATOR_KIND_SHM;
     unicastLocator.port = g_default_port;
 
+    Semaphore sem;
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    Semaphore sem;
     uint32_t messages_received = 0;
     std::function<void()> recCallback = [&]()
     {
@@ -573,7 +572,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
         // to cause segment overflow
         octet message_big[4096] = { 'H','e','l','l'};
 
-        EXPECT_FALSE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
+        ASSERT_FALSE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
             (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
@@ -582,10 +581,10 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
     {
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
-
+ 
         // At least 4 msgs of 4 bytes are allowed
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+        ASSERT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
     // Wait until the receiver get the first message
@@ -602,7 +601,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+        ASSERT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
             (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     } 
 
@@ -611,12 +610,11 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
 
-        EXPECT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+        ASSERT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
             (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     } 
 
-    sem.disable();
-        
+    sem.disable(); 
 }
 
 TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
@@ -635,10 +633,10 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     unicastLocator.kind = LOCATOR_KIND_SHM;
     unicastLocator.port = g_default_port;
 
+    Semaphore sem;
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    Semaphore sem;
     bool is_first_message_received = false;
     std::function<void()> recCallback = [&]()
     {
@@ -910,12 +908,11 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 			SharedMemTransport transport(my_descriptor);
 			ASSERT_TRUE(transport.init());
 
+            Semaphore sem;
 			MockReceiverResource receiver(transport, sub_locator);
 			MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
 			int samples_to_receive = num_samples;
-
-			Semaphore sem;
 
 			LocatorList_t send_locators_list;
 			send_locators_list.push_back(pub_locator);
@@ -947,12 +944,11 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 			SharedMemTransport transport(my_descriptor);
 			ASSERT_TRUE(transport.init());
 
+            Semaphore sem;
 			MockReceiverResource receiver(transport, pub_locator);
 			MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
 			int samples_sent = 0;
-
-			Semaphore sem;
 
 			LocatorList_t send_locators_list;
 			send_locators_list.push_back(sub_locator);

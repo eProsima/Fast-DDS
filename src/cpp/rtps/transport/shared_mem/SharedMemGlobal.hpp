@@ -290,9 +290,10 @@ public:
         void close_listener(
                 std::atomic<bool>* is_listener_closed)
         {
-            std::unique_lock<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
-            is_listener_closed->exchange(true);
-            lock.unlock();
+            {
+                std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
+                is_listener_closed->exchange(true);
+            }
 
             node_->empty_cv.notify_all();
         }
