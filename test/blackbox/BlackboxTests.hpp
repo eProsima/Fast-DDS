@@ -107,6 +107,8 @@ std::list<Data1mb> default_data300kb_data_generator(size_t max = 0);
 
 std::list<Data1mb> default_data300kb_mix_data_generator(size_t max = 0);
 
+std::list<Data1mb> default_data96kb_data300kb_data_generator(size_t max = 0);
+
 /****** Auxiliary lambda functions  ******/
 extern const std::function<void(const HelloWorld&)>  default_helloworld_print;
 

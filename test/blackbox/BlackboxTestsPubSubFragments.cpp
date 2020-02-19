@@ -216,6 +216,68 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditions)
         testTransport->dropLogLength);
 }
 
+// Test introduced to verify the fix of the bug (#7609 Do not reuse cache change if sample does not fit)
+// detected in relase 1.9.4 
+TEST(PubSubFragments, AsyncPubSubAsBestEffortAlternateSizeInLossyConditions)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    auto reader_transport = std::make_shared<UDPv4TransportDescriptor>();
+    reader_transport->interfaceWhiteList.push_back("127.0.0.1");
+
+    reader
+        .disable_builtin_transport()
+        .add_user_transport_to_pparams(reader_transport)
+        .history_depth(5)
+        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+        .mem_policy(eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+
+    // To simulate lossy conditions, we are going to remove the default
+    // bultin transport, and instead use a lossy shim layer variant.
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = 65536;
+    testTransport->receiveBufferSize = 65536;
+    // We drop 50% of all data frags
+    testTransport->dropDataFragMessagesPercentage = 50;
+    testTransport->dropLogLength = 10;
+    // Only one interface in order to really drop 50% of packages!!!
+    testTransport->interfaceWhiteList.push_back("127.0.0.1");
+
+    writer
+        .disable_builtin_transport()
+        .add_user_transport_to_pparams(testTransport)
+        .history_depth(5)
+        .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+        .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data96kb_data300kb_data_generator(2);
+    
+    reader.startReception(data);
+    writer.send(data);
+
+    // All data has 7 fragments so when 3 has been lost all data has been sent
+    // Wait until then
+    while(eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size() < 3)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
+    // A second should be enough time to assure all data has been received
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
 TEST(PubSubFragments, AsyncFragmentSizeTest)
 {
     // ThroghputController size large than maxMessageSize.

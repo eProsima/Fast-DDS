@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <asio.hpp>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <cstdlib>
 
@@ -41,6 +42,10 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
         test_UDPv4Transport_ShutdownAllNetwork = false;
         UDPv4Transport::mSendBufferSize = descriptor.sendBufferSize;
         UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
+        for (auto interf : descriptor.interfaceWhiteList)
+        {
+            UDPv4Transport::interface_whitelist_.emplace_back(asio::ip::address_v4::from_string(interf));
+        }
         test_UDPv4Transport_DropLog.clear();
         test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
     }

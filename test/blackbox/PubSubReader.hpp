@@ -456,6 +456,12 @@ public:
         return *this;
     }
 
+    PubSubReader& mem_policy(const eprosima::fastrtps::rtps::MemoryManagementPolicy mem_policy)
+    {
+        subscriber_attr_.historyMemoryPolicy = mem_policy;
+        return *this;
+    }
+
     PubSubReader& deadline_period(const eprosima::fastrtps::Duration_t deadline_period)
     {
         subscriber_attr_.qos.m_deadline.period = deadline_period;
