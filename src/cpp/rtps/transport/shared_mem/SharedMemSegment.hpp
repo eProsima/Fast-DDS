@@ -199,7 +199,7 @@ public:
      */
     class Id
     {
-public:
+    public:
 
         typedef UUID<16> type;
 

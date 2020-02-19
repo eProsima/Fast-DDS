@@ -806,6 +806,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
     auto listener = port->create_listener();
     bool listerners_active;
     SharedMemSegment::Id random_id;
+    random_id.generate();
     SharedMemGlobal::BufferDescriptor foo = {random_id, 0};
     ASSERT_TRUE(port->try_push(foo, &listerners_active));
     ASSERT_TRUE(listerners_active);
