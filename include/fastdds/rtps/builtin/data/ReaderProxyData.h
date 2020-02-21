@@ -369,7 +369,7 @@ public:
     RTPS_DllAPI bool readFromCDRMessage(
             CDRMessage_t* msg,
             const NetworkFactory& network,
-            bool is_shm_transport_possible);
+            bool is_shm_transport_available);
 
     //!
     bool m_expectsInlineQos;

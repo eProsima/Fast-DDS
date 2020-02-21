@@ -39,6 +39,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "RTPSDomainImpl.hpp"
+#include <utils/Host.hpp>
 
 #include <chrono>
 #include <thread>
@@ -141,27 +142,10 @@ RTPSParticipant* RTPSDomain::createParticipant(
         guidP.value[0] = c_VendorId_eProsima[0];
         guidP.value[1] = c_VendorId_eProsima[1];
 
-        if (loc.size() > 0)
-        {
-            MD5 md5;
-            for (auto& l : loc)
-            {
-                md5.update(l.address, sizeof(l.address));
-            }
-            md5.finalize();
-            uint16_t hostid = 0;
-            for (size_t i = 0; i < sizeof(md5.digest); i += 2)
-            {
-                hostid ^= ((md5.digest[i] << 8) | md5.digest[i + 1]);
-            }
-            guidP.value[2] = octet(hostid);
-            guidP.value[3] = octet(hostid >> 8);
-        }
-        else
-        {
-            guidP.value[2] = 127;
-            guidP.value[3] = 1;
-        }
+        uint16_t host_id = Host::get().id();
+        guidP.value[2] = octet(host_id);
+        guidP.value[3] = octet(host_id >> 8);
+
         guidP.value[4] = octet(pid);
         guidP.value[5] = octet(pid >> 8);
         guidP.value[6] = octet(pid >> 16);

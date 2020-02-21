@@ -25,6 +25,7 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/network/NetworkFactory.h>
+#include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
@@ -34,7 +35,7 @@
 #include <chrono>
 
 using namespace eprosima::fastrtps;
-
+using SHMLocator = eprosima::fastdds::rtps::SHMLocator;
 
 namespace eprosima {
 namespace fastrtps {
@@ -366,14 +367,16 @@ bool ParticipantProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         bool use_encapsulation,
         const NetworkFactory& network,
-        bool is_shm_transport_possible)
+        bool is_shm_transport_available)
 {
     bool are_shm_metatraffic_locators_present = false;
     bool are_shm_default_locators_present = false;
+    bool is_shm_transport_possible = false;
 
     auto param_process = [this, &network, &is_shm_transport_possible, 
-        &are_shm_metatraffic_locators_present, 
-        &are_shm_default_locators_present](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+        &are_shm_metatraffic_locators_present,
+        &are_shm_default_locators_present,
+        &is_shm_transport_available](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)
                 {
@@ -452,6 +455,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
+                            if(is_shm_transport_available && !is_shm_transport_possible )
+                            {
+                                is_shm_transport_possible = SHMLocator::is_shm_and_from_this_host(temp_locator);
+                            }
+
                             if (is_shm_transport_possible)
                             {
                                 if (temp_locator.kind == LOCATOR_KIND_SHM)
@@ -492,6 +500,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
+                            if(is_shm_transport_available && !is_shm_transport_possible )
+                            {
+                                is_shm_transport_possible = SHMLocator::is_shm_and_from_this_host(temp_locator);
+                            }
+
                             if (is_shm_transport_possible)
                             {
                                 if (temp_locator.kind == LOCATOR_KIND_SHM)
@@ -532,6 +545,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
+                            if(is_shm_transport_available && !is_shm_transport_possible )
+                            {
+                                is_shm_transport_possible = SHMLocator::is_shm_and_from_this_host(temp_locator);
+                            }
+
                             if (is_shm_transport_possible)
                             {
                                 if (temp_locator.kind == LOCATOR_KIND_SHM)
@@ -572,6 +590,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                         Locator_t temp_locator;
                         if (network.transform_remote_locator(p.locator, temp_locator))
                         {
+                            if(is_shm_transport_available && !is_shm_transport_possible )
+                            {
+                                is_shm_transport_possible = SHMLocator::is_shm_and_from_this_host(temp_locator);
+                            }
+
                             if (is_shm_transport_possible)
                             {
                                 if (temp_locator.kind == LOCATOR_KIND_SHM)

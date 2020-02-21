@@ -50,6 +50,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/authentication/PKIIdentityHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/authentication/PKIHandshakeHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/OpenSSLInit.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
         target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(BuiltinPKIDH PRIVATE

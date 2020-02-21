@@ -19,12 +19,11 @@
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/IPLocator.h>
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
+#include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 #include <rtps/transport/shared_mem/SharedMemSenderResource.hpp>
 #include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>
@@ -106,12 +105,8 @@ bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
         LocatorList_t& locators,
         uint32_t metatraffic_multicast_port) const
 {
-    Locator_t locator;
-    locator.kind = LOCATOR_KIND_SHM;
-    locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    locator.set_Invalid_Address();
-    locator.address[0] = 'M';
-    locators.push_back(locator);
+    locators.push_back(SHMLocator::create_locator(metatraffic_multicast_port, SHMLocator::Type::MULTICAST));
+    
     return true;
 }
 
@@ -119,11 +114,7 @@ bool SharedMemTransport::getDefaultMetatrafficUnicastLocators(
         LocatorList_t& locators,
         uint32_t metatraffic_unicast_port) const
 {
-    Locator_t locator;
-    locator.kind = LOCATOR_KIND_SHM;
-    locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
-    locator.set_Invalid_Address();
-    locators.push_back(locator);
+    locators.push_back(SHMLocator::create_locator(metatraffic_unicast_port, SHMLocator::Type::UNICAST));
 
     return true;
 }
@@ -132,9 +123,8 @@ bool SharedMemTransport::getDefaultUnicastLocators(
         LocatorList_t& locators,
         uint32_t unicast_port) const
 {
-    Locator_t locator;
-    locator.kind = LOCATOR_KIND_SHM;
-    locator.set_Invalid_Address();
+    auto locator = SHMLocator::create_locator(unicast_port, SHMLocator::Type::UNICAST);
+
     fillUnicastLocator(locator, unicast_port);
     locators.push_back(locator);
 

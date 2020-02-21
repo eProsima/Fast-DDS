@@ -93,8 +93,7 @@ void PDPServerListener::onNewCacheChangeAdded(
         CDRMessage_t msg(change->serializedPayload);
         if(local_data.readFromCDRMessage(&msg, true, 
             parent_pdp_->getRTPSParticipant()->network_factory(),
-            parent_pdp_->getRTPSParticipant()->has_shm_transport() &&
-            parent_pdp_->getRTPSParticipant()->getGuid().is_on_same_host_as(change->writerGUID)))
+            parent_pdp_->getRTPSParticipant()->has_shm_transport()))
         {
             change->instanceHandle = local_data.m_key;
             guid = local_data.m_guid;

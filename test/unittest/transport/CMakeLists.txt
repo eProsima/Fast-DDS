@@ -187,6 +187,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
         )
 
         include_directories(mock/)
