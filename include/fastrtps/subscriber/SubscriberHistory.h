@@ -196,7 +196,7 @@ class SubscriberHistory: public rtps::ReaderHistory
                 rtps::CacheChange_t* a_change,
                 std::vector<rtps::CacheChange_t*>& instance_changes);
 
-        void deserialize_change(
+        bool deserialize_change(
                 rtps::CacheChange_t* change,
                 uint32_t ownership_strength,
                 void* data,
