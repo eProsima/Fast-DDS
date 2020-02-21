@@ -62,6 +62,9 @@ template<>
 void default_receive_print(const FixedSized& hello);
 
 template<>
+void default_receive_print(const KeyedHelloWorld& str);
+
+template<>
 void default_receive_print(const String& str);
 
 template<>
@@ -84,6 +87,9 @@ void default_send_print(const HelloWorld& hello);
 
 template<>
 void default_send_print(const FixedSized& hello);
+
+template<>
+void default_send_print(const KeyedHelloWorld& str);
 
 template<>
 void default_send_print(const String& str);
