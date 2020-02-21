@@ -47,7 +47,7 @@
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 GUID_t RemoteServerAttributes::GetParticipant() const
@@ -102,46 +102,50 @@ PDPClient::~PDPClient()
     }
 }
 
-void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant_data)
+void PDPClient::initializeParticipantProxyData(
+        ParticipantProxyData* participant_data)
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if(getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT)
     {
         logError(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
+            use_PublicationWriterANDSubscriptionReader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
+            use_PublicationReaderANDSubscriptionWriter)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     }
 
-//#if HAVE_SECURITY
-//    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
-//    .enable_builtin_secure_publications_writer_and_subscriptions_reader)
-//    {
-//        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
-//        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
-//    }
-//
-//    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
-//    .enable_builtin_secure_subscriptions_writer_and_publications_reader)
-//    {
-//        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
-//        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
-//    }
-//#endif
+    //#if HAVE_SECURITY
+    //    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
+    //    .enable_builtin_secure_publications_writer_and_subscriptions_reader)
+    //    {
+    //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
+    //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
+    //    }
+    //
+    //    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
+    //    .enable_builtin_secure_subscriptions_writer_and_publications_reader)
+    //    {
+    //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
+    //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
+    //    }
+    //#endif
 
 }
 
-bool PDPClient::init(RTPSParticipantImpl* part)
+bool PDPClient::init(
+        RTPSParticipantImpl* part)
 {
     if (!PDP::initPDP(part))
     {
@@ -152,29 +156,31 @@ bool PDPClient::init(RTPSParticipantImpl* part)
        all server EDPs as TRANSIENT_LOCAL. Server builtin Writers are actually TRANSIENT.
        Currently this mistake is not an issue but must be kept in mind if further development
        justifies the creation of an EDPClient class.
-    */
-    mp_EDP = new EDPClient(this,mp_RTPSParticipant);
-    if(!mp_EDP->initEDP(m_discovery))
+     */
+    mp_EDP = new EDPClient(this, mp_RTPSParticipant);
+    if (!mp_EDP->initEDP(m_discovery))
     {
-        logError(RTPS_PDP,"Endpoint discovery configuration failed");
+        logError(RTPS_PDP, "Endpoint discovery configuration failed");
         return false;
     }
 
-    mp_sync = new DSClientEvent(this, TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.discoveryServer_client_syncperiod));
+    mp_sync =
+            new DSClientEvent(this, TimeConv::Duration_t2MilliSecondsDouble(
+                        m_discovery.discovery_config.discoveryServer_client_syncperiod));
     mp_sync->restart_timer();
 
     return true;
 }
 
 ParticipantProxyData* PDPClient::createParticipantProxyData(
-    const ParticipantProxyData& participant_data,
-    const GUID_t&)
+        const ParticipantProxyData& participant_data,
+        const GUID_t&)
 {
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
     // Verify if this participant is a server
     bool is_server = false;
-    for (auto & svr : mp_builtin->m_DiscoveryServers)
+    for (auto& svr : mp_builtin->m_DiscoveryServers)
     {
         if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
         {
@@ -200,15 +206,14 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
     return pdata;
 }
 
-
 bool PDPClient::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP,"Beginning PDPClient Endpoints creation");
+    logInfo(RTPS_PDP, "Beginning PDPClient Endpoints creation");
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
 
     HistoryAttributes hatt;
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     mp_PDPReaderHistory = new ReaderHistory(hatt);
@@ -226,11 +231,11 @@ bool PDPClient::createPDPEndpoints()
     mp_listener = new PDPListener(this);
 
     if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener,
-        c_EntityId_SPDPReader, true, false))
+            c_EntityId_SPDPReader, true, false))
     {
-//#if HAVE_SECURITY
-//        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
-//#endif
+        //#if HAVE_SECURITY
+        //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
+        //#endif
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
         for (const RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
@@ -256,7 +261,7 @@ bool PDPClient::createPDPEndpoints()
         return false;
     }
 
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_PDPWriterHistory = new WriterHistory(hatt);
@@ -273,17 +278,17 @@ bool PDPClient::createPDPEndpoints()
     watt.times.nackSupressionDuration = pdp_nack_supression_duration;
 
     if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-        mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+            mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
     {
         watt.mode = ASYNCHRONOUS_WRITER;
     }
 
     if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr,
-        c_EntityId_SPDPWriter, true))
+            c_EntityId_SPDPWriter, true))
     {
-//#if HAVE_SECURITY
-//        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
-//#endif
+        //#if HAVE_SECURITY
+        //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
+        //#endif
         for (const RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
@@ -305,18 +310,19 @@ bool PDPClient::createPDPEndpoints()
         mp_PDPWriterHistory = nullptr;
         return false;
     }
-    logInfo(RTPS_PDP,"PDPClient Endpoints creation finished");
+    logInfo(RTPS_PDP, "PDPClient Endpoints creation finished");
     return true;
 }
 
 // the ParticipantProxyData* pdata must be the one kept in PDP database
-void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
+void PDPClient::assignRemoteEndpoints(
+        ParticipantProxyData* pdata)
 {
     {
         std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
         // Verify if this participant is a server
-        for (auto & svr : mp_builtin->m_DiscoveryServers)
+        for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -328,15 +334,18 @@ void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
     notifyAboveRemoteEndpoints(*pdata);
 }
 
-void PDPClient::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
+void PDPClient::notifyAboveRemoteEndpoints(
+        const ParticipantProxyData& pdata)
 {
     // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
     if (mp_builtin->mp_WLP != nullptr)
+    {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+    }
 }
 
-
-void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
+void PDPClient::removeRemoteEndpoints(
+        ParticipantProxyData* pdata)
 {
     // EDP endpoints have been already unmatch by the associated listener
     assert(!mp_EDP->areRemoteEndpointsMatched(pdata));
@@ -346,7 +355,7 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
         std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
         // Verify if this participant is a server
-        for (auto & svr : mp_builtin->m_DiscoveryServers)
+        for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -415,15 +424,15 @@ bool PDPClient::all_servers_acknowledge_PDP()
     assert(mp_PDPWriterHistory && mp_PDPWriter);
 
     // get a reference to client proxy data
-    CacheChange_t * pPD;
+    CacheChange_t* pPD;
     if (mp_PDPWriterHistory->get_min_change(&pPD))
     {
-       return mp_PDPWriter->is_acked_by_all(pPD);
+        return mp_PDPWriter->is_acked_by_all(pPD);
     }
     else
     {
         logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache "
-            "by a previous call to announceParticipantState()");
+                "by a previous call to announceParticipantState()");
     }
 
     return false;
@@ -432,24 +441,24 @@ bool PDPClient::all_servers_acknowledge_PDP()
 bool PDPClient::is_all_servers_PDPdata_updated()
 {
     // Assess all server DATA has been received
-    StatefulReader * pR = dynamic_cast<StatefulReader *>(mp_PDPReader);
+    StatefulReader* pR = dynamic_cast<StatefulReader*>(mp_PDPReader);
     assert(pR);
     return pR->isInCleanState();
 }
 
 void PDPClient::announceParticipantState(
-    bool new_change,
-    bool dispose,
-    WriteParams& )
+        bool new_change,
+        bool dispose,
+        WriteParams& )
 {
     /*
-    Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
-    writer mutex is systematically lock before the PDP one (if needed):
+       Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
+       writer mutex is systematically lock before the PDP one (if needed):
         - transport callbacks on PDPListener
         - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
         - DSClientEvent (own thread)
         - ResendParticipantProxyDataPeriod (participant event thread)
-    */
+     */
     std::lock_guard<RecursiveTimedMutex> wlock(mp_PDPWriter->getMutex());
 
     WriteParams wp;
@@ -466,13 +475,15 @@ void PDPClient::announceParticipantState(
         // note here we can no longer receive and DATA or ACKNACK from clients.
         // In order to avoid that we send the message directly as in the standard stateless PDP
 
-        StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
+        StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
         assert(pW);
 
         CacheChange_t* change = nullptr;
 
-        if ((change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
+        if ((change = pW->new_change([this]() -> uint32_t {
+                        return mp_builtin->m_att.writerPayloadSize;
+                    },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
         {
             // update the sequence number
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
@@ -495,7 +506,7 @@ void PDPClient::announceParticipantState(
                 // temporary workaround
                 std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-                for (auto & svr : mp_builtin->m_DiscoveryServers)
+                for (auto& svr : mp_builtin->m_DiscoveryServers)
                 {
                     // if we are matched to a server report demise
                     if (svr.proxy != nullptr)
@@ -525,7 +536,7 @@ void PDPClient::announceParticipantState(
         if (!new_change)
         {
             // retrieve the participant discovery data
-            CacheChange_t * pPD;
+            CacheChange_t* pPD;
             if (mp_PDPWriterHistory->get_min_change(&pPD))
             {
                 std::lock_guard<std::recursive_mutex> lock(*getMutex());
@@ -533,7 +544,7 @@ void PDPClient::announceParticipantState(
                 std::vector<GUID_t> remote_readers;
                 LocatorList_t locators;
 
-                for (auto & svr : mp_builtin->m_DiscoveryServers)
+                for (auto& svr : mp_builtin->m_DiscoveryServers)
                 {
                     // non-pinging announcements like lease duration ones must be
                     // broadcast to all servers
@@ -560,7 +571,7 @@ void PDPClient::announceParticipantState(
             else
             {
                 logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history "
-                    "cache by a previous call to announceParticipantState()");
+                        "cache by a previous call to announceParticipantState()");
             }
         }
     }
@@ -574,7 +585,7 @@ bool PDPClient::match_servers_EDP_endpoints()
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
     bool all = true; // have all servers been discovered?
 
-    for (auto & svr : mp_builtin->m_DiscoveryServers)
+    for (auto& svr : mp_builtin->m_DiscoveryServers)
     {
         all &= (svr.proxy != nullptr);
 

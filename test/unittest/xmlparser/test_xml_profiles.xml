@@ -114,6 +114,8 @@
                     </initialPeersList>
                     <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
                     <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
+                    <readerPayloadSize>1000</readerPayloadSize>
+                    <writerPayloadSize>2000</writerPayloadSize>
                     <mutation_tries>55</mutation_tries>
                 </builtin>
                 <port>

@@ -398,13 +398,13 @@ void PDP::announceParticipantState(
             {
                 mp_PDPWriterHistory->remove_min_change();
             }
-            // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
+            // TODO(Ricardo) Change mp_builtin->m_att.writerPayloadSize with getLocalParticipantProxyData()->size().
             change = mp_PDPWriter->new_change(
-                    []() -> uint32_t
-                    {
-                        return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-                    }
-                    , ALIVE, key);
+                [this]() -> uint32_t
+                {
+                    return mp_builtin->m_att.writerPayloadSize;
+                }
+                , ALIVE, key);
 
             if (change != nullptr)
             {
@@ -443,11 +443,11 @@ void PDP::announceParticipantState(
             mp_PDPWriterHistory->remove_min_change();
         }
         change = mp_PDPWriter->new_change(
-                []() -> uint32_t
-                {
-                    return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-                }
-                , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+            [this]() -> uint32_t
+            {
+                return mp_builtin->m_att.writerPayloadSize;
+            }
+            , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
 
         if (change != nullptr)
         {

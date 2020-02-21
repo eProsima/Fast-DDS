@@ -484,6 +484,22 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, READER_PAYLOAD_SIZE) == 0)
+        {
+            // readerPayloadSize
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.readerPayloadSize, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, WRITER_PAYLOAD_SIZE) == 0)
+        {
+            // readerPayloadSize
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.writerPayloadSize, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else if (strcmp(name, MUTATION_TRIES) == 0)
         {
             // mutation_tries - uint32Type

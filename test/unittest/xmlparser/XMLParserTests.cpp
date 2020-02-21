@@ -33,7 +33,8 @@ using eprosima::fastrtps::xmlparser::XMLParser;
 
 class XMLTreeTests : public ::testing::Test
 {
-  public:
+public:
+
     XMLTreeTests()
     {
     }
@@ -41,6 +42,7 @@ class XMLTreeTests : public ::testing::Test
     ~XMLTreeTests()
     {
     }
+
 };
 
 TEST_F(XMLTreeTests, OnlyRoot)
@@ -127,7 +129,8 @@ TEST_F(XMLTreeTests, DataNode)
 
 class XMLParserTests : public ::testing::Test
 {
-  public:
+public:
+
     XMLParserTests()
     {
     }
@@ -138,7 +141,9 @@ class XMLParserTests : public ::testing::Test
         eprosima::fastrtps::Log::KillThread();
     }
 
-    bool get_participant_attributes(std::unique_ptr<BaseNode>& root, ParticipantAttributes& participant_atts)
+    bool get_participant_attributes(
+            std::unique_ptr<BaseNode>& root,
+            ParticipantAttributes& participant_atts)
     {
         const std::string name_attribute{"profile_name"};
         const std::string profile_name{"missing_profile"};
@@ -158,6 +163,7 @@ class XMLParserTests : public ::testing::Test
         }
         return participant_profile;
     }
+
 };
 
 TEST_F(XMLParserTests, NoFIle)
@@ -294,7 +300,7 @@ TEST_F(XMLParserTests, Types)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
 
-    BaseNode * profiles(root->getChild(0));
+    BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
@@ -331,7 +337,7 @@ TEST_F(XMLParserTests, TypesBuffer)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
 
-    BaseNode * profiles(root->getChild(0));
+    BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
@@ -436,7 +442,7 @@ TEST_F(XMLParserTests, Data)
 
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
 
-    BaseNode * profiles(root->getChild(0));
+    BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
@@ -501,6 +507,8 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
     EXPECT_EQ(builtin.mutation_tries, 55u);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
@@ -527,7 +535,7 @@ TEST_F(XMLParserTests, DataBuffer)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
 
-    BaseNode * profiles(root->getChild(0));
+    BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
@@ -592,6 +600,8 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
     EXPECT_EQ(builtin.mutation_tries, 55u);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
@@ -607,7 +617,9 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

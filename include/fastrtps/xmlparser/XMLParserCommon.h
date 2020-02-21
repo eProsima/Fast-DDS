@@ -276,6 +276,8 @@ extern const char* PUBREADER_SUBWRITER;
 extern const char* STATIC_ENDPOINT_XML;
 extern const char* READER_HIST_MEM_POLICY;
 extern const char* WRITER_HIST_MEM_POLICY;
+extern const char* READER_PAYLOAD_SIZE;
+extern const char* WRITER_PAYLOAD_SIZE;
 extern const char* MUTATION_TRIES;
 extern const char* ACCESS_SCOPE;
 extern const char* ENABLED;
