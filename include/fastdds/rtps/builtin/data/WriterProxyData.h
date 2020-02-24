@@ -54,16 +54,20 @@ public:
 
     virtual RTPS_DllAPI ~WriterProxyData();
 
-    RTPS_DllAPI WriterProxyData(const WriterProxyData& writerInfo);
+    RTPS_DllAPI WriterProxyData(
+            const WriterProxyData& writerInfo);
 
-    RTPS_DllAPI WriterProxyData& operator=(const WriterProxyData& writerInfo);
+    RTPS_DllAPI WriterProxyData& operator =(
+            const WriterProxyData& writerInfo);
 
-    RTPS_DllAPI void guid(const GUID_t& guid)
+    RTPS_DllAPI void guid(
+            const GUID_t& guid)
     {
         m_guid = guid;
     }
 
-    RTPS_DllAPI void guid(GUID_t&& guid)
+    RTPS_DllAPI void guid(
+            GUID_t&& guid)
     {
         m_guid = std::move(guid);
     }
@@ -78,12 +82,14 @@ public:
         return m_guid;
     }
 
-    RTPS_DllAPI void persistence_guid(const GUID_t& guid)
+    RTPS_DllAPI void persistence_guid(
+            const GUID_t& guid)
     {
         persistence_guid_ = guid;
     }
 
-    RTPS_DllAPI void persistence_guid(GUID_t&& guid)
+    RTPS_DllAPI void persistence_guid(
+            GUID_t&& guid)
     {
         persistence_guid_ = std::move(guid);
     }
@@ -98,7 +104,8 @@ public:
         return persistence_guid_;
     }
 
-    RTPS_DllAPI void set_persistence_entity_id(const EntityId_t & nid)
+    RTPS_DllAPI void set_persistence_entity_id(
+            const EntityId_t& nid)
     {
         persistence_guid_.entityId = persistence_guid_.guidPrefix != c_GuidPrefix_Unknown ? nid : c_EntityId_Unknown;
     }
@@ -113,7 +120,8 @@ public:
         return remote_locators_;
     }
 
-    RTPS_DllAPI void add_unicast_locator(const Locator_t& locator);
+    RTPS_DllAPI void add_unicast_locator(
+            const Locator_t& locator);
 
     void set_announced_unicast_locators(
             const LocatorList_t& locators);
@@ -122,7 +130,8 @@ public:
             const LocatorList_t& locators,
             const NetworkFactory& network);
 
-    RTPS_DllAPI void add_multicast_locator(const Locator_t& locator);
+    RTPS_DllAPI void add_multicast_locator(
+            const Locator_t& locator);
 
     void set_multicast_locators(
             const LocatorList_t& locators,
@@ -136,12 +145,14 @@ public:
             const NetworkFactory& network,
             bool use_multicast_locators);
 
-    RTPS_DllAPI void key(const InstanceHandle_t& key)
+    RTPS_DllAPI void key(
+            const InstanceHandle_t& key)
     {
         m_key = key;
     }
 
-    RTPS_DllAPI void key(InstanceHandle_t&& key)
+    RTPS_DllAPI void key(
+            InstanceHandle_t&& key)
     {
         m_key = std::move(key);
     }
@@ -156,12 +167,14 @@ public:
         return m_key;
     }
 
-    RTPS_DllAPI void RTPSParticipantKey(const InstanceHandle_t& RTPSParticipantKey)
+    RTPS_DllAPI void RTPSParticipantKey(
+            const InstanceHandle_t& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = RTPSParticipantKey;
     }
 
-    RTPS_DllAPI void RTPSParticipantKey(InstanceHandle_t&& RTPSParticipantKey)
+    RTPS_DllAPI void RTPSParticipantKey(
+            InstanceHandle_t&& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = std::move(RTPSParticipantKey);
     }
@@ -176,12 +189,14 @@ public:
         return m_RTPSParticipantKey;
     }
 
-    RTPS_DllAPI void typeName(const string_255& typeName)
+    RTPS_DllAPI void typeName(
+            const string_255& typeName)
     {
         m_typeName = typeName;
     }
 
-    RTPS_DllAPI void typeName(string_255&& typeName)
+    RTPS_DllAPI void typeName(
+            string_255&& typeName)
     {
         m_typeName = std::move(typeName);
     }
@@ -196,12 +211,14 @@ public:
         return m_typeName;
     }
 
-    RTPS_DllAPI void topicName(const string_255& topicName)
+    RTPS_DllAPI void topicName(
+            const string_255& topicName)
     {
         m_topicName = topicName;
     }
 
-    RTPS_DllAPI void topicName(string_255&& topicName)
+    RTPS_DllAPI void topicName(
+            string_255&& topicName)
     {
         m_topicName = std::move(topicName);
     }
@@ -216,7 +233,8 @@ public:
         return m_topicName;
     }
 
-    RTPS_DllAPI void userDefinedId(uint16_t userDefinedId)
+    RTPS_DllAPI void userDefinedId(
+            uint16_t userDefinedId)
     {
         m_userDefinedId = userDefinedId;
     }
@@ -231,7 +249,8 @@ public:
         return m_userDefinedId;
     }
 
-    RTPS_DllAPI void typeMaxSerialized(uint32_t typeMaxSerialized)
+    RTPS_DllAPI void typeMaxSerialized(
+            uint32_t typeMaxSerialized)
     {
         m_typeMaxSerialized = typeMaxSerialized;
     }
@@ -246,7 +265,8 @@ public:
         return m_typeMaxSerialized;
     }
 
-    RTPS_DllAPI void topicKind(TopicKind_t topicKind)
+    RTPS_DllAPI void topicKind(
+            TopicKind_t topicKind)
     {
         m_topicKind = topicKind;
     }
@@ -261,7 +281,8 @@ public:
         return m_topicKind;
     }
 
-    RTPS_DllAPI void type_id(TypeIdV1 type_id)
+    RTPS_DllAPI void type_id(
+            TypeIdV1 type_id)
     {
         m_type_id = type_id;
     }
@@ -276,7 +297,8 @@ public:
         return m_type_id;
     }
 
-    RTPS_DllAPI void type(TypeObjectV1 type)
+    RTPS_DllAPI void type(
+            TypeObjectV1 type)
     {
         m_type = type;
     }
@@ -291,7 +313,8 @@ public:
         return m_type;
     }
 
-    RTPS_DllAPI void type_information(const xtypes::TypeInformation& type_information)
+    RTPS_DllAPI void type_information(
+            const xtypes::TypeInformation& type_information)
     {
         m_type_information = type_information;
     }
@@ -321,20 +344,23 @@ public:
     void clear();
 
     /**
-         * Check if this object can be updated with the information on another object.
-         * @param wdata WriterProxyData object to be checked.
-         * @return true if this object can be updated with the information on wdata.
-         */
-    bool is_update_allowed(const WriterProxyData& wdata) const;
+     * Check if this object can be updated with the information on another object.
+     * @param wdata WriterProxyData object to be checked.
+     * @return true if this object can be updated with the information on wdata.
+     */
+    bool is_update_allowed(
+            const WriterProxyData& wdata) const;
 
     /**
-         * Update certain parameters from another object.
-         * @param wdata pointer to object with new information.
-         */
-    void update(WriterProxyData* wdata);
+     * Update certain parameters from another object.
+     * @param wdata pointer to object with new information.
+     */
+    void update(
+            WriterProxyData* wdata);
 
     //!Copy all information from another object.
-    void copy(WriterProxyData* wdata);
+    void copy(
+            WriterProxyData* wdata);
 
     //!Write as a parameter list on a CDRMessage_t
     bool writeToCDRMessage(
