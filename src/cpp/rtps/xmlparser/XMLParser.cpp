@@ -491,7 +491,8 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, NON_BLOCKING_SEND) == 0  || 
             strcmp(name, SEGMENT_SIZE) == 0 || strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
             strcmp(name, PORT_OVERFLOW_POLICY) == 0 || strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
-            strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0)
+            strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
+            strcmp(name, RTPS_DUMP_FILE) == 0)
         {
             // Parsed outside of this method
         }
@@ -654,6 +655,7 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
                 <xs:element name="port_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="segment_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 </xs:all>
         </xs:complexType>
     */
@@ -718,6 +720,13 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
                 }
                 else
                     return XMLP_ret::XML_ERROR;
+            }
+            else if (strcmp(name, RTPS_DUMP_FILE) == 0)
+            {
+                std::string str;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->rtps_dump_file = str;
             }
             else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0)
             {

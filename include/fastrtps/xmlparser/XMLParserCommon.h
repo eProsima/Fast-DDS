@@ -78,6 +78,7 @@ extern const char* SEGMENT_OVERFLOW_POLICY;
 extern const char* HEALTHY_CHECK_TIMEOUT_MS;
 extern const char* DISCARD;
 extern const char* FAIL;
+extern const char* RTPS_DUMP_FILE;
 
 // IntraprocessDeliveryType
 extern const char* OFF;

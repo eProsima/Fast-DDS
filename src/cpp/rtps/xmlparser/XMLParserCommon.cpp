@@ -62,6 +62,7 @@ const char* SEGMENT_OVERFLOW_POLICY = "segment_overflow_policy";
 const char* HEALTHY_CHECK_TIMEOUT_MS = "healthy_check_timeout_ms";
 const char* DISCARD = "DISCARD";
 const char* FAIL = "FAIL";
+const char* RTPS_DUMP_FILE = "rtps_dump_file";
 
 const char* OFF = "OFF";
 const char* USER_DATA_ONLY = "USER_DATA_ONLY";

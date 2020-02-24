@@ -58,6 +58,7 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor()
     , port_overflow_policy(SharedMemTransport::default_overflow_policy)
     , segment_overflow_policy(SharedMemTransport::default_overflow_policy)
     , healthy_check_timeout_ms(SharedMemTransport::default_healthy_check_timeout_ms)
+    , rtps_dump_file("")
 {
     maxMessageSize = segment_size;
 }
@@ -70,6 +71,7 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor(
     , port_overflow_policy(t.port_overflow_policy)
     , segment_overflow_policy(t.segment_overflow_policy)
     , healthy_check_timeout_ms(t.healthy_check_timeout_ms)
+    , rtps_dump_file(t.rtps_dump_file)
 {
     maxMessageSize = t.segment_size;
 }

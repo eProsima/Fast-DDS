@@ -805,6 +805,7 @@
             <xs:element name="port_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
             <xs:element name="segment_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
             <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

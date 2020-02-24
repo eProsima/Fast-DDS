@@ -739,6 +739,7 @@ TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
     ASSERT_EQ(descriptor->segment_overflow_policy,
             eprosima::fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
     ASSERT_EQ(descriptor->healthy_check_timeout_ms, std::numeric_limits<uint32_t>::max());
+    ASSERT_EQ(descriptor->rtps_dump_file, "test_file.dump");
 }
 
 int main(

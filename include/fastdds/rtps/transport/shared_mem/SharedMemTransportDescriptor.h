@@ -53,6 +53,7 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 	OverflowPolicy port_overflow_policy;
 	OverflowPolicy segment_overflow_policy;
 	uint32_t healthy_check_timeout_ms;
+	std::string rtps_dump_file;
 }SharedMemTransportDescriptor;
 
 } // namespace rtps
