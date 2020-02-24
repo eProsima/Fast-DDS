@@ -58,17 +58,30 @@ TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
 
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.init();
+
+    ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_data300kb_data_generator(1);
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator();
+
+    reader.startReception(data);
     // Send data
     writer.send(data);
-    // In this test data is not sent.
-    ASSERT_FALSE(data.empty());
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
 }
 
 TEST_P(PubSubFragments, PubSubAsReliableData300kb)
@@ -76,17 +89,33 @@ TEST_P(PubSubFragments, PubSubAsReliableData300kb)
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
 
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
-    writer.init();
+    reader.history_depth(10).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(10).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_data300kb_data_generator(1);
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator();
+
+    reader.startReception(data);
+
     // Send data
     writer.send(data);
-    // In this test data is not sent.
-    ASSERT_FALSE(data.empty());
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
 }
 
 TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)

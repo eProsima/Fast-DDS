@@ -214,16 +214,6 @@ bool PublisherImpl::create_new_change_with_params(
             // If it is big data, fragment it.
             if(ch->serializedPayload.length > final_high_mark_for_frag)
             {
-                // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
-                if( m_att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
-                {
-                    logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
-                            ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
-                            final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
-                    m_history.release_Cache(ch);
-                    return false;
-                }
-
                 /// Fragment the data.
                 // Set the fragment size to the cachechange.
                 // Note: high_mark will always be a value that can be casted to uint16_t)

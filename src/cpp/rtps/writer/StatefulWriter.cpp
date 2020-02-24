@@ -238,9 +238,40 @@ void StatefulWriter::unsent_change_added_to_history(
                     if (locator_selector_.selected_size() > 0)
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
-                        if (!group.add_data(*change, expectsInlineQos))
+
+                        if (change->getFragmentCount() > 0)
                         {
-                            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                            ChangeForReader_t change_for_reader(change);
+                            change_for_reader.getUnsentFragments().for_each([&](FragmentNumber_t fragment_number)
+                            {
+                                if (group.add_data_frag(*change, fragment_number,
+                                        expectsInlineQos))
+                                {
+                                    for (ReaderProxy* it : matched_readers_)
+                                    {
+                                        if (!it->is_local_reader())
+                                        {
+                                            bool allFragmentsSent = false;
+                                            it->mark_fragment_as_sent_for_change(
+                                                        change->sequenceNumber,
+                                                        fragment_number,
+                                                        allFragmentsSent);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
+                                        ", " << fragment_number << ")");
+                                }
+                            });
+                        }
+                        else
+                        {
+                            if (!group.add_data(*change, expectsInlineQos))
+                            {
+                                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                            }
                         }
                         // Heartbeat piggyback.
                         uint32_t last_processed = 0;
@@ -274,9 +305,26 @@ void StatefulWriter::unsent_change_added_to_history(
                         {
                             RTPSMessageGroup group(mp_RTPSParticipant, this, it->message_sender(),
                                     max_blocking_time);
-                            if (!group.add_data(*change, it->expects_inline_qos()))
+
+                            if (change->getFragmentCount() > 0)
                             {
-                                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                                ChangeForReader_t change_for_reader(change);
+                                change_for_reader.getUnsentFragments().for_each([&](FragmentNumber_t fragment_number)
+                                {
+                                    if (!group.add_data_frag(*change, fragment_number,
+                                            it->expects_inline_qos()))
+                                    {
+                                        logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
+                                            ", " << fragment_number << ")");
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                if (!group.add_data(*change, it->expects_inline_qos()))
+                                {
+                                    logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                                }
                             }
                             uint32_t last_processed = 0;
                             send_heartbeat_piggyback_nts_(it, group, last_processed);
@@ -458,6 +506,7 @@ void StatefulWriter::send_any_unsent_changes()
 
     bool activateHeartbeatPeriod = false;
     SequenceNumber_t max_sequence = mp_history->next_sequence_number();
+
 
     // Separate sending for asynchronous writers
     if (m_pushMode && m_separateSendingEnabled)
