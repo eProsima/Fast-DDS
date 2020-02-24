@@ -114,6 +114,33 @@ public:
     {
         return m_key;
     }
+
+    /*
+     * @brief This function sets a value in member index
+     * @param _index New value for member index
+     */
+   inline eProsima_user_DllExport void index(uint16_t _index)
+   {
+       m_index = _index;
+   }
+
+   /*!
+    * @brief This function returns the value of member index
+    * @return Value of member index
+    */
+   inline eProsima_user_DllExport uint16_t index() const
+   {
+       return m_index;
+   }
+
+   /*!
+    * @brief This function returns a reference to member index
+    * @return Reference to member index
+    */
+   inline eProsima_user_DllExport uint16_t& index()
+   {
+       return m_index;
+   }
     /*!
      * @brief This function copies the value in member message
      * @param _message New value to be copied in member message
@@ -201,6 +228,7 @@ public:
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
     
 private:
+    uint16_t m_index;
     uint16_t m_key;
     std::string m_message;
 };
