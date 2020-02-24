@@ -2129,11 +2129,15 @@ XMLP_ret XMLParser::getXMLDuration(
     /*
         <xs:complexType name="durationType">
             <xs:all>
-                <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" minOccurs="0"/>
-                <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
+                <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0"/>
+                <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
+
+    // set default values
+    duration.seconds = 0;
+    duration.nanosec = 0;
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
