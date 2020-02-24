@@ -124,8 +124,8 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
     return mp_history->getTypeMaxSerialized();
 }
 
-
-bool RTPSWriter::remove_older_changes(unsigned int max)
+bool RTPSWriter::remove_older_changes(
+        unsigned int max)
 {
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
@@ -153,13 +153,14 @@ uint32_t RTPSWriter::getMaxDataSize()
     return calculateMaxDataSize(mp_RTPSParticipant->getMaxMessageSize());
 }
 
-uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
+uint32_t RTPSWriter::calculateMaxDataSize(
+        uint32_t length)
 {
     uint32_t maxDataSize = mp_RTPSParticipant->calculateMaxDataSize(length);
 
     maxDataSize -= info_dst_message_length +
-        info_ts_message_length +
-        data_frag_submessage_header_length;
+            info_ts_message_length +
+            data_frag_submessage_header_length;
 
     //TODO(Ricardo) inlineqos in future.
 
@@ -178,12 +179,13 @@ uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
     return maxDataSize;
 }
 
-void RTPSWriter::add_guid(const GUID_t& remote_guid)
+void RTPSWriter::add_guid(
+        const GUID_t& remote_guid)
 {
     const GuidPrefix_t& prefix = remote_guid.guidPrefix;
     all_remote_readers_.push_back(remote_guid);
     if (std::find(all_remote_participants_.begin(), all_remote_participants_.end(), prefix) ==
-        all_remote_participants_.end())
+            all_remote_participants_.end())
     {
         all_remote_participants_.push_back(prefix);
     }
@@ -194,7 +196,7 @@ void RTPSWriter::compute_selected_guids()
     all_remote_readers_.clear();
     all_remote_participants_.clear();
 
-    for(LocatorSelectorEntry* entry : locator_selector_.transport_starts())
+    for (LocatorSelectorEntry* entry : locator_selector_.transport_starts())
     {
         if (entry->enabled)
         {
@@ -210,7 +212,8 @@ void RTPSWriter::update_cached_info_nts()
 }
 
 #if HAVE_SECURITY
-bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
+bool RTPSWriter::encrypt_cachechange(
+        CacheChange_t* change)
 {
     if (getAttributes().security_attributes().is_payload_protected && change->getFragmentCount() == 0)
     {
@@ -221,17 +224,17 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
             (mp_history->m_att.memoryPolicy != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE))
         {
             encrypt_payload_.data = (octet*)realloc(encrypt_payload_.data, change->serializedPayload.length +
-                    // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-                +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
-                + 16 + 4 /*SecureDataTag*/);
+                            // In future v2 changepool is in writer, and writer set this value to cachechagepool.
+                            +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
+                            + 16 + 4 /*SecureDataTag*/);
             encrypt_payload_.max_size = change->serializedPayload.length +
-                // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-                +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
-                + 16 + 4 /*SecureDataTag*/;
+                    // In future v2 changepool is in writer, and writer set this value to cachechagepool.
+                    +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
+                    + 16 + 4 /*SecureDataTag*/;
         }
 
         if (!mp_RTPSParticipant->security_manager().encode_serialized_payload(change->serializedPayload,
-            encrypt_payload_, m_guid))
+                encrypt_payload_, m_guid))
         {
             logError(RTPS_WRITER, "Error encoding change " << change->sequenceNumber);
             return false;
@@ -245,7 +248,7 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
         change->serializedPayload.max_size = encrypt_payload_.max_size;
         change->serializedPayload.pos = encrypt_payload_.pos;
 
-        encrypt_payload_.data = data;;
+        encrypt_payload_.data = data;
         encrypt_payload_.length = 0;
         encrypt_payload_.max_size = max_size;
         encrypt_payload_.pos = 0;
@@ -255,6 +258,7 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
 
     return true;
 }
+
 #endif
 
 bool RTPSWriter::destinations_have_changed() const
@@ -285,13 +289,13 @@ bool RTPSWriter::send(
 
     RTPSParticipantImpl* participant = getRTPSParticipant();
     locator_selector_.for_each(
-        [participant, message, & max_blocking_time_point, & ret_val](const Locator_t& loc)
-        {
-            if(ret_val)
-            {
-                ret_val = participant->sendSync(message, loc, max_blocking_time_point);
-            }
-        });
+        [participant, message, &max_blocking_time_point, &ret_val](const Locator_t& loc)
+                {
+                    if (ret_val)
+                    {
+                        ret_val = participant->sendSync(message, loc, max_blocking_time_point);
+                    }
+                });
 
     return ret_val;
 }

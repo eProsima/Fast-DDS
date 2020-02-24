@@ -25,6 +25,7 @@
 using namespace eprosima::fastrtps;
 using namespace ::xmlparser;
 
+LibrarySettingsAttributes XMLProfileManager::library_settings_;
 std::map<std::string, up_participant_t> XMLProfileManager::participant_profiles_;
 ParticipantAttributes default_participant_attributes;
 std::map<std::string, up_publisher_t> XMLProfileManager::publisher_profiles_;
@@ -367,13 +368,6 @@ XMLP_ret XMLProfileManager::extractProfiles(
 
     profile_count += static_cast<unsigned int>(transport_profiles_.size()); // Count transport profiles
 
-    if (0 == profile_count)
-    {
-        xml_files_.emplace(filename, XMLP_ret::XML_ERROR);
-        logError(XMLPARSER, "Error, file '" << filename << "' bad content");
-        return XMLP_ret::XML_ERROR;
-    }
-
     xml_files_.emplace(filename, XMLP_ret::XML_OK);
 
     return XMLP_ret::XML_OK;
@@ -489,6 +483,17 @@ bool XMLProfileManager::insertTransportById(
     }
     logError(XMLPARSER, "Error adding the transport " << transport_id << ". There is other transport with the same id");
     return false;
+}
+
+const LibrarySettingsAttributes& XMLProfileManager::library_settings()
+{
+    return library_settings_;
+}
+
+void XMLProfileManager::library_settings(
+        const LibrarySettingsAttributes& library_settings)
+{
+    library_settings_ = library_settings;
 }
 
 sp_transport_t XMLProfileManager::getTransportById(

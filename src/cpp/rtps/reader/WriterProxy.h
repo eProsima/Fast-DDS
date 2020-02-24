@@ -191,8 +191,8 @@ public:
     inline const ResourceLimitedVector<Locator_t>& remote_locators_shrinked() const
     {
         return attributes_.remote_locators().unicast.empty() ?
-            attributes_.remote_locators().multicast :
-            attributes_.remote_locators().unicast;
+               attributes_.remote_locators().multicast :
+               attributes_.remote_locators().unicast;
     }
 
     /**
@@ -202,7 +202,7 @@ public:
     inline bool is_alive() const
     {
         return is_alive_;
-    };
+    }
 
     /*!
      * @brief Returns number of ChangeFromWriter_t managed currently by the WriterProxy.
@@ -314,6 +314,11 @@ public:
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
+    bool is_on_same_process() const
+    {
+        return is_on_same_process_;
+    }
+
 private:
 
     /**
@@ -347,7 +352,7 @@ private:
     bool is_alive_;
 
     using pool_allocator_t =
-        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+                    foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
     //! Memory pool allocator for changes_received_
     pool_allocator_t changes_pool_;
@@ -363,6 +368,8 @@ private:
     ResourceLimitedVector<GUID_t> guid_as_vector_;
     //!To fool RTPSMessageGroup when using this proxy as single destination
     ResourceLimitedVector<GuidPrefix_t> guid_prefix_as_vector_;
+    //! Is the writer on the same process
+    bool is_on_same_process_;
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 

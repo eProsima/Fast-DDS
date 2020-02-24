@@ -36,6 +36,10 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "RTPSDomainImpl.hpp"
+
 #include <chrono>
 #include <thread>
 
@@ -50,14 +54,20 @@ std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
 
 void RTPSDomain::stopAll()
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
-    logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN");
+    std::unique_lock<std::mutex> lock(m_mutex);
+    logInfo(RTPS_PARTICIPANT, "DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
-    while(m_RTPSParticipants.size()>0)
+    while (m_RTPSParticipants.size() > 0)
     {
-        RTPSDomain::removeRTPSParticipant_nts(m_RTPSParticipants.begin());
+        RTPSDomain::t_p_RTPSParticipant participant = m_RTPSParticipants.back();
+        m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+        m_RTPSParticipants.pop_back();
+
+        lock.unlock();
+        RTPSDomain::removeRTPSParticipant_nts(participant);
+        lock.lock();
     }
-    logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
+    logInfo(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
@@ -65,42 +75,49 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
-    logInfo(RTPS_PARTICIPANT,"");
+    logInfo(RTPS_PARTICIPANT, "");
 
     RTPSParticipantAttributes PParam = attrs;
 
-    if(PParam.builtin.discovery_config.leaseDuration < c_TimeInfinite && PParam.builtin.discovery_config.leaseDuration <= PParam.builtin.discovery_config.leaseDuration_announcementperiod) //TODO CHeckear si puedo ser infinito
+    if (PParam.builtin.discovery_config.leaseDuration < c_TimeInfinite &&
+            PParam.builtin.discovery_config.leaseDuration <=
+            PParam.builtin.discovery_config.leaseDuration_announcementperiod)
     {
-        logError(RTPS_PARTICIPANT,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
+        logError(RTPS_PARTICIPANT,
+                "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
     }
     uint32_t ID;
-    if(PParam.participantID < 0)
     {
-        ID = getNewId();
-        while(m_RTPSParticipantIDs.insert(ID).second == false)
+        std::lock_guard<std::mutex> guard(m_mutex);
+
+        if (PParam.participantID < 0)
         {
             ID = getNewId();
+            while (m_RTPSParticipantIDs.insert(ID).second == false)
+            {
+                ID = getNewId();
+            }
         }
-    }
-    else
-    {
-        ID = PParam.participantID;
-        if(m_RTPSParticipantIDs.insert(ID).second == false)
+        else
         {
-            logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists");
-            return nullptr;
+            ID = PParam.participantID;
+            if (m_RTPSParticipantIDs.insert(ID).second == false)
+            {
+                logError(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
+                return nullptr;
+            }
         }
     }
-    if(!PParam.defaultUnicastLocatorList.isValid())
+
+    if (!PParam.defaultUnicastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT,"Default Unicast Locator List contains invalid Locator");
+        logError(RTPS_PARTICIPANT, "Default Unicast Locator List contains invalid Locator");
         return nullptr;
     }
-    if(!PParam.defaultMulticastLocatorList.isValid())
+    if (!PParam.defaultMulticastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT,"Default Multicast Locator List contains invalid Locator");
+        logError(RTPS_PARTICIPANT, "Default Multicast Locator List contains invalid Locator");
         return nullptr;
     }
 
@@ -117,7 +134,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     // Generate a new GuidPrefix_t
     GuidPrefix_t guidP;
-
     {
         // Make a new participant GuidPrefix_t up
         int pid = System::GetPID();
@@ -161,7 +177,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     // If we force the participant to have a specific prefix we must define a different persistence GuidPrefix_t that
     // would ensure builtin endpoints are able to differentiate between a communication loss and a participant recovery
-    if(PParam.prefix != c_GuidPrefix_Unknown)
+    if (PParam.prefix != c_GuidPrefix_Unknown)
     {
         pimpl = new RTPSParticipantImpl(PParam, PParam.prefix, guidP, p, listen);
     }
@@ -181,40 +197,52 @@ RTPSParticipant* RTPSDomain::createParticipant(
 #endif
 
     // Check there is at least one transport registered.
-    if(!pimpl->networkFactoryHasRegisteredTransports())
+    if (!pimpl->networkFactoryHasRegisteredTransports())
     {
-        logError(RTPS_PARTICIPANT,"Cannot create participant, because there is any transport");
+        logError(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
         delete pimpl;
         return nullptr;
     }
 
-    m_RTPSParticipants.push_back(t_p_RTPSParticipant(p,pimpl));
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
+    }
+
+    // Start protocols
+    pimpl->enable();
     return p;
 }
 
-bool RTPSDomain::removeRTPSParticipant(RTPSParticipant* p)
+bool RTPSDomain::removeRTPSParticipant(
+        RTPSParticipant* p)
 {
-    if(p!=nullptr)
+    if (p != nullptr)
     {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        for(auto it = m_RTPSParticipants.begin();it!= m_RTPSParticipants.end();++it)
+        p->mp_impl->disable();
+
+        std::unique_lock<std::mutex> lock(m_mutex);
+        for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
         {
-            if(it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+            if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
             {
-                removeRTPSParticipant_nts(it);
+                RTPSDomain::t_p_RTPSParticipant participant = *it;
+                m_RTPSParticipants.erase(it);
+                m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+                lock.unlock();
+                removeRTPSParticipant_nts(participant);
                 return true;
             }
         }
     }
-    logError(RTPS_PARTICIPANT,"RTPSParticipant not valid or not recognized");
+    logError(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
     return false;
 }
 
-void RTPSDomain::removeRTPSParticipant_nts(std::vector<RTPSDomain::t_p_RTPSParticipant>::iterator it)
+void RTPSDomain::removeRTPSParticipant_nts(
+        RTPSDomain::t_p_RTPSParticipant& participant)
 {
-    m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(it->second->getRTPSParticipantID()));
-    delete(it->second);
-    m_RTPSParticipants.erase(it);
+    delete(participant.second);
 }
 
 RTPSWriter* RTPSDomain::createRTPSWriter(
@@ -223,13 +251,15 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
-    for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+    std::unique_lock<std::mutex> lock(m_mutex);
+    for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
     {
-        if(it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
+        if (it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
         {
+            t_p_RTPSParticipant participant = *it;
+            lock.unlock();
             RTPSWriter* writ;
-            if(it->second->createWriter(&writ,watt,hist,listen))
+            if (participant.second->createWriter(&writ, watt, hist, listen))
             {
                 return writ;
             }
@@ -239,16 +269,19 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
     return nullptr;
 }
 
-bool RTPSDomain::removeRTPSWriter(RTPSWriter* writer)
+bool RTPSDomain::removeRTPSWriter(
+        RTPSWriter* writer)
 {
-    if(writer!=nullptr)
+    if (writer != nullptr)
     {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+        std::unique_lock<std::mutex> lock(m_mutex);
+        for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
         {
-            if(it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
+            if (it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
             {
-                return it->second->deleteUserEndpoint((Endpoint*)writer);
+                t_p_RTPSParticipant participant = *it;
+                lock.unlock();
+                return participant.second->deleteUserEndpoint((Endpoint*)writer);
             }
         }
     }
@@ -261,13 +294,15 @@ RTPSReader* RTPSDomain::createRTPSReader(
         ReaderHistory* rhist,
         ReaderListener* rlisten)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
-    for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+    std::unique_lock<std::mutex> lock(m_mutex);
+    for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
     {
-        if(it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
+        if (it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
         {
+            t_p_RTPSParticipant participant = *it;
+            lock.unlock();
             RTPSReader* reader;
-            if(it->second->createReader(&reader,ratt,rhist,rlisten))
+            if (participant.second->createReader(&reader, ratt, rhist, rlisten))
             {
                 return reader;
             }
@@ -278,19 +313,94 @@ RTPSReader* RTPSDomain::createRTPSReader(
     return nullptr;
 }
 
-bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
+bool RTPSDomain::removeRTPSReader(
+        RTPSReader* reader)
 {
-    if(reader !=  nullptr)
+    if (reader !=  nullptr)
     {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+        std::unique_lock<std::mutex> lock(m_mutex);
+        for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
         {
-            if(it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
+            if (it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
             {
-                return it->second->deleteUserEndpoint((Endpoint*)reader);
+                t_p_RTPSParticipant participant = *it;
+                lock.unlock();
+                return participant.second->deleteUserEndpoint((Endpoint*)reader);
             }
         }
     }
+    return false;
+}
+
+RTPSReader* RTPSDomainImpl::find_local_reader(
+        const GUID_t& reader_guid)
+{
+    std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
+    for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
+    {
+        if (participant.second->getGuid().guidPrefix == reader_guid.guidPrefix)
+        {
+            // Participant found, forward the query
+            return participant.second->find_local_reader(reader_guid);
+        }
+    }
+
+    return nullptr;
+}
+
+RTPSWriter* RTPSDomainImpl::find_local_writer(
+        const GUID_t& writer_guid)
+{
+    std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
+    for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
+    {
+        if (participant.second->getGuid().guidPrefix == writer_guid.guidPrefix)
+        {
+            // Participant found, forward the query
+            return participant.second->find_local_writer(writer_guid);
+        }
+    }
+
+    return nullptr;
+}
+
+/**
+ * Check whether intraprocess delivery should be used between two GUIDs.
+ *
+ * @param local_guid    GUID of the local endpoint performing the query.
+ * @param matched_guid  GUID being queried about.
+ *
+ * @returns true when intraprocess delivery is enabled, false otherwise.
+ */
+bool RTPSDomainImpl::should_intraprocess_between(
+        const GUID_t& local_guid,
+        const GUID_t& matched_guid)
+{
+    if (!local_guid.is_on_same_process_as(matched_guid))
+    {
+        // Not on the same process, should not use intraprocess mechanism.
+        return false;
+    }
+
+    if (local_guid.entityId == c_EntityId_SPDPWriter || local_guid.entityId == c_EntityId_SPDPReader)
+    {
+        // Always disabled for PDP, to avoid inter-domain communications.
+        return false;
+    }
+
+    switch (xmlparser::XMLProfileManager::library_settings().intraprocess_delivery)
+    {
+        case IntraprocessDeliveryType::INTRAPROCESS_FULL:
+            return true;
+
+        case IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY:
+            return !matched_guid.is_builtin();
+
+        case IntraprocessDeliveryType::INTRAPROCESS_OFF:
+        default:
+            break;
+    }
+
     return false;
 }
 

@@ -29,6 +29,7 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/log/Log.h>
 
 #include <thread>
@@ -63,6 +64,16 @@ class BlackboxEnvironment : public ::testing::Environment
         void SetUp()
         {
             global_port = get_port();
+
+            // Blackbox tests were designed with the assumption that intraprocess is
+            // disabled. Most of them use TEST_P in order to test both with and without
+            // intraprocess, but those who test conditions related to network packets
+            // being lost should not use intraprocess. Setting it off here ensures that
+            // intraprocess in only tested when required.
+            LibrarySettingsAttributes att;
+            att.intraprocess_delivery = INTRAPROCESS_OFF;
+            eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
+
             //Log::SetVerbosity(Log::Info);
             //Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }

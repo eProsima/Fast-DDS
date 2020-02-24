@@ -31,6 +31,8 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
 
+#include "rtps/RTPSDomainImpl.hpp"
+
 #include <mutex>
 #include <thread>
 
@@ -97,15 +99,20 @@ bool StatefulReader::matched_writer_add(
         return false;
     }
 
+    bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+
     for (WriterProxy* it : matched_writers_)
     {
         if (it->guid() == wdata.guid())
         {
             logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
             it->update(wdata);
-            for (const Locator_t& locator : it->remote_locators_shrinked())
+            if (!is_same_process)
             {
-                getRTPSParticipant()->createSenderResources(locator);
+                for (const Locator_t& locator : it->remote_locators_shrinked())
+                {
+                    getRTPSParticipant()->createSenderResources(locator);
+                }
             }
             return false;
         }
@@ -134,9 +141,12 @@ bool StatefulReader::matched_writer_add(
         matched_writers_pool_.pop_back();
     }
 
-    for (const Locator_t& locator : wp->remote_locators_shrinked())
+    if (!is_same_process)
     {
-        getRTPSParticipant()->createSenderResources(locator);
+        for (const Locator_t& locator : wp->remote_locators_shrinked())
+        {
+            getRTPSParticipant()->createSenderResources(locator);
+        }
     }
 
     SequenceNumber_t initial_sequence;
@@ -367,9 +377,10 @@ bool StatefulReader::processDataMsg(
                 releaseCache(change_to_add);
             }
         }
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::processDataFragMsg(
@@ -550,9 +561,10 @@ bool StatefulReader::processHeartbeatMsg(
             // Maybe now we have to notify user from new CacheChanges.
             NotifyChanges(writer);
         }
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::processGapMsg(
@@ -610,9 +622,11 @@ bool StatefulReader::processGapMsg(
 
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::acceptMsgFrom(
@@ -951,7 +965,7 @@ void StatefulReader::send_acknack(
         bool is_final)
 {
 
-    std::lock_guard<RecursiveTimedMutex> guard_reader(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     if (!writer->is_alive())
     {
@@ -963,8 +977,25 @@ void StatefulReader::send_acknack(
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    RTPSMessageGroup group(getRTPSParticipant(), this, sender);
-    group.add_acknack(sns, acknack_count_, is_final);
+    if (!writer->is_on_same_process())
+    {
+        RTPSMessageGroup group(getRTPSParticipant(), this, sender);
+        group.add_acknack(sns, acknack_count_, is_final);
+    }
+    else
+    {
+        GUID_t reader_guid = m_guid;
+        uint32_t acknack_count = acknack_count_;
+        lock.unlock(); //For local writers only call when initial ack, and we have to avoid deadlock with common
+                       //calls writer -> reader
+        RTPSWriter* writer_ptr = RTPSDomainImpl::find_local_writer(writer->guid());
+
+        if (writer_ptr)
+        {
+            bool result;
+            writer_ptr->process_acknack(writer->guid(), reader_guid, acknack_count, sns, is_final, result);
+        }
+    }
 }
 
 void StatefulReader::send_acknack(

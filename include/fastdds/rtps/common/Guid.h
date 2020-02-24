@@ -106,7 +106,7 @@ struct RTPS_DllAPI GUID_t
      *
      * @return true when this guid corresponds to a builtin entity, false otherwise.
      */
-    bool is_builtin()
+    bool is_builtin() const
     {
         return entityId.value[3] >= 0xC0;
     }

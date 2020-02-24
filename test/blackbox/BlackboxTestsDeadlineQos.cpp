@@ -22,11 +22,39 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(DeadlineQos, NoKeyTopicLongDeadline)
+class DeadlineQos : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+};
+
+TEST_P(DeadlineQos, NoKeyTopicLongDeadline)
 {
     // This test sets a long deadline (long in comparison to the write rate),
     // makes the writer send a few samples and checks that the deadline was
@@ -71,7 +99,7 @@ TEST(DeadlineQos, NoKeyTopicLongDeadline)
     EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
-TEST(DeadlineQos, NoKeyTopicShortDeadline)
+TEST_P(DeadlineQos, NoKeyTopicShortDeadline)
 {
     // This test sets a short deadline (short compared to the write rate),
     // makes the writer send a few samples and checks that the deadline was missed every time
@@ -116,7 +144,7 @@ TEST(DeadlineQos, NoKeyTopicShortDeadline)
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
 }
 
-TEST(DeadlineQos, KeyedTopicLongDeadline)
+TEST_P(DeadlineQos, KeyedTopicLongDeadline)
 {
     // This test sets a long deadline (long in comparison to the write rate),
     // makes the writer send a few samples and checks that the deadline was met
@@ -161,7 +189,7 @@ TEST(DeadlineQos, KeyedTopicLongDeadline)
     EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
-TEST(DeadlineQos, KeyedTopicShortDeadline)
+TEST_P(DeadlineQos, KeyedTopicShortDeadline)
 {
     // This test sets a short deadline (short compared to the write rate),
     // makes the writer send a few samples and checks that the deadline was missed every time
@@ -205,3 +233,15 @@ TEST(DeadlineQos, KeyedTopicShortDeadline)
     EXPECT_GE(writer.missed_deadlines(), writer_samples);
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
 }
+
+
+INSTANTIATE_TEST_CASE_P(DeadlineQos,
+        DeadlineQos,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<DeadlineQos::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });

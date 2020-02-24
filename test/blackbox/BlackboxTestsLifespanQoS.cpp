@@ -22,11 +22,40 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/xmlparser//XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(LifespanQos, LongLifespan)
+class LifespanQos : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+};
+
+
+TEST_P(LifespanQos, LongLifespan)
 {
     // This test sets a long lifespan, makes the writer send a few samples
     // and checks that those changes can be removed from the history
@@ -43,11 +72,11 @@ TEST(LifespanQos, LongLifespan)
     uint32_t lifespan_ms = 10000;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .lifespan_period(lifespan_ms * 1e-3)
-            .init();
+    .lifespan_period(lifespan_ms * 1e-3)
+    .init();
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .init();
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -79,7 +108,7 @@ TEST(LifespanQos, LongLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
 }
 
-TEST(LifespanQos, ShortLifespan)
+TEST_P(LifespanQos, ShortLifespan)
 {
     // This test sets a short lifespan, makes the writer send a few samples
     // and checks that those samples cannot be removed from the history as
@@ -96,11 +125,11 @@ TEST(LifespanQos, ShortLifespan)
     uint32_t lifespan_ms = 1;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .lifespan_period(lifespan_ms * 1e-3)
-            .init();
+    .lifespan_period(lifespan_ms * 1e-3)
+    .init();
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .lifespan_period(lifespan_ms * 1e-3)
-            .init();
+    .lifespan_period(lifespan_ms * 1e-3)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -126,3 +155,15 @@ TEST(LifespanQos, ShortLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
 }
+
+INSTANTIATE_TEST_CASE_P(LifespanQos,
+        LifespanQos,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<LifespanQos::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
+

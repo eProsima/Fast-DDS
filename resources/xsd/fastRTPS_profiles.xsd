@@ -715,6 +715,20 @@
       </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="IntraprocessDeliveryType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="OFF"/>
+            <xs:enumeration value="USER_DATA_ONLY"/>
+            <xs:enumeration value="FULL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="LibrarySettingsType">
+        <xs:all minOccurs="0">
+            <xs:element name="intraprocess_delivery" type="IntraprocessDeliveryType"/>
+        </xs:all>
+    </xs:complexType>
+
     <xs:complexType name="rtpsTransportDescriptorType">
         <xs:all minOccurs="0">
             <xs:element name="transport_id" type="stringType"/>
@@ -771,6 +785,7 @@
 
     <xs:complexType name="profilesType">
         <xs:sequence>
+            <xs:element name="library_settings" type="LibrarySettingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="transport_descriptors" type="TransportDescriptorListType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>

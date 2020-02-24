@@ -47,21 +47,34 @@ ReaderProxy::ReaderProxy(
     , writer_(writer)
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_supression_event_(nullptr)
+    , initial_heartbeat_event_(nullptr)
     , timers_enabled_(false)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
-            [&](TimedEvent::EventCode code) -> bool
-            {
-                if (TimedEvent::EVENT_SUCCESS == code)
+                    [&](TimedEvent::EventCode code) -> bool
                 {
-                    writer_->perform_nack_supression(reader_attributes_.guid());
-                }
+                    if (TimedEvent::EVENT_SUCCESS == code)
+                    {
+                        writer_->perform_nack_supression(reader_attributes_.guid());
+                    }
 
-                return false;
-            },
-            TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+                    return false;
+                },
+                    TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+
+    initial_heartbeat_event_ =
+            new TimedEvent(writer->getRTPSParticipant()->getEventResource(), [&](
+                        TimedEvent::EventCode code) -> bool
+                {
+                    if (TimedEvent::EVENT_SUCCESS == code)
+                    {
+                        writer_->intraprocess_heartbeat(this);
+                    }
+                    return false;
+                },
+                    0);
 
     stop();
 }
@@ -73,9 +86,16 @@ ReaderProxy::~ReaderProxy()
         delete(nack_supression_event_);
         nack_supression_event_ = nullptr;
     }
+
+    if (initial_heartbeat_event_)
+    {
+        delete(initial_heartbeat_event_);
+        initial_heartbeat_event_ = nullptr;
+    }
 }
 
-void ReaderProxy::start(const ReaderProxyData& reader_attributes)
+void ReaderProxy::start(
+        const ReaderProxyData& reader_attributes)
 {
     locator_info_.start(
         reader_attributes.guid(),
@@ -86,17 +106,22 @@ void ReaderProxy::start(const ReaderProxyData& reader_attributes)
     is_active_ = true;
     reader_attributes_ = reader_attributes;
 
-    timers_enabled_.store(reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS);
+    timers_enabled_.store(is_remote_and_reliable());
+    if (is_local_reader())
+    {
+        initial_heartbeat_event_->restart_timer();
+    }
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
 }
 
-bool ReaderProxy::update(const ReaderProxyData& reader_attributes)
+bool ReaderProxy::update(
+        const ReaderProxyData& reader_attributes)
 {
     if ((reader_attributes_.m_qos == reader_attributes.m_qos) &&
-        (reader_attributes_.remote_locators().unicast == reader_attributes.remote_locators().unicast) &&
-        (reader_attributes_.remote_locators().multicast == reader_attributes.remote_locators().multicast) &&
-        (reader_attributes_.m_expectsInlineQos == reader_attributes.m_expectsInlineQos))
+            (reader_attributes_.remote_locators().unicast == reader_attributes.remote_locators().unicast) &&
+            (reader_attributes_.remote_locators().multicast == reader_attributes.remote_locators().multicast) &&
+            (reader_attributes_.m_expectsInlineQos == reader_attributes.m_expectsInlineQos))
     {
         return false;
     }
@@ -129,9 +154,11 @@ void ReaderProxy::disable_timers()
     {
         nack_supression_event_->cancel_timer();
     }
+    initial_heartbeat_event_->cancel_timer();
 }
 
-void ReaderProxy::update_nack_supression_interval(const Duration_t& interval)
+void ReaderProxy::update_nack_supression_interval(
+        const Duration_t& interval)
 {
     nack_supression_event_->update_interval(interval);
 }
@@ -166,7 +193,7 @@ void ReaderProxy::add_change(
 {
     assert(change.getSequenceNumber() > changes_low_mark_);
     assert(changes_for_reader_.empty() ? true :
-        change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
+            change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
 
     // For best effort readers, changes are acked when being sent
     if (changes_for_reader_.empty() && change.getStatus() == ACKNOWLEDGED)
@@ -178,6 +205,11 @@ void ReaderProxy::add_change(
     // Irrelevant changes are not added to the collection
     if (!change.isRelevant())
     {
+        if (is_local_reader() && changes_for_reader_.empty())
+        {
+            changes_low_mark_ = change.getSequenceNumber();
+        }
+
         return;
     }
 
@@ -186,7 +218,7 @@ void ReaderProxy::add_change(
         // This should never happen
         assert(false);
         logError(RTPS_WRITER, "Error adding change " << change.getSequenceNumber() << " to reader proxy " << \
-            reader_attributes_.guid());
+                reader_attributes_.guid());
     }
 }
 
@@ -195,7 +227,8 @@ bool ReaderProxy::has_changes() const
     return !changes_for_reader_.empty();
 }
 
-bool ReaderProxy::change_is_acked(const SequenceNumber_t& seq_num) const
+bool ReaderProxy::change_is_acked(
+        const SequenceNumber_t& seq_num) const
 {
     if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
     {
@@ -214,78 +247,93 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& seq_num) const
     return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
 }
 
-void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
+void ReaderProxy::acked_changes_set(
+        const SequenceNumber_t& seq_num)
 {
     SequenceNumber_t future_low_mark = seq_num;
 
     if (seq_num > changes_low_mark_)
     {
         ChangeIterator chit = find_change(seq_num, false);
+        // continue advancing until next change is not acknowledged
+        while (chit != changes_for_reader_.end()
+                && chit->getSequenceNumber() == future_low_mark
+                && chit->getStatus() == ACKNOWLEDGED)
+        {
+            ++chit;
+            ++future_low_mark;
+        }
         changes_for_reader_.erase(changes_for_reader_.begin(), chit);
     }
     else
     {
-        // Special case. Currently only used on Builtin StatefulWriters
-        // after losing lease duration.
+        future_low_mark = changes_low_mark_ + 1;
 
-        SequenceNumber_t current_sequence = seq_num;
-        SequenceNumber_t min_sequence = writer_->get_seq_num_min();
-        if (seq_num < min_sequence)
+        if (seq_num == SequenceNumber_t())
         {
-            current_sequence = min_sequence;
-        }
-        future_low_mark = current_sequence;
-
-        bool should_sort = false;
-        for (; current_sequence <= changes_low_mark_; ++current_sequence)
-        {
-            // Skip all consecutive changes already in the collection
-            ChangeConstIterator it = find_change(current_sequence);
-            while( it != changes_for_reader_.end() &&
-                current_sequence <= changes_low_mark_ &&
-                it->getSequenceNumber() == current_sequence)
+            // Special case. Currently only used on Builtin StatefulWriters
+            // after losing lease duration.
+            SequenceNumber_t min_sequence = writer_->get_seq_num_min();
+            if (min_sequence != SequenceNumber_t::unknown())
             {
-                ++current_sequence;
-                ++it;
-            }
-
-            if (current_sequence <= changes_low_mark_)
-            {
-                CacheChange_t* change = nullptr;
-                if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                SequenceNumber_t current_sequence = seq_num;
+                if (seq_num < min_sequence)
                 {
-                    should_sort = true;
-                    ChangeForReader_t cr(change);
-                    cr.setStatus(UNACKNOWLEDGED);
-                    changes_for_reader_.push_back(cr);
+                    current_sequence = min_sequence;
+                }
+                future_low_mark = current_sequence;
+
+                bool should_sort = false;
+                for (; current_sequence <= changes_low_mark_; ++current_sequence)
+                {
+                    // Skip all consecutive changes already in the collection
+                    ChangeConstIterator it = find_change(current_sequence);
+                    while ( it != changes_for_reader_.end() &&
+                            current_sequence <= changes_low_mark_ &&
+                            it->getSequenceNumber() == current_sequence)
+                    {
+                        ++current_sequence;
+                        ++it;
+                    }
+
+                    if (current_sequence <= changes_low_mark_)
+                    {
+                        CacheChange_t* change = nullptr;
+                        if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                        {
+                            should_sort = true;
+                            ChangeForReader_t cr(change);
+                            cr.setStatus(UNACKNOWLEDGED);
+                            changes_for_reader_.push_back(cr);
+                        }
+                    }
+                }
+                // Keep changes sorted by sequence number
+                if (should_sort)
+                {
+                    std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
                 }
             }
         }
-
-        // Keep changes sorted by sequence number
-        if (should_sort)
-        {
-            std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
-        }
     }
-
     changes_low_mark_ = future_low_mark - 1;
 }
 
-bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
+bool ReaderProxy::requested_changes_set(
+        const SequenceNumberSet_t& seq_num_set)
 {
     bool isSomeoneWasSetRequested = false;
 
     seq_num_set.for_each([&](SequenceNumber_t sit)
-    {
-        ChangeIterator chit = find_change(sit, true);
-        if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
-        {
-            chit->setStatus(REQUESTED);
-            chit->markAllFragmentsAsUnsent();
-            isSomeoneWasSetRequested = true;
-        }
-    });
+                {
+                    ChangeIterator chit = find_change(sit, true);
+                    if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
+                    {
+                        chit->setStatus(REQUESTED);
+                        chit->markAllFragmentsAsUnsent();
+                        isSomeoneWasSetRequested = true;
+                    }
+                });
 
     if (isSomeoneWasSetRequested)
     {
@@ -295,12 +343,22 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
     return isSomeoneWasSetRequested;
 }
 
+bool ReaderProxy::process_initial_acknack()
+{
+    if (is_local_reader())
+    {
+        return convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
+    }
+
+    return true;
+}
+
 bool ReaderProxy::set_change_to_status(
         const SequenceNumber_t& seq_num,
         ChangeForReaderStatus_t status,
         bool restart_nack_supression)
 {
-    if (restart_nack_supression && is_reliable())
+    if (restart_nack_supression && is_remote_and_reliable())
     {
         assert(timers_enabled_.load());
         nack_supression_event_->restart_timer();
@@ -316,9 +374,16 @@ bool ReaderProxy::set_change_to_status(
 
     // If the status is UNDERWAY (change was right now sent) and the reader is besteffort,
     // then the status has to be changed to ACKNOWLEDGED.
-    if(UNDERWAY == status && !is_reliable())
+    if (UNDERWAY == status)
     {
-        status = ACKNOWLEDGED;
+        if (!is_reliable())
+        {
+            status = ACKNOWLEDGED;
+        }
+        else if (is_local_reader())
+        {
+            status = UNACKNOWLEDGED;
+        }
     }
 
     // If the change following the low mark is acknowledged, low mark is advanced.
@@ -397,7 +462,7 @@ bool ReaderProxy::convert_status_on_all_changes(
     //       UNDERWAY=>UNACKNOWLEDGED (nack supression)
 
     bool at_least_one_modified = false;
-    for(ChangeForReader_t& change : changes_for_reader_)
+    for (ChangeForReader_t& change : changes_for_reader_)
     {
         if (change.getStatus() == previous)
         {
@@ -409,7 +474,8 @@ bool ReaderProxy::convert_status_on_all_changes(
     return at_least_one_modified;
 }
 
-void ReaderProxy::change_has_been_removed(const SequenceNumber_t& seq_num)
+void ReaderProxy::change_has_been_removed(
+        const SequenceNumber_t& seq_num)
 {
     // Check sequence number is in the container, because it was not clean up.
     if (changes_for_reader_.empty() || seq_num < changes_for_reader_.begin()->getSequenceNumber())
@@ -417,8 +483,15 @@ void ReaderProxy::change_has_been_removed(const SequenceNumber_t& seq_num)
         return;
     }
 
-    // Element may not be in the container when marked as irrelevant.
     auto chit = find_change(seq_num);
+
+    // In intraprocess, if there is an UNACKNOWLEDGED, a GAP has to be send because there is no reliable mechanism.
+    if (is_local_reader() && ACKNOWLEDGED > chit->getStatus())
+    {
+        writer_->intraprocess_gap(this, seq_num);
+    }
+
+    // Element may not be in the container when marked as irrelevant.
     changes_for_reader_.erase(chit);
 }
 
@@ -479,8 +552,8 @@ bool ReaderProxy::process_nack_frag(
 }
 
 static bool change_less_than_sequence(
-    const ChangeForReader_t& change,
-    const SequenceNumber_t& seq_num)
+        const ChangeForReader_t& change,
+        const SequenceNumber_t& seq_num)
 {
     return change.getSequenceNumber() < seq_num;
 }
@@ -494,27 +567,29 @@ ReaderProxy::ChangeIterator ReaderProxy::find_change(
     it = std::lower_bound(changes_for_reader_.begin(), end, seq_num, change_less_than_sequence);
 
     return (!exact)
-        ? it
-        : it == end
-            ? it
-            : it->getSequenceNumber() == seq_num ? it : end;
+           ? it
+           : it == end
+           ? it
+           : it->getSequenceNumber() == seq_num ? it : end;
 }
 
-ReaderProxy::ChangeConstIterator ReaderProxy::find_change(const SequenceNumber_t& seq_num) const
+ReaderProxy::ChangeConstIterator ReaderProxy::find_change(
+        const SequenceNumber_t& seq_num) const
 {
     ReaderProxy::ChangeConstIterator it;
     ReaderProxy::ChangeConstIterator end = changes_for_reader_.end();
     it = std::lower_bound(changes_for_reader_.begin(), end, seq_num, change_less_than_sequence);
 
     return it == end
-        ? it
-        : it->getSequenceNumber() == seq_num ? it : end;
+           ? it
+           : it->getSequenceNumber() == seq_num ? it : end;
 }
 
 bool ReaderProxy::are_there_gaps()
 {
     return (0 < changes_for_reader_.size() &&
-            changes_low_mark_ + uint32_t(changes_for_reader_.size()) != changes_for_reader_.rbegin()->getSequenceNumber());
+           changes_low_mark_ + uint32_t(changes_for_reader_.size()) !=
+           changes_for_reader_.rbegin()->getSequenceNumber());
 }
 
 }   // namespace rtps
