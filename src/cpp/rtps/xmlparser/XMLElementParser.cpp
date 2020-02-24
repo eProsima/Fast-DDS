@@ -2901,8 +2901,8 @@ XMLP_ret XMLParser::getXMLBool(
 }
 
 XMLP_ret XMLParser::getXMLEnum(
-        tinyxml2::XMLElement *elem,
-        IntraprocessDeliveryType * e,
+        tinyxml2::XMLElement* elem,
+        IntraprocessDeliveryType* e,
         uint8_t /*ident*/)
 {
     //<xs:simpleType name="IntraprocessDeliveryType">

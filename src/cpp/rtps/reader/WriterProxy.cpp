@@ -516,7 +516,7 @@ bool WriterProxy::process_heartbeat(
         //Analyze whether a acknack message is needed:
         if (!is_on_same_process_)
         {
-       	    if (!final_flag)
+            if (!final_flag)
             {
                 if (!disable_positive || are_there_missing_changes())
                 {

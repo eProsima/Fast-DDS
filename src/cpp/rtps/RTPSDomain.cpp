@@ -82,7 +82,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
     if (PParam.builtin.discovery_config.leaseDuration < c_TimeInfinite &&
             PParam.builtin.discovery_config.leaseDuration <=
             PParam.builtin.discovery_config.leaseDuration_announcementperiod)
-//TODO CHeckear si puedo ser infinito
     {
         logError(RTPS_PARTICIPANT,
                 "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");

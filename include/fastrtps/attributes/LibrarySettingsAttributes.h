@@ -53,7 +53,7 @@ public:
     IntraprocessDeliveryType intraprocess_delivery = INTRAPROCESS_FULL;
 };
 
-}
-}
+}  // namespace fastrtps
+}  // namespace eprosima
 
 #endif /* LIBRARYSETTINGS_ATTRIBUTES_H_ */

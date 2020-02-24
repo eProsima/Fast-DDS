@@ -321,7 +321,6 @@ void StatefulWriter::unsent_change_added_to_history(
                 changeForReader.setRelevance(it->rtps_is_relevant(change));
                 it->add_change(changeForReader, false, max_blocking_time);
             }
-            //TODO send to local readers.
 
             if (m_pushMode)
             {

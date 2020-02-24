@@ -341,14 +341,12 @@ protected:
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLWriterQosPolicies(
-            tinyxml2::XMLElement*
-            elem,
+            tinyxml2::XMLElement* elem,
             WriterQos& qos,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLReaderQosPolicies(
-            tinyxml2::XMLElement*
-            elem,
+            tinyxml2::XMLElement* elem,
             ReaderQos& qos,
             uint8_t ident);
 

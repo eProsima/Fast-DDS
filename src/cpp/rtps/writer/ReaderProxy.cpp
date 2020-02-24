@@ -107,7 +107,10 @@ void ReaderProxy::start(
     reader_attributes_ = reader_attributes;
 
     timers_enabled_.store(is_remote_and_reliable());
-    initial_heartbeat_event_->restart_timer();
+    if (is_local_reader())
+    {
+        initial_heartbeat_event_->restart_timer();
+    }
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
 }

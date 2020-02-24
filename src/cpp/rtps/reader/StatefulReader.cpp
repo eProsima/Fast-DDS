@@ -377,7 +377,7 @@ bool StatefulReader::processDataMsg(
                 releaseCache(change_to_add);
             }
         }
-    return true;
+        return true;
     }
 
     return false;
