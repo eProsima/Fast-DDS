@@ -244,8 +244,7 @@ void StatefulWriter::unsent_change_added_to_history(
                             ChangeForReader_t change_for_reader(change);
                             change_for_reader.getUnsentFragments().for_each([&](FragmentNumber_t fragment_number)
                             {
-                                if (group.add_data_frag(*change, fragment_number,
-                                        expectsInlineQos))
+                                if (group.add_data_frag(*change, fragment_number, expectsInlineQos))
                                 {
                                     for (ReaderProxy* it : matched_readers_)
                                     {
@@ -253,9 +252,9 @@ void StatefulWriter::unsent_change_added_to_history(
                                         {
                                             bool allFragmentsSent = false;
                                             it->mark_fragment_as_sent_for_change(
-                                                        change->sequenceNumber,
-                                                        fragment_number,
-                                                        allFragmentsSent);
+                                                change->sequenceNumber,
+                                                fragment_number,
+                                                allFragmentsSent);
                                         }
                                     }
                                 }

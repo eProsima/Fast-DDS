@@ -55,9 +55,6 @@ public:
 
 TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
 {
-    // Mutes an expected error
-    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
-
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
@@ -87,9 +84,6 @@ TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
 
 TEST_P(PubSubFragments, PubSubAsReliableData300kb)
 {
-    // Mutes an expected error
-    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
-
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
