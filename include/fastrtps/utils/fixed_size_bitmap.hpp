@@ -276,6 +276,33 @@ public:
     }
 
     /**
+     * Removes an element from the range.
+     * Removes an element from the bitmap.
+     *
+     * @param item   Value to be removed.
+     */
+    void remove(
+        const T& item) noexcept
+    {
+        // Check item is inside the allowed range.
+        T max_value = max();
+        if ((item >= base_) && (max_value >= item))
+        {
+            // Calc distance from base to item, and set the corresponding bit.
+            Diff d_func;
+            uint32_t diff = d_func(item, base_);
+            uint32_t pos = diff >> 5;
+            diff &= 31UL;
+            bitmap_[pos] &= ~(1UL << (31UL - diff));
+
+            if (item == max_value)
+            {
+                calc_maximum_bit_set(pos, 0);
+            }
+        }
+    }
+
+    /**
      * Gets the current value of the bitmap.
      * This method is designed to be used when performing serialization of a bitmap range.
      * 
