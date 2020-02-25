@@ -178,9 +178,25 @@ void StatelessWriter::unsent_change_added_to_history(
                         {
                             RTPSMessageGroup group(mp_RTPSParticipant, this, it, max_blocking_time);
 
-                            if (!group.add_data(*change, it.expects_inline_qos()))
+                            if(change->getFragmentCount() > 0)
                             {
-                                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                                ChangeForReader_t change_for_reader(change);
+                                change_for_reader.getUnsentFragments().for_each([this, &group, change](FragmentNumber_t fragment_number)
+                                {
+                                    if (!group.add_data_frag(*change, fragment_number,
+                                        is_inline_qos_expected_))
+                                    {
+                                        logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
+                                            ", " << fragment_number << ")");
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                if (!group.add_data(*change, is_inline_qos_expected_))
+                                {
+                                    logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                                }
                             }
                         }
                     }
@@ -190,9 +206,25 @@ void StatelessWriter::unsent_change_added_to_history(
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
 
-                        if (!group.add_data(*change, is_inline_qos_expected_))
+                        if(change->getFragmentCount() > 0)
                         {
-                            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                            ChangeForReader_t change_for_reader(change);
+                            change_for_reader.getUnsentFragments().for_each([this, &group, change](FragmentNumber_t fragment_number)
+                            {
+                                if (!group.add_data_frag(*change, fragment_number,
+                                    is_inline_qos_expected_))
+                                {
+                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
+                                        ", " << fragment_number << ")");
+                                }
+                            });
+                        }
+                        else
+                        {
+                            if (!group.add_data(*change, is_inline_qos_expected_))
+                            {
+                                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                            }
                         }
                     }
                     for (ReaderLocator& it : matched_readers_)

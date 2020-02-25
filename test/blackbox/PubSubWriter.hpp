@@ -921,6 +921,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& socket_buffer_size(
+            uint32_t sockerBufferSize)
+    {
+        participant_attr_.rtps.listenSocketBufferSize = sockerBufferSize;
+        return *this;
+    }
+
     PubSubWriter& participant_id(
             int32_t participantId)
     {
