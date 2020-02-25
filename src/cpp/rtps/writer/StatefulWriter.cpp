@@ -308,16 +308,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
                             if (change->getFragmentCount() > 0)
                             {
-                                ChangeForReader_t change_for_reader(change);
-                                change_for_reader.getUnsentFragments().for_each([&](FragmentNumber_t fragment_number)
-                                {
-                                    if (!group.add_data_frag(*change, fragment_number,
-                                            it->expects_inline_qos()))
-                                    {
-                                        logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
-                                            ", " << fragment_number << ")");
-                                    }
-                                });
+                                logError(RTPS_WRITER, "Cannot send large messages on separate sending mode");
                             }
                             else
                             {
@@ -531,7 +522,11 @@ void StatefulWriter::send_any_unsent_changes()
                             {
                                 if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                                 {
-                                    // As we checked we are not async, we know we cannot have fragments
+                                    if (unsentChange->getChange()->getFragmentCount() > 0)
+                                    {
+                                        logError(RTPS_WRITER, "Cannot send large messages on separate sending mode");
+                                    }
+
                                     if (remoteReader->is_local_reader())
                                     {
                                         if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
