@@ -165,10 +165,18 @@
     </xs:simpleType>
 
     <xs:complexType name="durationType">
-        <xs:all>
-            <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0"/>
-            <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="0"/>
-        </xs:all>
+        <xs:sequence>
+            <xs:choice minOccurs="1">
+                <xs:sequence>
+                    <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:sequence>
+                    <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:choice>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="writerTimesType">
