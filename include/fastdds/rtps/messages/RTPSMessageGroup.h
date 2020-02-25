@@ -110,11 +110,34 @@ class Endpoint;
                 bool liveliness_flag);
 
         /**
-         * Adds a GAP message to the group.
+         * Adds one or more GAP messages to the group.
          * @param changes_seq_numbers Set of missed sequence numbers.
+         * @return True when messages were added to the group.
+         */
+        bool add_gap(
+                std::set<SequenceNumber_t>& changes_seq_numbers);
+
+        /**
+         * Adds one GAP message to the group.
+         * @param gap_initial_sequence Start of consecutive sequence numbers.
+         * @param gap_bitmap Bitmap of non-consecutive sequence numbers.
          * @return True when message was added to the group.
          */
-        bool add_gap(std::set<SequenceNumber_t>& changes_seq_numbers);
+        bool add_gap(
+                const SequenceNumber_t& gap_initial_sequence,
+                const SequenceNumberSet_t& gap_bitmap);
+
+        /**
+         * Adds one GAP message to the group.
+         * @param gap_initial_sequence Start of consecutive sequence numbers.
+         * @param gap_bitmap Bitmap of non-consecutive sequence numbers.
+         * @param reader_guid GUID of the destination reader.
+         * @return True when message was added to the group.
+         */
+        bool add_gap(
+                const SequenceNumber_t& gap_initial_sequence,
+                const SequenceNumberSet_t& gap_bitmap,
+                const GUID_t& reader_guid);
 
         /**
          * Adds a ACKNACK message to the group.
@@ -159,13 +182,32 @@ class Endpoint;
 
         void send();
 
-        void check_and_maybe_flush();
+        void check_and_maybe_flush()
+        {
+            check_and_maybe_flush(sender_.destination_guid_prefix());
+        }
 
-        bool insert_submessage();
+        void check_and_maybe_flush(
+                const GuidPrefix_t& destination_guid_prefix);
 
-        bool add_info_dst_in_buffer(CDRMessage_t* buffer);
+        bool insert_submessage()
+        {
+            return insert_submessage(sender_.destination_guid_prefix());
+        }
+
+        bool insert_submessage(
+                const GuidPrefix_t& destination_guid_prefix);
+
+        bool add_info_dst_in_buffer(
+                CDRMessage_t* buffer,
+                const GuidPrefix_t& destination_guid_prefix);
 
         bool add_info_ts_in_buffer(const Time_t& timestamp);
+
+        bool create_gap_submessage(
+                const SequenceNumber_t& gap_initial_sequence,
+                const SequenceNumberSet_t& gap_bitmap,
+                const EntityId_t& reader_id);
 
         const RTPSMessageSenderInterface& sender_;
 

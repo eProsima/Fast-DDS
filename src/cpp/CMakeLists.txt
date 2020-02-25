@@ -62,6 +62,7 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/RTPSReader.cpp
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
+    rtps/messages/RTPSGapBuilder.cpp
     rtps/messages/MessageReceiver.cpp
     rtps/messages/submessages/AckNackMsg.hpp
     rtps/messages/submessages/DataMsg.hpp
