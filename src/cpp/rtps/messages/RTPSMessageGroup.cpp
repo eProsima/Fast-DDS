@@ -23,6 +23,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/flowcontrol/FlowController.h>
 #include "RTPSGapBuilder.hpp"
+#include "RTPSMessageGroup_t.hpp"
 
 #include <fastrtps/log/Log.h>
 
@@ -31,56 +32,6 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-/**
- * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
- * @ingroup WRITER_MODULE
- */
-class RTPSMessageGroup_t
-{
-    public:
-
-        RTPSMessageGroup_t()
-            : rtpsmsg_submessage_(0u)
-            , rtpsmsg_fullmsg_(0u)
-#if HAVE_SECURITY
-            , rtpsmsg_encrypt_(0u)
-#endif
-        {
-        }
-
-        void init(
-#if HAVE_SECURITY
-                bool has_security,
-#endif
-                uint32_t payload,
-                const GuidPrefix_t& participant_guid)
-        {
-
-            rtpsmsg_fullmsg_.reserve(payload);
-            rtpsmsg_submessage_.reserve(payload);
-
-#if HAVE_SECURITY
-            if (has_security)
-            {
-                rtpsmsg_encrypt_.reserve(payload);
-            }
-#endif
-
-            CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);
-            RTPSMessageCreator::addHeader(&rtpsmsg_fullmsg_, participant_guid);
-        }
-
-        CDRMessage_t rtpsmsg_submessage_;
-
-        CDRMessage_t rtpsmsg_fullmsg_;
-
-#if HAVE_SECURITY
-        CDRMessage_t rtpsmsg_encrypt_;
-#endif
-};
-
-static thread_local std::unique_ptr<RTPSMessageGroup_t> tls_group;
 
 bool sort_changes_group (CacheChange_t* c1,CacheChange_t* c2)
 {
@@ -153,11 +104,12 @@ RTPSMessageGroup::RTPSMessageGroup(
     , full_msg_(nullptr)
     , submessage_msg_(nullptr)
     , currentBytesSent_(0)
-#if HAVE_SECURITY
     , participant_(participant)
+#if HAVE_SECURITY
     , encrypt_msg_(nullptr)
 #endif
     , max_blocking_time_point_(max_blocking_time_point)
+    , send_buffer_(participant->get_send_buffer())
 {
     // Avoid warning when neither SECURITY nor DEBUG is used
     (void)participant;
@@ -165,22 +117,8 @@ RTPSMessageGroup::RTPSMessageGroup(
     assert(participant);
     assert(endpoint);
 
-    if (!tls_group)
-    {
-        tls_group.reset(new RTPSMessageGroup_t());
-    }
-
-    uint32_t max_payload_size = participant->getMaxMessageSize();
-    const GuidPrefix_t& guid_prefix = participant->getGuid().guidPrefix;
-
-#if HAVE_SECURITY
-    tls_group->init(participant->is_secure(), max_payload_size, guid_prefix);
-#else
-    tls_group->init(max_payload_size, guid_prefix);
-#endif
-
-    full_msg_ = &(tls_group->rtpsmsg_fullmsg_);
-    submessage_msg_ = &(tls_group->rtpsmsg_submessage_);
+    full_msg_ = &(send_buffer_->rtpsmsg_fullmsg_);
+    submessage_msg_ = &(send_buffer_->rtpsmsg_submessage_);
 
     // Init RTPS message.
     reset_to_header();
@@ -190,7 +128,7 @@ RTPSMessageGroup::RTPSMessageGroup(
 #if HAVE_SECURITY
     if (participant->is_secure())
     {
-        encrypt_msg_ = &(tls_group->rtpsmsg_encrypt_);
+        encrypt_msg_ = &(send_buffer_->rtpsmsg_encrypt_);
         CDRMessage::initCDRMsg(encrypt_msg_);
     }
 #endif
@@ -198,7 +136,17 @@ RTPSMessageGroup::RTPSMessageGroup(
 
 RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
 {
-    send();
+    try
+    {
+        send();
+    }
+    catch (...)
+    {
+        participant_->return_send_buffer(std::move(send_buffer_));
+        throw;
+    }
+    
+    participant_->return_send_buffer(std::move(send_buffer_));
 }
 
 void RTPSMessageGroup::reset_to_header()

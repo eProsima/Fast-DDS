@@ -186,6 +186,14 @@ RTPSParticipant* RTPSDomain::createParticipant(
         pimpl = new RTPSParticipantImpl(PParam, guidP, p, listen);
     }
 
+    // Check there is at least one transport registered.
+    if (!pimpl->networkFactoryHasRegisteredTransports())
+    {
+        logError(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
+        delete pimpl;
+        return nullptr;
+    }
+
 #if HAVE_SECURITY
     // Check security was correctly initialized
     if (!pimpl->is_security_initialized())
@@ -195,14 +203,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
         return nullptr;
     }
 #endif
-
-    // Check there is at least one transport registered.
-    if (!pimpl->networkFactoryHasRegisteredTransports())
-    {
-        logError(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
-        delete pimpl;
-        return nullptr;
-    }
 
     {
         std::lock_guard<std::mutex> guard(m_mutex);

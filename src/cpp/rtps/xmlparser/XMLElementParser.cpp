@@ -37,6 +37,7 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
                 <xs:element name="total_participants" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="total_readers" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="total_writers" type="containerAllocationConfigType" minOccurs="0"/>
+                <xs:element name="send_buffers" type="sendBuffersAllocationConfigType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -74,6 +75,14 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         {
             // total_writers - containerAllocationConfigType
             if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.writers, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, SEND_BUFFERS) == 0)
+        {
+            // send_buffers - sendBuffersAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLSendBuffersAllocationAttributes(p_aux0, allocation.send_buffers, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -129,6 +138,55 @@ XMLP_ret XMLParser::getXMLRemoteLocatorsAllocationAttributes(
         else
         {
             logError(XMLPARSER, "Invalid element found into 'remoteLocatorsAllocationConfigType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
+        tinyxml2::XMLElement* elem,
+        rtps::SendBuffersAllocationAttributes& allocation,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="sendBuffersAllocationConfigType">
+            <xs:all minOccurs="0">
+                <xs:element name="preallocated_number" type="uint32Type" minOccurs="0"/>
+                <xs:element name="dynamic" type="boolType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    uint32_t tmp;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, PREALLOCATED_NUMBER) == 0)
+        {
+            // preallocated_number - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.preallocated_number = tmp;
+        }
+        else if (strcmp(name, DYNAMIC_LC) == 0)
+        {
+            // dynamic - boolType
+            bool tmp_bool = false;
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &tmp_bool, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.dynamic = tmp_bool;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'sendBuffersAllocationConfigType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
     }

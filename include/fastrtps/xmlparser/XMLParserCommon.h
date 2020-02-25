@@ -114,6 +114,9 @@ extern const char* MAX_MULTICAST_LOCATORS;
 extern const char* TOTAL_PARTICIPANTS;
 extern const char* TOTAL_READERS;
 extern const char* TOTAL_WRITERS;
+extern const char* SEND_BUFFERS;
+extern const char* PREALLOCATED_NUMBER;
+extern const char* DYNAMIC_LC;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;
