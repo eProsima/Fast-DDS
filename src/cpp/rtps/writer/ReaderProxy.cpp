@@ -60,14 +60,12 @@ ReaderProxy::ReaderProxy(
             },
             TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
-    initial_heartbeat_event_ =
-            new TimedEvent(writer->getRTPSParticipant()->getEventResource(), [&](
-                        TimedEvent::EventCode code) -> bool
+    initial_heartbeat_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
+            [&]() -> bool
                 {
                     writer_->intraprocess_heartbeat(this);
                     return false;
-                },
-                    0);
+                }, 0);
 
     stop();
 }
