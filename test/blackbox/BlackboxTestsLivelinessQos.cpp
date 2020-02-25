@@ -1410,6 +1410,7 @@ TEST_P(LivelinessQos, ThreeWriters_ThreeReaders)
     // The manual by participant subscriber will detect that two writers lost liveliness
     // The manual by topic subscriber will detect that one writer lost liveliness
     // This means that the subscribing participant will see that liveliness was lost three times
+    publishers.pub_wait_liveliness_lost(2u);
     subscribers.sub_wait_liveliness_lost(3u);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 3u);

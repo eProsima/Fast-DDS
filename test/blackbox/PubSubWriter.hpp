@@ -437,7 +437,7 @@ public:
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
         liveliness_cv_.wait(lock, [&](){
-            return times_liveliness_lost_ == times;
+            return times_liveliness_lost_ >= times;
         });
     }
 
