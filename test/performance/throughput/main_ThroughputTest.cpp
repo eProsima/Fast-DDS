@@ -186,7 +186,7 @@ int main(int argc, char** argv)
     uint32_t test_time_sec = 5;
     uint32_t recovery_time_ms = 5;
     int demand = 10000;
-    int msg_size = 1024;
+    int msg_size = 1024*1024;
     bool reliable = false;
     uint32_t seed = 80;
     bool hostname = false;

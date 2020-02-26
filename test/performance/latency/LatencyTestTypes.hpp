@@ -17,10 +17,39 @@
  *
  */
 
+#include <stdint.h>
+#include <vector>
+
 #ifndef LATENCYTESTTYPES_H_
 #define LATENCYTESTTYPES_H_
 
 #include "fastrtps/fastrtps_all.h"
+
+#define MAX_TYPE_SIZE 10*1024*1024
+
+class LatencyDataSamples
+{
+public:
+
+    LatencyDataSamples()
+    {
+        //sample_sizes_ = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
+        //sample_sizes_ = {12, 1024, 32*1024, 64*1024, 128*1024, 512*1024, 1024*1024};
+        //sample_sizes_ = {12, 1024, 32*1024, 64*1024, 128*1024};
+        sample_sizes_ = {8*1024-4, 16*1024-4, 32*1024-4, 64*1024-4, 128*1024-4, 256*1024-4, 512*1024-4, 1024*1024-4};
+        //sample_sizes_ = {1024*1024-4};
+    }
+
+    inline const std::vector<uint32_t>& sample_sizes()
+    {
+        return sample_sizes_;
+    }
+    
+private:
+
+    std::vector<uint32_t> sample_sizes_;
+
+};
 
 class LatencyType
 {
@@ -57,7 +86,7 @@ class LatencyDataType : public eprosima::fastrtps::TopicDataType
         LatencyDataType()
         {
             setName("LatencyType");
-            m_typeSize = 17000;
+            m_typeSize = MAX_TYPE_SIZE;
             m_isGetKeyDefined = false;
         };
         ~LatencyDataType(){};
