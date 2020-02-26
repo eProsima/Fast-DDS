@@ -134,7 +134,6 @@ enum  optionIndex
     EXPORT_PREFIX,
     USE_SECURITY,
     CERTS_PATH,
-    LARGE_DATA,
     XML_FILE,
     DYNAMIC_TYPES,
     FORCED_DOMAIN
@@ -154,7 +153,6 @@ const option::Descriptor usage[] = {
     { SAMPLES,         0, "s", "samples",         Arg::Numeric,  "  -s <num>,    --samples=<num>       Number of samples." },
     { SEED,            0, "",  "seed",            Arg::Numeric,  "               --seed=<num>          Seed to calculate domain and topic." },
     { HOSTNAME,        0, "",  "hostname",        Arg::None,     "               --hostname            Append hostname to the topic." },
-    { LARGE_DATA,      0, "l", "large",           Arg::None,     "  -l           --large               Test large data." },
     { XML_FILE,        0, "",  "xml",             Arg::String,   "               --xml                 XML Configuration file." },
     { FORCED_DOMAIN,   0, "",  "domain",          Arg::Numeric,  "               --domain              RTPS Domain." },
     { DYNAMIC_TYPES,   0, "",  "dynamic_types",   Arg::None,     "               --dynamic_types       Use dynamic types." },
@@ -206,7 +204,6 @@ int main(
     uint32_t seed = 80;
     bool hostname = false;
     bool export_csv = false;
-    bool large_data = false;
     std::string export_prefix = "";
     std::string raw_data_file = "";
     std::string xml_config_file = "";
@@ -325,9 +322,6 @@ int main(
                     return 0;
                 }
                 break;
-            case LARGE_DATA:
-                large_data = true;
-                break;
             case XML_FILE:
                 if (opt.arg != nullptr)
                 {
@@ -427,7 +421,7 @@ int main(
                 << std::endl;
         LatencyTestPublisher latency_publisher;
         if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
-                raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
+                raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
                 dynamic_types, forced_domain))
         {
             latency_publisher.run();
@@ -442,7 +436,7 @@ int main(
     {
         LatencyTestSubscriber latency_subscriber;
         if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-                large_data, xml_config_file, dynamic_types, forced_domain))
+                xml_config_file, dynamic_types, forced_domain))
         {
             latency_subscriber.run();
         }
@@ -460,13 +454,13 @@ int main(
         // Initialize publisher
         LatencyTestPublisher latency_publisher;
         bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
-                export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy, large_data,
+                export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
                 xml_config_file, dynamic_types, forced_domain);
 
         // Initialize subscriber
         LatencyTestSubscriber latency_subscriber;
         bool sub_init = latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
-                sub_property_policy, large_data, xml_config_file, dynamic_types, forced_domain);
+                sub_property_policy, xml_config_file, dynamic_types, forced_domain);
 
         // Spawn run threads
         if (pub_init && sub_init)

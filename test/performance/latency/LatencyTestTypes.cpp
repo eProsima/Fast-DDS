@@ -24,6 +24,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+
 bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 {
     LatencyType* lt = (LatencyType*)data;

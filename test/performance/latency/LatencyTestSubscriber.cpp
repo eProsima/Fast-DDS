@@ -26,10 +26,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
-
-uint32_t datassub[] = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
-uint32_t datassub_large[] = {63996, 131068};
-
 std::vector<uint32_t> data_size_sub;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
@@ -71,21 +67,16 @@ bool LatencyTestSubscriber::init(
         bool hostname,
         const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy,
-        bool large_data,
         const std::string& xml_config_file,
         bool dynamic_data,
         int forced_domain)
 {
-    // Payloads for which the test runs
-    if (!large_data)
-    {
-        data_size_sub.assign(datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
-    }
-    else
-    {
-        data_size_sub.assign(datassub_large, datassub_large + sizeof(datassub_large) / sizeof(uint32_t) );
-    }
+    //data_size_sub.assign(dataspubsub, dataspubsub + sizeof(dataspubsub) / sizeof(uint32_t) );
+    LatencyDataSamples latency_data_samples;
 
+    //data_size_pub.assign(latency_data_samples.sample_sizes(), dataspubsub + sizeof(dataspubsub) / sizeof(uint32_t) );
+    data_size_sub = latency_data_samples.sample_sizes();
+    
     xml_config_file_ = xml_config_file;
     echo_ = echo;
     samples_ = samples;
@@ -188,12 +179,8 @@ bool LatencyTestSubscriber::init(
     }
     publisher_data_attributes.properties = property_policy;
 
-    if (large_data)
-    {
-        publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        publisher_data_attributes.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
-    }
-
+    publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    
     if (xml_config_file_.length() > 0)
     {
         data_publisher_ = Domain::createPublisher(participant_, profile_name,
@@ -230,11 +217,8 @@ bool LatencyTestSubscriber::init(
     }
     subscriber_data_attributes.properties = property_policy;
 
-    if (large_data)
-    {
-        subscriber_data_attributes.historyMemoryPolicy =
-                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    }
+    subscriber_data_attributes.historyMemoryPolicy =
+            eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {

@@ -691,6 +691,207 @@ TEST_F(UDPv4Tests, simple_throughput)
         , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
 }
 
+TEST_F(UDPv4Tests, simple_latency)
+{
+    /*int num_samples = 10000;
+    std::vector<uint32_t> data_sizes = {16, 1024, 1024*64, 1024*512, 1024*1024};*/
+
+    int num_samples = 10000;
+    std::vector<uint32_t> data_sizes = {8*1024, 16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 512*1024, 1024*1024};
+
+    struct results
+    {
+        uint32_t sample_size;
+        std::chrono::high_resolution_clock::rep total_times;
+        std::chrono::high_resolution_clock::rep min_time;
+        std::chrono::high_resolution_clock::rep max_time;
+    };
+
+    std::vector<results> data_results;
+
+    for (auto data_size : data_sizes)
+    {    
+        auto data = std::unique_ptr<octet[]>(new octet[data_size]);
+
+        printf("Starting %u(bytes) measure...\n", data_size);
+
+        Locator_t sub_locator;
+        sub_locator.kind = LOCATOR_KIND_UDPv4;
+        sub_locator.port = 50000;
+        IPLocator::setIPv4(sub_locator, 127, 0, 0, 1);
+
+        Locator_t pub_locator;
+        pub_locator.kind = LOCATOR_KIND_UDPv4;
+        pub_locator.port = 50001;
+        IPLocator::setIPv4(pub_locator, 127, 0, 0, 1);
+
+        UDPv4TransportDescriptor my_descriptor;
+        my_descriptor.interfaceWhiteList.push_back("127.0.0.1");
+        my_descriptor.receiveBufferSize = (std::max)(data_sizes.back() * 2, my_descriptor.max_message_size());
+        my_descriptor.sendBufferSize = (std::max)(data_sizes.back() * 2, my_descriptor.max_message_size());
+
+        uint32_t full_fragments = 1;
+        uint32_t fragment_size = data_size;
+        uint32_t last_fragment_bytes = 0;
+
+        uint32_t max_message_size = my_descriptor.max_message_size();
+
+        if(data_size > max_message_size)
+        {
+            fragment_size = max_message_size;
+            full_fragments = data_size / max_message_size;
+            last_fragment_bytes = data_size % max_message_size;
+        }
+
+        uint32_t total_sends = ( full_fragments + ((last_fragment_bytes > 0) ? 1 : 0) ) * num_samples;
+
+        std::thread thread_subscriber([&]
+            {
+                UDPv4Transport transport(my_descriptor);
+                ASSERT_TRUE(transport.init());
+
+                Semaphore sem;
+                MockReceiverResource receiver(transport, sub_locator);
+                MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+                int buffers_to_receive = total_sends;
+
+                LocatorList_t send_locators_list;
+                send_locators_list.push_back(pub_locator);
+
+                eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+                ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, pub_locator));
+
+                std::function<void()> sub_callback = [&]()
+                {
+                    Locators locators_begin(send_locators_list.begin());
+                    Locators locators_end(send_locators_list.end());
+
+                    ASSERT_TRUE(send_resource_list.at(0)->send(msg_recv->data, msg_recv->data_size, &locators_begin, &locators_end,
+                        (std::chrono::steady_clock::now() + std::chrono::milliseconds(1000))));
+
+                    if (--buffers_to_receive == 0)
+                    {
+                        sem.post();
+                    }
+                };
+
+                msg_recv->setCallback(sub_callback);
+
+                sem.wait();
+            });
+
+        std::thread thread_publisher([&]
+            {
+                UDPv4Transport transport(my_descriptor);
+                ASSERT_TRUE(transport.init());
+
+                Semaphore sem;
+                MockReceiverResource receiver(transport, pub_locator);
+                MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+                int samples_sent = 0;
+
+                LocatorList_t send_locators_list;
+                send_locators_list.push_back(sub_locator);
+
+                eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+                ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, sub_locator));
+
+                data_results.push_back(
+                    {
+                        data_size,
+                        0, 
+                        (std::numeric_limits<std::chrono::high_resolution_clock::rep>::max)(),
+                        (std::numeric_limits<std::chrono::high_resolution_clock::rep>::min)()
+                    });
+
+                auto& results = data_results.back();
+                
+                auto t0 = std::chrono::high_resolution_clock::now();
+
+                Locators locators_begin(send_locators_list.begin());
+                Locators locators_end(send_locators_list.end());
+
+                auto my_full_fragments = full_fragments;
+                auto my_last_fragment_bytes = last_fragment_bytes;
+                
+                ASSERT_TRUE(send_resource_list.at(0)->send(data.get(), fragment_size, &locators_begin, &locators_end,
+                    (std::chrono::steady_clock::now() + std::chrono::milliseconds(1000))));
+
+                my_full_fragments--;
+
+                std::function<void()> pub_callback = [&]()
+                {
+                    Locators locators_begin(send_locators_list.begin());
+                    Locators locators_end(send_locators_list.end());
+
+                    if(my_full_fragments > 0)
+                    {
+                        ASSERT_TRUE(send_resource_list.at(0)->send(data.get(), fragment_size, &locators_begin, &locators_end,
+                            (std::chrono::steady_clock::now() + std::chrono::milliseconds(1000))));
+                        my_full_fragments--;
+                    }
+                    else
+                    {
+                        if(my_last_fragment_bytes > 0)
+                        {
+                            ASSERT_TRUE(send_resource_list.at(0)->send(data.get(), last_fragment_bytes, &locators_begin, &locators_end,
+                            (std::chrono::steady_clock::now() + std::chrono::milliseconds(1000))));
+
+                            my_last_fragment_bytes = 0;
+                        }
+                        else
+                        {
+                            auto t1 = std::chrono::high_resolution_clock::now();
+
+                            auto t = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count() / 2;
+                            if (t < results.min_time)
+                            {
+                                results.min_time = t;
+                            }
+                            if (t > results.max_time)
+                            {
+                                results.max_time = t;
+                            }
+                            results.total_times += t;
+
+                            samples_sent++;
+                            t0 = std::chrono::high_resolution_clock::now();
+
+                            my_full_fragments = full_fragments;
+                            my_last_fragment_bytes = last_fragment_bytes;
+
+                            if(samples_sent < num_samples)
+                            {
+                                ASSERT_TRUE(send_resource_list.at(0)->send(data.get(), fragment_size, &locators_begin, &locators_end,
+                                (std::chrono::steady_clock::now() + std::chrono::milliseconds(1000))));
+                                my_full_fragments--;
+                                
+                            }
+                            else
+                            {
+                                sem.post();
+                            }
+                        }
+                    }
+                };
+
+                msg_recv->setCallback(pub_callback);
+
+                sem.wait();
+            });
+
+        thread_subscriber.join();
+        thread_publisher.join();
+    }
+
+    for(const auto& results : data_results)
+    {
+        printf("LatencyTest for %d samples of %08d(bytes). Avg = %.3f(us) Min = %.3f(us) Max = %.3f(us)\n", num_samples, results.sample_size, results.total_times / (num_samples * 1000.0), results.min_time / 1000.0, results.max_time / 1000.0);
+    }
+}
+
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.maxMessageSize = 5;
@@ -707,3 +908,4 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+

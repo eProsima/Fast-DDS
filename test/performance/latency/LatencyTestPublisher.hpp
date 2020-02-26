@@ -91,7 +91,6 @@ public:
             std::string raw_data_file,
             const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-            bool large_data,
             const std::string& xml_config_file,
             bool dynamic_data,
             int forced_domain);
