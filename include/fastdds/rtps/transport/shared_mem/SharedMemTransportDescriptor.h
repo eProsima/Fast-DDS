@@ -47,7 +47,11 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 
 	uint32_t max_message_size() const override
 	{ 
-		return segment_size; 
+		// TODO(Adolfo): The current RTPS layer architecture yield better latency
+		// working with fragments. When this issue is solved, segment_size should be
+		// used as max_message_size.
+		return s_maximumMessageSize;
+		//return segment_size; 
 	}
 
 	OverflowPolicy port_overflow_policy;
