@@ -93,7 +93,6 @@ private:
 
     std::mutex mtx;
     MessageReceiver* receiver;
-    CDRMessage_t msg;
 };
 
 } // namespace rtps

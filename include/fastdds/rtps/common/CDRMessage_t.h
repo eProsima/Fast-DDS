@@ -47,22 +47,12 @@ namespace rtps {
  * @brief Structure CDRMessage_t, contains a serialized message.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI CDRMessage_t
+struct RTPS_DllAPI CDRMessage_t final
 {
-    //! Default constructor
+    // TODO(Miguel C): Deprecate when not used in mocks
     CDRMessage_t()
-        : wraps(false)
+        : CDRMessage_t(RTPSMESSAGE_DEFAULT_SIZE)
     {
-        pos = 0;
-        length = 0;
-        buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
-        max_size = RTPSMESSAGE_DEFAULT_SIZE;
-
-#if __BIG_ENDIAN__
-        msg_endian = BIGEND;
-#else
-        msg_endian = LITTLEEND;
-#endif
     }
 
     ~CDRMessage_t()
@@ -77,7 +67,7 @@ struct RTPS_DllAPI CDRMessage_t
      * Constructor with maximum size
      * @param size Maximum size
      */
-    CDRMessage_t(
+    explicit CDRMessage_t(
             uint32_t size)
     {
         wraps = false;
@@ -106,7 +96,7 @@ struct RTPS_DllAPI CDRMessage_t
      * Constructor to wrap a serialized payload
      * @param payload Payload to wrap
      */
-    CDRMessage_t(
+    explicit CDRMessage_t(
             const SerializedPayload_t& payload)
         : wraps(true)
     {

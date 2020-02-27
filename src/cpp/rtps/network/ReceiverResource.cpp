@@ -32,7 +32,6 @@ ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_
         , mValid(false)
         , mtx()
         , receiver(nullptr)
-        , msg(0)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenInputChannel(locator, this, max_size);
@@ -55,7 +54,6 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
     rValueResource.receiver = nullptr;
     mValid = rValueResource.mValid;
     rValueResource.mValid = false;
-    msg = std::move(rValueResource.msg);
 }
 
 bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
@@ -91,10 +89,12 @@ void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
 
     if (rcv != nullptr)
     {
+        CDRMessage_t msg(0);
         msg.wraps = true;
         msg.buffer = const_cast<octet*>(data);
         msg.length = size;
         msg.max_size = size;
+        msg.reserved_size = size;
 
         // TODO: Should we unlock in case UnregisterReceiver is called from callback ?
         rcv->processCDRMsg(remoteLocator, &msg);

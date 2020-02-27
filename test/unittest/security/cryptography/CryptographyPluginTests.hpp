@@ -348,9 +348,9 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantB,*ParticipantB_remote,ParticipantA_CryptoTokens,exception);
 
     //Perform sample message exchange
-    eprosima::fastrtps::rtps::CDRMessage_t plain_rtps_message;
-    eprosima::fastrtps::rtps::CDRMessage_t encoded_rtps_message;
-    eprosima::fastrtps::rtps::CDRMessage_t decoded_rtps_message;
+    eprosima::fastrtps::rtps::CDRMessage_t plain_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastrtps::rtps::CDRMessage_t encoded_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastrtps::rtps::CDRMessage_t decoded_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
 
     char message[] = "RPTSMessage"; //Length 11
     memcpy(plain_rtps_message.buffer, message, 11);
@@ -1374,9 +1374,9 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     ASSERT_TRUE( P_B->Readers.size() == 1);
 
     //Perform sample message exchange
-    eprosima::fastrtps::rtps::CDRMessage_t plain_payload;
-    eprosima::fastrtps::rtps::CDRMessage_t encoded_datareader_payload;
-    eprosima::fastrtps::rtps::CDRMessage_t encoded_datawriter_payload;
+    eprosima::fastrtps::rtps::CDRMessage_t plain_payload(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastrtps::rtps::CDRMessage_t encoded_datareader_payload(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastrtps::rtps::CDRMessage_t encoded_datawriter_payload(RTPSMESSAGE_DEFAULT_SIZE);
 
     char message[] = "My goose is cooked"; //Length 18
     memcpy(plain_payload.buffer, message, 18);
