@@ -73,12 +73,12 @@ bool TimedEventImpl::update(
 
     if (set_time)
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);
         next_trigger_time_ = current_time + interval_microsec_;
     }
     else if (expected == StateCode::INACTIVE)
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);
         next_trigger_time_ = cancel_time;
     }
 
@@ -102,13 +102,13 @@ void TimedEventImpl::trigger(
             expected = StateCode::INACTIVE;
             if (state_.compare_exchange_strong(expected, StateCode::WAITING))
             {
-                std::unique_lock<std::mutex> lock(mutex_);
+                std::lock_guard<std::mutex> lock(mutex_);
                 next_trigger_time_ = current_time + interval_microsec_;
                 return;
             }
         }
 
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);
         next_trigger_time_ = cancel_time;
     }
 }
@@ -116,7 +116,7 @@ void TimedEventImpl::trigger(
 bool TimedEventImpl::update_interval(
         const eprosima::fastrtps::Duration_t& interval)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(interval));
     return true;
 }
@@ -124,9 +124,8 @@ bool TimedEventImpl::update_interval(
 bool TimedEventImpl::update_interval_millisec(
         double interval)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
-    interval_microsec_ = std::chrono::microseconds(
-        static_cast<int64_t>(interval * 1000));
+    std::lock_guard<std::mutex> lock(mutex_);
+    interval_microsec_ = std::chrono::microseconds(static_cast<int64_t>(interval * 1000));
     return true;
 }
 
