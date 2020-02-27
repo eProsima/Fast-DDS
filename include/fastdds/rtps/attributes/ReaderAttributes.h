@@ -25,6 +25,7 @@
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 #include <functional>
 
@@ -102,6 +103,9 @@ public:
 
     //! Define the allocation behaviour for matched-writer-dependent collections.
     ResourceLimitedContainerConfig matched_writers_allocation;
+
+    //! Property policies
+    PropertyPolicy properties;
 };
 
 } /* namespace rtps */

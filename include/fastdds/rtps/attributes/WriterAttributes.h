@@ -25,6 +25,7 @@
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 #include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 #include <functional>
 
@@ -132,6 +133,9 @@ class WriterAttributes
 
         //! Keep duration to keep a sample before considering it has been acked
         Duration_t keep_duration;
+
+        //! Property policies
+        PropertyPolicy properties;
 };
 
 } /* namespace rtps */

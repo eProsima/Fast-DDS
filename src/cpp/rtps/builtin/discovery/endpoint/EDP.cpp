@@ -167,6 +167,16 @@ bool EDP::newLocalReaderProxyData(
                     }
                 }
 
+                // Getting DDS-RPC service_instance_name.
+                const std::string* property_value = PropertyPolicyHelper::find_property(
+                        reader->getAttributes().properties,
+                        "dds.rpc.service_instance_name");
+
+                if (property_value)
+                {
+                    rpd->service_instance_name(*property_value);
+                }
+
                 return true;
             };
 
@@ -281,6 +291,16 @@ bool EDP::newLocalWriterProxyData(
                             wpd->type().m_type_object = *type_obj;
                         }
                     }
+                }
+
+                // Getting DDS-RPC service_instance_name.
+                const std::string* property_value = PropertyPolicyHelper::find_property(
+                        writer->getAttributes().properties,
+                        "dds.rpc.service_instance_name");
+
+                if (property_value)
+                {
+                    wpd->service_instance_name(*property_value);
                 }
 
                 return true;

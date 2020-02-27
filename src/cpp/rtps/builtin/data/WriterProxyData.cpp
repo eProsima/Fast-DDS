@@ -67,6 +67,7 @@ WriterProxyData::WriterProxyData(
     , m_type_id(writerInfo.m_type_id)
     , m_type(writerInfo.m_type)
     , m_type_information(writerInfo.m_type_information)
+    , service_instance_name_(writerInfo.service_instance_name_)
 {
     m_qos.setQos(writerInfo.m_qos, true);
 }
@@ -98,6 +99,7 @@ WriterProxyData& WriterProxyData::operator =(
     m_type_id = writerInfo.m_type_id;
     m_type = writerInfo.m_type;
     m_type_information = writerInfo.m_type_information;
+    service_instance_name_ = writerInfo.service_instance_name_;
 
     return *this;
 }
@@ -353,6 +355,15 @@ bool WriterProxyData::writeToCDRMessage(
     if (m_type_information.assigned())
     {
         if (!m_type_information.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+
+    if (0 < service_instance_name_.size())
+    {
+        ParameterString_t p(fastdds::dds::PID_SERVICE_INSTANCE_NAME, 0, service_instance_name_);
+        if (!p.addToCDRMessage(msg))
         {
             return false;
         }
@@ -623,6 +634,13 @@ bool WriterProxyData::readFromCDRMessage(
                                 "Received TypeConsistencyEnforcementQos from a writer, but they haven't.");
                         break;
                     }
+                    case fastdds::dds::PID_SERVICE_INSTANCE_NAME:
+                    {
+                        const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
+                        assert(p != nullptr);
+                        service_instance_name_ = p->getName();
+                        break;
+                    }
 
                     default:
                     {
@@ -669,6 +687,7 @@ void WriterProxyData::clear()
     m_type_id = TypeIdV1();
     m_type = TypeObjectV1();
     m_type_information = xtypes::TypeInformation();
+    service_instance_name_ = "";
 }
 
 void WriterProxyData::copy(
@@ -688,6 +707,7 @@ void WriterProxyData::copy(
     m_type_id = wdata->m_type_id;
     m_type = wdata->m_type;
     m_type_information = wdata->m_type_information;
+    service_instance_name_ = wdata->service_instance_name_;
 }
 
 bool WriterProxyData::is_update_allowed(

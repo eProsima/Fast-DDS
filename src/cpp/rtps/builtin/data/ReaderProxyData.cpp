@@ -72,6 +72,7 @@ ReaderProxyData::ReaderProxyData(
     , m_type_id(readerInfo.m_type_id)
     , m_type(readerInfo.m_type)
     , m_type_information(readerInfo.m_type_information)
+    , service_instance_name_(readerInfo.service_instance_name_)
 {
     m_qos.setQos(readerInfo.m_qos, true);
 }
@@ -98,6 +99,7 @@ ReaderProxyData& ReaderProxyData::operator =(
     m_type_id = readerInfo.m_type_id;
     m_type = readerInfo.m_type;
     m_type_information = readerInfo.m_type_information;
+    service_instance_name_ = readerInfo.service_instance_name_;
 
     return *this;
 }
@@ -353,6 +355,15 @@ bool ReaderProxyData::writeToCDRMessage(
     if (m_type_information.assigned())
     {
         if (!m_type_information.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+
+    if (0 < service_instance_name_.size())
+    {
+        ParameterString_t p(fastdds::dds::PID_SERVICE_INSTANCE_NAME, 0, service_instance_name_);
+        if (!p.addToCDRMessage(msg))
         {
             return false;
         }
@@ -615,6 +626,13 @@ bool ReaderProxyData::readFromCDRMessage(
                         plugin_security_attributes_ = p->plugin_security_attributes;
                     }
 #endif
+                    case fastdds::dds::PID_SERVICE_INSTANCE_NAME:
+                    {
+                        const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
+                        assert(p != nullptr);
+                        service_instance_name_ = p->getName();
+                        break;
+                    }
                     default:
                     {
                         //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(param)->Pid << " NOT CONSIDERED");
@@ -664,6 +682,7 @@ void ReaderProxyData::clear()
     m_type_id = TypeIdV1();
     m_type = TypeObjectV1();
     m_type_information = xtypes::TypeInformation();
+    service_instance_name_ = "";
 }
 
 bool ReaderProxyData::is_update_allowed(
@@ -710,6 +729,7 @@ void ReaderProxyData::copy(
     m_type_id = rdata->m_type_id;
     m_type = rdata->m_type;
     m_type_information = rdata->m_type_information;
+    service_instance_name_ = rdata->service_instance_name_;
 }
 
 void ReaderProxyData::add_unicast_locator(

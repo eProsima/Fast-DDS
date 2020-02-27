@@ -306,6 +306,21 @@ public:
         return m_type_information;
     }
 
+    RTPS_DllAPI void service_instance_name(const string_255& instance_name)
+    {
+        service_instance_name_ = instance_name;
+    }
+
+    RTPS_DllAPI const string_255& service_instance_name() const
+    {
+        return service_instance_name_;
+    }
+
+    RTPS_DllAPI string_255& service_instance_name()
+    {
+        return service_instance_name_;
+    }
+
     //!WriterQOS
     WriterQos m_qos;
 
@@ -386,6 +401,9 @@ private:
 
     //!Type Information
     xtypes::TypeInformation m_type_information;
+
+    //!DDS-RPC service_instance_name parameter
+    string_255 service_instance_name_;
 };
 
 } /* namespace rtps */
