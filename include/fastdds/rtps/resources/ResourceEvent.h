@@ -67,7 +67,7 @@ public:
      *
      * This method has to be called before deleting the TimedEventImpl object.
      * This method cancels any operation of the timer.
-     * Then it avoids the situation of the execution thread calling the event handler when it was removed previously.
+     * Then it avoids the situation of the execution thread calling the event handler when it was previously removed.
      * @param event TimedEventImpl object that will be deleted and we have to be sure all its operations are cancelled.
      */
     void unregister_timer(
@@ -136,13 +136,18 @@ private:
             TimedEventImpl* event);
 
     //! Method called by the internal thread.
-    void run_io_service();
+    void event_service();
 
+    //! Sorts waiting timers in ascending order of trigger time.
     void sort_timers();
+
+    //! Updates internal register of current time.
     void update_current_time();
 
+    //! Method called by the internal thread to process due actions.
     void do_timer_actions();
 
+    //! Ensures internal collections can accommodate current total number of timers.
     void resize_collections()
     {
         pending_timers_.reserve(timers_count_);

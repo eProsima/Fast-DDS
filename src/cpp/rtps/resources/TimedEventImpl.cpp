@@ -114,19 +114,19 @@ void TimedEventImpl::trigger(
 }
 
 bool TimedEventImpl::update_interval(
-        const eprosima::fastrtps::Duration_t& time)
+        const eprosima::fastrtps::Duration_t& interval)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(time));
+    interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(interval));
     return true;
 }
 
 bool TimedEventImpl::update_interval_millisec(
-        double time_millisec)
+        double interval)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     interval_microsec_ = std::chrono::microseconds(
-        static_cast<int64_t>(time_millisec * 1000));
+        static_cast<int64_t>(interval * 1000));
     return true;
 }
 

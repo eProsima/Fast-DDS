@@ -37,7 +37,7 @@ namespace fastrtps {
 namespace rtps {
 
 /*!
- * This class encapsulates an asio::steady_timer.
+ * This class encapsulates a timer.
  * Also it manages the state of the event (INACTIVE, READY, WAITING..).
  * TimedEventImpl objects can be linked between them.
  * @ingroup MANAGEMENT_MODULE
@@ -50,15 +50,14 @@ public:
 
     enum StateCode
     {
-        INACTIVE = 0, //! The event is inactive. asio::io_service is not waiting for it.
-        READY, //! The event is ready for being processed by ResourceEvent and added to asio::io_service.
-        WAITING, //! The event is being waiting by asio::io_service to being triggered.
+        INACTIVE = 0, //! The event is inactive. The event service is not waiting for it.
+        READY, //! The event is ready for being processed by ResourceEvent and added to the event service.
+        WAITING, //! The event is waiting for the event service to be triggered.
     };
 
     /*!
      * @brief Default constructor.
-     * @param service asio::io_service managed by ResourceEvent.
-     * @param callback Callback called when asio::steady_timer is triggered.
+     * @param callback Callback called when the timer is triggered.
      * @param interval Expiration time in milliseconds of the event.
      */
     TimedEventImpl(
@@ -70,22 +69,22 @@ public:
      *
      * When updating the interval, the timer is not restarted and the new interval will only be used the next time you
      * call restart_timer().
-     * @param time New expiration time.
+     * @param interval New expiration time.
      * @return true on success
      */
     bool update_interval(
-            const Duration_t& time);
+            const Duration_t& interval);
 
     /*!
      * @brief Updates the expiration time of the event.
      *
      * When updating the interval, the timer is not restarted and the new interval will only be used the next time you
      * call restart_timer().
-     * @param time_millisec New expiration time in milliseconds.
+     * @param interval New expiration time in milliseconds.
      * @return true on success
      */
     bool update_interval_millisec(
-            double time_millisec);
+            double interval);
 
     /*!
      * @brief Returns current expiration time in milliseconds
@@ -111,6 +110,10 @@ public:
             count());
     }
 
+    /*!
+     * @brief Returns next trigger time as a time point
+     * @return Event's next trigger time as a time point
+     */
     std::chrono::steady_clock::time_point next_trigger_time()
     {
         std::unique_lock<std::mutex> lock(mutex_);
@@ -132,7 +135,7 @@ public:
     bool go_cancel();
 
     /*!
-     * @brief It updates the asio::steady_timer depending of the state of TimedEventImpl object.
+     * @brief It updates the timer depending of the state of TimedEventImpl object.
      * @warning This method has to be called from ResourceEvent's internal thread.
      * @return false if the event was canceled, true otherwise.
      */
@@ -140,14 +143,18 @@ public:
             std::chrono::steady_clock::time_point current_time,
             std::chrono::steady_clock::time_point cancel_time);
 
-
+    /*!
+     * @brief Triggers the callback action.
+     * Also updates next trigger time.
+     * @warning This method has to be called from ResourceEvent's internal thread when the timer expires.
+     */
     void trigger(
             std::chrono::steady_clock::time_point current_time,
             std::chrono::steady_clock::time_point cancel_time);
 
 private:
 
-    //! Expiration time in milliseconds of the event.
+    //! Expiration time in microseconds of the event.
     std::chrono::microseconds interval_microsec_;
 
     //! Next time to update this event

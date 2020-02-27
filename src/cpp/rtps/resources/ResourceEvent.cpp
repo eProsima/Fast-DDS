@@ -259,7 +259,7 @@ void ResourceEvent::init_thread()
     allow_vector_manipulation_ = false;
     resize_collections();
 
-    thread_ = std::thread(&ResourceEvent::run_io_service, this);
+    thread_ = std::thread(&ResourceEvent::event_service, this);
 }
 
 } /* namespace rtps */
