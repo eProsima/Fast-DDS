@@ -148,7 +148,7 @@ bool ResourceEvent::register_timer_nts(
     return false;
 }
 
-void ResourceEvent::run_io_service()
+void ResourceEvent::event_service()
 {
     while (!stop_.load())
     {
