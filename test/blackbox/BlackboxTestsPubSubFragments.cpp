@@ -242,6 +242,62 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditions)
         testTransport->dropLogLength);
 }
 
+TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditionsSmallFragments)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(5).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 300000;
+    uint32_t periodInMs = 200;
+    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
+
+    // To simulate lossy conditions, we are going to remove the default
+    // bultin transport, and instead use a lossy shim layer variant.
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = 1024;
+    testTransport->maxMessageSize = 1024;
+    testTransport->receiveBufferSize = 65536;
+    // We are sending around 300 fragments per sample.
+    // We drop 1% of all data frags
+    testTransport->dropDataFragMessagesPercentage = 1;
+    testTransport->dropLogLength = 1;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.history_depth(5).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+
+    // Sanity check. Make sure we have dropped a few packets
+    ASSERT_EQ(
+        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->dropLogLength);
+}
+
 // Test introduced to verify the fix of the bug (#7609 Do not reuse cache change if sample does not fit)
 // detected in relase 1.9.4 
 TEST(PubSubFragments, AsyncPubSubAsBestEffortAlternateSizeInLossyConditions)
