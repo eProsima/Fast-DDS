@@ -74,6 +74,7 @@ StatefulWriter::StatefulWriter(
     , disable_positive_acks_(att.disable_positive_acks)
     , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
     , last_sequence_number_()
+    , biggest_removed_sequence_number_()
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
     , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
     , m_controllers()
@@ -478,6 +479,12 @@ bool StatefulWriter::change_removed_by_history(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     logInfo(RTPS_WRITER, "Change " << sequence_number << " to be removed.");
 
+    // Take note of biggest removed sequence number to improve sending of gaps
+    if (sequence_number > biggest_removed_sequence_number_)
+    {
+        biggest_removed_sequence_number_ = sequence_number;
+    }
+
     // Invalidate CacheChange pointer in ReaderProxies.
     for (ReaderProxy* it : matched_readers_)
     {
@@ -613,11 +620,12 @@ void StatefulWriter::send_any_unsent_changes()
         RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
         // Add holes in history and send them to all readers
+        SequenceNumber_t max_removed = biggest_removed_sequence_number_;
         SequenceNumber_t last_sequence = mp_history->next_sequence_number();
         SequenceNumber_t min_history_seq = get_seq_num_min();
         uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
         if (there_are_remote_readers_ &&                          // intraprocess gaps are sent separatedly
-            (next_all_acked_notify_sequence_ < last_sequence) &&  // some changes pending acknowledgement
+            (next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
             ( (history_size == 0) ||                              // a) History is empty
               (min_history_seq + history_size != last_sequence))) // b) There is a hole in the history
         {

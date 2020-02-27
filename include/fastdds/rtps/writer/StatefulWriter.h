@@ -334,6 +334,8 @@ private:
     std::chrono::duration<double, std::ratio<1, 1000000> > keep_duration_us_;
     //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
     SequenceNumber_t last_sequence_number_;
+    //! Biggest sequence number removed from history
+    SequenceNumber_t biggest_removed_sequence_number_;
 
     const uint32_t sendBufferSize_;
 
