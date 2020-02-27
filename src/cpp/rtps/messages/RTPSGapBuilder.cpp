@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ bool RTPSGapBuilder::add(
     }
 
     // Did not fit inside bitmap. Difference between gap_sequence and base is greater than 255.
-    // Send GAP with current info and add prepare info for next GAP.
+    // Send GAP with current info and prepare info for next GAP.
     bool ret_val = flush();
     is_gap_pending_ = true;
     initial_sequence_ = gap_sequence;
