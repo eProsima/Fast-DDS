@@ -45,6 +45,7 @@ WriterProxyData::WriterProxyData(
     , m_topicKind(NO_KEY)
     , m_type_id(nullptr)
     , m_type(nullptr)
+    , m_type_information(nullptr)
 {
 }
 
@@ -68,7 +69,7 @@ WriterProxyData::WriterProxyData(
     , persistence_guid_(writerInfo.persistence_guid_)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , m_type_information(writerInfo.m_type_information)
+    , m_type_information(nullptr)
 {
     if (writerInfo.m_type_id)
     {
@@ -80,6 +81,11 @@ WriterProxyData::WriterProxyData(
         type(*writerInfo.m_type);
     }
 
+    if (writerInfo.m_type_information)
+    {
+        type_information(*writerInfo.m_type_information);
+    }
+
     m_qos.setQos(writerInfo.m_qos, true);
 }
 
@@ -87,6 +93,7 @@ WriterProxyData::~WriterProxyData()
 {
     delete m_type;
     delete m_type_id;
+    delete m_type_information;
 
     logInfo(RTPS_PROXY_DATA, this->m_guid);
 }
@@ -109,7 +116,6 @@ WriterProxyData& WriterProxyData::operator =(
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
-    m_type_information = writerInfo.m_type_information;
 
     if (writerInfo.m_type_id)
     {
@@ -129,6 +135,16 @@ WriterProxyData& WriterProxyData::operator =(
     {
         delete m_type;
         m_type = nullptr;
+    }
+
+    if (writerInfo.m_type_information)
+    {
+        type_information(*writerInfo.m_type_information);
+    }
+    else
+    {
+        delete m_type_information;
+        m_type_information = nullptr;
     }
 
     return *this;
@@ -382,9 +398,9 @@ bool WriterProxyData::writeToCDRMessage(
        }
      */
 
-    if (m_type_information.assigned())
+    if (m_type_information && m_type_information->assigned())
     {
-        if (!m_type_information.addToCDRMessage(msg))
+        if (!m_type_information->addToCDRMessage(msg))
         {
             return false;
         }
@@ -611,18 +627,14 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
                         assert(p != nullptr);
-                        if (m_type == nullptr)
-                        {
-                            m_type = new TypeObjectV1();
-                        }
-                        *m_type = *p;
+                        type(*p);
                         break;
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:
                     {
                         const xtypes::TypeInformation* p = dynamic_cast<const xtypes::TypeInformation*>(param);
                         assert(p != nullptr);
-                        m_type_information = *p;
+                        type_information(*p);
                         break;
                     }
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
@@ -702,7 +714,6 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
-    m_type_information = xtypes::TypeInformation();
 
     if (m_type_id)
     {
@@ -711,6 +722,10 @@ void WriterProxyData::clear()
     if (m_type)
     {
         *m_type = TypeObjectV1();
+    }
+    if (m_type_information)
+    {
+        *m_type_information = xtypes::TypeInformation();
     }
 }
 
@@ -728,9 +743,36 @@ void WriterProxyData::copy(
     m_typeMaxSerialized = wdata->m_typeMaxSerialized;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
-    m_type_id = wdata->m_type_id;
-    m_type = wdata->m_type;
-    m_type_information = wdata->m_type_information;
+
+    if (wdata->m_type_id)
+    {
+        type_id(*wdata->m_type_id);
+    }
+    else
+    {
+        delete m_type_id;
+        m_type_id = nullptr;
+    }
+
+    if (wdata->m_type)
+    {
+        type(*wdata->m_type);
+    }
+    else
+    {
+        delete m_type;
+        m_type = nullptr;
+    }
+
+    if (wdata->m_type_information)
+    {
+        type_information(*wdata->m_type_information);
+    }
+    else
+    {
+        delete m_type_information;
+        m_type_information = nullptr;
+    }
 }
 
 bool WriterProxyData::is_update_allowed(

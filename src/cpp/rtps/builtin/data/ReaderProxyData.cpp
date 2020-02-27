@@ -41,6 +41,7 @@ ReaderProxyData::ReaderProxyData (
     , m_topicKind(NO_KEY)
     , m_type_id(nullptr)
     , m_type(nullptr)
+    , m_type_information(nullptr)
 {
     // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
     // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
@@ -51,6 +52,7 @@ ReaderProxyData::~ReaderProxyData()
 {
     delete m_type;
     delete m_type_id;
+    delete m_type_information;
 
     logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << this->m_guid; );
 }
@@ -73,7 +75,7 @@ ReaderProxyData::ReaderProxyData(
     , m_topicKind(readerInfo.m_topicKind)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , m_type_information(readerInfo.m_type_information)
+    , m_type_information(nullptr)
 {
     if (readerInfo.m_type_id)
     {
@@ -83,6 +85,11 @@ ReaderProxyData::ReaderProxyData(
     if (readerInfo.m_type)
     {
         type(*readerInfo.m_type);
+    }
+
+    if (readerInfo.m_type_information)
+    {
+        type_information(*readerInfo.m_type_information);
     }
 
     m_qos.setQos(readerInfo.m_qos, true);
@@ -107,7 +114,6 @@ ReaderProxyData& ReaderProxyData::operator =(
     m_expectsInlineQos = readerInfo.m_expectsInlineQos;
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
-    m_type_information = readerInfo.m_type_information;
 
     if (readerInfo.m_type_id)
     {
@@ -127,6 +133,16 @@ ReaderProxyData& ReaderProxyData::operator =(
     {
         delete m_type;
         m_type = nullptr;
+    }
+
+    if (readerInfo.m_type_information)
+    {
+        type_information(*readerInfo.m_type_information);
+    }
+    else
+    {
+        delete m_type_information;
+        m_type_information = nullptr;
     }
 
     return *this;
@@ -380,9 +396,9 @@ bool ReaderProxyData::writeToCDRMessage(
         }
     }
 
-    if (m_type_information.assigned())
+    if (m_type_information && m_type_information->assigned())
     {
-        if (!m_type_information.addToCDRMessage(msg))
+        if (!m_type_information->addToCDRMessage(msg))
         {
             return false;
         }
@@ -624,7 +640,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     {
                         const xtypes::TypeInformation* p = dynamic_cast<const xtypes::TypeInformation*>(param);
                         assert(p != nullptr);
-                        m_type_information = *p;
+                        type_information(*p);
                         break;
                     }
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
@@ -691,7 +707,6 @@ void ReaderProxyData::clear()
     m_isAlive = true;
     m_topicKind = NO_KEY;
     m_qos = ReaderQos();
-    m_type_information = xtypes::TypeInformation();
 
     if (m_type_id)
     {
@@ -700,6 +715,10 @@ void ReaderProxyData::clear()
     if (m_type)
     {
         *m_type = TypeObjectV1();
+    }
+    if (m_type_information)
+    {
+        *m_type_information = xtypes::TypeInformation();
     }
 }
 
@@ -744,9 +763,36 @@ void ReaderProxyData::copy(
     m_expectsInlineQos = rdata->m_expectsInlineQos;
     m_isAlive = rdata->m_isAlive;
     m_topicKind = rdata->m_topicKind;
-    m_type_id = rdata->m_type_id;
-    m_type = rdata->m_type;
-    m_type_information = rdata->m_type_information;
+
+    if (rdata->m_type_id)
+    {
+        type_id(*rdata->m_type_id);
+    }
+    else
+    {
+        delete m_type_id;
+        m_type_id = nullptr;
+    }
+
+    if (rdata->m_type)
+    {
+        type(*rdata->m_type);
+    }
+    else
+    {
+        delete m_type;
+        m_type = nullptr;
+    }
+
+    if (rdata->m_type_information)
+    {
+        type_information(*rdata->m_type_information);
+    }
+    else
+    {
+        delete m_type_information;
+        m_type_information = nullptr;
+    }
 }
 
 void ReaderProxyData::add_unicast_locator(

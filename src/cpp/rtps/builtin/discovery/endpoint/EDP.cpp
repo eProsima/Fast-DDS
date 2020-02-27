@@ -1421,15 +1421,16 @@ bool EDP::hasTypeIdentifier(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata) const
 {
-    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
-           rdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00);
+    return wdata->has_type_id() && wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+           rdata->has_type_id() && rdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00);
 }
 
 bool EDP::checkTypeObject(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata) const
 {
-    if (wdata->type_information().assigned() && rdata->type_information().assigned())
+    if (wdata->has_type_information() && wdata->type_information().assigned() &&
+            rdata->has_type_information() && rdata->type_information().assigned())
     {
         const types::TypeIdentifier* rtype = nullptr;
         const types::TypeIdentifier* wtype = nullptr;
@@ -1476,8 +1477,8 @@ bool EDP::checkTypeObject(
         return false;
     }
 
-    if (wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
-            rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
+    if (wdata->has_type() && wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
+            rdata->has_type() && rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
     {
         // TODO - Remove once XCDR or XCDR2 is implemented.
         /*
@@ -1506,7 +1507,8 @@ bool EDP::hasTypeObject(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata) const
 {
-    if (wdata->type_information().assigned() && rdata->type_information().assigned())
+    if (wdata->has_type_information() && wdata->type_information().assigned() &&
+            rdata->has_type_information() && rdata->type_information().assigned())
     {
         if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
                 static_cast<uint8_t>(0x00) &&
@@ -1525,8 +1527,8 @@ bool EDP::hasTypeObject(
         return false;
     }
 
-    if (wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
-            rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
+    if (wdata->has_type() && wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
+            rdata->has_type() && rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
     {
         return true;
     }

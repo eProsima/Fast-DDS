@@ -275,6 +275,11 @@ public:
         return *m_type_id;
     }
 
+    RTPS_DllAPI bool has_type_id() const
+    {
+        return m_type_id != nullptr;
+    }
+
     RTPS_DllAPI void type(
             const TypeObjectV1& other_type)
     {
@@ -296,20 +301,35 @@ public:
         return *m_type;
     }
 
-    RTPS_DllAPI void type_information(
-            const xtypes::TypeInformation& type_information)
+    RTPS_DllAPI bool has_type() const
     {
-        m_type_information = type_information;
+        return m_type != nullptr;
+    }
+
+    RTPS_DllAPI void type_information(
+            const xtypes::TypeInformation& other_type_information)
+    {
+        type_information() = other_type_information;
     }
 
     RTPS_DllAPI const xtypes::TypeInformation& type_information() const
     {
-        return m_type_information;
+        assert(m_type_information != nullptr);
+        return *m_type_information;
     }
 
     RTPS_DllAPI xtypes::TypeInformation& type_information()
     {
-        return m_type_information;
+        if (m_type_information == nullptr)
+        {
+            m_type_information = new xtypes::TypeInformation();
+        }
+        return *m_type_information;
+    }
+
+    RTPS_DllAPI bool has_type_information() const
+    {
+        return m_type_information != nullptr;
     }
 
     inline bool disable_positive_acks() const
@@ -400,7 +420,7 @@ private:
     //!Type Object
     TypeObjectV1* m_type;
     //!Type Information
-    xtypes::TypeInformation m_type_information;
+    xtypes::TypeInformation* m_type_information;
 };
 
 }
