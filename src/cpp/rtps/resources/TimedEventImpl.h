@@ -38,8 +38,7 @@ namespace rtps {
 
 /*!
  * This class encapsulates a timer.
- * Also it manages the state of the event (INACTIVE, READY, WAITING..).
- * TimedEventImpl objects can be linked between them.
+ * It also manages the state of the event (INACTIVE, READY, WAITING..).
  * @ingroup MANAGEMENT_MODULE
  */
 class TimedEventImpl
@@ -58,7 +57,7 @@ public:
     /*!
      * @brief Default constructor.
      * @param callback Callback called when the timer is triggered.
-     * @param interval Expiration time in milliseconds of the event.
+     * @param interval Expiration time in microseconds of the event.
      */
     TimedEventImpl(
             Callback callback,
@@ -67,8 +66,8 @@ public:
     /*!
      * @brief Updates the expiration time of the event.
      *
-     * When updating the interval, the timer is not restarted and the new interval will only be used the next time you
-     * call restart_timer().
+     * When updating the interval, the timer is NOT restarted and the new interval will only be used the next time
+     * update() or trigger() are called.
      * @param interval New expiration time.
      * @return true on success
      */
@@ -78,8 +77,8 @@ public:
     /*!
      * @brief Updates the expiration time of the event.
      *
-     * When updating the interval, the timer is not restarted and the new interval will only be used the next time you
-     * call restart_timer().
+     * When updating the interval, the timer is NOT restarted and the new interval will only be used the next time
+     * update() or trigger() are called.
      * @param interval New expiration time in milliseconds.
      * @return true on success
      */
@@ -135,7 +134,7 @@ public:
     bool go_cancel();
 
     /*!
-     * @brief It updates the timer depending of the state of TimedEventImpl object.
+     * @brief It updates the timer depending on the state of the TimedEventImpl object.
      * @warning This method has to be called from ResourceEvent's internal thread.
      * @return false if the event was canceled, true otherwise.
      */
@@ -157,13 +156,16 @@ private:
     //! Expiration time in microseconds of the event.
     std::chrono::microseconds interval_microsec_;
 
-    //! Next time to update this event
+    //! Next time this event should be triggered
     std::chrono::steady_clock::time_point next_trigger_time_;
 
+    //! User function to be called when this event is triggered
     Callback callback_;
 
+    //! Current state of this event
     std::atomic<StateCode> state_;
 
+    //! Protects interval_microsec_ and next_trigger_time_
     std::mutex mutex_;
 };
 
