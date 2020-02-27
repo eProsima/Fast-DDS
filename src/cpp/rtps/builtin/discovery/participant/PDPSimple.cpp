@@ -71,37 +71,38 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    if(!getRTPSParticipant()->getAttributes().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol)
     {
-        logError(RTPS_PDP, "Using a PDP Simple object with another user's settings");
-    }
+        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+        }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
-    {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
-    }
-
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
-    {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
-    }
+        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+        }
 
 #if HAVE_SECURITY
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
-    {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
-    }
+        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
+        }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
-    {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
-    }
+        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
+        {
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
+        }
 #endif
-
+    }
+    else if(!getRTPSParticipant()->getAttributes().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    {
+        logError(RTPS_PDP, "Neither EDP simple nor EDP static enabled. Endpoints will not be discovered.");
+    }
 }
 
 bool PDPSimple::init(RTPSParticipantImpl* part)
