@@ -84,6 +84,7 @@ struct RTPS_DllAPI CDRMessage_t final
         }
 
         max_size = size;
+        reserved_size = size;
 
 #if __BIG_ENDIAN__
         msg_endian = BIGEND;
@@ -105,6 +106,7 @@ struct RTPS_DllAPI CDRMessage_t final
         length = payload.length;
         buffer = payload.data;
         max_size = payload.max_size;
+        reserved_size = payload.max_size;
     }
 
     CDRMessage_t(
@@ -116,6 +118,7 @@ struct RTPS_DllAPI CDRMessage_t final
         max_size = message.max_size;
         msg_endian = message.msg_endian;
 
+        reserved_size = max_size;
         if (max_size != 0)
         {
             buffer =  (octet*)malloc(max_size);
@@ -138,6 +141,8 @@ struct RTPS_DllAPI CDRMessage_t final
         message.length = 0;
         max_size = message.max_size;
         message.max_size = 0;
+        reserved_size = message.reserved_size;
+        message.reserved_size = 0;
         msg_endian = message.msg_endian;
 #if __BIG_ENDIAN__
         message.msg_endian = BIGEND;
@@ -159,6 +164,8 @@ struct RTPS_DllAPI CDRMessage_t final
         message.length = 0;
         max_size = message.max_size;
         message.max_size = 0;
+        reserved_size = message.reserved_size;
+        message.reserved_size = 0;
         msg_endian = message.msg_endian;
 #if __BIG_ENDIAN__
         message.msg_endian = BIGEND;
@@ -175,7 +182,7 @@ struct RTPS_DllAPI CDRMessage_t final
             uint32_t size)
     {
         assert(wraps == false);
-        if (size > max_size)
+        if (size > reserved_size)
         {
             octet* new_buffer = (octet*) realloc(buffer, size);
             if (new_buffer == nullptr)
@@ -185,9 +192,11 @@ struct RTPS_DllAPI CDRMessage_t final
             else
             {
                 buffer = new_buffer;
-                max_size = size;
+                reserved_size = size;
             }
         }
+
+        max_size = size;
     }
 
     //!Pointer to the buffer where the data is stored.
@@ -196,6 +205,8 @@ struct RTPS_DllAPI CDRMessage_t final
     uint32_t pos;
     //!Max size of the message.
     uint32_t max_size;
+    //!Size allocated on buffer. May be higher than max_size.
+    uint32_t reserved_size;
     //!Current length of the message.
     uint32_t length;
     //!Endianness of the message.
