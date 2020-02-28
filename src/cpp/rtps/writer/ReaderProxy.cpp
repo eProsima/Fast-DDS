@@ -43,7 +43,10 @@ ReaderProxy::ReaderProxy(
         StatefulWriter* writer)
     : is_active_(false)
     , locator_info_(writer->getRTPSParticipant(), loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
-    , reader_attributes_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , durability_kind_(VOLATILE)
+    , expects_inline_qos_(false)
+    , is_reliable_(false)
+    , disable_positive_acks_(false)
     , writer_(writer)
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_supression_event_(nullptr)
@@ -55,7 +58,7 @@ ReaderProxy::ReaderProxy(
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
             [&]() -> bool
             {
-                writer_->perform_nack_supression(reader_attributes_.guid());
+                writer_->perform_nack_supression(guid());
                 return false;
             },
             TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
@@ -95,7 +98,10 @@ void ReaderProxy::start(
         reader_attributes.m_expectsInlineQos);
 
     is_active_ = true;
-    reader_attributes_ = reader_attributes;
+    durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
+    expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
+    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS;
+    disable_positive_acks_ = reader_attributes.disable_positive_acks();
 
     timers_enabled_.store(is_remote_and_reliable());
     if (is_local_reader())
@@ -109,15 +115,11 @@ void ReaderProxy::start(
 bool ReaderProxy::update(
         const ReaderProxyData& reader_attributes)
 {
-    if ((reader_attributes_.m_qos == reader_attributes.m_qos) &&
-            (reader_attributes_.remote_locators().unicast == reader_attributes.remote_locators().unicast) &&
-            (reader_attributes_.remote_locators().multicast == reader_attributes.remote_locators().multicast) &&
-            (reader_attributes_.m_expectsInlineQos == reader_attributes.m_expectsInlineQos))
-    {
-        return false;
-    }
+    durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
+    expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
+    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS;
+    disable_positive_acks_ = reader_attributes.disable_positive_acks();
 
-    reader_attributes_ = reader_attributes;
     locator_info_.update(
         reader_attributes.remote_locators().unicast,
         reader_attributes.remote_locators().multicast,
@@ -128,9 +130,8 @@ bool ReaderProxy::update(
 
 void ReaderProxy::stop()
 {
-    locator_info_.stop(reader_attributes_.guid());
+    locator_info_.stop(guid());
     is_active_ = false;
-    reader_attributes_.guid(c_Guid_Unknown);
     disable_timers();
 
     changes_for_reader_.clear();
@@ -209,7 +210,7 @@ void ReaderProxy::add_change(
         // This should never happen
         assert(false);
         logError(RTPS_WRITER, "Error adding change " << change.getSequenceNumber() << " to reader proxy " << \
-                reader_attributes_.guid());
+                guid());
     }
 }
 
@@ -527,7 +528,7 @@ bool ReaderProxy::process_nack_frag(
         const SequenceNumber_t& seq_num,
         const FragmentNumberSet_t& fragments_state)
 {
-    if (reader_attributes_.guid() == reader_guid)
+    if (guid() == reader_guid)
     {
         if (last_nackfrag_count_ < nack_count)
         {

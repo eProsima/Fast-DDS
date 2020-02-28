@@ -51,6 +51,8 @@ class WriterProxyData
 
         void clear() { }
 
+        const GUID_t& persistence_guid() const { return m_guid; }
+
         void persistence_guid(const GUID_t& /*guid*/) { }
 
         void set_announced_unicast_locators(const LocatorList_t& /*locators*/) { }
