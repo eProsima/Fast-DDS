@@ -339,7 +339,11 @@ bool PDP::initPDP(
     }
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
+
+    mp_mutex->lock();
     ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid(), true);
+    mp_mutex->unlock();
+
     if (pdata == nullptr)
     {
         return false;
