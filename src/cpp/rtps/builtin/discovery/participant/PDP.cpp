@@ -1036,9 +1036,9 @@ void PDP::check_and_notify_type_discovery(
         listener,
         wdata.topicName(),
         wdata.typeName(),
-        wdata.type_id().m_type_identifier,
-        wdata.type().m_type_object,
-        wdata.type_information());
+        wdata.has_type_id() ? &wdata.type_id().m_type_identifier : nullptr,
+        wdata.has_type() ? &wdata.type().m_type_object : nullptr,
+        wdata.has_type_information() ? &wdata.type_information() : nullptr);
 }
 
 void PDP::check_and_notify_type_discovery(
@@ -1049,38 +1049,38 @@ void PDP::check_and_notify_type_discovery(
         listener,
         rdata.topicName(),
         rdata.typeName(),
-        rdata.type_id().m_type_identifier,
-        rdata.type().m_type_object,
-        rdata.type_information());
+        rdata.has_type_id() ? &rdata.type_id().m_type_identifier : nullptr,
+        rdata.has_type() ? &rdata.type().m_type_object : nullptr,
+        rdata.has_type_information() ? &rdata.type_information() : nullptr);
 }
 
 void PDP::check_and_notify_type_discovery(
         RTPSParticipantListener* listener,
         const string_255& topic_name,
         const string_255& type_name,
-        const types::TypeIdentifier& type_id,
-        const types::TypeObject& type_obj,
-        const xtypes::TypeInformation& type_info) const
+        const types::TypeIdentifier* type_id,
+        const types::TypeObject* type_obj,
+        const xtypes::TypeInformation* type_info) const
 {
     // Notify about type_info
-    if (type_info.assigned())
+    if (type_info && type_info->assigned())
     {
         listener->on_type_information_received(
-            mp_RTPSParticipant->getUserRTPSParticipant(), topic_name, type_name, type_info.type_information);
+            mp_RTPSParticipant->getUserRTPSParticipant(), topic_name, type_name, type_info->type_information);
     }
 
     // Are we discovering a type?
     types::DynamicType_ptr dyn_type;
-    if (type_obj._d() == types::EK_COMPLETE) // Writer shares a Complete TypeObject
+    if (type_obj && type_obj->_d() == types::EK_COMPLETE) // Writer shares a Complete TypeObject
     {
         dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            type_name.to_string(), &type_id, &type_obj);
+            type_name.to_string(), type_id, type_obj);
     }
-    else if (type_id._d() != static_cast<octet>(0x00)
-             && type_id._d() < types::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
+    else if (type_id && type_id->_d() != static_cast<octet>(0x00)
+             && type_id->_d() < types::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
     {
         dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            type_name.to_string(), &type_id);
+            type_name.to_string(), type_id);
     }
 
     if (dyn_type != nullptr)
@@ -1094,8 +1094,8 @@ void PDP::check_and_notify_type_discovery(
                 mp_RTPSParticipant->getUserRTPSParticipant(),
                 fastdds::dds::builtin::INVALID_SAMPLE_IDENTITY,
                 topic_name,
-                &type_id,
-                &type_obj,
+                type_id,
+                type_obj,
                 dyn_type);
         }
     }
