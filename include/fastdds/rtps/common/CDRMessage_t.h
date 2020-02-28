@@ -188,6 +188,7 @@ struct RTPS_DllAPI CDRMessage_t final
         length = 0;
         buffer = buffer_ptr;
         max_size = size;
+        reserved_size = size;
 
 #if __BIG_ENDIAN__
         msg_endian = BIGEND;

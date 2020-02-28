@@ -86,7 +86,7 @@ struct RTPSParticipantAllocationAttributes
     //! Defines the allocation behaviour for collections dependent on the total number of writers per participant.
     ResourceLimitedContainerConfig writers;
     //! Defines the allocation behaviour for the send buffer manager.
-     SendBuffersAllocationAttributes send_buffers;
+    SendBuffersAllocationAttributes send_buffers;
 
     //! @return the allocation config for the total of readers in the system (participants * readers)
     ResourceLimitedContainerConfig total_readers() const

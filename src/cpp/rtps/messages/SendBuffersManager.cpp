@@ -80,7 +80,7 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
 
     std::unique_ptr<RTPSMessageGroup_t> ret_val;
 
-    if (pool_.empty())
+    while (pool_.empty())
     {
         if (allow_growing_ || n_created_ < pool_.capacity())
         {
@@ -88,8 +88,8 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
         }
         else
         {
+            logInfo(RTPS_PARTICIPANT, "Waiting for send buffer");
             available_cv_.wait(lock);
-            assert(!pool_.empty());
         }
     }
 
