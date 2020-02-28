@@ -326,6 +326,20 @@ private:
      */
     bool ack_timer_expired();
 
+    void send_heartbeat_to_all_readers();
+
+    void send_changes_separatedly(
+            SequenceNumber_t max_sequence,
+            bool& activateHeartbeatPeriod);
+
+    void send_all_unsent_changes(
+            SequenceNumber_t max_sequence,
+            bool& activateHeartbeatPeriod);
+
+    void send_unsent_changes_with_flow_control(
+            SequenceNumber_t max_sequence,
+            bool& activateHeartbeatPeriod);
+
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
@@ -344,6 +358,8 @@ private:
     std::vector<std::unique_ptr<FlowController> > m_controllers;
 
     bool there_are_remote_readers_ = false;
+
+    bool readers_dont_share_locators_ = true;
 
     StatefulWriter& operator =(
             const StatefulWriter&) = delete;

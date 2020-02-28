@@ -238,6 +238,31 @@ bool ReaderProxy::change_is_acked(
     return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
 }
 
+bool ReaderProxy::change_is_unsent(
+        const SequenceNumber_t& seq_num,
+        bool& is_irrelevant) const
+{
+    if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
+    {
+        return false;
+    }
+
+    ChangeConstIterator chit = find_change(seq_num);
+     if (chit == changes_for_reader_.end())
+    {
+        // There is a hole in changes_for_reader_
+        // This means a change was removed.
+        return false;
+    }
+
+    if (chit->isRelevant())
+    {
+        is_irrelevant = false;
+    }
+
+    return chit->getStatus() == UNSENT;
+}
+
 void ReaderProxy::acked_changes_set(
         const SequenceNumber_t& seq_num)
 {

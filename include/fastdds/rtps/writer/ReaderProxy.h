@@ -115,6 +115,16 @@ public:
             const SequenceNumber_t& seq_num) const;
 
     /**
+     * Check if a specific change is marked to be sent to this reader.
+     * @param[in]  seq_num Sequence number of the change to be checked.
+     * @param[out] is_irrelevant Will be forced to true if change is irrelevant for this reader.
+     * @return true when the change is marked to be sent, false otherwise.
+     */
+    bool change_is_unsent(
+            const SequenceNumber_t& seq_num,
+            bool& is_irrelevant) const;
+
+    /**
      * Mark all changes up to the one indicated by seq_num as Acknowledged.
      * For instance, when seq_num is 30, changes 1-29 are marked as acknowledged.
      * @param seq_num Sequence number of the first change not to be marked as acknowledged.

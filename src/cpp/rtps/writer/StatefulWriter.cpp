@@ -48,8 +48,42 @@
 #include <vector>
 #include <stdexcept>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+bool send_data_or_fragments(
+        RTPSMessageGroup& group,
+        CacheChange_t* change,
+        bool inline_qos)
+{
+    bool sent_ok = true;
+
+    if (change->getFragmentSize() > 0)
+    {
+        for (FragmentNumber_t frag = 1; frag <= change->getFragmentCount(); frag++)
+        {
+            sent_ok &= group.add_data_frag(*change, frag, inline_qos);
+            if (!sent_ok)
+            {
+                logError(RTPS_WRITER, "Error sending fragment ("
+                    << change->sequenceNumber << ", " << frag << ")");
+                break;
+            }
+        }
+    }
+    else
+    {
+        sent_ok = group.add_data(*change, inline_qos);
+        if (!sent_ok)
+        {
+            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+        }
+    }
+
+    return sent_ok;
+}
+    
 using namespace std::chrono;
 
 StatefulWriter::StatefulWriter(
@@ -486,395 +520,31 @@ void StatefulWriter::send_any_unsent_changes()
     bool activateHeartbeatPeriod = false;
     SequenceNumber_t max_sequence = mp_history->next_sequence_number();
 
-
-    // Separate sending for asynchronous writers
-    if (m_pushMode && m_separateSendingEnabled)
+    if (!m_pushMode || mp_history->getHistorySize() == 0)
     {
-        if (!isAsync())
-        {
-            for (ReaderProxy* remoteReader : matched_readers_)
-            {
-                try
-                {
-                    // Specific destination message group
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
-                    RTPSGapBuilder gaps(group);
-
-                    if (!remoteReader->is_local_reader() &&
-                        remoteReader->are_there_gaps())
-                    {
-                        send_heartbeat_nts_(1u, group, true);
-                    }
-
-                    // Loop all changes
-                    bool is_remote_and_reliable = remoteReader->is_remote_and_reliable();
-                    SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
-                    auto unsent_change_process =
-                            [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
-                            {
-                                if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
-                                {
-                                    if (unsentChange->getChange()->getFragmentCount() > 0)
-                                    {
-                                        logError(RTPS_WRITER, "Cannot send large messages on separate sending mode");
-                                    }
-
-                                    if (remoteReader->is_local_reader())
-                                    {
-                                        if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
-                                        {
-                                            max_ack_seq = seqNum;
-                                        }
-                                        else
-                                        {
-                                            remoteReader->set_change_to_status(seqNum, UNDERWAY, false);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (group.add_data(*(unsentChange->getChange()),
-                                                remoteReader->expects_inline_qos()))
-                                        {
-                                            remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
-
-                                            if (is_remote_and_reliable)
-                                            {
-                                                activateHeartbeatPeriod = true;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            logError(RTPS_WRITER, "Error sending change " << seqNum);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    if (remoteReader->is_local_reader())
-                                    {
-                                        if (intraprocess_gap(remoteReader, seqNum))
-                                        {
-                                            max_ack_seq = seqNum;
-                                        }
-                                        else
-                                        {
-                                            remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (unsentChange != nullptr && is_remote_and_reliable)
-                                        {
-                                            gaps.add(seqNum);
-                                        }
-                                        remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
-                                    }
-                                } // Relevance
-                            };
-                    remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
-                    if (remoteReader->is_local_reader() && max_ack_seq != SequenceNumber_t::unknown())
-                    {
-                        remoteReader->acked_changes_set(max_ack_seq + 1);
-                    }
-                }
-                catch (const RTPSMessageGroup::timeout&)
-                {
-                    logError(RTPS_WRITER, "Max blocking time reached");
-                }
-            } // Readers loop
-        }
-        else
-        {
-            // This casuistic is not contemplated yet.
-            assert(0);
-        }
+        send_heartbeat_to_all_readers();
+    }
+    else if (m_separateSendingEnabled)
+    {
+        send_changes_separatedly(max_sequence, activateHeartbeatPeriod);
     }
     else
     {
-        RTPSWriterCollector<ReaderProxy*> relevantChanges;
-        bool heartbeat_has_been_sent = false;
-
-        NetworkFactory& network = mp_RTPSParticipant->network_factory();
-        locator_selector_.reset(true);
-        network.select_locators(locator_selector_);
-        compute_selected_guids();
-
-        RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
-
-        // Add holes in history and send them to all readers
-        SequenceNumber_t max_removed = biggest_removed_sequence_number_;
-        SequenceNumber_t last_sequence = mp_history->next_sequence_number();
-        SequenceNumber_t min_history_seq = get_seq_num_min();
-        uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
-        if (there_are_remote_readers_ &&                          // intraprocess gaps are sent separatedly
-            (next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
-            ( (history_size == 0) ||                              // a) History is empty
-              (min_history_seq + history_size != last_sequence))) // b) There is a hole in the history
+        bool no_flow_controllers = m_controllers.empty() && mp_RTPSParticipant->getFlowControllers().empty();
+        if (no_flow_controllers || !there_are_remote_readers_)
         {
-            try
+            if (readers_dont_share_locators_)
             {
-                send_heartbeat_nts_(all_remote_readers_.size(), group, true);
-                heartbeat_has_been_sent = true;
-
-                if (history_size == 0)
-                {
-                    // History is empty. Send single GAP from next_all_acked_notify_sequence_ to last_sequence - 1
-                    SequenceNumberSet_t gap_end(last_sequence);
-                    group.add_gap(next_all_acked_notify_sequence_, gap_end);
-                }
-                else
-                {
-                    // Find holes in history from next_all_acked_notify_sequence_ to last_sequence - 1
-                    RTPSGapBuilder gap_builder(group);
-
-                    // Algorithm starts in next_all_acked_notify_sequence_
-                    SequenceNumber_t seq = next_all_acked_notify_sequence_;
-
-                    // Point to first change with sequence not less than next_all_acked_notify_sequence_
-                    auto cit = std::lower_bound(
-                        mp_history->changesBegin(), mp_history->changesEnd(), seq,
-                        [](
-                            const CacheChange_t* change, const SequenceNumber_t& seq)
-                        {
-                            return change->sequenceNumber < seq;
-                        });
-
-                    // Loop till the end of history
-                    for (; cit != mp_history->changesEnd(); cit++)
-                    {
-                        // Add all sequence numbers until the change's sequence number
-                        while (seq < (*cit)->sequenceNumber)
-                        {
-                            gap_builder.add(seq);
-                            seq++;
-                        }
-
-                        // Skip change's sequence number
-                        seq++;
-                    }
-
-                    // Add all sequence numbers above last change
-                    while (seq < last_sequence)
-                    {
-                        gap_builder.add(seq);
-                        seq++;
-                    }
-                }
+                send_changes_separatedly(max_sequence, activateHeartbeatPeriod);
             }
-            catch (const RTPSMessageGroup::timeout&)
+            else
             {
-                logError(RTPS_WRITER, "Max blocking time reached");
-            }
-        }
-
-        for (ReaderProxy* remoteReader : matched_readers_)
-        {
-            if (!heartbeat_has_been_sent && !remoteReader->is_local_reader() && remoteReader->are_there_gaps())
-            {
-                send_heartbeat_nts_(all_remote_readers_.size(), group, true);
-                heartbeat_has_been_sent = true;
-            }
-
-            RTPSGapBuilder gaps(group, remoteReader->guid());
-            SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
-            auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
-                {
-                    if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
-                    {
-                        if (remoteReader->is_local_reader())
-                        {
-                            if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
-                            {
-                                max_ack_seq = seq_num;
-                            }
-                            else
-                            {
-                                remoteReader->set_change_to_status(seq_num, UNDERWAY, false);
-                            }
-                        }
-                        else
-                        {
-                            if (m_pushMode)
-                            {
-                                relevantChanges.add_change(
-                                    unsentChange->getChange(), remoteReader, unsentChange->getUnsentFragments());
-                            }
-                            else // Change status to UNACKNOWLEDGED
-                            {
-                                remoteReader->set_change_to_status(seq_num, UNACKNOWLEDGED, false);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (remoteReader->is_local_reader())
-                        {
-                            if (intraprocess_gap(remoteReader, seq_num))
-                            {
-                                max_ack_seq = seq_num;
-                            }
-                            else
-                            {
-                                remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
-                            }
-                        }
-                        else
-                        {
-                            // Skip holes in history, as they were added before
-                            if (unsentChange != nullptr && remoteReader->is_reliable())
-                            {
-                                gaps.add(seq_num);
-                            }
-
-                            remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
-                        }
-                    }
-                };
-
-            remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
-            if (remoteReader->is_local_reader() && max_ack_seq != SequenceNumber_t::unknown())
-            {
-                remoteReader->acked_changes_set(max_ack_seq + 1);
-            }
-        }
-
-        if (m_pushMode)
-        {
-            if (there_are_remote_readers_)
-            {
-                // Clear all relevant changes through the local controllers first
-                for (std::unique_ptr<FlowController>& controller : m_controllers)
-                {
-                    (*controller)(relevantChanges);
-                }
-
-                // Clear all relevant changes through the parent controllers
-                for (std::unique_ptr<FlowController>& controller : mp_RTPSParticipant->getFlowControllers())
-                {
-                    (*controller)(relevantChanges);
-                }
-
-                try
-                {
-                    uint32_t lastBytesProcessed = 0;
-
-                    while (!relevantChanges.empty())
-                    {
-                        RTPSWriterCollector<ReaderProxy*>::Item changeToSend = relevantChanges.pop();
-                        bool expectsInlineQos = false;
-                        locator_selector_.reset(false);
-
-                        for (const ReaderProxy* remoteReader : changeToSend.remoteReaders)
-                        {
-                            locator_selector_.enable(remoteReader->guid());
-                            expectsInlineQos |= remoteReader->expects_inline_qos();
-                        }
-
-                        if (locator_selector_.state_has_changed())
-                        {
-                            group.flush_and_reset();
-                            network.select_locators(locator_selector_);
-                            compute_selected_guids();
-                        }
-
-                        // TODO(Ricardo) Flowcontroller has to be used in RTPSMessageGroup. Study.
-                        // And controllers are notified about the changes being sent
-                        FlowController::NotifyControllersChangeSent(changeToSend.cacheChange);
-
-                        if (changeToSend.fragmentNumber != 0)
-                        {
-                            if (group.add_data_frag(*changeToSend.cacheChange, changeToSend.fragmentNumber,
-                                    expectsInlineQos))
-                            {
-                                bool must_wake_up_async_thread = false;
-                                for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
-                                {
-                                    bool allFragmentsSent = false;
-                                    if (remoteReader->mark_fragment_as_sent_for_change(
-                                                changeToSend.sequenceNumber,
-                                                changeToSend.fragmentNumber,
-                                                allFragmentsSent))
-                                    {
-                                        must_wake_up_async_thread |= !allFragmentsSent;
-                                        if (remoteReader->is_remote_and_reliable())
-                                        {
-                                            activateHeartbeatPeriod = true;
-                                            if (allFragmentsSent)
-                                            {
-                                                remoteReader->set_change_to_status(changeToSend.sequenceNumber,
-                                                        UNDERWAY,
-                                                        true);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (allFragmentsSent)
-                                            {
-                                                remoteReader->set_change_to_status(changeToSend.sequenceNumber,
-                                                        ACKNOWLEDGED, false);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (must_wake_up_async_thread)
-                                {
-                                    mp_RTPSParticipant->async_thread().wake_up(this);
-                                }
-                            }
-                            else
-                            {
-                                logError(RTPS_WRITER, "Error sending fragment (" << changeToSend.sequenceNumber <<
-                                        ", " << changeToSend.fragmentNumber << ")");
-                            }
-                        }
-                        else
-                        {
-                            if (group.add_data(*changeToSend.cacheChange, expectsInlineQos))
-                            {
-                                for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
-                                {
-                                    remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
-
-                                    if (remoteReader->is_remote_and_reliable())
-                                    {
-                                        activateHeartbeatPeriod = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                logError(RTPS_WRITER, "Error sending change " << changeToSend.sequenceNumber);
-                            }
-                        }
-                    }
-
-                    // Heartbeat piggyback.
-                    send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
-
-                    group.flush_and_reset();
-                }
-                catch (const RTPSMessageGroup::timeout&)
-                {
-                    logError(RTPS_WRITER, "Max blocking time reached");
-                }
-
-                locator_selector_.reset(true);
-                network.select_locators(locator_selector_);
-                compute_selected_guids();
+                send_all_unsent_changes(max_sequence, activateHeartbeatPeriod);
             }
         }
         else
         {
-            try
-            {
-                send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
-                group.flush_and_reset();
-            }
-            catch (const RTPSMessageGroup::timeout&)
-            {
-                logError(RTPS_WRITER, "Max blocking time reached");
-            }
+            send_unsent_changes_with_flow_control(max_sequence, activateHeartbeatPeriod);
         }
     }
 
@@ -887,6 +557,549 @@ void StatefulWriter::send_any_unsent_changes()
     check_acked_status();
 
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
+}
+
+void StatefulWriter::send_heartbeat_to_all_readers()
+{
+    if (m_separateSendingEnabled)
+    {
+        for (ReaderProxy* reader : matched_readers_)
+        {
+            if (reader->is_local_reader())
+            {
+                intraprocess_heartbeat(reader);
+            }
+            else
+            {
+                send_heartbeat_to_nts(*reader);
+            }
+        }
+    }
+    else
+    {
+        for (ReaderProxy* reader : matched_readers_)
+        {
+            if (reader->is_local_reader())
+            {
+                intraprocess_heartbeat(reader);
+            }
+        }
+
+        if (there_are_remote_readers_)
+        {
+            RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
+            send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
+        }
+    }
+}
+
+void StatefulWriter::send_changes_separatedly(
+        SequenceNumber_t max_sequence,
+        bool& activateHeartbeatPeriod)
+{
+    for (ReaderProxy* remoteReader : matched_readers_)
+    {
+        if (remoteReader->is_local_reader())
+        {
+            SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
+            auto unsent_change_process =
+                [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
+            {
+                if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                {
+                    if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
+                    {
+                        max_ack_seq = seqNum;
+                    }
+                    else
+                    {
+                        remoteReader->set_change_to_status(seqNum, UNDERWAY, false);
+                    }
+                }
+                else
+                {
+                    if (intraprocess_gap(remoteReader, seqNum))
+                    {
+                        max_ack_seq = seqNum;
+                    }
+                    else
+                    {
+                        remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
+                    }
+                }
+            };
+            remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+            if (max_ack_seq != SequenceNumber_t::unknown())
+            {
+                remoteReader->acked_changes_set(max_ack_seq + 1);
+            }
+        }
+        else
+        {
+            // Specific destination message group
+            RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
+            SequenceNumber_t min_history_seq = get_seq_num_min();
+            if (remoteReader->is_reliable())
+            {
+                if (remoteReader->are_there_gaps())
+                {
+                    send_heartbeat_nts_(1u, group, true);
+                }
+
+                RTPSGapBuilder gaps(group);
+                auto unsent_change_process =
+                    [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
+                {
+                    if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                    {
+                        bool sent_ok = send_data_or_fragments(
+                            group,
+                            unsentChange->getChange(),
+                            remoteReader->expects_inline_qos());
+                        if (sent_ok)
+                        {
+                            remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
+                            activateHeartbeatPeriod = true;
+                        }
+                    }
+                    else
+                    {
+                        if (seqNum >= min_history_seq)
+                        {
+                            gaps.add(seqNum);
+                        }
+                        remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
+                    }
+                };
+                remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+            }
+            else
+            {
+                SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
+                auto unsent_change_process =
+                    [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
+                {
+                    if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                    {
+                        bool sent_ok = send_data_or_fragments(
+                            group,
+                            unsentChange->getChange(),
+                            remoteReader->expects_inline_qos());
+                        if (sent_ok)
+                        {
+                            max_ack_seq = seqNum;
+                        }
+                    }
+                    else
+                    {
+                        max_ack_seq = seqNum;
+                    }
+                };
+                remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+                if (max_ack_seq != SequenceNumber_t::unknown())
+                {
+                    remoteReader->acked_changes_set(max_ack_seq + 1);
+                }
+            }
+        }
+    } // Readers loop
+}
+
+void StatefulWriter::send_all_unsent_changes(
+        SequenceNumber_t max_sequence,
+        bool& activateHeartbeatPeriod)
+{
+    // Process intraprocess first
+    for (ReaderProxy* remoteReader : matched_readers_)
+    {
+        if (remoteReader->is_local_reader())
+        {
+            SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
+            auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
+            {
+                if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                {
+                    if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
+                    {
+                        max_ack_seq = seq_num;
+                    }
+                    else
+                    {
+                        remoteReader->set_change_to_status(seq_num, UNDERWAY, false);
+                    }
+                }
+                else
+                {
+                    if (intraprocess_gap(remoteReader, seq_num))
+                    {
+                        max_ack_seq = seq_num;
+                    }
+                    else
+                    {
+                        remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
+                    }
+                }
+            };
+
+            remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+            if (max_ack_seq != SequenceNumber_t::unknown())
+            {
+                remoteReader->acked_changes_set(max_ack_seq + 1);
+            }
+        }
+    }
+
+    if (there_are_remote_readers_)
+    {
+        NetworkFactory& network = mp_RTPSParticipant->network_factory();
+        locator_selector_.reset(true);
+        network.select_locators(locator_selector_);
+        compute_selected_guids();
+
+        bool force_piggyback_hb = false; // Force piggyback HB if old samples not acknowledged.
+
+        RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
+
+        RTPSGapBuilder gap_builder(group);
+        SequenceNumber_t seq = next_all_acked_notify_sequence_;
+        SequenceNumber_t last_sequence = mp_history->next_sequence_number();
+
+        force_piggyback_hb = seq < get_seq_num_min();
+        seq = get_seq_num_min();
+
+        // Add holes in history and send them to all readers
+        for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
+        {
+            // Add all sequence numbers until the change's sequence number
+            while (seq < (*cit)->sequenceNumber)
+            {
+                gap_builder.add(seq);
+                seq++;
+            }
+
+            // Check if change is relevant for at least one reader
+            bool is_irrelevant = true;
+            bool should_be_sent = false;
+            bool inline_qos = false;
+            for (ReaderProxy* remoteReader : matched_readers_)
+            {
+                if (!remoteReader->is_local_reader())
+                {
+                    should_be_sent |= remoteReader->change_is_unsent(seq, is_irrelevant);
+                    if (should_be_sent)
+                    {
+                        inline_qos |= remoteReader->expects_inline_qos();
+                        if (is_irrelevant)
+                        {
+                            remoteReader->set_change_to_status(seq, UNDERWAY, true);
+                        }
+                    }
+                }
+            }
+
+            if (should_be_sent)
+            {
+                if (is_irrelevant)
+                {
+                    gap_builder.add(seq);
+                }
+                else
+                {
+                    bool sent_ok = send_data_or_fragments(group, *cit, inline_qos);
+                    if (sent_ok)
+                    {
+                        bool tmp_bool = false;
+                        for (ReaderProxy* remoteReader : matched_readers_)
+                        {
+                            if (!remoteReader->is_local_reader())
+                            {
+                                if(remoteReader->change_is_unsent(seq, tmp_bool))
+                                {
+                                    remoteReader->set_change_to_status(seq, UNDERWAY, true);
+                                    if (remoteReader->is_reliable())
+                                    {
+                                        activateHeartbeatPeriod = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Skip change's sequence number
+            seq++;
+        }
+
+        // Add all sequence numbers above last change
+        while (seq < last_sequence)
+        {
+            gap_builder.add(seq);
+            seq++;
+        }
+
+        // Heartbeat piggyback.
+        if (there_are_remote_readers_)
+        {
+            send_heartbeat_nts_(all_remote_readers_.size(), group, !force_piggyback_hb);
+        }
+
+        group.flush_and_reset();
+
+        locator_selector_.reset(true);
+        network.select_locators(locator_selector_);
+        compute_selected_guids();
+    }
+}
+
+void StatefulWriter::send_unsent_changes_with_flow_control(
+        SequenceNumber_t max_sequence,
+        bool& activateHeartbeatPeriod)
+{
+    RTPSWriterCollector<ReaderProxy*> relevantChanges;
+    bool heartbeat_has_been_sent = false;
+
+    NetworkFactory& network = mp_RTPSParticipant->network_factory();
+    locator_selector_.reset(true);
+    network.select_locators(locator_selector_);
+    compute_selected_guids();
+
+    RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
+
+    // Add holes in history and send them to all readers
+    if (there_are_remote_readers_)
+    {
+        try
+        {
+            RTPSGapBuilder gap_builder(group);
+            SequenceNumber_t seq = next_all_acked_notify_sequence_;
+            SequenceNumber_t last_sequence = mp_history->next_sequence_number();
+            SequenceNumber_t min_history_seq = get_seq_num_min();
+
+            // This condition will be true if there is a hole in the history
+            if ( (seq + static_cast<uint32_t>(mp_history->getHistorySize()) + 1) != last_sequence)
+            {
+                send_heartbeat_nts_(all_remote_readers_.size(), group, true);
+                heartbeat_has_been_sent = true;
+            }
+
+            seq = min_history_seq;
+            if (seq != c_SequenceNumber_Unknown)
+            {
+                for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
+                {
+                    // Add all sequence numbers until the change's sequence number
+                    while (seq < (*cit)->sequenceNumber)
+                    {
+                        gap_builder.add(seq);
+                        seq++;
+                    }
+
+                    // Skip change's sequence number
+                    seq++;
+                }
+
+                // Add all sequence numbers above last change
+                while (seq < last_sequence)
+                {
+                    gap_builder.add(seq);
+                    seq++;
+                }
+            }
+        }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+    }
+
+    for (ReaderProxy* remoteReader : matched_readers_)
+    {
+        if (!heartbeat_has_been_sent && !remoteReader->is_local_reader() && remoteReader->are_there_gaps())
+        {
+            send_heartbeat_nts_(all_remote_readers_.size(), group, true);
+            heartbeat_has_been_sent = true;
+        }
+
+        RTPSGapBuilder gaps(group, remoteReader->guid());
+        SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
+        auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
+            {
+                if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                {
+                    if (remoteReader->is_local_reader())
+                    {
+                        if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
+                        {
+                            max_ack_seq = seq_num;
+                        }
+                        else
+                        {
+                            remoteReader->set_change_to_status(seq_num, UNDERWAY, false);
+                        }
+                    }
+                    else
+                    {
+                        relevantChanges.add_change(
+                            unsentChange->getChange(), remoteReader, unsentChange->getUnsentFragments());
+                    }
+                }
+                else
+                {
+                    if (remoteReader->is_local_reader())
+                    {
+                        if (intraprocess_gap(remoteReader, seq_num))
+                        {
+                            max_ack_seq = seq_num;
+                        }
+                        else
+                        {
+                            remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
+                        }
+                    }
+                    else
+                    {
+                        // Skip holes in history, as they were added before
+                        if (unsentChange != nullptr && remoteReader->is_reliable())
+                        {
+                            gaps.add(seq_num);
+                        }
+
+                        remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
+                    }
+                }
+            };
+
+        remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+        if (remoteReader->is_local_reader() && max_ack_seq != SequenceNumber_t::unknown())
+        {
+            remoteReader->acked_changes_set(max_ack_seq + 1);
+        }
+    }
+
+    if (there_are_remote_readers_)
+    {
+        // Clear all relevant changes through the local controllers first
+        for (std::unique_ptr<FlowController>& controller : m_controllers)
+        {
+            (*controller)(relevantChanges);
+        }
+
+        // Clear all relevant changes through the parent controllers
+        for (std::unique_ptr<FlowController>& controller : mp_RTPSParticipant->getFlowControllers())
+        {
+            (*controller)(relevantChanges);
+        }
+
+        try
+        {
+            uint32_t lastBytesProcessed = 0;
+
+            while (!relevantChanges.empty())
+            {
+                RTPSWriterCollector<ReaderProxy*>::Item changeToSend = relevantChanges.pop();
+                bool expectsInlineQos = false;
+                locator_selector_.reset(false);
+
+                for (const ReaderProxy* remoteReader : changeToSend.remoteReaders)
+                {
+                    locator_selector_.enable(remoteReader->guid());
+                    expectsInlineQos |= remoteReader->expects_inline_qos();
+                }
+
+                if (locator_selector_.state_has_changed())
+                {
+                    group.flush_and_reset();
+                    network.select_locators(locator_selector_);
+                    compute_selected_guids();
+                }
+
+                // TODO(Ricardo) Flowcontroller has to be used in RTPSMessageGroup. Study.
+                // And controllers are notified about the changes being sent
+                FlowController::NotifyControllersChangeSent(changeToSend.cacheChange);
+
+                if (changeToSend.fragmentNumber != 0)
+                {
+                    if (group.add_data_frag(*changeToSend.cacheChange, changeToSend.fragmentNumber,
+                            expectsInlineQos))
+                    {
+                        bool must_wake_up_async_thread = false;
+                        for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
+                        {
+                            bool allFragmentsSent = false;
+                            if (remoteReader->mark_fragment_as_sent_for_change(
+                                        changeToSend.sequenceNumber,
+                                        changeToSend.fragmentNumber,
+                                        allFragmentsSent))
+                            {
+                                must_wake_up_async_thread |= !allFragmentsSent;
+                                if (remoteReader->is_remote_and_reliable())
+                                {
+                                    activateHeartbeatPeriod = true;
+                                    if (allFragmentsSent)
+                                    {
+                                        remoteReader->set_change_to_status(changeToSend.sequenceNumber,
+                                                UNDERWAY,
+                                                true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (allFragmentsSent)
+                                    {
+                                        remoteReader->set_change_to_status(changeToSend.sequenceNumber,
+                                                ACKNOWLEDGED, false);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (must_wake_up_async_thread)
+                        {
+                            mp_RTPSParticipant->async_thread().wake_up(this);
+                        }
+                    }
+                    else
+                    {
+                        logError(RTPS_WRITER, "Error sending fragment (" << changeToSend.sequenceNumber <<
+                                ", " << changeToSend.fragmentNumber << ")");
+                    }
+                }
+                else
+                {
+                    if (group.add_data(*changeToSend.cacheChange, expectsInlineQos))
+                    {
+                        for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
+                        {
+                            remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
+
+                            if (remoteReader->is_remote_and_reliable())
+                            {
+                                activateHeartbeatPeriod = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        logError(RTPS_WRITER, "Error sending change " << changeToSend.sequenceNumber);
+                    }
+                }
+            }
+
+            // Heartbeat piggyback.
+            send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
+            
+            group.flush_and_reset();
+        }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+
+        locator_selector_.reset(true);
+        network.select_locators(locator_selector_);
+        compute_selected_guids();
+    }
 }
 
 /*
@@ -907,13 +1120,84 @@ void StatefulWriter::update_reader_info(
         });
     }
 
+    // Check if readers have locators in common
+    size_t n_readers = matched_readers_.size();
+    size_t first_remote = 0;
+    readers_dont_share_locators_ = true;
     there_are_remote_readers_ = false;
-    for (ReaderProxy* reader : matched_readers_)
+
+    size_t i;
+    for (i = 0; (i < n_readers) && readers_dont_share_locators_; ++i)
     {
+        ReaderProxy* reader = matched_readers_.at(i);
+        if (!reader->is_local_reader())
+        {
+            if (!there_are_remote_readers_)
+            {
+                there_are_remote_readers_ = true;
+                first_remote = i;
+            }
+            else
+            {
+                // Multicast locators will often match, so we check them first
+                for (const Locator_t& loc : reader->locator_selector_entry()->multicast)
+                {
+                    for (size_t j = first_remote; j < i; ++j)
+                    {
+                        ReaderProxy* other_reader = matched_readers_.at(j);
+                        if (!other_reader->is_local_reader())
+                        {
+                            const ResourceLimitedVector<Locator_t>& other_locs =
+                                other_reader->locator_selector_entry()->multicast;
+                            if (std::find(other_locs.begin(), other_locs.end(), loc) != other_locs.end())
+                            {
+                                readers_dont_share_locators_ = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!readers_dont_share_locators_)
+                    {
+                        break;
+                    }
+                }
+
+                if (readers_dont_share_locators_)
+                {
+                    for (const Locator_t& loc : reader->locator_selector_entry()->unicast)
+                    {
+                        for (size_t j = first_remote; j < i; ++j)
+                        {
+                            ReaderProxy* other_reader = matched_readers_.at(j);
+                            if (!other_reader->is_local_reader())
+                            {
+                                const ResourceLimitedVector<Locator_t>& other_locs =
+                                    other_reader->locator_selector_entry()->unicast;
+                                if (std::find(other_locs.begin(), other_locs.end(), loc) != other_locs.end())
+                                {
+                                    readers_dont_share_locators_ = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!readers_dont_share_locators_)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for (; i < n_readers && !there_are_remote_readers_; ++i)
+    {
+        ReaderProxy* reader = matched_readers_.at(i);
         if (!reader->is_local_reader())
         {
             there_are_remote_readers_ = true;
-            break;
         }
     }
 }
@@ -1241,7 +1525,7 @@ bool StatefulWriter::wait_for_all_acked(
 
     if (!all_acked_)
     {
-        std::chrono::microseconds max_w(::TimeConv::Duration_t2MicroSecondsInt64(max_wait));
+        std::chrono::microseconds max_w(TimeConv::Duration_t2MicroSecondsInt64(max_wait));
         all_acked_cond_.wait_for(all_acked_lock, max_w, [&]() {
             return all_acked_;
         });
@@ -1426,7 +1710,7 @@ bool StatefulWriter::send_periodic_heartbeat(
     {
         for (ReaderProxy* it : matched_readers_)
         {
-            if (it->has_unacknowledged())
+            if (it->has_unacknowledged() && !it->is_local_reader())
             {
                 send_heartbeat_to_nts(*it, liveliness);
                 unacked_changes = true;
@@ -1754,3 +2038,7 @@ bool StatefulWriter::ack_timer_expired()
     ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     return true;
 }
+
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
