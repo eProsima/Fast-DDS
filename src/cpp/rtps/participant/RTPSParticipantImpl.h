@@ -341,6 +341,11 @@ public:
 
     fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
 
+    bool is_intraprocess_only() const
+    {
+        return is_intraprocess_only_;
+    }
+
     NetworkFactory& network_factory()
     {
         return m_network_Factory;
@@ -510,6 +515,9 @@ private:
 
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
+
+    //!Will this participant use intraprocess only?
+    bool is_intraprocess_only_;
 
     /*
      * Flow controllers for this participant.
