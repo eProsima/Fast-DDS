@@ -37,9 +37,9 @@ DServerEvent::DServerEvent(
         PDPServer* p_PDP,
         double interval)
     : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
-        [this](EventCode code)
+        [this]()
         {
-            return event(code);
+            return event();
         }, interval)
     , mp_PDP(p_PDP)
     , messages_enabled_(false)
@@ -51,79 +51,69 @@ DServerEvent::~DServerEvent()
 {
 }
 
-bool DServerEvent::event(EventCode code)
+bool DServerEvent::event()
 {
-    if(code == EVENT_SUCCESS)
+    logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
+
+    bool restart = false;
+
+    // messges_enabled is only modified from this thread
+    if (!messages_enabled_)
     {
-        logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
+        messages_enabled_ = true;
+        mp_PDP->getRTPSParticipant()->enableReader(mp_PDP->mp_PDPReader);
+    }
 
-        bool restart = false;
-
-        // messges_enabled is only modified from this thread
-        if (!messages_enabled_)
+    // Check Server matching
+    if (mp_PDP->all_servers_acknowledge_PDP())
+    {
+        // Wait until we have received all network discovery info currently available
+        if (mp_PDP->is_all_servers_PDPdata_updated())
         {
-            messages_enabled_ = true;
-            mp_PDP->getRTPSParticipant()->enableReader(mp_PDP->mp_PDPReader);
-        }
-
-        // Check Server matching
-        if (mp_PDP->all_servers_acknowledge_PDP())
-        {
-            // Wait until we have received all network discovery info currently available
-            if (mp_PDP->is_all_servers_PDPdata_updated())
-            {
-                restart |= !mp_PDP->match_servers_EDP_endpoints();
-                // we must keep this TimedEvent alive to cope with servers' shutdown
-                // PDPServer::removeRemoteEndpoints would restart_timer if a server vanishes
-            }
-            else
-            {
-                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all servers acknowledge PDP info")
-                restart = true;
-            }
+            restart |= !mp_PDP->match_servers_EDP_endpoints();
+            // we must keep this TimedEvent alive to cope with servers' shutdown
+            // PDPServer::removeRemoteEndpoints would restart_timer if a server vanishes
         }
         else
-        {   // awake the other servers
-            mp_PDP->announceParticipantState(false);
+        {
+            logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all servers acknowledge PDP info")
             restart = true;
         }
-
-        // Check EDP matching
-        if (mp_PDP->pendingEDPMatches())
-        {
-            if (mp_PDP->all_clients_acknowledge_PDP())
-            {
-                // Do the matching
-                mp_PDP->match_all_clients_EDP_endpoints();
-                // Whenever new clients appear restart_timer()
-                // see PDPServer::queueParticipantForEDPMatch
-
-                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " clients EDP points matched")
-            }
-            else
-            {   // keep trying the match
-                restart = true;
-
-                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all clients acknowledge PDP info")
-            }
-        }
-
-        if (mp_PDP->pendingHistoryCleaning())
-        {
-            restart |= !mp_PDP->trimWriterHistory();
-
-            logInfo(SERVER_PDP_THREAD, "trimming PDP history from removed endpoints")
-        }
-
-        return restart;
-
     }
-    else if(code == EVENT_ABORT)
+    else
+    {   // awake the other servers
+        mp_PDP->announceParticipantState(false);
+        restart = true;
+    }
+
+    // Check EDP matching
+    if (mp_PDP->pendingEDPMatches())
     {
-        logInfo(SERVER_PDP_THREAD,"DServerEvent aborted");
+        if (mp_PDP->all_clients_acknowledge_PDP())
+        {
+            // Do the matching
+            mp_PDP->match_all_clients_EDP_endpoints();
+            // Whenever new clients appear restart_timer()
+            // see PDPServer::queueParticipantForEDPMatch
+
+            logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " clients EDP points matched")
+        }
+        else
+        {   // keep trying the match
+            restart = true;
+
+            logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all clients acknowledge PDP info")
+        }
     }
 
-    return false;
+    if (mp_PDP->pendingHistoryCleaning())
+    {
+        restart |= !mp_PDP->trimWriterHistory();
+
+        logInfo(SERVER_PDP_THREAD, "trimming PDP history from removed endpoints")
+    }
+
+    return restart;
 }
 
 } /* namespace rtps */

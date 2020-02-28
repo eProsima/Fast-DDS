@@ -35,7 +35,7 @@ class MockEvent
 
         eprosima::fastrtps::rtps::TimedEvent& event() { return event_; }
 
-        bool callback(eprosima::fastrtps::rtps::TimedEvent::EventCode code);
+        bool callback();
 
         void wait();
 
@@ -44,7 +44,6 @@ class MockEvent
         bool wait(unsigned int milliseconds);
 
         std::atomic<int> successed_;
-        std::atomic<int> cancelled_;
 
     private:
 

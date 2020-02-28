@@ -844,13 +844,9 @@ bool SecurityManager::on_process_handshake(
                         remote_participant_info->expected_sequence_number_ = expected_sequence_number;
                         const GUID_t guid = participant_data.m_guid;
                         remote_participant_info->event_ = new TimedEvent(participant_->getEventResource(),
-                                [&, guid](TimedEvent::EventCode code) -> bool
+                                [&, guid]() -> bool
                                 {
-                                    if (TimedEvent::EVENT_SUCCESS == code)
-                                    {
-                                        resend_handshake_message_token(guid);
-                                    }
-
+                                    resend_handshake_message_token(guid);
                                     return true;
                                 },
                                 500); // TODO (Ricardo) Configurable

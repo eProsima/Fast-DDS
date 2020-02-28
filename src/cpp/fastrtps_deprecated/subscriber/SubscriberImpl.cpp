@@ -64,26 +64,16 @@ SubscriberImpl::SubscriberImpl(
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    return deadline_missed();
-                }
-
-                return false;
+                return deadline_missed();
             },
             att.qos.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    return lifespan_expired();
-                }
-
-                return false;
+                return lifespan_expired();
             },
             att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }

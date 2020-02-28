@@ -18,192 +18,250 @@
  */
 
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <rtps/resources/TimedEventImpl.h>
+#include <fastdds/dds/log/Log.hpp>
 
-#include <asio.hpp>
+#include "TimedEventImpl.h"
+
+#include <cassert>
 #include <thread>
-#include <functional>
-#include <future>
-#include <fastrtps/log/Log.h>
-#include <asio/steady_timer.hpp>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-
-ResourceEvent::ResourceEvent()
-    : stop_(false)
-    , allow_to_delete_(false)
-    , front_(nullptr)
-    , back_(nullptr)
-    , io_service_(
-#if ASIO_VERSION >= 101200
-            ASIO_CONCURRENCY_HINT_UNSAFE_IO
-#else
-            1
-#endif
-            )
+static bool event_compare(
+        TimedEventImpl* lhs,
+        TimedEventImpl* rhs)
 {
+    return lhs->next_trigger_time() < rhs->next_trigger_time();
 }
 
 ResourceEvent::~ResourceEvent()
 {
     // All timer should be unregistered before destroying this object.
-    assert(front_ == nullptr);
-    assert(back_ == nullptr);
+    assert(pending_timers_.empty());
+    assert(timers_count_ == 0);
 
-    logInfo(RTPS_PARTICIPANT,"Removing event thread");
-    stop_.store(true);
-    io_service_.stop();
-
+    logInfo(RTPS_PARTICIPANT, "Removing event thread");
     if (thread_.joinable())
     {
+        {
+            std::unique_lock<TimedMutex> lock(mutex_);
+            stop_.store(true);
+            cv_.notify_one();
+        }
         thread_.join();
     }
 }
 
-bool ResourceEvent::register_timer_nts(TimedEventImpl* event)
+void ResourceEvent::register_timer(
+        TimedEventImpl* /*event*/)
 {
-    TimedEventImpl* curr = front_;
+    assert(!stop_.load());
 
-    while(curr != nullptr)
-    {
-        if(curr == event)
-        {
-            return false;
-        }
+    std::lock_guard<TimedMutex> lock(mutex_);
 
-        curr = curr->next();
-    }
+    ++timers_count_;
 
-    if(back_)
-    {
-        back_->next(event);
-        back_ = event;
-    }
-    else
-    {
-        assert(front_ == nullptr);
-        front_ = event;
-        back_ = event;
-    }
-
-    return true;
+    // Notify the execution thread that something changed
+    cv_.notify_one();
 }
 
-void ResourceEvent::unregister_timer(TimedEventImpl* event)
+void ResourceEvent::unregister_timer(
+        TimedEventImpl* event)
 {
     assert(!stop_.load());
 
     std::unique_lock<TimedMutex> lock(mutex_);
 
-    cv_.wait(lock, [&]()
-    {
-        return allow_to_delete_;
-    });
+    cv_manipulation_.wait(lock, [&]()
+                {
+                    return allow_vector_manipulation_;
+                });
 
-    TimedEventImpl *prev = nullptr, *curr = front_;
+    bool should_notify = false;
+    std::vector<TimedEventImpl*>::iterator it;
 
-    while(curr && curr != event && curr->next())
+    // Remove from pending
+    it = std::find(pending_timers_.begin(), pending_timers_.end(), event);
+    if (it != pending_timers_.end())
     {
-        prev = curr;
-        curr = curr->next();
+        pending_timers_.erase(it);
+        should_notify = true;
     }
 
-    if(curr)
+    // Remove from active
+    it = std::find(active_timers_.begin(), active_timers_.end(), event);
+    if (it != active_timers_.end())
     {
-        if(prev)
-        {
-            prev->next(curr->next());
-        }
-        else
-        {
-            front_ = curr->next();
-        }
-
-        if(!curr->next())
-        {
-            back_ = prev;
-        }
-
-        curr->next(nullptr);
-        curr->go_cancel();
-        curr->update();
+        active_timers_.erase(it);
+        should_notify = true;
     }
-}
 
-void ResourceEvent::notify(TimedEventImpl* event)
-{
-    std::unique_lock<TimedMutex> lock(mutex_);
+    // Decrement counter of created timers
+    --timers_count_;
 
-    if(register_timer_nts(event))
+    if (should_notify)
     {
+        // Notify the execution thread that something changed
         cv_.notify_one();
     }
 }
 
-void ResourceEvent::notify(TimedEventImpl* event, const std::chrono::steady_clock::time_point& timeout)
+void ResourceEvent::notify(
+        TimedEventImpl* event)
+{
+    std::lock_guard<TimedMutex> lock(mutex_);
+
+    if (register_timer_nts(event))
+    {
+        // Notify the execution thread that something changed
+        cv_.notify_one();
+    }
+}
+
+void ResourceEvent::notify(
+        TimedEventImpl* event,
+        const std::chrono::steady_clock::time_point& timeout)
 {
     std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
 
     if (lock.try_lock_until(timeout))
     {
-        if(register_timer_nts(event))
+        if (register_timer_nts(event))
         {
+            // Notify the execution thread that something changed
             cv_.notify_one();
         }
     }
 }
 
-void ResourceEvent::run_io_service()
+bool ResourceEvent::register_timer_nts(
+        TimedEventImpl* event)
+{
+    if (std::find(pending_timers_.begin(), pending_timers_.end(), event) == pending_timers_.end())
+    {
+        pending_timers_.push_back(event);
+        return true;
+    }
+
+    return false;
+}
+
+void ResourceEvent::event_service()
 {
     while (!stop_.load())
     {
-#if ASIO_VERSION >= 101200
-        io_service_.restart();
-#else
-        io_service_.reset();
-#endif
-        io_service_.poll();
+        // Perform update and execution of timers
+        update_current_time();
+        do_timer_actions();
 
         std::unique_lock<TimedMutex> lock(mutex_);
 
-        allow_to_delete_ = true;
-        cv_.notify_one();
+        // Allow other threads to manipulate the timer collections
+        allow_vector_manipulation_ = true;
+        cv_manipulation_.notify_all();
 
-        if (cv_.wait_for(lock, std::chrono::nanoseconds(1000000), [&]()
-            {
-                return front_ != nullptr;
-            }))
+        // Wait for the first timer to be triggered
+        std::chrono::steady_clock::time_point next_trigger =
+                active_timers_.empty() ?
+                current_time_ + std::chrono::seconds(1) :
+                active_timers_[0]->next_trigger_time();
+
+        cv_.wait_until(lock, next_trigger);
+
+        // Don't allow other threads to manipulate the timer collections
+        allow_vector_manipulation_ = false;
+        resize_collections();
+    }
+}
+
+void ResourceEvent::sort_timers()
+{
+    std::sort(active_timers_.begin(), active_timers_.end(), event_compare);
+}
+
+void ResourceEvent::update_current_time()
+{
+    current_time_ = std::chrono::steady_clock::now();
+}
+
+void ResourceEvent::do_timer_actions()
+{
+    std::chrono::steady_clock::time_point cancel_time =
+            current_time_ + std::chrono::hours(24);
+
+    bool did_something = false;
+
+    // Process pending orders
+    {
+        std::lock_guard<TimedMutex> lock(mutex_);
+        for (TimedEventImpl* tp : pending_timers_)
         {
-            TimedEventImpl* curr = front_;
-
-            while(curr)
+            // Remove item from active timers
+            auto current_pos = std::lower_bound(active_timers_.begin(), active_timers_.end(), tp, event_compare);
+            current_pos = std::find(current_pos, active_timers_.end(), tp);
+            if (current_pos != active_timers_.end())
             {
-                curr->update();
-                curr = curr->next(nullptr);
+                active_timers_.erase(current_pos);
             }
 
-            front_ = nullptr;
-            back_ = nullptr;
-        }
+            // Update timer info
+            if (tp->update(current_time_, cancel_time))
+            {
+                // Timer has to be activated: add to active timers
+                std::vector<TimedEventImpl*>::iterator low_bound;
 
-        allow_to_delete_ = false;
+                // Insert on correct position
+                low_bound = std::lower_bound(active_timers_.begin(), active_timers_.end(), tp, event_compare);
+                active_timers_.emplace(low_bound, tp);
+            }
+        }
+        pending_timers_.clear();
+    }
+
+    // Trigger active timers
+    for (TimedEventImpl* tp : active_timers_)
+    {
+        if (tp->next_trigger_time() <= current_time_)
+        {
+            did_something = true;
+            tp->trigger(current_time_, cancel_time);
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    // If an action was made, keep active_timers_ sorted
+    if (did_something)
+    {
+        sort_timers();
+        active_timers_.erase(
+            std::lower_bound(active_timers_.begin(), active_timers_.end(), nullptr,
+            [cancel_time](
+                TimedEventImpl* a,
+                TimedEventImpl* b)
+                    {
+                        (void)b;
+                        return a->next_trigger_time() < cancel_time;
+                    }),
+            active_timers_.end()
+            );
     }
 }
 
 void ResourceEvent::init_thread()
 {
-    thread_ = std::thread(&ResourceEvent::run_io_service, this);
-    std::future<void> ready_fut = ready.get_future();
-    io_service_.post([this]()
-        {
-            ready.set_value();
-        });
-    ready_fut.wait();
+    std::lock_guard<TimedMutex> lock(mutex_);
+
+    allow_vector_manipulation_ = false;
+    resize_collections();
+
+    thread_ = std::thread(&ResourceEvent::event_service, this);
 }
 
-}
-} /* namespace */
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
