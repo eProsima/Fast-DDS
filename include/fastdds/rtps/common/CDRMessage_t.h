@@ -178,6 +178,25 @@ struct RTPS_DllAPI CDRMessage_t final
         return *(this);
     }
 
+    void init(
+            octet* buffer_ptr,
+            uint32_t size)
+    {
+        assert(buffer == nullptr);
+        wraps = true;
+        pos = 0;
+        length = 0;
+        buffer = buffer_ptr;
+        max_size = size;
+        reserved_size = size;
+
+#if __BIG_ENDIAN__
+        msg_endian = BIGEND;
+#else
+        msg_endian = LITTLEEND;
+#endif
+    }
+
     void reserve(
             uint32_t size)
     {

@@ -95,6 +95,9 @@ const char* MAX_MULTICAST_LOCATORS = "max_multicast_locators";
 const char* TOTAL_PARTICIPANTS = "total_participants";
 const char* TOTAL_READERS = "total_readers";
 const char* TOTAL_WRITERS = "total_writers";
+const char* SEND_BUFFERS = "send_buffers";
+const char* PREALLOCATED_NUMBER = "preallocated_number";
+const char* DYNAMIC_LC = "dynamic";
 
 /// Publisher-subscriber attributes
 const char* TOPIC = "topic";

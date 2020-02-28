@@ -114,6 +114,20 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     LocatorListIterator loc_list_it;
     PortParameters& port = rtps_atts.port;
 
+    EXPECT_EQ(rtps_atts.allocation.locators.max_unicast_locators, 4u);
+    EXPECT_EQ(rtps_atts.allocation.locators.max_multicast_locators, 1u);
+    EXPECT_EQ(rtps_atts.allocation.participants.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.participants.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.participants.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.readers.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.readers.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.readers.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.writers.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.writers.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.writers.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.preallocated_number, 127u);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.dynamic, true);
+
     IPLocator::setIPv4(locator, 192, 168, 1, 2);
     locator.port = 2019;
     EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);

@@ -29,6 +29,8 @@
 #include <vector>
 #include <chrono>
 #include <cassert>
+#include <memory>
+
 
 namespace eprosima {
 namespace fastrtps {
@@ -36,6 +38,7 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class Endpoint;
+class RTPSMessageGroup_t;
 
 /**
  * RTPSMessageGroup Class used to construct a RTPS message.
@@ -221,14 +224,15 @@ class Endpoint;
 
         GuidPrefix_t current_dst_;
 
-#if HAVE_SECURITY
         RTPSParticipantImpl* participant_;
 
+#if HAVE_SECURITY
         CDRMessage_t* encrypt_msg_;
 #endif
 
         std::chrono::steady_clock::time_point max_blocking_time_point_;
 
+        std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
 };
 
 } /* namespace rtps */

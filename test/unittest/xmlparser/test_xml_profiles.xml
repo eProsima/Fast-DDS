@@ -26,6 +26,10 @@
                         <maximum>20</maximum>
                         <increment>2</increment>
                     </total_writers>
+                    <send_buffers>
+                        <preallocated_number>127</preallocated_number>
+                        <dynamic>true</dynamic>
+                    </send_buffers>
                 </allocation>
                 <defaultUnicastLocatorList>
                     <locator>
