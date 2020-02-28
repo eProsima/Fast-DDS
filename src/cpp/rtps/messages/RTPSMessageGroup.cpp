@@ -22,6 +22,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/flowcontrol/FlowController.h>
+#include "RTPSGapBuilder.hpp"
 
 #include <fastrtps/log/Log.h>
 
@@ -92,52 +93,6 @@ bool sort_SeqNum(const SequenceNumber_t& s1,const SequenceNumber_t& s2)
 }
 
 typedef std::pair<SequenceNumber_t,SequenceNumberSet_t> pair_T;
-
-void prepare_SequenceNumberSet(std::set<SequenceNumber_t>& changesSeqNum,
-        std::vector<pair_T>& sequences)
-{
-    //First compute the number of GAP messages we need:
-    bool new_pair = true;
-    bool seqnumset_init = false;
-    uint32_t count = 0;
-    for(auto it = changesSeqNum.begin();
-            it!=changesSeqNum.end();++it)
-    {
-        if(new_pair)
-        {
-            SequenceNumberSet_t seqset((*it) + 1); // IN CASE IN THIS SEQNUMSET there is only 1 number.
-            pair_T pair(*it,seqset);
-            sequences.push_back(pair);
-            new_pair = false;
-            seqnumset_init = true;
-            count = 1;
-            continue;
-        }
-        if((*it - sequences.back().first).low == count) //CONTINUOUS FROM THE START
-        {
-            ++count;
-            sequences.back().second.base((*it)+1);
-            continue;
-        }
-        else
-        {
-            if(seqnumset_init) //FIRST TIME SINCE it was continuous
-            {
-                sequences.back().second.base((*(std::prev(it)) + 1));
-                seqnumset_init = false;
-            }
-            // Try to add, If it fails the diference between *it and base is greater than 255.
-            if(sequences.back().second.add((*it)))
-                continue;
-            else
-            {
-                // Process again the sequence number in a new pair in next loop.
-                --it;
-                new_pair = true;
-            }
-        }
-    }
-}
 
 bool compare_remote_participants(const std::vector<GUID_t>& remote_participants1,
         const std::vector<GuidPrefix_t>& remote_participants2)
@@ -302,17 +257,19 @@ void RTPSMessageGroup::flush_and_reset()
     current_dst_ = c_GuidPrefix_Unknown;
 }
 
-void RTPSMessageGroup::check_and_maybe_flush()
+void RTPSMessageGroup::check_and_maybe_flush(
+        const GuidPrefix_t& destination_guid_prefix)
 {
     CDRMessage::initCDRMsg(submessage_msg_);
 
     if(sender_.destinations_have_changed())
         flush_and_reset();
 
-    add_info_dst_in_buffer(submessage_msg_);
+    add_info_dst_in_buffer(submessage_msg_, destination_guid_prefix);
 }
 
-bool RTPSMessageGroup::insert_submessage()
+bool RTPSMessageGroup::insert_submessage(
+        const GuidPrefix_t& destination_guid_prefix)
 {
     if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
     {
@@ -321,7 +278,7 @@ bool RTPSMessageGroup::insert_submessage()
 
         current_dst_ = c_GuidPrefix_Unknown;
 
-        if(!add_info_dst_in_buffer(full_msg_))
+        if(!add_info_dst_in_buffer(full_msg_, destination_guid_prefix))
         {
             logError(RTPS_WRITER,"Cannot add INFO_DST submessage to the CDRMessage. Buffer too small");
             return false;
@@ -337,7 +294,9 @@ bool RTPSMessageGroup::insert_submessage()
     return true;
 }
 
-bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer)
+bool RTPSMessageGroup::add_info_dst_in_buffer(
+        CDRMessage_t* buffer,
+        const GuidPrefix_t& destination_guid_prefix)
 {
 #if HAVE_SECURITY
     // Add INFO_SRC when we are at the beginning of the message and RTPS protection is enabled
@@ -348,9 +307,9 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer)
     }
 #endif
 
-    if (current_dst_ != sender_.destination_guid_prefix())
+    if (current_dst_ != destination_guid_prefix)
     {
-        current_dst_ = sender_.destination_guid_prefix();
+        current_dst_ = destination_guid_prefix;
         RTPSMessageCreator::addSubmessageInfoDST(buffer, current_dst_);
     }
 
@@ -611,62 +570,94 @@ bool RTPSMessageGroup::add_heartbeat(
 // TODO (Ricardo) Check with standard 8.3.7.4.5
 bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum)
 {
-    std::vector<pair_T> Sequences;
-    prepare_SequenceNumberSet(changesSeqNum, Sequences);
-    std::vector<pair_T>::iterator seqit = Sequences.begin();
-
-    uint16_t gap_n = 1;
-
-    while(gap_n <= Sequences.size()) //There is still a message to add
+    RTPSGapBuilder gap_builder(*this);
+    for (const SequenceNumber_t& seq : changesSeqNum)
     {
-        // Check preconditions. If fail flush and reset.
-        check_and_maybe_flush();
-
-#if HAVE_SECURITY
-        uint32_t from_buffer_position = submessage_msg_->pos;
-#endif
-
-        const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
-
-        if(!RTPSMessageCreator::addSubmessageGap(submessage_msg_, seqit->first, seqit->second,
-                readerId, endpoint_->getGuid().entityId))
+        if (!gap_builder.add(seq))
         {
-            logError(RTPS_WRITER, "Cannot add GAP submsg to the CDRMessage. Buffer too small");
-            break;
+            return false;
         }
-
-#if HAVE_SECURITY
-        if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
-        {
-            submessage_msg_->pos = from_buffer_position;
-            CDRMessage::initCDRMsg(encrypt_msg_);
-            if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
-                        endpoint_->getGuid(), sender_.remote_guids()))
-            {
-                logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
-                return false;
-            }
-
-            if((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
-            {
-                memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
-                submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
-                submessage_msg_->pos = submessage_msg_->length;
-            }
-            else
-            {
-                logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
-                return false;
-            }
-        }
-#endif
-
-        if(!insert_submessage())
-            break;
-
-        ++gap_n;
-        ++seqit;
     }
+
+    return gap_builder.flush();
+}
+
+bool RTPSMessageGroup::add_gap(
+        const SequenceNumber_t& gap_initial_sequence,
+        const SequenceNumberSet_t& gap_bitmap)
+{
+    // Check preconditions. If fail flush and reset.
+    check_and_maybe_flush();
+
+    const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
+
+    if (!create_gap_submessage(gap_initial_sequence, gap_bitmap, readerId))
+    {
+        return false;
+    }
+
+    return insert_submessage();
+}
+
+bool RTPSMessageGroup::add_gap(
+        const SequenceNumber_t& gap_initial_sequence,
+        const SequenceNumberSet_t& gap_bitmap,
+        const GUID_t& reader_guid)
+{
+    // Check preconditions. If fail flush and reset.
+    check_and_maybe_flush(reader_guid.guidPrefix);
+
+    const EntityId_t& readerId = reader_guid.entityId;
+
+    if (!create_gap_submessage(gap_initial_sequence, gap_bitmap, readerId))
+    {
+        return false;
+    }
+
+    return insert_submessage(reader_guid.guidPrefix);
+}
+
+bool RTPSMessageGroup::create_gap_submessage(
+    const SequenceNumber_t& gap_initial_sequence,
+    const SequenceNumberSet_t& gap_bitmap,
+    const EntityId_t& reader_id)
+{
+#if HAVE_SECURITY
+    uint32_t from_buffer_position = submessage_msg_->pos;
+#endif
+
+    if (!RTPSMessageCreator::addSubmessageGap(submessage_msg_, gap_initial_sequence, gap_bitmap,
+        reader_id, endpoint_->getGuid().entityId))
+    {
+        logError(RTPS_WRITER, "Cannot add GAP submsg to the CDRMessage. Buffer too small");
+        return false;
+    }
+
+#if HAVE_SECURITY
+    if (endpoint_->getAttributes().security_attributes().is_submessage_protected)
+    {
+        submessage_msg_->pos = from_buffer_position;
+        CDRMessage::initCDRMsg(encrypt_msg_);
+        if (!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
+            endpoint_->getGuid(), sender_.remote_guids()))
+        {
+            logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
+            return false;
+        }
+
+        if ((submessage_msg_->max_size - from_buffer_position) >= encrypt_msg_->length)
+        {
+            memcpy(&submessage_msg_->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
+            submessage_msg_->length = from_buffer_position + encrypt_msg_->length;
+            submessage_msg_->pos = submessage_msg_->length;
+        }
+        else
+        {
+            logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
+            return false;
+        }
+    }
+#endif
 
     return true;
 }

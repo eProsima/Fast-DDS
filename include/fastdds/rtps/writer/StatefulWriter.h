@@ -310,8 +310,7 @@ private:
     void send_heartbeat_piggyback_nts_(
             ReaderProxy* reader,
             RTPSMessageGroup& message_group,
-            uint32_t& last_bytes_processed,
-            bool force = false);
+            uint32_t& last_bytes_processed);
 
     void send_heartbeat_nts_(
             size_t number_of_readers,
@@ -335,6 +334,8 @@ private:
     std::chrono::duration<double, std::ratio<1, 1000000> > keep_duration_us_;
     //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
     SequenceNumber_t last_sequence_number_;
+    //! Biggest sequence number removed from history
+    SequenceNumber_t biggest_removed_sequence_number_;
 
     const uint32_t sendBufferSize_;
 
