@@ -271,6 +271,7 @@ bool DataWriterImpl::perform_create_new_change(
                     (max_data_size > participant_throughput_controller_bytes ?
                      participant_throughput_controller_bytes :
                      max_data_size);
+                high_mark_for_frag_ &= ~3;
             }
 
             uint32_t final_high_mark_for_frag = high_mark_for_frag_;
