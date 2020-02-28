@@ -993,7 +993,7 @@ void PDP::assert_remote_participant_liveliness(
 CDRMessage_t PDP::get_participant_proxy_data_serialized(Endianness_t endian)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-    CDRMessage_t cdr_msg;
+    CDRMessage_t cdr_msg(RTPSMESSAGE_DEFAULT_SIZE);
     cdr_msg.msg_endian = endian;
 
     if (!getLocalParticipantProxyData()->writeToCDRMessage(&cdr_msg, false))

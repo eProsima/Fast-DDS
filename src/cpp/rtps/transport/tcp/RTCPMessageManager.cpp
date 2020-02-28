@@ -138,7 +138,7 @@ bool RTCPMessageManager::sendData(
 
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
-    CDRMessage_t msg;
+    CDRMessage_t msg(this->mTransport->get_configuration()->max_message_size());
     fastrtps::rtps::CDRMessage::initCDRMsg(&msg);
     const ResponseCode* code = (respCode != RETCODE_VOID) ? &respCode : nullptr;
 

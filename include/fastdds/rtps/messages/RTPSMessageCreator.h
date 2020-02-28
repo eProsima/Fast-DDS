@@ -51,15 +51,8 @@ class RTPSMessageCreator
 {
     public:
 
-        RTPSMessageCreator();
-        virtual ~RTPSMessageCreator();
-
-        //!
-        CDRMessage_t rtpsmc_submsgElem;
-        //!
-        CDRMessage_t rtpsmc_submsgHeader;
-
-
+        RTPSMessageCreator() = delete;
+        ~RTPSMessageCreator() = delete;
 
         /**
          * Create a Header to the serialized message.

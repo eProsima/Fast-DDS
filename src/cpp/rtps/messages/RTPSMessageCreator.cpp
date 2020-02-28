@@ -29,15 +29,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-RTPSMessageCreator::RTPSMessageCreator()
-{
-}
-
-RTPSMessageCreator::~RTPSMessageCreator() {
-    logInfo(RTPS_CDR_MSG,"RTPSMessageCreator destructor");
-}
-
-
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix,
         const ProtocolVersion_t& version,const VendorId_t& vendorId)
 {

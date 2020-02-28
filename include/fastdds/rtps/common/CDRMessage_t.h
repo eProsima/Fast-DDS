@@ -26,10 +26,9 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
-
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 //!Max size of RTPS message in bytes.
 #define RTPSMESSAGE_DEFAULT_SIZE 10500  //max size of rtps message in bytes
@@ -48,43 +47,44 @@ namespace rtps{
  * @brief Structure CDRMessage_t, contains a serialized message.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI CDRMessage_t{
-    //! Default constructor
-    CDRMessage_t():wraps(false){
-        pos = 0;
-        length = 0;
-        buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
-        max_size = RTPSMESSAGE_DEFAULT_SIZE;
-
-#if __BIG_ENDIAN__
-        msg_endian = BIGEND;
-#else
-        msg_endian = LITTLEEND;
-#endif
+struct RTPS_DllAPI CDRMessage_t final
+{
+    // TODO(Miguel C): Deprecate when not used in mocks
+    CDRMessage_t()
+        : CDRMessage_t(RTPSMESSAGE_DEFAULT_SIZE)
+    {
     }
 
     ~CDRMessage_t()
     {
-        if(buffer != nullptr && !wraps)
+        if (buffer != nullptr && !wraps)
+        {
             free(buffer);
+        }
     }
 
     /**
      * Constructor with maximum size
      * @param size Maximum size
      */
-    CDRMessage_t(uint32_t size)
+    explicit CDRMessage_t(
+            uint32_t size)
     {
         wraps = false;
         pos = 0;
         length = 0;
 
-        if(size != 0)
+        if (size != 0)
+        {
             buffer = (octet*)malloc(size);
+        }
         else
+        {
             buffer = nullptr;
+        }
 
         max_size = size;
+        reserved_size = size;
 
 #if __BIG_ENDIAN__
         msg_endian = BIGEND;
@@ -94,19 +94,23 @@ struct RTPS_DllAPI CDRMessage_t{
     }
 
     /**
-    * Constructor to wrap a serialized payload
-    * @param payload Payload to wrap
-    */
-    CDRMessage_t(const SerializedPayload_t& payload) : wraps(true)
+     * Constructor to wrap a serialized payload
+     * @param payload Payload to wrap
+     */
+    explicit CDRMessage_t(
+            const SerializedPayload_t& payload)
+        : wraps(true)
     {
         msg_endian = payload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
         pos = payload.pos;
         length = payload.length;
         buffer = payload.data;
         max_size = payload.max_size;
+        reserved_size = payload.max_size;
     }
 
-    CDRMessage_t(const CDRMessage_t& message)
+    CDRMessage_t(
+            const CDRMessage_t& message)
     {
         wraps = false;
         pos = 0;
@@ -114,16 +118,20 @@ struct RTPS_DllAPI CDRMessage_t{
         max_size = message.max_size;
         msg_endian = message.msg_endian;
 
-        if(max_size != 0)
+        reserved_size = max_size;
+        if (max_size != 0)
         {
             buffer =  (octet*)malloc(max_size);
             memcpy(buffer, message.buffer, length);
         }
         else
+        {
             buffer = nullptr;
+        }
     }
 
-    CDRMessage_t(CDRMessage_t&& message)
+    CDRMessage_t(
+            CDRMessage_t&& message)
     {
         wraps = message.wraps;
         message.wraps = false;
@@ -133,6 +141,8 @@ struct RTPS_DllAPI CDRMessage_t{
         message.length = 0;
         max_size = message.max_size;
         message.max_size = 0;
+        reserved_size = message.reserved_size;
+        message.reserved_size = 0;
         msg_endian = message.msg_endian;
 #if __BIG_ENDIAN__
         message.msg_endian = BIGEND;
@@ -143,7 +153,8 @@ struct RTPS_DllAPI CDRMessage_t{
         message.buffer = nullptr;
     }
 
-    CDRMessage_t& operator=(CDRMessage_t &&message)
+    CDRMessage_t& operator =(
+            CDRMessage_t&& message)
     {
         wraps = message.wraps;
         message.wraps = false;
@@ -153,6 +164,8 @@ struct RTPS_DllAPI CDRMessage_t{
         message.length = 0;
         max_size = message.max_size;
         message.max_size = 0;
+        reserved_size = message.reserved_size;
+        message.reserved_size = 0;
         msg_endian = message.msg_endian;
 #if __BIG_ENDIAN__
         message.msg_endian = BIGEND;
@@ -169,7 +182,7 @@ struct RTPS_DllAPI CDRMessage_t{
             uint32_t size)
     {
         assert(wraps == false);
-        if (size > max_size)
+        if (size > reserved_size)
         {
             octet* new_buffer = (octet*) realloc(buffer, size);
             if (new_buffer == nullptr)
@@ -179,9 +192,11 @@ struct RTPS_DllAPI CDRMessage_t{
             else
             {
                 buffer = new_buffer;
-                max_size = size;
+                reserved_size = size;
             }
         }
+
+        max_size = size;
     }
 
     //!Pointer to the buffer where the data is stored.
@@ -190,6 +205,8 @@ struct RTPS_DllAPI CDRMessage_t{
     uint32_t pos;
     //!Max size of the message.
     uint32_t max_size;
+    //!Size allocated on buffer. May be higher than max_size.
+    uint32_t reserved_size;
     //!Current length of the message.
     uint32_t length;
     //!Endianness of the message.
@@ -198,8 +215,9 @@ struct RTPS_DllAPI CDRMessage_t{
     bool wraps;
 };
 
-}
-}
-}
-#endif
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS_PUBLIC */
 #endif /* _FASTDDS_RTPS_CDRMESSAGE_T_H_ */
