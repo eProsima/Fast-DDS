@@ -85,26 +85,16 @@ DataWriterImpl::DataWriterImpl(
     , user_datawriter_(nullptr)
 {
     deadline_timer_ = new TimedEvent(publisher_->get_participant().get_resource_event(),
-                    [&](TimedEvent::EventCode code) -> bool
+                    [&]() -> bool
                 {
-                    if (TimedEvent::EVENT_SUCCESS == code)
-                    {
-                        return deadline_missed();
-                    }
-
-                    return false;
+                    return deadline_missed();
                 },
                     qos_.deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(publisher_->get_participant().get_resource_event(),
-                    [&](TimedEvent::EventCode code) -> bool
+                    [&]() -> bool
                 {
-                    if (TimedEvent::EVENT_SUCCESS == code)
-                    {
-                        return lifespan_expired();
-                    }
-
-                    return false;
+                    return lifespan_expired();
                 },
                     qos_.lifespan.duration.to_ns() * 1e-6);
 
@@ -346,6 +336,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
 
+#if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
     if (lock.try_lock_until(max_blocking_time))
 #else

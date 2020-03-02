@@ -121,7 +121,7 @@ WLP::~WLP()
 bool WLP::initWL(
         RTPSParticipantImpl* p)
 {
-    logInfo(RTPS_LIVELINESS,"Initializing Liveliness Protocol");
+    logInfo(RTPS_LIVELINESS, "Initializing Liveliness Protocol");
 
     mp_participant = p;
 
@@ -203,11 +203,11 @@ bool WLP::createEndpoints()
                 true))
     {
         mp_builtinWriter = dynamic_cast<StatefulWriter*>(wout);
-        logInfo(RTPS_LIVELINESS,"Builtin Liveliness Writer created");
+        logInfo(RTPS_LIVELINESS, "Builtin Liveliness Writer created");
     }
     else
     {
-        logError(RTPS_LIVELINESS,"Liveliness Writer Creation failed ");
+        logError(RTPS_LIVELINESS, "Liveliness Writer Creation failed ");
         delete(mp_builtinWriterHistory);
         mp_builtinWriterHistory = nullptr;
         return false;
@@ -246,11 +246,11 @@ bool WLP::createEndpoints()
                 true))
     {
         mp_builtinReader = dynamic_cast<StatefulReader*>(rout);
-        logInfo(RTPS_LIVELINESS,"Builtin Liveliness Reader created");
+        logInfo(RTPS_LIVELINESS, "Builtin Liveliness Reader created");
     }
     else
     {
-        logError(RTPS_LIVELINESS,"Liveliness Reader Creation failed.");
+        logError(RTPS_LIVELINESS, "Liveliness Reader Creation failed.");
         delete(mp_builtinReaderHistory);
         mp_builtinReaderHistory = nullptr;
         delete(mp_listener);
@@ -429,18 +429,18 @@ bool WLP::assignRemoteEndpoints(
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 
-    if ((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinReader != nullptr)
     {
-        logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader");
+        logInfo(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_WriterLiveliness;
         temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_WriterLiveliness);
         mp_builtinReader->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;
-    auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
-    if ((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
+    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriter != nullptr)
     {
-        logInfo(RTPS_LIVELINESS,"Adding remote reader to my local Builtin Writer");
+        logInfo(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Writer");
         temp_reader_proxy_data_.guid().entityId = c_EntityId_ReaderLiveliness;
         mp_builtinWriter->matched_reader_add(temp_reader_proxy_data_);
     }
@@ -487,24 +487,24 @@ void WLP::removeRemoteEndpoints(
     GUID_t tmp_guid;
     tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
 
-    logInfo(RTPS_LIVELINESS,"for RTPSParticipant: "<<pdata->m_guid);
+    logInfo(RTPS_LIVELINESS, "for RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 
-    if ((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinReader != nullptr)
     {
-        logInfo(RTPS_LIVELINESS,"Removing remote writer from my local Builtin Reader");
+        logInfo(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Reader");
         tmp_guid.entityId = c_EntityId_WriterLiveliness;
         mp_builtinReader->matched_writer_remove(tmp_guid);
     }
     auxendp = endp;
-    auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
-    if ((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
+    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriter != nullptr)
     {
-        logInfo(RTPS_LIVELINESS,"Removing remote reader from my local Builtin Writer");
+        logInfo(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Writer");
         tmp_guid.entityId = c_EntityId_ReaderLiveliness;
         mp_builtinWriter->matched_reader_remove(tmp_guid);
     }
@@ -558,15 +558,10 @@ bool WLP::add_local_writer(
         if (automatic_liveliness_assertion_ == nullptr)
         {
             automatic_liveliness_assertion_ = new TimedEvent(mp_participant->getEventResource(),
-                            [&](TimedEvent::EventCode code) -> bool
+                            [&]() -> bool
                         {
-                            if (TimedEvent::EVENT_SUCCESS == code)
-                            {
-                                automatic_liveliness_assertion();
-                                return true;
-                            }
-
-                            return false;
+                            automatic_liveliness_assertion();
+                            return true;
                         },
                             wAnnouncementPeriodMilliSec);
             automatic_liveliness_assertion_->restart_timer();
@@ -590,15 +585,10 @@ bool WLP::add_local_writer(
         if (manual_liveliness_assertion_ == nullptr)
         {
             manual_liveliness_assertion_ = new TimedEvent(mp_participant->getEventResource(),
-                            [&](TimedEvent::EventCode code) -> bool
+                            [&]() -> bool
                         {
-                            if (TimedEvent::EVENT_SUCCESS == code)
-                            {
-                                participant_liveliness_assertion();
-                                return true;
-                            }
-
-                            return false;
+                            participant_liveliness_assertion();
+                            return true;
                         },
                             wAnnouncementPeriodMilliSec);
             manual_liveliness_assertion_->restart_timer();
@@ -648,7 +638,7 @@ bool WLP::remove_local_writer(
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    logInfo(RTPS_LIVELINESS, W->getGuid().entityId <<" from Liveliness Protocol");
+    logInfo(RTPS_LIVELINESS, W->getGuid().entityId << " from Liveliness Protocol");
 
     if (W->get_liveliness_kind() == AUTOMATIC_LIVELINESS_QOS)
     {
@@ -673,7 +663,7 @@ bool WLP::remove_local_writer(
 
         // There are still some writers. Calculate the new minimum announcement period
 
-        min_automatic_ms_ =std::numeric_limits<double>::max();
+        min_automatic_ms_ = std::numeric_limits<double>::max();
         for (const auto& w : automatic_writers_)
         {
             auto announcement_period = TimeConv::Duration_t2MilliSecondsDouble(w->get_liveliness_announcement_period());
@@ -715,7 +705,7 @@ bool WLP::remove_local_writer(
 
         // There are still some writers. Calculate the new minimum announcement period
 
-        min_manual_by_participant_ms_ =std::numeric_limits<double>::max();
+        min_manual_by_participant_ms_ = std::numeric_limits<double>::max();
         for (const auto& w : manual_by_participant_writers_)
         {
             auto announcement_period = TimeConv::Duration_t2MilliSecondsDouble(w->get_liveliness_announcement_period());
@@ -752,7 +742,7 @@ bool WLP::remove_local_writer(
         return true;
     }
 
-    logWarning(RTPS_LIVELINESS, "Writer "<< W->getGuid() << " not found.");
+    logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
     return false;
 }
 
