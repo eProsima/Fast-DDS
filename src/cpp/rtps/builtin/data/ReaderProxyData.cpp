@@ -158,9 +158,136 @@ ReaderProxyData& ReaderProxyData::operator =(
     return *this;
 }
 
+uint32_t ReaderProxyData::get_serialized_size(
+        bool include_encapsulation) const
+{
+    uint32_t ret_val = include_encapsulation ? 4 : 0;
+
+    // PID_UNICAST_LOCATOR
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators_.unicast.size());
+
+    // PID_MULTICAST_LOCATOR
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators_.multicast.size());
+
+    // PID_EXPECTS_INLINE_QOS
+    ret_val += 4 + PARAMETER_BOOL_LENGTH;
+
+    // PID_PARTICIPANT_GUID
+    ret_val += 4 + PARAMETER_GUID_LENGTH;
+
+    // PID_TOPIC_NAME
+    ret_val += ParameterString_t::cdr_serialized_size(m_topicName);
+
+    // PID_TYPE_NAME
+    ret_val += ParameterString_t::cdr_serialized_size(m_typeName);
+
+    // PID_KEY_HASH
+    ret_val += 4 + 16;
+
+    // PID_ENDPOINT_GUID
+    ret_val += 4 + PARAMETER_GUID_LENGTH;
+
+    // PID_PROTOCOL_VERSION
+    ret_val += 4 + 4;
+
+    // PID_VENDORID
+    ret_val += 4 + 4;
+
+    if (m_qos.m_durability.send_always() || m_qos.m_durability.hasChanged)
+    {
+        ret_val += m_qos.m_durability.cdr_serialized_size();
+    }
+    if (m_qos.m_durabilityService.send_always() || m_qos.m_durabilityService.hasChanged)
+    {
+        ret_val += m_qos.m_durabilityService.cdr_serialized_size();
+    }
+    if (m_qos.m_deadline.send_always() || m_qos.m_deadline.hasChanged)
+    {
+        ret_val += m_qos.m_deadline.cdr_serialized_size();
+    }
+    if (m_qos.m_latencyBudget.send_always() || m_qos.m_latencyBudget.hasChanged)
+    {
+        ret_val += m_qos.m_latencyBudget.cdr_serialized_size();
+    }
+    if (m_qos.m_liveliness.send_always() || m_qos.m_liveliness.hasChanged)
+    {
+        ret_val += m_qos.m_liveliness.cdr_serialized_size();
+    }
+    if (m_qos.m_reliability.send_always() || m_qos.m_reliability.hasChanged)
+    {
+        ret_val += m_qos.m_reliability.cdr_serialized_size();
+    }
+    if (m_qos.m_lifespan.send_always() || m_qos.m_lifespan.hasChanged)
+    {
+        ret_val += m_qos.m_lifespan.cdr_serialized_size();
+    }
+    if (m_qos.m_userData.send_always() || m_qos.m_userData.hasChanged)
+    {
+        ret_val += m_qos.m_userData.cdr_serialized_size();
+    }
+    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
+    {
+        ret_val += m_qos.m_timeBasedFilter.cdr_serialized_size();
+    }
+    if (m_qos.m_ownership.send_always() || m_qos.m_ownership.hasChanged)
+    {
+        ret_val += m_qos.m_ownership.cdr_serialized_size();
+    }
+    if (m_qos.m_destinationOrder.send_always() || m_qos.m_destinationOrder.hasChanged)
+    {
+        ret_val += m_qos.m_destinationOrder.cdr_serialized_size();
+    }
+    if (m_qos.m_presentation.send_always() || m_qos.m_presentation.hasChanged)
+    {
+        ret_val += m_qos.m_presentation.cdr_serialized_size();
+    }
+    if (m_qos.m_partition.send_always() || m_qos.m_partition.hasChanged)
+    {
+        ret_val += m_qos.m_partition.cdr_serialized_size();
+    }
+    if (m_qos.m_topicData.send_always() || m_qos.m_topicData.hasChanged)
+    {
+        ret_val += m_qos.m_topicData.cdr_serialized_size();
+    }
+    if (m_qos.m_groupData.send_always() || m_qos.m_groupData.hasChanged)
+    {
+        ret_val += m_qos.m_groupData.cdr_serialized_size();
+    }
+    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
+    {
+        ret_val += m_qos.m_timeBasedFilter.cdr_serialized_size();
+    }
+    if (m_qos.m_disablePositiveACKs.send_always() || m_qos.m_disablePositiveACKs.hasChanged)
+    {
+        ret_val += m_qos.m_disablePositiveACKs.cdr_serialized_size();
+    }
+    if (m_type_id && m_type_id->m_type_identifier._d() != 0)
+    {
+        ret_val += m_type_id->cdr_serialized_size();
+    }
+    if (m_type && m_type->m_type_object._d() != 0)
+    {
+        ret_val += m_type->cdr_serialized_size();
+    }
+    if (m_type_information && m_type_information->assigned())
+    {
+        ret_val += m_type_information->cdr_serialized_size();
+    }
+
+#if HAVE_SECURITY
+    if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
+    {
+        ret_val += 4 + PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH;
+    }
+#endif
+
+    // PID_SENTINEL
+    return ret_val + 4;
+}
+
 bool ReaderProxyData::writeToCDRMessage(
         CDRMessage_t* msg,
-        bool write_encapsulation)
+        bool write_encapsulation) const
 {
     if (write_encapsulation)
     {
@@ -222,7 +349,7 @@ bool ReaderProxyData::writeToCDRMessage(
         }
     }
     {
-        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, 16, m_guid);
+        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, PARAMETER_GUID_LENGTH, m_guid);
         if (!p.addToCDRMessage(msg))
         {
             return false;

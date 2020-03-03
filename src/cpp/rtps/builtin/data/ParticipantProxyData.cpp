@@ -26,7 +26,6 @@
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/network/NetworkFactory.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
@@ -127,6 +126,86 @@ ParticipantProxyData::~ParticipantProxyData()
     {
         delete lease_duration_event;
     }
+}
+
+uint32_t ParticipantProxyData::get_serialized_size(
+        bool include_encapsulation) const
+{
+    uint32_t ret_val = include_encapsulation ? 4 : 0;
+
+    // PID_PROTOCOL_VERSION
+    ret_val += 4 + 4;
+
+    // PID_VENDORID
+    ret_val += 4 + 4;
+
+    if (m_expectsInlineQos)
+    {
+        // PID_EXPECTS_INLINE_QOS
+        ret_val += 4 + PARAMETER_BOOL_LENGTH;
+    }
+
+    // PID_PARTICIPANT_GUID
+    ret_val += 4 + PARAMETER_GUID_LENGTH;
+
+    // PID_METATRAFFIC_MULTICAST_LOCATOR
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * metatraffic_locators.multicast.size());
+    
+    // PID_METATRAFFIC_UNICAST_LOCATOR
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * metatraffic_locators.unicast.size());
+    
+    // PID_DEFAULT_UNICAST_LOCATOR
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.unicast.size());
+    
+    // PID_DEFAULT_MULTICAST_LOCATOR
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.multicast.size());
+
+    // PID_PARTICIPANT_LEASE_DURATION
+    ret_val += 4 + PARAMETER_TIME_LENGTH;
+
+    // PID_BUILTIN_ENDPOINT_SET
+    ret_val += 4 + PARAMETER_BUILTINENDPOINTSET_LENGTH;
+
+    if (m_participantName.size() > 0)
+    {
+        // PID_ENTITY_NAME
+        ret_val += ParameterString_t::cdr_serialized_size(m_participantName);
+    }
+
+    if (m_userData.size() > 0)
+    {
+        // PID_USER_DATA
+        ret_val += QosPolicy::get_cdr_serialized_size(m_userData);
+    }
+
+    if (m_properties.size() > 0)
+    {
+        // PID_PROPERTY_LIST
+        ret_val += m_properties.cdr_serialized_size();
+    }
+
+#if HAVE_SECURITY
+    if (!identity_token_.class_id().empty())
+    {
+        // PID_IDENTITY_TOKEN
+        ret_val += ParameterToken_t::cdr_serialized_size(identity_token_);
+    }
+
+    if (!permissions_token_.class_id().empty())
+    {
+        // PID_PERMISSIONS_TOKEN
+        ret_val += ParameterToken_t::cdr_serialized_size(permissions_token_);
+    }
+
+    if ((security_attributes_ != 0UL) || (plugin_security_attributes_ != 0UL))
+    {
+        // PID_PARTICIPANT_SECURITY_INFO
+        ret_val += 4 + PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH;
+    }
+#endif
+
+    // PID_SENTINEL
+    return ret_val + 4;
 }
 
 bool ParticipantProxyData::writeToCDRMessage(

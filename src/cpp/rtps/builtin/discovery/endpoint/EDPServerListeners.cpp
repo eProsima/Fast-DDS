@@ -71,7 +71,8 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        add_writer_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_writer_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
@@ -81,10 +82,10 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeWriterProxyData(auxGUID);
         sedp_->removePublisherFromHistory(change->instanceHandle);
-    }
 
-    //Removing change from history
-    reader_history->remove_change(change);
+        //Removing change from history
+        reader_history->remove_change(change);
+    }
 
     return;
 }
@@ -139,7 +140,8 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        add_reader_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_reader_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
@@ -149,12 +151,10 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeReaderProxyData(auxGUID);
         sedp_->removeSubscriberFromHistory(change->instanceHandle);
+
+        // Remove change from history.
+        reader_history->remove_change(change);
     }
-
-    // Remove change from history.
-    reader_history->remove_change(change);
-
-    return;
 }
 
 void EDPServerSUBListener::onWriterChangeReceivedByAll(
