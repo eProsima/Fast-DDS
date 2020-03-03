@@ -256,17 +256,8 @@ void PDP::initializeParticipantProxyData(
     }
     participant_data->m_expectsInlineQos = false;
     participant_data->m_guid = mp_RTPSParticipant->getGuid();
-    for (uint8_t i = 0; i < 16; ++i)
-    {
-        if (i < 12)
-        {
-            participant_data->m_key.value[i] = participant_data->m_guid.guidPrefix.value[i];
-        }
-        else
-        {
-            participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
-        }
-    }
+    memcpy( participant_data->m_key.value, participant_data->m_guid.guidPrefix.value, 12);
+    memcpy( participant_data->m_key.value + 12, participant_data->m_guid.entityId.value, 4);
 
     // Keep persistence Guid_Prefix_t in a specific property. This info must be propagated to all builtin endpoints
     {
@@ -408,11 +399,12 @@ void PDP::announceParticipantState(
                 mp_PDPWriterHistory->remove_min_change();
             }
             // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
-            change = mp_PDPWriter->new_change([]() -> uint32_t
-                        {
-                            return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-                        }
-                            , ALIVE, key);
+            change = mp_PDPWriter->new_change(
+                    []() -> uint32_t
+                    {
+                        return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+                    }
+                    , ALIVE, key);
 
             if (change != nullptr)
             {
@@ -450,11 +442,12 @@ void PDP::announceParticipantState(
         {
             mp_PDPWriterHistory->remove_min_change();
         }
-        change = mp_PDPWriter->new_change([]() -> uint32_t
-                    {
-                        return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-                    }
-                        , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+        change = mp_PDPWriter->new_change(
+                []() -> uint32_t
+                {
+                    return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+                }
+                , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
 
         if (change != nullptr)
         {

@@ -79,12 +79,7 @@ bool ParameterString_t::addToCDRMessage(
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     //Str size
     uint32_t str_siz = (uint32_t)this->string_.size() + 1;
-    int rest = str_siz % 4;
-    if (rest != 0)
-    {
-        rest = 4 - rest; //how many you have to add
-    }
-    this->length = (uint16_t)(str_siz + 4 + rest);
+    this->length = (uint16_t)(str_siz + 4 + 3) & ~3;
     valid &= CDRMessage::addUInt16(msg, this->length);
     valid &= CDRMessage::add_string(msg, this->string_);
     return valid;
@@ -472,7 +467,7 @@ bool ParameterSampleIdentity_t::readFromCDRMessage(
         CDRMessage_t* msg,
         uint16_t size)
 {
-    if (size != 24)
+    if (size != PARAMETER_SAMPLEIDENTITY_LENGTH)
     {
         return false;
     }

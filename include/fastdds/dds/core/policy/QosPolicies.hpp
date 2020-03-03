@@ -1202,16 +1202,13 @@ public:
             return;
         }
 
-        partitions_.reserve(partitions_.length +
-                size + alignment + 4);
+        partitions_.reserve(partitions_.length + size + alignment + 4);
 
         fastrtps::rtps::octet* o = (fastrtps::rtps::octet*)&size;
-        memcpy(partitions_.data + partitions_.length,
-                o, 4);
+        memcpy(partitions_.data + partitions_.length, o, 4);
         partitions_.length += 4;
 
-        memcpy(partitions_.data + partitions_.length,
-                name, size);
+        memcpy(partitions_.data + partitions_.length, name, size);
         partitions_.length += size;
 
         memset(partitions_.data + partitions_.length, 0, alignment);

@@ -175,8 +175,9 @@ struct RTPS_DllAPI SerializedPayload_t
     }
 
 };
-}
-}
-}
+
+} /* namespace rtps */
+} /* namespace fastrtps */
+} /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_SERIALIZEDPAYLOAD_H_ */

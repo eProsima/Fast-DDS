@@ -586,17 +586,8 @@ bool WriterProxyData::readFromCDRMessage(
                         }
 
                         m_guid = p.guid;
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_RTPSParticipantKey.value[i] = p.guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_RTPSParticipantKey.value[i] = p.guid.entityId.value[i - 12];
-                            }
-                        }
+                        memcpy(m_RTPSParticipantKey.value, p.guid.guidPrefix.value, 12);
+                        memcpy(m_RTPSParticipantKey.value + 12, p.guid.entityId.value, 4);
                         break;
                     }
                     case fastdds::dds::PID_ENDPOINT_GUID:
@@ -607,17 +598,8 @@ bool WriterProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_key.value[i] = p.guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_key.value[i] = p.guid.entityId.value[i - 12];
-                            }
-                        }
+                        memcpy(m_key.value, p.guid.guidPrefix.value, 12);
+                        memcpy(m_key.value + 12, p.guid.entityId.value, 4);
                         break;
                     }
                     case fastdds::dds::PID_PERSISTENCE_GUID:

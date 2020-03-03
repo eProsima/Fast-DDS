@@ -112,6 +112,7 @@ inline bool readTimestamp(
 inline bool readString(
         CDRMessage_t* msg,
         std::string* p_str);
+
 inline bool readString(
         CDRMessage_t* msg,
         string_255* stri);
@@ -274,7 +275,6 @@ inline bool addOctetVector(
 inline bool addParameterSampleIdentity(
         CDRMessage_t* msg,
         const SampleIdentity& sample_id);
-///@}
 
 inline bool addProperty(
         CDRMessage_t* msg,
@@ -315,10 +315,13 @@ inline bool addMessageIdentity(
 inline bool addParticipantGenericMessage(
         CDRMessage_t* msg,
         const security::ParticipantGenericMessage& message);
-}
 
-}
+///@}
+
+} /* namespace CDRMessage */
+
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

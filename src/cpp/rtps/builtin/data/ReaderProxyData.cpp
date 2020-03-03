@@ -52,18 +52,7 @@ ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
         const size_t max_multicast_locators,
         const VariableLengthDataLimits& data_limits)
-    : m_expectsInlineQos(false)
-#if HAVE_SECURITY
-    , security_attributes_(0UL)
-    , plugin_security_attributes_(0UL)
-#endif
-    , remote_locators_(max_unicast_locators, max_multicast_locators)
-    , m_userDefinedId(0)
-    , m_isAlive(true)
-    , m_topicKind(NO_KEY)
-    , m_type_id(nullptr)
-    , m_type(nullptr)
-    , m_type_information(nullptr)
+    : ReaderProxyData(max_unicast_locators, max_multicast_locators)
 {
     m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
     m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
@@ -586,17 +575,8 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_RTPSParticipantKey.value[i] = p.guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_RTPSParticipantKey.value[i] = p.guid.entityId.value[i - 12];
-                            }
-                        }
+                        memcpy(m_RTPSParticipantKey.value, p.guid.guidPrefix.value, 12);
+                        memcpy(m_RTPSParticipantKey.value + 12, p.guid.entityId.value, 4);
                         break;
                     }
                     case fastdds::dds::PID_ENDPOINT_GUID:
@@ -608,17 +588,8 @@ bool ReaderProxyData::readFromCDRMessage(
                         }
 
                         m_guid = p.guid;
-                        for (uint8_t i = 0; i < 16; ++i)
-                        {
-                            if (i < 12)
-                            {
-                                m_key.value[i] = p.guid.guidPrefix.value[i];
-                            }
-                            else
-                            {
-                                m_key.value[i] = p.guid.entityId.value[i - 12];
-                            }
-                        }
+                        memcpy(m_key.value, p.guid.guidPrefix.value, 12);
+                        memcpy(m_key.value + 12, p.guid.entityId.value, 4);
                         break;
                     }
                     case fastdds::dds::PID_UNICAST_LOCATOR:

@@ -22,7 +22,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/qos/ParameterList.h>
- #include <fastrtps/qos/QosPolicies.h>
+#include <fastrtps/qos/QosPolicies.h>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>

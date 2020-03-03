@@ -83,8 +83,7 @@ WLP::WLP(
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits)
 {
     automatic_instance_handle_ = p->mp_participantImpl->getGuid();
-    automatic_instance_handle_.value[12] = automatic_instance_handle_.value[13] = automatic_instance_handle_.value[14] =
-                            0;
+    memset(&automatic_instance_handle_.value[12], 0, 3);
     manual_by_participant_instance_handle_ = automatic_instance_handle_;
 
     automatic_instance_handle_.value[15] = AUTOMATIC_LIVELINESS_QOS + 0x01;
@@ -129,35 +128,35 @@ bool WLP::initWL(
 
     pub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
-        const LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration,
-        int alive_count,
-        int not_alive_count) -> void
-                {
-                    pub_liveliness_changed(
-                        guid,
-                        kind,
-                        lease_duration,
-                        alive_count,
-                        not_alive_count);
-                },
+            const LivelinessQosPolicyKind& kind,
+            const Duration_t& lease_duration,
+            int alive_count,
+            int not_alive_count) -> void
+        {
+            pub_liveliness_changed(
+                guid,
+                kind,
+                lease_duration,
+                alive_count,
+                not_alive_count);
+        },
         mp_participant->getEventResource(),
         false);
 
     sub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
-        const LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration,
-        int alive_count,
-        int not_alive_count) -> void
-                {
-                    sub_liveliness_changed(
-                        guid,
-                        kind,
-                        lease_duration,
-                        alive_count,
-                        not_alive_count);
-                },
+            const LivelinessQosPolicyKind& kind,
+            const Duration_t& lease_duration,
+            int alive_count,
+            int not_alive_count) -> void
+        {
+            sub_liveliness_changed(
+                guid,
+                kind,
+                lease_duration,
+                alive_count,
+                not_alive_count);
+        },
         mp_participant->getEventResource());
 
     bool retVal = createEndpoints();
@@ -810,9 +809,10 @@ bool WLP::send_liveliness_message(
     std::lock_guard<RecursiveTimedMutex> wguard(writer->getMutex());
 
     CacheChange_t* change = writer->new_change(
-        []() -> uint32_t {
-                    return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
-                },
+        []() -> uint32_t
+        {
+            return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+        },
         ALIVE,
         instance);
 

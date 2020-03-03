@@ -1086,13 +1086,16 @@ public:
 
         self_type operator ++()
         {
-            self_type i = *this; advance(); return i;
+            self_type i = *this;
+            advance();
+            return i;
         }
 
         self_type operator ++(
                 int)
         {
-            advance(); return *this;
+            advance();
+            return *this;
         }
 
         reference operator *()
@@ -1156,13 +1159,16 @@ public:
 
         self_type operator ++()
         {
-            self_type i = *this; advance(); return i;
+            self_type i = *this;
+            advance();
+            return i;
         }
 
         self_type operator ++(
                 int)
         {
-            advance(); return *this;
+            advance();
+            return *this;
         }
 
         reference operator *()
@@ -1368,12 +1374,10 @@ protected:
             uint32_t alignment)
     {
         fastrtps::rtps::octet* o = (fastrtps::rtps::octet*)&size;
-        memcpy(properties_.data + properties_.length,
-                o, 4);
+        memcpy(properties_.data + properties_.length, o, 4);
         properties_.length += 4;
 
-        memcpy(properties_.data + properties_.length,
-                data, size);
+        memcpy(properties_.data + properties_.length, data, size);
         properties_.length += size;
 
         for (uint32_t i = 0; i < alignment; ++i)
@@ -1432,6 +1436,9 @@ public:
             uint16_t size) override;
 
 };
+
+#define PARAMETER_SAMPLEIDENTITY_LENGTH 24
+
 
 #if HAVE_SECURITY
 

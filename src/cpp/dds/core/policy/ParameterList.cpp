@@ -192,7 +192,7 @@ bool ParameterList::read_guid_from_cdr_msg(
     while (msg.pos < msg.length)
     {
         valid = true;
-        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &pid);
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
         if ((pid == PID_SENTINEL) || !valid)
         {
@@ -201,14 +201,14 @@ bool ParameterList::read_guid_from_cdr_msg(
         if (pid == PID_KEY_HASH)
         {
             valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,
-                            fastrtps::rtps::GuidPrefix_t::size);
+                        fastrtps::rtps::GuidPrefix_t::size);
             valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.entityId.value, fastrtps::rtps::EntityId_t::size);
             return valid;
         }
         if (pid == search_pid)
         {
             valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,
-                            fastrtps::rtps::GuidPrefix_t::size);
+                        fastrtps::rtps::GuidPrefix_t::size);
             valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.entityId.value, fastrtps::rtps::EntityId_t::size);
             return valid;
         }

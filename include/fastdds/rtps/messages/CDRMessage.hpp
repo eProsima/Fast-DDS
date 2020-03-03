@@ -32,7 +32,7 @@ inline bool CDRMessage::initCDRMsg(
         CDRMessage_t* msg,
         uint32_t payload_size)
 {
-    if (msg->buffer == NULL)
+    if (msg->buffer == nullptr)
     {
         msg->buffer = (octet*)malloc(payload_size + RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
         msg->max_size = payload_size + RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE;
@@ -118,9 +118,7 @@ inline bool CDRMessage::read_array_with_max_size(
         return false;
     }
     valid &= CDRMessage::readData(msg, arr, datasize);
-    int rest = (datasize) % 4;
-    rest = rest == 0 ? 0 : 4 - rest;
-    msg->pos += rest;
+    msg->pos = (msg->pos + 3) & ~3;
     return valid;
 }
 
@@ -371,9 +369,7 @@ inline bool CDRMessage::readOctetVector(
     bool valid = CDRMessage::readUInt32(msg, &vecsize);
     ocvec->resize(vecsize);
     valid &= CDRMessage::readData(msg, ocvec->data(), vecsize);
-    int rest = (vecsize) % 4;
-    rest = rest == 0 ? 0 : 4 - rest;
-    msg->pos += rest;
+    msg->pos = (msg->pos + 3) & ~3;
     return valid;
 }
 
@@ -399,9 +395,7 @@ inline bool CDRMessage::readString(
         }
     }
     msg->pos += str_size;
-    int rest = (str_size) % 4;
-    rest = rest == 0 ? 0 : 4 - rest;
-    msg->pos += rest;
+    msg->pos = (msg->pos + 3) & ~3;
 
     return valid;
 }
@@ -755,12 +749,7 @@ inline bool CDRMessage::addParameterKey(
     }
     CDRMessage::addUInt16(msg, fastdds::dds::PID_KEY_HASH);
     CDRMessage::addUInt16(msg, 16);
-    for (uint8_t i = 0; i < 16; i++)
-    {
-        msg->buffer[msg->pos + i] = iHandle->value[i];
-    }
-    msg->pos += 16;
-    msg->length += 16;
+    CDRMessage::addData(msg, iHandle->value, 16);
     return true;
 }
 
@@ -785,7 +774,7 @@ inline bool CDRMessage::add_string(
     bool valid = CDRMessage::addUInt32(msg, str_siz);
     valid &= CDRMessage::addData(msg, (unsigned char*) in_str, str_siz);
     octet oc = '\0';
-    for (; str_siz &3; ++str_siz)
+    for (; str_siz & 3; ++str_siz)
     {
         valid &= CDRMessage::addOctet(msg, oc);
     }
