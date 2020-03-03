@@ -40,7 +40,7 @@ public:
     RTPS_DllAPI WriterQos();
     RTPS_DllAPI virtual ~WriterQos();
 
-    bool operator==(
+    bool operator ==(
             const WriterQos& b) const
     {
         return (this->m_durability == b.m_durability) &&
@@ -138,6 +138,8 @@ public:
 
     RTPS_DllAPI bool canQosBeUpdated(
             const WriterQos& qos) const;
+
+    void clear();
 };
 
 RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;

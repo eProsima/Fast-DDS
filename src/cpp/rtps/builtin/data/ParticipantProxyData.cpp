@@ -49,18 +49,20 @@ ParticipantProxyData::ParticipantProxyData(
     , m_availableBuiltinEndpoints(0)
     , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+    , m_manualLivelinessCount ()
 #if HAVE_SECURITY
     , security_attributes_(0UL)
     , plugin_security_attributes_(0UL)
 #endif
     , isAlive(false)
+    , m_properties(static_cast<uint32_t>(allocation.data_limits.max_properties))
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , m_readers(new ProxyHashTable<ReaderProxyData>(allocation.readers))
     , m_writers(new ProxyHashTable<WriterProxyData>(allocation.writers))
 {
+    m_userData.set_max_size(static_cast<uint32_t>(allocation.data_limits.max_user_data));
 }
-
 
 ParticipantProxyData::ParticipantProxyData(
         const ParticipantProxyData& pdata)
@@ -71,6 +73,7 @@ ParticipantProxyData::ParticipantProxyData(
     , m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints)
     , metatraffic_locators(pdata.metatraffic_locators)
     , default_locators(pdata.default_locators)
+    , m_manualLivelinessCount ()
     , m_participantName(pdata.m_participantName)
     , m_key(pdata.m_key)
     , m_leaseDuration(pdata.m_leaseDuration)
@@ -94,15 +97,14 @@ ParticipantProxyData::ParticipantProxyData(
 {
 }
 
-
 ParticipantProxyData::~ParticipantProxyData()
 {
     logInfo(RTPS_PARTICIPANT, m_guid);
 
-    // delete all reader proxies 
-    if(m_readers)
+    // delete all reader proxies
+    if (m_readers)
     {
-        for(ProxyHashTable<ReaderProxyData>::value_type val : *m_readers)
+        for (ProxyHashTable<ReaderProxyData>::value_type val : *m_readers)
         {
             delete val.second;
         }
@@ -111,9 +113,9 @@ ParticipantProxyData::~ParticipantProxyData()
     }
 
     // delete all writers proxies
-    if(m_writers)
+    if (m_writers)
     {
-        for(ProxyHashTable<WriterProxyData>::value_type val : *m_writers)
+        for (ProxyHashTable<WriterProxyData>::value_type val : *m_writers)
         {
             delete val.second;
         }
@@ -121,7 +123,7 @@ ParticipantProxyData::~ParticipantProxyData()
         delete m_writers;
     }
 
-    if(lease_duration_event != nullptr)
+    if (lease_duration_event != nullptr)
     {
         delete lease_duration_event;
     }
@@ -229,27 +231,24 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
 
-    if (this->m_userData.size() > 0)
+    if (m_userData.size() > 0)
     {
-        UserDataQosPolicy p;
-        p.data_vec(m_userData);
-        if (!p.addToCDRMessage(msg))
+        if (!m_userData.addToCDRMessage(msg))
         {
             return false;
         }
     }
 
-    if (this->m_properties.properties.size() > 0)
+    if (m_properties.size() > 0)
     {
-        ParameterPropertyList_t p(m_properties);
-        if (!p.addToCDRMessage(msg))
+        if (!m_properties.addToCDRMessage(msg))
         {
             return false;
         }
     }
 
 #if HAVE_SECURITY
-    if (!this->identity_token_.class_id().empty())
+    if (!identity_token_.class_id().empty())
     {
         ParameterToken_t p(fastdds::dds::PID_IDENTITY_TOKEN, 0);
         p.token = identity_token_;
@@ -259,7 +258,7 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
 
-    if (!this->permissions_token_.class_id().empty())
+    if (!permissions_token_.class_id().empty())
     {
         ParameterToken_t p(fastdds::dds::PID_PERMISSIONS_TOKEN, 0);
         p.token = permissions_token_;
@@ -269,11 +268,11 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
 
-    if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
+    if ((security_attributes_ != 0UL) || (plugin_security_attributes_ != 0UL))
     {
         ParameterParticipantSecurityInfo_t p;
-        p.security_attributes = this->security_attributes_;
-        p.plugin_security_attributes = this->plugin_security_attributes_;
+        p.security_attributes = security_attributes_;
+        p.plugin_security_attributes = plugin_security_attributes_;
         if (!p.addToCDRMessage(msg))
         {
             return false;
@@ -289,60 +288,84 @@ bool ParticipantProxyData::readFromCDRMessage(
         bool use_encapsulation,
         const NetworkFactory& network)
 {
-    auto param_process = [this, &network](const Parameter_t* param)
+    auto param_process = [this, &network](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
-                switch (param->Pid)
+                switch (pid)
                 {
                     case fastdds::dds::PID_KEY_HASH:
                     {
-                        const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                        assert(p != nullptr);
+                        ParameterKey_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
                         GUID_t guid;
-                        iHandle2GUID(guid, p->key);
-                        this->m_guid = guid;
-                        this->m_key = p->key;
+                        iHandle2GUID(guid, p.key);
+                        m_guid = guid;
+                        m_key = p.key;
                         break;
                     }
                     case fastdds::dds::PID_PROTOCOL_VERSION:
                     {
-                        const ParameterProtocolVersion_t* p = dynamic_cast<const ParameterProtocolVersion_t*>(param);
-                        assert(p != nullptr);
-                        if (p->protocolVersion.m_major < c_ProtocolVersion.m_major)
+                        ParameterProtocolVersion_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
                         {
                             return false;
                         }
-                        this->m_protocolVersion = p->protocolVersion;
+
+                        if (p.protocolVersion.m_major < c_ProtocolVersion.m_major)
+                        {
+                            return false;
+                        }
+                        m_protocolVersion = p.protocolVersion;
                         break;
                     }
                     case fastdds::dds::PID_VENDORID:
                     {
-                        const ParameterVendorId_t* p = dynamic_cast<const ParameterVendorId_t*>(param);
-                        assert(p != nullptr);
-                        this->m_VendorId[0] = p->vendorId[0];
-                        this->m_VendorId[1] = p->vendorId[1];
+                        ParameterVendorId_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        m_VendorId[0] = p.vendorId[0];
+                        m_VendorId[1] = p.vendorId[1];
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
                     {
-                        const ParameterBool_t* p = dynamic_cast<const ParameterBool_t*>(param);
-                        assert(p != nullptr);
-                        this->m_expectsInlineQos = p->value;
+                        ParameterBool_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        m_expectsInlineQos = p.value;
                         break;
                     }
                     case fastdds::dds::PID_PARTICIPANT_GUID:
                     {
-                        const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                        assert(p != nullptr);
-                        this->m_guid = p->guid;
-                        this->m_key = p->guid;
+                        ParameterGuid_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        m_guid = p.guid;
+                        m_key = p.guid;
                         break;
                     }
                     case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
                     {
-                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                        assert(p != nullptr);
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
                         Locator_t temp_locator;
-                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        if (network.transform_remote_locator(p.locator, temp_locator))
                         {
                             metatraffic_locators.add_multicast_locator(temp_locator);
                         }
@@ -350,10 +373,14 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR:
                     {
-                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                        assert(p != nullptr);
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
                         Locator_t temp_locator;
-                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        if (network.transform_remote_locator(p.locator, temp_locator))
                         {
                             metatraffic_locators.add_unicast_locator(temp_locator);
                         }
@@ -361,10 +388,14 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_DEFAULT_UNICAST_LOCATOR:
                     {
-                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                        assert(p != nullptr);
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
                         Locator_t temp_locator;
-                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        if (network.transform_remote_locator(p.locator, temp_locator))
                         {
                             default_locators.add_unicast_locator(temp_locator);
                         }
@@ -372,10 +403,14 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_DEFAULT_MULTICAST_LOCATOR:
                     {
-                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                        assert(p != nullptr);
+                        ParameterLocator_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
                         Locator_t temp_locator;
-                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        if (network.transform_remote_locator(p.locator, temp_locator))
                         {
                             default_locators.add_multicast_locator(temp_locator);
                         }
@@ -383,48 +418,66 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_PARTICIPANT_LEASE_DURATION:
                     {
-                        const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
-                        assert(p != nullptr);
-                        this->m_leaseDuration = p->time.to_duration_t();
+                        ParameterTime_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        m_leaseDuration = p.time.to_duration_t();
                         lease_duration_ =
-                                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
+                                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(
+                                            m_leaseDuration));
                         break;
                     }
                     case fastdds::dds::PID_BUILTIN_ENDPOINT_SET:
                     {
-                        const ParameterBuiltinEndpointSet_t* p =
-                                dynamic_cast<const ParameterBuiltinEndpointSet_t*>(param);
-                        assert(p != nullptr);
-                        this->m_availableBuiltinEndpoints = p->endpointSet;
+                        ParameterBuiltinEndpointSet_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        m_availableBuiltinEndpoints = p.endpointSet;
                         break;
                     }
                     case fastdds::dds::PID_ENTITY_NAME:
                     {
-                        const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
-                        assert(p != nullptr);
-                        this->m_participantName = p->getName();
+                        ParameterString_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        m_participantName = p.getName();
                         break;
                     }
                     case fastdds::dds::PID_PROPERTY_LIST:
                     {
-                        const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
-                        assert(p != nullptr);
-                        this->m_properties = *p;
+                        if (!m_properties.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
                         break;
                     }
                     case fastdds::dds::PID_USER_DATA:
                     {
-                        const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
-                        assert(p != nullptr);
-                        this->m_userData = p->data_vec();
+                        if (!m_userData.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
                         break;
                     }
                     case fastdds::dds::PID_IDENTITY_TOKEN:
                     {
 #if HAVE_SECURITY
-                        const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
-                        assert(p != nullptr);
-                        this->identity_token_ = std::move(p->token);
+                        ParameterToken_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        identity_token_ = std::move(p.token);
 #else
                         logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
 #endif
@@ -433,29 +486,40 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_PERMISSIONS_TOKEN:
                     {
 #if HAVE_SECURITY
-                        const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
-                        assert(p != nullptr);
-                        this->permissions_token_ = std::move(p->token);
+                        ParameterToken_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        permissions_token_ = std::move(p.token);
 #else
                         logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
 #endif
                         break;
                     }
+
                     case fastdds::dds::PID_PARTICIPANT_SECURITY_INFO:
                     {
 #if HAVE_SECURITY
-                        const ParameterParticipantSecurityInfo_t* p =
-                                dynamic_cast<const ParameterParticipantSecurityInfo_t*>(param);
-                        assert(p != nullptr);
-                        this->security_attributes_ = p->security_attributes;
-                        this->plugin_security_attributes_ = p->plugin_security_attributes;
+                        ParameterParticipantSecurityInfo_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        security_attributes_ = p.security_attributes;
+                        plugin_security_attributes_ = p.plugin_security_attributes;
 #else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+                        logWarning(RTPS_PARTICIPANT,
+                                "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
 #endif
                         break;
                     }
-
-                    default: break;
+                    default:
+                    {
+                        break;
+                    }
                 }
 
                 return true;
@@ -463,7 +527,15 @@ bool ParticipantProxyData::readFromCDRMessage(
 
     uint32_t qos_size;
     clear();
-    return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
+    try
+    {
+        return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
+    }
+    catch (std::bad_alloc& ba)
+    {
+        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+        return false;
+    }
 }
 
 void ParticipantProxyData::clear()
@@ -489,9 +561,10 @@ void ParticipantProxyData::clear()
     security_attributes_ = 0UL;
     plugin_security_attributes_ = 0UL;
 #endif
-    m_properties.properties.clear();
+    m_properties.clear();
     m_properties.length = 0;
     m_userData.clear();
+    m_userData.length = 0;
 }
 
 void ParticipantProxyData::copy(
@@ -509,8 +582,8 @@ void ParticipantProxyData::copy(
     lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration));
     m_key = pdata.m_key;
     isAlive = pdata.isAlive;
-    m_properties = pdata.m_properties;
     m_userData = pdata.m_userData;
+    m_properties = pdata.m_properties;
 
     // This method is only called when a new participant is discovered.The destination of the copy
     // will always be a new ParticipantProxyData or one from the pool, so there is no need for
@@ -529,10 +602,10 @@ bool ParticipantProxyData::updateData(
 {
     metatraffic_locators = pdata.metatraffic_locators;
     default_locators = pdata.default_locators;
-    m_properties = pdata.m_properties;
     m_leaseDuration = pdata.m_leaseDuration;
-    m_userData = pdata.m_userData;
     isAlive = true;
+    m_userData = pdata.m_userData;
+    m_properties = pdata.m_properties;
 #if HAVE_SECURITY
     identity_token_ = pdata.identity_token_;
     permissions_token_ = pdata.permissions_token_;
@@ -540,7 +613,7 @@ bool ParticipantProxyData::updateData(
     plugin_security_attributes_ = pdata.plugin_security_attributes_;
 #endif
     auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
-    if (this->lease_duration_event != nullptr)
+    if (lease_duration_event != nullptr)
     {
         if (new_lease_duration < lease_duration_)
         {
@@ -575,25 +648,27 @@ void ParticipantProxyData::set_persistence_guid(
     persistent_guid.second = data.str();
 
     // if exists replace
-    std::vector<std::pair<std::string, std::string> >& props = m_properties.properties;
-
-    std::vector<std::pair<std::string, std::string> >::iterator it =
-            std::find_if(
-        props.begin(),
-        props.end(),
-        [&persistent_guid](const std::pair<std::string, std::string>& p)
+    ParameterPropertyList_t::iterator it = std::find_if(
+        m_properties.begin(),
+        m_properties.end(),
+        [&persistent_guid](const fastdds::dds::ParameterProperty_t& p)
                 {
-                    return persistent_guid.first == p.first;
+                    return persistent_guid.first == p.first();
                 });
 
-    if (it != props.end())
+    if (it != m_properties.end())
     {
-        *it = std::move(persistent_guid);
+        if (!it->modify(persistent_guid))
+        {
+            logError(RTPS_PARTICIPANT, "Failed to change property <"
+                    << it->first() << " | " << it->second() << "> to <"
+                    << persistent_guid.first << " | " << persistent_guid.second << ">");
+        }
     }
     else
     {
         // if not exists add
-        m_properties.properties.push_back(std::move(persistent_guid));
+        m_properties.push_back(persistent_guid);
     }
 }
 
@@ -601,20 +676,17 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
 {
     GUID_t persistent(c_Guid_Unknown);
 
-    const std::vector<std::pair<std::string, std::string> >& props = m_properties.properties;
-
-    std::vector<std::pair<std::string, std::string> >::const_iterator it =
-            std::find_if(
-        props.cbegin(),
-        props.cend(),
-        [](const std::pair<std::string, std::string>& p)
+    ParameterPropertyList_t::const_iterator it = std::find_if(
+        m_properties.begin(),
+        m_properties.end(),
+        [](const fastdds::dds::ParameterProperty_t p)
                 {
-                    return "PID_PERSISTENCE_GUID" == p.first;
+                    return "PID_PERSISTENCE_GUID" == p.first();
                 });
 
-    if (it != props.end())
+    if (it != m_properties.end())
     {
-        std::istringstream in(it->second);
+        std::istringstream in(it->second());
         in >> persistent;
     }
 

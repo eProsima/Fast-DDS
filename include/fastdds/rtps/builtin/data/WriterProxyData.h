@@ -26,6 +26,7 @@
 #include <fastrtps/qos/ParameterList.h>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
@@ -51,6 +52,11 @@ public:
     RTPS_DllAPI WriterProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators);
+
+    RTPS_DllAPI WriterProxyData(
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits);
 
     virtual RTPS_DllAPI ~WriterProxyData();
 
