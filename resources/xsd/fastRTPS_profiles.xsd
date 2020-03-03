@@ -347,6 +347,8 @@
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+            <xs:element name="readerPayloadSize" type="uint32Type" minOccurs="0"/>
+            <xs:element name="writerPayloadSize" type="uint32Type" minOccurs="0"/>
             <xs:element name="mutation_tries" type="uint32Type" minOccurs="0"/>
             <xs:element name="avoid_builtin_multicast" type="boolType" minOccurs="0"/>
         </xs:all>

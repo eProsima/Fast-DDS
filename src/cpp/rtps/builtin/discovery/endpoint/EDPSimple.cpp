@@ -155,7 +155,7 @@ void EDPSimple::set_builtin_reader_history_attributes(
         HistoryAttributes& attributes)
 {
     attributes.initialReservedCaches = edp_initial_reserved_caches;
-    attributes.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+    attributes.payloadMaxSize = mp_PDP->builtin_attributes().readerPayloadSize;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().readerHistoryMemoryPolicy;
 }
 
@@ -163,7 +163,7 @@ void EDPSimple::set_builtin_writer_history_attributes(
         HistoryAttributes& attributes)
 {
     attributes.initialReservedCaches = edp_initial_reserved_caches;
-    attributes.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+    attributes.payloadMaxSize = mp_PDP->builtin_attributes().writerPayloadSize;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().writerHistoryMemoryPolicy;
 }
 
@@ -480,10 +480,12 @@ bool EDPSimple::processLocalReaderProxyData(
     if (writer->first != nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {
-                        return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
-                    },
-                        ALIVE, rdata->key());
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            ALIVE, rdata->key());
 
         if (change != nullptr)
         {
@@ -541,10 +543,12 @@ bool EDPSimple::processLocalWriterProxyData(
 
     if (writer->first != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {
-                        return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
-                    },
-                        ALIVE, wdata->key());
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            ALIVE, wdata->key());
         if (change != nullptr)
         {
             CDRMessage_t aux_msg(change->serializedPayload);
@@ -599,10 +603,12 @@ bool EDPSimple::removeLocalWriter(
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {
-                        return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
-                    },
-                        NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
         {
             {
@@ -642,10 +648,12 @@ bool EDPSimple::removeLocalReader(
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {
-                        return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
-                    },
-                        NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
         {
             {
