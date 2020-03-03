@@ -480,10 +480,12 @@ void PDPClient::announceParticipantState(
 
         CacheChange_t* change = nullptr;
 
-        if ((change = pW->new_change([this]() -> uint32_t {
-                        return mp_builtin->m_att.writerPayloadSize;
-                    },
-                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
+        if ((change = pW->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_builtin->m_att.writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
         {
             // update the sequence number
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();

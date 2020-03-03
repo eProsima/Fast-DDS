@@ -579,8 +579,8 @@ bool PDPServer::addRelayedChangeToHistory(
         sid.sequence_number(c.sequenceNumber);
         logError(RTPS_PDP,
                 "A DATA(p) received by server " << mp_PDPWriter->getGuid()
-                                                << " from participant " << c.writerGUID <<
-                            " without a valid SampleIdentity");
+                    << " from participant " << c.writerGUID
+                    << " without a valid SampleIdentity");
     }
 
     if (wp.related_sample_identity() == SampleIdentity::unknown())
@@ -779,10 +779,12 @@ void PDPServer::announceParticipantState(
 
             CacheChange_t* change = nullptr;
 
-            if ((change = pW->new_change([this]() -> uint32_t {
-                            return mp_builtin->m_att.writerPayloadSize;
-                        },
-                    NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
+            if ((change = pW->new_change(
+                [this]() -> uint32_t
+                {
+                    return mp_builtin->m_att.writerPayloadSize;
+                },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
             {
                 // update the sequence number
                 change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
@@ -933,10 +935,12 @@ bool PDPServer::remove_remote_participant(
                 pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
                 pC->instanceHandle == key )) // from the same participant I'm going to report
         {   // We must create the DATA(p[UD])
-            if ((pC = mp_PDPWriter->new_change([this]() -> uint32_t {
-                            return mp_builtin->m_att.writerPayloadSize;
-                        },
-                    NOT_ALIVE_DISPOSED_UNREGISTERED, key)))
+            if ((pC = mp_PDPWriter->new_change(
+                [this]() -> uint32_t
+                {
+                    return mp_builtin->m_att.writerPayloadSize;
+                },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, key)))
             {
                 // Use this server identity in order to hint clients it's a lease duration demise
                 WriteParams wp;

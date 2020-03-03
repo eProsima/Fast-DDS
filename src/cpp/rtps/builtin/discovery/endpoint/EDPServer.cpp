@@ -182,10 +182,10 @@ bool EDPServer::trimWriterHistory(
     std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
-            [_demises](const CacheChange_t* chan)
-                {
-                    return _demises.find(chan->instanceHandle) != _demises.cend();
-                });
+        [_demises](const CacheChange_t* chan)
+        {
+            return _demises.find(chan->instanceHandle) != _demises.cend();
+        });
 
     if (removal.empty())
     {
@@ -232,8 +232,8 @@ bool EDPServer::addEndpointFromHistory(
         sid.sequence_number(c.sequenceNumber);
         logError(RTPS_EDP,
                 "A DATA(r|w) received by server " << writer.getGuid()
-                                                  << " from participant " << c.writerGUID <<
-                            " without a valid SampleIdentity");
+                    << " from participant " << c.writerGUID
+                    << " without a valid SampleIdentity");
     }
 
     if (wp.related_sample_identity() == SampleIdentity::unknown())
@@ -243,9 +243,11 @@ bool EDPServer::addEndpointFromHistory(
 
     // See if this sample is already in the cache.
     // TODO: Accelerate this search by using a PublisherHistory as mp_PDPWriterHistory
-    auto it = std::find_if(history.changesRbegin(), history.changesRend(), [&sid](CacheChange_t* c) {
-                    return sid == c->write_params.sample_identity();
-                });
+    auto it = std::find_if(history.changesRbegin(), history.changesRend(),
+            [&sid](CacheChange_t* c)
+            {
+                return sid == c->write_params.sample_identity();
+            });
 
     if ( it == history.changesRend())
     {
@@ -299,11 +301,12 @@ bool EDPServer::removeLocalReader(
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
-                    {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
         {
             // unlike on EDPSimple we would remove old WriterHistory related entities when all
@@ -335,11 +338,12 @@ bool EDPServer::removeLocalWriter(
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
-                    {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
         {
             // unlike on EDPSimple we would remove old WriterHistory related
@@ -371,11 +375,12 @@ bool EDPServer::processLocalWriterProxyData(
 
     if (writer->first != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
-                    {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        ALIVE, wdata->key());
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            ALIVE, wdata->key());
         if (change != nullptr)
         {
             //wdata->toParameterList();
@@ -424,11 +429,12 @@ bool EDPServer::processLocalReaderProxyData(
     if (writer->first != nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
-                    {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        ALIVE, rdata->key());
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            ALIVE, rdata->key());
 
         if (change != nullptr)
         {
