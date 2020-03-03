@@ -11,6 +11,7 @@
                 <segment_overflow_policy>FAIL</segment_overflow_policy>
                 <healthy_check_timeout_ms>4294967295</healthy_check_timeout_ms>
                 <rtps_dump_file>test_file.dump</rtps_dump_file>
+                <maxMessageSize>128000</maxMessageSize>
             </transport_descriptor>
         </transport_descriptors>
     </profiles>

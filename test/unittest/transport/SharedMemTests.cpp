@@ -521,10 +521,10 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
 {
     SharedMemTransportDescriptor my_descriptor;
 
-    my_descriptor.port_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::FAIL;
-    my_descriptor.segment_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::FAIL;
-    my_descriptor.segment_size = 16;
-    my_descriptor.port_queue_capacity = 4;
+    my_descriptor.port_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+    my_descriptor.segment_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+    my_descriptor.segment_size(16, 16);
+    my_descriptor.port_queue_capacity(4);
 
     SharedMemTransport transportUnderTest(my_descriptor);
     ASSERT_TRUE(transportUnderTest.init());
@@ -621,10 +621,10 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
 {
     SharedMemTransportDescriptor my_descriptor;
 
-    my_descriptor.port_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
-    my_descriptor.segment_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
-    my_descriptor.segment_size = 16;
-    my_descriptor.port_queue_capacity = 4;
+    my_descriptor.port_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+    my_descriptor.segment_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+    my_descriptor.segment_size(16, 16);
+    my_descriptor.port_queue_capacity(4);
 
     SharedMemTransport transportUnderTest(my_descriptor);
     ASSERT_TRUE(transportUnderTest.init());

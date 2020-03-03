@@ -78,8 +78,8 @@ SharedMemChannelResource* test_SharedMemTransport::CreateInputChannelResource(
     return new test_SharedMemChannelResource(
         shared_mem_manager_->open_port(
             locator.port,
-            configuration()->port_queue_capacity,
-            configuration()->healthy_check_timeout_ms,
+            configuration()->port_queue_capacity(),
+            configuration()->healthy_check_timeout_ms(),
             open_mode)->create_listener(),
         locator,
         receiver,

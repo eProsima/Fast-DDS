@@ -35,29 +35,83 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 	virtual TransportInterface* create_transport() const override;
 	uint32_t min_send_buffer_size() const override {return 0;}
 
+	enum class OverflowPolicy { DISCARD, FAIL };
+
 	RTPS_DllAPI SharedMemTransportDescriptor();
 
 	RTPS_DllAPI SharedMemTransportDescriptor(
         	const SharedMemTransportDescriptor& t);
 
-	uint32_t segment_size;
-	uint32_t port_queue_capacity;
-
-	enum class OverflowPolicy { DISCARD, FAIL };
-
-	uint32_t max_message_size() const override
-	{ 
-		// TODO(Adolfo): The current RTPS layer architecture yield better latency
-		// working with fragments. When this issue is solved, segment_size should be
-		// used as max_message_size.
-		return s_maximumMessageSize;
-		//return segment_size; 
+	RTPS_DllAPI uint32_t segment_size() const
+	{
+		return segment_size_;
 	}
 
-	OverflowPolicy port_overflow_policy;
-	OverflowPolicy segment_overflow_policy;
-	uint32_t healthy_check_timeout_ms;
-	std::string rtps_dump_file;
+	RTPS_DllAPI void segment_size(uint32_t segment_size, uint32_t max_message_size)
+	{
+		segment_size_ = segment_size;
+		maxMessageSize = max_message_size;
+	}
+
+	RTPS_DllAPI OverflowPolicy port_overflow_policy() const
+	{
+		return port_overflow_policy_;
+	}
+
+	RTPS_DllAPI void port_overflow_policy(OverflowPolicy port_overflow_policy)
+	{
+		port_overflow_policy_ = port_overflow_policy; 
+	}
+
+	RTPS_DllAPI uint32_t port_queue_capacity() const
+	{
+		return port_queue_capacity_;
+	}
+
+	RTPS_DllAPI void port_queue_capacity(uint32_t port_queue_capacity)
+	{
+		port_queue_capacity_ = port_queue_capacity;
+	}
+
+	RTPS_DllAPI OverflowPolicy segment_overflow_policy() const
+	{
+		return segment_overflow_policy_;
+	}
+
+	RTPS_DllAPI void segment_overflow_policy(OverflowPolicy segment_overflow_policy)
+	{
+		segment_overflow_policy_ = segment_overflow_policy;
+	}
+
+	RTPS_DllAPI uint32_t healthy_check_timeout_ms() const
+	{
+		return healthy_check_timeout_ms_;
+	}
+
+	RTPS_DllAPI void healthy_check_timeout_ms(uint32_t healthy_check_timeout_ms)
+	{
+		healthy_check_timeout_ms_ = healthy_check_timeout_ms;
+	}
+
+	RTPS_DllAPI std::string rtps_dump_file() const
+	{
+		return rtps_dump_file_;
+	}
+
+	RTPS_DllAPI void rtps_dump_file(const std::string& rtps_dump_file)
+	{
+		rtps_dump_file_ = rtps_dump_file;
+	}
+
+private:
+
+	uint32_t segment_size_;
+	uint32_t port_queue_capacity_;
+	OverflowPolicy port_overflow_policy_;
+	OverflowPolicy segment_overflow_policy_;
+	uint32_t healthy_check_timeout_ms_;
+	std::string rtps_dump_file_;
+
 }SharedMemTransportDescriptor;
 
 } // namespace rtps

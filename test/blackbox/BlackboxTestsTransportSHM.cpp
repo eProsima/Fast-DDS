@@ -77,7 +77,8 @@ TEST(BlackBox, SHM300KFragmentation)
     auto data_size = data.front().data().size();
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
-    shm_transport->segment_size = static_cast<uint32_t>(data_size*3/4);
+    const uint32_t segment_size = static_cast<uint32_t>(data_size * 3 / 4);
+    shm_transport->segment_size(segment_size, segment_size);
     
     writer
         .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
@@ -87,7 +88,7 @@ TEST(BlackBox, SHM300KFragmentation)
         .init();
 
     uint32_t big_buffers_count = 0;
-    shm_transport->big_buffer_size_ = shm_transport->segment_size/3;
+    shm_transport->big_buffer_size_ = shm_transport->segment_size()/3;
     shm_transport->big_buffer_size_count_ = &big_buffers_count;
 
     reader
@@ -130,7 +131,8 @@ TEST(BlackBox, SHM300KNoFragmentation)
     auto data_size = data.front().data().size();
     
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
-    shm_transport->segment_size = 1024*1024;
+    const uint32_t segment_size = 1024 * 1024;
+    shm_transport->segment_size(segment_size, segment_size);
     
     writer
         .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
@@ -183,7 +185,8 @@ TEST(BlackBox, SHM_UDP_300KFragmentation)
     uint32_t writer_samples = 1;
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
-    shm_transport->segment_size = 1024*1024;
+    const uint32_t segment_size = 1024 * 1024;
+    shm_transport->segment_size(segment_size, segment_size);
 
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
@@ -242,7 +245,8 @@ TEST(BlackBox, UDPvsSHM_UDP)
     uint32_t writer_samples = 1;
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
-    shm_transport->segment_size = 1024*1024;
+    const uint32_t segment_size = 1024 * 1024;
+    shm_transport->segment_size(segment_size, segment_size);
     
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
@@ -299,7 +303,8 @@ TEST(BlackBox, SHM_UDPvsUDP)
     uint32_t writer_samples = 1;
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
-    shm_transport->segment_size = 1024*1024;
+    const uint32_t segment_size = 1024 * 1024;
+    shm_transport->segment_size(segment_size, segment_size);
     
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 

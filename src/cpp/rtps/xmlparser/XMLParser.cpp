@@ -448,7 +448,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             uint32_t uSize = 0;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
                 return XMLP_ret::XML_ERROR;
-            pDesc->maxMessageSize = uSize;
+            std::dynamic_pointer_cast<rtps::TransportDescriptorInterface>(p_transport)->maxMessageSize = uSize;
         }
         else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
         {
@@ -675,19 +675,19 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
             {
                 if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
                     return XMLP_ret::XML_ERROR;
-                transport_descriptor->segment_size =  static_cast<uint32_t>(aux);
+                transport_descriptor->segment_size(static_cast<uint32_t>(aux), static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, PORT_QUEUE_CAPACITY) == 0)
             {
                 if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
                     return XMLP_ret::XML_ERROR;
-                transport_descriptor->port_queue_capacity =  static_cast<uint32_t>(aux);
+                transport_descriptor->port_queue_capacity(static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0)
             {
                 if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
                     return XMLP_ret::XML_ERROR;
-                transport_descriptor->healthy_check_timeout_ms =  static_cast<uint32_t>(aux);
+                transport_descriptor->healthy_check_timeout_ms(static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, PORT_OVERFLOW_POLICY) == 0)
             {
@@ -696,11 +696,11 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
                     return XMLP_ret::XML_ERROR;
                 if(str == DISCARD)
                 {
-                    transport_descriptor->port_overflow_policy = fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
+                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
                 }
                 else if(str == FAIL)
                 {
-                    transport_descriptor->port_overflow_policy = fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL;
+                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
                 }
                 else
                     return XMLP_ret::XML_ERROR;
@@ -712,11 +712,11 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
                     return XMLP_ret::XML_ERROR;
                 if(str == DISCARD)
                 {
-                    transport_descriptor->segment_overflow_policy = fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
+                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
                 }
                 else if(str == FAIL)
                 {
-                    transport_descriptor->segment_overflow_policy = fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL;
+                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
                 }
                 else
                     return XMLP_ret::XML_ERROR;
@@ -726,9 +726,9 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
                 std::string str;
                 if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
                     return XMLP_ret::XML_ERROR;
-                transport_descriptor->rtps_dump_file = str;
+                transport_descriptor->rtps_dump_file(str);
             }
-            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0)
+            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 || strcmp(name, MAX_MESSAGE_SIZE) == 0)
             {
                 // Parsed Outside of this method
             }

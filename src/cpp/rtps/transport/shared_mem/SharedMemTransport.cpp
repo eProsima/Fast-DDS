@@ -53,27 +53,27 @@ using PortParameters = fastrtps::rtps::PortParameters;
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor()
     : TransportDescriptorInterface(SharedMemTransport::default_segment_size, s_maximumInitialPeersRange)
-    , segment_size(SharedMemTransport::default_segment_size)
-    , port_queue_capacity(SharedMemTransport::default_port_queue_capacity)
-    , port_overflow_policy(SharedMemTransport::default_overflow_policy)
-    , segment_overflow_policy(SharedMemTransport::default_overflow_policy)
-    , healthy_check_timeout_ms(SharedMemTransport::default_healthy_check_timeout_ms)
-    , rtps_dump_file("")
+    , segment_size_(SharedMemTransport::default_segment_size)
+    , port_queue_capacity_(SharedMemTransport::default_port_queue_capacity)
+    , port_overflow_policy_(SharedMemTransport::default_overflow_policy)
+    , segment_overflow_policy_(SharedMemTransport::default_overflow_policy)
+    , healthy_check_timeout_ms_(SharedMemTransport::default_healthy_check_timeout_ms)
+    , rtps_dump_file_("")
 {
-    maxMessageSize = segment_size;
+    maxMessageSize = segment_size_;
 }
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor(
         const SharedMemTransportDescriptor& t)
-    : TransportDescriptorInterface(t.segment_size, s_maximumInitialPeersRange)
-    , segment_size(t.segment_size)
-    , port_queue_capacity(t.port_queue_capacity)
-    , port_overflow_policy(t.port_overflow_policy)
-    , segment_overflow_policy(t.segment_overflow_policy)
-    , healthy_check_timeout_ms(t.healthy_check_timeout_ms)
-    , rtps_dump_file(t.rtps_dump_file)
+    : TransportDescriptorInterface(t.segment_size_, s_maximumInitialPeersRange)
+    , segment_size_(t.segment_size_)
+    , port_queue_capacity_(t.port_queue_capacity_)
+    , port_overflow_policy_(t.port_overflow_policy_)
+    , segment_overflow_policy_(t.segment_overflow_policy_)
+    , healthy_check_timeout_ms_(t.healthy_check_timeout_ms_)
+    , rtps_dump_file_(t.rtps_dump_file_)
 {
-    maxMessageSize = t.segment_size;
+    maxMessageSize = t.segment_size_;
 }
 
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
@@ -239,7 +239,7 @@ bool SharedMemTransport::init()
 {
     try
     {
-        switch (configuration_.port_overflow_policy)
+        switch (configuration_.port_overflow_policy())
         {
         case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
             push_lambda_ = &SharedMemTransport::push_discard;
@@ -251,7 +251,7 @@ bool SharedMemTransport::init()
             throw std::runtime_error("unknown port_overflow_policy");
         }
 
-        switch (configuration_.segment_overflow_policy)
+        switch (configuration_.segment_overflow_policy())
         {
         case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
         case SharedMemTransportDescriptor::OverflowPolicy::FAIL:
@@ -261,13 +261,13 @@ bool SharedMemTransport::init()
         }
 
         shared_mem_manager_ = std::make_shared<SharedMemManager>(SHM_MANAGER_DOMAIN);
-        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size,
-                        configuration_.port_queue_capacity);
+        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
+                        configuration_.port_queue_capacity());
 
         // Memset the whole segment to zero in order to forze physical map of the buffer
-        auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size,
+        auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),
                         (std::chrono::steady_clock::now()+std::chrono::milliseconds(100)));
-        memset(buffer->data(), 0, configuration_.segment_size);
+        memset(buffer->data(), 0, configuration_.segment_size());
         buffer.reset();
     }
     catch (std::exception& e)
@@ -311,8 +311,8 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
     return new SharedMemChannelResource(
         shared_mem_manager_->open_port(
             locator.port,
-            configuration_.port_queue_capacity,
-            configuration_.healthy_check_timeout_ms,
+            configuration_.port_queue_capacity(),
+            configuration_.healthy_check_timeout_ms(),
             open_mode)->create_listener(),
         locator,
         receiver);
@@ -447,7 +447,7 @@ bool SharedMemTransport::send(
 
 		// Segment overflow with discard policy doesn't return error.
 		if(!shared_buffer && 
-            configuration_.segment_overflow_policy == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
+            configuration_.segment_overflow_policy() == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
 		{
 			ret = true;
 		}
@@ -472,7 +472,7 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
     {
         // The port is not opened
         std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->
-                open_port(port_id, configuration_.port_queue_capacity, configuration_.healthy_check_timeout_ms,
+                open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
                         SharedMemGlobal::Port::OpenMode::Write);
         opened_ports_[port_id] = port;
 
