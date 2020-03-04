@@ -533,14 +533,7 @@ void StatefulWriter::send_any_unsent_changes()
         bool no_flow_controllers = m_controllers.empty() && mp_RTPSParticipant->getFlowControllers().empty();
         if (no_flow_controllers || !there_are_remote_readers_)
         {
-            if (readers_dont_share_locators_)
-            {
-                send_changes_separatedly(max_sequence, activateHeartbeatPeriod);
-            }
-            else
-            {
-                send_all_unsent_changes(max_sequence, activateHeartbeatPeriod);
-            }
+            send_all_unsent_changes(max_sequence, activateHeartbeatPeriod);
         }
         else
         {
