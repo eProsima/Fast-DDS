@@ -2236,16 +2236,26 @@ XMLP_ret XMLParser::getXMLDuration(
     /*
         <xs:complexType name="durationType">
             <xs:all>
-                <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" minOccurs="0"/>
-                <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
+                <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0"/>
+                <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
+
+    // set default values
+    duration.seconds = 0;
+    duration.nanosec = 0;
+
+    // it's mandatory to provide a sec or nanocsec child item
+    bool empty = true;
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
+        // there is at least a child element
+        empty = false;
+
         name = p_aux0->Name();
         if (strcmp(name, SECONDS) == 0)
         {
@@ -2311,6 +2321,14 @@ XMLP_ret XMLParser::getXMLDuration(
             return XMLP_ret::XML_ERROR;
         }
     }
+
+    // An empty Duration_t xml is forbidden
+    if(empty)
+    {
+        logError(XMLPARSER, "'durationType' elements cannot be empty. At least second or nanoseconds should be provided");
+        return XMLP_ret::XML_ERROR;
+    }
+
     return XMLP_ret::XML_OK;
 }
 
