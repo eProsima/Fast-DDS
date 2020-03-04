@@ -22,62 +22,45 @@
 #include <cassert>
 
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
-ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, RTPSWriter* associatedWriter):
-    mBytesPerPeriod(descriptor.bytesPerPeriod),
-    mAccumulatedPayloadSize(0),
-    mPeriodMillisecs(descriptor.periodMillisecs),
-    mAssociatedParticipant(nullptr),
-    mAssociatedWriter(associatedWriter)
+ThroughputController::ThroughputController(
+        const ThroughputControllerDescriptor& descriptor,
+        RTPSWriter* associatedWriter)
+    : mBytesPerPeriod(descriptor.bytesPerPeriod)
+    , mAccumulatedPayloadSize(0)
+    , mPeriodMillisecs(descriptor.periodMillisecs)
+    , mAssociatedParticipant(nullptr)
+    , mAssociatedWriter(associatedWriter)
 {
 }
 
-ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, RTPSParticipantImpl* associatedParticipant):
-    mBytesPerPeriod(descriptor.bytesPerPeriod),
-    mAccumulatedPayloadSize(0),
-    mPeriodMillisecs(descriptor.periodMillisecs),
-    mAssociatedParticipant(associatedParticipant),
-    mAssociatedWriter(nullptr)
+ThroughputController::ThroughputController(
+        const ThroughputControllerDescriptor& descriptor,
+        RTPSParticipantImpl* associatedParticipant)
+    : mBytesPerPeriod(descriptor.bytesPerPeriod)
+    , mAccumulatedPayloadSize(0)
+    , mPeriodMillisecs(descriptor.periodMillisecs)
+    , mAssociatedParticipant(associatedParticipant)
+    , mAssociatedWriter(nullptr)
 {
 }
 
-void ThroughputController::operator()(RTPSWriterCollector<ReaderLocator*>& changesToSend)
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
-
-    auto it = changesToSend.items().begin();
-
-    while(it != changesToSend.items().end())
-    {
-        if(!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
-            break;
-
-        ++it;
-    }
-
-    changesToSend.items().erase(it, changesToSend.items().end());
-}
-
-void ThroughputController::operator()(RTPSWriterCollector<ReaderProxy*>& changesToSend)
+void ThroughputController::operator ()(
+        RTPSWriterCollector<ReaderLocator*>& changesToSend)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
-
-    auto it = changesToSend.items().begin();
-
-    while(it != changesToSend.items().end())
-    {
-        if(!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
-            break;
-
-        ++it;
-    }
-
-    changesToSend.items().erase(it, changesToSend.items().end());
+    process_nts(changesToSend);
 }
 
+void ThroughputController::operator ()(
+        RTPSWriterCollector<ReaderProxy*>& changesToSend)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
+    process_nts(changesToSend);
+}
 
 void ThroughputController::disable()
 {
@@ -86,55 +69,83 @@ void ThroughputController::disable()
     mAssociatedParticipant = nullptr;
 }
 
-bool ThroughputController::process_change_nts_(CacheChange_t* change, const SequenceNumber_t& /*seqNum*/,
-        const FragmentNumber_t fragNum)
+template<typename Collector>
+void ThroughputController::process_nts(Collector& changesToSend)
+{
+    uint32_t size_to_restore = 0;
+    auto it = changesToSend.items().begin();
+    while (
+        it != changesToSend.items().end() &&
+        process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber, &size_to_restore))
+    {
+        ++it;
+    }
+
+    changesToSend.items().erase(it, changesToSend.items().end());
+
+    if (size_to_restore > 0)
+    {
+        ScheduleRefresh(size_to_restore);
+    }
+}
+
+bool ThroughputController::process_change_nts_(
+        CacheChange_t* change,
+        const SequenceNumber_t& /*seqNum*/,
+        const FragmentNumber_t fragNum,
+        uint32_t* accumulated_size)
 {
     assert(change != nullptr);
 
     uint32_t dataLength = change->serializedPayload.length;
 
     if (fragNum != 0)
+    {
         dataLength = (fragNum + 1) != change->getFragmentCount() ?
-            change->getFragmentSize() : change->serializedPayload.length - (fragNum * change->getFragmentSize());
+                change->getFragmentSize() : change->serializedPayload.length - (fragNum * change->getFragmentSize());
+    }
 
-    if((mAccumulatedPayloadSize + dataLength) <= mBytesPerPeriod)
+    if ((mAccumulatedPayloadSize + dataLength) <= mBytesPerPeriod)
     {
         mAccumulatedPayloadSize += dataLength;
-        ScheduleRefresh(dataLength);
+        *accumulated_size += dataLength;
         return true;
     }
 
     return false;
 }
 
-void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
+void ThroughputController::ScheduleRefresh(
+        uint32_t sizeToRestore)
 {
-    std::shared_ptr<asio::steady_timer> throwawayTimer(std::make_shared<asio::steady_timer>(*FlowController::ControllerService));
+    std::shared_ptr<asio::steady_timer> throwawayTimer(std::make_shared<asio::steady_timer>(
+                *FlowController::ControllerService));
     auto refresh = [throwawayTimer, this, sizeToRestore]
-        (const asio::error_code& error)
-        {
-            if ((error != asio::error::operation_aborted) &&
-                    FlowController::IsListening(this))
+                (const asio::error_code& error)
             {
-                std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
-                throwawayTimer->cancel();
-                mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToRestore;
+                if ((error != asio::error::operation_aborted) &&
+                        FlowController::IsListening(this))
+                {
+                    std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
+                    throwawayTimer->cancel();
+                    mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ?
+                        0 : mAccumulatedPayloadSize - sizeToRestore;
 
-                if (mAssociatedWriter)
-                {
-                    mAssociatedWriter->getRTPSParticipant()->async_thread().wake_up(mAssociatedWriter);
-                }
-                else if (mAssociatedParticipant)
-                {
-                    std::unique_lock<std::recursive_mutex> lock(*mAssociatedParticipant->getParticipantMutex());
-                    for (auto it = mAssociatedParticipant->userWritersListBegin();
-                            it != mAssociatedParticipant->userWritersListEnd(); ++it)
+                    if (mAssociatedWriter)
                     {
-                        mAssociatedParticipant->async_thread().wake_up(*it);
+                        mAssociatedWriter->getRTPSParticipant()->async_thread().wake_up(mAssociatedWriter);
+                    }
+                    else if (mAssociatedParticipant)
+                    {
+                        std::unique_lock<std::recursive_mutex> lock(*mAssociatedParticipant->getParticipantMutex());
+                        for (auto it = mAssociatedParticipant->userWritersListBegin();
+                                it != mAssociatedParticipant->userWritersListEnd(); ++it)
+                        {
+                            mAssociatedParticipant->async_thread().wake_up(*it);
+                        }
                     }
                 }
-            }
-        };
+            };
 
     throwawayTimer->expires_from_now(std::chrono::milliseconds(mPeriodMillisecs));
     throwawayTimer->async_wait(refresh);

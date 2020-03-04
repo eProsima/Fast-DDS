@@ -156,6 +156,10 @@ private:
             CacheChange_t* change,
             ReaderLocator& reader_locator);
 
+    void send_all_unsent_changes();
+
+    void send_unsent_changes_with_flow_control();
+
     bool is_inline_qos_expected_ = false;
     LocatorList_t fixed_locators_;
     ResourceLimitedVector<ReaderLocator> matched_readers_;
