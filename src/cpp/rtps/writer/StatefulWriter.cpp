@@ -749,7 +749,7 @@ void StatefulWriter::send_all_unsent_changes(
         network.select_locators(locator_selector_);
         compute_selected_guids();
 
-        bool force_piggyback_hb = false; // Force piggyback HB if old samples not acknowledged.
+        bool heartbeat_has_been_sent = false;
 
         RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
@@ -757,8 +757,12 @@ void StatefulWriter::send_all_unsent_changes(
         SequenceNumber_t seq = next_all_acked_notify_sequence_;
         SequenceNumber_t last_sequence = mp_history->next_sequence_number();
 
-        force_piggyback_hb = seq < get_seq_num_min();
-        seq = get_seq_num_min();
+        // Send heartbeat if there are holes pending acknowledgement 
+        if (seq < biggest_removed_sequence_number_)
+        {
+            send_heartbeat_nts_(all_remote_readers_.size(), group, true);
+            heartbeat_has_been_sent = true;
+        }
 
         // Add holes in history and send them to all readers
         for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
@@ -832,9 +836,9 @@ void StatefulWriter::send_all_unsent_changes(
         }
 
         // Heartbeat piggyback.
-        if (there_are_remote_readers_)
+        if (!heartbeat_has_been_sent)
         {
-            send_heartbeat_nts_(all_remote_readers_.size(), group, !force_piggyback_hb);
+            send_heartbeat_nts_(all_remote_readers_.size(), group, true);
         }
 
         group.flush_and_reset();
