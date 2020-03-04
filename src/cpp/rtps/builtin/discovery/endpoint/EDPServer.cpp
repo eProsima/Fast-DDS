@@ -376,7 +376,7 @@ bool EDPServer::processLocalWriterProxyData(
 
     // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
     // client-servers acknowledge reception
-    bool ret_val = serialize_proxy_data(*wdata, *writer, false, &change);
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, false, &change);
     if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:
@@ -404,7 +404,7 @@ bool EDPServer::processLocalReaderProxyData(
 
     // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
     // client-servers acknowledge reception
-    bool ret_val = serialize_proxy_data(*rdata, *writer, false, &change);
+    bool ret_val = serialize_reader_proxy_data(*rdata, *writer, false, &change);
     if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:

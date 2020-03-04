@@ -51,7 +51,7 @@ bool EDPClient::processLocalReaderProxyData(
 #endif
 
     CacheChange_t* change = nullptr;
-    bool ret_val = serialize_proxy_data(*rdata, *writer, true, &change);
+    bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
     if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:
@@ -84,7 +84,7 @@ bool EDPClient::processLocalWriterProxyData(
 #endif
 
     CacheChange_t* change = nullptr;
-    bool ret_val = serialize_proxy_data(*wdata, *writer, true, &change);
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
     if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:
