@@ -611,11 +611,24 @@ bool TransportPriorityQosPolicy::readFromCDRMessage(
     return CDRMessage::readUInt32(msg, &value);
 }
 
+uint32_t DataRepresentationQosPolicy::cdr_serialized_size() const
+{
+    // Size of data
+    uint32_t data_size = static_cast<uint32_t>(m_value.size() * sizeof(uint16_t));
+    // Align to next 4 byte
+    data_size = (data_size + 3) & ~3;
+    // p_id + p_length + data_size + data
+    return 2 + 2 + 4 + data_size;
+}
+
 bool DataRepresentationQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    uint16_t len = 4 + static_cast<uint16_t>(m_value.size() * sizeof(uint16_t));
+
+    uint16_t len = static_cast<uint32_t>(m_value.size() * sizeof(uint16_t)) + 4;
+    len = (len + 3) & ~3;
+
     valid &= CDRMessage::addUInt16(msg, len);
     valid &= CDRMessage::addUInt32(msg, static_cast<uint32_t>(m_value.size()));
     for (const DataRepresentationId_t& id : m_value)

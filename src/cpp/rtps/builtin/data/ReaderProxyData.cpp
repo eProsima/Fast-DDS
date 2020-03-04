@@ -253,10 +253,6 @@ uint32_t ReaderProxyData::get_serialized_size(
     {
         ret_val += m_qos.m_groupData.cdr_serialized_size();
     }
-    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
-    {
-        ret_val += m_qos.m_timeBasedFilter.cdr_serialized_size();
-    }
     if (m_qos.m_disablePositiveACKs.send_always() || m_qos.m_disablePositiveACKs.hasChanged)
     {
         ret_val += m_qos.m_disablePositiveACKs.cdr_serialized_size();
@@ -272,6 +268,10 @@ uint32_t ReaderProxyData::get_serialized_size(
     if (m_type_information && m_type_information->assigned())
     {
         ret_val += m_type_information->cdr_serialized_size();
+    }
+    if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
+    {
+        ret_val += m_qos.type_consistency.cdr_serialized_size();
     }
 
 #if HAVE_SECURITY
@@ -470,13 +470,6 @@ bool ReaderProxyData::writeToCDRMessage(
     if (m_qos.m_groupData.send_always() || m_qos.m_groupData.hasChanged)
     {
         if (!m_qos.m_groupData.addToCDRMessage(msg))
-        {
-            return false;
-        }
-    }
-    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
-    {
-        if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg))
         {
             return false;
         }
