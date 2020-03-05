@@ -79,8 +79,8 @@ static bool should_be_intraprocess_only(
 {
     return
         xmlparser::XMLProfileManager::library_settings().intraprocess_delivery == INTRAPROCESS_FULL &&
-        att.builtin.discovery_config.ignoreParticipantFlags == 
-            (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
+        att.builtin.discovery_config.ignoreParticipantFlags ==
+        (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 }
 
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
@@ -128,19 +128,19 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
         case DiscoveryProtocol::BACKUP:
-            // Verify if listening ports are provided
-            for (auto& transportDescriptor : PParam.userTransports)
+        // Verify if listening ports are provided
+        for (auto& transportDescriptor : PParam.userTransports)
+        {
+            TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+            if (pT && pT->listening_ports.empty())
             {
-                TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
-                if (pT && pT->listening_ports.empty())
-                {
-                    logError(RTPS_PARTICIPANT,
-                            "Participant " << m_att.getName() << " with GUID " << m_guid
-                            << " tries to use discovery server over TCP without providing a proper listening port");
-                }
+                logError(RTPS_PARTICIPANT,
+                        "Participant " << m_att.getName() << " with GUID " << m_guid
+                                       << " tries to use discovery server over TCP without providing a proper listening port");
             }
-        default:
-            break;
+        }
+    default:
+        break;
     }
 
     // User defined transports
@@ -257,7 +257,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 #if HAVE_SECURITY
     // Start security
     // TODO(Ricardo) Get returned value in future.
-    m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
+    m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties,
+                    m_is_security_active);
     if (!m_security_manager_initialized)
     {
         // Participant will be deleted, no need to allocate buffers or create builtin endpoints
@@ -279,7 +280,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
     size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
-    if(num_send_buffers == 0)
+    if (num_send_buffers == 0)
     {
         // Three buffers (user, events and async writer threads)
         num_send_buffers = 3;
@@ -307,7 +308,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     mp_builtinProtocols = new BuiltinProtocols();
 
     //Start reception
-    for(auto& receiver : m_receiverResourcelist)
+    for (auto& receiver : m_receiverResourcelist)
     {
         receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
     }
@@ -333,7 +334,7 @@ void RTPSParticipantImpl::enable()
     }
 
     //Start reception
-    for(auto& receiver : m_receiverResourcelist)
+    for (auto& receiver : m_receiverResourcelist)
     {
         receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
     }
@@ -1337,7 +1338,8 @@ std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
     return send_buffers_->get_buffer(this);
 }
 
-void RTPSParticipantImpl::return_send_buffer(std::unique_ptr <RTPSMessageGroup_t>&& buffer)
+void RTPSParticipantImpl::return_send_buffer(
+        std::unique_ptr <RTPSMessageGroup_t>&& buffer)
 {
     send_buffers_->return_buffer(std::move(buffer));
 }
