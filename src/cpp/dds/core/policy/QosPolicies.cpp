@@ -626,7 +626,7 @@ bool DataRepresentationQosPolicy::addToCDRMessage(
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
 
-    uint16_t len = static_cast<uint32_t>(m_value.size() * sizeof(uint16_t)) + 4;
+    uint16_t len = static_cast<uint16_t>(m_value.size() * sizeof(uint16_t)) + 4;
     len = (len + 3) & ~3;
 
     valid &= CDRMessage::addUInt16(msg, len);
