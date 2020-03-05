@@ -45,6 +45,7 @@ namespace rtps {
 
 void EDPBasePUBListener::add_writer_from_change(
         RTPSReader* reader,
+        ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp)
 {
@@ -85,6 +86,9 @@ void EDPBasePUBListener::add_writer_from_change(
                 edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
         if (writer_data != nullptr)
         {
+            //Removing change from history
+            reader_history->remove_change(change);
+
             // At this point we can release reader lock, cause change is not used
             reader->getMutex().unlock();
 
@@ -121,7 +125,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        add_writer_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_writer_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
@@ -129,12 +134,10 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
         logInfo(RTPS_EDP, "Disposed Remote Writer, removing...");
         GUID_t writer_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeWriterProxyData(writer_guid);
+
+        //Removing change from history
+        reader_history->remove_change(change);
     }
-
-    //Removing change from history
-    reader_history->remove_change(change);
-
-    return;
 }
 
 bool EDPListener::computeKey(
@@ -145,6 +148,7 @@ bool EDPListener::computeKey(
 
 void EDPBaseSUBListener::add_reader_from_change(
         RTPSReader* reader,
+        ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp)
 {
@@ -185,6 +189,9 @@ void EDPBaseSUBListener::add_reader_from_change(
                 edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
         if (reader_data != nullptr) //ADDED NEW DATA
         {
+            // Remove change from history.
+            reader_history->remove_change(change);
+
             // At this point we can release reader lock, cause change is not used
             reader->getMutex().unlock();
 
@@ -221,7 +228,8 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        add_reader_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_reader_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
@@ -230,12 +238,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 
         GUID_t reader_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeReaderProxyData(reader_guid);
+
+        // Remove change from history.
+        reader_history->remove_change(change);
     }
-
-    // Remove change from history.
-    reader_history->remove_change(change);
-
-    return;
 }
 
 void EDPSimplePUBListener::onWriterChangeReceivedByAll(

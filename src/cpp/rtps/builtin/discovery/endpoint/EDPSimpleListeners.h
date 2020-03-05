@@ -77,6 +77,7 @@ protected:
 
     void add_writer_from_change(
             RTPSReader* reader,
+            ReaderHistory* reader_history,
             CacheChange_t* change,
             EDP* edp);
 
@@ -107,9 +108,10 @@ public:
 protected:
 
     void add_reader_from_change(
-            RTPSReader* reader,
-            CacheChange_t* change,
-            EDP* edp);
+        RTPSReader* reader,
+        ReaderHistory* reader_history,
+        CacheChange_t* change,
+        EDP* edp);
 
     //!Temporary structure to avoid allocations
     ReaderProxyData temp_reader_data_;

@@ -398,10 +398,18 @@ public:
     void copy(
             WriterProxyData* wdata);
 
+    /**
+     * Get the size in bytes of the CDR serialization of this object.
+     * @param include_encapsulation Whether to include the size of the encapsulation info.
+     * @return size in bytes of the CDR serialization.
+     */
+    uint32_t get_serialized_size(
+            bool include_encapsulation) const;
+
     //!Write as a parameter list on a CDRMessage_t
     bool writeToCDRMessage(
             CDRMessage_t* msg,
-            bool write_encapsulation);
+            bool write_encapsulation) const;
 
     //!Read a parameter list from a CDRMessage_t.
     RTPS_DllAPI bool readFromCDRMessage(

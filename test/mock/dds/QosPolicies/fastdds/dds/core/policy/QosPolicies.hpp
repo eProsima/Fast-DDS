@@ -73,6 +73,17 @@ public:
 
     virtual inline void clear() = 0;
 
+    static uint32_t get_cdr_serialized_size(
+            const std::vector<fastrtps::rtps::octet>& data)
+    {
+        // Size of data
+        uint32_t data_size = static_cast<uint32_t>(data.size());
+        // Align to next 4 byte
+        data_size = (data_size + 3) & ~3;
+        // p_id + p_length + str_length + str_data
+        return 2 + 2 + 4 + data_size;
+    }
+
 protected:
 
     bool m_sendAlways;
@@ -158,7 +169,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -212,7 +223,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -266,7 +277,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -339,7 +350,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -406,7 +417,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -470,7 +481,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -535,7 +546,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -636,7 +647,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -726,7 +737,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -798,7 +809,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -861,7 +872,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -947,7 +958,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1038,7 +1049,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1143,7 +1154,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1205,7 +1216,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1275,7 +1286,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1329,7 +1340,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1382,7 +1393,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1438,7 +1449,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1537,7 +1548,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1604,7 +1615,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1659,7 +1670,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override
+            fastrtps::rtps::CDRMessage_t* msg) const override
     {
         (void)msg;
         return true;
@@ -1749,7 +1760,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1828,7 +1839,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) override
+            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
     {
         return true;
     }
@@ -1900,7 +1911,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t*)  override
+            fastrtps::rtps::CDRMessage_t*) const override
     {
         return true;
     }

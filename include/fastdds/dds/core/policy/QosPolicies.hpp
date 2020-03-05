@@ -82,6 +82,9 @@ public:
 
     virtual inline void clear() = 0;
 
+    static uint32_t get_cdr_serialized_size(
+            const std::vector<fastrtps::rtps::octet>& data);
+
 protected:
 
     bool send_always_;
@@ -174,7 +177,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -233,7 +236,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -292,7 +295,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -370,7 +373,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -440,7 +443,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -524,7 +527,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -594,7 +597,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -765,13 +768,18 @@ public:
         hasChanged = false;
     }
 
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(collection_);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -846,7 +854,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -923,7 +931,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1167,13 +1175,15 @@ public:
         return max_size_;
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1295,13 +1305,18 @@ public:
                QosPolicy::operator ==(b);
     }
 
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(value);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1383,13 +1398,18 @@ public:
                QosPolicy::operator ==(b);
     }
 
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(value);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1496,7 +1516,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1569,7 +1589,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1640,7 +1660,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1704,7 +1724,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1762,7 +1782,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1824,7 +1844,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1922,13 +1942,15 @@ public:
         std::swap(*this, reset);
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2000,7 +2022,7 @@ public:
     }
 
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2056,7 +2078,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2144,13 +2166,15 @@ public:
         *this = TypeIdV1();
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2243,13 +2267,15 @@ public:
         *this = TypeObjectV1();
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2347,13 +2373,15 @@ public:
         *this = TypeInformation();
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
