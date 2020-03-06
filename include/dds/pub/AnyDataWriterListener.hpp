@@ -46,13 +46,16 @@ namespace pub {
 class AnyDataWriterListener
 {
 public:
+
     /** @cond */
     virtual ~AnyDataWriterListener()
     {
     }
+
     /** @endcond */
 
 public:
+
     /** @copydoc dds::pub::DataWriterListener::on_offered_deadline_missed() */
     virtual void on_offered_deadline_missed(
             AnyDataWriter& writer,
@@ -91,16 +94,19 @@ public:
  */
 class NoOpAnyDataWriterListener : public virtual AnyDataWriterListener
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
+    /** @cond
+     * All these functions have already been documented in the non-NoOp listener.
+     * Ignore these functions for the doxygen API documentation for clarity.
+     */
+
 public:
+
     virtual ~NoOpAnyDataWriterListener()
     {
     }
 
 public:
+
     virtual void on_offered_deadline_missed(
             AnyDataWriter& writer,
             const ::dds::core::status::OfferedDeadlineMissedStatus& status)
@@ -124,7 +130,8 @@ public:
             const ::dds::core::status::PublicationMatchedStatus& status)
     {
     }
-/** @endcond */
+
+    /** @endcond */
 };
 
 } //namespace pub

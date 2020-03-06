@@ -29,21 +29,21 @@ namespace core {
  */
 
 template<
-        typename T1,
-        typename T2>
+    typename T1,
+    typename T2>
 struct is_base_of;
 
 template<
-        typename T1,
-        typename T2>
+    typename T1,
+    typename T2>
 struct is_same;
 
 template<typename T>
 struct smart_ptr_traits;
 
 template<
-        typename TO,
-        typename FROM>
+    typename TO,
+    typename FROM>
 TO  polymorphic_cast(
         FROM& from);
 

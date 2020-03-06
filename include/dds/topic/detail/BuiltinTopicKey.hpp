@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_BUILTIN_TOPIC_KEY_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_BUILTIN_TOPIC_KEY_HPP_
@@ -31,7 +31,9 @@ namespace topic {
 namespace detail {
 
 //typedef dds::topic::TBuiltinTopicKey<org::opensplice::topic::BuiltinTopicKeyDelegate> BuiltinTopicKey;
-class BuiltinTopicKey { };
+class BuiltinTopicKey
+{
+};
 
 } //namespace detail
 } //namespace topic

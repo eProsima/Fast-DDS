@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_COLLECTION_TYPES_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_COLLECTION_TYPES_HPP_
@@ -25,10 +25,18 @@ namespace core {
 namespace xtypes {
 namespace detail {
 
-class CollectionType : public DynamicType { };
-class MapType : public CollectionType { };
-class SequenceType : public CollectionType { };
-class StringType : public CollectionType { };
+class CollectionType : public DynamicType
+{
+};
+class MapType : public CollectionType
+{
+};
+class SequenceType : public CollectionType
+{
+};
+class StringType : public CollectionType
+{
+};
 
 } //namespace detail
 } //namespace xtypes

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_DETAIL_ENTITY_IMPL_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_ENTITY_IMPL_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when EntityDelegate is implemented
 //typedef dds::core::TEntity<org::opensplice::core::EntityDelegate> Entity;
-class Entity { };
+class Entity
+{
+};
 
 } //namespace detail
 } //namespace core

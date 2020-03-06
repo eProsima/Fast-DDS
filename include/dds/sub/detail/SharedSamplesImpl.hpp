@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_SHARED_SAMPLES_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_SHARED_SAMPLES_IMPL_HPP_
@@ -32,16 +32,16 @@ namespace dds {
 namespace sub {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::SharedSamples()
     : delegate_(new DELEGATE<T>())
 {
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::SharedSamples(
         dds::sub::LoanedSamples<T> ls)
     : delegate_(new DELEGATE<T>(ls))
@@ -49,65 +49,65 @@ SharedSamples<T, DELEGATE>::SharedSamples(
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::~SharedSamples()
 {
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::SharedSamples(
         const SharedSamples& other)
 {
     //To implement
-//    delegate_ = other.delegate_;
+    //    delegate_ = other.delegate_;
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 typename SharedSamples<T, DELEGATE>::const_iterator SharedSamples<T, DELEGATE>::begin() const
 {
     //To implement
-//    return delegate()->begin();
+    //    return delegate()->begin();
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 typename SharedSamples<T, DELEGATE>::const_iterator SharedSamples<T, DELEGATE>::end() const
 {
     //To implement
-//    return delegate()->end();
+    //    return delegate()->end();
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 const typename SharedSamples<T, DELEGATE>::DELEGATE_REF_T& SharedSamples<T, DELEGATE>::delegate() const
 {
     //To implement
-//    return delegate_;
+    //    return delegate_;
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 typename SharedSamples<T, DELEGATE>::DELEGATE_REF_T& SharedSamples<T, DELEGATE>::delegate()
 {
     //To implement
-//    return delegate_;
+    //    return delegate_;
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 uint32_t SharedSamples<T, DELEGATE>::length() const
 {
     //To implement
-//    return delegate_->length();
+    //    return delegate_->length();
 }
 
 } //namespace sub

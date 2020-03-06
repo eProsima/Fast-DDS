@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_DETAIL_DATA_WRITER_HPP_
 #define EPROSIMA_DDS_PUB_DETAIL_DATA_WRITER_HPP_
@@ -41,7 +41,9 @@ class DataWriterListener;
 namespace detail {
 
 template<typename T>
-class DataWriter { };
+class DataWriter
+{
+};
 
 } //namespace detail
 
@@ -54,11 +56,11 @@ class DataWriter;
 
 
 /***************************************************************************
- *
- * dds/pub/detail/DataWriter<> DELEGATE declaration.
- * Implementation can be found in dds/pub/detail/DataWriterImpl.hpp
- *
- ***************************************************************************/
+*
+* dds/pub/detail/DataWriter<> DELEGATE declaration.
+* Implementation can be found in dds/pub/detail/DataWriterImpl.hpp
+*
+***************************************************************************/
 //template<typename T>
 //class dds::pub::detail::DataWriter : public ::org::opensplice::pub::AnyDataWriterDelegate  {
 //public:

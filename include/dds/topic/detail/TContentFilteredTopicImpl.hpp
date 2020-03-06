@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_TCONTENTFILTEREDTOPIC_HPP_
 #define EPROSIMA_DDS_TOPIC_TCONTENTFILTEREDTOPIC_HPP_
@@ -39,12 +39,12 @@ TContentFilteredTopic<T, DELEGATE>::TContentFilteredTopic(
         const Topic<T>& topic,
         const std::string& name,
         const dds::topic::Filter& filter)
-    //: dds::core::Reference<DELEGATE<T>>(new dds::topic::detail::ContentFilteredTopic<T>(topic, name, filter))
-    : dds::core::Reference<DELEGATE<T>>()
+//: dds::core::Reference<DELEGATE<T>>(new dds::topic::detail::ContentFilteredTopic<T>(topic, name, filter))
+    : dds::core::Reference<DELEGATE<T> >()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(topic);
-//    this->delegate()->init(dds::core::Reference< DELEGATE<T> >::impl_);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(topic);
+    //    this->delegate()->init(dds::core::Reference< DELEGATE<T> >::impl_);
 }
 
 template<typename T, template<typename Q> class DELEGATE>
@@ -57,16 +57,16 @@ template<typename T, template<typename Q> class DELEGATE>
 const std::string& TContentFilteredTopic<T, DELEGATE>::filter_expression() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->filter_expression();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->filter_expression();
 }
 
 template<typename T, template<typename Q> class DELEGATE>
 const dds::core::StringSeq TContentFilteredTopic<T, DELEGATE>::filter_parameters() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->filter_parameters();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->filter_parameters();
 }
 
 template<typename T, template<typename Q> class DELEGATE>
@@ -76,16 +76,16 @@ void TContentFilteredTopic<T, DELEGATE>::filter_parameters(
         const FWDIterator& end)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->filter_parameters(begin, end);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->filter_parameters(begin, end);
 }
 
 template<typename T, template<typename Q> class DELEGATE>
 const dds::topic::Topic<T>& TContentFilteredTopic<T, DELEGATE>::topic() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->topic();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->topic();
 }
 
 } //namespace topic

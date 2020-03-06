@@ -39,14 +39,15 @@ template<
 class MultiTopic : public TTopicDescription< DELEGATE<T> >
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC_T(
-            MultiTopic,
-            dds::topic::TTopicDescription,
-            T,
-            DELEGATE)
+        MultiTopic,
+        dds::topic::TTopicDescription,
+        T,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            MultiTopic)
+        MultiTopic)
 
     template<typename FWDIterator>
     MultiTopic(

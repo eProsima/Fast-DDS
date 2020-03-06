@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
 #define EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
@@ -34,47 +34,69 @@ namespace detail {
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TInconsistentTopicStatus< org::opensplice::core::InconsistentTopicStatusDelegate > InconsistentTopicStatus;
-class InconsistentTopicStatus { };
+class InconsistentTopicStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TLivelinessChangedStatus <org::opensplice::core::LivelinessChangedStatusDelegate> LivelinessChangedStatus;
-class LivelinessChangedStatus { };
+class LivelinessChangedStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TLivelinessLostStatus<org::opensplice::core::LivelinessLostStatusDelegate> LivelinessLostStatus;
-class LivelinessLostStatus { };
+class LivelinessLostStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TOfferedDeadlineMissedStatus<org::opensplice::core::OfferedDeadlineMissedStatusDelegate> OfferedDeadlineMissedStatus;
-class OfferedDeadlineMissedStatus { };
+class OfferedDeadlineMissedStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TOfferedIncompatibleQosStatus<org::opensplice::core::OfferedIncompatibleQosStatusDelegate> OfferedIncompatibleQosStatus;
-class OfferedIncompatibleQosStatus { };
+class OfferedIncompatibleQosStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TPublicationMatchedStatus<org::opensplice::core::PublicationMatchedStatusDelegate> PublicationMatchedStatus;
-class PublicationMatchedStatus { };
+class PublicationMatchedStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TSampleRejectedStatus< org::opensplice::core::SampleRejectedStatusDelegate > SampleRejectedStatus;
-class SampleRejectedStatus { };
+class SampleRejectedStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TRequestedDeadlineMissedStatus<org::opensplice::core::RequestedDeadlineMissedStatusDelegate> RequestedDeadlineMissedStatus;
-class RequestedDeadlineMissedStatus { };
+class RequestedDeadlineMissedStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TRequestedIncompatibleQosStatus<org::opensplice::core::RequestedIncompatibleQosStatusDelegate> RequestedIncompatibleQosStatus;
-class RequestedIncompatibleQosStatus { };
+class RequestedIncompatibleQosStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TSampleLostStatus<org::opensplice::core::SampleLostStatusDelegate> SampleLostStatus;
-class SampleLostStatus { };
+class SampleLostStatus
+{
+};
 
 //TODO: Fix when StatusDelegate is implemented
 //typedef dds::core::status::TSubscriptionMatchedStatus<org::opensplice::core::SubscriptionMatchedStatusDelegate> SubscriptionMatchedStatus;
-class SubscriptionMatchedStatus { };
+class SubscriptionMatchedStatus
+{
+};
 
 } //namespace detail
 } //namespace status

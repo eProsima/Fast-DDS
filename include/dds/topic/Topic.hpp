@@ -58,11 +58,12 @@ namespace topic {
  * @see @ref DCPS_Modules_TopicDefinition "Topic Definition"
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
-class TTopic : public TAnyTopic<DELEGATE<T>>
+    typename T,
+    template<typename Q> class DELEGATE>
+class TTopic : public TAnyTopic<DELEGATE<T> >
 {
 public:
+
     /**
      * Convenience typedef for the type of the data sample.
      */
@@ -74,13 +75,13 @@ public:
     typedef TopicListener<T> Listener;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC_T(
-            TTopic,
-            TAnyTopic,
-            T,
-            DELEGATE)
+        TTopic,
+        TAnyTopic,
+        T,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TTopic)
+        TTopic)
 
     /** @cond */
     virtual ~TTopic();
@@ -453,7 +454,9 @@ public:
 };
 
 template<typename T>
-class Topic : public TTopic<T, detail::Topic> { };
+class Topic : public TTopic<T, detail::Topic>
+{
+};
 
 } //namespace topic
 } //namespace dds

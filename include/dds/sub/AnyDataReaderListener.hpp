@@ -48,6 +48,7 @@ namespace sub {
 class OMG_DDS_API AnyDataReaderListener
 {
 public:
+
     /** @cond */
     typedef ::dds::core::smart_ptr_traits<AnyDataReaderListener>::ref_type ref_type;
     /** @endcond */
@@ -56,40 +57,42 @@ public:
     virtual ~AnyDataReaderListener()
     {
     }
+
     /** @endcond */
 
     /** @copydoc dds::sub::DataReaderListener::on_requested_deadline_missed() */
     virtual void on_requested_deadline_missed(
-        AnyDataReader& reader,
-        const dds::core::status::RequestedDeadlineMissedStatus& status) = 0;
+            AnyDataReader& reader,
+            const dds::core::status::RequestedDeadlineMissedStatus& status) = 0;
 
     /** @copydoc dds::sub::DataReaderListener::on_requested_incompatible_qos() */
     virtual void on_requested_incompatible_qos(
-        AnyDataReader& reader,
-        const dds::core::status::RequestedIncompatibleQosStatus& status) = 0;
+            AnyDataReader& reader,
+            const dds::core::status::RequestedIncompatibleQosStatus& status) = 0;
 
     /** @copydoc dds::sub::DataReaderListener::on_sample_rejected() */
     virtual void on_sample_rejected(
-        AnyDataReader& reader,
-        const dds::core::status::SampleRejectedStatus& status) = 0;
+            AnyDataReader& reader,
+            const dds::core::status::SampleRejectedStatus& status) = 0;
 
     /** @copydoc dds::sub::DataReaderListener::on_liveliness_changed() */
     virtual void on_liveliness_changed(
-        AnyDataReader& reader,
-        const dds::core::status::LivelinessChangedStatus& status)  = 0;
+            AnyDataReader& reader,
+            const dds::core::status::LivelinessChangedStatus& status)  = 0;
 
     /** @copydoc dds::sub::DataReaderListener::on_data_available() */
-    virtual void on_data_available(AnyDataReader& reader) = 0;
+    virtual void on_data_available(
+            AnyDataReader& reader) = 0;
 
     /** @copydoc dds::sub::DataReaderListener::on_subscription_matched() */
     virtual void on_subscription_matched(
-        AnyDataReader& reader,
-        const dds::core::status::SubscriptionMatchedStatus& status) = 0;
+            AnyDataReader& reader,
+            const dds::core::status::SubscriptionMatchedStatus& status) = 0;
 
     /** @copydoc dds::sub::DataReaderListener::on_sample_lost() */
     virtual void on_sample_lost(
-        AnyDataReader& reader,
-        const dds::core::status::SampleLostStatus& status) = 0;
+            AnyDataReader& reader,
+            const dds::core::status::SampleLostStatus& status) = 0;
 };
 
 
@@ -108,55 +111,59 @@ public:
  */
 class OMG_DDS_API NoOpAnyDataReaderListener : public virtual AnyDataReaderListener
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
+    /** @cond
+     * All these functions have already been documented in the non-NoOp listener.
+     * Ignore these functions for the doxygen API documentation for clarity.
+     */
+
 public:
+
     virtual ~NoOpAnyDataReaderListener()
     {
     }
 
     virtual void on_requested_deadline_missed(
-        AnyDataReader&,
-        const dds::core::status::RequestedDeadlineMissedStatus&)
+            AnyDataReader&,
+            const dds::core::status::RequestedDeadlineMissedStatus&)
     {
     }
 
     virtual void on_requested_incompatible_qos(
-        AnyDataReader&,
-        const dds::core::status::RequestedIncompatibleQosStatus&)
+            AnyDataReader&,
+            const dds::core::status::RequestedIncompatibleQosStatus&)
     {
     }
 
     virtual void on_sample_rejected(
-        AnyDataReader&,
-        const dds::core::status::SampleRejectedStatus&)
+            AnyDataReader&,
+            const dds::core::status::SampleRejectedStatus&)
     {
     }
 
     virtual void on_liveliness_changed(
-        AnyDataReader&,
-        const dds::core::status::LivelinessChangedStatus&)
+            AnyDataReader&,
+            const dds::core::status::LivelinessChangedStatus&)
     {
     }
 
-    virtual void on_data_available(AnyDataReader&)
+    virtual void on_data_available(
+            AnyDataReader&)
     {
     }
 
     virtual void on_subscription_matched(
-        AnyDataReader&,
-        const dds::core::status::SubscriptionMatchedStatus&)
+            AnyDataReader&,
+            const dds::core::status::SubscriptionMatchedStatus&)
     {
     }
 
     virtual void on_sample_lost(
-        AnyDataReader&,
-        const dds::core::status::SampleLostStatus&)
+            AnyDataReader&,
+            const dds::core::status::SampleLostStatus&)
     {
     }
-/** @endcond */
+
+    /** @endcond */
 };
 
 } //namespace sub

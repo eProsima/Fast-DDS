@@ -47,13 +47,14 @@ template<typename DELEGATE>
 class TAnyDataWriter : public dds::core::TEntity<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TAnyDataWriter,
-            dds::core::TEntity,
-            DELEGATE)
+        TAnyDataWriter,
+        dds::core::TEntity,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TAnyDataWriter)
+        TAnyDataWriter)
 
     /** @cond */
     virtual ~TAnyDataWriter();

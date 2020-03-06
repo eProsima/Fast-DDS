@@ -62,6 +62,7 @@ template<typename DELEGATE>
 class TGenerationCount : public core::Value<DELEGATE>
 {
 public:
+
     /** @cond
      * Create an empty GenerationCount.
      * This constructor is required for containers.

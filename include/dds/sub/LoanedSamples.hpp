@@ -30,8 +30,8 @@ namespace dds {
 namespace sub {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE = dds::sub::detail::LoanedSamples>
+    typename T,
+    template<typename Q> class DELEGATE = dds::sub::detail::LoanedSamples>
 class LoanedSamples;
 
 // Used by C++11 compilers to allow for using LoanedSamples
@@ -89,11 +89,12 @@ typename T::const_iterator cend(
  * @see @ref DCPS_Modules_Subscription "Subscription" for more information
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class LoanedSamples
 {
 public:
+
     /**
      * Convenience typedef for the type of the data sample.
      */
@@ -173,6 +174,7 @@ public:
     uint32_t length() const;
 
 private:
+
     DELEGATE_REF_T delegate_;
 };
 
@@ -182,8 +184,8 @@ private:
  * @return LoanedSampless
  */
 template<
-        typename T,
-        template<typename Q> class D>
+    typename T,
+    template<typename Q> class D>
 LoanedSamples<T, D > move(
         LoanedSamples<T, D >& a);
 

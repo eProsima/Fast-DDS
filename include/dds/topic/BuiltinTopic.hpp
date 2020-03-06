@@ -68,6 +68,7 @@ template<typename D>
 class TParticipantBuiltinTopicData : public dds::core::Value<D>
 {
 public:
+
     /**
      * Globally unique identifier of the participant
      */
@@ -119,6 +120,7 @@ template<typename D>
 class TTopicBuiltinTopicData : public dds::core::Value<D>
 {
 public:
+
     /**
      * Global unique identifier of the Topic
      */
@@ -243,6 +245,7 @@ template<typename D>
 class TPublicationBuiltinTopicData : public dds::core::Value<D>
 {
 public:
+
     /**
      * Global unique identifier of the DataWriter
      */
@@ -381,9 +384,10 @@ public:
  * @see @ref DCPS_Builtin_Topics_SubscriptionData
  */
 template<typename D>
-class TSubscriptionBuiltinTopicData  : public dds::core::Value<D>
+class TSubscriptionBuiltinTopicData : public dds::core::Value<D>
 {
 public:
+
     /**
      * Global unique identifier of the DataReader
      */

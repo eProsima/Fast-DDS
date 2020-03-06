@@ -45,16 +45,18 @@ namespace topic {
 class OMG_DDS_API AnyTopicListener
 {
 public:
+
     /** @cond */
     virtual ~AnyTopicListener()
     {
     }
+
     /** @endcond */
 
     /** @copydoc dds::topic::TopicListener::on_inconsistent_topic() */
     virtual void on_inconsistent_topic(
-        AnyTopic& topic,
-        const dds::core::status::InconsistentTopicStatus& status) = 0;
+            AnyTopic& topic,
+            const dds::core::status::InconsistentTopicStatus& status) = 0;
 };
 
 
@@ -72,22 +74,26 @@ public:
  */
 class OMG_DDS_API NoOpAnyTopicListener : public virtual AnyTopicListener
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
+    /** @cond
+     * All these functions have already been documented in the non-NoOp listener.
+     * Ignore these functions for the doxygen API documentation for clarity.
+     */
+
 public:
+
     virtual ~NoOpAnyTopicListener()
     {
     }
 
 public:
+
     virtual void on_inconsistent_topic(
-        AnyTopic& topic,
-        const dds::core::status::InconsistentTopicStatus& status)
+            AnyTopic& topic,
+            const dds::core::status::InconsistentTopicStatus& status)
     {
     }
-/** @endcond */
+
+    /** @endcond */
 };
 
 } //namespace topic

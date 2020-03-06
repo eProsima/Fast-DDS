@@ -33,8 +33,8 @@ namespace dds {
 namespace pub {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE = dds::pub::detail::DataWriter >
+    typename T,
+    template<typename Q> class DELEGATE = dds::pub::detail::DataWriter >
 class DataWriter;
 
 template<typename T>
@@ -86,25 +86,26 @@ class DataWriterListener;
  * @see @ref DCPS_Modules_Publication_DataWriter "DataWriter concept"
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class DataWriter : public TAnyDataWriter< DELEGATE<T> >
 {
 
 public:
+
     /**
      * Local convenience typedef for dds::pub::DataWriterListener.
      */
     typedef DataWriterListener<T> Listener;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC_T(
-            DataWriter,
-            dds::pub::TAnyDataWriter,
-            T,
-            DELEGATE)
+        DataWriter,
+        dds::pub::TAnyDataWriter,
+        T,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            DataWriter)
+        DataWriter)
 
     /**
      * Create a new DataWriter for the desired Topic, using the given Publisher.
@@ -666,8 +667,8 @@ public:
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
     template<
-            typename SamplesFWIterator,
-            typename HandlesFWIterator>
+        typename SamplesFWIterator,
+        typename HandlesFWIterator>
     void write(
             const SamplesFWIterator& data_begin,
             const SamplesFWIterator& data_end,
@@ -721,8 +722,8 @@ public:
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
     template<
-            typename SamplesFWIterator,
-            typename HandlesFWIterator>
+        typename SamplesFWIterator,
+        typename HandlesFWIterator>
     void write(
             const SamplesFWIterator& data_begin,
             const SamplesFWIterator& data_end,
@@ -748,7 +749,7 @@ public:
      * really for the DataWriter. Leave it from the API documentation for clarity.
      */
     DataWriter& operator <<(
-            DataWriter & (*manipulator)(DataWriter&));
+            DataWriter& (*manipulator)(DataWriter&));
     /** @endcond */
 
     //==========================================================================

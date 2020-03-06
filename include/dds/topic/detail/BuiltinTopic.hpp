@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_BUILTIN_TOPIC_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_BUILTIN_TOPIC_HPP_
@@ -34,16 +34,24 @@ namespace topic {
 namespace detail {
 
 //typedef dds::topic::TParticipantBuiltinTopicData<org::opensplice::topic::ParticipantBuiltinTopicDataDelegate> ParticipantBuiltinTopicData;
-class ParticipantBuiltinTopicData { };
+class ParticipantBuiltinTopicData
+{
+};
 
 //typedef dds::topic::TTopicBuiltinTopicData<org::opensplice::topic::TopicBuiltinTopicDataDelegate> TopicBuiltinTopicData;
-class TopicBuiltinTopicData { };
+class TopicBuiltinTopicData
+{
+};
 
 //typedef dds::topic::TPublicationBuiltinTopicData<org::opensplice::topic::PublicationBuiltinTopicDataDelegate> PublicationBuiltinTopicData;
-class PublicationBuiltinTopicData { };
+class PublicationBuiltinTopicData
+{
+};
 
 //typedef dds::topic::TSubscriptionBuiltinTopicData<org::opensplice::topic::SubscriptionBuiltinTopicDataDelegate> SubscriptionBuiltinTopicData;
-class SubscriptionBuiltinTopicData { };
+class SubscriptionBuiltinTopicData
+{
+};
 
 } //namespace detail
 } //namespace topic

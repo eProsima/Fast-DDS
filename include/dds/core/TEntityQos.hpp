@@ -43,6 +43,7 @@ template<typename DELEGATE>
 class TEntityQos : public Value<DELEGATE>
 {
 public:
+
     /**
      * Create default QoS.
      */
@@ -66,11 +67,13 @@ public:
             const TEntityQos<T>& qos);
 
 public:
+
     /** @cond */
     ~TEntityQos();
     /** @endcond */
 
 public:
+
     /**
      * Generic function for setting a policy applicable to this QoS object.
      * Available policies depend on the actual instantiation of the template

@@ -74,6 +74,7 @@ class TSampleInfo : public dds::core::Value<DELEGATE>
 {
 
 public:
+
     /** @cond
      * Create an empty SampleInfo.
      * This constructor is required for containers.

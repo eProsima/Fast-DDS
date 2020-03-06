@@ -64,13 +64,17 @@ namespace core {
 class OMG_DDS_API Exception
 {
 protected:
+
     Exception();
+
 public:
+
     /** @cond */
     virtual ~Exception() throw();
     /** @endcond */
 
 public:
+
     /**
      * Retrieve information about the exception that was thrown.
      *
@@ -110,8 +114,10 @@ public:
  */
 class OMG_DDS_API Error : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit Error(
             const std::string& msg);
 
@@ -121,8 +127,9 @@ public:
     virtual ~Error() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -131,8 +138,10 @@ public:
  */
 class OMG_DDS_API AlreadyClosedError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit AlreadyClosedError(
             const std::string& msg);
 
@@ -142,8 +151,9 @@ public:
     virtual ~AlreadyClosedError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -156,8 +166,10 @@ public:
  */
 class OMG_DDS_API IllegalOperationError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit IllegalOperationError(
             const std::string& msg);
 
@@ -167,8 +179,9 @@ public:
     virtual ~IllegalOperationError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -177,8 +190,10 @@ public:
  */
 class OMG_DDS_API ImmutablePolicyError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit ImmutablePolicyError(
             const std::string& msg);
 
@@ -188,8 +203,9 @@ public:
     virtual ~ImmutablePolicyError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -199,8 +215,10 @@ public:
  */
 class OMG_DDS_API InconsistentPolicyError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit InconsistentPolicyError(
             const std::string& msg);
 
@@ -210,8 +228,9 @@ public:
     virtual ~InconsistentPolicyError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -220,8 +239,10 @@ public:
  */
 class OMG_DDS_API InvalidArgumentError : public Exception, public std::invalid_argument
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit InvalidArgumentError(
             const std::string& msg);
 
@@ -231,8 +252,9 @@ public:
     virtual ~InvalidArgumentError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -241,8 +263,10 @@ public:
  */
 class OMG_DDS_API NotEnabledError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit NotEnabledError(
             const std::string& msg);
 
@@ -252,8 +276,9 @@ public:
     virtual ~NotEnabledError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -263,8 +288,10 @@ public:
  */
 class OMG_DDS_API OutOfResourcesError : public Exception, public std::runtime_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit OutOfResourcesError(
             const std::string& msg);
 
@@ -274,8 +301,9 @@ public:
     virtual ~OutOfResourcesError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 
@@ -285,8 +313,10 @@ public:
  */
 class OMG_DDS_API PreconditionNotMetError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit PreconditionNotMetError(
             const std::string& msg);
 
@@ -296,8 +326,9 @@ public:
     virtual ~PreconditionNotMetError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -306,8 +337,10 @@ public:
  */
 class OMG_DDS_API TimeoutError : public Exception, public std::runtime_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit TimeoutError(
             const std::string& msg);
 
@@ -317,8 +350,9 @@ public:
     virtual ~TimeoutError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -329,8 +363,10 @@ public:
  */
 class OMG_DDS_API UnsupportedError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit UnsupportedError(
             const std::string& msg);
 
@@ -340,8 +376,9 @@ public:
     virtual ~UnsupportedError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -350,8 +387,10 @@ public:
  */
 class OMG_DDS_API InvalidDowncastError : public Exception, public std::runtime_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit InvalidDowncastError(
             const std::string& msg);
 
@@ -361,8 +400,9 @@ public:
     virtual ~InvalidDowncastError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -381,8 +421,10 @@ public:
  */
 class OMG_DDS_API NullReferenceError : public Exception, public std::runtime_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit NullReferenceError(
             const std::string& msg);
 
@@ -392,8 +434,9 @@ public:
     virtual ~NullReferenceError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 /**
@@ -402,8 +445,10 @@ public:
  */
 class OMG_DDS_API InvalidDataError : public Exception, public std::logic_error
 {
-/** @cond */
+    /** @cond */
+
 public:
+
     explicit InvalidDataError(
             const std::string& msg);
 
@@ -413,8 +458,9 @@ public:
     virtual ~InvalidDataError() throw();
 
 public:
+
     virtual const char* what() const throw();
-/** @endcond */
+    /** @endcond */
 };
 
 } //namespace core

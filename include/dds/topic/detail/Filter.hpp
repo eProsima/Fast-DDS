@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_QUERY_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_QUERY_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when FilterDelegate is implemented
 //typedef dds::topic::TFilter< ::org::opensplice::topic::FilterDelegate > Filter;
-class Filter { };
+class Filter
+{
+};
 
 } //namespace detail
 } //namespace topic

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_DETAIL_STATUSCONDITION_HPP_
 #define EPROSIMA_DDS_CORE_COND_DETAIL_STATUSCONDITION_HPP_
@@ -34,7 +34,9 @@ namespace detail {
 
 //TODO: Fix when StatusConditionDelegate is implemented
 //typedef dds::core::cond::TStatusCondition<org::opensplice::core::cond::StatusConditionDelegate> StatusCondition;
-class StatusCondition { };
+class StatusCondition
+{
+};
 
 } //namespace detail
 } //namespace cond

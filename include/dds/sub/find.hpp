@@ -66,11 +66,11 @@ const Subscriber OMG_DDS_API builtin_subscriber(
  *
  */
 template<
-        typename READER,
-        typename FwdIterator>
+    typename READER,
+    typename FwdIterator>
 uint32_t find(
         const Subscriber& sub,
-        const std::string &topic_name,
+        const std::string& topic_name,
         FwdIterator begin,
         uint32_t max_size);
 
@@ -92,11 +92,11 @@ uint32_t find(
  * @return the total number of elements returned
  */
 template<
-        typename READER,
-        typename BinIterator>
+    typename READER,
+    typename BinIterator>
 uint32_t find(
         const dds::sub::Subscriber& sub,
-        const std::string &topic_name,
+        const std::string& topic_name,
         BinIterator begin);
 
 /**
@@ -119,9 +119,9 @@ uint32_t find(
  *        at most max_size will be copied using the provided iterator
  */
 template<
-        typename READER,
-        typename T,
-        typename FwdIterator>
+    typename READER,
+    typename T,
+    typename FwdIterator>
 uint32_t find(
         const Subscriber& sub,
         const dds::topic::TopicDescription& topic_description,
@@ -146,9 +146,9 @@ uint32_t find(
  * @return the total number of elements returned
  */
 template<
-        typename READER,
-        typename T,
-        typename BinIterator>
+    typename READER,
+    typename T,
+    typename BinIterator>
 uint32_t find(
         const Subscriber& sub,
         const dds::topic::TopicDescription& topic_description,
@@ -184,8 +184,8 @@ uint32_t find(
  *        at most max_size will be copied using the provided iterator
  */
 template<
-        typename READER,
-        typename FwdIterator>
+    typename READER,
+    typename FwdIterator>
 uint32_t find(
         const Subscriber& sub,
         const dds::sub::status::DataState& data_state,
@@ -220,8 +220,8 @@ uint32_t find(
  * @return the total number of elements returned
  */
 template<
-        typename READER,
-        typename BinIterator>
+    typename READER,
+    typename BinIterator>
 uint32_t find(
         const Subscriber& sub,
         const status::DataState& rs,

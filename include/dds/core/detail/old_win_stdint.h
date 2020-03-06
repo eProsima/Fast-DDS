@@ -11,33 +11,33 @@
  */
 
 /* ISO C9x 7.18 Integer types <stdint.h>
-  * Based on ISO/IEC SC22/WG14 9899 Committee draft (SC22 N2794)
-  *
-  * THIS SOFTWARE IS NOT COPYRIGHTED
-  *
-  * Contributor: Danny Smith <danny_r_smith_2001@yahoo.co.nz>
-  *
-  * This source code is offered for use in the public domain. You may
-  * use, modify or distribute it freely.
-  *
-  * This code is distributed in the hope that it will be useful but
-  * WITHOUT ANY WARRANTY. ALL WARRANTIES, EXPRESS OR IMPLIED ARE HEREBY
-  * DISCLAIMED. This includes but is not limited to warranties of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  *
-  * Date: 2000-12-02
-  *
-  * mwb: This was modified in the following ways:
-  *
-  * - make it compatible with Visual C++ 6 (which uses
-  * non-standard keywords and suffixes for 64-bit types)
-  * - some environments need stddef.h included (for wchar stuff?)
-  * - handle the fact that Microsoft's limits.h header defines
-  * SIZE_MAX
-  * - make corrections for SIZE_MAX, INTPTR_MIN, INTPTR_MAX, UINTPTR_MAX,
-  * PTRDIFF_MIN, PTRDIFF_MAX, SIG_ATOMIC_MIN, and SIG_ATOMIC_MAX
-  * to be 64-bit aware.
-  */
+ * Based on ISO/IEC SC22/WG14 9899 Committee draft (SC22 N2794)
+ *
+ * THIS SOFTWARE IS NOT COPYRIGHTED
+ *
+ * Contributor: Danny Smith <danny_r_smith_2001@yahoo.co.nz>
+ *
+ * This source code is offered for use in the public domain. You may
+ * use, modify or distribute it freely.
+ *
+ * This code is distributed in the hope that it will be useful but
+ * WITHOUT ANY WARRANTY. ALL WARRANTIES, EXPRESS OR IMPLIED ARE HEREBY
+ * DISCLAIMED. This includes but is not limited to warranties of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Date: 2000-12-02
+ *
+ * mwb: This was modified in the following ways:
+ *
+ * - make it compatible with Visual C++ 6 (which uses
+ * non-standard keywords and suffixes for 64-bit types)
+ * - some environments need stddef.h included (for wchar stuff?)
+ * - handle the fact that Microsoft's limits.h header defines
+ * SIZE_MAX
+ * - make corrections for SIZE_MAX, INTPTR_MIN, INTPTR_MAX, UINTPTR_MAX,
+ * PTRDIFF_MIN, PTRDIFF_MAX, SIG_ATOMIC_MIN, and SIG_ATOMIC_MAX
+ * to be 64-bit aware.
+ */
 
 
 #ifndef _STDINT_H
@@ -57,7 +57,7 @@
 #endif
 
 #if !defined( PASTE)
-#define PASTE2( x, y) x##y
+#define PASTE2( x, y) x ## y
 #define PASTE( x, y) PASTE2( x, y)
 #endif /* PASTE */
 
@@ -83,9 +83,9 @@ typedef __STDINT_LONGLONG int_least64_t;
 typedef unsigned __STDINT_LONGLONG uint_least64_t;
 
 /* 7.18.1.3 Fastest minimum-width integer types
-  * Not actually guaranteed to be fastest for all purposes
-  * Here we use the exact-width types for 8 and 16-bit ints.
-  */
+ * Not actually guaranteed to be fastest for all purposes
+ * Here we use the exact-width types for 8 and 16-bit ints.
+ */
 typedef char int_fast8_t;
 typedef unsigned char uint_fast8_t;
 typedef short int_fast16_t;
@@ -170,7 +170,7 @@ typedef unsigned __STDINT_LONGLONG uintmax_t;
 #define UINT_FAST64_MAX UINT64_MAX
 
 /* 7.18.2.4 Limits of integer types capable of holding
-  object pointers */
+   object pointers */
 #ifdef _WIN64
 #define INTPTR_MIN INT64_MIN
 #define INTPTR_MAX INT64_MAX
@@ -204,8 +204,8 @@ typedef unsigned __STDINT_LONGLONG uintmax_t;
 #endif
 
 /*
-  * wint_t is unsigned short for compatibility with MS runtime
-  */
+ * wint_t is unsigned short for compatibility with MS runtime
+ */
 #define WINT_MIN 0
 #define WINT_MAX ((wint_t)-1) /* UINT16_MAX */
 
@@ -217,24 +217,24 @@ typedef unsigned __STDINT_LONGLONG uintmax_t;
 
 /* 7.18.4.1 Macros for minimum-width integer constants
 
-  Accoding to Douglas Gwyn <gwyn@arl.mil>:
-"This spec was changed in ISO/IEC 9899:1999 TC1; in ISO/IEC
-9899:1999 as initially published, the expansion was required
-to be an integer constant of precisely matching type, which
-is impossible to accomplish for the shorter types on most
-platforms, because C99 provides no standard way to designate
-an integer constant with width less than that of type int.
-TC1 changed this to require just an integer constant
-*expression* with *promoted* type."
-*/
+   Accoding to Douglas Gwyn <gwyn@arl.mil>:
+   "This spec was changed in ISO/IEC 9899:1999 TC1; in ISO/IEC
+   9899:1999 as initially published, the expansion was required
+   to be an integer constant of precisely matching type, which
+   is impossible to accomplish for the shorter types on most
+   platforms, because C99 provides no standard way to designate
+   an integer constant with width less than that of type int.
+   TC1 changed this to require just an integer constant
+ * expression* with *promoted* type."
+ */
 
 #define INT8_C(val) ((int8_t) + (val))
-#define UINT8_C(val) ((uint8_t) + (val##U))
+#define UINT8_C(val) ((uint8_t) + (val ## U))
 #define INT16_C(val) ((int16_t) + (val))
-#define UINT16_C(val) ((uint16_t) + (val##U))
+#define UINT16_C(val) ((uint16_t) + (val ## U))
 
-#define INT32_C(val) val##L
-#define UINT32_C(val) val##UL
+#define INT32_C(val) val ## L
+#define UINT32_C(val) val ## UL
 #define INT64_C(val) (PASTE( val, __STDINT_LONGLONG_SUFFIX))
 #define UINT64_C(val)(PASTE( PASTE( val, U), __STDINT_LONGLONG_SUFFIX))
 

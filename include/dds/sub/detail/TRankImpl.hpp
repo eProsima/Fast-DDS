@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_TRANK_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_TRANK_IMPL_HPP_
@@ -36,7 +36,10 @@ TRank<DELEGATE>::TRank()
 }
 
 template<typename DELEGATE>
-TRank<DELEGATE>::TRank(int32_t s, int32_t a, int32_t ag)
+TRank<DELEGATE>::TRank(
+        int32_t s,
+        int32_t a,
+        int32_t ag)
     : dds::core::Value<DELEGATE>(s, a, ag)
 {
 }
@@ -45,21 +48,21 @@ template<typename DELEGATE>
 int32_t TRank<DELEGATE>::absolute_generation() const
 {
     //To implement
-//    return this->delegate().absolute_generation();
+    //    return this->delegate().absolute_generation();
 }
 
 template<typename DELEGATE>
 inline int32_t TRank<DELEGATE>::generation() const
 {
     //To implement
-//    return this->delegate().generation();
+    //    return this->delegate().generation();
 }
 
 template<typename DELEGATE>
 inline int32_t TRank<DELEGATE>::sample() const
 {
     //To implement
-//    return this->delegate().sample();
+    //    return this->delegate().sample();
 }
 
 } //namespace sub

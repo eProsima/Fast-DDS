@@ -59,12 +59,12 @@ class TReadCondition : public dds::core::cond::TCondition<DELEGATE>
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TReadCondition,
-            dds::core::cond::TCondition,
-            DELEGATE)
+        TReadCondition,
+        dds::core::cond::TCondition,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TReadCondition)
+        TReadCondition)
 
     /**
      * Create a dds::sub::cond::ReadCondition associated with a DataReader.

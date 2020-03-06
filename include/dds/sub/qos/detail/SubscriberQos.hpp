@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_QOS_DETAIL_SUBSCRIBER_QOS_HPP_
 #define EPROSIMA_DDS_SUB_QOS_DETAIL_SUBSCRIBER_QOS_HPP_
@@ -29,7 +29,9 @@ namespace detail {
 
 //TODO: Fix when SubscriberQosDelegate is implemented
 //typedef ::dds::core::TEntityQos< ::org::opensplice::sub::qos::SubscriberQosDelegate> SubscriberQos;
-class SubscriberQos { };
+class SubscriberQos
+{
+};
 
 } //namespace detail
 } //namespace qos

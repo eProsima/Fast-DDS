@@ -37,16 +37,17 @@ namespace xtypes {
  * of the type being read or written.
  */
 template<
-        typename DELEGATE,
-        typename DELEGATE_TYPE>
+    typename DELEGATE,
+    typename DELEGATE_TYPE>
 class TDynamicData : Reference<DELEGATE>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TDynamicData,
-            Reference,
-            DELEGATE)
+        TDynamicData,
+        Reference,
+        DELEGATE)
 
 public:
+
     TDynamicData(
             const TDynamicType<DELEGATE_TYPE>& type)
     {
@@ -105,6 +106,7 @@ public:
     {
         throw "Not implemented";
     }
+
 };
 
 typedef TDynamicData<detail::DynamicData, detail::DynamicType> DynamicData;

@@ -39,6 +39,7 @@ template<typename D>
 class TQosPolicyCount : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a QosPolicyCount instance
      *

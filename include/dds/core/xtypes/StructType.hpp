@@ -33,11 +33,13 @@ template<typename DELEGATE>
 class TStructForwardDeclaration : public TDynamicType<DELEGATE>
 {
 public:
+
     TStructForwardDeclaration(
             const std::string& name)
     {
         throw "Not implemented";
     }
+
 };
 
 /**
@@ -50,7 +52,9 @@ class TStructType : public TDynamicType<DELEGATE>
 {
 
     TStructType& parent_ts_;
+
 public:
+
     explicit TStructType(
             const std::string& name)
     {
@@ -58,16 +62,16 @@ public:
     }
 
     TStructType(
-        const std::string& name,
-        const std::vector<MemberType>& members)
+            const std::string& name,
+            const std::vector<MemberType>& members)
     {
         TDynamicType<DELEGATE>::impl()->name(name);
     }
 
     TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const std::vector<MemberType>& members)
+            const std::string& name,
+            const TStructType& parent,
+            const std::vector<MemberType>& members)
     {
         TDynamicType<DELEGATE>::impl()->name(name);
         parent_ts_ = parent;
@@ -76,10 +80,10 @@ public:
 
     template<typename MemberIter>
     TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const MemberIter& begin,
-        const MemberIter& end)
+            const std::string& name,
+            const TStructType& parent,
+            const MemberIter& begin,
+            const MemberIter& end)
     {
         TDynamicType<DELEGATE>::impl()->name(name);
         parent_ts_ = parent;
@@ -87,10 +91,10 @@ public:
     }
 
     TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const std::vector<MemberType>& members,
-        const Annotation& annotation)
+            const std::string& name,
+            const TStructType& parent,
+            const std::vector<MemberType>& members,
+            const Annotation& annotation)
     {
         TDynamicType<DELEGATE>::impl()->name(name);
         parent_ts_ = parent;
@@ -99,10 +103,10 @@ public:
     }
 
     TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const std::vector<MemberType>& members,
-        const std::vector<Annotation>& annotations)
+            const std::string& name,
+            const TStructType& parent,
+            const std::vector<MemberType>& members,
+            const std::vector<Annotation>& annotations)
     {
         TDynamicType<DELEGATE>::impl()->name(name);
         parent_ts_ = parent;
@@ -111,15 +115,15 @@ public:
     }
 
     template<
-            typename AnnotationIter,
-            typename MemberIter>
+        typename AnnotationIter,
+        typename MemberIter>
     TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const MemberIter& member_begin,
-        const MemberIter& member_end,
-        const AnnotationIter& annotation_begin,
-        const AnnotationIter& annotation_end)
+            const std::string& name,
+            const TStructType& parent,
+            const MemberIter& member_begin,
+            const MemberIter& member_end,
+            const AnnotationIter& annotation_begin,
+            const AnnotationIter& annotation_end)
     {
         TDynamicType<DELEGATE>::impl()->name(name);
         parent_ts_ = parent;
@@ -187,6 +191,7 @@ public:
         TDynamicType<DELEGATE>::impl()->remove_annotation(annotation);
         return *this;
     }
+
 };
 
 typedef TStructType<detail::StructType> StructType;

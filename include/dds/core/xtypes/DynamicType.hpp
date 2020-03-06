@@ -33,11 +33,12 @@ template<typename DELEGATE>
 class TDynamicType : public Reference<DELEGATE>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TDynamicType,
-            Reference,
-            DELEGATE)
+        TDynamicType,
+        Reference,
+        DELEGATE)
 
 public:
+
     const std::string& name() const
     {
         return impl()->name();
@@ -67,25 +68,26 @@ public:
 
     bool is_primitive_type()
     {
-        return (impl()->kind().underlying()&  0x4000 ) != 0;
+        return (impl()->kind().underlying() &  0x4000 ) != 0;
     }
 
     bool is_collection_type()
     {
-        return (impl()->kind().underlying()&  0x0200 ) != 0;
+        return (impl()->kind().underlying() &  0x0200 ) != 0;
     }
 
     bool is_aggregation_type()
     {
-        return (impl()->kind().underlying()&  0x0100 ) != 0;
+        return (impl()->kind().underlying() &  0x0100 ) != 0;
     }
 
     bool is_constructed_type()
     {
-        return (impl()->kind().underlying()&  0x8000 ) != 0;
+        return (impl()->kind().underlying() &  0x8000 ) != 0;
     }
 
 protected:
+
     TDynamicType(
             const std::string& name,
             TypeKind kind)
@@ -127,6 +129,7 @@ protected:
     }
 
 public:
+
     TDynamicType(
             const TDynamicType& other) = default;
 };

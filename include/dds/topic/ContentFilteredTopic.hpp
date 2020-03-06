@@ -70,19 +70,20 @@ namespace topic {
  * @see @ref DCPS_Modules_TopicDefinition "Topic Definition"
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class TContentFilteredTopic : public TTopicDescription< DELEGATE<T> >
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC_T(
-            TContentFilteredTopic,
-            TTopicDescription,
-            T,
-            DELEGATE)
+        TContentFilteredTopic,
+        TTopicDescription,
+        T,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TContentFilteredTopic)
+        TContentFilteredTopic)
 
     /**
      * Convenience typedef for the type of the data sample.
@@ -165,7 +166,9 @@ public:
 };
 
 template<typename T>
-class ContentFilteredTopic : public TContentFilteredTopic <T, detail::ContentFilteredTopic> { };
+class ContentFilteredTopic : public TContentFilteredTopic <T, detail::ContentFilteredTopic>
+{
+};
 
 //#endif  //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 

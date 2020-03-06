@@ -39,6 +39,7 @@ template<typename D>
 class TInconsistentTopicStatus : public dds::core::Value<D>
 {
 public:
+
     TInconsistentTopicStatus();
 
     /**
@@ -60,6 +61,7 @@ template<typename D>
 class TSampleLostStatus : public dds::core::Value<D>
 {
 public:
+
     TSampleLostStatus();
 
     /**
@@ -83,6 +85,7 @@ template<typename D>
 class TSampleRejectedStatus : public dds::core::Value<D>
 {
 public:
+
     TSampleRejectedStatus();
 
     /**
@@ -116,6 +119,7 @@ template<typename D>
 class TLivelinessLostStatus : public dds::core::Value<D>
 {
 public:
+
     TLivelinessLostStatus();
 
     /**
@@ -141,6 +145,7 @@ template<typename D>
 class TLivelinessChangedStatus : public dds::core::Value<D>
 {
 public:
+
     TLivelinessChangedStatus();
 
     /**
@@ -190,6 +195,7 @@ template<typename D>
 class TOfferedDeadlineMissedStatus : public dds::core::Value<D>
 {
 public:
+
     TOfferedDeadlineMissedStatus();
 
     /**
@@ -220,6 +226,7 @@ template<typename D>
 class TRequestedDeadlineMissedStatus : public dds::core::Value<D>
 {
 public:
+
     TRequestedDeadlineMissedStatus();
 
     /**
@@ -251,6 +258,7 @@ template<typename D>
 class TOfferedIncompatibleQosStatus : public dds::core::Value<D>
 {
 public:
+
     TOfferedIncompatibleQosStatus();
 
     /**
@@ -299,6 +307,7 @@ template<typename D>
 class TRequestedIncompatibleQosStatus : public dds::core::Value<D>
 {
 public:
+
     TRequestedIncompatibleQosStatus();
 
     /**
@@ -347,6 +356,7 @@ template<typename D>
 class TPublicationMatchedStatus : public dds::core::Value<D>
 {
 public:
+
     TPublicationMatchedStatus();
 
     /**
@@ -389,6 +399,7 @@ template<typename D>
 class TSubscriptionMatchedStatus : public dds::core::Value<D>
 {
 public:
+
     TSubscriptionMatchedStatus();
 
     /**

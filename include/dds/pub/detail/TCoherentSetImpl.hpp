@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_TCOHERENTSET_IMPL_HPP_
 #define EPROSIMA_DDS_PUB_TCOHERENTSET_IMPL_HPP_
@@ -43,16 +43,16 @@ template<typename DELEGATE>
 void TCoherentSet<DELEGATE>::end()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_publisher().delegate().get());
-//    this->delegate().end();
+    //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_publisher().delegate().get());
+    //    this->delegate().end();
 }
 
 template<typename DELEGATE>
 TCoherentSet<DELEGATE>::~TCoherentSet()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_publisher().delegate().get());
-//    this->delegate().end();
+    //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_publisher().delegate().get());
+    //    this->delegate().end();
 }
 
 } //namespace pub

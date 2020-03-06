@@ -33,16 +33,17 @@ namespace core {
 namespace xtypes {
 
 template<
-        typename DELEGATE,
-        typename OTHER_DELEGATE>
+    typename DELEGATE,
+    typename OTHER_DELEGATE>
 class TMemberType : public Reference<DELEGATE>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TMemberType,
-            Reference,
-            DELEGATE)
+        TMemberType,
+        Reference,
+        DELEGATE)
 
 public:
+
     TMemberType(
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type)
@@ -51,9 +52,10 @@ public:
         impl()->dt(type);
     }
 
-    TMemberType(const std::string& name,
-                const xtypes::DynamicType& type,
-                const Annotation& annotation)
+    TMemberType(
+            const std::string& name,
+            const xtypes::DynamicType& type,
+            const Annotation& annotation)
     {
         impl()->name(name);
         impl()->dt(type);
@@ -150,6 +152,7 @@ public:
     {
         return impl()->get_bitbound();
     }
+
 };
 
 typedef TMemberType<detail::MemberType, detail::DynamicType> MemberType;

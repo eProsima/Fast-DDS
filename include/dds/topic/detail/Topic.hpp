@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_TOPIC_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_TOPIC_HPP_
@@ -51,14 +51,16 @@ class TopicListener;
 namespace detail {
 
 template<typename T>
-class Topic { };
+class Topic
+{
+};
 
 /***************************************************************************
- *
- * dds/topic/detail/Topic<> DELEGATE declaration.
- * Implementation can be found in dds/topic/detail/TTopicImpl.hpp
- *
- ***************************************************************************/
+*
+* dds/topic/detail/Topic<> DELEGATE declaration.
+* Implementation can be found in dds/topic/detail/TTopicImpl.hpp
+*
+***************************************************************************/
 
 //TODO: Fix when TopicTraits, AnyTopicDelegate and TopicDescriptionDelegate are implemented
 //template<typename T>

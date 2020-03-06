@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_TSAMPLEINFO_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_TSAMPLEINFO_IMPL_HPP_
@@ -39,49 +39,49 @@ template<typename DELEGATE>
 const dds::core::Time TSampleInfo<DELEGATE>::timestamp() const
 {
     //To implement
-//    return this->delegate().timestamp();
+    //    return this->delegate().timestamp();
 }
 
 template<typename DELEGATE>
 const dds::sub::status::DataState TSampleInfo<DELEGATE>::state() const
 {
     //To implement
-//    return this->delegate().state();
+    //    return this->delegate().state();
 }
 
 template<typename DELEGATE>
 dds::sub::GenerationCount TSampleInfo<DELEGATE>::generation_count() const
 {
     //To implement
-//    return this->delegate().generation_count();
+    //    return this->delegate().generation_count();
 }
 
 template<typename DELEGATE>
 dds::sub::Rank TSampleInfo<DELEGATE>::rank() const
 {
     //To implement
-//    return this->delegate().rank();
+    //    return this->delegate().rank();
 }
 
 template<typename DELEGATE>
 bool TSampleInfo<DELEGATE>::valid() const
 {
     //To implement
-//    return this->delegate().valid();
+    //    return this->delegate().valid();
 }
 
 template<typename DELEGATE>
 dds::core::InstanceHandle TSampleInfo<DELEGATE>::instance_handle() const
 {
     //To implement
-//    return this->delegate().instance_handle();
+    //    return this->delegate().instance_handle();
 }
 
 template<typename DELEGATE>
 dds::core::InstanceHandle TSampleInfo<DELEGATE>::publication_handle() const
 {
     //To implement
-//    return this->delegate().publication_handle();
+    //    return this->delegate().publication_handle();
 }
 
 } //namespace sub

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_
 #define EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_
@@ -41,40 +41,40 @@ template<typename DELEGATE>
 void TEntity<DELEGATE>::enable()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->enable();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->enable();
 }
 
 template<typename DELEGATE>
 const status::StatusMask TEntity<DELEGATE>::status_changes()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->status_changes();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->status_changes();
 }
 
 template<typename DELEGATE>
 const InstanceHandle TEntity<DELEGATE>::instance_handle() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->instance_handle();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->instance_handle();
 }
 
 template<typename DELEGATE>
 void TEntity<DELEGATE>::close()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->close();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->close();
 }
 
 template<typename DELEGATE>
 void TEntity<DELEGATE>::retain()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->retain();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->retain();
 }
 
 } //namespace core

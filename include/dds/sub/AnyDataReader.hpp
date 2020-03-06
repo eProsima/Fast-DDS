@@ -48,12 +48,12 @@ class TAnyDataReader : public dds::core::TEntity<DELEGATE>
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TAnyDataReader,
-            dds::core::TEntity,
-            DELEGATE)
+        TAnyDataReader,
+        dds::core::TEntity,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TAnyDataReader)
+        TAnyDataReader)
 
     /** @cond */
     virtual ~TAnyDataReader();

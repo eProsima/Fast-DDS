@@ -49,18 +49,19 @@ template<typename DELEGATE>
 class TPublisher : public dds::core::TEntity<DELEGATE>
 {
 public:
+
     /**
      * Local convenience typedef for dds::pub::PublisherListener.
      */
     typedef PublisherListener Listener;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TPublisher,
-            dds::core::TEntity,
-            DELEGATE)
+        TPublisher,
+        dds::core::TEntity,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TPublisher)
+        TPublisher)
 
     /**
      * Create a new Publisher.

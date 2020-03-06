@@ -38,9 +38,11 @@ template<typename T>
 class WeakReference
 {
 public:
+
     typedef T ReferenceType;
 
 public:
+
     /**
      * Creates a weak reference without an referenced dds object.
      */
@@ -75,6 +77,7 @@ public:
     T lock();
 
 private:
+
     typename T::DELEGATE_WEAK_REF_T impl_;
 };
 

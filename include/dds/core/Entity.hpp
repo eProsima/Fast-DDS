@@ -53,13 +53,14 @@ template<typename DELEGATE>
 class TEntity : public virtual Reference<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TEntity,
-            Reference,
-            DELEGATE)
+        TEntity,
+        Reference,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TEntity)
+        TEntity)
 
     /** @cond */
     virtual ~TEntity();

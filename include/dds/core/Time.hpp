@@ -30,17 +30,18 @@ class Duration;
 class Time;
 
 /**
-* Time represents a time value and can:
-*
-* * Be incremented by Duration expressed as seconds,
-*   nanoseconds, milliseconds, or Duration objects.
-*
-* * Be converted to and from Times expressed in
-*   milliseconds (or other units) as integer types.
-*/
+ * Time represents a time value and can:
+ *
+ * * Be incremented by Duration expressed as seconds,
+ *   nanoseconds, milliseconds, or Duration objects.
+ *
+ * * Be converted to and from Times expressed in
+ *   milliseconds (or other units) as integer types.
+ */
 class OMG_DDS_API Time
 {
 public:
+
     static const Time invalid();       // {-1, 0xffffffff}
 
     /**
@@ -102,7 +103,7 @@ public:
 
     /**
      * Returns an integer indicating the result of a comparison
-      * of two Times:
+     * of two Times:
      *   1 if this Time is greater than the comparator (that)
      *  -1 if the Time is less than the comparator (that)
      *   0 if the Time matches the comparator (that)
@@ -131,7 +132,8 @@ public:
      * @param that Time to compare
      * @return true if the Time is not equal to the comparator
      */
-    bool operator !=(const Time& that) const;
+    bool operator !=(
+            const Time& that) const;
 
     /**
      * @param that Time to compare
@@ -153,6 +155,7 @@ public:
             const Time& that) const;
 
 public:
+
     /**
      * @param a_ti Duration to add
      * @return Time value + Duration
@@ -167,6 +170,7 @@ public:
             const Duration& a_ti);
 
 public:
+
     /**
      * Returns this Time in milliseconds.
      *
@@ -189,6 +193,7 @@ public:
     double to_secs() const;
 
 private:
+
     int64_t sec_;
     uint32_t nsec_;
 };

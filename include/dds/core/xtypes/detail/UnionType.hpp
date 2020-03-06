@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_UNION_TYPE_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_UNION_TYPE_HPP_
@@ -24,7 +24,9 @@ namespace xtypes {
 namespace detail {
 
 template<typename T>
-class UnionType { };
+class UnionType
+{
+};
 
 } //namespace detail
 } //namespace xtypes

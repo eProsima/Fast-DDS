@@ -43,7 +43,9 @@ typedef std::vector<std::string> StringSeq;
 /**
  * @brief This class is used to create dds::core::null objects.
  */
-class OMG_DDS_API null_type { };
+class OMG_DDS_API null_type
+{
+};
 
 /**
  * This is the DDS Null-Reference.<br>

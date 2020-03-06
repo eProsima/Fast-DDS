@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_TINSTANCEHANDLE_IMPL_HPP_
 #define EPROSIMA_DDS_CORE_TINSTANCEHANDLE_IMPL_HPP_
@@ -65,14 +65,15 @@ TInstanceHandle<DELEGATE>::~TInstanceHandle()
 }
 
 template<typename DELEGATE>
-TInstanceHandle<DELEGATE>& TInstanceHandle<DELEGATE>::operator=(const TInstanceHandle& that)
+TInstanceHandle<DELEGATE>& TInstanceHandle<DELEGATE>::operator =(
+        const TInstanceHandle& that)
 {
     //To implement
-//    if(this != &that)
-//        {
-//            this->delegate() = that.delegate();
-//        }
-//        return *this;
+    //    if(this != &that)
+    //        {
+    //            this->delegate() = that.delegate();
+    //        }
+    //        return *this;
 }
 
 template<typename DELEGATE>
@@ -80,7 +81,7 @@ bool TInstanceHandle<DELEGATE>::operator ==(
         const TInstanceHandle& that) const
 {
     //To implement
-//    return this->delegate() == that.delegate();
+    //    return this->delegate() == that.delegate();
 }
 
 template<typename DELEGATE>
@@ -88,7 +89,7 @@ bool TInstanceHandle<DELEGATE>::operator <(
         const TInstanceHandle& that) const
 {
     //To implement
-//    return this->delegate() < that.delegate();
+    //    return this->delegate() < that.delegate();
 }
 
 template<typename DELEGATE>
@@ -96,23 +97,23 @@ bool TInstanceHandle<DELEGATE>::operator >(
         const TInstanceHandle& that) const
 {
     //To implement
-//    return this->delegate() > that.delegate();
+    //    return this->delegate() > that.delegate();
 }
 
 template<typename DELEGATE>
 const TInstanceHandle<DELEGATE> TInstanceHandle<DELEGATE>::nil()
 {
     //To implement
-//    dds::core::null_type nt;
-//    static TInstanceHandle nil_handle(nt);
-//    return nil_handle;
+    //    dds::core::null_type nt;
+    //    static TInstanceHandle nil_handle(nt);
+    //    return nil_handle;
 }
 
 template<typename DELEGATE>
 bool TInstanceHandle<DELEGATE>::is_nil() const
 {
     //To implement
-//    return this->delegate().is_nil();
+    //    return this->delegate().is_nil();
 }
 
 } //namespace core
@@ -123,8 +124,8 @@ inline std::ostream& operator <<(
         std::ostream& os,
         /*const dds::core::TInstanceHandle<org::opensplice::core::InstanceHandleDelegate>& h*/)
 {
-//    os << h.delegate();
-//    return os;
+    //    os << h.delegate();
+    //    return os;
 }
 
 #endif //EPROSIMA_DDS_CORE_TINSTANCEHANDLE_IMPL_HPP_

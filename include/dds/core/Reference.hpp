@@ -90,8 +90,9 @@ template<typename DELEGATE>
 class Reference
 {
 public:
+
     DECLARE_TYPE_TRAITS(
-            DELEGATE)
+        DELEGATE)
 
     /**
      * Creates a "null" Reference.
@@ -100,8 +101,9 @@ public:
      */
     explicit Reference(
             dds::core::null_type& n)
-        :impl_()
-    {}
+        : impl_()
+    {
+    }
 
     /**
      * Creates a Reference from another.
@@ -110,8 +112,9 @@ public:
      */
     explicit Reference(
             const Reference& ref)
-        :impl_(ref.impl_)
-    {}
+        : impl_(ref.impl_)
+    {
+    }
 
     /**
      * Creates a Reference from other Reference type safely.
@@ -125,9 +128,9 @@ public:
         impl_ = std::dynamic_pointer_cast<DELEGATE_T>(ref.impl_);
         if (impl_ != ref.impl_)
         {
-            throw 
-                IllegalOperationError(std::string("Attempted invalid cast: ") + 
-                typeid(ref).name() + " to " + typeid(*this).name());
+            throw
+                IllegalOperationError(std::string("Attempted invalid cast: ") +
+                        typeid(ref).name() + " to " + typeid(*this).name());
         }
 
     }
@@ -144,13 +147,16 @@ public:
      */
     explicit Reference(
             DELEGATE_T* p)
-        :impl_(p)
-    {}
+        : impl_(p)
+    {
+    }
 
     explicit Reference(
             const DELEGATE_REF_T& p)
-        :impl_(p)
-    {}
+        : impl_(p)
+    {
+    }
+
     /** @endcond */
 
     /**
@@ -162,7 +168,8 @@ public:
      * delegate will not be destroyed.
      */
     ~Reference()
-    {}
+    {
+    }
 
     /** @cond
      * Function possibly needed for delegate implementation, but not recommended
@@ -186,7 +193,7 @@ public:
      * @return true when equal
      */
     template<typename R>
-    bool operator==(
+    bool operator ==(
             const R& ref) const
     {
         bool equal = false;
@@ -214,7 +221,7 @@ public:
      * @return true when <i>not</i> equal
      */
     template<typename R>
-    bool operator!=(
+    bool operator !=(
             const R& ref) const
     {
         // FRANAVA read something removing the this keyword.
@@ -230,7 +237,7 @@ public:
      * @return reference pointing to the new object.
      */
     template<typename D>
-    Reference& operator=(
+    Reference& operator =(
             const Reference<D>& that)
     {
         //To implement
@@ -245,7 +252,7 @@ public:
 
     /** @copydoc dds::core::Reference::operator=(const Reference<D>& that) */
     template<typename R>
-    Reference& operator=(
+    Reference& operator =(
             const R& rhs)
     {
         static_assert(
@@ -269,7 +276,7 @@ public:
      * @return reference pointing to a null object.
      */
 
-    Reference& operator=(
+    Reference& operator =(
             const null_type nil)
     {
         return null;
@@ -300,7 +307,7 @@ public:
      *
      * @return true if this reference is null.
      */
-    bool operator==(
+    bool operator ==(
             const null_type) const
     {
         return this->is_nil();
@@ -319,18 +326,20 @@ public:
      *
      * @return true if this reference is not null.
      */
-    bool operator!=(
+    bool operator !=(
             const null_type) const
     {
         return !(this->is_nil());
     }
 
 private:
+
     // -- disallow dynamic allocation for reference types
     void* operator new(
-            size_t); 
+            size_t);
 
 public:
+
     /** @cond
      * Functions possibly needed for delegate implementation, but not recommended
      * for application usage: exclude from the API documentation for clarity.
@@ -366,14 +375,14 @@ public:
      *
      * @return a reference to delegate.
      */
-    DELEGATE* operator->()
+    DELEGATE* operator ->()
     {
         return impl_.get();
 
     }
 
     /** @copydoc dds::core::Reference::operator->() */
-    const DELEGATE* operator->() const
+    const DELEGATE* operator ->() const
     {
         return impl_.get();
     }
@@ -396,6 +405,7 @@ public:
     /** @endcond */
 
 protected:
+
     Reference()
     {
     }
@@ -407,6 +417,7 @@ protected:
     }
 
 protected:
+
     DELEGATE_REF_T impl_;
 };
 

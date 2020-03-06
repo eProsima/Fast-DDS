@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_CONTENTFILTEREDTOPIC_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_CONTENTFILTEREDTOPIC_HPP_
@@ -199,7 +199,9 @@ template<typename T>
 //    dds::topic::Topic<T> myTopic;
 //    dds::topic::Filter myFilter;
 //};
-class ContentFilteredTopic { };
+class ContentFilteredTopic
+{
+};
 
 } //namespace detail
 } //namespace topic

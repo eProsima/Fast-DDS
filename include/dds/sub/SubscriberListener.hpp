@@ -123,6 +123,7 @@ namespace sub {
 class OMG_DDS_API SubscriberListener : public virtual AnyDataReaderListener
 {
 public:
+
     /** @cond */
     typedef ::dds::core::smart_ptr_traits<SubscriberListener>::ref_type ref_type;
     /** @endcond */
@@ -131,6 +132,7 @@ public:
     virtual ~SubscriberListener()
     {
     }
+
     /** @endcond */
 
     /**
@@ -182,14 +184,16 @@ public:
  * @see dds::sub::SubscriberListener
  */
 class OMG_DDS_API NoOpSubscriberListener :
-        public virtual SubscriberListener,
-        public virtual NoOpAnyDataReaderListener
+    public virtual SubscriberListener,
+    public virtual NoOpAnyDataReaderListener
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
+    /** @cond
+     * All these functions have already been documented in the non-NoOp listener.
+     * Ignore these functions for the doxygen API documentation for clarity.
+     */
+
 public:
+
     virtual ~NoOpSubscriberListener()
     {
     }
@@ -198,7 +202,8 @@ public:
             Subscriber&)
     {
     }
-/** @endcond */
+
+    /** @endcond */
 };
 
 } //namespace sub

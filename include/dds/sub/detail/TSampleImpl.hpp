@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_TSAMPLE_HPP_
 #define EPROSIMA_DDS_SUB_TSAMPLE_HPP_
@@ -31,25 +31,26 @@ namespace dds {
 namespace sub {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 Sample<T, DELEGATE>::Sample()
     : dds::core::Value< DELEGATE<T> >()
 {
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 Sample<T, DELEGATE>::Sample(
-        const T& data, const SampleInfo& info)
+        const T& data,
+        const SampleInfo& info)
     : dds::core::Value< DELEGATE<T> >(data, info)
 {
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 Sample<T, DELEGATE>::Sample(
         const Sample& other)
     : dds::core::Value< DELEGATE<T> >(other.delegate())
@@ -57,41 +58,41 @@ Sample<T, DELEGATE>::Sample(
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 const typename Sample<T, DELEGATE>::DataType& Sample<T, DELEGATE>::data() const
 {
     //To implement
-//    return this->delegate().data();
+    //    return this->delegate().data();
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 void Sample<T, DELEGATE>::data(
         const DataType& d)
 {
     //To implement
-//    this->delegate().data(d);
+    //    this->delegate().data(d);
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 const SampleInfo& Sample<T, DELEGATE>::info() const
 {
     //To implement
-//    return this->delegate().info();
+    //    return this->delegate().info();
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 void Sample<T, DELEGATE>::info(
         const SampleInfo& i)
 {
     //To implement
-//    this->delegate().info(i);
+    //    this->delegate().info(i);
 }
 
 } //namespace sub

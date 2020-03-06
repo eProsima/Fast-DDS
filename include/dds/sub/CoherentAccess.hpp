@@ -91,6 +91,7 @@ template<typename DELEGATE>
 class TCoherentAccess : public dds::core::Value<DELEGATE>
 {
 public:
+
     /**
      * Creating a CoherentAccess object, which will begin ‘coherent access’ of
      * received samples using DataReader objects attached to this Subscriber.
@@ -143,10 +144,11 @@ public:
     ~TCoherentAccess();
 
 private:
+
     TCoherentAccess(
             const TCoherentAccess&);
 
-    TCoherentAccess& operator=(
+    TCoherentAccess& operator =(
             const TCoherentAccess&);
 };
 

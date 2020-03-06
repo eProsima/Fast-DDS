@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_DETAIL_TQOSPROVIDERIMPL_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_TQOSPROVIDERIMPL_HPP_
@@ -49,8 +49,8 @@ template<typename DELEGATE>
 dds::domain::qos::DomainParticipantQos TQosProvider<DELEGATE>::participant_qos()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->participant_qos(NULL);
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->participant_qos(NULL);
 }
 
 template<typename DELEGATE>
@@ -58,16 +58,16 @@ dds::domain::qos::DomainParticipantQos TQosProvider<DELEGATE>::participant_qos(
         const std::string& id)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->participant_qos(id.c_str());
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->participant_qos(id.c_str());
 }
 
 template<typename DELEGATE>
 dds::topic::qos::TopicQos TQosProvider<DELEGATE>::topic_qos()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->topic_qos(NULL);
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->topic_qos(NULL);
 }
 
 template<typename DELEGATE>
@@ -75,17 +75,16 @@ dds::topic::qos::TopicQos TQosProvider<DELEGATE>::topic_qos(
         const std::string& id)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->topic_qos(id.c_str());
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->topic_qos(id.c_str());
 }
-
 
 template<typename DELEGATE>
 dds::sub::qos::SubscriberQos TQosProvider<DELEGATE>::subscriber_qos()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->subscriber_qos(NULL);
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->subscriber_qos(NULL);
 }
 
 template<typename DELEGATE>
@@ -93,16 +92,16 @@ dds::sub::qos::SubscriberQos TQosProvider<DELEGATE>::subscriber_qos(
         const std::string& id)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->subscriber_qos(id.c_str());
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->subscriber_qos(id.c_str());
 }
 
 template<typename DELEGATE>
 dds::sub::qos::DataReaderQos TQosProvider<DELEGATE>::datareader_qos()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->datareader_qos(NULL);
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->datareader_qos(NULL);
 }
 
 template<typename DELEGATE>
@@ -110,16 +109,16 @@ dds::sub::qos::DataReaderQos TQosProvider<DELEGATE>::datareader_qos(
         const std::string& id)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->datareader_qos(id.c_str());
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->datareader_qos(id.c_str());
 }
 
 template<typename DELEGATE>
 dds::pub::qos::PublisherQos TQosProvider<DELEGATE>::publisher_qos()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->publisher_qos(NULL);
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->publisher_qos(NULL);
 }
 
 template<typename DELEGATE>
@@ -127,16 +126,16 @@ dds::pub::qos::PublisherQos TQosProvider<DELEGATE>::publisher_qos(
         const std::string& id)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->publisher_qos(id.c_str());
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->publisher_qos(id.c_str());
 }
 
 template<typename DELEGATE>
 dds::pub::qos::DataWriterQos TQosProvider<DELEGATE>::datawriter_qos()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->datawriter_qos(NULL);
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->datawriter_qos(NULL);
 }
 
 template<typename DELEGATE>
@@ -144,8 +143,8 @@ dds::pub::qos::DataWriterQos TQosProvider<DELEGATE>::datawriter_qos(
         const std::string& id)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return this->delegate()->datawriter_qos(id.c_str());
+    //    ISOCPP_REPORT_STACK_NC_BEGIN();
+    //    return this->delegate()->datawriter_qos(id.c_str());
 }
 
 } //namespace core

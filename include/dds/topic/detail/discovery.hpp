@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file
@@ -39,69 +39,68 @@ namespace topic {
 
 template<typename TOPIC>
 TOPIC discover(
-    const dds::domain::DomainParticipant& dp,
-    const std::string& topic_name,
-    const dds::core::Duration& timeout)
+        const dds::domain::DomainParticipant& dp,
+        const std::string& topic_name,
+        const dds::core::Duration& timeout)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    TOPIC t = org::opensplice::topic::lookup_topic<TOPIC, typename TOPIC::DELEGATE_T>::discover(dp, topic_name, timeout);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    TOPIC t = org::opensplice::topic::lookup_topic<TOPIC, typename TOPIC::DELEGATE_T>::discover(dp, topic_name, timeout);
 
-//    return t;
+    //    return t;
 }
 
-
 template<
-        typename ANYTOPIC,
-        typename FwdIterator>
+    typename ANYTOPIC,
+    typename FwdIterator>
 uint32_t discover(
-    const dds::domain::DomainParticipant& dp,
-    FwdIterator begin,
-    uint32_t max_size)
+        const dds::domain::DomainParticipant& dp,
+        FwdIterator begin,
+        uint32_t max_size)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    std::vector<ANYTOPIC> list;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    std::vector<ANYTOPIC> list;
 
-//    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, max_size);
+    //    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, max_size);
 
-//    FwdIterator fit = begin;
-//    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
-//       *fit++ = *it;
-//    }
+    //    FwdIterator fit = begin;
+    //    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
+    //       *fit++ = *it;
+    //    }
 
-//    return list.size();
+    //    return list.size();
 }
 
 template<
-        typename ANYTOPIC,
-        typename BinIterator>
+    typename ANYTOPIC,
+    typename BinIterator>
 uint32_t discover_all(
-    const dds::domain::DomainParticipant& dp,
-    BinIterator begin)
+        const dds::domain::DomainParticipant& dp,
+        BinIterator begin)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    std::vector<ANYTOPIC> list;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    std::vector<ANYTOPIC> list;
 
-//    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, (uint32_t)dds::core::LENGTH_UNLIMITED);
+    //    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, (uint32_t)dds::core::LENGTH_UNLIMITED);
 
-//    BinIterator bit = begin;
-//    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
-//       *bit++ = *it;
-//    }
+    //    BinIterator bit = begin;
+    //    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
+    //       *bit++ = *it;
+    //    }
 
-//    return list.size();
+    //    return list.size();
 }
-
 
 template<typename FwdIterator>
 void ignore(
-    const dds::domain::DomainParticipant& dp,
-    FwdIterator begin, FwdIterator end)
+        const dds::domain::DomainParticipant& dp,
+        FwdIterator begin,
+        FwdIterator end)
 {
     //To implement
-//    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
+    //    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
 }
 
 } //namespace topic

@@ -156,7 +156,8 @@ void OMG_DDS_API ignore(
 template<typename FwdIterator>
 void ignore(
         const dds::domain::DomainParticipant& dp,
-        FwdIterator begin, FwdIterator end);
+        FwdIterator begin,
+        FwdIterator end);
 
 } //namespace topic
 } //namespace dds

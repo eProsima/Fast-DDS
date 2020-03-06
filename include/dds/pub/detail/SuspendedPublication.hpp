@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_DETAIL_SUSPENDED_PUBLICATION_HPP_
 #define EPROSIMA_DDS_PUB_DETAIL_SUSPENDED_PUBLICATION_HPP_
@@ -32,7 +32,9 @@ namespace detail {
 
 //TODO: Fix when SuspendPublicationDelegate is implemented
 //typedef dds::pub::TSuspendedPublication<org::opensplice::pub::SuspendedPublicationDelegate> SuspendedPublication;
-class SuspendedPublication { };
+class SuspendedPublication
+{
+};
 
 } //namespace detail
 } //namespace pub

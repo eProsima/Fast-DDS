@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_TSUBSCRIBER_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_TSUBSCRIBER_IMPL_HPP_
@@ -34,13 +34,13 @@ template<typename DELEGATE>
 TSubscriber<DELEGATE>::TSubscriber(
         const ::dds::domain::DomainParticipant& dp)
     : ::dds::core::Reference<DELEGATE>(new DELEGATE(dp,
-                                                    dp.default_subscriber_qos(),
-                                                    NULL,
-                                                    dds::core::status::StatusMask::none()))
+            dp.default_subscriber_qos(),
+            NULL,
+            dds::core::status::StatusMask::none()))
 {
     //To implement
-//	ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    this->delegate()->init(this->impl_);
+    //	ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    this->delegate()->init(this->impl_);
 }
 
 template<typename DELEGATE>
@@ -52,19 +52,21 @@ TSubscriber<DELEGATE>::TSubscriber(
     : ::dds::core::Reference<DELEGATE>(new DELEGATE(dp, qos, listener, mask))
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    this->delegate()->init(this->impl_);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    this->delegate()->init(this->impl_);
 }
 
 template<typename DELEGATE>
-TSubscriber<DELEGATE>::~TSubscriber() {}
+TSubscriber<DELEGATE>::~TSubscriber()
+{
+}
 
 template<typename DELEGATE>
 void TSubscriber<DELEGATE>::notify_datareaders()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->notify_datareaders();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->notify_datareaders();
 }
 
 template<typename DELEGATE>
@@ -73,83 +75,83 @@ void TSubscriber<DELEGATE>::listener(
         const dds::core::status::StatusMask& event_mask)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->listener(listener, event_mask);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->listener(listener, event_mask);
 }
 
 template<typename DELEGATE>
 typename TSubscriber<DELEGATE>::Listener* TSubscriber<DELEGATE>::listener() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->listener();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->listener();
 }
 
 
 template<typename DELEGATE>
 const dds::sub::qos::SubscriberQos& TSubscriber<DELEGATE>::qos() const
 {
-      //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->qos();
+    //To implement
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->qos();
 }
 
 template<typename DELEGATE>
 void TSubscriber<DELEGATE>::qos(
-            const dds::sub::qos::SubscriberQos& sqos)
+        const dds::sub::qos::SubscriberQos& sqos)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->qos(sqos);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->qos(sqos);
 }
 
 template<typename DELEGATE>
 dds::sub::qos::DataReaderQos TSubscriber<DELEGATE>::default_datareader_qos() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->default_datareader_qos();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->default_datareader_qos();
 }
 
 template<typename DELEGATE>
 TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::default_datareader_qos(
-    const dds::sub::qos::DataReaderQos& qos)
+        const dds::sub::qos::DataReaderQos& qos)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-//    this->delegate()->default_datareader_qos(qos);
-//    return *this;
+    //    this->delegate()->default_datareader_qos(qos);
+    //    return *this;
 }
 
 template<typename DELEGATE>
 const dds::domain::DomainParticipant& TSubscriber<DELEGATE>::participant() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->participant();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->participant();
 }
 
 template<typename DELEGATE>
 TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::operator <<(
-            const dds::sub::qos::SubscriberQos& qos)
+        const dds::sub::qos::SubscriberQos& qos)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-//    this->qos(qos);
-//    return *this;
+    //    this->qos(qos);
+    //    return *this;
 }
 
 template<typename DELEGATE>
 const TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::operator >>(
-            dds::sub::qos::SubscriberQos& qos) const
+        dds::sub::qos::SubscriberQos& qos) const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-//    qos = this->qos();
-//    return *this;
+    //    qos = this->qos();
+    //    return *this;
 }
 
 } //namespace sub

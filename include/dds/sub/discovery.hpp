@@ -114,8 +114,8 @@ void ignore(
  *                  complete this operation.
  */
 template<
-        typename T,
-         template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 ::dds::core::InstanceHandleSeq matched_publications(
         const DataReader<T, DELEGATE>& dr);
 
@@ -173,9 +173,9 @@ template<
  *                  complete this operation.
  */
 template<
-        typename T,
-        typename FwdIterator,
-        template<typename Q> class DELEGATE>
+    typename T,
+    typename FwdIterator,
+    template<typename Q> class DELEGATE>
 uint32_t matched_publications(
         const dds::sub::DataReader<T, DELEGATE>& dr,
         FwdIterator begin,
@@ -221,8 +221,8 @@ uint32_t matched_publications(
  *                  complete this operation.
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 const dds::topic::PublicationBuiltinTopicData matched_publication_data(
         const dds::sub::DataReader<T, DELEGATE>& dr,
         const ::dds::core::InstanceHandle& h);

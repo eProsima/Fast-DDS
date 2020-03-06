@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_DETAIL_ANYDATAWRITER_HPP_
 #define EPROSIMA_DDS_PUB_DETAIL_ANYDATAWRITER_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when DataWriterDelegate is implemented
 //typedef dds::pub::TAnyDataWriter<org::opensplice::pub::AnyDataWriterDelegate> AnyDataWriter;
-class AnyDataWriter { };
+class AnyDataWriter
+{
+};
 
 } //namespace detail
 } //namespace pub

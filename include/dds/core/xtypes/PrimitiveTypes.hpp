@@ -35,17 +35,19 @@ struct dynamic_type_traits
 };
 
 template<
-        typename T,
-        typename DELEGATE>
+    typename T,
+    typename DELEGATE>
 class TPrimitiveType : public TDynamicType<DELEGATE>
 {
 public:
+
     TPrimitiveType()
         : TDynamicType<DELEGATE>(
-                dynamic_type_traits<T>::NAME,
-                dynamic_type_traits<T>::TYPE_ID)
+            dynamic_type_traits<T>::NAME,
+            dynamic_type_traits<T>::TYPE_ID)
     {
     }
+
 };
 
 
@@ -60,7 +62,6 @@ TPrimitiveType<T, detail::DynamicType> primitive_type()
 {
     throw "Not implemented";
 }
-
 
 } //namespace xtypes
 } //namespace core

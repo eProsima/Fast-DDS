@@ -43,8 +43,8 @@ namespace pub {
  *
  */
 template<
-        typename WRITER,
-        typename FwdIterator>
+    typename WRITER,
+    typename FwdIterator>
 uint32_t find(
         const Publisher& pub,
         const std::string& topic_name,
@@ -66,8 +66,8 @@ uint32_t find(
  *
  */
 template<
-        typename WRITER,
-        typename BinIterator>
+    typename WRITER,
+    typename BinIterator>
 uint32_t find(
         const Publisher& pub,
         const std::string& topic_name,

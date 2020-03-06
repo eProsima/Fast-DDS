@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_ANY_TOPIC_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_ANY_TOPIC_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when AnyTopicDelegate is implemented
 //typedef dds::topic::TAnyTopic<org::opensplice::topic::AnyTopicDelegate> AnyTopic;
-class AnyTopic { };
+class AnyTopic
+{
+};
 
 } //namespace detail
 } //namespace topic

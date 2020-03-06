@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_TCOHERENTACCESS_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_TCOHERENTACCESS_IMPL_HPP_
@@ -41,16 +41,16 @@ template<typename DELEGATE>
 void TCoherentAccess<DELEGATE>::end()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_subscriber().delegate().get());
-//    this->delegate().end();
+    //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_subscriber().delegate().get());
+    //    this->delegate().end();
 }
 
 template<typename DELEGATE>
 TCoherentAccess<DELEGATE>::~TCoherentAccess()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_subscriber().delegate().get());
-//    this->delegate().end();
+    //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_subscriber().delegate().get());
+    //    this->delegate().end();
 }
 
 } //namespace sub

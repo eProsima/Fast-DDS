@@ -31,8 +31,8 @@ namespace core {
  * do not implictly convert to integers, and resolve scoping issues.
  */
 template<
-        typename Def,
-        typename Inner = typename Def::Type>
+    typename Def,
+    typename Inner = typename Def::Type>
 class SafeEnum : public Def
 {
 public:
@@ -85,6 +85,7 @@ public:
     }
 
 private:
+
     Inner val;
 
 };

@@ -66,6 +66,7 @@ template<typename DELEGATE>
 class TRank : public core::Value<DELEGATE>
 {
 public:
+
     /** @cond
      * Create an empty Rank.
      * This constructor is required for containers.

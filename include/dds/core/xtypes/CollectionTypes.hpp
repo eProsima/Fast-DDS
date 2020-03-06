@@ -32,6 +32,7 @@ template<typename DELEGATE>
 class TCollectionType : public TDynamicType<DELEGATE>
 {
 public:
+
     constexpr static uint32_t UNBOUNDED = 0xFFFFFFFF;
 
     uint32_t bounds() const
@@ -40,21 +41,24 @@ public:
     }
 
 protected:
+
     TCollectionType(
             const std::string& name,
             TypeKind kind)
     {
         throw "Not implemented";
     }
+
 };
 
 template<
-        typename DELEGATE,
-        typename DELEGATE_K,
-        typename DELEGATE_V>
+    typename DELEGATE,
+    typename DELEGATE_K,
+    typename DELEGATE_V>
 class TMapType : public TCollectionType<DELEGATE>
 {
 public:
+
     TMapType(
             const TDynamicType<DELEGATE_K>& key_type,
             const TDynamicType<DELEGATE_V>& value_type)
@@ -79,32 +83,37 @@ public:
     {
         throw "Not implemented";
     }
+
 };
 
 
 template<
-        typename DELEGATE,
-        typename DELEGATE_T>
+    typename DELEGATE,
+    typename DELEGATE_T>
 class TSequenceType : public TCollectionType<DELEGATE>
 {
 public:
+
     TSequenceType(
-        const TDynamicType<DELEGATE_T>& type)
+            const TDynamicType<DELEGATE_T>& type)
     {
         throw "Not implemented";
     }
 
     TSequenceType(
-        const TDynamicType<DELEGATE_T>& type,
-        uint32_t bounds)
+            const TDynamicType<DELEGATE_T>& type,
+            uint32_t bounds)
     {
         throw "Not implemented";
     }
+
 public:
+
     const TDynamicType<DELEGATE_T>& key_type() const
     {
         throw "Not implemented";
     }
+
 };
 
 
@@ -112,11 +121,13 @@ template<typename DELEGATE>
 class TStringType : public TCollectionType<DELEGATE>
 {
 public:
+
     TStringType(
             uint32_t bounds)
     {
         throw "Not implemented";
     }
+
 };
 
 typedef TCollectionType<detail::CollectionType> CollectionType;

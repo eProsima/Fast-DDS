@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_TPUBLISHER_IMPL_HPP_
 #define EPROSIMA_DDS_PUB_TPUBLISHER_IMPL_HPP_
@@ -35,14 +35,14 @@ template<typename DELEGATE>
 TPublisher<DELEGATE>::TPublisher(
         const dds::domain::DomainParticipant& dp)
     : ::dds::core::Reference<DELEGATE>(
-            new DELEGATE(dp,
-                         dp.default_publisher_qos(),
-                         NULL,
-                         dds::core::status::StatusMask::none()))
+        new DELEGATE(dp,
+        dp.default_publisher_qos(),
+        NULL,
+        dds::core::status::StatusMask::none()))
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    this->delegate()->init(this->impl_);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    this->delegate()->init(this->impl_);
 }
 
 template<typename DELEGATE>
@@ -54,8 +54,8 @@ TPublisher<DELEGATE>::TPublisher(
     : ::dds::core::Reference<DELEGATE>(new DELEGATE(dp, qos, listener, mask))
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    this->delegate()->init(this->impl_);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    this->delegate()->init(this->impl_);
 }
 
 template<typename DELEGATE>
@@ -67,8 +67,8 @@ template<typename DELEGATE>
 const qos::PublisherQos& TPublisher<DELEGATE>::qos() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->qos();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->qos();
 }
 
 template<typename DELEGATE>
@@ -76,8 +76,8 @@ void TPublisher<DELEGATE>::qos(
         const qos::PublisherQos& pqos)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->qos(pqos);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->qos(pqos);
 }
 
 template<typename DELEGATE>
@@ -85,9 +85,9 @@ TPublisher<DELEGATE>& TPublisher<DELEGATE>::operator <<(
         const qos::PublisherQos& qos)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->qos(qos);
-//    return *this;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->qos(qos);
+    //    return *this;
 }
 
 template<typename DELEGATE>
@@ -95,9 +95,9 @@ TPublisher<DELEGATE>& TPublisher<DELEGATE>::operator >>(
         qos::PublisherQos& qos)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    qos = this->qos();
-//    return *this;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    qos = this->qos();
+    //    return *this;
 }
 
 template<typename DELEGATE>
@@ -105,17 +105,17 @@ TPublisher<DELEGATE>& TPublisher<DELEGATE>::default_datawriter_qos(
         const qos::DataWriterQos& dwqos)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->default_datawriter_qos(dwqos);
-//    return *this;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->default_datawriter_qos(dwqos);
+    //    return *this;
 }
 
 template<typename DELEGATE>
 qos::DataWriterQos TPublisher<DELEGATE>::default_datawriter_qos() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->default_datawriter_qos();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->default_datawriter_qos();
 }
 
 template<typename DELEGATE>
@@ -124,16 +124,16 @@ void TPublisher<DELEGATE>::listener(
         const dds::core::status::StatusMask& event_mask)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->listener(plistener, event_mask);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->listener(plistener, event_mask);
 }
 
 template<typename DELEGATE>
 typename TPublisher<DELEGATE>::Listener* TPublisher<DELEGATE>::listener() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->listener();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->listener();
 }
 
 template<typename DELEGATE>
@@ -141,16 +141,16 @@ void TPublisher<DELEGATE>::wait_for_acknowledgments(
         const dds::core::Duration& timeout)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->wait_for_acknowledgments(timeout);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->wait_for_acknowledgments(timeout);
 }
 
 template<typename DELEGATE>
 const dds::domain::DomainParticipant& TPublisher<DELEGATE>::participant() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->participant();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->participant();
 }
 
 } //namespace pub

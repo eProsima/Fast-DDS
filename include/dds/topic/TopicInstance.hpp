@@ -39,6 +39,7 @@ template<typename T>
 class TopicInstance
 {
 public:
+
     /**
      * Construct a TopicInstance.
      */
@@ -107,6 +108,7 @@ public:
             const T& sample);
 
 private:
+
     dds::core::InstanceHandle h_;
     T sample_;
 };

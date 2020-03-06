@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file
@@ -40,43 +40,43 @@ void ignore(
         FwdIterator end)
 {
     //To implement
-//    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
+    //    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
 }
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 ::dds::core::InstanceHandleSeq matched_publications(
         const DataReader<T, DELEGATE>& dr)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
-//    return dr.delegate()->matched_publications();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+    //    return dr.delegate()->matched_publications();
 }
 
 template<
-        typename T,
-        typename FwdIterator,
-        template<typename Q> class DELEGATE>
+    typename T,
+    typename FwdIterator,
+    template<typename Q> class DELEGATE>
 uint32_t matched_publications(
         const DataReader<T, DELEGATE>& dr,
         FwdIterator begin,
         uint32_t max_size)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
-//    return dr.delegate()->matched_publications(begin, max_size);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+    //    return dr.delegate()->matched_publications(begin, max_size);
 }
 
 template<typename T,
-         template<typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 const dds::topic::PublicationBuiltinTopicData matched_publication_data(
         const dds::sub::DataReader<T, DELEGATE>& dr,
         const ::dds::core::InstanceHandle& h)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
-//    return dr.delegate()->matched_publication_data(h);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+    //    return dr.delegate()->matched_publication_data(h);
 }
 
 } //namespace sub

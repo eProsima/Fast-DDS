@@ -62,14 +62,15 @@ template<typename DELEGATE>
 class TGuardCondition : public TCondition<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_NO_DC(
-            TGuardCondition,
-            TCondition,
-            DELEGATE)
+        TGuardCondition,
+        TCondition,
+        DELEGATE)
 
     OMG_DDS_EXPLICIT_REF_BASE(
-            TGuardCondition,
-            dds::core::cond::Condition)
+        TGuardCondition,
+        dds::core::cond::Condition)
     /**
      * Create a dds::core::cond::GuardCondition.
      *

@@ -28,9 +28,9 @@
 
 #include <vector>
 
-namespace dds{
-namespace core{
-namespace xtypes{
+namespace dds {
+namespace core {
+namespace xtypes {
 
 /**
  * Declares a forward declaration for a union type.
@@ -39,46 +39,49 @@ template<typename DELEGATE>
 class TUnionForwardDeclaration : public TDynamicType<DELEGATE>
 {
 public:
+
     TUnionForwardDeclaration(
             const std::string& name)
     {
         throw "Not implemented";
     }
+
 };
 
 template<
-        typename T,
-        template<typename> class DELEGATE>
-class TUnionType  : public TDynamicType<DELEGATE<T>>
+    typename T,
+    template<typename> class DELEGATE>
+class TUnionType : public TDynamicType<DELEGATE<T> >
 {
 public:
+
     TUnionType(
-        const std::string& name,
-        const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
-        const std::vector<UnionCase<T>>& cases)
+            const std::string& name,
+            const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
+            const std::vector<UnionCase<T> >& cases)
     {
         throw "Not implemented";
     }
 
     TUnionType(
-        const std::string& name,
-        const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
-        const std::vector<UnionCase<T>>& cases,
-        const Annotation& annotation)
+            const std::string& name,
+            const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
+            const std::vector<UnionCase<T> >& cases,
+            const Annotation& annotation)
     {
         throw "Not implemented";
     }
 
     TUnionType(
-        const std::string& name,
-        const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
-        const std::vector<UnionCase<T>>& cases,
-        const std::vector<Annotation>& annotations)
+            const std::string& name,
+            const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
+            const std::vector<UnionCase<T> >& cases,
+            const std::vector<Annotation>& annotations)
     {
         throw "Not implemented";
     }
 
-    const std::vector<UnionCase<T>>& members() const
+    const std::vector<UnionCase<T> >& members() const
     {
         throw "Not implemented";
     }
@@ -123,10 +126,13 @@ public:
     {
         throw "Not implemented";
     }
+
 };
 
 template<typename T>
-class UnionType : public TUnionType<T, detail::UnionType> {};
+class UnionType : public TUnionType<T, detail::UnionType>
+{
+};
 
 } //namespace xtypes
 } //namespace core

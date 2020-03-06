@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_DETAIL_REF_TRAITS_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_REF_TRAITS_HPP_
@@ -28,26 +28,28 @@ namespace dds {
 namespace core {
 
 template<
-        typename T1,
-        typename T2>
+    typename T1,
+    typename T2>
 struct is_base_of : public ::std::is_base_of<T1, T2> { };
 
 template<
-        typename T1,
-        typename T2>
+    typename T1,
+    typename T2>
 struct is_same : public ::std::is_same<T1, T2> { };
 
 template<typename T>
-struct smart_ptr_traits {
+struct smart_ptr_traits
+{
     typedef ::std::shared_ptr<T>  ref_type;
     typedef ::std::weak_ptr<T>    weak_ref_type;
 };
 
 template<
-        typename TO,
-        typename FROM>
+    typename TO,
+    typename FROM>
 TO polymorphic_cast(
-        FROM& from) {
+        FROM& from)
+{
 
     typename TO::DELEGATE_REF_T dr = ::std::dynamic_pointer_cast<typename TO::DELEGATE_T>(from.delegate());
 

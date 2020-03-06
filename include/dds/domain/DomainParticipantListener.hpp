@@ -158,9 +158,9 @@ namespace domain {
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
 class OMG_DDS_API DomainParticipantListener :
-        public virtual dds::pub::PublisherListener,
-        public virtual dds::sub::SubscriberListener,
-        public virtual dds::topic::AnyTopicListener
+    public virtual dds::pub::PublisherListener,
+    public virtual dds::sub::SubscriberListener,
+    public virtual dds::topic::AnyTopicListener
 {
 public:
 
@@ -189,10 +189,10 @@ public:
  * @see dds::domain::DomainParticipantListener
  */
 class OMG_DDS_API NoOpDomainParticipantListener :
-        public virtual DomainParticipantListener,
-        public virtual dds::pub::NoOpPublisherListener,
-        public virtual dds::sub::NoOpSubscriberListener,
-        public virtual dds::topic::NoOpAnyTopicListener
+    public virtual DomainParticipantListener,
+    public virtual dds::pub::NoOpPublisherListener,
+    public virtual dds::sub::NoOpSubscriberListener,
+    public virtual dds::topic::NoOpAnyTopicListener
 {
 public:
 

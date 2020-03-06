@@ -101,10 +101,12 @@ template<typename T>
 class DataWriterListener
 {
 public:
+
     /** @cond */
     virtual ~DataWriterListener()
     {
     }
+
     /** @endcond */
 
     /**
@@ -126,8 +128,8 @@ public:
      *               the application).
      */
     virtual void on_offered_deadline_missed(
-        DataWriter<T>& writer,
-        const dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
+            DataWriter<T>& writer,
+            const dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
 
     /**
      * This operation called by the Data Distribution Service when the
@@ -147,8 +149,8 @@ public:
      *               an input to the application).
      */
     virtual void on_offered_incompatible_qos(
-        DataWriter<T>& writer,
-        const dds::core::status::OfferedIncompatibleQosStatus&  status) = 0;
+            DataWriter<T>& writer,
+            const dds::core::status::OfferedIncompatibleQosStatus&  status) = 0;
 
     /**
      * This operation is called by the Data Distribution Service when the
@@ -170,8 +172,8 @@ public:
      *               to the application).
      */
     virtual void on_liveliness_lost(
-        DataWriter<T>& writer,
-        const dds::core::status::LivelinessLostStatus& status) = 0;
+            DataWriter<T>& writer,
+            const dds::core::status::LivelinessLostStatus& status) = 0;
 
     /**
      * This operation is called by the Data
@@ -198,8 +200,8 @@ public:
      *               provided by the Data Distribution Service).
      */
     virtual void on_publication_matched(
-        DataWriter<T>& writer,
-        const dds::core::status::PublicationMatchedStatus& status) = 0;
+            DataWriter<T>& writer,
+            const dds::core::status::PublicationMatchedStatus& status) = 0;
 };
 
 
@@ -222,11 +224,13 @@ public:
 template<typename T>
 class NoOpDataWriterListener : public virtual DataWriterListener<T>
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
+    /** @cond
+     * All these functions have already been documented in the non-NoOp listener.
+     * Ignore these functions for the doxygen API documentation for clarity.
+     */
+
 public:
+
     virtual ~NoOpDataWriterListener()
     {
     }
@@ -254,7 +258,8 @@ public:
             const dds::core::status::PublicationMatchedStatus& status)
     {
     }
-/** @endcond */
+
+    /** @endcond */
 };
 
 } //namespace pub

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_TWAITSET_HPP_
 #define EPROSIMA_DDS_CORE_COND_TWAITSET_HPP_
@@ -37,9 +37,9 @@ template<typename DELEGATE>
 TWaitSet<DELEGATE>::TWaitSet()
 {
     //To implement
-//   ISOCPP_REPORT_STACK_NC_BEGIN();
-//   this->set_ref(new DELEGATE);
-//   this->delegate()->init(this->impl_);
+    //   ISOCPP_REPORT_STACK_NC_BEGIN();
+    //   this->set_ref(new DELEGATE);
+    //   this->delegate()->init(this->impl_);
 }
 
 template<typename DELEGATE>
@@ -52,45 +52,45 @@ const typename TWaitSet<DELEGATE>::ConditionSeq TWaitSet<DELEGATE>::wait(
         const dds::core::Duration& timeout)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    ConditionSeq triggered;
-//    return this->wait(triggered, timeout);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ConditionSeq triggered;
+    //    return this->wait(triggered, timeout);
 }
 
 template<typename DELEGATE>
 const typename TWaitSet<DELEGATE>::ConditionSeq TWaitSet<DELEGATE>::wait()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    ConditionSeq triggered;
-//    return this->wait(triggered, dds::core::Duration::infinite());
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ConditionSeq triggered;
+    //    return this->wait(triggered, dds::core::Duration::infinite());
 }
 
 template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
-        ConditionSeq& triggered,
-        const dds::core::Duration& timeout)
+    ConditionSeq & triggered,
+    const dds::core::Duration& timeout)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->wait(triggered, timeout);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->wait(triggered, timeout);
 }
 
 template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::wait(
-        ConditionSeq& triggered)
+    ConditionSeq & triggered)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->wait(triggered, dds::core::Duration::infinite());
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->wait(triggered, dds::core::Duration::infinite());
 }
 
 template<typename DELEGATE>
 void TWaitSet<DELEGATE>::dispatch()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->dispatch(dds::core::Duration::infinite());
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->dispatch(dds::core::Duration::infinite());
 }
 
 template<typename DELEGATE>
@@ -98,8 +98,8 @@ void TWaitSet<DELEGATE>::dispatch(
         const dds::core::Duration& timeout)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->dispatch(timeout);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->dispatch(timeout);
 }
 
 template<typename DELEGATE>
@@ -107,9 +107,9 @@ TWaitSet<DELEGATE>& TWaitSet<DELEGATE>::operator +=(
         const Condition& cond)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->attach_condition(cond);
-//    return *this;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->attach_condition(cond);
+    //    return *this;
 }
 
 template<typename DELEGATE>
@@ -117,9 +117,9 @@ TWaitSet<DELEGATE>& TWaitSet<DELEGATE>::operator -=(
         const Condition& cond)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->detach_condition(cond);
-//    return *this;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->detach_condition(cond);
+    //    return *this;
 }
 
 template<typename DELEGATE>
@@ -127,9 +127,9 @@ TWaitSet<DELEGATE>& TWaitSet<DELEGATE>::attach_condition(
         const Condition& cond)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->attach_condition(cond);
-//    return *this;
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->attach_condition(cond);
+    //    return *this;
 }
 
 template<typename DELEGATE>
@@ -137,26 +137,26 @@ bool TWaitSet<DELEGATE>::detach_condition(
         const Condition& cond)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//        return this->delegate()->detach_condition(cond.delegate().get());
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //        return this->delegate()->detach_condition(cond.delegate().get());
 }
 
 template<typename DELEGATE>
 const typename TWaitSet<DELEGATE>::ConditionSeq TWaitSet<DELEGATE>::conditions() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    ConditionSeq conds;
-//    return this->conditions(conds);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ConditionSeq conds;
+    //    return this->conditions(conds);
 }
 
 template<typename DELEGATE>
 typename TWaitSet<DELEGATE>::ConditionSeq& TWaitSet<DELEGATE>::conditions(
-        ConditionSeq& conds) const
+    ConditionSeq & conds) const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->conditions(conds);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->conditions(conds);
 }
 
 } //namespace cond

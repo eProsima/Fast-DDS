@@ -32,8 +32,8 @@ namespace dds {
 namespace sub {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE = detail::SharedSamples>
+    typename T,
+    template<typename Q> class DELEGATE = detail::SharedSamples>
 class SharedSamples;
 
 /** @endcond */
@@ -48,11 +48,12 @@ class SharedSamples;
  *       class can also be done by the LoanedSamples.
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class SharedSamples
 {
 public:
+
     typedef T DataType;
     typedef typename DELEGATE<T>::const_iterator const_iterator;
     typedef typename dds::core::smart_ptr_traits< DELEGATE<T> >::ref_type DELEGATE_REF_T;
@@ -120,6 +121,7 @@ public:
     uint32_t length() const;
 
 private:
+
     DELEGATE_REF_T delegate_;
 };
 

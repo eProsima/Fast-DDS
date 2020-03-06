@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_SHARED_SAMPLES_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_SHARED_SAMPLES_HPP_
@@ -29,8 +29,8 @@ namespace dds {
 namespace sub {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class Sample;
 
 namespace detail {
@@ -40,8 +40,8 @@ class SharedSamples
 {
 public:
 
-    typedef typename std::vector<::dds::sub::Sample<T, Sample>>::iterator iterator;
-    typedef typename std::vector<::dds::sub::Sample<T, Sample>>::const_iterator const_iterator;
+    typedef typename std::vector<::dds::sub::Sample<T, Sample> >::iterator iterator;
+    typedef typename std::vector<::dds::sub::Sample<T, Sample> >::const_iterator const_iterator;
 
     SharedSamples()
     {
@@ -61,35 +61,36 @@ public:
     iterator mbegin()
     {
         //To implement
-//        return samples_->begin();
+        //        return samples_->begin();
     }
 
     const_iterator begin() const
     {
         //To implement
-//        return samples_.begin();
+        //        return samples_.begin();
     }
 
     const_iterator end() const
     {
         //To implement
-//        return samples_.end();
+        //        return samples_.end();
     }
 
     uint32_t length() const
     {
         //To implement
-//        return static_cast<uint32_t>(samples_.length());
+        //        return static_cast<uint32_t>(samples_.length());
     }
 
     void resize(
             uint32_t s)
     {
         //To implement
-//        samples_.resize(s);
+        //        samples_.resize(s);
     }
 
 private:
+
     ::dds::sub::LoanedSamples<T> samples_;
 };
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_GENERATION_COUNT_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_GENERATION_COUNT_HPP_
@@ -31,7 +31,9 @@ namespace sub {
 namespace detail {
 
 //typedef dds::sub::TGenerationCount< org::opensplice::sub::GenerationCountImpl > GenerationCount;
-class GenerationCount { };
+class GenerationCount
+{
+};
 
 } //namespace detail
 } //namespace sub

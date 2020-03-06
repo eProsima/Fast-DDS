@@ -41,6 +41,7 @@ template<typename DELEGATE>
 class TInstanceHandle : public Value<DELEGATE>
 {
 public:
+
     /**
      * Create an nil instance handle.
      */
@@ -78,6 +79,7 @@ public:
     /** @endcond */
 
 public:
+
     /**
      * Assign an existing InstancHandle to this InstancHandle
      *
@@ -114,6 +116,7 @@ public:
             const TInstanceHandle& that) const;
 
 public:
+
     /**
      * Create an nil instance handle.
      *

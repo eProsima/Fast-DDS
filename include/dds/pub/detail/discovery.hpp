@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file
@@ -40,7 +40,7 @@ void ignore(
         FwdIterator end)
 {
     //To implement
-//    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
+    //    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
 }
 
 template<typename T>
@@ -48,21 +48,21 @@ template<typename T>
         const DataWriter<T>& dw)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
-//    return dw.delegate()->matched_subscriptions();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
+    //    return dw.delegate()->matched_subscriptions();
 }
 
 template<
-        typename T,
-        typename FwdIterator>
+    typename T,
+    typename FwdIterator>
 uint32_t matched_subscriptions(
         const DataWriter<T>& dw,
         FwdIterator begin,
         uint32_t max_size)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
-//    return dw.delegate()->matched_subscriptions(begin, max_size);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
+    //    return dw.delegate()->matched_subscriptions(begin, max_size);
 }
 
 template<typename T>
@@ -71,8 +71,8 @@ const dds::topic::SubscriptionBuiltinTopicData matched_subscription_data(
         const ::dds::core::InstanceHandle& h)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
-//    return dw.delegate()->matched_subscription_data(h);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dw);
+    //    return dw.delegate()->matched_subscription_data(h);
 }
 
 } //namespace pub

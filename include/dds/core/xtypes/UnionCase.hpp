@@ -25,16 +25,17 @@
 
 #include <dds/core/Reference.hpp>
 
-namespace dds{
-namespace core{
-namespace xtypes{
+namespace dds {
+namespace core {
+namespace xtypes {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class TUnionCase : public Reference< DELEGATE<T> >
 {
 public:
+
     TUnionCase()
     {
     }
@@ -55,6 +56,7 @@ public:
     {
         throw "Not implemented";
     }
+
 };
 
 template<typename T>

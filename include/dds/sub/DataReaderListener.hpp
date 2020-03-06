@@ -27,8 +27,8 @@ namespace dds {
 namespace sub {
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class DataReader;
 
 /**
@@ -123,8 +123,8 @@ class DataReader;
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class DataReaderListener
 {
 public:
@@ -137,6 +137,7 @@ public:
     virtual ~DataReaderListener()
     {
     }
+
     /** @endcond */
 
     /**
@@ -327,15 +328,17 @@ public:
  * @see dds::sub::DataReaderListener
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class NoOpDataReaderListener : public virtual DataReaderListener<T, DELEGATE>
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
+    /** @cond
+     * All these functions have already been documented in the non-NoOp listener.
+     * Ignore these functions for the doxygen API documentation for clarity.
+     */
+
 public:
+
     typedef typename ::dds::core::smart_ptr_traits<NoOpDataReaderListener>::ref_type ref_type;
 
     virtual ~NoOpDataReaderListener()
@@ -355,8 +358,8 @@ public:
     }
 
     virtual void on_sample_rejected(
-        DataReader<T, DELEGATE>& reader,
-        const dds::core::status::SampleRejectedStatus& status)
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::SampleRejectedStatus& status)
     {
     }
 
@@ -366,7 +369,8 @@ public:
     {
     }
 
-    virtual void on_data_available(DataReader<T, DELEGATE>& reader)
+    virtual void on_data_available(
+            DataReader<T, DELEGATE>& reader)
     {
     }
 
@@ -381,7 +385,8 @@ public:
             const dds::core::status::SampleLostStatus& status)
     {
     }
-/** @endcond */
+
+    /** @endcond */
 };
 
 } //namespace sub

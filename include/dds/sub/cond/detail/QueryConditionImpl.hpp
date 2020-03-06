@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_COND_QUERYCONDITION_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_COND_QUERYCONDITION_IMPL_HPP_
@@ -37,11 +37,11 @@ QueryCondition::QueryCondition(
         const dds::sub::status::DataState& status,
         const FUN& functor)
     : dds::sub::cond::TReadCondition<DELEGATE>(
-          new DELEGATE(query.delegate().data_reader(), query.delegate(), status, functor))
+        new DELEGATE(query.delegate().data_reader(), query.delegate(), status, functor))
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(query);
-//	this->delegate()->init(this->impl_);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(query);
+    //	this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -51,13 +51,12 @@ QueryCondition::QueryCondition(
         const std::vector<std::string>& params,
         const dds::sub::status::DataState& status)
     : dds::sub::cond::TReadCondition<DELEGATE>(
-          new DELEGATE(dds::sub::AnyDataReader(dr), expression, params, status))
+        new DELEGATE(dds::sub::AnyDataReader(dr), expression, params, status))
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
-//	this->delegate()->init(this->impl_);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+    //	this->delegate()->init(this->impl_);
 }
-
 
 template<typename T, typename FUN>
 QueryCondition::QueryCondition(
@@ -67,11 +66,11 @@ QueryCondition::QueryCondition(
         const dds::sub::status::DataState& status,
         const FUN& functor)
     : dds::sub::cond::TReadCondition<DELEGATE>(
-          new DELEGATE(dds::sub::AnyDataReader(dr), expression, params, status, functor))
+        new DELEGATE(dds::sub::AnyDataReader(dr), expression, params, status, functor))
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
-//	this->delegate()->init(this->impl_);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+    //	this->delegate()->init(this->impl_);
 }
 
 template<typename FWIterator>
@@ -80,10 +79,10 @@ void QueryCondition::parameters(
         const FWIterator end)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-//    std::vector<std::string> params(begin, end);
-//    this->delegate()->parameters(params);
+    //    std::vector<std::string> params(begin, end);
+    //    this->delegate()->parameters(params);
 }
 
 } //namespace cond

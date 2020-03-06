@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_DETAIL_WAITSET_HPP_
 #define EPROSIMA_DDS_CORE_COND_DETAIL_WAITSET_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when WaitSetDelegate is implemented
 //typedef dds::core::cond::TWaitSet<org::opensplice::core::cond::WaitSetDelegate> WaitSet;
-class WaitSet { };
+class WaitSet
+{
+};
 
 } //namespace detail
 } //namespace cond

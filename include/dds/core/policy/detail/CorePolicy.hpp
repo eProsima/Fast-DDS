@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_POLICY_DETAIL_CORE_POLICY_HPP_
 #define EPROSIMA_DDS_CORE_POLICY_DETAIL_CORE_POLICY_HPP_
@@ -35,107 +35,156 @@ namespace detail {
 
 #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 //TODO: Fix when PolicyDelegate and Policy are implemented
-typedef dds::core::policy::TDataRepresentation<org::opensplice::core::policy::DataRepresentationDelegate> DataRepresentation;
-class DataRepresentation { };
+typedef dds::core::policy::TDataRepresentation<org::opensplice::core::policy::DataRepresentationDelegate>
+        DataRepresentation;
+class DataRepresentation
+{
+};
 #endif // OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TDeadline<org::opensplice::core::policy::DeadlineDelegate> Deadline;
-class Deadline { };
+class Deadline
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TDestinationOrder<org::opensplice::core::policy::DestinationOrderDelegate> DestinationOrder;
-class DestinationOrder { };
+class DestinationOrder
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TDurability<org::opensplice::core::policy::DurabilityDelegate> Durability;
-class Durability { };
+class Durability
+{
+};
 
 #ifdef  OMG_DDS_PERSISTENCE_SUPPORT
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TDurabilityService<org::opensplice::core::policy::DurabilityServiceDelegate> DurabilityService;
-class DurabilityService { };
+class DurabilityService
+{
+};
 #endif  // OMG_DDS_PERSISTENCE_SUPPORT
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TEntityFactory<org::opensplice::core::policy::EntityFactoryDelegate> EntityFactory;
-class EntityFactory { };
+class EntityFactory
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TGroupData<org::opensplice::core::policy::GroupDataDelegate> GroupData;
-class GroupData { };
+class GroupData
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::THistory<org::opensplice::core::policy::HistoryDelegate> History;
-class History { };
+class History
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TLatencyBudget<org::opensplice::core::policy::LatencyBudgetDelegate> LatencyBudget;
-class LatencyBudget { };
+class LatencyBudget
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TLifespan<org::opensplice::core::policy::LifespanDelegate> Lifespan;
-class Lifespan { };
+class Lifespan
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TLiveliness<org::opensplice::core::policy::LivelinessDelegate> Liveliness;
-class Liveliness { };
+class Liveliness
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TOwnership<org::opensplice::core::policy::OwnershipDelegate> Ownership;
-class Ownership { };
+class Ownership
+{
+};
 
 #ifdef  OMG_DDS_OWNERSHIP_SUPPORT
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TOwnershipStrength<org::opensplice::core::policy::OwnershipStrengthDelegate> OwnershipStrength;
-class OwnershipStrength { };
+class OwnershipStrength
+{
+};
 #endif  //OMG_DDS_OWNERSHIP_SUPPORT
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TPartition<org::opensplice::core::policy::PartitionDelegate> Partition;
-class Partition { };
+class Partition
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TPresentation<org::opensplice::core::policy::PresentationDelegate> Presentation;
-class Presentation { };
+class Presentation
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TReaderDataLifecycle<org::opensplice::core::policy::ReaderDataLifecycleDelegate> ReaderDataLifecycle;
-class ReaderDataLifecycle { };
+class ReaderDataLifecycle
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TReliability<org::opensplice::core::policy::ReliabilityDelegate> Reliability;
-class Reliability { };
+class Reliability
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TResourceLimits<org::opensplice::core::policy::ResourceLimitsDelegate> ResourceLimits;
-class ResourceLimits { };
+class ResourceLimits
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TTimeBasedFilter<org::opensplice::core::policy::TimeBasedFilterDelegate> TimeBasedFilter;
-class TimeBasedFilter { };
+class TimeBasedFilter
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TTopicData<org::opensplice::core::policy::TopicDataDelegate> TopicData;
-class TopicData { };
+class TopicData
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TTransportPriority<org::opensplice::core::policy::TransportPriorityDelegate> TransportPriority;
-class TransportPriority { };
+class TransportPriority
+{
+};
 
 #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TTypeConsistencyEnforcement<org::opensplice::core::policy::TypeConsistencyEnforcementDelegate> TypeConsistencyEnforcement;
-class TypeConsistencyEnforcement { };
+class TypeConsistencyEnforcement
+{
+};
 #endif //OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TUserData<org::opensplice::core::policy::UserDataDelegate> UserData;
-class UserData { };
+class UserData
+{
+};
 
 //TODO: Fix when PolicyDelegate and Policy are implemented
 //typedef dds::core::policy::TWriterDataLifecycle<org::opensplice::core::policy::WriterDataLifecycleDelegate> WriterDataLifecycle;
-class WriterDataLifecycle { };
+class WriterDataLifecycle
+{
+};
 
 } //namespace detail
 } //namespace policy

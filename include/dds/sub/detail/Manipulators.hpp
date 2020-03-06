@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_MANIPULATOR_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_MANIPULATOR_HPP_
@@ -38,6 +38,7 @@ namespace detail {
 class MaxSamplesManipulatorFunctor
 {
 public:
+
     /**
      * Create a manipulator object to only read a maximum of samples.
      *
@@ -51,15 +52,17 @@ public:
 
     /** @cond */
     template<typename S>
-    void operator()(
+    void operator ()(
             S& s)
     {
         //To implement
-//        s.max_samples(n_);
+        //        s.max_samples(n_);
     }
+
     /** @endcond */
 
 private:
+
     uint32_t n_;
 };
 
@@ -71,6 +74,7 @@ private:
 class ContentFilterManipulatorFunctor
 {
 public:
+
     /**
      * Create a manipulator object to filter read of samples according to their content.
      *
@@ -84,15 +88,17 @@ public:
 
     /** @cond */
     template<typename S>
-    void operator()(
+    void operator ()(
             S& s)
     {
         //To implement
-//        s.content(query_);
+        //        s.content(query_);
     }
+
     /** @endcond */
 
 private:
+
     const dds::sub::Query query_;
 };
 
@@ -104,28 +110,31 @@ private:
 class StateFilterManipulatorFunctor
 {
 public:
+
     /**
      * Create a manipulator object to filter read of samples according to their state.
      *
      * @param s sample state filter, only samples that match are read
      */
     StateFilterManipulatorFunctor(
-        const dds::sub::status::DataState& s)
+            const dds::sub::status::DataState& s)
         : state_(s)
     {
     }
 
     /** @cond */
     template<typename S>
-    void operator()(
+    void operator ()(
             S& s)
     {
         //To implement
-//        s.state(state_);
+        //        s.state(state_);
     }
+
     /** @endcond */
 
 private:
+
     dds::sub::status::DataState state_;
 };
 
@@ -137,6 +146,7 @@ private:
 class InstanceManipulatorFunctor
 {
 public:
+
     /**
      * Create a manipulator object to filter read of samples according to their instance.
      *
@@ -150,15 +160,17 @@ public:
 
     /** @cond */
     template<typename S>
-    void operator()(
+    void operator ()(
             S& s)
     {
         //To implement
-//        s.instance(handle_);
+        //        s.instance(handle_);
     }
+
     /** @endcond */
 
 private:
+
     dds::core::InstanceHandle handle_;
 };
 
@@ -170,28 +182,31 @@ private:
 class NextInstanceManipulatorFunctor
 {
 public:
+
     /**
      * Create a manipulator object to filter read of samples according to their instance.
      *
      * @param h sample instance filter, samples of the 'next' instance will be read
      */
     NextInstanceManipulatorFunctor(
-        const dds::core::InstanceHandle& h)
+            const dds::core::InstanceHandle& h)
         : handle_(h)
     {
     }
 
     /** @cond */
     template<typename S>
-    void operator()(
+    void operator ()(
             S& s)
     {
         //To implement
-//        s.next_instance(handle_);
+        //        s.next_instance(handle_);
     }
+
     /** @endcond */
 
 private:
+
     dds::core::InstanceHandle handle_;
 };
 

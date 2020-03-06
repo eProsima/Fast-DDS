@@ -27,22 +27,22 @@ namespace dds {
 namespace sub {
 
 template<typename T,
-template<typename Q> class DELEGATE = dds::sub::detail::DataReader>
+        template<typename Q> class DELEGATE = dds::sub::detail::DataReader>
 class DataReader;
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class DataReaderListener;
 
 // = Manipulators
 namespace functors {
 
-typedef dds::sub::functors::detail::MaxSamplesManipulatorFunctor      MaxSamplesManipulatorFunctor;
-typedef dds::sub::functors::detail::ContentFilterManipulatorFunctor   ContentFilterManipulatorFunctor;
-typedef dds::sub::functors::detail::StateFilterManipulatorFunctor   StateFilterManipulatorFunctor;
-typedef dds::sub::functors::detail::InstanceManipulatorFunctor     InstanceManipulatorFunctor;
-typedef dds::sub::functors::detail::NextInstanceManipulatorFunctor   NextInstanceManipulatorFunctor;
+typedef dds::sub::functors::detail::MaxSamplesManipulatorFunctor MaxSamplesManipulatorFunctor;
+typedef dds::sub::functors::detail::ContentFilterManipulatorFunctor ContentFilterManipulatorFunctor;
+typedef dds::sub::functors::detail::StateFilterManipulatorFunctor StateFilterManipulatorFunctor;
+typedef dds::sub::functors::detail::InstanceManipulatorFunctor InstanceManipulatorFunctor;
+typedef dds::sub::functors::detail::NextInstanceManipulatorFunctor NextInstanceManipulatorFunctor;
 
 } //namespace functors
 
@@ -110,11 +110,12 @@ typedef dds::sub::functors::detail::NextInstanceManipulatorFunctor   NextInstanc
  * @see @ref DCPS_Modules_Subscription_DataReader "DataReader concept"
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class DataReader : public TAnyDataReader< DELEGATE<T> >
 {
 public:
+
     /**
      * Local convenience typedef for dds::sub::DataReaderListener.
      */
@@ -169,7 +170,8 @@ public:
      */
     class Selector
     {
-    public:
+public:
+
         /**
          * Construct a Selector for a DataReader.
          *
@@ -457,7 +459,8 @@ public:
         uint32_t take(
                 SamplesBIIterator sbit);
 
-    private:
+private:
+
         typename DELEGATE<T>::Selector impl_;
     };
 
@@ -522,7 +525,8 @@ public:
      */
     class ManipulatorSelector
     {
-    public:
+public:
+
         /**
          * Construct a ManipulatorSelector for a DataReader.
          *
@@ -771,7 +775,7 @@ public:
          *                  The DataReader has not yet been enabled.
          */
         ManipulatorSelector& operator >>(
-                ManipulatorSelector & (manipulator)(ManipulatorSelector&));
+                ManipulatorSelector& (manipulator)(ManipulatorSelector &));
 
         /**
          * This operation works the same as the @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls)
@@ -794,7 +798,8 @@ public:
         ManipulatorSelector operator >>(
                 Functor f);
 
-    private:
+private:
+
         typename DELEGATE<T>::ManipulatorSelector impl_;
 
     };
@@ -802,13 +807,13 @@ public:
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC_T(
-            DataReader,
-            TAnyDataReader,
-            T,
-            DELEGATE)
+        DataReader,
+        TAnyDataReader,
+        T,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            DataReader)
+        DataReader)
 
     /**
      * Create a new DataReader for the desired Topic, ContentFilteredTopic or MultiTopic,
@@ -929,11 +934,11 @@ public:
 
     /** @copydoc dds::sub::DataReader::DataReader(const dds::sub::Subscriber& sub, const ::dds::topic::Topic<T>& topic, const dds::sub::qos::DataReaderQos& qos, dds::sub::DataReaderListener<T>* listener, const dds::core::status::StatusMask& mask) */
     DataReader(
-           const Subscriber& sub,
-           const ::dds::topic::MultiTopic<T>& topic,
-           const qos::DataReaderQos& qos,
-           DataReaderListener<T>* listener = NULL,
-           const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const Subscriber& sub,
+            const ::dds::topic::MultiTopic<T>& topic,
+            const qos::DataReaderQos& qos,
+            DataReaderListener<T>* listener = NULL,
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     #endif //OMG_DDS_MULTI_TOPIC_SUPPORT
 
@@ -951,7 +956,7 @@ public:
      *
      * @return the default state to filter for
      */
-     status::DataState default_filter_state();
+    status::DataState default_filter_state();
 
     /**
      * Set the default state filter for read/take operations.
@@ -1075,7 +1080,7 @@ public:
 
     /** @copydoc dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) */
     ManipulatorSelector operator >>(
-            ManipulatorSelector & (manipulator)(ManipulatorSelector&));
+            ManipulatorSelector& (manipulator)(ManipulatorSelector &));
 
     /** @copydoc dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) */
     template<typename Functor>

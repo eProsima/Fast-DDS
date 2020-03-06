@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_DETAIL_GUARDCONDITION_HPP_
 #define EPROSIMA_DDS_CORE_COND_DETAIL_GUARDCONDITION_HPP_
@@ -36,7 +36,9 @@ namespace detail {
 
 //TODO: Fix when GuardConditionDelegate is implemented
 //typedef dds::core::cond::TGuardCondition<org::opensplice::core::cond::GuardConditionDelegate> GuardCondition;
-class GuardCondition { };
+class GuardCondition
+{
+};
 
 } //namespace detail
 } //namespace cond

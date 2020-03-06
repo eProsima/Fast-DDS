@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_TOPICDESCRIPTION_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_TOPICDESCRIPTION_HPP_
@@ -37,7 +37,9 @@ namespace detail {
 
 //TODO: Fix when TopicDescriptionDelegate is implemented
 //typedef dds::topic::TTopicDescription<org::opensplice::topic::TopicDescriptionDelegate> TopicDescription;
-class TopicDescription { };
+class TopicDescription
+{
+};
 
 } //namespace detail
 } //namespace topic

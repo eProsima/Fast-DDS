@@ -57,9 +57,10 @@ namespace topic {
  * @see @ref DCPS_Modules_TopicDefinition "Topic Definition"
  */
 template<typename D>
-class TFilter: public dds::core::Value<D>
+class TFilter : public dds::core::Value<D>
 {
 public:
+
     /**
      * Iterator for the query expression parameters.
      */

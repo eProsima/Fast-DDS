@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_DELEGATE_BUILTIN_TOPIC_TYPES_HPP_
 #define EPROSIMA_DDS_CORE_DELEGATE_BUILTIN_TOPIC_TYPES_HPP_
@@ -33,19 +33,27 @@ namespace detail {
 
 //TODO: Fix when BuiltinTopicDelegate and BuiltinTopic are implemented
 //typedef dds::core::TBytesTopicType<org::opensplice::topic::BytesTopicTypeDelegate> BytesTopicType;
-class BytesTopicType { };
+class BytesTopicType
+{
+};
 
 //TODO: Fix when BuiltinTopicDelegate and BuiltinTopic are implemented
 //typedef dds::core::TStringTopicType<org::opensplice::topic::StringTopicTypeDelegate> StringTopicType;
-class StringTopicType { };
+class StringTopicType
+{
+};
 
 //TODO: Fix when BuiltinTopicDelegate and BuiltinTopic are implemented
 //typedef dds::core::TKeyedBytesTopicType<org::opensplice::topic::KeyedBytesTopicTypeDelegate> KeyedBytesTopicType;
-class KeyedBytesTopicType { };
+class KeyedBytesTopicType
+{
+};
 
 //TODO: Fix when BuiltinTopicDelegate and BuiltinTopic are implemented
 //typedef dds::core::TKeyedStringTopicType<org::opensplice::topic::KeyedStringTopicTypeDelegate> KeyedStringTopicType;
-class KeyedStringTopicType { };
+class KeyedStringTopicType
+{
+};
 
 } //namespace detail
 
@@ -57,7 +65,7 @@ class KeyedStringTopicType { };
 template<typename DELEGATE>
 TBytesTopicType<DELEGATE>::TBytesTopicType()
     : Value<DELEGATE>(
-            std::vector<uint8_t>())
+        std::vector<uint8_t>())
 {
 }
 
@@ -65,12 +73,12 @@ template<typename DELEGATE>
 TBytesTopicType<DELEGATE>::TBytesTopicType(
         const std::vector<uint8_t>& data)
     : dds::core::Value<DELEGATE>(
-            data)
+        data)
 {
 }
 
 template<typename DELEGATE>
-TBytesTopicType<DELEGATE>::operator std::vector<uint8_t>& () const
+TBytesTopicType<DELEGATE>::operator std::vector<uint8_t>&() const
 {
     return this->delegate().value();
 }
@@ -88,7 +96,6 @@ void TBytesTopicType<DELEGATE>::data(
     this->delegate().value(data);
 }
 
-
 //==============================================================================
 //            String Template
 //==============================================================================
@@ -96,7 +103,7 @@ void TBytesTopicType<DELEGATE>::data(
 template<typename DELEGATE>
 TStringTopicType<DELEGATE>::TStringTopicType()
     : Value<DELEGATE>(
-            std::string())
+        std::string())
 {
 }
 
@@ -104,7 +111,7 @@ template<typename DELEGATE>
 TStringTopicType<DELEGATE>::TStringTopicType(
         const std::string& data)
     : dds::core::Value<DELEGATE>(
-            data)
+        data)
 {
 }
 
@@ -127,7 +134,6 @@ void TStringTopicType<DELEGATE>::data(
     this->delegate().value(data);
 }
 
-
 //==============================================================================
 //            KeyedBytes Template
 //==============================================================================
@@ -135,8 +141,8 @@ void TStringTopicType<DELEGATE>::data(
 template<typename DELEGATE>
 TKeyedBytesTopicType<DELEGATE>::TKeyedBytesTopicType()
     : Value<DELEGATE>(
-            std::string(),
-            std::vector<uint8_t>())
+        std::string(),
+        std::vector<uint8_t>())
 {
 }
 
@@ -145,8 +151,8 @@ TKeyedBytesTopicType<DELEGATE>::TKeyedBytesTopicType(
         const std::string& key,
         const std::vector<uint8_t>& value)
     : Value<DELEGATE>(
-            key,
-            value)
+        key,
+        value)
 {
 }
 
@@ -176,7 +182,6 @@ void TKeyedBytesTopicType<DELEGATE>::value(
     this->delegate().value(value);
 }
 
-
 //==============================================================================
 //            KeyedString Template
 //==============================================================================
@@ -184,8 +189,8 @@ void TKeyedBytesTopicType<DELEGATE>::value(
 template<typename DELEGATE>
 TKeyedStringTopicType<DELEGATE>::TKeyedStringTopicType()
     : Value<DELEGATE>(
-            std::string(),
-            std::string())
+        std::string(),
+        std::string())
 {
 }
 
@@ -194,8 +199,8 @@ TKeyedStringTopicType<DELEGATE>::TKeyedStringTopicType(
         const std::string& key,
         const std::string& value)
     : Value<DELEGATE>(
-            key,
-            value)
+        key,
+        value)
 {
 }
 

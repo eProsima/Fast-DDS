@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_ANYDATAREADER_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_ANYDATAREADER_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when AnyDataReaderDelegate is implemented
 //typedef dds::sub::TAnyDataReader<org::opensplice::sub::AnyDataReaderDelegate> AnyDataReader;
-class AnyDataReader { };
+class AnyDataReader
+{
+};
 
 } //namespace detail
 } //namespace sub

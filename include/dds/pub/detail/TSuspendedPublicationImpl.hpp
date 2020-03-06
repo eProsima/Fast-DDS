@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_TSUSPENDEDPUBLICATION_IMPL_HPP_
 #define EPROSIMA_DDS_PUB_TSUSPENDEDPUBLICATION_IMPL_HPP_
@@ -42,20 +42,20 @@ template<typename DELEGATE>
 void TSuspendedPublication<DELEGATE>::resume()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->get_publisher().delegate().get());
-//    this->delegate().resume();
+    //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->get_publisher().delegate().get());
+    //    this->delegate().resume();
 }
 
 template<typename DELEGATE>
 TSuspendedPublication<DELEGATE>::~TSuspendedPublication()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->get_publisher().delegate().get());
-//    try {
-//        this->delegate().resume();
-//    } catch (...) {
-//        /* Empty: the exception throw should have already traced an error. */
-//    }
+    //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->get_publisher().delegate().get());
+    //    try {
+    //        this->delegate().resume();
+    //    } catch (...) {
+    //        /* Empty: the exception throw should have already traced an error. */
+    //    }
 }
 
 } //namespace pub

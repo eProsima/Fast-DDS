@@ -76,14 +76,15 @@ template<typename DELEGATE>
 class TStatusCondition : public TCondition<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_DELEGATE_C(
-            TStatusCondition,
-            TCondition,
-            DELEGATE)
+        TStatusCondition,
+        TCondition,
+        DELEGATE)
 
     OMG_DDS_EXPLICIT_REF_BASE(
-            TStatusCondition,
-            dds::core::cond::Condition)
+        TStatusCondition,
+        dds::core::cond::Condition)
 
     /**
      * Create a dds::core::cond::StatusCondition associated with an Entity.

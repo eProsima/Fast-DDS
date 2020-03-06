@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 
 /**
@@ -39,10 +39,10 @@ TOPIC find(
         const std::string& topic_name)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    TOPIC t = org::opensplice::topic::finder<TOPIC, typename TOPIC::DELEGATE_T>::find(dp, topic_name);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+    //    TOPIC t = org::opensplice::topic::finder<TOPIC, typename TOPIC::DELEGATE_T>::find(dp, topic_name);
 
-//    return t;
+    //    return t;
 }
 
 } //namespace topic

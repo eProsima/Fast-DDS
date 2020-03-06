@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_
@@ -32,7 +32,9 @@ namespace detail {
 
 //TODO: Fix when QosProviderDelegate is implemented
 //typedef dds::core::TQosProvider<org::opensplice::core::QosProviderDelegate> QosProvider;
-class QosProvider { };
+class QosProvider
+{
+};
 
 } //namespace detail
 } //namespace core

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_
@@ -34,7 +34,7 @@ template<typename D>
 const int32_t* TBuiltinTopicKey<D>::value() const
 {
     //To implement
-//    return <this->delegate().value();
+    //    return <this->delegate().value();
 }
 
 template<typename D>
@@ -42,7 +42,7 @@ void TBuiltinTopicKey<D>::value(
         const int32_t v[])
 {
     //To implement
-//    this->delegate().value(v);
+    //    this->delegate().value(v);
 }
 
 } //namespace topic

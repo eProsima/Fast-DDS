@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_DATA_READER_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_DATA_READER_HPP_
@@ -42,11 +42,11 @@
  */
 
 /***************************************************************************
- *
- * dds/sub/detail/DataReader<> DELEGATE declaration.
- * Implementation can be found in dds/sub/detail/TDataReaderImpl.hpp
- *
- ***************************************************************************/
+*
+* dds/sub/detail/DataReader<> DELEGATE declaration.
+* Implementation can be found in dds/sub/detail/TDataReaderImpl.hpp
+*
+***************************************************************************/
 
 namespace dds {
 namespace sub {
@@ -220,7 +220,9 @@ template<typename T>
 //    uint32_t take(SamplesBIIterator samples, const Selector& selector);
 
 //};
-class DataReader { };
+class DataReader
+{
+};
 
 } //namespace detail
 } //namespace sub

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_TFILTER_HPP_
 #define EPROSIMA_DDS_TOPIC_TFILTER_HPP_
@@ -59,21 +59,21 @@ template<typename D>
 const std::string& TFilter<D>::expression() const
 {
     //To implement
-//    return this->delegate().expression();
+    //    return this->delegate().expression();
 }
 
 template<typename D>
 typename TFilter<D>::const_iterator TFilter<D>::begin() const
 {
     //To implement
-//    return this->delegate().begin();
+    //    return this->delegate().begin();
 }
 
 template<typename D>
 typename TFilter<D>::const_iterator TFilter<D>::end() const
 {
     //To implement
-//    return this->delegate().end();
+    //    return this->delegate().end();
 }
 
 template<typename D>
@@ -86,7 +86,7 @@ template<typename D>
 typename TFilter<D>::iterator TFilter<D>::end()
 {
     //To implement
-//    return this->delegate().end();
+    //    return this->delegate().end();
 }
 
 template<typename D>
@@ -96,7 +96,7 @@ void TFilter<D>::parameters(
         const FWIterator end)
 {
     //To implement
-//    this->delegate().parameters(begin, end);
+    //    this->delegate().parameters(begin, end);
 }
 
 template<typename D>
@@ -104,14 +104,14 @@ void TFilter<D>::add_parameter(
         const std::string& param)
 {
     //To implement
-//    this->delegate().add_parameter(param);
+    //    this->delegate().add_parameter(param);
 }
 
 template<typename D>
 uint32_t TFilter<D>::parameters_length() const
 {
     //To implement
-//    return this->delegate().parameters_length();
+    //    return this->delegate().parameters_length();
 }
 
 } //namespace topic

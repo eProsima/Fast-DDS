@@ -39,6 +39,7 @@ template<typename DELEGATE>
 class TBytesTopicType : public Value<DELEGATE>
 {
 public:
+
     /**
      * Creates topic type with an empty byte vector.
      */
@@ -53,7 +54,7 @@ public:
     /**
      * Conversion operator to a vector of bytes.
      */
-    operator std::vector<uint8_t>& () const;
+    operator std::vector<uint8_t>&() const;
 
     /**
      * Getter function for the internal vector of bytes.
@@ -79,6 +80,7 @@ template<typename DELEGATE>
 class TStringTopicType : public Value<DELEGATE>
 {
 public:
+
     /**
      * Creates topic type with an empty data string.
      */
@@ -118,6 +120,7 @@ template<typename DELEGATE>
 class TKeyedStringTopicType : public Value<DELEGATE>
 {
 public:
+
     /**
      * Creates topic type with an empty key and data strings.
      */
@@ -164,6 +167,7 @@ template<typename DELEGATE>
 class TKeyedBytesTopicType : public Value<DELEGATE>
 {
 public:
+
     /**
      * Creates topic type with an empty key string and data vector.
      */

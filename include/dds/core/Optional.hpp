@@ -67,15 +67,17 @@ namespace core {
  * @endcode
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
+    typename T,
+    template<typename Q> class DELEGATE>
 class optional : public dds::core::Value< DELEGATE<T> >
 {
 public:
+
     optional(
             const T& t);
 
 public:
+
     /**
      * Returns true only if the attribute is set.
      */

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_QOS_DETAIL_DATAWRITER_QOS_HPP_
 #define EPROSIMA_DDS_PUB_QOS_DETAIL_DATAWRITER_QOS_HPP_
@@ -29,7 +29,9 @@ namespace detail {
 
 //TODO: Fix when DataWriterQosDelegate is implemented
 //typedef dds::core::TEntityQos<org::opensplice::pub::qos::DataWriterQosDelegate> DataWriterQos;
-class DataWriterQos { };
+class DataWriterQos
+{
+};
 
 } //namespace detail
 } //namespace qos

@@ -68,30 +68,31 @@ template<typename DELEGATE>
 class TCoherentSet : public dds::core::Value<DELEGATE>
 {
 public:
-   /**
-    * Creating a CoherentSet object, which will begin a ‘coherent set’ of
-    * modifications using DataWriter objects attached to this Publisher.
-    *
-    * A precondition for making coherent changes is that the PresentationQos of the
-    * Publisher has its coherent_access attribute set to TRUE. If this is not the case,
-    * the Publisher will not accept any coherent start requests and throw
-    * dds::core::PreconditionNotMetError.
-    *
-    * @param pub The publisher to supsend publications on.
-    * @throws dds::core::Error
-    *                  An internal error has occurred.
-    * @throws dds::core::AlreadyClosedError
-    *                  The Publisher has already been closed.
-    * @throws dds::core::NotEnabledError
-    *                  The Publisher has not yet been enabled.
-    * @throws dds::core::OutOfResourcesError
-    *                  The Data Distribution Service ran out of resources to
-    *                  complete this operation.
-    * @throws dds::core::NullReferenceError
-    *                  The Publisher was not properly created and references to dds::core::null.
-    * @throws dds::core::PreconditionNotMetError
-    *                  The coherent access attribute of the Publisher's PresentationQos is not set to true.
-    */
+
+    /**
+     * Creating a CoherentSet object, which will begin a ‘coherent set’ of
+     * modifications using DataWriter objects attached to this Publisher.
+     *
+     * A precondition for making coherent changes is that the PresentationQos of the
+     * Publisher has its coherent_access attribute set to TRUE. If this is not the case,
+     * the Publisher will not accept any coherent start requests and throw
+     * dds::core::PreconditionNotMetError.
+     *
+     * @param pub The publisher to supsend publications on.
+     * @throws dds::core::Error
+     *                  An internal error has occurred.
+     * @throws dds::core::AlreadyClosedError
+     *                  The Publisher has already been closed.
+     * @throws dds::core::NotEnabledError
+     *                  The Publisher has not yet been enabled.
+     * @throws dds::core::OutOfResourcesError
+     *                  The Data Distribution Service ran out of resources to
+     *                  complete this operation.
+     * @throws dds::core::NullReferenceError
+     *                  The Publisher was not properly created and references to dds::core::null.
+     * @throws dds::core::PreconditionNotMetError
+     *                  The coherent access attribute of the Publisher's PresentationQos is not set to true.
+     */
     explicit TCoherentSet(
             const Publisher& pub);
     /**

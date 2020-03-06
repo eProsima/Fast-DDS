@@ -44,11 +44,13 @@ template<typename D>
 class Value
 {
 protected:
+
     Value();
     Value(
             const Value& p);
 
 public:
+
     /** @cond
      * The following Constructors are not really relevant for the API.
      * So, leave them from the doxygen generated API documentation for clarity.
@@ -70,8 +72,8 @@ public:
      * @param arg2 VALUETYPES value
      */
     template<
-            typename ARG1,
-            typename ARG2>
+        typename ARG1,
+        typename ARG2>
     Value(
             const ARG1& arg1,
             const ARG2& arg2);
@@ -84,9 +86,9 @@ public:
      * @param arg3 VALUETYPES value
      */
     template<
-            typename ARG1,
-            typename ARG2,
-            typename ARG3>
+        typename ARG1,
+        typename ARG2,
+        typename ARG3>
     Value(
             const ARG1& arg1,
             const ARG2& arg2,
@@ -101,10 +103,10 @@ public:
      * @param arg4 VALUETYPES value
      */
     template<
-            typename ARG1,
-            typename ARG2,
-            typename ARG3,
-            typename ARG4>
+        typename ARG1,
+        typename ARG2,
+        typename ARG3,
+        typename ARG4>
     Value(
             const ARG1& arg1,
             const ARG2& arg2,
@@ -121,11 +123,11 @@ public:
      * @param arg5 VALUETYPES value
      */
     template<
-            typename ARG1,
-            typename ARG2,
-            typename ARG3,
-            typename ARG4,
-            typename ARG5>
+        typename ARG1,
+        typename ARG2,
+        typename ARG3,
+        typename ARG4,
+        typename ARG5>
     Value(
             const ARG1& arg1,
             const ARG2& arg2,
@@ -144,12 +146,12 @@ public:
      * @param arg6 VALUETYPES value
      */
     template<
-            typename ARG1,
-            typename ARG2,
-            typename ARG3,
-            typename ARG4,
-            typename ARG5,
-            typename ARG6>
+        typename ARG1,
+        typename ARG2,
+        typename ARG3,
+        typename ARG4,
+        typename ARG5,
+        typename ARG6>
     Value(
             const ARG1& arg1,
             const ARG2& arg2,
@@ -205,10 +207,10 @@ public:
      *
      * @return a reference to delegate.
      */
-    D* operator->();
+    D* operator ->();
 
     /** @copydoc dds::core::Value::operator->() */
-    const D* operator->() const;
+    const D* operator ->() const;
 
     /** @cond
      * Functions possibly needed for delegate implementation, but not recommended
@@ -226,6 +228,7 @@ public:
     /** @endcond */
 
 protected:
+
     D d_;
 };
 

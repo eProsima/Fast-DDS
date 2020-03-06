@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_WEAK_REFERENCE_IMPL_HPP_
 #define EPROSIMA_DDS_CORE_WEAK_REFERENCE_IMPL_HPP_
@@ -37,14 +37,14 @@ WeakReference<T>::WeakReference()
 }
 
 template<typename T>
-WeakReference<T>::WeakReference(const T& t)
+WeakReference<T>::WeakReference(
+        const T& t)
 {
     //To implement
-//    if (!t.is_nil()) {
-//        impl_ = t.delegate();
-//    }
+    //    if (!t.is_nil()) {
+    //        impl_ = t.delegate();
+    //    }
 }
-
 
 template<typename T>
 WeakReference<T>::~WeakReference()
@@ -55,14 +55,14 @@ template<typename T>
 bool WeakReference<T>::expired()
 {
     //To implement
-//    return impl_.expired();
+    //    return impl_.expired();
 }
 
 template<typename T>
 T WeakReference<T>::lock()
 {
     //To implement
-//    return T(impl_.lock());
+    //    return T(impl_.lock());
 }
 
 } //namespace core

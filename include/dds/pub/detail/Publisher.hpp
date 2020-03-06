@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 //#include <dds/pub/detail/TPublisherImpl.hpp>
 //TODO: Fix when PublisherDelegate is implemented
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when PublisherDelegate is implemented
 //typedef dds::pub::TPublisher<org::opensplice::pub::PublisherDelegate> Publisher;
-class Publisher { };
+class Publisher
+{
+};
 
 } //namespace detail
 } //namespace pub

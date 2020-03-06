@@ -170,8 +170,8 @@ template<typename T>
  *                  complete this operation.
  */
 template<
-        typename T,
-        typename FwdIterator>
+    typename T,
+    typename FwdIterator>
 uint32_t matched_subscriptions(
         const DataWriter<T>& dw,
         FwdIterator begin,

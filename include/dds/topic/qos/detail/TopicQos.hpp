@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
 #define EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
@@ -29,7 +29,9 @@ namespace detail {
 
 //TODO: Fix when TopicQosDelegate is implemented
 //typedef dds::core::TEntityQos< ::org::opensplice::topic::qos::TopicQosDelegate > TopicQos;
-class TopicQos { };
+class TopicQos
+{
+};
 
 } //namespace detail
 } //namespace qos

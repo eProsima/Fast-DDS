@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
 #define EPROSIMA_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
@@ -34,7 +34,9 @@ namespace detail {
 
 //TODO: Fix when QosPolicyCountDelegate is implemented
 //typedef dds::core::policy::TQosPolicyCount<org::opensplice::core::policy::QosPolicyCountDelegate> QosPolicyCount;
-class QosPolicyCount { };
+class QosPolicyCount
+{
+};
 
 } //namespace detail
 } //namespace policy

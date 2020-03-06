@@ -77,13 +77,16 @@ template<typename T>
 class TopicListener
 {
 public:
+
     /** @cond */
     virtual ~TopicListener()
     {
     }
+
     /** @endcond */
 
 public:
+
     /**
      * This operation is called by the Data Distribution Service when the
      * InconsistentTopicStatus changes.
@@ -101,8 +104,8 @@ public:
      *               an input to the application).
      */
     virtual void on_inconsistent_topic(
-	Topic<T>& topic,
-	const dds::core::status::InconsistentTopicStatus& status) = 0;
+            Topic<T>& topic,
+            const dds::core::status::InconsistentTopicStatus& status) = 0;
 };
 
 
@@ -125,22 +128,26 @@ public:
 template<typename T>
 class NoOpTopicListener : public virtual TopicListener<T>
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
+    /** @cond
+     * All these functions have already been documented in the non-NoOp listener.
+     * Ignore these functions for the doxygen API documentation for clarity.
+     */
+
 public:
+
     virtual ~NoOpTopicListener()
     {
     }
 
 public:
+
     virtual void on_inconsistent_topic(
-	Topic<T>& topic,
-    const dds::core::status::InconsistentTopicStatus& status)
+            Topic<T>& topic,
+            const dds::core::status::InconsistentTopicStatus& status)
     {
     }
-/** @endcond */
+
+    /** @endcond */
 };
 
 } //namespace topic

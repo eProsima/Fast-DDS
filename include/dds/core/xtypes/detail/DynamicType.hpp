@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_DYNAMIC_TYPE_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_DYNAMIC_TYPE_HPP_
 
@@ -30,11 +30,28 @@ namespace detail {
 class DynamicType
 {
 public:
-    const std::string& name() const noexcept { return name_; }
-    const TypeKind& kind() const noexcept { return kind_; }
 
-    void name(const std::string& name){ name_ = name; }
-    void kind(const TypeKind& kind) { kind_ = kind; }
+    const std::string& name() const noexcept
+    {
+        return name_;
+    }
+
+    const TypeKind& kind() const noexcept
+    {
+        return kind_;
+    }
+
+    void name(
+            const std::string& name)
+    {
+        name_ = name;
+    }
+
+    void kind(
+            const TypeKind& kind)
+    {
+        kind_ = kind;
+    }
 
     void annotation(
             xtypes::Annotation& a)
@@ -70,6 +87,7 @@ public:
     }
 
 private:
+
     std::string name_;
     TypeKind kind_;
     std::vector<xtypes::Annotation> ann_;

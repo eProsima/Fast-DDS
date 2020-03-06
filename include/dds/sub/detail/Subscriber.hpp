@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when SubscriberDelegate is implemented
 //typedef dds::sub::TSubscriber<org::opensplice::sub::SubscriberDelegate> Subscriber;
-class Subscriber { };
+class Subscriber
+{
+};
 
 } //namespace detail
 } //namespace sub

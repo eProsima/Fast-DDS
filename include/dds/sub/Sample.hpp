@@ -37,8 +37,8 @@ namespace sub {
 class SampleInfo;
 
 template<
-        typename T,
-        template<typename Q> class DELEGATE = dds::sub::detail::Sample>
+    typename T,
+    template<typename Q> class DELEGATE = dds::sub::detail::Sample>
 class Sample;
 
 /**
@@ -73,11 +73,12 @@ class Sample;
  * @see @ref DCPS_Modules_Subscription "Subscription" for more information
  */
 template<
-        typename T,
-        template<typename Q> class DELEGATE>
-class Sample : public dds::core::Value<DELEGATE<T>>
+    typename T,
+    template<typename Q> class DELEGATE>
+class Sample : public dds::core::Value<DELEGATE<T> >
 {
 public:
+
     /**
      * Convenience typedef for the type of the data sample.
      */

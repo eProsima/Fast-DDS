@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
 #define EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
@@ -39,24 +39,24 @@ template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::name() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->name();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->name();
 }
 
 template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::type_name() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->type_name();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->type_name();
 }
 
 template<typename DELEGATE>
 const dds::domain::DomainParticipant& TTopicDescription<DELEGATE>::domain_participant() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->domain_participant();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->domain_participant();
 }
 
 } //namespace topic

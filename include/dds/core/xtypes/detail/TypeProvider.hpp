@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_TYPE_PROVIDER_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_TYPE_PROVIDER_HPP_
@@ -23,7 +23,9 @@ namespace core {
 namespace xtypes {
 namespace detail {
 
-class TypeProvider { };
+class TypeProvider
+{
+};
 
 } //namespace detail
 } //namespace xtypes

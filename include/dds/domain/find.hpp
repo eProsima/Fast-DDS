@@ -23,10 +23,8 @@
 
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace dds
-{
-namespace domain
-{
+namespace dds {
+namespace domain {
 
 
 /**
@@ -37,7 +35,8 @@ namespace domain
  * @param id the domain id
  */
 OMG_DDS_API
-DomainParticipant find(uint32_t id);
+DomainParticipant find(
+        uint32_t id);
 
 } //namespace domain
 } //namespace dds

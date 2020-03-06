@@ -42,13 +42,14 @@ template<typename DELEGATE>
 class TTopicDescription : public virtual dds::core::Reference<DELEGATE>
 {
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TTopicDescription,
-            dds::core::Reference,
-            DELEGATE)
+        TTopicDescription,
+        dds::core::Reference,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TTopicDescription)
+        TTopicDescription)
 
     /** @cond */
     virtual ~TTopicDescription();

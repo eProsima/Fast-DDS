@@ -65,6 +65,7 @@ template<typename DELEGATE>
 class TSuspendedPublication : public dds::core::Value<DELEGATE>
 {
 public:
+
     /**
      * Creating a SuspendedPublication object, which will suspend the
      * dissemination of the publications by all contained DataWriter objects

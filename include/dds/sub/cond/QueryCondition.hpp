@@ -52,18 +52,18 @@ namespace cond {
  */
 template<typename DELEGATE>
 class TQueryCondition :
-        public TReadCondition<DELEGATE>,
-        public dds::sub::TQuery<DELEGATE>
+    public TReadCondition<DELEGATE>,
+    public dds::sub::TQuery<DELEGATE>
 {
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TQueryCondition,
-            TReadCondition,
-            DELEGATE)
+        TQueryCondition,
+        TReadCondition,
+        DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TQueryCondition)
+        TQueryCondition)
 
     // Random access iterators
     /**
@@ -117,7 +117,8 @@ public:
     template<typename FUN>
     TQueryCondition(
             const dds::sub::Query& query,
-            const dds::sub::status::DataState& status, FUN& functor);
+            const dds::sub::status::DataState& status,
+            FUN& functor);
 
     /**
      * @copydoc dds::sub::cond::TQueryCondition::TQueryCondition(const dds::sub::Query& query, const dds::sub::status::DataState& status, FUN& functor)
@@ -125,7 +126,8 @@ public:
     template<typename FUN>
     TQueryCondition(
             const dds::sub::Query& query,
-            const dds::sub::status::DataState& status, const FUN& functor);
+            const dds::sub::status::DataState& status,
+            const FUN& functor);
 
     /**
      * Creates a QueryCondition instance.

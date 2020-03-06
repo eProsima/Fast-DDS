@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_QUERY_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_QUERY_IMPL_HPP_
@@ -27,8 +27,8 @@
 
 template<typename DELEGATE>
 dds::sub::TQuery<DELEGATE>::TQuery(
-    const dds::sub::AnyDataReader& dr,
-    const std::string& expression)
+        const dds::sub::AnyDataReader& dr,
+        const std::string& expression)
     : dds::core::Reference<DELEGATE>(new DELEGATE(AnyDataReader(dr), expression))
 {
 }
@@ -39,26 +39,27 @@ dds::sub::TQuery<DELEGATE>::TQuery(
 template<typename DELEGATE>
 template<typename FWIterator>
 dds::sub::TQuery<DELEGATE>::TQuery(
-    const dds::sub::AnyDataReader& dr,
-    const std::string& expression,
-    const FWIterator& params_begin,
-    const FWIterator& params_end) :
-        dds::core::Reference<DELEGATE>(new DELEGATE(AnyDataReader(dr), expression))
+        const dds::sub::AnyDataReader& dr,
+        const std::string& expression,
+        const FWIterator& params_begin,
+        const FWIterator& params_end)
+    : dds::core::Reference<DELEGATE>(new DELEGATE(AnyDataReader(dr), expression))
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
 
-//    for (FWIterator it = params_begin; it != params_end; ++it) {
-//        add_parameter(*it);
-//    }
+    //    for (FWIterator it = params_begin; it != params_end; ++it) {
+    //        add_parameter(*it);
+    //    }
 }
+
 /** @endcond */
 
 template<typename DELEGATE>
 dds::sub::TQuery<DELEGATE>::TQuery(
-    const dds::sub::AnyDataReader& dr,
-    const std::string& expression,
-    const std::vector<std::string>& params)
+        const dds::sub::AnyDataReader& dr,
+        const std::string& expression,
+        const std::vector<std::string>& params)
     : dds::core::Reference<DELEGATE>(new DELEGATE(AnyDataReader(dr), expression, params))
 {
 }
@@ -67,16 +68,17 @@ template<typename DELEGATE>
 const std::string& dds::sub::TQuery<DELEGATE>::expression() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->expression();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->expression();
 }
 
 template<typename DELEGATE>
-void dds::sub::TQuery<DELEGATE>::expression(const std::string& expr)
+void dds::sub::TQuery<DELEGATE>::expression(
+        const std::string& expr)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->expression(expr);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->expression(expr);
 }
 
 /**
@@ -86,8 +88,8 @@ template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::const_iterator dds::sub::TQuery<DELEGATE>::begin() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->begin();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->begin();
 }
 
 /**
@@ -97,8 +99,8 @@ template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::const_iterator dds::sub::TQuery<DELEGATE>::end() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->end();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->end();
 }
 
 /**
@@ -108,8 +110,8 @@ template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::iterator dds::sub::TQuery<DELEGATE>::begin()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->begin();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->begin();
 }
 
 /**
@@ -119,39 +121,39 @@ template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::iterator dds::sub::TQuery<DELEGATE>::end()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->end();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->end();
 }
 
 template<typename DELEGATE>
 template<typename FWIterator>
 void dds::sub::TQuery<DELEGATE>::parameters(
-    const FWIterator& begin,
-    const FWIterator end)
+        const FWIterator& begin,
+        const FWIterator end)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-//    for (FWIterator it = begin; it != end; ++it) {
-//        add_parameter(*it);
-//    }
+    //    for (FWIterator it = begin; it != end; ++it) {
+    //        add_parameter(*it);
+    //    }
 }
 
 template<typename DELEGATE>
 void dds::sub::TQuery<DELEGATE>::add_parameter(
-    const std::string& param)
+        const std::string& param)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->add_parameter(param);
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    this->delegate()->add_parameter(param);
 }
 
 template<typename DELEGATE>
 uint32_t dds::sub::TQuery<DELEGATE>::parameters_length() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->parameters_length();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->parameters_length();
 }
 
 template<typename DELEGATE>
@@ -159,8 +161,8 @@ const dds::sub::AnyDataReader&
 dds::sub::TQuery<DELEGATE>::data_reader() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->data_reader();
+    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //    return this->delegate()->data_reader();
 }
 
 #endif //EPROSIMA_DDS_SUB_DETAIL_QUERY_IMPL_HPP_

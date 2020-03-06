@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_TOPIC_TOPICINSTANCE_HPP_
 #define EPROSIMA_DDS_TOPIC_TOPICINSTANCE_HPP_
@@ -39,7 +39,8 @@ TopicInstance<T>::TopicInstance()
 template<typename T>
 TopicInstance<T>::TopicInstance(
         const dds::core::InstanceHandle& h)
-    : h_(h), sample_()
+    : h_(h)
+    , sample_()
 {
 }
 
@@ -47,7 +48,8 @@ template<typename T>
 TopicInstance<T>::TopicInstance(
         const dds::core::InstanceHandle& h,
         const T& sample)
-    : h_(h), sample_(sample)
+    : h_(h)
+    , sample_(sample)
 {
 }
 
@@ -55,14 +57,14 @@ template<typename T>
 TopicInstance<T>::operator const dds::core::InstanceHandle() const
 {
     //To implement
-//    return h_;
+    //    return h_;
 }
 
 template<typename T>
 const dds::core::InstanceHandle TopicInstance<T>::handle() const
 {
     //To implement
-//    return h_;
+    //    return h_;
 }
 
 template<typename T>
@@ -70,21 +72,21 @@ void TopicInstance<T>::handle(
         const dds::core::InstanceHandle& h)
 {
     //To implement
-//    h_ = h;
+    //    h_ = h;
 }
 
 template<typename T>
 const T& TopicInstance<T>::sample() const
 {
     //To implement
-//    return sample_;
+    //    return sample_;
 }
 
 template<typename T>
 T& TopicInstance<T>::sample()
 {
     //To implement
-//    return sample_;
+    //    return sample_;
 }
 
 template<typename T>
@@ -92,7 +94,7 @@ void TopicInstance<T>::sample(
         const T& sample)
 {
     //To implement
-//    sample_ = sample;
+    //    sample_ = sample;
 }
 
 } //namespace topic

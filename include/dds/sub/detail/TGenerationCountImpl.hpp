@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_TGENERATIONCOUNT_IMPL_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_TGENERATIONCOUNT_IMPL_HPP_
@@ -47,14 +47,14 @@ template<typename DELEGATE>
 int32_t TGenerationCount<DELEGATE>::disposed() const
 {
     //To implement
-//    return this->delegate().disposed();
+    //    return this->delegate().disposed();
 }
 
 template<typename DELEGATE>
 inline int32_t TGenerationCount<DELEGATE>::no_writers() const
 {
     //To implement
-//    return this->delegate().no_writers();
+    //    return this->delegate().no_writers();
 }
 
 } //namespace sub

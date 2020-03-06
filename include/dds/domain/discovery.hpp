@@ -25,16 +25,14 @@
 #include <dds/domain/DomainParticipant.hpp>
 
 
-namespace dds
-{
-namespace domain
-{
+namespace dds {
+namespace domain {
 
 /**
  * This function enables you to ignore the entity
  * represented by the given InstanceHandle for the specific
  * DomainParticipant.
-  *
+ *
  * <b><i>This operation is not yet implemented. It is scheduled for a future release.</i></b>
  *
  * @param dp      the DomainParticipant for which the remote
@@ -44,7 +42,9 @@ namespace domain
  *                has to be ignored
  *
  */
-void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp, const dds::core::InstanceHandle& handle);
+void OMG_DDS_API ignore(
+        const dds::domain::DomainParticipant& dp,
+        const dds::core::InstanceHandle& handle);
 
 /**
  * This function enables you to ignore a series of entities
@@ -63,7 +63,10 @@ void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp, const dds::cor
  *
  */
 template <typename FwdIterator>
-void ignore(const dds::domain::DomainParticipant& dp, FwdIterator begin, FwdIterator end);
+void ignore(
+        const dds::domain::DomainParticipant& dp,
+        FwdIterator begin,
+        FwdIterator end);
 
 
 } //namespace domain

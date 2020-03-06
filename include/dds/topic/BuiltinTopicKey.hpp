@@ -38,6 +38,7 @@ template<typename D>
 class TBuiltinTopicKey : public dds::core::Value<D>
 {
 public:
+
     /**
      * Gets the BuiltinTopicKey.
      *

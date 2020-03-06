@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_COND_DETAIL_CONDITION_HPP_
 #define EPROSIMA_DDS_CORE_COND_DETAIL_CONDITION_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when ConditionDelegate is implemented
 //typedef dds::core::cond::TCondition<eprosima::fastdds::dds::core::cond::ConditionDelegate> Condition;
-class Condition { };
+class Condition
+{
+};
 
 } //namespace detail
 } //namespace cond

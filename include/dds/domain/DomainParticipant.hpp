@@ -40,8 +40,6 @@ namespace dds {
 namespace domain {
 
 class DomainParticipantListener;
-}
-}
 
 /**
  * @brief
@@ -62,19 +60,21 @@ template<typename DELEGATE>
 class TDomainParticipant : public ::dds::core::TEntity<DELEGATE>
 {
 public:
+
     /**
      * Local representation of the dds::domain::DomainParticipantListener
      */
     typedef DomainParticipantListener Listener;
 
 public:
+
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TDomainParticipant,
-            dds::core::TEntity,
-            DELEGATE)
+        TDomainParticipant,
+        dds::core::TEntity,
+        DELEGATE)
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            TDomainParticipant,
-            dds::core::Entity)
+        TDomainParticipant,
+        dds::core::Entity)
 
     /**
      * Creates a new DomainParticipant object. The DomainParticipant signifies
@@ -94,7 +94,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant(uint32_t id);
+    TDomainParticipant(
+            uint32_t id);
 
     /**
      * Creates a new DomainParticipant object. The DomainParticipant signifies
@@ -331,7 +332,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    static void default_participant_qos(const ::dds::domain::qos::DomainParticipantQos& qos);
+    static void default_participant_qos(
+            const ::dds::domain::qos::DomainParticipantQos& qos);
 
     /**
      * Gets the default PublisherQos of the DomainParticipant.
@@ -383,7 +385,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_publisher_qos(const ::dds::pub::qos::PublisherQos& qos);
+    TDomainParticipant& default_publisher_qos(
+            const ::dds::pub::qos::PublisherQos& qos);
 
     /**
      * Gets the default SubscriberQos of the DomainParticipant.

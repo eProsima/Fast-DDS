@@ -37,9 +37,10 @@ class TAnnotation : public Reference<DELEGATE>
 {
 
     OMG_DDS_REF_TYPE_BASE(
-            TAnnotation,
-            dds::core::Reference,
-            DELEGATE)
+        TAnnotation,
+        dds::core::Reference,
+        DELEGATE)
+
 public:
 
     virtual ~TAnnotation();
@@ -53,12 +54,13 @@ public:
         return reinterpret_cast<K<Q>&>(*this);
     }
 
-    const AnnotationKind& akind()const
+    const AnnotationKind& akind() const
     {
         return impl()->akind();
     }
 
 protected:
+
     TAnnotation(
             const TypeKind& kind);
 };
@@ -66,13 +68,13 @@ protected:
 template<typename DELEGATE>
 class TIdAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl;
+    using TAnnotation<DELEGATE>::impl;
 
 public:
 
     TIdAnnotation(
             uint32_t id)
-        :TAnnotation<DELEGATE>(TypeKind::ANNOTATION_TYPE)
+        : TAnnotation<DELEGATE>(TypeKind::ANNOTATION_TYPE)
     {
         impl()->id(id);
     }
@@ -87,36 +89,45 @@ public:
 template<typename DELEGATE>
 class TKeyAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl;
+    using TAnnotation<DELEGATE>::impl;
+
 public:
+
     TKeyAnnotation()
     {
     }
+
 };
 
 template<typename DELEGATE>
 class TSharedAnnotation : public TAnnotation<DELEGATE>
 {
 public:
+
     TSharedAnnotation()
     {
     }
+
 };
 
 template<typename DELEGATE>
 class TNestedAnnotation : public TAnnotation<DELEGATE>
 {
 public:
+
     TNestedAnnotation()
     {
     }
+
 };
 
 template<typename DELEGATE>
 class TExtensibilityAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl;
+    using TAnnotation<DELEGATE>::impl;
+
 public:
+
     TExtensibilityAnnotation(
             ExtensibilityKind xkind)
     {
@@ -127,22 +138,27 @@ public:
     {
         return impl()->xKind();
     }
+
 };
 
 template<typename DELEGATE>
 class TMustUnderstandAnnotation : public TAnnotation<DELEGATE>
 {
 public:
+
     TMustUnderstandAnnotation()
     {
     }
+
 };
 
 template<typename DELEGATE>
 class TVerbatimAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl;
+    using TAnnotation<DELEGATE>::impl;
+
 public:
+
     TVerbatimAnnotation(
             const std::string& text)
     {
@@ -153,12 +169,14 @@ public:
     {
         return impl()->vbt();
     }
+
 };
 
 template<typename DELEGATE>
 class TBitsetAnnotation : public TAnnotation<DELEGATE>
 {
 public:
+
     TBitsetAnnotation()
     {
     }
@@ -166,17 +184,19 @@ public:
 };
 
 template<typename DELEGATE>
-class  TBitBoundAnnotation : public TAnnotation<DELEGATE>
+class TBitBoundAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl;
+    using TAnnotation<DELEGATE>::impl;
+
 public:
+
     TBitBoundAnnotation(
             uint32_t bound)
     {
         impl()->bsb(bound);
     }
 
-    virtual uint32_t bound()const
+    virtual uint32_t bound() const
     {
         return impl()->bsb();
     }
@@ -186,6 +206,7 @@ public:
     {
         impl()->bsb(bound);
     }
+
 };
 
 typedef TAnnotation<detail::Annotation> Annotation;
@@ -211,21 +232,21 @@ typedef TBitBoundAnnotation<detail::BitBoundAnnotation> BitBoundAnnotation;
 //FRANAVA We must think about the fact that previous API has a way of creating a
 //dynamically defined Annotation.
 /*
-namespace converter
-{
+   namespace converter
+   {
     IdAnnotation convert(const Annotation& a)
     {
         uint32_t idav = reinterpret_cast<const IdAnnotation&>(a).id();
         return IdAnnotation(idav);
     }
-}
-*/
+   }
+ */
 namespace annotation {
 
 // These functions can be used to get cached instances,
 // to avoid the proliferation of small annotation objects.
 IdAnnotation id(
-        uint32_t);
+    uint32_t);
 
 KeyAnnotation key();
 

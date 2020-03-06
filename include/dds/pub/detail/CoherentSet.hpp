@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_PUB_DETAIL_COHERENT_SET_HPP_
 #define EPROSIMA_DDS_PUB_DETAIL_COHERENT_SET_HPP_
@@ -31,7 +31,9 @@ namespace pub {
 namespace detail {
 
 //typedef dds::pub::TCoherentSet<org::opensplice::pub::CoherentSetDelegate> CoherentSet;
-class CoherentSet { };
+class CoherentSet
+{
+};
 
 } //namespace detail
 } //namespace pub

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_SUB_DETAIL_COHERENT_ACCESS_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_COHERENT_ACCESS_HPP_
@@ -33,7 +33,9 @@ namespace detail {
 
 //TODO: Fix when CoherentAccessDelegate is implemented
 //typedef ::dds::sub::TCoherentAccess<org::opensplice::sub::CoherentAccessDelegate> CoherentAccess;
-class CoherentAccess { };
+class CoherentAccess
+{
+};
 
 } //namespace detail
 } //namespace sub

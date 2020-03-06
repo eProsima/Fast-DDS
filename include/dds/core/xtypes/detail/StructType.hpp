@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_STRUCT_TYPE_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_STRUCT_TYPE_HPP_
@@ -21,8 +21,8 @@
 #include <string>
 #include <dds/core/xtypes/MemberType.hpp>
 
-#define COND_EXCEP_THROW(EXPR, CONT) if(EXPR) {\
-    throw IllegalOperationError(CONT);\
+#define COND_EXCEP_THROW(EXPR, CONT) if (EXPR){ \
+        throw IllegalOperationError(CONT); \
 }
 
 
@@ -35,7 +35,10 @@ namespace detail {
 class StructType
 {
 public:
-    StructType(){}
+
+    StructType()
+    {
+    }
 
     void name(
             const std::string& s)
@@ -54,7 +57,7 @@ public:
     {
         members_.reserve( v.size() + members_.size() );
 
-        for(auto it = v.begin(); v.end() != it; ++it)
+        for (auto it = v.begin(); v.end() != it; ++it)
         {
             members_.emplace_back(*it);
         }
@@ -62,11 +65,12 @@ public:
 
     template <typename MemberIter>
     void members(
-            MemberIter& begin, MemberIter& end)
+            MemberIter& begin,
+            MemberIter& end)
     {
         members_.reserve( (end - begin) + members_.size() );
 
-        for(auto it = begin; end != it; ++it)
+        for (auto it = begin; end != it; ++it)
         {
             members_.emplace_back(*it);
         }
@@ -83,7 +87,7 @@ public:
     {
         annotations_.reserve( v.size() + annotations_.size() );
 
-        for(auto it = v.begin(); v.end() != it; ++it)
+        for (auto it = v.begin(); v.end() != it; ++it)
         {
             annotations_.emplace_back(*it);
         }
@@ -91,11 +95,12 @@ public:
 
     template <typename AnnotationIter>
     void annotations(
-            AnnotationIter& begin, AnnotationIter& end)
+            AnnotationIter& begin,
+            AnnotationIter& end)
     {
         annotations_.reserve( (end - begin) + annotations_.size() );
 
-        for(auto it = begin; end != it; ++it)
+        for (auto it = begin; end != it; ++it)
         {
             annotations_.emplace_back(*it);
         }
@@ -107,7 +112,7 @@ public:
     }
 
     const xtypes::MemberType& member(
-            uint32_t id)const
+            uint32_t id) const
     {
         COND_EXCEP_THROW(id >= members_.size(), "no such member_id could be found");
 
@@ -115,14 +120,16 @@ public:
     }
 
     const xtypes::MemberType& member(
-            const std::string& s)const
+            const std::string& s) const
     {
         auto retval = find_if(
-                        members_.begin(),
-                        members_.end(),
-                        [&](const xtypes::MemberType& m){return m.name() == s;});
+            members_.begin(),
+            members_.end(),
+            [&](const xtypes::MemberType& m){
+                            return m.name() == s;
+                        });
 
-        COND_EXCEP_THROW(retval == members_.end(), "member"+s+"not found");
+        COND_EXCEP_THROW(retval == members_.end(), "member" + s + "not found");
         return *retval;
     }
 
@@ -135,11 +142,13 @@ public:
             const xtypes::MemberType& m)
     {
         auto rv = find_if(
-                    members_.begin(),
-                    members_.end(),
-                    [&](xtypes::MemberType& t) {return t.name() == m.name();});
+            members_.begin(),
+            members_.end(),
+            [&](xtypes::MemberType& t) {
+                            return t.name() == m.name();
+                        });
 
-        COND_EXCEP_THROW(rv == members_.end(), "could not find "+ m.name()+" member");
+        COND_EXCEP_THROW(rv == members_.end(), "could not find " + m.name() + " member");
         members_.erase(rv);
     }
 
@@ -147,16 +156,19 @@ public:
             const xtypes::Annotation& a)
     {
         auto rv = find_if(
-                    annotations_.begin(),
-                    annotations_.end(),
-                    [&]( xtypes::Annotation& aa)
-                    {return aa.akind() == a.akind();});
+            annotations_.begin(),
+            annotations_.end(),
+            [&]( xtypes::Annotation& aa)
+                        {
+                            return aa.akind() == a.akind();
+                        });
 
         COND_EXCEP_THROW(rv == annotations_.end(), "could not find such annotation");
         annotations_.erase(rv);
     }
 
 private:
+
     std::string name_;
     std::vector<xtypes::MemberType> members_;
     std::vector<xtypes::Annotation> annotations_;

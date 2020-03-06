@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 #ifndef EPROSIMA_DDS_CORE_POLICY_TQOSPOLICYCOUNT_IMPL_HPP_
 #define EPROSIMA_DDS_CORE_POLICY_TQOSPOLICYCOUNT_IMPL_HPP_
@@ -52,14 +52,14 @@ template<typename D>
 QosPolicyId TQosPolicyCount<D>::policy_id() const
 {
     //To implement
-//    return this->delegate().policy_id();
+    //    return this->delegate().policy_id();
 }
 
 template<typename D>
 int32_t TQosPolicyCount<D>::count() const
 {
     //To implement
-//    return this->delegate().count();
+    //    return this->delegate().count();
 }
 
 } //namespace policy

@@ -37,12 +37,12 @@
 #define OMG_DDS_POLICY_TRAITS(POLICY, ID) \
     template<> \
     class policy_id<POLICY> { \
-    public: \
+public: \
         static const dds::core::policy::QosPolicyId value = ID; \
     }; \
     template<> \
     class policy_name<POLICY> { \
-    public:\
+public: \
         static const std::string& name(); \
     };
 
@@ -65,6 +65,7 @@ template<typename D>
 class TUserData : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a UserData QoS instance with an empty UserData
      */
@@ -149,6 +150,7 @@ template<typename D>
 class TGroupData : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a GroupData QoS instance
      */
@@ -167,7 +169,8 @@ public:
      *
      * @param other the GroupData QoS instance to copy
      */
-    TGroupData(const TGroupData& other);
+    TGroupData(
+            const TGroupData& other);
 
     /**
      * Creates a GroupData QoS instance
@@ -232,6 +235,7 @@ template<typename D>
 class TTopicData : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a TopicData QoS instance
      */
@@ -317,6 +321,7 @@ template<typename D>
 class TEntityFactory : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates an EntityFactory QoS instance
      *
@@ -374,6 +379,7 @@ template<typename D>
 class TTransportPriority : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a TransportPriority QoS instance
      *
@@ -415,6 +421,7 @@ template<typename D>
 class TLifespan : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a Lifespan QoS instance
      *
@@ -456,6 +463,7 @@ template<typename D>
 class TDeadline : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a Deadline QoS instance
      *
@@ -497,6 +505,7 @@ template<typename D>
 class TLatencyBudget : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a LatencyBudget QoS instance
      *
@@ -538,13 +547,14 @@ template<typename D>
 class TTimeBasedFilter : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a TimeBasedFilter QoS instance
      *
      * @param period minimum separation period
      */
     explicit TTimeBasedFilter(
-        const dds::core::Duration& period = dds::core::Duration::zero());
+            const dds::core::Duration& period = dds::core::Duration::zero());
 
     /**
      * Copies a TimeBasedFilter QoS instance
@@ -580,6 +590,7 @@ template<typename D>
 class TPartition : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a Partition QoS instance
      *
@@ -638,6 +649,7 @@ template<typename D>
 class TOwnership : public dds::core::Value<D>
 {
 public:
+
     #   if defined (__SUNPRO_CC) && defined(SHARED)
     #   undef SHARED
     #   endif
@@ -647,7 +659,7 @@ public:
      * @param kind the kind
      */
     explicit TOwnership(
-        dds::core::policy::OwnershipKind::Type kind = dds::core::policy::OwnershipKind::SHARED);
+            dds::core::policy::OwnershipKind::Type kind = dds::core::policy::OwnershipKind::SHARED);
 
     /**
      * Copies an Ownership QoS instance
@@ -693,6 +705,7 @@ template<typename D>
 class TOwnershipStrength : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates an OwnershipStrength QoS instance
      *
@@ -735,6 +748,7 @@ template<typename D>
 class TWriterDataLifecycle : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a WriterDataLifecycle QoS instance
      *
@@ -766,7 +780,7 @@ public:
      * instances should be autodisposed
      */
     TWriterDataLifecycle& autodispose_unregistered_instances(
-        bool autodispose_unregistered_instances);
+            bool autodispose_unregistered_instances);
 
     /**
      * @return a WriterDataLifecycle QoS instance with autodispose_unregistered_instances
@@ -791,6 +805,7 @@ template<typename D>
 class TReaderDataLifecycle : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a ReaderDataLifecycle QoS instance
      *
@@ -798,8 +813,8 @@ public:
      * @param autopurge_disposed_samples_delay the autopurge disposed samples delay
      */
     TReaderDataLifecycle(
-        const dds::core::Duration& autopurge_nowriter_samples_delay = dds::core::Duration::infinite(),
-        const dds::core::Duration& autopurge_disposed_samples_delay = dds::core::Duration::infinite());
+            const dds::core::Duration& autopurge_nowriter_samples_delay = dds::core::Duration::infinite(),
+            const dds::core::Duration& autopurge_disposed_samples_delay = dds::core::Duration::infinite());
 
     /**
      * Copies a ReaderDataLifecycle QoS instance
@@ -821,7 +836,7 @@ public:
      * @param autopurge_nowriter_samples_delay the autopurge nowriter samples delay
      */
     TReaderDataLifecycle& autopurge_nowriter_samples_delay(
-        const dds::core::Duration& autopurge_nowriter_samples_delay);
+            const dds::core::Duration& autopurge_nowriter_samples_delay);
 
     /**
      * Gets the autopurge_disposed_samples_delay
@@ -836,7 +851,7 @@ public:
      * @return the autopurge disposed samples delay
      */
     TReaderDataLifecycle& autopurge_disposed_samples_delay(
-        const dds::core::Duration& autopurge_disposed_samples_delay);
+            const dds::core::Duration& autopurge_disposed_samples_delay);
 
     /**
      * @return a ReaderDataLifecycle QoS instance which will not autopurge disposed
@@ -850,7 +865,7 @@ public:
      * set to a specified value
      */
     static TReaderDataLifecycle AutoPurgeDisposedSamples(
-        const dds::core::Duration& autopurge_disposed_samples_delay);
+            const dds::core::Duration& autopurge_disposed_samples_delay);
 
 };
 
@@ -863,13 +878,14 @@ template<typename D>
 class TDurability : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a Durability QoS instance
      *
      * @param kind the kind
      */
     explicit TDurability(
-        dds::core::policy::DurabilityKind::Type kind = dds::core::policy::DurabilityKind::VOLATILE);
+            dds::core::policy::DurabilityKind::Type kind = dds::core::policy::DurabilityKind::VOLATILE);
 
     /**
      * Copies a Durability QoS instance
@@ -880,10 +896,10 @@ public:
             const TDurability& other);
 
     /**
-    * Set the kind
-    *
-    * @param kind the kind
-    */
+     * Set the kind
+     *
+     * @param kind the kind
+     */
     TDurability& kind(
             dds::core::policy::DurabilityKind::Type kind);
 
@@ -924,6 +940,7 @@ template<typename D>
 class TPresentation : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a Presentation QoS instance
      *
@@ -932,10 +949,10 @@ public:
      * @param ordered_access the ordered_access setting
      */
     TPresentation(
-        dds::core::policy::PresentationAccessScopeKind::Type access_scope
-        = dds::core::policy::PresentationAccessScopeKind::INSTANCE,
-        bool coherent_access = false,
-        bool ordered_access = false);
+            dds::core::policy::PresentationAccessScopeKind::Type access_scope
+                = dds::core::policy::PresentationAccessScopeKind::INSTANCE,
+            bool coherent_access = false,
+            bool ordered_access = false);
 
     /**
      * Copies a Presentation QoS instance
@@ -1033,6 +1050,7 @@ template<typename D>
 class TReliability : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a Reliability QoS instance
      *
@@ -1040,8 +1058,8 @@ public:
      * @param max_blocking_time the max_blocking_time
      */
     TReliability(
-        dds::core::policy::ReliabilityKind::Type kind = dds::core::policy::ReliabilityKind::BEST_EFFORT,
-        const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
+            dds::core::policy::ReliabilityKind::Type kind = dds::core::policy::ReliabilityKind::BEST_EFFORT,
+            const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
 
     /**
      * Copies a Reliability QoS instance
@@ -1106,14 +1124,15 @@ template<typename D>
 class TDestinationOrder : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a DestinationOrder QoS instance
      *
      * @param kind the kind
      */
     explicit TDestinationOrder(
-        dds::core::policy::DestinationOrderKind::Type kind
-        = dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
+            dds::core::policy::DestinationOrderKind::Type kind
+                = dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
 
     /**
      * Copies a DestinationOrder QoS instance
@@ -1124,6 +1143,7 @@ public:
             const TDestinationOrder& other);
 
 public:
+
     /**
      * Sets the kind
      *
@@ -1140,6 +1160,7 @@ public:
     dds::core::policy::DestinationOrderKind::Type kind() const;
 
 public:
+
     /**
      * @return a DestinationOrder QoS instance with the kind set to BY_SOURCE_TIMESTAMP
      */
@@ -1160,6 +1181,7 @@ template<typename D>
 class THistory : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a History QoS instance
      *
@@ -1168,7 +1190,7 @@ public:
      */
     THistory(
             dds::core::policy::HistoryKind::Type kind = dds::core::policy::HistoryKind::KEEP_LAST,
-             int32_t depth = 1);
+            int32_t depth = 1);
 
     /**
      * Copies a History QoS instance
@@ -1231,6 +1253,7 @@ template<typename D>
 class TResourceLimits : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a ResourceLimits QoS instance
      *
@@ -1252,6 +1275,7 @@ public:
             const TResourceLimits& other);
 
 public:
+
     /**
      * Sets the max_samples value
      *
@@ -1307,6 +1331,7 @@ template<typename D>
 class TLiveliness : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a Liveliness QoS instance
      *
@@ -1314,8 +1339,8 @@ public:
      * @param lease_duration the lease_duration
      */
     TLiveliness(
-        dds::core::policy::LivelinessKind::Type kind = dds::core::policy::LivelinessKind::AUTOMATIC,
-        const dds::core::Duration& lease_duration = dds::core::Duration::infinite());
+            dds::core::policy::LivelinessKind::Type kind = dds::core::policy::LivelinessKind::AUTOMATIC,
+            const dds::core::Duration& lease_duration = dds::core::Duration::infinite());
 
     /**
      * Copies a Liveliness QoS instance
@@ -1386,6 +1411,7 @@ template<typename D>
 class TDurabilityService : public dds::core::Value<D>
 {
 public:
+
     /**
      * Creates a DurabilityService QoS instance
      *
@@ -1397,12 +1423,12 @@ public:
      * @param max_samples_per_instance the max_samples_per_instance value
      */
     TDurabilityService(
-        const dds::core::Duration& service_cleanup_delay = dds::core::Duration::zero(),
-        dds::core::policy::HistoryKind::Type history_kind = dds::core::policy::HistoryKind::KEEP_LAST,
-        int32_t history_depth = 1,
-        int32_t max_samples = dds::core::LENGTH_UNLIMITED,
-        int32_t max_instances = dds::core::LENGTH_UNLIMITED,
-        int32_t max_samples_per_instance = dds::core::LENGTH_UNLIMITED);
+            const dds::core::Duration& service_cleanup_delay = dds::core::Duration::zero(),
+            dds::core::policy::HistoryKind::Type history_kind = dds::core::policy::HistoryKind::KEEP_LAST,
+            int32_t history_depth = 1,
+            int32_t max_samples = dds::core::LENGTH_UNLIMITED,
+            int32_t max_instances = dds::core::LENGTH_UNLIMITED,
+            int32_t max_samples_per_instance = dds::core::LENGTH_UNLIMITED);
 
     /**
      * Copies a DurabilityService QoS instance
@@ -1513,13 +1539,18 @@ class TDataRepresentation : public dds::core::Value<D>
 {
 
 public:
-    explicit TDataRepresentation(
-        const dds::core::policy::DataRepresentationIdSeq& value);
 
-    TDataRepresentation(const TDataRepresentation& other)
+    explicit TDataRepresentation(
+            const dds::core::policy::DataRepresentationIdSeq& value);
+
+    TDataRepresentation(
+            const TDataRepresentation& other)
         : dds::core::Value<D>(other.value())
-    { }
+    {
+    }
+
 public:
+
     TDataRepresentation& value(
             const dds::core::policy::DataRepresentationIdSeq& value);
 
@@ -1539,6 +1570,7 @@ template<typename D>
 class TTypeConsistencyEnforcement : public dds::core::Value<D>
 {
 public:
+
     explicit TTypeConsistencyEnforcement(
             dds::core::policy::TypeConsistencyEnforcementKind::Type kind);
 

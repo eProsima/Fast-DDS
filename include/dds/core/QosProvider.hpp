@@ -52,6 +52,7 @@ template<typename DELEGATE>
 class TQosProvider : public Reference<DELEGATE>
 {
 public:
+
     /**
      * Constructs a new QosProvider based on the provided uri and profile.
      *
