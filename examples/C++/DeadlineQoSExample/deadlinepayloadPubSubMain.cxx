@@ -17,7 +17,7 @@
 
 
 #include <fastrtps/Domain.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Log.h>
 #include "asio.hpp"
 
 using namespace eprosima;

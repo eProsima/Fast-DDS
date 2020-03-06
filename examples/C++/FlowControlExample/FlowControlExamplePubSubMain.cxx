@@ -25,7 +25,7 @@
 
 
 #include <fastrtps/Domain.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;

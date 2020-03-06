@@ -24,7 +24,7 @@
 
 
 #include <fastrtps/Domain.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Log.h>
 #include <sstream>
 
 using namespace eprosima;
@@ -87,6 +87,6 @@ int main(int argc, char** argv)
             }
     }
 
-    eprosima::fastdds::dds::Log::Reset();
+    Log::Reset();
     return 0;
 }

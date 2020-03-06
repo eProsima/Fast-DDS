@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <sstream>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 
 #include "TestWriterPersistent.h"

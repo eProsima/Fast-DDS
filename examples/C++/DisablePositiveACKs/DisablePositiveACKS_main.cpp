@@ -21,7 +21,7 @@
 #include "DisablePositiveACKsSubscriber.h"
 
 #include <fastrtps/Domain.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima;
 using namespace fastrtps;
@@ -155,7 +155,7 @@ int main(int argc, char** argv)
         std::cout << argv[0] << " subscriber ";
         std::cout << "[--disable]" << std::endl;
 
-        eprosima::fastdds::dds::Log::Reset();
+        Log::Reset();
         return 0;
     }
 
@@ -181,6 +181,6 @@ int main(int argc, char** argv)
             }
     }
     Domain::stopAll();
-    eprosima::fastdds::dds::Log::Reset();
+    Log::Reset();
     return 0;
 }
