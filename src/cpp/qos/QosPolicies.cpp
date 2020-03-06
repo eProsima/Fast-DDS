@@ -48,7 +48,6 @@ bool QosPolicy::serialize_generic_data(
     uint16_t siz = static_cast<uint16_t>(data.size());
     siz = (siz + 3) & ~3;
     valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(4 + siz));
-    valid &= CDRMessage::addUInt32(msg, siz);
     valid &= CDRMessage::addOctetVector(msg, &data, true);
     return valid;
 }
