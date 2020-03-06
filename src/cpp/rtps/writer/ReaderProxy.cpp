@@ -102,6 +102,7 @@ void ReaderProxy::start(
     expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
     is_reliable_ = reader_attributes.m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS;
     disable_positive_acks_ = reader_attributes.disable_positive_acks();
+    acked_changes_set(SequenceNumber_t());  // Simulate initial acknack to set low mark
 
     timers_enabled_.store(is_remote_and_reliable());
     if (is_local_reader())
@@ -330,6 +331,10 @@ void ReaderProxy::acked_changes_set(
                 {
                     std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
                 }
+            }
+            else if (!is_local_reader())
+            {
+                future_low_mark = writer_->next_sequence_number();
             }
         }
     }
