@@ -16,7 +16,7 @@
 #include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <rtps/transport/TCPSenderResource.hpp>
 //#include "TCPSenderResource.hpp"
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 #include <fastdds/rtps/transport/TCPChannelResourceBasic.h>

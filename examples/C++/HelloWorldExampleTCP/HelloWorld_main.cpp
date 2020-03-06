@@ -21,7 +21,7 @@
 #include "HelloWorldSubscriber.h"
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <string>
 

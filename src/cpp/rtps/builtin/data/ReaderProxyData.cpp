@@ -19,7 +19,7 @@
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/network/NetworkFactory.h>
 
 namespace eprosima {

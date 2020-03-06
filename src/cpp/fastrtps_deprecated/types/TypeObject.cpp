@@ -15,7 +15,7 @@
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 #include <fastcdr/Cdr.h>
 

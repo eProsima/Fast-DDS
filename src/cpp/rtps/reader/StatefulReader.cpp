@@ -20,7 +20,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/WriterProxy.h>

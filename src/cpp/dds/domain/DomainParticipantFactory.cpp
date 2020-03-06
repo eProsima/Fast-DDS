@@ -24,7 +24,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <dds/domain/DomainParticipantImpl.hpp>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -35,7 +35,7 @@
 using namespace eprosima::fastrtps::xmlparser;
 
 using eprosima::fastrtps::ParticipantAttributes;
-using eprosima::fastrtps::Log;
+using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::RTPSDomain;
 using eprosima::fastrtps::rtps::RTPSParticipant;
@@ -91,7 +91,7 @@ DomainParticipantFactory::~DomainParticipantFactory()
     fastrtps::types::TypeObjectFactory::delete_instance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    fastrtps::Log::KillThread();
+    eprosima::fastdds::dds::Log::KillThread();
 }
 
 DomainParticipantFactory* DomainParticipantFactory::get_instance()

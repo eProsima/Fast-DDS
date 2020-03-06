@@ -18,7 +18,7 @@
  */
 
 #include <rtps/persistence/SQLite3PersistenceService.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/CacheChangePool.h>
 
 #include <rtps/persistence/sqlite3.h>

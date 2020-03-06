@@ -20,7 +20,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
 namespace eprosima {
@@ -626,7 +626,7 @@ bool DataRepresentationQosPolicy::addToCDRMessage(
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
 
-    uint16_t len = static_cast<uint32_t>(m_value.size() * sizeof(uint16_t)) + 4;
+    uint16_t len = static_cast<uint16_t>(m_value.size() * sizeof(uint16_t)) + 4;
     len = (len + 3) & ~3;
 
     valid &= CDRMessage::addUInt16(msg, len);

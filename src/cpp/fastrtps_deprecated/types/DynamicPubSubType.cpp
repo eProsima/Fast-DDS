@@ -19,7 +19,7 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
 namespace eprosima {

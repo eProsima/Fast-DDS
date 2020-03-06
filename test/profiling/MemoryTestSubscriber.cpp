@@ -18,7 +18,7 @@
  */
 
 #include "MemoryTestSubscriber.h"
-#include "fastrtps/log/Log.h"
+#include <fastdds/dds/log/Log.hpp>
 #include "fastrtps/log/Colors.h"
 
 using namespace eprosima::fastrtps;

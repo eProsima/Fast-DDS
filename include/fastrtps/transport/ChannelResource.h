@@ -16,7 +16,7 @@
 #define CHANNEL_RESOURCE_INFO_
 
 #include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/transport/ChannelResource.h>
 

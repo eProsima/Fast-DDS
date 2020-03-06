@@ -29,8 +29,8 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 
-#include <fastrtps/log/StdoutConsumer.h>
-#include <fastrtps/log/FileConsumer.h>
+#include <fastdds/dds/log/FileConsumer.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
 
 #include <tinyxml2.h>
 #include <iostream>
@@ -2478,7 +2478,7 @@ XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
                 }
                 if (!use_default)
                 {
-                    Log::ClearConsumers();
+                    eprosima::fastdds::dds::Log::ClearConsumers();
                 }
             }
             else if (strcmp(tag, CONSUMER) == 0)
@@ -2502,6 +2502,8 @@ XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
 
 XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
 {
+    using namespace eprosima::fastdds::dds;
+
     XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* p_element = consumer.FirstChildElement(CLASS);
 

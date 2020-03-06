@@ -20,7 +20,7 @@
 #include "TypeLookupPublisher.h"
 #include "TypeLookupSubscriber.h"
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps;
 
@@ -54,7 +54,7 @@ int main(
     else
     {
         std::cout << "publisher OR subscriber argument needed" << std::endl;
-        Log::Reset();
+        eprosima::fastdds::dds::Log::Reset();
         return 0;
     }
 
@@ -79,6 +79,6 @@ int main(
                 break;
             }
     }
-    Log::Reset();
+    eprosima::fastdds::dds::Log::Reset();
     return 0;
 }

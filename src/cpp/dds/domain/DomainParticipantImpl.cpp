@@ -48,7 +48,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <chrono>
 
@@ -70,7 +70,7 @@ using fastrtps::rtps::InstanceHandle_t;
 using fastrtps::rtps::GUID_t;
 using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
-using fastrtps::Log;
+using eprosima::fastdds::dds::Log;
 
 DomainParticipantImpl::DomainParticipantImpl(
         const ParticipantAttributes& patt,

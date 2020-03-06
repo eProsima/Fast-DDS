@@ -18,7 +18,7 @@
  */
 
 #include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
 

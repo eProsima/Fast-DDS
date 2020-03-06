@@ -22,7 +22,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/transport/UDPv4Transport.h>
 #include <fastdds/rtps/transport/UDPv6Transport.h>

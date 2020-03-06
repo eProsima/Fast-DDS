@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef _FASTRTPS_LOG_LOG_H_
-#define _FASTRTPS_LOG_LOG_H_
+#ifndef _FASTDDS_LOG_LOG_HPP_
+#define _FASTDDS_LOG_LOG_HPP_
 
 #include <functional>
 #include <memory>
@@ -41,7 +41,8 @@ protected:
 };
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 class LogConsumer
 {
@@ -77,7 +78,8 @@ class LogMock
         MOCK_METHOD0(ClearConsumers, void());
 };
 
-} // namespace fastrtps
+} // namespace dds
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_LOG_LOG_HPP_

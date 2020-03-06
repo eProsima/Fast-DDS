@@ -18,7 +18,7 @@
  */
 
 #include "VideoTestSubscriber.hpp"
-#include "fastrtps/log/Log.h"
+#include <fastdds/dds/log/Log.hpp>
 #include "fastrtps/log/Colors.h"
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <numeric>

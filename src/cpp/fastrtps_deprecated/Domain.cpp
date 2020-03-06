@@ -26,7 +26,7 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -80,7 +80,7 @@ void Domain::stopAll()
     XMLProfileManager::DeleteInstance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    Log::KillThread();
+    eprosima::fastdds::dds::Log::KillThread();
 }
 
 bool Domain::removeParticipant(Participant* part)

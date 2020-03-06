@@ -23,7 +23,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/rtps/resources/TimedEvent.h>

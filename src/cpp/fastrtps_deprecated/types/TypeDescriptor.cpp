@@ -16,7 +16,7 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {

@@ -19,7 +19,7 @@
 #include <thread>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-//#include <fastrtps/log/Log.h>
+//#include <fastdds/dds/log/Log.hpp>
 #include <memory>
 #include <asio.hpp>
 #include <MockReceiverResource.h>
@@ -585,7 +585,7 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Warning);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);

@@ -14,7 +14,7 @@
 
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <gtest/gtest.h>
@@ -137,8 +137,8 @@ public:
 
     ~XMLParserTests()
     {
-        eprosima::fastrtps::Log::Reset();
-        eprosima::fastrtps::Log::KillThread();
+        eprosima::fastdds::dds::Log::Reset();
+        eprosima::fastdds::dds::Log::KillThread();
     }
 
     bool get_participant_attributes(

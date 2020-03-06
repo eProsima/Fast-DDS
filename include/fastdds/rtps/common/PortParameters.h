@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_PORT_PARAMETERS_H_
 
 #include <fastdds/rtps/common/Types.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps{

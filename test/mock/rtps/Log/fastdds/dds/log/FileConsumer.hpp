@@ -17,14 +17,16 @@
  *
  */
 
-#ifndef FILE_CONSUMER_H
-#define FILE_CONSUMER_H
+#ifndef _FASTDDS_FILE_CONSUMER_HPP_
+#define _FASTDDS_FILE_CONSUMER_HPP_
 
-#include <fastrtps/log/Log.h>
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 class FileConsumer : public LogConsumer
 {
@@ -43,7 +45,8 @@ MATCHER(IsFileConsumer, "Argument is a FileConsumer object?")
     return typeid(*arg.get()) == typeid(FileConsumer);
 }
 
-} // namespace fastrtps
+} // namespace dds
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // FILE_CONSUMER_H
+#endif // _FASTDDS_FILE_CONSUMER_HPP_

@@ -22,7 +22,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using eprosima::fastdds::dds::Log;
 
@@ -56,7 +56,7 @@ int main(
     else
     {
         std::cout << "publisher OR subscriber argument needed" << std::endl;
-        Log::Reset();
+        eprosima::fastdds::dds::Log::Reset();
         return 0;
     }
 
@@ -81,6 +81,6 @@ int main(
                 break;
             }
     }
-    Log::Reset();
+    eprosima::fastdds::dds::Log::Reset();
     return 0;
 }

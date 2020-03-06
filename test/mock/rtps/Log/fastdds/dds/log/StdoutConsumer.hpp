@@ -1,4 +1,3 @@
-
 // Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-#ifndef _FASTRTPS_LOG_LOG_H_
-#define _FASTRTPS_LOG_LOG_H_
+
+#ifndef _FASTDDS_STDOUT_CONSUMER_HPP_
+#define _FASTDDS_STDOUT_CONSUMER_HPP_
 
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
-using LogConsumer = fastdds::dds::LogConsumer;
-using Log = fastdds::dds::Log;
+    class StdoutConsumer : public LogConsumer {};
 
-} // namespace fastrtps
+} // namespace dds
+} // namespace fastdds
 } // namespace eprosima
 
 #endif

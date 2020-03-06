@@ -1,5 +1,5 @@
 #include <fastdds/rtps/writer/LivelinessManager.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <algorithm>
 

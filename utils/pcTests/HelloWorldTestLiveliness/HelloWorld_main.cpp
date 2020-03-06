@@ -23,7 +23,7 @@
 #include "fastrtps/Domain.h"
 
 #include "fastrtps/utils/eClock.h"
-#include "fastrtps/log/Log.h"
+#include <fastdds/dds/log/Log.hpp>
 
 #include "fastrtps/rtps/rtps_all.h"
 

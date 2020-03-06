@@ -26,7 +26,7 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include "idl/BasicPubSubTypes.h"
 #include "idl/BasicTypeObject.h"
@@ -47,7 +47,7 @@ class DynamicTypesTests: public ::testing::Test
 
         ~DynamicTypesTests()
         {
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         virtual void TearDown()
@@ -5036,7 +5036,7 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
 
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

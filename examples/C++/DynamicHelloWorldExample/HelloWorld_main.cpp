@@ -21,7 +21,7 @@
 #include "HelloWorldSubscriber.h"
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima;
 using namespace fastrtps;
@@ -57,7 +57,7 @@ bool parseArgs(int argc, char** argv)
                 else
                 {
                     std::cout << "role defined twice" << std::endl;
-                    Log::Reset();
+                    eprosima::fastdds::dds::Log::Reset();
                     return false;
                 }
             }
@@ -71,7 +71,7 @@ bool parseArgs(int argc, char** argv)
                 else
                 {
                     std::cout << "role defined twice" << std::endl;
-                    Log::Reset();
+                    eprosima::fastdds::dds::Log::Reset();
                     return false;
                 }
             }
@@ -80,7 +80,7 @@ bool parseArgs(int argc, char** argv)
                 if (argc <= i+1)
                 {
                     std::cout << "count expected" << std::endl;
-                    Log::Reset();
+                    eprosima::fastdds::dds::Log::Reset();
                     return false;
                 }
                 count = atoi(argv[++i]);
@@ -90,7 +90,7 @@ bool parseArgs(int argc, char** argv)
                 if (argc <= i+1)
                 {
                     std::cout << "sleep expected" << std::endl;
-                    Log::Reset();
+                    eprosima::fastdds::dds::Log::Reset();
                     return false;
                 }
                 sleep = atoi(argv[++i]);
@@ -108,7 +108,7 @@ bool parseArgs(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    //Log::SetVerbosity(Log::Kind::Info);
+    //Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
     //std::regex filter("RTPS_HISTORY");
     //std::regex filter("RTPS_EDP");
     //Log::SetCategoryFilter(filter);
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    //Log::SetVerbosity(Log::Kind::Info);
+    //Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
     switch(type)
     {
         case 1:
@@ -143,6 +143,6 @@ int main(int argc, char** argv)
             }
     }
     Domain::stopAll();
-    Log::Reset();
+    eprosima::fastdds::dds::Log::Reset();
     return 0;
 }

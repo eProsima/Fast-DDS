@@ -33,7 +33,7 @@
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPServerListener.h>

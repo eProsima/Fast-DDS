@@ -18,7 +18,7 @@
 
 #include <fastrtps_deprecated/security/authentication/PKIDH.h>
 #include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 

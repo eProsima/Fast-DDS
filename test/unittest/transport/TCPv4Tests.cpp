@@ -17,7 +17,7 @@
 #include "mock/MockTCPv4Transport.h"
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <MockReceiverResource.h>
 #include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
 
@@ -57,13 +57,13 @@ class TCPv4Tests: public ::testing::Test
     public:
         TCPv4Tests()
         {
-            Log::SetVerbosity(Log::Kind::Info);
+            eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
             HELPER_SetDescriptorDefaults();
         }
 
         ~TCPv4Tests()
         {
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         void HELPER_SetDescriptorDefaults();
@@ -161,9 +161,9 @@ TEST_F(TCPv4Tests, opening_and_closing_input_channel)
 #ifndef __APPLE__
 TEST_F(TCPv4Tests, send_and_receive_between_ports)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
     std::regex filter("RTCP(?!_SEQ)");
-    Log::SetCategoryFilter(filter);
+    eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
     TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.wait_for_tcp_negotiation = true;
@@ -349,9 +349,9 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 
         if (IsAddressDefined(locator))
         {
-            Log::SetVerbosity(Log::Kind::Info);
+            eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
             std::regex filter("RTCP(?!_SEQ)");
-            Log::SetCategoryFilter(filter);
+            eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
             TCPv4TransportDescriptor recvDescriptor;
             recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
             recvDescriptor.add_listener_port(g_default_port);
@@ -421,7 +421,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 #if TLS_FOUND
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -501,7 +501,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -588,7 +588,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
 
 TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -677,7 +677,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
 
 TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -770,7 +770,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
 
 TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
@@ -858,7 +858,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
 /*
 TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
@@ -948,7 +948,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
 
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -1038,9 +1038,9 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 
 TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
     std::regex filter("RTCP(?!_SEQ)");
-    Log::SetCategoryFilter(filter);
+    eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
     TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.interfaceWhiteList.emplace_back("127.0.0.1");
     recvDescriptor.add_listener_port(g_default_port);
@@ -1122,9 +1122,9 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 
         if (IsAddressDefined(locator))
         {
-            Log::SetVerbosity(Log::Kind::Info);
+            eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
             std::regex filter("RTCP(?!_SEQ)");
-            Log::SetCategoryFilter(filter);
+            eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
             TCPv4TransportDescriptor recvDescriptor;
             recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
             recvDescriptor.add_listener_port(g_default_port);
@@ -1201,7 +1201,7 @@ void TCPv4Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port(4000);
     g_output_port = get_port(5000);
     g_input_port = get_port(5010);

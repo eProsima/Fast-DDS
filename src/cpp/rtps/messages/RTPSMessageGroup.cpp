@@ -25,7 +25,7 @@
 #include "RTPSGapBuilder.hpp"
 #include "RTPSMessageGroup_t.hpp"
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <algorithm>
 

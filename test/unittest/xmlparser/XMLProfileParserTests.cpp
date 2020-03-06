@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/log/Log.h>
-#include <fastrtps/log/FileConsumer.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
@@ -28,6 +28,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
+
+using eprosima::fastdds::dds::Log;
+using eprosima::fastdds::dds::LogMock;
+using eprosima::fastdds::dds::LogConsumer;
 
 // Initialize Log mock
 LogMock* log_mock;
@@ -613,6 +617,8 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
+    using namespace eprosima::fastdds::dds;
+
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
@@ -626,6 +632,8 @@ TEST_F(XMLProfileParserTests, log_inactive)
 
 TEST_F(XMLProfileParserTests, file_and_default)
 {
+    using namespace eprosima::fastdds::dds;
+
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
 }

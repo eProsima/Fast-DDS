@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 #include <thread>
 #include <memory>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <asio.hpp>
 #include <MockReceiverResource.h>
 
@@ -57,7 +57,7 @@ class TCPv6Tests: public ::testing::Test
 
         ~TCPv6Tests()
         {
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         void HELPER_SetDescriptorDefaults();
@@ -163,7 +163,7 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
 /*
 TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -348,7 +348,7 @@ void TCPv6Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);

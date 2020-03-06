@@ -21,7 +21,7 @@
 #include "HelloWorldSubscriber.h"
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima;
 using namespace fastrtps;
@@ -40,11 +40,11 @@ int main(int argc, char** argv)
     else
     {
         std::cout << "publisher OR subscriber argument needed"<<std::endl;
-        Log::Reset();
+        eprosima::fastdds::dds::Log::Reset();
         return 0;
     }
 
-    //Log::SetVerbosity(Log::Info);
+    //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     //Log::SetCategoryFilter(std::regex("(SECURITY)"));
 
     switch(type)
@@ -69,6 +69,6 @@ int main(int argc, char** argv)
             }
     }
     Domain::stopAll();
-    Log::Reset();
+    eprosima::fastdds::dds::Log::Reset();
     return 0;
 }

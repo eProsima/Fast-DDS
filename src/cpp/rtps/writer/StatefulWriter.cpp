@@ -34,7 +34,7 @@
 
 #include <fastdds/rtps/history/WriterHistory.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
