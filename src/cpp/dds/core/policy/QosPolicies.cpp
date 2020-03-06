@@ -40,6 +40,55 @@ uint32_t QosPolicy::get_cdr_serialized_size(
     return 2 + 2 + 4 + data_size;
 }
 
+bool QosPolicy::serialize_generic_data(
+        CDRMessage_t* msg,
+        uint16_t pid,
+        const std::vector<fastrtps::rtps::octet>& data)
+{
+    bool valid = CDRMessage::addUInt16(msg, pid);
+    uint16_t siz = static_cast<uint16_t>(data.size());
+    siz = (siz + 3) & ~3;
+    valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(4 + siz));
+    valid &= CDRMessage::addOctetVector(msg, &data, true);
+    return valid;
+}
+
+bool QosPolicy::deserialize_generic_data(
+        CDRMessage_t* msg,
+        uint16_t size,
+        size_t max_size,
+        std::vector<fastrtps::rtps::octet>& data)
+{
+    uint32_t pos_ref = msg->pos;
+
+    // Read size of data
+    uint32_t len;
+    if (!CDRMessage::readUInt32(msg, &len))
+    {
+        return false;
+    }
+
+    if ( (len + sizeof(uint32_t) > size)  // Exceeds parameter length
+        || (len > max_size) )             // Exceeds size limit
+    {
+        return false;
+    }
+
+    // Either the data is size limited and already has max_size() allocated
+    // or it is not limited and we resize if needed
+    data.resize(len);
+    if (!CDRMessage::readData(msg, data.data(), len))
+    {
+        return false;
+    }
+
+    // Skip padding
+    msg->pos += ( (len + 3) & ~3) - len;
+
+    // Should have consumed whole size
+    return (pos_ref + size == msg->pos);
+}
+
 bool DurabilityQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {

@@ -89,6 +89,17 @@ public:
     static uint32_t get_cdr_serialized_size(
             const std::vector<fastrtps::rtps::octet>& data);
 
+    static bool serialize_generic_data(
+            fastrtps::rtps::CDRMessage_t* msg,
+            uint16_t pid,
+            const std::vector<fastrtps::rtps::octet>& data);
+
+    static bool deserialize_generic_data(
+            fastrtps::rtps::CDRMessage_t* msg,
+            uint16_t size,
+            size_t max_size,
+            std::vector<fastrtps::rtps::octet>& data);
+
 protected:
 
     bool send_always_;
