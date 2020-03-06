@@ -613,40 +613,41 @@ public:
 
 
 /**
- * Class UserDataQosPolicy, to transmit user data during the discovery phase.
+ * Class GenericDataQosPolicy, base class to transmit user data during the discovery phase.
  */
-class UserDataQosPolicy : public Parameter_t, public QosPolicy, public ResourceLimitedVector<rtps::octet>
+template<ParameterId_t TPid>
+class GenericDataQosPolicy : public Parameter_t, public QosPolicy, public ResourceLimitedVector<rtps::octet>
 {
     using ResourceLimitedOctetVector = ResourceLimitedVector<rtps::octet>;
 
 public:
 
-    RTPS_DllAPI UserDataQosPolicy()
-        : Parameter_t(PID_USER_DATA, 0)
+    RTPS_DllAPI GenericDataQosPolicy()
+        : Parameter_t(TPid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
     }
 
-    RTPS_DllAPI UserDataQosPolicy(
+    RTPS_DllAPI GenericDataQosPolicy(
             uint16_t in_length)
-        : Parameter_t(PID_USER_DATA, in_length)
+        : Parameter_t(TPid, in_length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
     }
 
     /**
-     * Construct from another UserDataQosPolicy.
+     * Construct from another GenericDataQosPolicy.
      *
-     * The resulting UserDataQosPolicy will have the same size limits
+     * The resulting GenericDataQosPolicy will have the same size limits
      * as the input attribute
      *
      * @param data data to copy in the newly created object
      */
-    RTPS_DllAPI UserDataQosPolicy(
-            const UserDataQosPolicy& data)
-        : Parameter_t(PID_USER_DATA, data.length)
+    RTPS_DllAPI GenericDataQosPolicy(
+            const GenericDataQosPolicy& data)
+        : Parameter_t(TPid, data.length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector(data)
     {
@@ -656,20 +657,20 @@ public:
      * Construct from underlying collection type.
      *
      * Useful to easy integration on old APIs where a traditional container was used.
-     * The resulting UserDataQosPolicy will always be unlimited in size
+     * The resulting GenericDataQosPolicy will always be unlimited in size
      *
      * @param data data to copy in the newly created object
      */
-    RTPS_DllAPI UserDataQosPolicy(
+    RTPS_DllAPI GenericDataQosPolicy(
             const collection_type& data)
-        : Parameter_t(PID_USER_DATA, 0)
+        : Parameter_t(TPid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
         assign(data.begin(), data.end());
     }
 
-    virtual RTPS_DllAPI ~UserDataQosPolicy()
+    virtual RTPS_DllAPI ~GenericDataQosPolicy()
     {
     }
 
@@ -677,14 +678,14 @@ public:
      * Copies data from underlying collection type.
      *
      * Useful to easy integration on old APIs where a traditional container was used.
-     * The resulting UserDataQosPolicy will keep the current size limit.
+     * The resulting GenericDataQosPolicy will keep the current size limit.
      * If the input data is larger than the current limit size, the elements exceeding
      * that maximum will be silently discarded.
      *
      * @param b object to be copied
      * @return reference to the current object.
      */
-    UserDataQosPolicy& operator =(
+    GenericDataQosPolicy& operator =(
             const collection_type& b)
     {
         if (collection_ != b)
@@ -698,16 +699,16 @@ public:
     }
 
     /**
-     * Copies another UserDataQosPolicy.
+     * Copies another GenericDataQosPolicy.
      *
-     * The resulting UserDataQosPolicy will have the same size limit
+     * The resulting GenericDataQosPolicy will have the same size limit
      * as the input parameter, so all data in the input will be copied.
      *
      * @param b object to be copied
      * @return reference to the current object.
      */
-    UserDataQosPolicy& operator =(
-            const UserDataQosPolicy& b)
+    GenericDataQosPolicy& operator =(
+            const GenericDataQosPolicy& b)
     {
         QosPolicy::operator=(b);
         Parameter_t::operator=(b);
@@ -718,7 +719,7 @@ public:
     }
 
     bool operator ==(
-            const UserDataQosPolicy& b) const
+            const GenericDataQosPolicy& b) const
     {
         return collection_ == b.collection_ &&
                Parameter_t::operator ==(b) &&
@@ -774,7 +775,10 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) const override;
+            rtps::CDRMessage_t* msg) const override
+    {
+        return QosPolicy::serialize_generic_data(msg, Pid, collection_);
+    }
 
     /**
      * Reads QoS from the specified CDR message
@@ -784,7 +788,16 @@ public:
      */
     bool readFromCDRMessage(
             rtps::CDRMessage_t* msg,
-            uint16_t size) override;
+            uint16_t size) override
+    {
+        if (QosPolicy::deserialize_generic_data(msg, size, max_size(), collection_))
+        {
+            length = size;
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Returns raw data vector.
@@ -806,6 +819,7 @@ public:
     }
 };
 
+using UserDataQosPolicy = GenericDataQosPolicy<PID_USER_DATA>;
 /**
  * Class TimeBasedFilterQosPolicy, to indicate the Time Based Filter Qos.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.

@@ -421,38 +421,6 @@ bool PartitionQosPolicy::readFromCDRMessage(
     return valid;
 }
 
-bool UserDataQosPolicy::addToCDRMessage(
-        CDRMessage_t* msg) const
-{
-    bool valid = CDRMessage::addUInt16(msg, Pid);
-    uint32_t siz = (uint32_t)size();
-    uint32_t align = ((siz + 3) & ~3) - siz;
-    valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(4 + siz));
-    valid &= CDRMessage::addUInt32(msg, siz);
-    valid &= CDRMessage::addData(msg, collection_.data(), siz);
-    for (uint32_t count = 0; count < align; ++count)
-    {
-        valid &= CDRMessage::addOctet(msg, 0);
-    }
-
-    return valid;
-}
-
-bool UserDataQosPolicy::readFromCDRMessage(
-        CDRMessage_t* msg,
-        uint16_t size)
-{
-    if (size > max_size())
-    {
-        return false;
-    }
-    length = size;
-
-    //Either the data is size limited and already has max_size() allocated
-    // or it is not limited and readOctedVector will resize if needed
-    return CDRMessage::readOctetVector(msg, &collection_);
-}
-
 bool TopicDataQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {
