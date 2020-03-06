@@ -114,8 +114,6 @@ typedef enum DurabilityQosPolicyKind : fastrtps::rtps::octet
  */
 class DurabilityQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI DurabilityQosPolicy()
@@ -205,8 +203,6 @@ public:
  */
 class DeadlineQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI DeadlineQosPolicy()
@@ -264,8 +260,6 @@ public:
  */
 class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI LatencyBudgetQosPolicy()
@@ -338,8 +332,6 @@ typedef enum LivelinessQosPolicyKind : fastrtps::rtps::octet
  */
 class LivelinessQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI LivelinessQosPolicy()
@@ -410,8 +402,6 @@ typedef enum ReliabilityQosPolicyKind : fastrtps::rtps::octet
  */
 class ReliabilityQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI ReliabilityQosPolicy()
@@ -496,8 +486,6 @@ enum OwnershipQosPolicyKind : fastrtps::rtps::octet
  */
 class OwnershipQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI OwnershipQosPolicy()
@@ -566,8 +554,6 @@ enum DestinationOrderQosPolicyKind : fastrtps::rtps::octet
  */
 class DestinationOrderQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI DestinationOrderQosPolicy()
@@ -625,7 +611,6 @@ public:
 class UserDataQosPolicy : public Parameter_t, public QosPolicy,
     public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
 {
-    friend class ParameterList;
     using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>;
 
 public:
@@ -823,8 +808,6 @@ public:
  */
 class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI TimeBasedFilterQosPolicy()
@@ -896,8 +879,6 @@ enum PresentationQosPolicyAccessScopeKind : fastrtps::rtps::octet
  */
 class PresentationQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI PresentationQosPolicy()
@@ -1009,7 +990,6 @@ public:
  */
 class PartitionQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
     friend class fastrtps::rtps::EDP;
 
 public:
@@ -1287,8 +1267,6 @@ private:
  */
 class TopicDataQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI TopicDataQosPolicy()
@@ -1379,8 +1357,6 @@ private:
  */
 class GroupDataQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI GroupDataQosPolicy()
@@ -1483,8 +1459,6 @@ enum HistoryQosPolicyKind : fastrtps::rtps::octet
  */
 class HistoryQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI HistoryQosPolicy()
@@ -1547,8 +1521,6 @@ public:
  */
 class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     int32_t max_samples;
@@ -1621,8 +1593,6 @@ public:
  */
 class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI DurabilityServiceQosPolicy()
@@ -1693,8 +1663,6 @@ public:
  */
 class LifespanQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI LifespanQosPolicy()
@@ -1751,8 +1719,6 @@ public:
  */
 class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI OwnershipStrengthQosPolicy()
@@ -1812,8 +1778,6 @@ public:
  */
 class TransportPriorityQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     uint32_t value;
@@ -1912,8 +1876,6 @@ typedef enum DataRepresentationId : int16_t
  */
 class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     std::vector<DataRepresentationId_t> m_value;
@@ -1979,8 +1941,6 @@ enum TypeConsistencyKind : uint16_t
  */
 class TypeConsistencyEnforcementQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     TypeConsistencyKind m_kind;
@@ -2046,8 +2006,6 @@ public:
  */
 class DisablePositiveACKsQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     RTPS_DllAPI DisablePositiveACKsQosPolicy()
@@ -2107,8 +2065,6 @@ public:
  */
 class TypeIdV1 : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     fastrtps::types::TypeIdentifier m_type_identifier;
@@ -2209,8 +2165,6 @@ public:
  */
 class TypeObjectV1 : public Parameter_t, public QosPolicy
 {
-    friend class ParameterList;
-
 public:
 
     fastrtps::types::TypeObject m_type_object;
