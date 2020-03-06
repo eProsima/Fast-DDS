@@ -615,23 +615,24 @@ public:
 /**
  * Class GenericDataQosPolicy, base class to transmit user data during the discovery phase.
  */
-template<ParameterId_t TPid>
 class GenericDataQosPolicy : public Parameter_t, public QosPolicy, public ResourceLimitedVector<rtps::octet>
 {
     using ResourceLimitedOctetVector = ResourceLimitedVector<rtps::octet>;
 
 public:
 
-    RTPS_DllAPI GenericDataQosPolicy()
-        : Parameter_t(TPid, 0)
+    RTPS_DllAPI GenericDataQosPolicy(
+            ParameterId_t pid)
+        : Parameter_t(pid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
     }
 
     RTPS_DllAPI GenericDataQosPolicy(
+            ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(TPid, in_length)
+        : Parameter_t(pid, in_length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
@@ -647,7 +648,7 @@ public:
      */
     RTPS_DllAPI GenericDataQosPolicy(
             const GenericDataQosPolicy& data)
-        : Parameter_t(TPid, data.length)
+        : Parameter_t(data.Pid, data.length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector(data)
     {
@@ -662,12 +663,14 @@ public:
      * @param data data to copy in the newly created object
      */
     RTPS_DllAPI GenericDataQosPolicy(
+            ParameterId_t pid,
             const collection_type& data)
-        : Parameter_t(TPid, 0)
+        : Parameter_t(pid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
         assign(data.begin(), data.end());
+        length = (size() + 7) & ~3;
     }
 
     virtual RTPS_DllAPI ~GenericDataQosPolicy()
@@ -774,7 +777,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool inline addToCDRMessage(
             rtps::CDRMessage_t* msg) const override
     {
         return QosPolicy::serialize_generic_data(msg, Pid, collection_);
@@ -786,7 +789,7 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(
+    bool inline readFromCDRMessage(
             rtps::CDRMessage_t* msg,
             uint16_t size) override
     {
@@ -838,9 +841,61 @@ public:
     }
 };
 
-using UserDataQosPolicy = GenericDataQosPolicy<PID_USER_DATA>;
-using TopicDataQosPolicy = GenericDataQosPolicy<PID_TOPIC_DATA>;
-using GroupDataQosPolicy = GenericDataQosPolicy<PID_GROUP_DATA>;
+/**
+ * Class TemplateDataQosPolicy, base template for user data qos policies.
+ */
+template<ParameterId_t TPid>
+class TemplateDataQosPolicy : public GenericDataQosPolicy
+{
+public:
+
+    RTPS_DllAPI TemplateDataQosPolicy()
+        : GenericDataQosPolicy(TPid)
+    {
+    }
+
+    RTPS_DllAPI TemplateDataQosPolicy(
+            uint16_t in_length)
+        : GenericDataQosPolicy(TPid, in_length)
+    {
+    }
+
+    /**
+     * Construct from another TemplateDataQosPolicy.
+     *
+     * The resulting TemplateDataQosPolicy will have the same size limits
+     * as the input attribute
+     *
+     * @param data data to copy in the newly created object
+     */
+    RTPS_DllAPI TemplateDataQosPolicy(
+            const TemplateDataQosPolicy& data)
+        : GenericDataQosPolicy(data)
+    {
+    }
+
+    /**
+     * Construct from underlying collection type.
+     *
+     * Useful to easy integration on old APIs where a traditional container was used.
+     * The resulting TemplateDataQosPolicy will always be unlimited in size
+     *
+     * @param data data to copy in the newly created object
+     */
+    RTPS_DllAPI TemplateDataQosPolicy(
+            const collection_type& data)
+        : GenericDataQosPolicy(TPid, data)
+    {
+    }
+
+    virtual RTPS_DllAPI ~TemplateDataQosPolicy()
+    {
+    }
+};
+
+using UserDataQosPolicy = TemplateDataQosPolicy<PID_USER_DATA>;
+using TopicDataQosPolicy = TemplateDataQosPolicy<PID_TOPIC_DATA>;
+using GroupDataQosPolicy = TemplateDataQosPolicy<PID_GROUP_DATA>;
 
 /**
  * Class TimeBasedFilterQosPolicy, to indicate the Time Based Filter Qos.
