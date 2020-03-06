@@ -1791,6 +1791,8 @@ public:
         std::swap(*this, reset);
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
