@@ -75,6 +75,11 @@ public:
         return SequenceNumber_t(0, 0);
     }
 
+    SequenceNumber_t next_sequence_number() const
+    {
+        return mp_history->next_sequence_number();
+    }
+
 private:
 
     friend class ReaderProxy;

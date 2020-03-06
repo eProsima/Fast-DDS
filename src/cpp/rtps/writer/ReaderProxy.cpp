@@ -102,6 +102,7 @@ void ReaderProxy::start(
     expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
     is_reliable_ = reader_attributes.m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS;
     disable_positive_acks_ = reader_attributes.disable_positive_acks();
+    acked_changes_set(SequenceNumber_t());  // Simulate initial acknack to set low mark
 
     timers_enabled_.store(is_remote_and_reliable());
     if (is_local_reader())
@@ -289,7 +290,8 @@ void ReaderProxy::acked_changes_set(
         if (seq_num == SequenceNumber_t())
         {
             // Special case. Currently only used on Builtin StatefulWriters
-            // after losing lease duration.
+            // after losing lease duration, and on late joiners to set
+            // changes_low_mark_ to match that of the writer.
             SequenceNumber_t min_sequence = writer_->get_seq_num_min();
             if (min_sequence != SequenceNumber_t::unknown())
             {
@@ -330,6 +332,10 @@ void ReaderProxy::acked_changes_set(
                 {
                     std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
                 }
+            }
+            else if (!is_local_reader())
+            {
+                future_low_mark = writer_->next_sequence_number();
             }
         }
     }

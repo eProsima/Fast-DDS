@@ -77,6 +77,11 @@ class WriterHistory
             }
         }
 
+        SequenceNumber_t next_sequence_number() const
+        {
+            return last_sequence_number_ + 1;
+        }
+
         HistoryAttributes m_att;
 
     private:
