@@ -19,7 +19,7 @@
 
 #include "LatencyTestPublisher.hpp"
 #include <fastdds/dds/log/Log.hpp>
-#include "fastrtps/log/Colors.h"
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <numeric>

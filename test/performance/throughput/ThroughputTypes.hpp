@@ -22,7 +22,7 @@
 
 #include <fastrtps/TopicDataType.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/log/Colors.h>
+#include <fastdds/dds/log/Colors.hpp>
 
 #include <chrono>
 
