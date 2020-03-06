@@ -22,7 +22,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <dds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 
