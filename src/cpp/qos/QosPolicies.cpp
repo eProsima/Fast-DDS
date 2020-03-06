@@ -421,50 +421,6 @@ bool PartitionQosPolicy::readFromCDRMessage(
     return valid;
 }
 
-bool TopicDataQosPolicy::addToCDRMessage(
-        CDRMessage_t* msg) const
-{
-    bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addOctetVector(msg, &value);
-    return valid;
-}
-
-bool TopicDataQosPolicy::readFromCDRMessage(
-        CDRMessage_t* msg,
-        uint16_t size)
-{
-    length = size;
-
-    uint32_t pos_ref = msg->pos;
-    bool valid = CDRMessage::readOctetVector(msg, &value);
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
-    return valid;
-}
-
-bool GroupDataQosPolicy::addToCDRMessage(
-        CDRMessage_t* msg) const
-{
-    bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addOctetVector(msg, &value);
-    return valid;
-}
-
-bool GroupDataQosPolicy::readFromCDRMessage(
-        CDRMessage_t* msg,
-        uint16_t size)
-{
-    length = size;
-
-    uint32_t pos_ref = msg->pos;
-    bool valid = CDRMessage::readOctetVector(msg, &value);
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
-    return valid;
-}
-
 bool HistoryQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {

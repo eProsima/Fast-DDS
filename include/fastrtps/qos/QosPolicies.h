@@ -817,9 +817,31 @@ public:
     {
         assign(vec.begin(), vec.end());
     }
+
+    /**
+     * Returns raw data vector.
+     * @return raw data as vector of octets.
+     * */
+    RTPS_DllAPI inline std::vector<rtps::octet> getValue() const
+    {
+        return collection_;
+    }
+
+    /**
+     * Sets raw data vector.
+     * @param vec raw data to set.
+     * */
+    RTPS_DllAPI inline void setValue(
+            const std::vector<rtps::octet>& vec)
+    {
+        assign(vec.begin(), vec.end());
+    }
 };
 
 using UserDataQosPolicy = GenericDataQosPolicy<PID_USER_DATA>;
+using TopicDataQosPolicy = GenericDataQosPolicy<PID_TOPIC_DATA>;
+using GroupDataQosPolicy = GenericDataQosPolicy<PID_GROUP_DATA>;
+
 /**
  * Class TimeBasedFilterQosPolicy, to indicate the Time Based Filter Qos.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
@@ -1282,207 +1304,6 @@ private:
     uint32_t max_size_;
     rtps::SerializedPayload_t partitions_;
     uint32_t Npartitions_;
-};
-
-
-/**
- * Class TopicDataQosPolicy, to indicate the Topic Data.
- */
-class TopicDataQosPolicy : public Parameter_t, public QosPolicy
-{
-public:
-
-    RTPS_DllAPI TopicDataQosPolicy()
-        : Parameter_t(PID_TOPIC_DATA, 0)
-        , QosPolicy(false)
-        , value{}
-    {
-    }
-
-    RTPS_DllAPI TopicDataQosPolicy(
-            uint16_t in_length)
-        : Parameter_t(PID_TOPIC_DATA, in_length)
-        , QosPolicy(false)
-        , value{}
-    {
-    }
-
-    virtual RTPS_DllAPI ~TopicDataQosPolicy()
-    {
-    }
-
-    bool operator ==(
-            const TopicDataQosPolicy& b) const
-    {
-        return (this->value == b.value) &&
-               Parameter_t::operator ==(b) &&
-               QosPolicy::operator ==(b);
-    }
-
-    virtual uint32_t cdr_serialized_size() const override
-    {
-        return QosPolicy::get_cdr_serialized_size(value);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
-    /**
-     * Appends topic data.
-     * @param oc Data octet.
-     */
-    RTPS_DllAPI inline void push_back(
-            rtps::octet oc)
-    {
-        value.push_back(oc);
-    }
-
-    /**
-     * Clears all topic data.
-     */
-    RTPS_DllAPI inline void clear() override
-    {
-        value.clear();
-        hasChanged = true;
-    }
-
-    /**
-     * Overrides topic data vector.
-     * @param ocv Topic data octet vector.
-     */
-    RTPS_DllAPI inline void setValue(
-            std::vector<rtps::octet> ocv)
-    {
-        value = ocv;
-    }
-
-    /**
-     * Returns topic data
-     * @return Vector of data octets.
-     */
-    RTPS_DllAPI inline std::vector<rtps::octet> getValue() const
-    {
-        return value;
-    }
-
-private:
-
-    std::vector<rtps::octet> value;
-};
-
-/**
- * Class GroupDataQosPolicy, to indicate the Group Data.
- */
-class GroupDataQosPolicy : public Parameter_t, public QosPolicy
-{
-public:
-
-    RTPS_DllAPI GroupDataQosPolicy()
-        : Parameter_t(PID_GROUP_DATA, 0)
-        , QosPolicy(false)
-        , value{}
-    {
-    }
-
-    RTPS_DllAPI GroupDataQosPolicy(
-            uint16_t in_length)
-        : Parameter_t(PID_GROUP_DATA, in_length)
-        , QosPolicy(false)
-        , value{}
-    {
-    }
-
-    virtual RTPS_DllAPI ~GroupDataQosPolicy()
-    {
-    }
-
-    bool operator ==(
-            const GroupDataQosPolicy& b) const
-    {
-        return (this->value == b.value) &&
-               Parameter_t::operator ==(b) &&
-               QosPolicy::operator ==(b);
-    }
-
-    virtual uint32_t cdr_serialized_size() const override
-    {
-        return QosPolicy::get_cdr_serialized_size(value);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
-    /**
-     * Appends group data.
-     * @param oc Data octet.
-     */
-    RTPS_DllAPI inline void push_back(
-            rtps::octet oc)
-    {
-        value.push_back(oc);
-    }
-
-    /**
-     * Clears all group data.
-     */
-    RTPS_DllAPI inline void clear() override
-    {
-        value.clear();
-        hasChanged = true;
-    }
-
-    /**
-     * Overrides group data vector.
-     * @param ocv Group data octet vector.
-     */
-    RTPS_DllAPI inline void setValue(
-            std::vector<rtps::octet> ocv)
-    {
-        value = ocv;
-    }
-
-    /**
-     * Returns group data
-     * @return Vector of data octets.
-     */
-    RTPS_DllAPI inline std::vector<rtps::octet> getValue() const
-    {
-        return value;
-    }
-
-private:
-
-    std::vector<rtps::octet> value;
 };
 
 /**
