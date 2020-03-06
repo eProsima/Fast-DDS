@@ -280,6 +280,175 @@ public:
         }
     }
 
+    struct IteratorIndex
+    {
+        size_t selections_index;
+        size_t state_index;
+        bool state_multicast_done;
+        Locator_t* locator;
+    };
+
+    class iterator : public std::iterator<
+            std::input_iterator_tag,                    // iterator_category
+            Locator_t,                                  // value_type
+            IteratorIndex,                              // difference_type
+            Locator_t*,                                 // pointer
+            Locator_t&>,                                 // reference
+        public LocatorsIterator
+    {
+        const LocatorSelector& locator_selector_;
+        IteratorIndex current_;
+
+        void go_to_next_entry()
+        {
+            // While entries selected
+            while (++current_.selections_index < locator_selector_.selections_.size())
+            {
+                LocatorSelectorEntry* entry =
+                        locator_selector_.entries_.at(locator_selector_.selections_[current_.selections_index]);
+
+                // No multicast locators in this entry
+                if (entry->state.multicast.size() == 0)
+                {
+                    // But there's unicast
+                    if (entry->state.unicast.size() > 0)
+                    {
+                        current_.locator = &entry->unicast[entry->state.unicast.at(0)];
+                        return;
+                    }
+                }
+                else     // process multicast
+                {
+                    current_.state_multicast_done = false;
+                    current_.locator = &entry->multicast[entry->state.multicast.at(0)];
+                    return;
+                }
+            }
+
+            current_.locator = nullptr;
+        }
+
+    public:
+
+        enum class Position
+        {
+            Begin,
+            End
+        };
+
+        explicit iterator(
+                const LocatorSelector& locator_selector,
+                Position index_pos)
+            : locator_selector_(locator_selector)
+        {
+            current_ = {std::numeric_limits<size_t>::max(),0,true, nullptr};
+
+            if (index_pos == Position::Begin)
+            {
+                go_to_next_entry();
+            }
+        }
+
+		iterator(const iterator& other)
+			: locator_selector_(other.locator_selector_)
+			, current_(other.current_)
+		{
+		}
+
+        iterator& operator++()
+        {
+            // Shouldn't call ++ when index already at the end
+            assert(current_.selections_index < locator_selector_.selections_.size());
+
+            LocatorSelectorEntry* entry =
+                    locator_selector_.entries_.at(locator_selector_.selections_[current_.selections_index]);
+
+            // Index at unicast locators
+            if (current_.state_multicast_done)
+            {
+                // No more unicast locators selected
+                if (++current_.state_index >= entry->state.unicast.size())
+                {
+                    current_.state_index = 0;
+                    go_to_next_entry();
+                }
+                else     // current unicast locator
+                {
+                    current_.locator = &entry->unicast[entry->state.unicast.at(current_.state_index)];
+                }
+            }
+            else     // Index at multicast locators
+            {
+                // No more multicast locators selected
+                if (++current_.state_index >= entry->state.multicast.size())
+                {
+                    // Reset index to process unicast
+                    current_.state_multicast_done = true;
+                    current_.state_index = 0;
+                    // No unicast locators
+                    if (current_.state_index >= entry->state.unicast.size())
+                    {
+                        go_to_next_entry();
+                    }
+                    else     // current unicast locator
+                    {
+                        current_.locator = &entry->unicast[entry->state.unicast.at(current_.state_index)];
+                    }
+                }
+                else     // current multicast locator
+                {
+                    current_.locator = &entry->multicast[entry->state.multicast.at(current_.state_index)];
+                }
+            }
+
+            return *this;
+        }
+
+        bool operator==(
+                const LocatorsIterator& other) const
+        {
+            return *this == static_cast<const iterator&>(other);
+        }
+
+        bool operator!=(
+                const LocatorsIterator& other) const
+        {
+            return !(*this == other);
+        }
+
+        bool operator==(
+                const iterator& other) const
+        {
+            return (current_.locator == other.current_.locator);
+        }
+
+        bool operator!=(
+                const iterator& other) const
+        {
+            return !(*this == other);
+        }
+
+        pointer operator->() const
+        {
+            return current_.locator;
+        }
+
+        reference operator*() const
+        {
+            return *current_.locator;
+        }
+    };
+
+    iterator begin() const
+    {
+        return iterator(*this, iterator::Position::Begin);
+    }
+
+    iterator end() const
+    {
+        return iterator(*this, iterator::Position::End);
+    }
+
 private:
     //! Entries collection.
     ResourceLimitedVector<LocatorSelectorEntry*> entries_;

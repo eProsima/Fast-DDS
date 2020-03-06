@@ -208,6 +208,70 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
 typedef std::vector<Locator_t>::const_iterator LocatorListConstIterator;
 
 /**
+ * Provides a Locator's iterator interface that can by used by different Locator's
+ * containers
+ */
+class LocatorsIterator
+{
+public:
+
+    virtual LocatorsIterator& operator++() = 0;
+    virtual bool operator==(
+            const LocatorsIterator& other) const = 0;
+    virtual bool operator!=(
+            const LocatorsIterator& other) const = 0;
+    virtual const Locator_t& operator*() const = 0;
+};
+
+/**
+ * Adapter class that provides a LocatorsIterator interface from a LocatorListConstIterator
+ */
+class Locators : public LocatorsIterator
+{
+public:
+
+    Locators(
+            const LocatorListConstIterator& it)
+        : it_(it)
+    {
+    }
+
+	Locators(
+		const Locators& other)
+		: it_(other.it_)
+	{
+	}
+
+    LocatorsIterator& operator++()
+    {
+        ++it_;
+        return *this;
+    }
+
+    bool operator==(
+            const LocatorsIterator& other) const
+    {
+        return it_ == static_cast<const Locators&>(other).it_;
+    }
+
+    bool operator!=(
+            const LocatorsIterator& other) const
+    {
+        return it_ != static_cast<const Locators&>(other).it_;
+    }
+
+    const Locator_t& operator*() const
+    {
+        return (*it_);
+    }
+
+private:
+
+    LocatorListConstIterator it_;
+};
+
+
+/**
     * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.
     * @ingroup COMMON_MODULE
     */

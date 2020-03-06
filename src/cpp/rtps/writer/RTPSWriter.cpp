@@ -285,19 +285,9 @@ bool RTPSWriter::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    bool ret_val = true;
-
     RTPSParticipantImpl* participant = getRTPSParticipant();
-    locator_selector_.for_each(
-        [participant, message, &max_blocking_time_point, &ret_val](const Locator_t& loc)
-                {
-                    if (ret_val)
-                    {
-                        ret_val = participant->sendSync(message, loc, max_blocking_time_point);
-                    }
-                });
 
-    return ret_val;
+    return participant->sendSync(message, locator_selector_.begin(), locator_selector_.end(), max_blocking_time_point);
 }
 
 const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const

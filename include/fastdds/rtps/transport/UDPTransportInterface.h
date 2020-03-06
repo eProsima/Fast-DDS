@@ -93,17 +93,21 @@ public:
    * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
    * It must not exceed the send_buffer_size fed to this class during construction.
    * @param socket channel we're sending from.
-   * @param remote_locator Locator describing the remote destination we're sending to.
+   * @param destination_locators_begin pointer to destination locators iterator begin, the iterator can be advanced inside this fuction
+   * so should not be reuse.
+   * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
+   * so should not be reuse.
    * @param only_multicast_purpose
-   * @param timeout Maximum time this function will block
+   * @param max_blocking_time_point maximum blocking time.
    */
    virtual bool send(
            const fastrtps::rtps::octet* send_buffer,
            uint32_t send_buffer_size,
            eProsimaUDPSocket& socket,
-           const fastrtps::rtps::Locator_t& remote_locator,
+           fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+           fastrtps::rtps::LocatorsIterator* destination_locators_end,
            bool only_multicast_purpose,
-           const std::chrono::microseconds& timeout);
+           const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     /**
      * Performs the locator selection algorithm for this transport.
@@ -182,6 +186,17 @@ protected:
     virtual void set_receive_buffer_size(uint32_t size) = 0;
     virtual void set_send_buffer_size(uint32_t size) = 0;
     virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) = 0;
+
+    /**
+     * Send a buffer to a destination
+     */
+    bool send(
+        const fastrtps::rtps::octet* send_buffer,
+        uint32_t send_buffer_size,
+        eProsimaUDPSocket& socket,
+        const fastrtps::rtps::Locator_t& remote_locator,
+        bool only_multicast_purpose,
+        const std::chrono::microseconds& timeout);
 };
 
 } // namespace rtps

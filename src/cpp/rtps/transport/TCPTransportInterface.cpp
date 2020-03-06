@@ -989,8 +989,33 @@ bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
         std::shared_ptr<TCPChannelResource>& channel,
+        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end)
+{
+    fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
+
+    bool ret = true;
+
+    while (it != *destination_locators_end)
+    {
+        ret &= send(send_buffer, send_buffer_size, channel,*it);
+        ++it;
+    }
+
+    return ret;
+}
+
+bool TCPTransportInterface::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        std::shared_ptr<TCPChannelResource>& channel,
         const Locator_t& remote_locator)
 {
+    if (!IsLocatorSupported(remote_locator))
+    {
+        return false;
+    }
+
     bool locator_mismatch = false;
 
     if (channel->locator() != IPLocator::toPhysicalLocator(remote_locator))

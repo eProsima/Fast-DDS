@@ -564,15 +564,12 @@ bool WriterProxy::send(
         return true;
     }
 
-    for (const Locator_t& locator : remote_locators_shrinked())
-    {
-        if (!reader_->send_sync_nts(message, locator, max_blocking_time_point))
-        {
-            return false;
-        }
-    }
-
-    return true;
+    ResourceLimitedVector<Locator_t> remote_locators = remote_locators_shrinked();
+    
+    return reader_->send_sync_nts(message,
+                   Locators(remote_locators.begin()),
+                   Locators(remote_locators.end()),
+                   max_blocking_time_point);
 }
 
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
