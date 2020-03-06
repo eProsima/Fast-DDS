@@ -2249,6 +2249,24 @@ XMLP_ret XMLParser::getXMLDuration(
     // it's mandatory to provide a sec or nanocsec child item
     bool empty = true;
 
+    // First we check if it matches the schema pattern
+    std::regex infinite(DURATION_INFINITY);
+    std::regex infinite_sec(DURATION_INFINITE_SEC);
+    std::regex infinite_nsec(DURATION_INFINITE_NSEC);
+
+    if (std::regex_match(elem->GetText(), infinite))
+    {
+        empty = false;
+        duration = c_TimeInfinite; 
+        
+        if(!elem->NoChildren())
+        {
+            logError(XMLPARSER, "If a Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
+            " <nanosec> subelements.");
+            return XMLP_ret::XML_ERROR;
+        }     
+    }
+
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -2272,13 +2290,12 @@ XMLP_ret XMLParser::getXMLDuration(
                 logError(XMLPARSER, "Node 'SECONDS' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, DURATION_INFINITY) == 0)
+            else if (std::regex_match(text, infinite_sec))
             {
                 duration = c_TimeInfinite;
-            }
-            else if (strcmp(text, DURATION_INFINITE_SEC) == 0)
-            {
-                duration.seconds = c_TimeInfinite.seconds;
+
+                // if either SECONDS or NANOSECONDS is set to infinity then all of it is
+                return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
             {
@@ -2301,13 +2318,12 @@ XMLP_ret XMLParser::getXMLDuration(
                 logError(XMLPARSER, "Node 'NANOSECONDS' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, DURATION_INFINITY) == 0)
+            else if (std::regex_match(text, infinite_nsec))
             {
                 duration = c_TimeInfinite;
-            }
-            else if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
-            {
-                duration.nanosec = c_TimeInfinite.nanosec;
+
+                // if either SECONDS or NANOSECONDS is set to infinity then all of it is
+                return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
             {
