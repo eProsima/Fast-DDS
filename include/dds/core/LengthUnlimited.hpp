@@ -26,7 +26,7 @@
 namespace dds {
 namespace core {
 
-const int32_t LENGTH_UNLIMITED = -1;
+const uint32_t LENGTH_UNLIMITED = 0;
 
 } //namespace core
 } //namespace dds
