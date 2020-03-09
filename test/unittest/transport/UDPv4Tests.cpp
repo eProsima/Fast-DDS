@@ -172,11 +172,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     senderThread->join();
     sem.wait();
 }
@@ -223,11 +223,11 @@ TEST_F(UDPv4Tests, send_to_loopback)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     senderThread->join();
     sem.wait();
 }
@@ -258,7 +258,7 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
-                &locators_begin, &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                &locators_begin, &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
 }
 
 TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -322,7 +322,7 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     IPLocator::setIPv4(outputChannelLocator, 111, 111, 111, 111);
     std::vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin, &locators_end, 
-        (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+        (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
 }
 
 TEST_F(UDPv4Tests, send_to_blocked_interface)
@@ -382,7 +382,7 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
             // Sending through a ALLOWED IP will work
             std::vector<octet> message = { 'H','e','l','l','o' };
             ASSERT_TRUE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(),
-                        &locators_begin, &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                        &locators_begin, &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
         }
     }
 }
@@ -446,11 +446,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     senderThread->join();
     sem.wait();
 }
@@ -504,11 +504,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     senderThread->join();
     sem.wait();
 }
@@ -562,11 +562,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     senderThread->join();
     sem.wait();
 }
