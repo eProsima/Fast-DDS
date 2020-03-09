@@ -86,14 +86,21 @@ if(PYTHONINTERP_FOUND)
             TEST performance.latency.${latency_test_name}
             APPEND PROPERTY ENVIRONMENT "LATENCY_TEST_BIN=$<TARGET_FILE:LatencyTest>"
         )
+
+        # Add environment
         if(WIN32)
             set(WIN_PATH "$ENV{PATH}")
-            set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+            get_target_property(LINK_LIBRARIES_ ${PROJECT_NAME} LINK_LIBRARIES)
+            if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
+            list(APPEND LINK_LIBRARIES_ ${PROJECT_NAME})
+                foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
+                    if(TARGET ${LIBRARY_LINKED})
+                        set(WIN_PATH "$<TARGET_FILE_DIR:${LIBRARY_LINKED}>;${WIN_PATH}")
+                    endif()
+                endforeach()
+            endif()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-            set_property(
-                TEST performance.latency.${latency_test_name}
-                APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
-            )
+            set_property(TEST performance.latency.${latency_test_name}  APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
         endif()
 
         # If there is security, add a secure test as well

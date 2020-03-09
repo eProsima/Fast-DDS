@@ -2234,12 +2234,20 @@ XMLP_ret XMLParser::getXMLDuration(
         uint8_t ident)
 {
     /*
-        <xs:complexType name="durationType">
-            <xs:all>
-                <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0"/>
-                <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="0"/>
-            </xs:all>
-        </xs:complexType>
+    <xs:complexType name="durationType" mixed="true">
+      <xs:sequence>
+        <xs:choice minOccurs="0">
+         <xs:sequence>
+          <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="0" maxOccurs="1"/>
+         </xs:sequence>
+         <xs:sequence>
+          <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+       </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
      */
 
     // set default values
@@ -2253,13 +2261,14 @@ XMLP_ret XMLParser::getXMLDuration(
     std::regex infinite(DURATION_INFINITY);
     std::regex infinite_sec(DURATION_INFINITE_SEC);
     std::regex infinite_nsec(DURATION_INFINITE_NSEC);
+    const char* text = elem->GetText();
 
-    if (std::regex_match(elem->GetText(), infinite))
+    if (text != nullptr && std::regex_match(text, infinite))
     {
         empty = false;
         duration = c_TimeInfinite; 
         
-        if(!elem->NoChildren())
+        if(elem->FirstChildElement() != nullptr)
         {
             logError(XMLPARSER, "If a Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
             " <nanosec> subelements.");
@@ -2278,13 +2287,20 @@ XMLP_ret XMLParser::getXMLDuration(
         if (strcmp(name, SECONDS) == 0)
         {
             /*
-                <xs:simpleType name="nonNegativeInteger_Duration_SEC">
-                    <xs:restriction base="xs:string">
-                        <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_SEC|([0-9])*)?"/>
-                    </xs:restriction>
+               <xs:simpleType name="nonNegativeInteger_Duration_SEC">
+                    <xs:union>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:unsignedInt"/>
+                        </xs:simpleType>
+                    </xs:union>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
+            text = p_aux0->GetText();
             if (nullptr == text)
             {
                 logError(XMLPARSER, "Node 'SECONDS' without content");
@@ -2307,12 +2323,19 @@ XMLP_ret XMLParser::getXMLDuration(
         {
             /*
                 <xs:simpleType name="nonNegativeInteger_Duration_NSEC">
-                    <xs:restriction base="xs:string">
-                        <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_NSEC|([0-9])*)?"/>
-                    </xs:restriction>
+                    <xs:union>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:unsignedInt"/>
+                        </xs:simpleType>
+                    </xs:union>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
+            text = p_aux0->GetText();
             if (nullptr == text)
             {
                 logError(XMLPARSER, "Node 'NANOSECONDS' without content");
