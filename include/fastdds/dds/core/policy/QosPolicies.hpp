@@ -53,11 +53,18 @@ public:
     {
     }
 
-    QosPolicy(
+    explicit QosPolicy(
             bool send_always)
         : hasChanged(false)
         , send_always_(send_always)
     {
+    }
+
+    QosPolicy(
+            const QosPolicy& other)
+    {
+        hasChanged = other.hasChanged;
+        send_always_ = other.send_always();
     }
 
     virtual ~QosPolicy()
@@ -1131,8 +1138,8 @@ public:
     PartitionQosPolicy& operator =(
             const PartitionQosPolicy& b)
     {
-        QosPolicy::operator=(b);
-        Parameter_t::operator=(b);
+        QosPolicy::operator =(b);
+        Parameter_t::operator =(b);
         max_size_ = b.max_size_;
         partitions_.reserve(max_size_ != 0 ?
                 b.partitions_.max_size :
