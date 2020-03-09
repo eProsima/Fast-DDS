@@ -336,7 +336,7 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
             R"(<profiles>
                 <participant><rtps>
                     <allocation>
-                        <max_user_data> 8 </max_user_data>
+                        <max_user_data> 4 </max_user_data>
                         <max_partitions> 28 </max_partitions>
                     </allocation>
                 </rtps></participant>
@@ -378,7 +378,7 @@ TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
             R"(<profiles>
                 <participant><rtps>
                     <allocation>
-                        <max_user_data> 8 </max_user_data>
+                        <max_user_data> 4 </max_user_data>
                     </allocation>
                 </rtps></participant>
             </profiles>)";
