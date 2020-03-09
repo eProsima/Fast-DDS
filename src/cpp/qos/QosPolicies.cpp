@@ -39,6 +39,55 @@ uint32_t QosPolicy::get_cdr_serialized_size(
     return 2 + 2 + 4 + data_size;
 }
 
+bool QosPolicy::serialize_generic_data(
+        rtps::CDRMessage_t* msg,
+        uint16_t pid,
+        const std::vector<rtps::octet>& data)
+{
+    bool valid = CDRMessage::addUInt16(msg, pid);
+    uint16_t siz = static_cast<uint16_t>(data.size());
+    siz = (siz + 3) & ~3;
+    valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(4 + siz));
+    valid &= CDRMessage::addOctetVector(msg, &data, true);
+    return valid;
+}
+
+bool QosPolicy::deserialize_generic_data(
+        rtps::CDRMessage_t* msg,
+        uint16_t size,
+        size_t max_size,
+        std::vector<rtps::octet>& data)
+{
+    uint32_t pos_ref = msg->pos;
+
+    // Read size of data
+    uint32_t len;
+    if (!CDRMessage::readUInt32(msg, &len))
+    {
+        return false;
+    }
+
+    if ( (len + sizeof(uint32_t) > size)  // Exceeds parameter length
+        || (len > max_size) )             // Exceeds size limit
+    {
+        return false;
+    }
+
+    // Either the data is size limited and already has max_size() allocated
+    // or it is not limited and we resize if needed
+    data.resize(len);
+    if (!CDRMessage::readData(msg, data.data(), len))
+    {
+        return false;
+    }
+
+    // Skip padding
+    msg->pos += ( (len + 3) & ~3) - len;
+
+    // Should have consumed whole size
+    return (pos_ref + size == msg->pos);
+}
+
 bool DurabilityQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {
@@ -371,82 +420,6 @@ bool PartitionQosPolicy::readFromCDRMessage(
     return valid;
 }
 
-bool UserDataQosPolicy::addToCDRMessage(
-        CDRMessage_t* msg) const
-{
-    bool valid = CDRMessage::addUInt16(msg, Pid);
-    uint32_t siz = (uint32_t)size();
-    uint32_t align = ((siz + 3) & ~3) - siz;
-    valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(4 + siz));
-    valid &= CDRMessage::addUInt32(msg, siz);
-    valid &= CDRMessage::addData(msg, collection_.data(), siz);
-    for (uint32_t count = 0; count < align; ++count)
-    {
-        valid &= CDRMessage::addOctet(msg, 0);
-    }
-
-    return valid;
-}
-
-bool UserDataQosPolicy::readFromCDRMessage(
-        CDRMessage_t* msg,
-        uint16_t size)
-{
-    if (size > max_size())
-    {
-        return false;
-    }
-    length = size;
-
-    //Either the data is size limited and already has max_size() allocated
-    // or it is not limited and readOctedVector will resize if needed
-    return CDRMessage::readOctetVector(msg, &collection_);
-}
-
-bool TopicDataQosPolicy::addToCDRMessage(
-        CDRMessage_t* msg) const
-{
-    bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addOctetVector(msg, &value);
-    return valid;
-}
-
-bool TopicDataQosPolicy::readFromCDRMessage(
-        CDRMessage_t* msg,
-        uint16_t size)
-{
-    length = size;
-
-    uint32_t pos_ref = msg->pos;
-    bool valid = CDRMessage::readOctetVector(msg, &value);
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
-    return valid;
-}
-
-bool GroupDataQosPolicy::addToCDRMessage(
-        CDRMessage_t* msg) const
-{
-    bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addOctetVector(msg, &value);
-    return valid;
-}
-
-bool GroupDataQosPolicy::readFromCDRMessage(
-        CDRMessage_t* msg,
-        uint16_t size)
-{
-    length = size;
-
-    uint32_t pos_ref = msg->pos;
-    bool valid = CDRMessage::readOctetVector(msg, &value);
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
-    return valid;
-}
-
 bool HistoryQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {
@@ -610,13 +583,33 @@ bool TransportPriorityQosPolicy::readFromCDRMessage(
     return CDRMessage::readUInt32(msg, &value);
 }
 
+uint32_t DataRepresentationQosPolicy::cdr_serialized_size() const
+{
+    // Size of data
+    uint32_t data_size = static_cast<uint32_t>(m_value.size() * sizeof(uint16_t));
+    // Align to next 4 byte
+    data_size = (data_size + 3) & ~3;
+    // p_id + p_length + data_size + data
+    return 2 + 2 + 4 + data_size;
+}
+
 bool DataRepresentationQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {
-    bool valid = CDRMessage::addUInt32(msg, (uint32_t)m_value.size());
-    for (const DataRepresentationId_t& it : m_value)
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+
+    uint16_t len = static_cast<uint16_t>(m_value.size() * sizeof(uint16_t)) + 4;
+    len = (len + 3) & ~3;
+
+    valid &= CDRMessage::addUInt16(msg, len);
+    valid &= CDRMessage::addUInt32(msg, static_cast<uint32_t>(m_value.size()));
+    for (const DataRepresentationId_t& id : m_value)
     {
-        valid &= CDRMessage::addUInt16(msg, it);
+        valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(id));
+    }
+    if (m_value.size() % 2 == 1) // Odd, we must align
+    {
+        valid &= CDRMessage::addUInt16(msg, uint16_t(0));
     }
     return valid;
 }
@@ -631,13 +624,18 @@ bool DataRepresentationQosPolicy::readFromCDRMessage(
     int16_t temp(0);
     uint32_t datasize(0);
     bool valid = CDRMessage::readUInt32(msg, &datasize);
-    for (uint32_t i = 0; i < datasize; ++i)
+    valid &= (datasize * sizeof(uint16_t)) <= (size - sizeof(uint32_t));
+
+    for (uint32_t i = 0; valid && (i < datasize); ++i)
     {
         valid &= CDRMessage::readInt16(msg, &temp);
         m_value.push_back(static_cast<DataRepresentationId_t>(temp));
     }
-    uint32_t length_diff = msg->pos - pos_ref;
-    valid &= (size == length_diff);
+    if (valid)
+    {
+        msg->pos = pos_ref + size;
+    }
+
     return valid;
 }
 
