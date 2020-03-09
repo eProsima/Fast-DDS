@@ -20,6 +20,8 @@
 
 //#include <dds/sub/detail/TRankImpl.hpp>
 
+#include <cstdint>
+
 /**
  * @cond
  * Ignore this file in the API
@@ -29,9 +31,21 @@ namespace dds {
 namespace sub {
 namespace detail {
 
+<<<<<<< HEAD
 //TODO: Change when fastdds Rank is implemented
 class Rank
+=======
+struct Rank
+>>>>>>> Feature/psm helloworld [6739] (#822)
 {
+    //!Preview of the samples that follow within the sequence returned by the read or take operations.
+    int32_t sample_rank = 0;
+
+    //!Preview of the samples that follow within the sequence returned by the read or take operations.
+    int32_t generation_rank = 0;
+
+    //!Preview of what is available within DataReader.
+    int32_t absolute_generation_rank = 0;
 };
 
 } //namespace detail

@@ -62,8 +62,7 @@ template<
     template<typename Q> class DELEGATE>
 const typename Sample<T, DELEGATE>::DataType& Sample<T, DELEGATE>::data() const
 {
-    //To implement
-    //    return this->delegate().data();
+    return this->delegate().data();
 }
 
 template<
@@ -72,8 +71,7 @@ template<
 void Sample<T, DELEGATE>::data(
         const DataType& d)
 {
-    //To implement
-    //    this->delegate().data(d);
+    this->delegate().data(d);
 }
 
 template<
@@ -81,8 +79,7 @@ template<
     template<typename Q> class DELEGATE>
 const SampleInfo& Sample<T, DELEGATE>::info() const
 {
-    //To implement
-    //    return this->delegate().info();
+    return this->delegate().info();
 }
 
 template<
@@ -91,8 +88,7 @@ template<
 void Sample<T, DELEGATE>::info(
         const SampleInfo& i)
 {
-    //To implement
-    //    this->delegate().info(i);
+    this->delegate().info(i);
 }
 
 } //namespace sub

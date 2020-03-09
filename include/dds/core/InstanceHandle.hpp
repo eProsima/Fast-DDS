@@ -37,34 +37,33 @@ namespace core {
  * @brief
  * Class to hold the handle associated with in sample instance.
  */
-template<typename DELEGATE>
-class TInstanceHandle : public Value<DELEGATE>
+class InstanceHandle : public Value<detail::InstanceHandle>
 {
 public:
 
     /**
      * Create an nil instance handle.
      */
-    TInstanceHandle();
+    InstanceHandle();
 
     /**
      * Create an nil instance handle.
      *
      * @param nullHandle placeholder
-     */
-    TInstanceHandle(
+    InstanceHandle(
             const null_type& nullHandle);
+     */
 
     /**
      * Copy an existing InstancHandle
      *
      * @param other InstanceHandle to copy
      */
-    TInstanceHandle(
-            const TInstanceHandle& other);
+    InstanceHandle(
+            const InstanceHandle& other);
 
     /** @cond */
-    ~TInstanceHandle();
+    ~InstanceHandle();
     /** @endcond */
 
     /**
@@ -73,9 +72,8 @@ public:
      * from some other type. This function is intended for internal
      * usage.
      */
-    template<typename ARG0>
-    TInstanceHandle(
-            const ARG0& arg0);
+    InstanceHandle(
+            const detail::InstanceHandle& arg0);
     /** @endcond */
 
 public:
@@ -83,37 +81,37 @@ public:
     /**
      * Assign an existing InstancHandle to this InstancHandle
      *
-     * @param that The TInstanceHandle to assign to this
+     * @param that The InstanceHandle to assign to this
      */
-    TInstanceHandle& operator =(
-            const TInstanceHandle& that);
+    InstanceHandle& operator =(
+            const InstanceHandle& that);
 
     /**
      * Compare this InstanceHandle to another InstanceHandle
      *
-     * @param that The TInstanceHandle to compare
+     * @param that The InstanceHandle to compare
      * @return true if they match
      */
     bool operator ==(
-            const TInstanceHandle& that) const;
+            const InstanceHandle& that) const;
 
     /**
      * Compare this InstanceHandle to another InstanceHandle
      *
-     * @param that The TInstanceHandle to compare
+     * @param that The InstanceHandle to compare
      * @return true if this is less than that
      */
     bool operator <(
-            const TInstanceHandle& that) const;
+            const InstanceHandle& that) const;
 
     /**
      * Compare this InstanceHandle to another InstanceHandle
      *
-     * @param that The TInstanceHandle to compare
+     * @param that The InstanceHandle to compare
      * @return true if this is greater than that
      */
     bool operator >(
-            const TInstanceHandle& that) const;
+            const InstanceHandle& that) const;
 
 public:
 
@@ -122,7 +120,7 @@ public:
      *
      * @return a nil InstanceHandle
      */
-    static const TInstanceHandle nil();
+    static const InstanceHandle nil();
 
     /**
      * Check if the InstanceHandle is nil.
@@ -132,15 +130,15 @@ public:
     bool is_nil() const;
 };
 
-typedef dds::core::detail::InstanceHandle InstanceHandle;
 typedef std::vector<InstanceHandle> InstanceHandleSeq;
 
 } //namespace core
 } //namespace dds
 
+/*
 inline std::ostream& operator <<(
         std::ostream& os,
         const dds::core::InstanceHandle& h);
-
+*/
 
 #endif //OMG_DDS_CORE_INSTANCE_HANDLE_HPP_

@@ -18,9 +18,7 @@
 #ifndef EPROSIMA_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
 
-//TODO: Fix when InstanceHandleDelegate is implemented
-//#include <dds/core/detail/TInstanceHandleImpl.hpp>
-//#include <org/opensplice/core/InstanceHandleDelegate.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
 
 /**
  * @cond
@@ -31,11 +29,7 @@ namespace dds {
 namespace core {
 namespace detail {
 
-//TODO: Fix when InstanceHandleDelegate is implemented
-//typedef dds::core::TInstanceHandle<org::opensplice::core::InstanceHandleDelegate> InstanceHandle;
-class InstanceHandle
-{
-};
+using InstanceHandle = eprosima::fastrtps::rtps::InstanceHandle_t;
 
 } //namespace detail
 } //namespace core

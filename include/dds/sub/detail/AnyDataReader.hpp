@@ -18,9 +18,7 @@
 #ifndef EPROSIMA_DDS_SUB_DETAIL_ANYDATAREADER_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_ANYDATAREADER_HPP_
 
-//#include <dds/sub/detail/TAnyDataReaderImpl.hpp>
-//TODO: Fix when AnyDataReaderDelegate is implemented
-//#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
+#include <fastdds/dds/topic/DataReader.hpp>
 
 /**
  * @cond
@@ -31,11 +29,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-//TODO: Fix when AnyDataReaderDelegate is implemented
-//typedef dds::sub::TAnyDataReader<org::opensplice::sub::AnyDataReaderDelegate> AnyDataReader;
-class AnyDataReader
-{
-};
+using AnyDataReader = eprosima::fastdds::dds::DataReader;
 
 } //namespace detail
 } //namespace sub

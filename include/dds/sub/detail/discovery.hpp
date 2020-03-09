@@ -47,7 +47,7 @@ template<
     typename T,
     template<typename Q> class DELEGATE>
 ::dds::core::InstanceHandleSeq matched_publications(
-        const DataReader<T, DELEGATE>& dr)
+        const DataReader<T>& dr)
 {
     //To implement
     //    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
@@ -59,7 +59,7 @@ template<
     typename FwdIterator,
     template<typename Q> class DELEGATE>
 uint32_t matched_publications(
-        const DataReader<T, DELEGATE>& dr,
+        const DataReader<T>& dr,
         FwdIterator begin,
         uint32_t max_size)
 {
@@ -71,7 +71,7 @@ uint32_t matched_publications(
 template<typename T,
         template<typename Q> class DELEGATE>
 const dds::topic::PublicationBuiltinTopicData matched_publication_data(
-        const dds::sub::DataReader<T, DELEGATE>& dr,
+        const dds::sub::DataReader<T>& dr,
         const ::dds::core::InstanceHandle& h)
 {
     //To implement

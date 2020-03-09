@@ -18,20 +18,14 @@
 #ifndef EPROSIMA_DDS_PUB_QOS_DETAIL_DATAWRITER_QOS_HPP_
 #define EPROSIMA_DDS_PUB_QOS_DETAIL_DATAWRITER_QOS_HPP_
 
-//#include <dds/core/detail/TEntityQosImpl.hpp>
-//TODO: Fix when DataWriterQosDelegate is implemented
-//#include <org/opensplice/pub/qos/DataWriterQosDelegate.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 
 namespace dds {
 namespace pub {
 namespace qos {
 namespace detail {
 
-//TODO: Fix when DataWriterQosDelegate is implemented
-//typedef dds::core::TEntityQos<org::opensplice::pub::qos::DataWriterQosDelegate> DataWriterQos;
-class DataWriterQos
-{
-};
+using DataWriterQos = eprosima::fastdds::dds::DataWriterQos;
 
 } //namespace detail
 } //namespace qos

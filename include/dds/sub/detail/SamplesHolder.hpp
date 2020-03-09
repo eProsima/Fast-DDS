@@ -34,7 +34,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-class SampleInfo;
+//class SampleInfo;
 
 template<typename T>
 class LoanedSamplesHolder /*: public SamplesHolder*/
@@ -51,14 +51,12 @@ public:
     void set_length(
             uint32_t len)
     {
-        //To implement
-        //        this->samples_.delegate()->resize(len);
+        this->samples_.delegate()->resize(len);
     }
 
     uint32_t get_length() const
     {
-        //To implement
-        //        return this->index;
+        return this->index;
     }
 
     //    SamplesHolder& operator ++(
@@ -71,14 +69,12 @@ public:
 
     void* data()
     {
-        //To implement
-        //        return (*this->samples_.delegate())[this->index].delegate().data_ptr();
+        return (*this->samples_.delegate())[this->index].delegate().data_ptr();
     }
 
     detail::SampleInfo* info()
     {
-        //To implement
-        //        return (*this->samples_.delegate())[this->index].delegate().info_ptr();
+        return (*this->samples_.delegate())[this->index].delegate().info_ptr();
     }
 
 private:
@@ -106,15 +102,13 @@ public:
     void set_length(
             uint32_t len)
     {
-        //To implement
-        //        this->length = len;
+        this->length = len;
 
     }
 
     uint32_t get_length() const
     {
-        //To implement
-        //        return this->length;
+        return this->length;
     }
 
     //    SamplesHolder& operator ++(
@@ -127,14 +121,12 @@ public:
 
     void* data()
     {
-        //To implement
-        //        return (*iterator).delegate().data_ptr();
+        return (*iterator).delegate().data_ptr();
     }
 
     detail::SampleInfo* info()
     {
-        //To implement
-        //        return (*iterator).delegate().info_ptr();
+        return (*iterator).delegate().info_ptr();
     }
 
 private:
@@ -161,14 +153,12 @@ public:
     void set_length(
             uint32_t len)
     {
-        //To implement
-        //        this->length = len;
+        this->length = len;
     }
 
     uint32_t get_length() const
     {
-        //To implement
-        //        return this->length;
+        return this->length;
     }
 
     //    SamplesHolder& operator ++(
@@ -182,14 +172,12 @@ public:
 
     void* data()
     {
-        //To implement
-        //        return this->sample.delegate().data_ptr();
+        return this->sample.delegate().data_ptr();
     }
 
     detail::SampleInfo* info()
     {
-        //To implement
-        //        return this->sample.delegate().info_ptr();
+        return this->sample.delegate().info_ptr();
     }
 
 private:

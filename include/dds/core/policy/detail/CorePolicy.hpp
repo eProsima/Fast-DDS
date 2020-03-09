@@ -18,10 +18,9 @@
 #ifndef EPROSIMA_DDS_CORE_POLICY_DETAIL_CORE_POLICY_HPP_
 #define EPROSIMA_DDS_CORE_POLICY_DETAIL_CORE_POLICY_HPP_
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//#include <org/opensplice/core/policy/PolicyDelegate.hpp>
-//#include <dds/core/policy/detail/TCorePolicyImpl.hpp>
-//#include <org/opensplice/core/policy/Policy.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
+#include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 
 /**
  * @cond
@@ -33,158 +32,61 @@ namespace core {
 namespace policy {
 namespace detail {
 
-#ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
-//TODO: Fix when PolicyDelegate and Policy are implemented
-typedef dds::core::policy::TDataRepresentation<org::opensplice::core::policy::DataRepresentationDelegate>
-        DataRepresentation;
-class DataRepresentation
-{
-};
-#endif // OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+// #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+using DataRepresentation = eprosima::fastdds::dds::DataRepresentationQosPolicy;
+// #endif // OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TDeadline<org::opensplice::core::policy::DeadlineDelegate> Deadline;
-class Deadline
-{
-};
+using Deadline = eprosima::fastdds::dds::DeadlineQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TDestinationOrder<org::opensplice::core::policy::DestinationOrderDelegate> DestinationOrder;
-class DestinationOrder
-{
-};
+using DestinationOrder = eprosima::fastdds::dds::DestinationOrderQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TDurability<org::opensplice::core::policy::DurabilityDelegate> Durability;
-class Durability
-{
-};
+using Durability = eprosima::fastdds::dds::DurabilityQosPolicy;
 
-#ifdef  OMG_DDS_PERSISTENCE_SUPPORT
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TDurabilityService<org::opensplice::core::policy::DurabilityServiceDelegate> DurabilityService;
-class DurabilityService
-{
-};
-#endif  // OMG_DDS_PERSISTENCE_SUPPORT
+// #ifdef  OMG_DDS_PERSISTENCE_SUPPORT
+using DurabilityService = eprosima::fastdds::dds::DurabilityServiceQosPolicy;
+// #endif  // OMG_DDS_PERSISTENCE_SUPPORT
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TEntityFactory<org::opensplice::core::policy::EntityFactoryDelegate> EntityFactory;
-class EntityFactory
-{
-};
+using EntityFactory = eprosima::fastdds::dds::EntityFactoryQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TGroupData<org::opensplice::core::policy::GroupDataDelegate> GroupData;
-class GroupData
-{
-};
+using GroupData = eprosima::fastdds::dds::GroupDataQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::THistory<org::opensplice::core::policy::HistoryDelegate> History;
-class History
-{
-};
+using History = eprosima::fastdds::dds::HistoryQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TLatencyBudget<org::opensplice::core::policy::LatencyBudgetDelegate> LatencyBudget;
-class LatencyBudget
-{
-};
+using LatencyBudget = eprosima::fastdds::dds::LatencyBudgetQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TLifespan<org::opensplice::core::policy::LifespanDelegate> Lifespan;
-class Lifespan
-{
-};
+using Lifespan = eprosima::fastdds::dds::LifespanQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TLiveliness<org::opensplice::core::policy::LivelinessDelegate> Liveliness;
-class Liveliness
-{
-};
+using Liveliness = eprosima::fastdds::dds::LivelinessQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TOwnership<org::opensplice::core::policy::OwnershipDelegate> Ownership;
-class Ownership
-{
-};
+using Ownership = eprosima::fastdds::dds::OwnershipQosPolicy;
 
-#ifdef  OMG_DDS_OWNERSHIP_SUPPORT
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TOwnershipStrength<org::opensplice::core::policy::OwnershipStrengthDelegate> OwnershipStrength;
-class OwnershipStrength
-{
-};
-#endif  //OMG_DDS_OWNERSHIP_SUPPORT
+// #ifdef  OMG_DDS_OWNERSHIP_SUPPORT
+using OwnershipStrength = eprosima::fastdds::dds::OwnershipStrengthQosPolicy;
+// #endif  //OMG_DDS_OWNERSHIP_SUPPORT
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TPartition<org::opensplice::core::policy::PartitionDelegate> Partition;
-class Partition
-{
-};
+using Partition = eprosima::fastdds::dds::PartitionQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TPresentation<org::opensplice::core::policy::PresentationDelegate> Presentation;
-class Presentation
-{
-};
+using Presentation = eprosima::fastdds::dds::PresentationQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TReaderDataLifecycle<org::opensplice::core::policy::ReaderDataLifecycleDelegate> ReaderDataLifecycle;
-class ReaderDataLifecycle
-{
-};
+using ReaderDataLifecycle = eprosima::fastdds::dds::ReaderDataLifecycleQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TReliability<org::opensplice::core::policy::ReliabilityDelegate> Reliability;
-class Reliability
-{
-};
+using Reliability = eprosima::fastdds::dds::ReliabilityQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TResourceLimits<org::opensplice::core::policy::ResourceLimitsDelegate> ResourceLimits;
-class ResourceLimits
-{
-};
+using ResourceLimits = eprosima::fastdds::dds::ResourceLimitsQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TTimeBasedFilter<org::opensplice::core::policy::TimeBasedFilterDelegate> TimeBasedFilter;
-class TimeBasedFilter
-{
-};
+using TimeBasedFilter = eprosima::fastdds::dds::TimeBasedFilterQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TTopicData<org::opensplice::core::policy::TopicDataDelegate> TopicData;
-class TopicData
-{
-};
+using TopicData = eprosima::fastdds::dds::TopicDataQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TTransportPriority<org::opensplice::core::policy::TransportPriorityDelegate> TransportPriority;
-class TransportPriority
-{
-};
+using TransportPriority = eprosima::fastdds::dds::TransportPriorityQosPolicy;
 
-#ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TTypeConsistencyEnforcement<org::opensplice::core::policy::TypeConsistencyEnforcementDelegate> TypeConsistencyEnforcement;
-class TypeConsistencyEnforcement
-{
-};
-#endif //OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+// #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+using TypeConsistencyEnforcement = eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy;
+// #endif //OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TUserData<org::opensplice::core::policy::UserDataDelegate> UserData;
-class UserData
-{
-};
+using UserData = eprosima::fastdds::dds::UserDataQosPolicy;
 
-//TODO: Fix when PolicyDelegate and Policy are implemented
-//typedef dds::core::policy::TWriterDataLifecycle<org::opensplice::core::policy::WriterDataLifecycleDelegate> WriterDataLifecycle;
-class WriterDataLifecycle
-{
-};
+using WriterDataLifecycle = eprosima::fastdds::dds::WriterDataLifecycleQosPolicy;
 
 } //namespace detail
 } //namespace policy

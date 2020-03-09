@@ -36,6 +36,13 @@ public:
           autopurge_disposed_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {}
 
+    ReaderDataLifecycleQosPolicy(
+            const fastrtps::Duration_t& autopurge_no_writer_delay,
+            const fastrtps::Duration_t& autopurge_disposed_delay)
+        : autopurge_no_writer_samples_delay(autopurge_no_writer_delay),
+          autopurge_disposed_samples_delay(autopurge_disposed_delay)
+    {}
+
     virtual RTPS_DllAPI ~ReaderDataLifecycleQosPolicy() {}
 
     bool operator ==(

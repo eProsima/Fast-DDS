@@ -21,10 +21,15 @@
 #ifndef OMG_DDS_DOMAIN_DOMAINPARTICIPANT_LISTENER_HPP_
 #define OMG_DDS_DOMAIN_DOMAINPARTICIPANT_LISTENER_HPP_
 
+// TODO Remove when PSM DDS Listeners are ready to be used.
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+
+// TODO uncomment when PSM DDS Listeners are ready to be used.
+/*
 #include <dds/pub/PublisherListener.hpp>
 #include <dds/sub/SubscriberListener.hpp>
 #include <dds/topic/AnyTopicListener.hpp>
-
+*/
 
 namespace dds {
 namespace domain {
@@ -157,10 +162,23 @@ namespace domain {
  * @see @ref DCPS_Modules_DomainParticipant "Domain Participant"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
+
+// TODO Uncomment when PSM DDS listeners are ready to be used
+/*
 class OMG_DDS_API DomainParticipantListener :
     public virtual dds::pub::PublisherListener,
     public virtual dds::sub::SubscriberListener,
     public virtual dds::topic::AnyTopicListener
+{
+public:
+
+    virtual ~DomainParticipantListener()
+    {
+    }
+
+};
+*/
+class DomainParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
 {
 public:
 
@@ -188,6 +206,8 @@ public:
  *
  * @see dds::domain::DomainParticipantListener
  */
+// TODO Uncomment when PSM DDS listeners are ready to be used
+/*
 class OMG_DDS_API NoOpDomainParticipantListener :
     public virtual DomainParticipantListener,
     public virtual dds::pub::NoOpPublisherListener,
@@ -200,6 +220,14 @@ public:
     {
     }
 
+};
+*/
+class NoOpDomainParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
+{
+public:
+    ~NoOpDomainParticipantListener()
+    {
+    }
 };
 
 } //namespace domain

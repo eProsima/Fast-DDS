@@ -20,7 +20,12 @@
 #ifndef OMG_DDS_SUB_SUBSCRIBER_LISTENER_HPP_
 #define OMG_DDS_SUB_SUBSCRIBER_LISTENER_HPP_
 
-#include <dds/sub/AnyDataReaderListener.hpp>
+// TODO Remove when PSM DDS Listeners are ready to be used.
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
+
+// TODO uncomment when PSM DDS Listeners are ready to be used.
+//#include <dds/sub/AnyDataReaderListener.hpp>
+
 #include <dds/sub/Subscriber.hpp>
 
 namespace dds {
@@ -120,7 +125,10 @@ namespace sub {
  * @see @ref DCPS_Modules_Subscriber "Subscriber"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-class OMG_DDS_API SubscriberListener : public virtual AnyDataReaderListener
+// TODO Uncomment the PSM listeners are implemented.
+//class OMG_DDS_API SubscriberListener : public virtual AnyDataReaderListener
+// TODO Remove the PSM listeners are implemented.
+class SubscriberListener : public eprosima::fastdds::dds::SubscriberListener
 {
 public:
 
@@ -129,7 +137,7 @@ public:
     /** @endcond */
 
     /** @cond */
-    virtual ~SubscriberListener()
+    virtual ~SubscriberListener() override
     {
     }
 
@@ -183,9 +191,14 @@ public:
  *
  * @see dds::sub::SubscriberListener
  */
+// TODO Uncomment the PSM listeners are implemented.
+/*
 class OMG_DDS_API NoOpSubscriberListener :
-    public virtual SubscriberListener,
-    public virtual NoOpAnyDataReaderListener
+        public virtual SubscriberListener,
+        public virtual NoOpAnyDataReaderListener
+*/
+// TODO Remove the PSM listeners are implemented.
+class NoOpSubscriberListener : public SubscriberListener
 {
     /** @cond
      * All these functions have already been documented in the non-NoOp listener.
@@ -199,7 +212,7 @@ public:
     }
 
     virtual void on_data_on_readers(
-            Subscriber&)
+            Subscriber&) override
     {
     }
 

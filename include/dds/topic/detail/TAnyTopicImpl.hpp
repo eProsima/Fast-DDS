@@ -38,46 +38,36 @@ template<typename DELEGATE>
 dds::topic::qos::TopicQos
 TAnyTopic<DELEGATE>::qos() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->qos();
+    return this->delegate()->get_qos();
 }
 
 template<typename DELEGATE>
 void TAnyTopic<DELEGATE>::qos(
         const dds::topic::qos::TopicQos& qos)
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    this->delegate()->qos(qos);
+    this->delegate()->set_qos(qos);
 }
 
 template<typename DELEGATE>
 TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator <<(
         const dds::topic::qos::TopicQos& qos)
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    this->delegate()->qos(qos);
-    //    return *this;
+    this->qos(qos);
+    return *this;
 }
 
 template<typename DELEGATE>
 const TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator >>(
         dds::topic::qos::TopicQos& qos) const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    qos = this->delegate()->qos();
-    //    return *this;
+    qos = this->qos();
+    return *this;
 }
 
 template<typename DELEGATE>
 dds::core::status::InconsistentTopicStatus TAnyTopic<DELEGATE>::inconsistent_topic_status() const
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->inconsistent_topic_status();
+    return this->delegate()->inconsistent_topic_status();
 }
 
 } //namespace topic

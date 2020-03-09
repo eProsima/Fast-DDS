@@ -20,11 +20,19 @@
 #ifndef OMG_DDS_PUB_DATA_WRITER_LISTENER_HPP_
 #define OMG_DDS_PUB_DATA_WRITER_LISTENER_HPP_
 
+// TODO Remove when PSM DDS Listeners are ready to be used.
+#include <fastdds/dds/topic/DataWriterListener.hpp>
 
-#include <dds/pub/DataWriter.hpp>
+#include <dds/core/status/Status.hpp>
+#include <dds/core/ref_traits.hpp>
+
+#include <fastdds/dds/topic/DataWriterListener.hpp>
 
 namespace dds {
 namespace pub {
+
+template<typename T>
+class DataWriter;
 
 /**
  *  * @brief
@@ -97,10 +105,16 @@ namespace pub {
  * @see @ref DCPS_Modules_Publication_DataWriter "Data Writer"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
+
 template<typename T>
-class DataWriterListener
+class DataWriterListener : public eprosima::fastdds::dds::DataWriterListener
 {
 public:
+
+    using eprosima::fastdds::dds::DataWriterListener::on_publication_matched;
+    using eprosima::fastdds::dds::DataWriterListener::on_offered_deadline_missed;
+    using eprosima::fastdds::dds::DataWriterListener::on_offered_incompatible_qos;
+    using eprosima::fastdds::dds::DataWriterListener::on_liveliness_lost;
 
     /** @cond */
     virtual ~DataWriterListener()
@@ -221,6 +235,7 @@ public:
  *
  * @see dds::pub::DataWriterListener
  */
+
 template<typename T>
 class NoOpDataWriterListener : public virtual DataWriterListener<T>
 {
@@ -239,24 +254,32 @@ public:
             DataWriter<T>& writer,
             const dds::core::status::OfferedDeadlineMissedStatus& status)
     {
+        (void) writer;
+        (void) status;
     }
 
     virtual void on_offered_incompatible_qos(
             DataWriter<T>& writer,
             const dds::core::status::OfferedIncompatibleQosStatus&  status)
     {
+        (void) writer;
+        (void) status;
     }
 
     virtual void on_liveliness_lost(
             DataWriter<T>& writer,
             const dds::core::status::LivelinessLostStatus& status)
     {
+        (void) writer;
+        (void) status;
     }
 
     virtual void on_publication_matched(
             DataWriter<T>& writer,
             const dds::core::status::PublicationMatchedStatus& status)
     {
+        (void) writer;
+        (void) status;
     }
 
     /** @endcond */

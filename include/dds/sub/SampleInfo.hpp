@@ -25,15 +25,14 @@
 #include <dds/sub/Rank.hpp>
 #include <dds/sub/GenerationCount.hpp>
 
+#include <dds/core/Value.hpp>
+
 
 namespace dds {
 namespace core {
 
 class Time;
 class InstanceHandle;
-
-template<typename D>
-class Value;
 
 } //namespace core
 } //namespace dds
@@ -69,8 +68,7 @@ class DataState;
  *
  * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
  */
-template<typename DELEGATE>
-class TSampleInfo : public dds::core::Value<DELEGATE>
+class SampleInfo : public dds::core::Value<detail::SampleInfo>
 {
 
 public:
@@ -81,8 +79,14 @@ public:
      * An application would normally not create a SampleInfo itself.
      * So, do not put the creation in the API documentation for clarity.
      */
-    TSampleInfo();
+    OMG_DDS_API SampleInfo();
+
+    OMG_DDS_API SampleInfo(
+            detail::SampleInfo sample_info);
+
     /** @endcond */
+
+    OMG_DDS_API ~SampleInfo();
 
     /**
      * Gets the timestamp of the sample.
@@ -138,7 +142,7 @@ public:
      *
      * @return the valid_data flag
      */
-    bool valid() const;
+    bool OMG_DDS_API valid() const;
 
     /**
      * Gets the InstanceHandle of the associated data Sample.
@@ -155,10 +159,7 @@ public:
     dds::core::InstanceHandle publication_handle() const;
 };
 
-typedef dds::sub::detail::SampleInfo SampleInfo;
-
 } //namespace sub
 } //namespace dds
-
 
 #endif //OMG_DDS_SUB_SAMPLE_INFO_HPP_

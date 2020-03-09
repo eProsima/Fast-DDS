@@ -55,8 +55,7 @@ public:
     void operator ()(
             S& s)
     {
-        //To implement
-        //        s.max_samples(n_);
+        s.max_samples(n_);
     }
 
     /** @endcond */
@@ -91,8 +90,7 @@ public:
     void operator ()(
             S& s)
     {
-        //To implement
-        //        s.content(query_);
+        s.content(query_);
     }
 
     /** @endcond */
@@ -127,10 +125,8 @@ public:
     void operator ()(
             S& s)
     {
-        //To implement
-        //        s.state(state_);
+        s.state(state_);
     }
-
     /** @endcond */
 
 private:
@@ -163,8 +159,7 @@ public:
     void operator ()(
             S& s)
     {
-        //To implement
-        //        s.instance(handle_);
+        s.instance(handle_);
     }
 
     /** @endcond */
@@ -199,8 +194,7 @@ public:
     void operator ()(
             S& s)
     {
-        //To implement
-        //        s.next_instance(handle_);
+        s.next_instance(handle_);
     }
 
     /** @endcond */

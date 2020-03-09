@@ -20,8 +20,12 @@
 #ifndef OMG_DDS_PUB_ANY_DATA_WRITER_LISTENER_HPP_
 #define OMG_DDS_PUB_ANY_DATA_WRITER_LISTENER_HPP_
 
+// TODO Remove when PSM DDS Listeners are ready to be used.
+#include <fastdds/dds/topic/DataWriterListener.hpp>
+
 #include <dds/pub/AnyDataWriter.hpp>
 #include <dds/core/status/Status.hpp>
+#include <dds/pub/DataWriter.hpp>
 
 namespace dds {
 namespace pub {
@@ -59,25 +63,40 @@ public:
     /** @copydoc dds::pub::DataWriterListener::on_offered_deadline_missed() */
     virtual void on_offered_deadline_missed(
             AnyDataWriter& writer,
-            const ::dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
+            const ::dds::core::status::OfferedDeadlineMissedStatus& status)
+    {
+        (void) writer;
+        (void) status;
+    }
 
     /** @copydoc dds::pub::DataWriterListener::on_offered_incompatible_qos() */
     virtual void on_offered_incompatible_qos(
             AnyDataWriter& writer,
-            const ::dds::core::status::OfferedIncompatibleQosStatus& status) = 0;
+            const ::dds::core::status::OfferedIncompatibleQosStatus& status)
+    {
+        (void) writer;
+        (void) status;
+    }
 
     /** @copydoc dds::pub::DataWriterListener::on_liveliness_lost() */
     virtual void on_liveliness_lost(
             AnyDataWriter& writer,
-            const ::dds::core::status::LivelinessLostStatus& status) = 0;
+            const ::dds::core::status::LivelinessLostStatus& status)
+    {
+        (void) writer;
+        (void) status;
+    }
 
     /** @copydoc dds::pub::DataWriterListener::on_publication_matched() */
     virtual void on_publication_matched(
             AnyDataWriter& writer,
-            const ::dds::core::status::PublicationMatchedStatus& status) = 0;
+            const ::dds::core::status::PublicationMatchedStatus& status)
+    {
+        (void) writer;
+        (void) status;
+    }
 
 };
-
 
 /**
  * @brief
@@ -111,24 +130,32 @@ public:
             AnyDataWriter& writer,
             const ::dds::core::status::OfferedDeadlineMissedStatus& status)
     {
+        (void) writer;
+        (void) status;
     }
 
     virtual void on_offered_incompatible_qos(
             AnyDataWriter& writer,
             const ::dds::core::status::OfferedIncompatibleQosStatus& status)
     {
+        (void) writer;
+        (void) status;
     }
 
     virtual void on_liveliness_lost(
             AnyDataWriter& writer,
             const ::dds::core::status::LivelinessLostStatus& status)
     {
+        (void) writer;
+        (void) status;
     }
 
     virtual void on_publication_matched(
             AnyDataWriter& writer,
             const ::dds::core::status::PublicationMatchedStatus& status)
     {
+        (void) writer;
+        (void) status;
     }
 
     /** @endcond */

@@ -18,9 +18,7 @@
 #ifndef EPROSIMA_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
 
-//#include <dds/sub/detail/TSubscriberImpl.hpp>
-//TODO: Fix when SubscriberDelegate is implemented
-//#include <org/opensplice/sub/SubscriberDelegate.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 
 /**
  * @cond
@@ -31,11 +29,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-//TODO: Fix when SubscriberDelegate is implemented
-//typedef dds::sub::TSubscriber<org::opensplice::sub::SubscriberDelegate> Subscriber;
-class Subscriber
-{
-};
+using Subscriber = eprosima::fastdds::dds::Subscriber;
 
 } //namespace detail
 } //namespace sub

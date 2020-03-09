@@ -85,6 +85,8 @@ public:
 
     const PublisherListener* get_listener() const;
 
+    PublisherListener* get_listener();
+
     ReturnCode_t set_listener(
             PublisherListener* listener);
 

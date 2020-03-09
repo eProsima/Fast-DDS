@@ -18,20 +18,14 @@
 #ifndef EPROSIMA_DDS_SUB_QOS_DETAIL_DATA_READER_QOS_HPP_
 #define EPROSIMA_DDS_SUB_QOS_DETAIL_DATA_READER_QOS_HPP_
 
-//#include <dds/core/detail/TEntityQosImpl.hpp>
-//TODO: Fix when DataReaderQosDelegate is implemented
-//#include <org/opensplice/sub/qos/DataReaderQosDelegate.hpp>
+#include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 
 namespace dds {
 namespace sub {
 namespace qos {
 namespace detail {
 
-//TODO: Fix when DataReaderQosDelegate is implemented
-//typedef ::dds::core::TEntityQos< ::org::opensplice::sub::qos::DataReaderQosDelegate > DataReaderQos;
-class DataReaderQos
-{
-};
+using DataReaderQos = eprosima::fastdds::dds::DataReaderQos;
 
 } //namespace detail
 } //namespace qos

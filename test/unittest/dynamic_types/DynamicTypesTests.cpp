@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <dds/core/LengthUnlimited.hpp>
+
 #include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -36,30 +38,32 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
-class DynamicTypesTests: public ::testing::Test
+class DynamicTypesTests : public ::testing::Test
 {
     const std::string config_file_ = "types.xml";
 
-    public:
-        DynamicTypesTests()
-        {
-        }
+public:
 
-        ~DynamicTypesTests()
-        {
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    DynamicTypesTests()
+    {
+    }
 
-        virtual void TearDown()
-        {
-            DynamicDataFactory::delete_instance();
-            DynamicTypeBuilderFactory::delete_instance();
-        }
+    ~DynamicTypesTests()
+    {
+        Log::KillThread();
+    }
 
-        const std::string& config_file()
-        {
-            return config_file_;
-        }
+    virtual void TearDown()
+    {
+        DynamicDataFactory::delete_instance();
+        DynamicTypeBuilderFactory::delete_instance();
+    }
+
+    const std::string& config_file()
+    {
+        return config_file_;
+    }
+
 };
 
 TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
@@ -102,7 +106,8 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     auto struct_type = struct_type_builder->build();
     ASSERT_TRUE(struct_type != nullptr);
 
-    ASSERT_TRUE(struct_type_builder->add_member(1, "int64", DynamicTypeBuilderFactory::get_instance()->create_int64_type()) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->add_member(1, "int64",
+            DynamicTypeBuilderFactory::get_instance()->create_int64_type()) == ReturnCode_t::RETCODE_OK);
     auto struct_type2 = struct_type_builder->build();
     ASSERT_TRUE(struct_type2 != nullptr);
     ASSERT_FALSE(struct_type->equals(struct_type2.get()));
@@ -322,7 +327,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 
-        created_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(LENGTH_UNLIMITED);
+        created_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(dds::core::LENGTH_UNLIMITED);
         ASSERT_TRUE(created_builder != nullptr);
         type = created_builder->build();
         ASSERT_TRUE(type != nullptr);
@@ -338,7 +343,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 
-        created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(LENGTH_UNLIMITED);
+        created_builder =
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(dds::core::LENGTH_UNLIMITED);
         ASSERT_TRUE(created_builder != nullptr);
         type = created_builder->build();
         ASSERT_TRUE(type != nullptr);
@@ -1827,7 +1833,8 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     uint32_t length = 15;
     {
         DynamicTypeBuilderFactory::get_instance()->create_string_type(length);
-        DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(length);
+        DynamicTypeBuilder_ptr created_builder =
+                DynamicTypeBuilderFactory::get_instance()->create_string_builder(length);
         ASSERT_TRUE(created_builder != nullptr);
         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(created_builder.get());
         ASSERT_TRUE(created_type != nullptr);
@@ -1936,7 +1943,8 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
 {
     uint32_t length = 15;
     {
-        DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(length);
+        DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(
+            length);
         ASSERT_TRUE(created_builder != nullptr);
         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(created_builder.get());
         ASSERT_TRUE(created_type != nullptr);
@@ -1955,7 +1963,8 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
         ASSERT_TRUE(data->get_wstring_value(sTest2, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(sTest1 == sTest2);
 
-        ASSERT_FALSE(data->set_wstring_value(L"TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
         ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
         ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
@@ -2047,7 +2056,8 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
         std::string name = "ALIAS";
         DynamicTypeBuilder_ptr base_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
         ASSERT_TRUE(base_builder != nullptr);
-        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(base_builder.get(), name);
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(
+            base_builder.get(), name);
         ASSERT_TRUE(alias_builder != nullptr);
         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
         ASSERT_TRUE(created_type != nullptr);
@@ -2108,12 +2118,14 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         std::string name2 = "ALIAS2";
         DynamicTypeBuilder_ptr base_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(length);
         ASSERT_TRUE(base_builder != nullptr);
-        DynamicTypeBuilder_ptr base_alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(base_builder.get(), name);
+        DynamicTypeBuilder_ptr base_alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(
+            base_builder.get(), name);
         ASSERT_TRUE(base_alias_builder != nullptr);
         DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_type(base_alias_builder.get());
         ASSERT_TRUE(base_type != nullptr);
         ASSERT_TRUE(base_type->get_name() == name);
-        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(base_alias_builder.get(), name2);
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(
+            base_alias_builder.get(), name2);
         ASSERT_TRUE(alias_builder != nullptr);
         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
         ASSERT_TRUE(created_type != nullptr);
@@ -2122,7 +2134,8 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         ASSERT_TRUE(aliasData != nullptr);
 
         // Try to create an alias without base type.
-        DynamicTypeBuilder_ptr alias2_type_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(nullptr, "ALIAS2");
+        DynamicTypeBuilder_ptr alias2_type_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(
+            nullptr, "ALIAS2");
         ASSERT_FALSE(alias2_type_builder != nullptr);
 
         ASSERT_FALSE(aliasData->set_int32_value(10, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
@@ -2137,7 +2150,8 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         ASSERT_TRUE(aliasData->get_string_value(sTest2, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(sTest1 == sTest2);
 
-        ASSERT_FALSE(aliasData->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(aliasData->set_string_value("TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -2169,7 +2183,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         auto base_type2 = base_type_builder2->build();
 
         DynamicTypeBuilder_ptr bitset_type_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+                DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
         ASSERT_TRUE(bitset_type_builder != nullptr);
 
         // Add members to the struct.
@@ -2224,7 +2238,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     uint32_t limit = 5;
     {
         DynamicTypeBuilder_ptr created_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+                DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
         ASSERT_TRUE(created_builder != nullptr);
 
         // Add two members to the bitmask
@@ -2508,7 +2522,8 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         auto seq_type = seq_type_builder->build();
         ASSERT_TRUE(seq_type != nullptr);
 
-        DynamicTypeBuilder_ptr seq_seq_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+        DynamicTypeBuilder_ptr seq_seq_type_builder =
+                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
             seq_type_builder.get(), sup_sequence_length);
         ASSERT_TRUE(seq_seq_type_builder != nullptr);
         auto seq_seq_type = seq_seq_type_builder->build();
@@ -2800,7 +2815,8 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
         auto array_type = array_type_builder->build();
         ASSERT_TRUE(array_type != nullptr);
 
-        DynamicTypeBuilder_ptr parent_array_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(
+        DynamicTypeBuilder_ptr parent_array_type_builder =
+                DynamicTypeBuilderFactory::get_instance()->create_array_builder(
             array_type_builder.get(), sequence_lengths);
         ASSERT_TRUE(parent_array_type_builder != nullptr);
         auto parent_array_type = parent_array_type_builder->build();
@@ -3341,11 +3357,13 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
         ASSERT_TRUE(struct_type != nullptr);
 
         // Try to create the child struct without parent
-        DynamicTypeBuilder_ptr child_struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(nullptr);
+        DynamicTypeBuilder_ptr child_struct_type_builder =
+                DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(nullptr);
         ASSERT_FALSE(child_struct_type_builder != nullptr);
 
         // Create the child struct.
-        child_struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(struct_type_builder.get());
+        child_struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(
+            struct_type_builder.get());
         ASSERT_TRUE(child_struct_type_builder != nullptr);
 
         // Add a new member to the child struct.
@@ -3422,7 +3440,8 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
         ASSERT_TRUE(struct_type != nullptr);
 
         // Create the parent struct.
-        DynamicTypeBuilder_ptr parent_struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+        DynamicTypeBuilder_ptr parent_struct_type_builder =
+                DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
         ASSERT_TRUE(parent_struct_type_builder != nullptr);
 
         // Add members to the parent struct.
@@ -3519,13 +3538,16 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
 
         // Add members to the union.
         ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 },
+                false) == ReturnCode_t::RETCODE_OK);
 
         // Try to add a second "DEFAULT" value to the union
-        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 0 },
+                true) == ReturnCode_t::RETCODE_OK);
 
         // Try to add a second value to the same case label
-        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 1 },
+                false) == ReturnCode_t::RETCODE_OK);
 
         // Create a data of this union
         auto union_type = union_type_builder->build();
@@ -3612,31 +3634,39 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
         ASSERT_TRUE(base_type_builder2 != nullptr);
         auto base_type2 = base_type_builder2->build();
 
-        DynamicTypeBuilder_ptr union_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(base_type);
+        DynamicTypeBuilder_ptr union_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(
+            base_type);
         ASSERT_TRUE(union_type_builder != nullptr);
 
         // Add members to the union.
         ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 },
+                false) == ReturnCode_t::RETCODE_OK);
 
         // Try to add a second "DEFAULT" value to the union
-        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 0 },
+                true) == ReturnCode_t::RETCODE_OK);
 
         // Try to add a second value to the same case label
-        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 1 },
+                false) == ReturnCode_t::RETCODE_OK);
 
         // Create a data of this union
         auto union_type = union_type_builder->build();
         ASSERT_TRUE(union_type != nullptr);
 
-        DynamicTypeBuilder_ptr parent_union_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(base_type);
+        DynamicTypeBuilder_ptr parent_union_type_builder =
+                DynamicTypeBuilderFactory::get_instance()->create_union_builder(base_type);
         ASSERT_TRUE(parent_union_type_builder != nullptr);
 
         // Add Members to the parent union
-        ASSERT_TRUE(parent_union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(parent_union_type_builder->add_member(1, "second", union_type, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(parent_union_type_builder->add_member(0, "first", base_type, "", { 0 },
+                true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(parent_union_type_builder->add_member(1, "second", union_type, "", { 1 },
+                false) == ReturnCode_t::RETCODE_OK);
 
-        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(parent_union_type_builder.get());
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(
+            parent_union_type_builder.get());
         ASSERT_TRUE(created_type != nullptr);
         auto union_data = DynamicDataFactory::get_instance()->create_data(parent_union_type_builder.get());
         ASSERT_TRUE(union_data != nullptr);
@@ -3704,7 +3734,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("EnumStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("EnumStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -3782,7 +3812,8 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
 
         // Alias and aliasalias
         DynamicTypeBuilder_ptr alias_builder = m_factory->create_alias_builder(enum_builder.get(), "MyAliasEnum");
-        DynamicTypeBuilder_ptr alias_alias_builder = m_factory->create_alias_builder(alias_builder.get(), "MyAliasAliasEnum");
+        DynamicTypeBuilder_ptr alias_alias_builder = m_factory->create_alias_builder(
+            alias_builder.get(), "MyAliasAliasEnum");
 
         // Struct AliasAliasStruct
         DynamicTypeBuilder_ptr aliasAliasS_builder_ptr = m_factory->create_struct_builder();
@@ -4355,7 +4386,8 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
         DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder();
 
         // Alias
-        DynamicTypeBuilder_ptr myAlias_builder = m_factory->create_alias_builder(wstring_builder.get(), "MyAliasWString");
+        DynamicTypeBuilder_ptr myAlias_builder =
+                m_factory->create_alias_builder(wstring_builder.get(), "MyAliasWString");
 
         // Struct StructAliasWString
         DynamicTypeBuilder_ptr alias_wstring_builder_ptr = m_factory->create_struct_builder();
@@ -4442,34 +4474,34 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
         // Manual comparision test
         /*
-        typedef long MyArray[2][2];
+           typedef long MyArray[2][2];
 
-        struct ArrayArrayStruct
-        {
+           struct ArrayArrayStruct
+           {
             MyArray my_array_array[2][2];
-        };
+           };
 
-        struct ArrayArrayArrayStruct
-        {
+           struct ArrayArrayArrayStruct
+           {
             ArrayArrayStruct my_array_array_array[2][2];
-        };
+           };
 
-        ======
+           ======
 
-        <type>
+           <type>
             <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
-        </type>
-        <type>
+           </type>
+           <type>
             <struct name="ArrayArrayStruct">
                 <member name="my_array_array" type="nonBasic" nonBasicTypeName="MyArray" arrayDimensions="2,2"/>
             </struct>
-        </type>
-        <type>
+           </type>
+           <type>
             <struct name="ArrayArrayArrayStruct">
                 <member name="my_array_array_array" type="nonBasic" nonBasicTypeName="ArrayArrayStruct" arrayDimensions="2,2"/>
             </struct>
-        </type>
-        */
+           </type>
+         */
         // Typedef aka Alias
         DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
         DynamicTypeBuilder_ptr array_builder = m_factory->create_array_builder(int32_builder.get(), { 2, 2 });
@@ -4502,7 +4534,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4528,13 +4560,14 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
         DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
         DynamicTypeBuilder_ptr seq_builder = m_factory->create_sequence_builder(int32_builder.get(), 2);
-        DynamicTypeBuilder_ptr alias_builder = m_factory->create_alias_builder(seq_builder.get(), "my_sequence_sequence_inner");
+        DynamicTypeBuilder_ptr alias_builder = m_factory->create_alias_builder(
+            seq_builder.get(), "my_sequence_sequence_inner");
 
         DynamicTypeBuilder_ptr sss_builder = m_factory->create_struct_builder();
         DynamicTypeBuilder_ptr seq_seq_builder = m_factory->create_sequence_builder(alias_builder.get(), 2);
@@ -4556,7 +4589,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4582,14 +4615,15 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
         DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
         DynamicTypeBuilder_ptr map_builder = m_factory->create_map_builder(int32_builder.get(), int32_builder.get(), 7);
         DynamicTypeBuilder_ptr alias_builder = m_factory->create_alias_builder(map_builder.get(), "my_map_map_inner");
-        DynamicTypeBuilder_ptr map_map_builder = m_factory->create_map_builder(alias_builder.get(), int32_builder.get(), 2);
+        DynamicTypeBuilder_ptr map_map_builder = m_factory->create_map_builder(alias_builder.get(),
+                        int32_builder.get(), 2);
 
 
         DynamicTypeBuilder_ptr maps_builder = m_factory->create_struct_builder();
@@ -4611,7 +4645,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4638,7 +4672,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4670,7 +4704,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4702,7 +4736,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4739,7 +4773,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4772,7 +4806,7 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
         DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
 
         // SERIALIZATION TEST
@@ -4805,7 +4839,7 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
         DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
 
         // SERIALIZATION TEST
@@ -5034,7 +5068,9 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
     ASSERT_FALSE(unionUnionStruct1 == unionUnion1);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
 

@@ -80,28 +80,18 @@ DataWriterImpl::DataWriterImpl(
     , user_datawriter_(nullptr)
 {
     deadline_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
-                                     [&](TimedEvent::EventCode code) -> bool
-                                     {
-                                         if (TimedEvent::EVENT_SUCCESS == code)
-                                         {
-                                             return deadline_missed();
-                                         }
-
-                                         return false;
-                                     },
-                                     qos_.m_deadline.period.to_ns() * 1e-6);
+                    [&]() -> bool
+                {
+                    return deadline_missed();
+                },
+                    qos_.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
-                                     [&](TimedEvent::EventCode code) -> bool
-                                     {
-                                         if (TimedEvent::EVENT_SUCCESS == code)
-                                         {
-                                             return lifespan_expired();
-                                         }
-
-                                         return false;
-                                     },
-                                     qos_.m_lifespan.duration.to_ns() * 1e-6);
+                    [&]() -> bool
+                {
+                    return lifespan_expired();
+                },
+                    qos_.m_lifespan.duration.to_ns() * 1e-6);
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
@@ -368,7 +358,7 @@ bool DataWriterImpl::create_new_change_with_params(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif
-        type_.get()->getKey(data,&handle,is_key_protected);
+        type_.get()->getKey(data, &handle, is_key_protected);
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);

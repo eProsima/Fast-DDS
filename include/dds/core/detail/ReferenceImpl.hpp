@@ -26,7 +26,7 @@
  * OMG PSM class declaration
  */
 #include <dds/core/Reference.hpp>
-
+/*
 namespace dds {
 namespace core {
 
@@ -253,5 +253,5 @@ bool operator !=(
 
 } //namespace core
 } //namespace dds
-
+*/
 #endif //EPROSIMA_DDS_CORE_REFERENCE_IMPL_HPP_

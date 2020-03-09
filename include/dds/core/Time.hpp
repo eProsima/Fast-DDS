@@ -51,6 +51,7 @@ public:
      */
     static const Time from_microsecs(
             int64_t microseconds);
+
     /**
      * Create a Time from a number of milliseconds
      *
@@ -58,6 +59,7 @@ public:
      */
     static const Time from_millisecs(
             int64_t milliseconds);
+
     /**
      * Create a Time from a number of seconds
      *
@@ -70,6 +72,7 @@ public:
      * Create a Time of zero seconds.
      */
     Time();
+
     /**
      * Create a Time elapsing a specific amount of time.
      */
@@ -189,9 +192,8 @@ public:
     double to_secs() const;
 
 private:
-
-    int64_t sec_;
-    uint32_t nsec_;
+    int64_t sec_ = 0;
+    uint32_t nsec_ = 0;
 };
 
 // Time arithmetic operators.

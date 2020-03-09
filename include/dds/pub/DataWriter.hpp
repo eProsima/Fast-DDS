@@ -32,9 +32,7 @@
 namespace dds {
 namespace pub {
 
-template<
-    typename T,
-    template<typename Q> class DELEGATE = dds::pub::detail::DataWriter >
+template<typename T>
 class DataWriter;
 
 template<typename T>
@@ -85,24 +83,20 @@ class DataWriterListener;
  * @see @ref DCPS_Modules_Publication "Publication concept"
  * @see @ref DCPS_Modules_Publication_DataWriter "DataWriter concept"
  */
-template<
-    typename T,
-    template<typename Q> class DELEGATE>
-class DataWriter : public TAnyDataWriter< DELEGATE<T> >
+template<typename T>
+class DataWriter : public TAnyDataWriter<detail::DataWriter>
 {
-
 public:
 
     /**
      * Local convenience typedef for dds::pub::DataWriterListener.
      */
-    typedef DataWriterListener<T> Listener;
+    using Listener = DataWriterListener<T>;
 
-    OMG_DDS_REF_TYPE_PROTECTED_DC_T(
-        DataWriter,
-        dds::pub::TAnyDataWriter,
-        T,
-        DELEGATE)
+    OMG_DDS_REF_TYPE_PROTECTED_DC(
+            DataWriter,
+            dds::pub::TAnyDataWriter,
+            detail::DataWriter)
 
     OMG_DDS_IMPLICIT_REF_BASE(
         DataWriter)
@@ -202,7 +196,7 @@ public:
             const Publisher& pub,
             const ::dds::topic::Topic<T>& topic,
             const qos::DataWriterQos& qos,
-            DataWriterListener<T>* listener = NULL,
+            DataWriterListener<T>* listener = nullptr,
             const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     /** @cond */
@@ -1613,5 +1607,7 @@ public:
 
 } //namespace pub
 } //namespace dds
+
+#include <dds/pub/detail/DataWriterImpl.hpp>
 
 #endif //OMG_DDS_PUB_DATA_WRITER_HPP_

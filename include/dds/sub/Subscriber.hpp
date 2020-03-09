@@ -23,8 +23,10 @@
 #include <dds/sub/detail/Subscriber.hpp>
 
 #include <dds/sub/qos/DataReaderQos.hpp>
+#include <dds/sub/qos/SubscriberQos.hpp>
 
 #include <dds/core/Entity.hpp>
+#include <dds/core/status/Status.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
 namespace dds {
@@ -47,18 +49,17 @@ class SubscriberListener;
  *
  * @see @ref DCPS_Modules_Subscriber "Subscriber"
  */
-template<typename DELEGATE>
-class TSubscriber : public dds::core::TEntity<DELEGATE>
+class Subscriber : public dds::core::TEntity<detail::Subscriber>
 {
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-        TSubscriber,
-        dds::core::TEntity,
-        DELEGATE)
+            Subscriber,
+            dds::core::TEntity,
+            detail::Subscriber)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-        TSubscriber)
+            Subscriber)
     /**
      * Local convenience typedef for dds::sub::SubscriberListener.
      */
@@ -79,7 +80,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TSubscriber(
+    Subscriber(
             const ::dds::domain::DomainParticipant& dp);
 
     /**
@@ -104,14 +105,14 @@ public:
      * @throws dds::core::InconsistentPolicyError
      *                  The parameter qos contains conflicting QosPolicy settings.
      */
-    TSubscriber(
+    OMG_DDS_API Subscriber(
             const ::dds::domain::DomainParticipant& dp,
             const qos::SubscriberQos& qos,
             SubscriberListener* listener = NULL,
             const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
     /** @cond */
-    virtual ~TSubscriber();
+    virtual OMG_DDS_API ~Subscriber();
     /** @endcond */
 
     /**
@@ -272,7 +273,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TSubscriber& default_datareader_qos(
+    Subscriber& default_datareader_qos(
             const qos::DataReaderQos& qos);
 
     /**
@@ -289,15 +290,15 @@ public:
     const dds::domain::DomainParticipant& participant() const;
 
     /** @copydoc dds::sub::Subscriber::qos(const dds::sub::qos::SubscriberQos& qos) */
-    TSubscriber& operator <<(
+    Subscriber& operator <<(
             const qos::SubscriberQos& qos);
 
     /** @copydoc dds::sub::Subscriber::qos() */
-    const TSubscriber& operator >>(
+    const Subscriber& operator >>(
             qos::SubscriberQos& qos) const;
-};
 
-typedef ::dds::sub::detail::Subscriber Subscriber;
+    dds::domain::DomainParticipant* participant_;
+};
 
 } //namespace sub
 } //namespace dds

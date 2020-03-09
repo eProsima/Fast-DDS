@@ -101,9 +101,8 @@ public:
      */
     explicit Reference(
             dds::core::null_type& n)
-        : impl_()
-    {
-    }
+        :impl_(n)
+    {}
 
     /**
      * Creates a Reference from another.
@@ -279,7 +278,8 @@ public:
     Reference& operator =(
             const null_type nil)
     {
-        return null;
+        this = nil;
+        return this;
     }
 
     /**

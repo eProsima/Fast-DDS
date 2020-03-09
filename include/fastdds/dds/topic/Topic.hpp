@@ -50,22 +50,30 @@ class Topic : public TopicDescription
 
 public:
 
-	RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
+    RTPS_DllAPI Topic(
+            const DomainParticipant* dp,
+            const std::string& topic_name,
+            const std::string& type_name,
+            const TopicQos& qos,
+            TopicListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+
+    RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;
 
-	RTPS_DllAPI fastrtps::types::ReturnCode_t set_qos(
+    RTPS_DllAPI fastrtps::types::ReturnCode_t set_qos(
             const TopicQos& qos);
 
-	RTPS_DllAPI TopicListener* get_listener() const;
+    RTPS_DllAPI TopicListener* get_listener() const;
 
-	RTPS_DllAPI fastrtps::types::ReturnCode_t set_listener(
+    RTPS_DllAPI fastrtps::types::ReturnCode_t set_listener(
             TopicListener* a_listener,
             const ::dds::core::status::StatusMask& mask);
 
-	RTPS_DllAPI fastrtps::types::ReturnCode_t get_inconsistent_topic_status(
+    RTPS_DllAPI fastrtps::types::ReturnCode_t get_inconsistent_topic_status(
             InconsistentTopicStatus& status) const;
 
-	RTPS_DllAPI DomainParticipant* get_participant() const override;
+    RTPS_DllAPI DomainParticipant* get_participant() const override;
 };
 
 }
