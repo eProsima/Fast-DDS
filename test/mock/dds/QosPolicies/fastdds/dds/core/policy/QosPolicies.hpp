@@ -565,54 +565,86 @@ public:
 
 };
 
-
 /**
- * Class UserDataQosPolicy, to transmit user data during the discovery phase.
+ * Class GenericDataQosPolicy, base class to transmit user data during the discovery phase.
  */
-class UserDataQosPolicy : public Parameter_t, public QosPolicy, public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
+class GenericDataQosPolicy : public Parameter_t, public QosPolicy,
+    public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
 {
-    friend class ParameterList;
-    using ResourceLimitedOctetVector = ResourceLimitedVector<fastrtps::rtps::octet>;
-    using collection_type = std::vector<fastrtps::rtps::octet>;
+    using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>;
 
 public:
 
-    RTPS_DllAPI UserDataQosPolicy()
-        : Parameter_t(PID_USER_DATA, 0)
+    RTPS_DllAPI GenericDataQosPolicy(
+        ParameterId_t pid)
+        : Parameter_t(pid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
     }
 
-    RTPS_DllAPI UserDataQosPolicy(uint16_t in_length)
-        : Parameter_t(PID_USER_DATA, in_length)
+    RTPS_DllAPI GenericDataQosPolicy(
+        ParameterId_t pid,
+        uint16_t in_length)
+        : Parameter_t(pid, in_length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
     }
 
-    RTPS_DllAPI UserDataQosPolicy(const UserDataQosPolicy& data)
-        : Parameter_t(PID_USER_DATA, data.length)
+    /**
+     * Construct from another GenericDataQosPolicy.
+     *
+     * The resulting GenericDataQosPolicy will have the same size limits
+     * as the input attribute
+     *
+     * @param data data to copy in the newly created object
+     */
+    RTPS_DllAPI GenericDataQosPolicy(
+        const GenericDataQosPolicy& data)
+        : Parameter_t(data.Pid, data.length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector(data)
     {
     }
 
-    RTPS_DllAPI UserDataQosPolicy(
-            const collection_type& data)
-        : Parameter_t(PID_USER_DATA, 0)
+    /**
+     * Construct from underlying collection type.
+     *
+     * Useful to easy integration on old APIs where a traditional container was used.
+     * The resulting GenericDataQosPolicy will always be unlimited in size
+     *
+     * @param pid Id of the parameter
+     * @param data data to copy in the newly created object
+     */
+    RTPS_DllAPI GenericDataQosPolicy(
+        ParameterId_t pid,
+        const collection_type& data)
+        : Parameter_t(pid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
     {
         assign(data.begin(), data.end());
+        length = (size() + 7) & ~3;
     }
 
-    virtual RTPS_DllAPI ~UserDataQosPolicy()
+    virtual RTPS_DllAPI ~GenericDataQosPolicy()
     {
     }
 
-    UserDataQosPolicy& operator =(
-            const collection_type& b)
+    /**
+     * Copies data from underlying collection type.
+     *
+     * Useful to easy integration on old APIs where a traditional container was used.
+     * The resulting GenericDataQosPolicy will keep the current size limit.
+     * If the input data is larger than the current limit size, the elements exceeding
+     * that maximum will be silently discarded.
+     *
+     * @param b object to be copied
+     * @return reference to the current object.
+     */
+    GenericDataQosPolicy& operator =(
+        const collection_type& b)
     {
         if (collection_ != b)
         {
@@ -624,30 +656,85 @@ public:
         return *this;
     }
 
-     /**
-      * Const cast to underlying collection.
-      *
-      * Useful to easy integration on old APIs where a traditional container was used.
-      *
-      * @return const reference to the underlying collection.
-      */
-     operator const collection_type& () const noexcept
-     {
-         return collection_;
-     }
+    /**
+     * Copies another GenericDataQosPolicy.
+     *
+     * The resulting GenericDataQosPolicy will have the same size limit
+     * as the input parameter, so all data in the input will be copied.
+     *
+     * @param b object to be copied
+     * @return reference to the current object.
+     */
+    GenericDataQosPolicy& operator =(
+        const GenericDataQosPolicy& b)
+    {
+        QosPolicy::operator=(b);
+        Parameter_t::operator=(b);
+        configuration_ = b.configuration_;
+        collection_.reserve(b.collection_.capacity());
+        collection_.assign(b.collection_.begin(), b.collection_.end());
+        return *this;
+    }
 
-     inline void clear() override
-     {
-         ResourceLimitedOctetVector::clear();
-     }
+    bool operator ==(
+        const GenericDataQosPolicy& b) const
+    {
+        return collection_ == b.collection_ &&
+            Parameter_t::operator ==(b) &&
+            m_sendAlways == b.m_sendAlways &&
+            hasChanged == b.hasChanged;
+    }
+
+    bool operator ==(
+        const collection_type& b) const
+    {
+        return collection_ == b;
+    }
+
+    /**
+     * Set the maximum size of the user data and reserves memory for that much.
+     * @param size new maximum size of the user data. Zero for unlimited size
+     */
+    void set_max_size(
+        size_t size)
+    {
+        if (size > 0)
+        {
+            configuration_ = fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(size);
+            collection_.reserve(configuration_.maximum);
+        }
+        else
+        {
+            configuration_ = fastrtps::ResourceLimitedContainerConfig::dynamic_allocation_configuration();
+        }
+    }
+
+    /**
+     * @return const reference to the internal raw data.
+     */
+    inline const collection_type& dataVec() const
+    {
+        return collection_;
+    }
+
+    inline void clear() override
+    {
+        ResourceLimitedOctetVector::clear();
+        hasChanged = false;
+    }
+
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(collection_);
+    }
 
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
+    bool inline addToCDRMessage(
+        fastrtps::rtps::CDRMessage_t* /* msg */) const override
     {
         return true;
     }
@@ -658,8 +745,9 @@ public:
      * @param size Size of the QoS Policy field to read
      * @return True if the parameter was correctly taken.
      */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
+    bool inline readFromCDRMessage(
+        fastrtps::rtps::CDRMessage_t* /* msg */,
+        uint16_t /* size */) override
     {
         return true;
     }
@@ -668,7 +756,7 @@ public:
      * Returns raw data vector.
      * @return raw data as vector of octets.
      * */
-    RTPS_DllAPI inline std::vector<fastrtps::rtps::octet> data_vec() const
+    RTPS_DllAPI inline const collection_type& data_vec() const
     {
         return collection_;
     }
@@ -678,29 +766,86 @@ public:
      * @param vec raw data to set.
      * */
     RTPS_DllAPI inline void data_vec(
-            const std::vector<fastrtps::rtps::octet>& vec)
+        const collection_type& vec)
     {
-        collection_ = vec;
+        assign(vec.begin(), vec.end());
     }
 
     /**
-     * Set the maximum size of the user data and reserves memory for that much.
-     * @param size new maximum size of the user data
-     */
-    void set_max_size (size_t size)
-    {
-        configuration_.maximum = size;
-    }
-
-    /**
-     * @return const reference to the internal raw data.
+     * Returns raw data vector.
+     * @return raw data as vector of octets.
      * */
-    inline const std::vector<fastrtps::rtps::octet>& dataVec() const
+    RTPS_DllAPI inline const collection_type& getValue() const
     {
         return collection_;
     }
 
+    /**
+     * Sets raw data vector.
+     * @param vec raw data to set.
+     * */
+    RTPS_DllAPI inline void setValue(
+        const collection_type& vec)
+    {
+        assign(vec.begin(), vec.end());
+    }
 };
+
+/**
+ * Class TemplateDataQosPolicy, base template for user data qos policies.
+ */
+template<ParameterId_t TPid>
+class TemplateDataQosPolicy : public GenericDataQosPolicy
+{
+public:
+
+    RTPS_DllAPI TemplateDataQosPolicy()
+        : GenericDataQosPolicy(TPid)
+    {
+    }
+
+    RTPS_DllAPI TemplateDataQosPolicy(
+        uint16_t in_length)
+        : GenericDataQosPolicy(TPid, in_length)
+    {
+    }
+
+    /**
+     * Construct from another TemplateDataQosPolicy.
+     *
+     * The resulting TemplateDataQosPolicy will have the same size limits
+     * as the input attribute
+     *
+     * @param data data to copy in the newly created object
+     */
+    RTPS_DllAPI TemplateDataQosPolicy(
+        const TemplateDataQosPolicy& data)
+        : GenericDataQosPolicy(data)
+    {
+    }
+
+    /**
+     * Construct from underlying collection type.
+     *
+     * Useful to easy integration on old APIs where a traditional container was used.
+     * The resulting TemplateDataQosPolicy will always be unlimited in size
+     *
+     * @param data data to copy in the newly created object
+     */
+    RTPS_DllAPI TemplateDataQosPolicy(
+        const collection_type& data)
+        : GenericDataQosPolicy(TPid, data)
+    {
+    }
+
+    virtual RTPS_DllAPI ~TemplateDataQosPolicy()
+    {
+    }
+};
+
+using UserDataQosPolicy = TemplateDataQosPolicy<PID_USER_DATA>;
+using TopicDataQosPolicy = TemplateDataQosPolicy<PID_TOPIC_DATA>;
+using GroupDataQosPolicy = TemplateDataQosPolicy<PID_GROUP_DATA>;
 
 /**
  * Class TimeBasedFilterQosPolicy, to indicate the Time Based Filter Qos.
@@ -930,182 +1075,6 @@ private:
 
     std::vector<std::string> names_;
     uint32_t max_size_ = 0;
-};
-
-
-/**
- * Class TopicDataQosPolicy, to indicate the Topic Data.
- */
-class TopicDataQosPolicy : public Parameter_t, public QosPolicy
-{
-    friend class ParameterList;
-
-public:
-
-    RTPS_DllAPI TopicDataQosPolicy()
-        : Parameter_t(PID_TOPIC_DATA, 0)
-        , QosPolicy(false)
-    {
-    }
-
-    virtual RTPS_DllAPI ~TopicDataQosPolicy()
-    {
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
-    /**
-     * Appends topic data.
-     * @param oc Data octet.
-     */
-    RTPS_DllAPI inline void push_back(
-            fastrtps::rtps::octet oc)
-    {
-        value.push_back(oc);
-    }
-
-    /**
-     * Clears all topic data.
-     */
-    RTPS_DllAPI inline void clear() override
-    {
-        value.clear();
-    }
-
-    /**
-     * Overrides topic data vector.
-     * @param ocv Topic data octet vector.
-     */
-    RTPS_DllAPI inline void setValue(
-            std::vector<fastrtps::rtps::octet> ocv)
-    {
-        value = ocv;
-    }
-
-    /**
-     * Returns topic data
-     * @return Vector of data octets.
-     */
-    RTPS_DllAPI inline std::vector<fastrtps::rtps::octet> getValue() const
-    {
-        return value;
-    }
-
-private:
-
-    std::vector<fastrtps::rtps::octet> value;
-};
-
-/**
- * Class GroupDataQosPolicy, to indicate the Group Data.
- */
-class GroupDataQosPolicy : public Parameter_t, public QosPolicy
-{
-    friend class ParameterList;
-
-public:
-
-    RTPS_DllAPI GroupDataQosPolicy()
-        : Parameter_t(PID_GROUP_DATA, 0)
-        , QosPolicy(false)
-    {
-    }
-
-    RTPS_DllAPI GroupDataQosPolicy(uint16_t in_length)
-        : Parameter_t(PID_GROUP_DATA, in_length)
-        , QosPolicy(false)
-        , value{}
-    {
-    }
-
-    virtual RTPS_DllAPI ~GroupDataQosPolicy()
-    {
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
-    /**
-     * Appends group data.
-     * @param oc Data octet.
-     */
-    RTPS_DllAPI inline void push_back(
-            fastrtps::rtps::octet oc)
-    {
-        value.push_back(oc);
-    }
-
-    /**
-     * Clears all group data.
-     */
-    RTPS_DllAPI inline void clear() override
-    {
-        value.clear();
-    }
-
-    /**
-     * Overrides group data vector.
-     * @param ocv Group data octet vector.
-     */
-    RTPS_DllAPI inline void setValue(
-            std::vector<fastrtps::rtps::octet> ocv)
-    {
-        value = ocv;
-    }
-
-    /**
-     * Returns group data
-     * @return Vector of data octets.
-     */
-    RTPS_DllAPI inline std::vector<fastrtps::rtps::octet> getValue() const
-    {
-        return value;
-    }
-
-private:
-
-    std::vector<fastrtps::rtps::octet> value;
 };
 
 /**
