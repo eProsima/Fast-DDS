@@ -30,8 +30,9 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::rtps;
 
-HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
-mp_subscriber(nullptr)
+HelloWorldSubscriber::HelloWorldSubscriber()
+    : mp_participant(nullptr)
+    ,mp_subscriber(nullptr)
 {
 }
 
@@ -49,7 +50,7 @@ bool HelloWorldSubscriber::init()
     // SharedMem transport configuration
     PParam.rtps.useBuiltinTransports = false;
 
-	auto sm_transport = std::make_shared<SharedMemTransportDescriptor>();
+    auto sm_transport = std::make_shared<SharedMemTransportDescriptor>();
     sm_transport->segment_size(2*1024*1024, 2 * 1024 * 1024);
     PParam.rtps.userTransports.push_back(sm_transport);
 
@@ -59,8 +60,10 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.userTransports.push_back(udp_transport);
 
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant==nullptr)
+    if (mp_participant==nullptr)
+    {
         return false;
+    }
 
     //REGISTER THE TYPE
 
@@ -80,8 +83,10 @@ bool HelloWorldSubscriber::init()
 
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
-    if(mp_subscriber == nullptr)
+    if (mp_subscriber == nullptr)
+    {
         return false;
+    }
 
 
     return true;
@@ -92,9 +97,11 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
     Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         std::cout << "Subscriber matched"<<std::endl;
@@ -106,23 +113,23 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*
     }
 }
 
-void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void HelloWorldSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
-    if(sub->takeNextData((void*)m_Hello.get(), &m_info))
+    if (sub->takeNextData((void*)m_Hello.get(), &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             this->n_samples++;
             const size_t data_size = m_Hello->data().size();
             // Print your structure data here.
-            std::cout << "Message " << m_Hello->message() << " " << m_Hello->index() 
-                << " RECEIVED With " << data_size << "(bytes) of Data. DataEnd = " << (char*)&m_Hello->data()[data_size-9] 
-                << std::endl;
+            std::cout << "Message " << m_Hello->message() << " " << m_Hello->index()
+                      << " RECEIVED With " << data_size << "(bytes) of Data. DataEnd = " <<
+            (char*)&m_Hello->data()[data_size-9]
+                      << std::endl;
         }
     }
-
 }
-
 
 void HelloWorldSubscriber::run()
 {
@@ -130,10 +137,11 @@ void HelloWorldSubscriber::run()
     std::cin.ignore();
 }
 
-void HelloWorldSubscriber::run(uint32_t number)
+void HelloWorldSubscriber::run(
+        uint32_t number)
 {
     std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
-    while(number > this->m_listener.n_samples)
+    while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

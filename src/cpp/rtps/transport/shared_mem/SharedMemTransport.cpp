@@ -264,7 +264,7 @@ bool SharedMemTransport::init()
         shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
                         configuration_.port_queue_capacity());
 
-        // Memset the whole segment to zero in order to forze physical map of the buffer
+        // Memset the whole segment to zero in order to force physical map of the buffer
         auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),
                         (std::chrono::steady_clock::now()+std::chrono::milliseconds(100)));
         memset(buffer->data(), 0, configuration_.segment_size());

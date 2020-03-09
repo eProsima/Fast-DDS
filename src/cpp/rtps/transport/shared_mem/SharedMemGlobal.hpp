@@ -153,9 +153,14 @@ public:
          *
          * ReadExclusive (one listener / multipler writers): Once a port is opened ReadExclusive cannot be opened ReadShared.
          *
-         * Write (multipler writers): A port can always be opened for writing.
+         * Write (multiple writers): A port can always be opened for writing.
          */
-        enum class OpenMode { ReadShared, ReadExclusive, Write };
+        enum class OpenMode 
+        { 
+            ReadShared, 
+            ReadExclusive, 
+            Write 
+        };
 
         Port(
                 std::unique_ptr<SharedMemSegment>&& port_segment,
@@ -283,7 +288,7 @@ public:
 
         /**
          * Set the caller's 'is_closed' flag (protecting empty_cv_mutex) and
-         * forzes wake-up all listeners on this port.
+         * forces wake-up all listeners on this port.
          * This function is used when destroying a listener waiting for messages
          * in the port.
          */
@@ -503,7 +508,7 @@ public:
                     new SharedMemSegment(boost::interprocess::create_only, port_segment_name.c_str(),
                     segment_size + extra));
 
-                // Memset the whole segment to zero in order to forze physical map of the buffer
+                // Memset the whole segment to zero in order to force physical map of the buffer
                 auto payload = port_segment->get().allocate(segment_size);
                 memset(payload, 0, segment_size);
                 port_segment->get().deallocate(payload);

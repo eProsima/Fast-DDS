@@ -45,26 +45,26 @@ HelloWorld::HelloWorld()
 
 HelloWorld::~HelloWorld()
 {
-
-
-
 }
 
-HelloWorld::HelloWorld(const HelloWorld &x)
+HelloWorld::HelloWorld(
+        const HelloWorld& x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
     m_data = x.m_data;
 }
 
-HelloWorld::HelloWorld(HelloWorld &&x)
+HelloWorld::HelloWorld(
+        HelloWorld&& x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
     m_data = std::move(x.m_data);
 }
 
-HelloWorld& HelloWorld::operator=(const HelloWorld &x)
+HelloWorld& HelloWorld::operator=(
+        const HelloWorld& x)
 {
 
     m_index = x.m_index;
@@ -74,7 +74,8 @@ HelloWorld& HelloWorld::operator=(const HelloWorld &x)
     return *this;
 }
 
-HelloWorld& HelloWorld::operator=(HelloWorld &&x)
+HelloWorld& HelloWorld::operator=(
+        HelloWorld&& x)
 {
 
     m_index = x.m_index;
@@ -84,65 +85,61 @@ HelloWorld& HelloWorld::operator=(HelloWorld &&x)
     return *this;
 }
 
-size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
+size_t HelloWorld::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
     current_alignment += ((DATA_SIZE) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-
-
     return current_alignment - initial_alignment;
 }
 
-size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
+size_t HelloWorld::getCdrSerializedSize(
+        const HelloWorld& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
-
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
     current_alignment += ((DATA_SIZE) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-
     return current_alignment - initial_alignment;
 }
 
-void HelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
+void HelloWorld::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-
     scdr << m_index;
     scdr << m_message;
     scdr << m_data;
-
 }
 
-void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void HelloWorld::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
-
     dcdr >> m_index;
     dcdr >> m_message;
     dcdr >> m_data;
-
 }
 
 /*!
  * @brief This function sets a value in member index
  * @param _index New value for member index
  */
-void HelloWorld::index(uint32_t _index)
+void HelloWorld::index(
+        uint32_t _index)
 {
-m_index = _index;
+    m_index = _index;
 }
 
 /*!
@@ -167,18 +164,20 @@ uint32_t& HelloWorld::index()
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
  */
-void HelloWorld::message(const std::string &_message)
+void HelloWorld::message(
+        const std::string& _message)
 {
-m_message = _message;
+    m_message = _message;
 }
 
 /*!
  * @brief This function moves the value in member message
  * @param _message New value to be moved in member message
  */
-void HelloWorld::message(std::string &&_message)
+void HelloWorld::message(
+        std::string&& _message)
 {
-m_message = std::move(_message);
+    m_message = std::move(_message);
 }
 
 /*!
@@ -202,18 +201,20 @@ std::string& HelloWorld::message()
  * @brief This function copies the value in member data
  * @param _data New value to be copied in member data
  */
-void HelloWorld::data(const std::array<char, DATA_SIZE> &_data)
+void HelloWorld::data(
+        const std::array<char, DATA_SIZE>& _data)
 {
-m_data = _data;
+    m_data = _data;
 }
 
 /*!
  * @brief This function moves the value in member data
  * @param _data New value to be moved in member data
  */
-void HelloWorld::data(std::array<char, DATA_SIZE> &&_data)
+void HelloWorld::data(
+        std::array<char, DATA_SIZE>&& _data)
 {
-m_data = std::move(_data);
+    m_data = std::move(_data);
 }
 
 /*!
@@ -234,27 +235,21 @@ std::array<char, DATA_SIZE>& HelloWorld::data()
     return m_data;
 }
 
-size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t HelloWorld::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-
-
-
-
-
+    size_t current_align = current_alignment;
 
     return current_align;
 }
 
 bool HelloWorld::isKeyDefined()
 {
-   return false;
+    return false;
 }
 
-void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void HelloWorld::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
-	 
-	 
-	 
+    (void) scdr;
 }

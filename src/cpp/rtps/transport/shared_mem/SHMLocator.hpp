@@ -29,12 +29,16 @@ class SHMLocator
 {
 public:
 
-    enum class Type {UNICAST, MULTICAST};
+    enum class Type 
+    {
+        UNICAST, 
+        MULTICAST
+    };
 
     /**
      * Generate a shared-memory locator for the local host.
      * @param port Locator's shared-memory port.
-     * @param type Indicates wether the locator is unicast or multicast.
+     * @param type Indicates whether the locator is unicast or multicast.
      * @return The created shared-memory locator.
      */
     static fastrtps::rtps::Locator_t create_locator(
@@ -55,7 +59,7 @@ public:
     }
 
     /**
-     * Check wether a given locator is shared-memory kind and belongs to this host
+     * Check whether a given locator is shared-memory kind and belongs to this host
      * @param locator Locator to check
      * @return boolean 
      */

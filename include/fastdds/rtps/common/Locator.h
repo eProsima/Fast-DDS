@@ -222,7 +222,7 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
 typedef std::vector<Locator_t>::const_iterator LocatorListConstIterator;
 
 /**
- * Provides a Locator's iterator interface that can by used by different Locator's
+ * Provides a Locator's iterator interface that can be used by different Locator's
  * containers
  */
 class LocatorsIterator

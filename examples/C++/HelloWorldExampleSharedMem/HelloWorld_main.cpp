@@ -26,19 +26,21 @@
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     Log::SetVerbosity(Log::Warning);
     //Log::SetCategoryFilter(std::regex("RTPS_EDP_MATCH|RTPS_PDP_DISCOVERY|RTPS_PARTICIPANT_LISTEN|SHM"));
-    
+
 
     std::cout << "Starting "<< std::endl;
     int type = 1;
     int count = 10;
     long sleep = 100;
-    if(argc > 1)
+    if (argc > 1)
     {
-        if(strcmp(argv[1],"publisher")==0)
+        if (strcmp(argv[1],"publisher")==0)
         {
             type = 1;
             if (argc >= 3)
@@ -50,10 +52,14 @@ int main(int argc, char** argv)
                 }
             }
         }
-        else if(strcmp(argv[1],"subscriber")==0)
+        else if (strcmp(argv[1],"subscriber")==0)
+        {
             type = 2;
+        }
         else if (strcmp(argv[1], "both") == 0)
+        {
             type = 3;
+        }
     }
     else
     {
@@ -62,51 +68,51 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    switch(type)
+    switch (type)
     {
-        case 1:
-            {
-                HelloWorldPublisher mypub;
-                if(mypub.init())
+    case 1:
+    {
+        HelloWorldPublisher mypub;
+        if (mypub.init())
+        {
+            mypub.run(count, sleep);
+        }
+        break;
+    }
+    case 2:
+    {
+        HelloWorldSubscriber mysub;
+        if (mysub.init())
+        {
+            mysub.run();
+        }
+        break;
+    }
+    case 3:
+    {
+        std::thread thread_sub([]
                 {
-                    mypub.run(count, sleep);
-                }
-                break;
-            }
-        case 2:
-            {
                 HelloWorldSubscriber mysub;
-                if(mysub.init())
+                if (mysub.init())
                 {
                     mysub.run();
                 }
-                break;
-            }
-        case 3:
-        {
-            std::thread thread_sub([]
-                {
-                    HelloWorldSubscriber mysub;
-                    if (mysub.init())
-                    {
-                        mysub.run();
-                    }
                 });
 
-            std::thread thread_pub([&]
+        std::thread thread_pub([&]
                 {
-                    HelloWorldPublisher mypub;
-                    if (mypub.init())
-                    {
-                        mypub.run(count, sleep);
-                    }
+                HelloWorldPublisher mypub;
+                if (mypub.init())
+                {
+                    mypub.run(count, sleep);
+                }
                 });
 
-            thread_sub.join();
-            thread_pub.join();
+        thread_sub.join();
+        thread_pub.join();
 
-            break;
-        }
+        break;
+    }
     }
     Domain::stopAll();
     Log::Reset();

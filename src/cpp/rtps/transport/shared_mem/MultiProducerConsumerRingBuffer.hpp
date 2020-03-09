@@ -39,7 +39,7 @@ public:
 
     class Cell
     {
-public:
+    public:
 
         const T& data() const
         {
@@ -57,8 +57,6 @@ public:
             return ref_counter_.load(std::memory_order_relaxed);
         }
 
-public:
-
         friend class MultiProducerConsumerRingBuffer<T>;
 
         std::atomic<uint32_t> ref_counter_;
@@ -67,7 +65,7 @@ public:
 
     class Listener
     {
-public:
+    public:
 
         Listener(
                 MultiProducerConsumerRingBuffer<T>& buffer,
@@ -138,7 +136,7 @@ public:
             return (counter == 1);
         }
 
-private:
+    private:
 
         MultiProducerConsumerRingBuffer<T>& buffer_;
         uint32_t read_p_;
@@ -380,7 +378,7 @@ private:
 
         try
         {
-            // Forzes to decrement the ref_counters for cells available to the listener.
+            // Forces to decrement the ref_counters for cells available to the listener.
             // A exception will break the loop
             while (1)
             {

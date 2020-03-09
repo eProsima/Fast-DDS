@@ -29,34 +29,46 @@
 
 #include "HelloWorld.h"
 
-class HelloWorldPublisher {
+class HelloWorldPublisher
+{
 public:
-	HelloWorldPublisher();
-	virtual ~HelloWorldPublisher();
-	//!Initialize
-	bool init();
-	//!Publish a sample
-	bool publish(bool waitForListener = true);
-	//!Run for number samples
-	void run(uint32_t number, uint32_t sleep);
+
+    HelloWorldPublisher();
+    virtual ~HelloWorldPublisher();
+    //!Initialize
+    bool init();
+    //!Publish a sample
+    bool publish(
+            bool waitForListener = true);
+    //!Run for number samples
+    void run(
+            uint32_t number,
+            uint32_t sleep);
+
 private:
-	std::shared_ptr<HelloWorld> m_Hello;
-	eprosima::fastrtps::Participant* mp_participant;
-	eprosima::fastrtps::Publisher* mp_publisher;
-	bool stop;
-	class PubListener:public eprosima::fastrtps::PublisherListener
-	{
-	public:
-		PubListener():n_matched(0),firstConnected(false){};
-		~PubListener(){};
-		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
-		int n_matched;
+
+    std::shared_ptr<HelloWorld> m_Hello;
+    eprosima::fastrtps::Participant* mp_participant;
+    eprosima::fastrtps::Publisher* mp_publisher;
+    bool stop;
+    class PubListener : public eprosima::fastrtps::PublisherListener
+    {
+public:
+
+        PubListener()
+            : n_matched(0)
+            ,firstConnected(false){};
+        ~PubListener(){};
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
+        int n_matched;
         bool firstConnected;
-	}m_listener;
-	void runThread(uint32_t number, uint32_t sleep);
-	HelloWorldPubSubType m_type;
+    } m_listener;
+    void runThread(
+            uint32_t number,
+            uint32_t sleep);
+    HelloWorldPubSubType m_type;
 };
-
-
 
 #endif /* HELLOWORLDPUBLISHER_H_ */

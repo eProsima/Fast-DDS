@@ -56,7 +56,7 @@ bool HelloWorldPublisher::init()
     // SharedMem transport configuration
     PParam.rtps.useBuiltinTransports = false;
 
-	auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+    auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
     const uint32_t segment_size = 2*1024*1024;
     shm_transport->segment_size(segment_size, segment_size);
     PParam.rtps.userTransports.push_back(shm_transport);
@@ -68,8 +68,10 @@ bool HelloWorldPublisher::init()
 
     mp_participant = Domain::createParticipant(PParam);
 
-    if(mp_participant==nullptr)
+    if (mp_participant==nullptr)
+    {
         return false;
+    }
     //REGISTER THE TYPE
 
     Domain::registerType(mp_participant,&m_type);
@@ -88,11 +90,12 @@ bool HelloWorldPublisher::init()
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
-    if(mp_publisher == nullptr)
+    if (mp_publisher == nullptr)
+    {
         return false;
+    }
 
     return true;
-
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()
@@ -101,9 +104,11 @@ HelloWorldPublisher::~HelloWorldPublisher()
     Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void HelloWorldPublisher::PubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         firstConnected = true;
@@ -116,13 +121,15 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     }
 }
 
-void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
+void HelloWorldPublisher::runThread(
+        uint32_t samples,
+        uint32_t sleep)
 {
     if (samples == 0)
     {
-        while(!stop)
+        while (!stop)
         {
-            if(publish(false))
+            if (publish(false))
             {
                 std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
             }
@@ -131,10 +138,12 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
     }
     else
     {
-        for(uint32_t i = 0;i<samples;++i)
+        for (uint32_t i = 0; i<samples; ++i)
         {
-            if(!publish())
+            if (!publish())
+            {
                 --i;
+            }
             else
             {
                 std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
@@ -144,7 +153,9 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
     }
 }
 
-void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
+void HelloWorldPublisher::run(
+        uint32_t samples,
+        uint32_t sleep)
 {
     stop = false;
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
@@ -161,15 +172,16 @@ void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
     thread.join();
 }
 
-bool HelloWorldPublisher::publish(bool waitForListener)
+bool HelloWorldPublisher::publish(
+        bool waitForListener)
 {
-    if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
         m_Hello->index(m_Hello->index()+1);
         size_t data_size = m_Hello->data().size();
         std::string s = "BigData" + std::to_string(m_Hello->index() % 10);
-        strcpy(&m_Hello->data()[data_size - s.length() -1], s.c_str());
-        
+        strcpy(&m_Hello->data()[data_size - s.length() - 1], s.c_str());
+
         mp_publisher->write((void*)m_Hello.get());
 
         return true;

@@ -961,7 +961,7 @@ void RTPSParticipantImpl::createReceiverResources(
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
-    // that impose a limit in the received messages size even if the transport allows (uint32_t) messages size.
+    // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
     uint32_t max_receiver_buffer_size = 
         is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
 #else
@@ -1225,7 +1225,7 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 {
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
-    // that impose a limit in the received messages size even if the transport allows (uint32_t) messages size.
+    // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
     // So the sender limits also its size.
     uint32_t max_receiver_buffer_size = 
         is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();

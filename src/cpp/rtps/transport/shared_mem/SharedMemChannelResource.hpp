@@ -50,14 +50,6 @@ public:
         message_receiver_ = nullptr;
     }
 
-    SharedMemChannelResource& operator=(
-            SharedMemChannelResource&& channelResource)
-    {
-        (void)channelResource;
-
-        return *this;
-    }
-
     void only_multicast_purpose(
             const bool value)
     {
@@ -135,7 +127,7 @@ private:
                 logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
             }
 
-            // Forzes message release before waiting for the next
+            // Forces message release before waiting for the next
             message.reset();
         }
 
