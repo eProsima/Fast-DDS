@@ -740,8 +740,8 @@ TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
             eprosima::fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
     ASSERT_EQ(descriptor->healthy_check_timeout_ms(), std::numeric_limits<uint32_t>::max());
     ASSERT_EQ(descriptor->rtps_dump_file(), "test_file.dump");
-    ASSERT_EQ(descriptor->maxMessageSize, 128000);
-    ASSERT_EQ(descriptor->max_message_size(), 128000);
+    ASSERT_EQ(descriptor->maxMessageSize, 128000u);
+    ASSERT_EQ(descriptor->max_message_size(), 128000u);
 }
 
 int main(
