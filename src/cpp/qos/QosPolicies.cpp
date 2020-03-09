@@ -82,7 +82,7 @@ bool QosPolicy::deserialize_generic_data(
     }
 
     // Skip padding
-    msg->pos += (len - (len + 3) & ~3);
+    msg->pos += ( (len + 3) & ~3) - len;
 
     // Should have consumed whole size
     return (pos_ref + size == msg->pos);
