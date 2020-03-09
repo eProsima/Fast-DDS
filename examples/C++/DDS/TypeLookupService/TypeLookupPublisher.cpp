@@ -24,6 +24,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 
@@ -88,7 +89,6 @@ bool TypeLookupPublisher::init()
     Wparam.topic.auto_fill_type_information = true; // Share the type with readers.
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
-    Wparam.qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
 
     if (mp_publisher == nullptr)
@@ -97,7 +97,9 @@ bool TypeLookupPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_listener);
+    DataWriterQos wqos;
+    wqos.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    writer_ = mp_publisher->create_datawriter(Wparam.topic, wqos, &m_listener);
 
     if (writer_ == nullptr)
     {

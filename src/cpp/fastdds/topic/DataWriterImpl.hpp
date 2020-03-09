@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/WriteParams.h>
 
-#include <fastrtps/qos/WriterQos.h>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/dds/topic/DataWriterListener.hpp>
@@ -76,7 +76,7 @@ class DataWriterImpl
             TypeSupport type,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::WriterAttributes& att,
-            const fastrtps::WriterQos& qos,
+            const fastdds::dds::DataWriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataWriterListener* listener = nullptr);
 
@@ -151,9 +151,9 @@ public:
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastrtps::WriterQos& qos);
+            const fastdds::dds::DataWriterQos &qos);
 
-    const fastrtps::WriterQos& get_qos() const;
+    const fastdds::dds::DataWriterQos& get_qos() const;
 
     bool set_topic(
             const fastrtps::TopicAttributes& att);
@@ -211,7 +211,7 @@ private:
 
     fastrtps::rtps::WriterAttributes w_att_;
 
-    fastrtps::WriterQos qos_;
+    fastdds::dds::DataWriterQos qos_;
 
     //!Publisher History
     fastrtps::PublisherHistory history_;

@@ -24,6 +24,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 
 #include <thread>
 
@@ -57,8 +58,10 @@ bool HelloWorldPublisher::init()
     eprosima::fastrtps::PublisherAttributes pub_att;
     pub_att.topic.topicDataType = "HelloWorld";
     pub_att.topic.topicName = "HelloWorldTopic";
-    pub_att.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
+
+    DataWriterQos qos;
+    qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
 
     if (publisher_ == nullptr)
     {
@@ -66,7 +69,7 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(pub_att.topic, pub_att.qos, &listener_);
+    writer_ = publisher_->create_datawriter(pub_att.topic, qos, &listener_);
 
     if (writer_ == nullptr)
     {
