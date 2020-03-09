@@ -660,7 +660,8 @@ public:
      * Useful to easy integration on old APIs where a traditional container was used.
      * The resulting GenericDataQosPolicy will always be unlimited in size
      *
-     * @param data data to copy in the newly created object
+     * @param pid Id of the parameter
+     * @param data Data to copy in the newly created object
      */
     RTPS_DllAPI GenericDataQosPolicy(
             ParameterId_t pid,
@@ -755,7 +756,7 @@ public:
 
     /**
      * @return const reference to the internal raw data.
-     * */
+     */
     inline const std::vector<rtps::octet>& dataVec() const
     {
         return collection_;
