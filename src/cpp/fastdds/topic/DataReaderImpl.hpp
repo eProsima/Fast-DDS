@@ -24,7 +24,9 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
 
-#include <fastrtps/qos/ReaderQos.h>
+#include <fastdds/dds/topic/qos/DataReaderQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
@@ -68,9 +70,10 @@ class DataReaderImpl {
     DataReaderImpl(
             SubscriberImpl* s,
             TypeSupport type,
+            const Topic& topic,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
-            const fastrtps::ReaderQos& qos,
+            const DataReaderQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataReaderListener* listener = nullptr);
 
@@ -141,14 +144,20 @@ public:
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastrtps::ReaderQos& qos);
+            const DataReaderQos& qos);
 
-    const fastrtps::ReaderQos& get_qos() const;
+    const DataReaderQos& get_qos() const;
+
 
     bool set_topic(
+            const Topic& topic);
+
+    bool set_topic_attributes(
             const fastrtps::TopicAttributes& att);
 
-    const fastrtps::TopicAttributes& get_topic() const;
+    const fastrtps::TopicAttributes& get_topic_attributes() const;
+
+    const Topic& get_topic() const;
 
     ReturnCode_t set_listener(
             DataReaderListener* listener);
@@ -188,6 +197,12 @@ public:
             const fastrtps::Duration_t& max_wait) const;
     */
 
+    /* TODO
+    ReturnCode_t get_matched_publication_data(
+            PublicationBuiltinTopicData publication_data,
+            fastrtps::rtps::InstanceHandle_t publication_handle);
+    */
+
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -204,10 +219,14 @@ private:
 
     fastrtps::TopicAttributes topic_att_;
 
+    Topic topic_;
+
     //!Attributes of the Subscriber
     fastrtps::rtps::ReaderAttributes att_;
 
-    fastrtps::ReaderQos qos_;
+    DataReaderQos qos_;
+
+    ReaderQos rqos_;
 
     //!History
     fastrtps::SubscriberHistory history_;

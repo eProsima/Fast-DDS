@@ -37,34 +37,56 @@
 class TestSubscriber
 {
 public:
+
     TestSubscriber();
 
     virtual ~TestSubscriber();
 
     //!Initialize the subscriber
     bool init(
-        const std::string& topicName,
-        int domain,
-        eprosima::fastrtps::rtps::TopicKind_t topic_kind,
-        eprosima::fastdds::dds::TypeSupport type,
-        const eprosima::fastrtps::types::TypeObject* type_object,
-        const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-        const eprosima::fastrtps::types::TypeInformation* type_info,
-        const std::string& name,
-        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-        const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
-        bool use_typelookup = false);
+            const std::string& topicName,
+            int domain,
+            eprosima::fastrtps::rtps::TopicKind_t topic_kind,
+            eprosima::fastdds::dds::TypeSupport type,
+            const eprosima::fastrtps::types::TypeObject* type_object,
+            const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
+            const eprosima::fastrtps::types::TypeInformation* type_info,
+            const std::string& name,
+            const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
+            const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
+            bool use_typelookup = false);
 
     //!RUN the subscriber
     void run();
 
     // Auxiliar test methods
     bool isInitialized() const { return m_bInitialized; }
-    void waitDiscovery(bool expectMatch = true, int maxWait = 10);
-    void waitTypeDiscovery(bool expectMatch = true, int maxWait = 10);
-    void matched(bool unmatched = false);
+    void waitDiscovery(
+            bool expectMatch = true,
+            int maxWait = 10);
+    void waitTypeDiscovery(
+            bool expectMatch = true,
+            int maxWait = 10);
+    void matched(
+            bool unmatched = false);
     bool isMatched() { return m_subListener.n_matched > 0; }
     uint32_t samplesReceived() { return m_subListener.n_samples; }
+
+    void block(
+            std::function<bool()> checker)
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cv_.wait(lock, checker);
+    }
+
+    size_t block_for_at_least(
+            size_t at_least)
+    {
+        block([this, at_least]() -> bool {
+            return samplesReceived() >= at_least;
+        });
+        return samplesReceived();
+    }
 
     eprosima::fastrtps::types::DynamicType_ptr discovered_type() const
     {
@@ -75,17 +97,19 @@ public:
 
     eprosima::fastdds::dds::DataReader* create_datareader();
 
-    void delete_datareader(eprosima::fastdds::dds::DataReader* reader);
+    void delete_datareader(
+            eprosima::fastdds::dds::DataReader* reader);
 
     eprosima::fastdds::dds::DomainParticipant* participant();
 
 private:
+
     std::string m_Name;
     eprosima::fastdds::dds::TypeSupport m_Type;
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
     eprosima::fastdds::dds::DataReader* reader_;
-    void *m_Data;
+    void* m_Data;
     bool m_bInitialized;
     std::mutex m_mDiscovery;
     std::mutex mtx_type_discovery_;
@@ -95,15 +119,20 @@ private:
     std::condition_variable cv_;
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
     eprosima::fastrtps::TopicAttributes topic_att;
-    eprosima::fastrtps::ReaderQos reader_qos;
+    eprosima::fastdds::dds::DataReaderQos reader_qos;
     bool using_typelookup_;
     bool tls_callback_called_;
 
 public:
+
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-    public:
-        PartListener(TestSubscriber* parent) : parent_(parent), discovered_(false) {}
+public:
+
+        PartListener(
+                TestSubscriber* parent)
+            : parent_(parent)
+            , discovered_(false) {}
         ~PartListener() override {}
 
         void on_type_discovery(
@@ -125,11 +154,13 @@ public:
 
     } part_listener_;
 
-    class SubListener :public eprosima::fastdds::dds::DataReaderListener
+    class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-    public:
+public:
+
         SubListener() {}
-        SubListener(TestSubscriber* parent);
+        SubListener(
+                TestSubscriber* parent);
 
         ~SubListener() override {}
 
@@ -137,13 +168,14 @@ public:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void on_data_available(eprosima::fastdds::dds::DataReader* reader) override;
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
 
         TestSubscriber* mParent;
         eprosima::fastdds::dds::SampleInfo_t info_;
         int n_matched;
         uint32_t n_samples;
-    }m_subListener;
+    } m_subListener;
 };
 
 #endif /* _TEST_SUBSCRIBER_H_ */

@@ -42,6 +42,7 @@ DataReader::DataReader(
     : impl_(
           (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
 {
+    impl_->set_topic(topic);
 }
 
 DataReader::DataReader(
@@ -93,7 +94,7 @@ InstanceHandle_t DataReader::get_instance_handle() const
 }
 
 ReturnCode_t DataReader::set_qos(
-        const ReaderQos& qos)
+        const DataReaderQos& qos)
 {
     return impl_->set_qos(qos);
 }
@@ -101,16 +102,16 @@ ReturnCode_t DataReader::set_qos(
 bool DataReader::set_topic(
         const TopicAttributes& topic_att)
 {
-    return impl_->set_topic(topic_att);
+    return impl_->set_topic_attributes(topic_att);
 }
 
-const ReaderQos& DataReader::get_qos() const
+const DataReaderQos& DataReader::get_qos() const
 {
     return impl_->get_qos();
 }
 
 ReturnCode_t DataReader::get_qos(
-        ReaderQos& qos) const
+        DataReaderQos& qos) const
 {
     qos = impl_->get_qos();
     return ReturnCode_t::RETCODE_OK;
@@ -118,7 +119,7 @@ ReturnCode_t DataReader::get_qos(
 
 const TopicAttributes& DataReader::get_topic() const
 {
-    return impl_->get_topic();
+    return impl_->get_topic_attributes();
 }
 
 bool DataReader::set_attributes(
@@ -229,6 +230,15 @@ TypeSupport DataReader::type()
 {
     return impl_->type();
 }
+
+/* TODO
+ReturnCode_t DataReader::get_matched_publication_data(
+        PublicationBuiltinTopicData publication_data,
+        fastrtps::rtps::InstanceHandle_t publication_handle)
+{
+    return impl_->get_matched_publication_data(publication_data, publication_handle);
+}
+*/
 
 } /* namespace dds */
 } /* namespace fastdds */

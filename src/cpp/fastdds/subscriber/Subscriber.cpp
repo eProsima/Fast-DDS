@@ -74,36 +74,27 @@ ReturnCode_t Subscriber::set_listener(
 
 DataReader* Subscriber::create_datareader(
         const fastrtps::TopicAttributes& topic_attr,
-        const fastrtps::ReaderQos& reader_qos,
+        const DataReaderQos& reader_qos,
         DataReaderListener* listener)
 {
-    return impl_->create_datareader(topic_attr, reader_qos, listener);
+    Topic topic(get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
+    return impl_->create_datareader(topic, topic_attr, reader_qos, listener);
 }
 
 DataReader* Subscriber::create_datareader(
         const Topic& topic,
         const DataReaderQos& qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
 {
     fastrtps::TopicAttributes topic_attr;
-    fastrtps::ReaderQos rqos;
     topic_attr.topicName = topic.get_name();
     topic_attr.topicDataType = topic.get_type_name();
     TopicQos topic_qos;
     topic.get_qos(topic_qos);
     topic_attr.historyQos = qos.history;
-    rqos.m_topicData = topic_qos.topic_data;
-    rqos.m_durability = qos.durability;
-    rqos.m_deadline = qos.deadline;
-    rqos.m_latencyBudget = qos.latency_budget;
-    rqos.m_liveliness = qos.liveliness;
-    rqos.m_reliability = qos.reliability;
-    rqos.m_destinationOrder = qos.destination_order;
-    topic_attr.resourceLimitsQos = qos.resource_limits;
-    rqos.m_ownership = qos.ownership;
-    rqos.m_userData = qos.user_data;
 
-    return impl_->create_datareader(topic_attr, rqos, listener);
+    return impl_->create_datareader(topic, topic_attr, qos, listener);
 }
 
 ReturnCode_t Subscriber::delete_datareader(
@@ -156,18 +147,18 @@ bool Subscriber::delete_contained_entities()
 */
 
 ReturnCode_t Subscriber::set_default_datareader_qos(
-        const fastrtps::ReaderQos& qos)
+        const DataReaderQos& qos)
 {
     return impl_->set_default_datareader_qos(qos);
 }
 
-const fastrtps::ReaderQos& Subscriber::get_default_datareader_qos() const
+const DataReaderQos& Subscriber::get_default_datareader_qos() const
 {
     return impl_->get_default_datareader_qos();
 }
 
 ReturnCode_t Subscriber::get_default_datareader_qos(
-        fastrtps::ReaderQos& qos) const
+        DataReaderQos& qos) const
 {
     qos = impl_->get_default_datareader_qos();
     return ReturnCode_t::RETCODE_OK;
@@ -175,7 +166,7 @@ ReturnCode_t Subscriber::get_default_datareader_qos(
 
 /* TODO
 bool Subscriber::copy_from_topic_qos(
-        fastrtps::ReaderQos& reader_qos,
+        DataReaderQos& reader_qos,
         const fastrtps::TopicAttributes& topic_qos) const
 {
     return impl_->copy_from_topic_qos(reader_qos, topic_qos);

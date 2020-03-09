@@ -60,8 +60,8 @@ bool TypeLookupSubscriber::init()
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
-    qos_.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    qos_.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    qos_.durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    qos_.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     topic_.topicKind = NO_KEY;
     topic_.topicDataType = "TypeLookup";
     topic_.topicName = "TypeLookupTopic";
@@ -160,7 +160,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     Rparam = subscriber_->att_;
                     Rparam.topic = subscriber_->topic_;
                     Rparam.topic.topicName = topic_name;
-                    Rparam.qos = subscriber_->qos_;
+                    Rparam.qos = subscriber_->qos_.changeToReaderQos();
                     subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
                         SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
 

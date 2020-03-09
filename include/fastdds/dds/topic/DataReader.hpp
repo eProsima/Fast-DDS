@@ -23,6 +23,8 @@
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/Status.hpp>
@@ -62,8 +64,6 @@ class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
 class Topic;
-class ReaderQos;
-class DataReaderQos;
 struct LivelinessChangedStatus;
 class SampleInfo_t;
 
@@ -81,7 +81,7 @@ class RTPS_DllAPI DataReader
     DataReader(
             const Subscriber* pub,
             const Topic& topic,
-            const DataReaderQos& qos,
+            const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
             DataReaderListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
@@ -163,12 +163,12 @@ public:
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const ReaderQos& qos);
+            const DataReaderQos& qos);
 
-    const ReaderQos& get_qos() const;
+    const DataReaderQos& get_qos() const;
 
     ReturnCode_t get_qos(
-            ReaderQos& qos) const;
+            DataReaderQos& qos) const;
 
     bool set_topic(
             const fastrtps::TopicAttributes& att);
@@ -212,6 +212,12 @@ public:
        bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
      */
+
+    /* TODO
+       ReturnCode_t get_matched_publication_data(
+            PublicationBuiltinTopicData publication_data,
+            fastrtps::rtps::InstanceHandle_t publication_handle);
+    */
 
 private:
 

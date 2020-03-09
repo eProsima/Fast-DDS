@@ -50,7 +50,7 @@ bool HelloWorldSubscriber::init()
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
-    qos_.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    qos_.reliability.kind = RELIABLE_RELIABILITY_QOS;
     topic_.topicKind = eprosima::fastrtps::rtps::NO_KEY;
     topic_.topicDataType = "HelloWorld";
     topic_.topicName = "DDSDynHelloWorldTopic";
@@ -132,7 +132,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         Rparam = subscriber_->att_;
         Rparam.topic = subscriber_->topic_;
         Rparam.topic.topicName = topic;
-        Rparam.qos = subscriber_->qos_;
+        Rparam.qos = subscriber_->qos_.changeToReaderQos();
         subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
             SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
 
