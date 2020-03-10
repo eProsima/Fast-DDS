@@ -53,7 +53,7 @@
 #include <mutex>
 #include <algorithm>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {

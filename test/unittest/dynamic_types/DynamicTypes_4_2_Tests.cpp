@@ -26,7 +26,7 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 #include "idl/new_features_4_2PubSubTypes.h"
 #include "idl/new_features_4_2TypeObject.h"
@@ -47,7 +47,7 @@ class DynamicTypes_4_2_Tests: public ::testing::Test
 
         ~DynamicTypes_4_2_Tests()
         {
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         virtual void TearDown() override
@@ -441,7 +441,7 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
 
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -20,7 +20,7 @@
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/BinaryProperty.h>
 #include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyExchange.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>

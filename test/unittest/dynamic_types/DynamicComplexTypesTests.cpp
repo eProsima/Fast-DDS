@@ -27,7 +27,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include "idl/Test.h"
 #include "idl/TestPubSubTypes.h"
@@ -69,7 +69,7 @@ class DynamicComplexTypesTests: public ::testing::Test
             DynamicTypeBuilderFactory::delete_instance();
             TypeObjectFactory::delete_instance();
 
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         virtual void TearDown()
@@ -2232,7 +2232,7 @@ TEST_F(DynamicComplexTypesTests, TypeInformation)
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
 
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

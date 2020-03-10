@@ -15,7 +15,7 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {

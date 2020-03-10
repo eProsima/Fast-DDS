@@ -15,7 +15,7 @@
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <cstdlib>
 #ifdef _WIN32

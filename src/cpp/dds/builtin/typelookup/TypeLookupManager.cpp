@@ -37,7 +37,7 @@
 //#include <fastdds/rtps/common/Guid.h>
 //#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -46,7 +46,7 @@
 namespace eprosima {
 
 using namespace fastrtps::rtps;
-using fastrtps::Log;
+using eprosima::fastdds::dds::Log;
 
 namespace fastdds {
 namespace dds {

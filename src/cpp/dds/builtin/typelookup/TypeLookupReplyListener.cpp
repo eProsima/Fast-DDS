@@ -26,13 +26,13 @@
 
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;
-using eprosima::fastrtps::Log;
+using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
 

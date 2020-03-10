@@ -25,7 +25,7 @@
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <utility>
 
@@ -38,7 +38,7 @@ using eprosima::fastrtps::types::TypeIdentifierPair;
 using eprosima::fastrtps::types::TypeObjectFactory;
 using eprosima::fastrtps::types::TypeIdentifierWithSize;
 using eprosima::fastrtps::types::TypeIdentifierWithSizeSeq;
-using eprosima::fastrtps::Log;
+using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
 

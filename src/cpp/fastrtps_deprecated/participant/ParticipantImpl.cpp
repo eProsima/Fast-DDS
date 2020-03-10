@@ -43,7 +43,7 @@
 #include <fastdds/rtps/transport/test_UDPv4Transport.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

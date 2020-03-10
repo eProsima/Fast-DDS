@@ -24,7 +24,7 @@
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <sstream>
 
 namespace eprosima {

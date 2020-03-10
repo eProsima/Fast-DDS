@@ -25,7 +25,7 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/network/NetworkFactory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>

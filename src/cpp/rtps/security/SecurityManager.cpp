@@ -25,7 +25,7 @@
 #include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/security/accesscontrol/AccessControl.h>
 #include <fastdds/rtps/security/accesscontrol/SecurityMaskUtilities.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/network/NetworkFactory.h>
 

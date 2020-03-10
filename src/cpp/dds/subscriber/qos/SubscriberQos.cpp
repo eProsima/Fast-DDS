@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastdds {

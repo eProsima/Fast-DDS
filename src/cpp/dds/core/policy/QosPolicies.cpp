@@ -20,7 +20,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
 namespace eprosima {

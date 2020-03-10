@@ -242,6 +242,7 @@ protected:
 #ifndef LOG_NO_ERROR
 #define logError_(cat, msg)                                                                          \
     {                                                                                                \
+        using namespace eprosima::fastdds::dds;                                                      \
         std::stringstream ss;                                                                        \
         ss << msg;                                                                                   \
         Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
@@ -263,6 +264,7 @@ protected:
 #ifndef LOG_NO_WARNING
 #define logWarning_(cat, msg)                                                                              \
     {                                                                                                      \
+        using namespace eprosima::fastdds::dds;                                                            \
         if (Log::GetVerbosity() >= Log::Kind::Warning)                                                     \
         {                                                                                                  \
             std::stringstream ss;                                                                          \
@@ -288,6 +290,7 @@ protected:
     (!defined(LOG_NO_INFO))
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
+        using namespace eprosima::fastdds::dds;                                                         \
         if (Log::GetVerbosity() >= Log::Kind::Info)                                                     \
         {                                                                                               \
             std::stringstream ss;                                                                       \

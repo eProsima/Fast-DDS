@@ -21,8 +21,8 @@
 #define THROUGHPUTTYPES_H_
 
 #include <fastrtps/TopicDataType.h>
-#include <fastrtps/log/Log.h>
-#include <fastrtps/log/Colors.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/Colors.hpp>
 
 #include <chrono>
 

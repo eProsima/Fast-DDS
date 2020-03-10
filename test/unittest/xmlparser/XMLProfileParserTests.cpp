@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/log/Log.h>
-#include <fastrtps/log/FileConsumer.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
@@ -29,15 +29,25 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 
+using eprosima::fastdds::dds::Log;
+using eprosima::fastdds::dds::LogMock;
+using eprosima::fastdds::dds::LogConsumer;
+
+LogMock* log_mock = nullptr;
+
 // Initialize Log mock
-LogMock* log_mock;
-std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc =
-        [](std::unique_ptr<LogConsumer>&& c) {
-            log_mock->RegisterConsumer(std::move(c));
-        };
-std::function<void()> Log::ClearConsumersFunc = []() {
-            log_mock->ClearConsumers();
-        };
+void TestRegisterConsumerFunc(std::unique_ptr<LogConsumer>&& c)
+{
+    log_mock->RegisterConsumer(std::move(c));
+}
+
+void TestClearConsumersFunc()
+{
+    log_mock->ClearConsumers();
+}
+
+std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc = TestRegisterConsumerFunc;
+std::function<void()> Log::ClearConsumersFunc = TestClearConsumersFunc;
 
 class XMLProfileParserTests : public ::testing::Test
 {
@@ -613,6 +623,8 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
+    using namespace eprosima::fastdds::dds;
+
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
@@ -626,6 +638,8 @@ TEST_F(XMLProfileParserTests, log_inactive)
 
 TEST_F(XMLProfileParserTests, file_and_default)
 {
+    using namespace eprosima::fastdds::dds;
+
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
 }

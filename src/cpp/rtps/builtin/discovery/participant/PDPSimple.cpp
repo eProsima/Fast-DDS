@@ -45,7 +45,7 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
 

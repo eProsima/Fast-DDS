@@ -20,7 +20,7 @@
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>

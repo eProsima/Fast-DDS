@@ -19,7 +19,7 @@
 #include <fastdds/rtps/transport/tcp/RTCPHeader.h>
 #include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <fastdds/rtps/transport/TCPChannelResource.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 #include <fastdds/rtps/transport/TCPTransportInterface.h>

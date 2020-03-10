@@ -15,13 +15,14 @@
 #ifndef MOCK_LOG_CONSUMER_H
 #define MOCK_LOG_CONSUMER_H
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <thread>
 #include <mutex>
 #include <vector>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 class MockConsumer: public LogConsumer {
 public:
@@ -42,7 +43,8 @@ private:
    mutable std::mutex mMutex;
 };
 
-} // namespace fastrtps
+} // namespace dds
+} // namespace fastdds
 } // namespace eprosima
 
 #endif

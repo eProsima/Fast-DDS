@@ -24,7 +24,7 @@
 #include <rtps/reader/WriterProxy.h>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
 

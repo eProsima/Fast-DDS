@@ -30,7 +30,7 @@
 
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <thread>
 #include <memory>
@@ -74,14 +74,14 @@ class BlackboxEnvironment : public ::testing::Environment
             att.intraprocess_delivery = INTRAPROCESS_OFF;
             eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
 
-            //Log::SetVerbosity(Log::Info);
+            //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
             //Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
 
         void TearDown()
         {
             //Log::Reset();
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
             eprosima::fastrtps::rtps::RTPSDomain::stopAll();
         }
 };

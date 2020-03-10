@@ -33,7 +33,7 @@
 #include <set>
 #include <vector>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include "rtps/RTPSDomainImpl.hpp"
 
 namespace eprosima {

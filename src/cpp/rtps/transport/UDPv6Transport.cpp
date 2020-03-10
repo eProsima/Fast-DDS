@@ -17,7 +17,7 @@
 #include <utility>
 #include <cstring>
 #include <algorithm>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastdds/rtps/network/SenderResource.h>

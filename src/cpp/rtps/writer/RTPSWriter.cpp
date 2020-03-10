@@ -20,7 +20,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/flowcontrol/FlowController.h>
 

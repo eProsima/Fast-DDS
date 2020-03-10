@@ -56,7 +56,7 @@
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
 #include <chrono>

@@ -18,7 +18,7 @@
 
 #include <fastdds/rtps/history/WriterHistory.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/common/WriteParams.h>
 

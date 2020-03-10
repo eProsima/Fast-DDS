@@ -34,7 +34,7 @@
 #include <fastrtps/attributes/TopicAttributes.h>
 
 #include <fastrtps/utils/StringMatching.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps/types/TypeObjectFactory.h>
 

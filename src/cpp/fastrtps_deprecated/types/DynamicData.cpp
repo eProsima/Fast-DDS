@@ -20,7 +20,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
 #include <locale>

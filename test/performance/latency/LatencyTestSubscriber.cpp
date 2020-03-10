@@ -18,8 +18,8 @@
  */
 
 #include "LatencyTestSubscriber.hpp"
-#include "fastrtps/log/Log.h"
-#include "fastrtps/log/Colors.h"
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;

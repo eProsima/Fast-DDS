@@ -15,7 +15,7 @@
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <cassert>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
 
