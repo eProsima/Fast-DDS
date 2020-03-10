@@ -17,7 +17,10 @@
  */
 
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 
 namespace eprosima {
 using ReturnCode_t = fastrtps::types::ReturnCode_t;
@@ -25,67 +28,75 @@ namespace fastdds {
 namespace dds {
 
 Topic::Topic(
-        const DomainParticipant* dp,
-        const std::string& topic_name,
-        const std::string& type_name,
-        const TopicQos& qos,
-        TopicListener* listener,
-        const ::dds::core::status::StatusMask& mask)
-    : TopicDescription(topic_name.c_str(), type_name.c_str())
-    , listener_(listener)
-    , qos_(qos)
-    , mask_(mask)
+        TopicImpl* impl,
+        const ::dds::core::status::StatusMask& /*mask*/)
+    : TopicDescription(impl->get_participant(), impl->get_topic_attributes().topicName.c_str(),
+            impl->get_topic_attributes().topicDataType.c_str())
+    , impl_(impl)
 {
-    (void)dp;
+}
+
+fastrtps::TopicAttributes Topic::get_topic_attributes() const
+{
+    return impl_->get_topic_attributes();
+}
+
+fastrtps::TopicAttributes Topic::get_topic_attributes(
+        const DataReaderQos& qos) const
+{
+    return impl_->get_topic_attributes(qos);
+}
+
+fastrtps::TopicAttributes Topic::get_topic_attributes(
+        const DataWriterQos& qos) const
+{
+    return impl_->get_topic_attributes(qos);
 }
 
 ReturnCode_t Topic::get_qos(
         TopicQos& qos) const
 {
-    qos = qos_;
-    return ReturnCode_t::RETCODE_OK;
+    return impl_->get_qos(qos);
 }
 
 const TopicQos& Topic::get_qos() const
 {
-    return qos_;
+    return impl_->get_qos();
 }
 
 ReturnCode_t Topic::set_qos(
         const TopicQos& qos)
 {
-    // TODO Check updatable
-    qos_ = qos;
-    return ReturnCode_t::RETCODE_OK;
+    return impl_->set_qos(qos);
 }
 
 TopicListener* Topic::get_listener() const
 {
-    return listener_;
+    return impl_->get_listener();
 }
 
 ReturnCode_t Topic::set_listener(
         TopicListener* a_listener,
-        const ::dds::core::status::StatusMask& mask)
+        const ::dds::core::status::StatusMask& /*mask*/)
 {
-    listener_ = a_listener;
-    mask_ = mask;
-    return ReturnCode_t::RETCODE_OK;
-}
-
-ReturnCode_t Topic::get_inconsistent_topic_status(
-        InconsistentTopicStatus& status) const
-{
-    status = status_;
-    return ReturnCode_t::RETCODE_OK;
+    return impl_->set_listener(a_listener);
 }
 
 DomainParticipant* Topic::get_participant() const
 {
-    // TODO: Retrieve participant
-    return nullptr;
+    return impl_->get_participant();
 }
 
+std::vector<DataWriter*>* Topic::get_writers()
+{
+    return impl_->get_writers();
 }
+
+std::vector<DataReader*>* Topic::get_readers()
+{
+    return impl_->get_readers();
 }
-}
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

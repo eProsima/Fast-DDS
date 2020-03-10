@@ -79,8 +79,10 @@ DataReader* Subscriber::create_datareader(
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    Topic topic(&get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
-    return impl_->create_datareader(topic, topic_attr, reader_qos, listener, mask);
+    DomainParticipant dp = get_participant();
+    Topic* topic = dp.create_topic(topic_attr.getTopicName().c_str(),
+                    topic_attr.getTopicDataType().c_str(), topic_attr);
+    return impl_->create_datareader(*topic, topic_attr, reader_qos, listener, mask);
 }
 
 DataReader* Subscriber::create_datareader(

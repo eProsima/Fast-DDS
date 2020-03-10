@@ -93,6 +93,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/qos/DataReaderQos.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/topic/Topic.cpp
+    fastdds/topic/TopicImpl.cpp
     fastdds/publisher/PublisherImpl.cpp
     fastdds/publisher/qos/PublisherQos.cpp
     fastdds/publisher/Publisher.cpp

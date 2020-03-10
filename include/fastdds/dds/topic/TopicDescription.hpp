@@ -37,17 +37,25 @@ class DomainParticipant;
 class TopicDescription
 {
 public:
+
     RTPS_DllAPI TopicDescription(
+            DomainParticipant* participant,
             const char* name,
             const char* type_name)
         : name_(name)
         , type_name_(type_name)
-    {}
+        , participant_(participant)
+    {
+    }
 
     virtual RTPS_DllAPI ~TopicDescription()
-    {}
+    {
+    }
 
-    virtual RTPS_DllAPI DomainParticipant* get_participant() const = 0;
+    virtual RTPS_DllAPI DomainParticipant* get_participant() const
+    {
+        return participant_;
+    }
 
     RTPS_DllAPI const char* get_name() const
     {
@@ -69,6 +77,18 @@ public:
         return type_name_;
     }
 
+    RTPS_DllAPI void set_name(
+            std::string name)
+    {
+        name_ = name;
+    }
+
+    RTPS_DllAPI void set_type_name(
+            std::string type_name)
+    {
+        type_name_ = type_name;
+    }
+
 protected:
 
     //! Name that allows the TopicDescription to be retrieved locally
@@ -76,6 +96,9 @@ protected:
 
     //! Name that defines a unique resulting type for the publication or the subscription
     std::string type_name_;
+
+    //! Domain Participant to which the topic description belongs
+    DomainParticipant* participant_;
 };
 
 } /* namespace dds */

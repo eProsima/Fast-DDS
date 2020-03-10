@@ -228,6 +228,13 @@ void DataReaderQos::copyFromTopicQos(
     this->resource_limits = topic_qos.resource_limits;
 }
 
+void DataReaderQos::copy_to_topic_attributes(
+        eprosima::fastrtps::TopicAttributes* topic_att) const
+{
+    topic_att->historyQos = this->history;
+    topic_att->resourceLimitsQos = this->resource_limits;
+}
+
 std::string DataReaderQos::search_qos_by_id(
         QosPolicyId_t id)
 {

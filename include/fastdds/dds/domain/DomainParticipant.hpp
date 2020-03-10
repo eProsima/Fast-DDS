@@ -145,6 +145,49 @@ public:
             Subscriber* subscriber);
 
     /**
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Name of the TypeSupport.
+     * @param qos QoS of the Topic.
+     * @param listen Pointer to the listener.
+     * @param mask Mask containing the status enabled of the Topic.
+     * @return Pointer to the created Topic.
+     */
+    Topic* create_topic(
+            std::string topic_name,
+            std::string type_name,
+            const fastrtps::TopicAttributes& att = fastrtps::TopicAttributes(),
+            const fastdds::dds::TopicQos& qos = TOPIC_QOS_DEFAULT,
+            TopicListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+
+    /**
+     * Deletes an existing Topic.
+     * @param topic to be deleted.
+     * @return if topic was deleted.
+     */
+    ReturnCode_t delete_topic(
+            Topic* topic);
+
+    /**
+     * Look for an existing Topic.
+     * @param topic_name Name of the Topic.
+     * @param timeout Maximum time.
+     * @return Pointer to the Topic if found, otherwise nullptr
+     */
+    Topic* find_topic(
+            const std::string& topic_name,
+            const Duration_t& timeout);
+
+    /**
+     * Look for an existing TopicDescription
+     * @param topic_name Name of the Topic.
+     * @return Pointer to the TopicDescription if found, otherwise nullptr
+     */
+    TopicDescription* lookup_topicdescription(
+            const std::string& topic_name);
+
+    /**
      * Register a type in this participant.
      * @param type TypeSupport.
      * @param type_name The name that will be used to identify the Type.

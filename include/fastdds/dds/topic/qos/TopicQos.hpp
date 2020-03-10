@@ -36,6 +36,9 @@ namespace dds {
 class TopicQos
 {
 public:
+
+    TopicQos();
+
     //!Topic Data Qos, NOT implemented in the library.
     fastrtps::TopicDataQosPolicy topic_data;
 
@@ -104,21 +107,24 @@ public:
      * Set Qos from another class
      * @param qos Reference from a TopicQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-    RTPS_DllAPI void setQos(const TopicQos& qos, bool first_time);
-    */
+     */
+    RTPS_DllAPI void setQos(
+            const TopicQos& qos,
+            bool first_time);
 
     /* TODO: Implement this method
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
+     */
     RTPS_DllAPI bool checkQos() const;
-    */
 
     /* TODO: Implement this method
      * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
-    RTPS_DllAPI bool canQosBeUpdated(const TopicQos& qos) const;
-    */
+     */
+    RTPS_DllAPI bool canQosBeUpdated(
+            const TopicQos& qos) const;
 };
 
 extern const TopicQos TOPIC_QOS_DEFAULT;

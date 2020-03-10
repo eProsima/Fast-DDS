@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Topic.hpp
+ * @file TopicImpl.hpp
  */
 
-#ifndef _FASTDDS_TOPIC_HPP_
-#define _FASTDDS_TOPIC_HPP_
+#ifndef _FASTDDS_TOPICIMPL_HPP_
+#define _FASTDDS_TOPICIMPL_HPP_
 
 #include <dds/core/status/State.hpp>
 #include <fastdds/dds/core/Entity.hpp>
@@ -35,34 +35,29 @@
 
 #include <string>
 #include <vector>
-
-namespace dds {
-namespace topic {
-template<typename T>
-class Topic;
-} // topic
-} // dds
+#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class TopicImpl;
 class TopicListener;
 class DomainParticipantImpl;
 
-class Topic : public TopicDescription
-
+class TopicImpl
 {
-    friend class TopicImpl;
-    template<typename T>
-    friend class ::dds::topic::Topic;
+    friend class DomainParticipantImpl;
+
+    RTPS_DllAPI TopicImpl(
+            DomainParticipant* dp,
+            fastrtps::TopicAttributes att,
+            const TopicQos& qos,
+            TopicListener* listener = nullptr);
 
 public:
 
-    RTPS_DllAPI Topic(
-            TopicImpl* impl,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+    virtual ~TopicImpl();
+
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
 
@@ -83,8 +78,7 @@ public:
     RTPS_DllAPI TopicListener* get_listener() const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t set_listener(
-            TopicListener* a_listener,
-            const ::dds::core::status::StatusMask& mask);
+            TopicListener* a_listener);
 
     RTPS_DllAPI DomainParticipant* get_participant() const;
 
@@ -92,13 +86,29 @@ public:
 
     RTPS_DllAPI std::vector<DataReader*>* get_readers();
 
+    //! Remove all listeners in the hierarchy to allow a quiet destruction
+    void disable();
+
+    Topic* user_topic_;
+
 private:
 
-    TopicImpl* impl_;
+    TopicListener* listener_;
+
+    TopicQos qos_;
+
+    InconsistentTopicStatus status_;
+
+    fastrtps::TopicAttributes topic_att_;
+
+    DomainParticipant* participant_;
+
+    std::vector<DataReader*> readers_;
+    std::vector<DataWriter*> writers_;
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace eprosima
+} // namespace fastdds
+} // namespace dds
 
-#endif // _FASTDDS_TOPIC_HPP_
+#endif // _FASTDDS_TOPICIMPL_HPP_
