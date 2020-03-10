@@ -33,15 +33,21 @@ using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::dds::LogMock;
 using eprosima::fastdds::dds::LogConsumer;
 
+LogMock* log_mock = nullptr;
+
 // Initialize Log mock
-LogMock* log_mock;
-std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc =
-        [](std::unique_ptr<LogConsumer>&& c) {
-            log_mock->RegisterConsumer(std::move(c));
-        };
-std::function<void()> Log::ClearConsumersFunc = []() {
-            log_mock->ClearConsumers();
-        };
+void TestRegisterConsumerFunc(std::unique_ptr<LogConsumer>&& c)
+{
+    log_mock->RegisterConsumer(std::move(c));
+}
+
+void TestClearConsumersFunc()
+{
+    log_mock->ClearConsumers();
+};
+
+std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc = TestRegisterConsumerFunc;
+std::function<void()> Log::ClearConsumersFunc = TestClearConsumersFunc;
 
 class XMLProfileParserTests : public ::testing::Test
 {
