@@ -44,7 +44,7 @@ void TestRegisterConsumerFunc(std::unique_ptr<LogConsumer>&& c)
 void TestClearConsumersFunc()
 {
     log_mock->ClearConsumers();
-};
+}
 
 std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc = TestRegisterConsumerFunc;
 std::function<void()> Log::ClearConsumersFunc = TestClearConsumersFunc;
