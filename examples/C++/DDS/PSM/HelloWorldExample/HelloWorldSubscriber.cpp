@@ -50,15 +50,15 @@ bool HelloWorldSubscriber::init()
     }
 
     // TopicQos
-	dds::topic::qos::TopicQos topicQos
-		= participant_.default_topic_qos()
-        << dds::core::policy::Reliability::Reliable();
+    dds::topic::qos::TopicQos topicQos
+        = participant_.default_topic_qos()
+            << dds::core::policy::Reliability::Reliable();
 
     topic_ = dds::topic::Topic<HelloWorld>(participant_, "HelloWorldTopic", "HelloWorld", topicQos);
 
-	dds::sub::qos::DataReaderQos drqos = topicQos;
+    dds::sub::qos::DataReaderQos drqos = topicQos;
 
-	// CREATE THE READER
+    // CREATE THE READER
     reader_ = dds::sub::DataReader<HelloWorld>(subscriber_, topic_, drqos, &listener_);
 
     if (reader_ == dds::core::null)
@@ -102,6 +102,16 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     }
 }
 
+void HelloWorldSubscriber::SubListener::on_requested_incompatible_qos(
+        DataReader* reader,
+        const RequestedIncompatibleQosStatus& status)
+{
+    DataReaderQos qos = reader->get_qos();
+    std::cout << "The Requested Qos is incompatible with the Offered one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
+}
+
 void HelloWorldSubscriber::SubListener::on_data_available(
         dds::sub::DataReader<HelloWorld>& reader)
 {
@@ -117,7 +127,6 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         }
     }
 }
-
 
 void HelloWorldSubscriber::run()
 {

@@ -424,6 +424,19 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
 }
 
+void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
+        RTPSReader* /*reader*/,
+        const RequestedIncompatibleQosStatus& status)
+{
+    if (data_reader_->listener_ != nullptr)
+    {
+        data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+    }
+    data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_,
+            status);
+}
+
+
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
@@ -645,16 +658,14 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool DataReaderImpl::get_requested_incompatible_qos_status(
+
+ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
         RequestedIncompatibleQosStatus& status) const
-   {
-    (void)status;
-    // TODO Implement
-    // TODO add callback call subscriber_->subscriber_listener_->on_requested_incompatibe_qos
-    return false;
-   }
- */
+{
+    status = reader_->requested_incompatible_qos_status_;
+    reader_->requested_incompatible_qos_status_.total_count_change = 0;
+    return ReturnCode_t::RETCODE_OK;
+}
 
 /* TODO
    bool DataReaderImpl::get_sample_lost_status(

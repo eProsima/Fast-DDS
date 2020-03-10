@@ -102,8 +102,18 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     else
     {
         std::cout << info.current_count_change
-                  << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
+                  << " is not a valid value for PublicationMatchedStatus current count change." << std::endl;
     }
+}
+
+void HelloWorldPublisher::PubListener::on_offered_incompatible_qos(
+        DataWriter* writer,
+        const OfferedIncompatibleQosStatus& status)
+{
+    DataWriterQos qos =  writer->get_qos();
+    std::cout << "The Offered Qos is incompatible with the Requested one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
 }
 
 void HelloWorldPublisher::runThread(
@@ -162,9 +172,9 @@ void HelloWorldPublisher::run(
 bool HelloWorldPublisher::publish(
         bool waitForListener)
 {
-    if (listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
+    if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
     {
-        hello_.index(hello_.index()+1);
+        hello_.index(hello_.index() + 1);
         writer_->write(&hello_);
         return true;
     }

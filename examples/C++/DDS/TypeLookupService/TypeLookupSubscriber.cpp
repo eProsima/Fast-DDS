@@ -122,6 +122,16 @@ void TypeLookupSubscriber::SubListener::on_subscription_matched(
     }
 }
 
+void TypeLookupSubscriber::SubListener::on_requested_incompatible_qos(
+        DataReader* reader,
+        const RequestedIncompatibleQosStatus& status)
+{
+    DataReaderQos qos = reader->get_qos();
+    std::cout << "The Requested Qos is incompatible with the Offered one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
+}
+
 void TypeLookupSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
@@ -150,7 +160,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-        [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
+            [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
             {
                 std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
 
@@ -178,15 +188,15 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 if (type == nullptr)
                 {
                     const types::TypeIdentifier* ident =
-                        types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
+                            types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
 
                     if (nullptr != ident)
                     {
                         const types::TypeObject* obj =
-                            types::TypeObjectFactory::get_instance()->get_type_object(ident);
+                                types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
                         types::DynamicType_ptr dyn_type =
-                            types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+                                types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
                         if (nullptr != dyn_type)
                         {
@@ -229,7 +239,7 @@ void TypeLookupSubscriber::run(
         uint32_t number)
 {
     std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
-    while(number > this->m_listener.n_samples)
+    while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

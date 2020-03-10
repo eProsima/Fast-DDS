@@ -146,6 +146,9 @@ public:
     RTPS_DllAPI void copyFromTopicQos(
             const TopicQos& topic_qos);
 
+    RTPS_DllAPI std::string search_qos_by_id(
+            eprosima::fastdds::dds::QosPolicyId_t id);
+
 };
 
 extern const DataWriterQos DDS_DATAWRITER_QOS_DEFAULT;

@@ -88,7 +88,7 @@ bool TypeLookupPublisher::init()
     Wparam.topic.auto_fill_type_object = false;
     Wparam.topic.auto_fill_type_information = true; // Share the type with readers.
     Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
+    Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
 
     if (mp_publisher == nullptr)
@@ -134,6 +134,16 @@ void TypeLookupPublisher::PubListener::on_publication_matched(
     {
         std::cout << "Publisher received an invalid value for PublicationMatchedStatus." << std::endl;
     }
+}
+
+void TypeLookupPublisher::PubListener::on_offered_incompatible_qos(
+        DataWriter* writer,
+        const OfferedIncompatibleQosStatus& status)
+{
+    DataWriterQos qos = writer->get_qos();
+    std::cout << "The Offered Qos is incompatible with the Requested one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
 }
 
 void TypeLookupPublisher::runThread(
@@ -198,7 +208,7 @@ void TypeLookupPublisher::run(
 bool TypeLookupPublisher::publish(
         bool waitForListener)
 {
-    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);

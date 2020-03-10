@@ -78,18 +78,28 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         n_matched = info.total_count;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         n_matched = info.total_count;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
     else
     {
         std::cout << info.current_count_change
                   << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
+}
+
+void HelloWorldSubscriber::SubListener::on_requested_incompatible_qos(
+        DataReader* reader,
+        const RequestedIncompatibleQosStatus& status)
+{
+    DataReaderQos qos = reader->get_qos();
+    std::cout << "The Requested Qos is incompatible with the Offered one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
 }
 
 void HelloWorldSubscriber::SubListener::on_data_available(
@@ -162,7 +172,7 @@ void HelloWorldSubscriber::run()
 void HelloWorldSubscriber::run(
         uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
+    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
     while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

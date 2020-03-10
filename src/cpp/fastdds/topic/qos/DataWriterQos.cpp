@@ -31,7 +31,6 @@ DataWriterQos::DataWriterQos()
     this->durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
-
 void DataWriterQos::setQos(
         const DataWriterQos& qos,
         bool first_time)
@@ -127,8 +126,6 @@ void DataWriterQos::setQos(
     }
 }
 
-
-
 bool DataWriterQos::checkQos() const
 {
     if (durability.kind == PERSISTENT_DURABILITY_QOS)
@@ -157,8 +154,6 @@ bool DataWriterQos::checkQos() const
     }
     return true;
 }
-
-
 
 bool DataWriterQos::canQosBeUpdated(
         const DataWriterQos& qos) const
@@ -262,4 +257,57 @@ void DataWriterQos::copyFromTopicQos(
     this->resource_limits = topic_qos.resource_limits;
     this->transport_priority = topic_qos.transport_priority;
 
+}
+
+std::string DataWriterQos::search_qos_by_id(
+        QosPolicyId_t id)
+{
+    switch (id){
+        case 1:
+            return "UserDataQosPolicy";
+        case 2:
+            return "DurabilityQosPolicy";
+        case 3:
+            return "PresentationQosPolicy";
+        case 4:
+            return "DeadlineQosPolicy";
+        case 5:
+            return "LatencyBudgetQosPolicy";
+        case 6:
+            return "OwnershipQosPolicy";
+        case 7:
+            return "OwnershipStrengthQosPolicy";
+        case 8:
+            return "LivelinessQosPolicy";
+        case 9:
+            return "TimeBasedFilterQosPolicy";
+        case 10:
+            return "PartitionQosPolicy";
+        case 11:
+            return "ReliabilityQosPolicy";
+        case 12:
+            return "DestinationOrderQosPolicy";
+        case 13:
+            return "HistoryQosPolicy";
+        case 14:
+            return "ResourceLimitsQosPolicy";
+        case 15:
+            return "EntityFactoryQosPolicy";
+        case 16:
+            return "WriterDataLifecycleQosPolicy";
+        case 17:
+            return "ReaderDataLifecycleQosPolicy";
+        case 18:
+            return "TopicDataQosPolicy";
+        case 19:
+            return "GroupDataQosPolicy";
+        case 20:
+            return "TransportPriorityQosPolicy";
+        case 21:
+            return "LifespanQosPolicy";
+        case 22:
+            return "DurabilityServiceQosPolicy";
+        default:
+            return "";
+    }
 }
