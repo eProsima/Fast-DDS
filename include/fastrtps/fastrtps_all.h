@@ -49,7 +49,7 @@
 #include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/qos/QosPolicies.h>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Log.h>
 
 
 #endif /* FASTRTPS_ALL_H_ */
