@@ -422,15 +422,14 @@ const dds::core::Duration TimeBasedFilter::minimum_separation() const
 
 //Partition
 
-Partition::Partition(
-        const std::string& name)
-    : dds::core::Value<detail::Partition>(name)
+Partition::Partition()
+    : dds::core::Value<detail::Partition>()
 {
 }
 
 Partition::Partition(
-        const dds::core::StringSeq& names)
-    : dds::core::Value<detail::Partition>(names)
+        uint16_t in_length)
+    : dds::core::Value<detail::Partition>(in_length)
 {
 }
 
@@ -447,16 +446,27 @@ Partition& Partition::name(
     return *this;
 }
 
-Partition& Partition::name(
-        const dds::core::StringSeq& names)
+Partition& Partition::names(
+        StringSeq& names)
 {
     delegate().names(names);
     return *this;
 }
 
-const dds::core::StringSeq Partition::name() const
+const dds::core::StringSeq Partition::names() const
 {
     return delegate().names();
+}
+
+void Partition::push_back(
+        const char* name)
+{
+    delegate().push_back(name);
+}
+
+void Partition::clear()
+{
+    delegate().clear();
 }
 
 //#ifdef OMG_DDS_OWNERSHIP_SUPPORT

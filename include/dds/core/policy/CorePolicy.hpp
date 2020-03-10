@@ -581,21 +581,15 @@ class Partition : public dds::core::Value<detail::Partition>
 {
 public:
 
-    /**
-     * Creates a Partition QoS instance
-     *
-     * @param name partition name
-     */
-    explicit Partition(
-            const std::string& name = "");
+    Partition();
 
     /**
      * Creates a Partition QoS instance
      *
-     * @param names a sequence containing multiple partition names
+     * @param in_length partition length
      */
     explicit Partition(
-            const dds::core::StringSeq& names);
+            uint16_t in_length);
 
     /**
      * Copies a Partition QoS instance
@@ -618,15 +612,24 @@ public:
      *
      * @param names a sequence containing multiple partition names
      */
-    Partition& name(
-            const dds::core::StringSeq& names);
+    Partition& names(
+            dds::core::StringSeq& names);
 
     /**
      * Gets the partition names
      *
      * @return a sequence containing the partition names
      */
-    const dds::core::StringSeq name() const;
+    const dds::core::StringSeq names() const;
+
+    /**
+     * Appends a name to the list of partition names.
+     * @param name Name to append.
+     */
+    void push_back(
+            const char* name);
+
+    void clear();
 };
 
 //==============================================================================

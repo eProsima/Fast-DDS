@@ -23,6 +23,8 @@
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
@@ -320,6 +322,12 @@ public:
 
     //! Liveliness lost status of this writer
     LivelinessLostStatus liveliness_lost_status_;
+
+    //! Publication matched status of this writer
+    fastdds::dds::PublicationMatchedStatus publication_matched_status_;
+
+    //! Offered incompatible qos status of this writer
+    fastdds::dds::OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
 
     /**
      * Check if the destinations managed by this sender interface have changed.

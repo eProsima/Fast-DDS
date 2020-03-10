@@ -247,7 +247,7 @@ bool DataWriterImpl::perform_create_new_change(
                 //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
                 if (!type_.serialize(data, &ch->serializedPayload))
                 {
-                    logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
+                    logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false");
                     history_.release_Cache(ch);
                     return false;
                 }
@@ -662,6 +662,14 @@ ReturnCode_t DataWriterImpl::get_offered_deadline_missed_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::get_offered_incompatible_qos_status(
+        OfferedIncompatibleQosStatus& status)
+{
+    status = writer_->offered_incompatible_qos_status_;
+    writer_->offered_incompatible_qos_status_.total_count_change = 0;
+    return ReturnCode_t::RETCODE_OK;
+}
+
 bool DataWriterImpl::lifespan_expired()
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
@@ -739,6 +747,13 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
             stateful_writer->send_periodic_heartbeat(true, true);
         }
     }
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataWriterImpl::get_publication_matched_status(
+        PublicationMatchedStatus& status)
+{
+    status = writer_->publication_matched_status_;
     return ReturnCode_t::RETCODE_OK;
 }
 

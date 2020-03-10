@@ -31,21 +31,17 @@ class WriterDataLifecycleQosPolicy : public QosPolicy
 public:
 
     WriterDataLifecycleQosPolicy()
-        : QosPolicy(false)
+        : QosPolicy(false, (QosPolicyId_t)16)
         , autodispose_unregistered_instances(true)
-    {
-    }
+    {}
 
     WriterDataLifecycleQosPolicy(
             bool autodispose)
-        : QosPolicy(false)
-        , autodispose_unregistered_instances(autodispose)
-    {
-    }
+        : QosPolicy(false, (QosPolicyId_t)16)
+        ,  autodispose_unregistered_instances(autodispose)
+    {}
 
-    virtual RTPS_DllAPI ~WriterDataLifecycleQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~WriterDataLifecycleQosPolicy() {}
 
     bool operator ==(
             const WriterDataLifecycleQosPolicy& b) const
