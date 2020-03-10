@@ -26,6 +26,7 @@
 #include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/Entity.hpp>
 
 #include <dds/core/status/Status.hpp>
 #include <dds/core/status/State.hpp>
@@ -73,7 +74,7 @@ class SampleInfo_t;
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DataReader
+class RTPS_DllAPI DataReader : public DomainEntity
 {
     friend class SubscriberImpl;
 
@@ -91,7 +92,8 @@ class RTPS_DllAPI DataReader
      * Creates a DataReader. Don't use it directly, but through Subscriber.
      */
     DataReader(
-            DataReaderImpl* impl);
+            DataReaderImpl* impl,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 

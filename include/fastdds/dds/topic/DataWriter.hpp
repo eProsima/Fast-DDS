@@ -22,6 +22,8 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/Status.hpp>
@@ -64,13 +66,12 @@ class Topic;
 
 class DataWriterImpl;
 class DataWriterListener;
-class DataWriterQos;
 
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DataWriter
+class RTPS_DllAPI DataWriter : public DomainEntity
 {
     friend class PublisherImpl;
     friend class DataWriterImpl;
@@ -80,7 +81,7 @@ class RTPS_DllAPI DataWriter
     DataWriter(
             const Publisher* pub,
             const Topic& topic,
-            const DataWriterQos& qos,
+            const DataWriterQos& qos = DDS_DATAWRITER_QOS_DEFAULT,
             DataWriterListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -89,7 +90,8 @@ class RTPS_DllAPI DataWriter
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
     DataWriter(
-            DataWriterImpl* impl);
+            DataWriterImpl* impl,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 

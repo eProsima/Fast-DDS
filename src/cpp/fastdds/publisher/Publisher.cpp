@@ -30,8 +30,10 @@ using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
 Publisher::Publisher(
-        PublisherImpl* p)
-    : impl_(p)
+        PublisherImpl* p,
+        const ::dds::core::status::StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(p)
 {
 }
 
@@ -40,7 +42,8 @@ Publisher::Publisher(
         const PublisherQos& qos,
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener)->impl_)
 {
 }
 
@@ -80,7 +83,8 @@ ReturnCode_t Publisher::set_listener(
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_mask_ = mask;
+    return impl_->set_listener(listener);
 }
 
 DataWriter* Publisher::create_datawriter(

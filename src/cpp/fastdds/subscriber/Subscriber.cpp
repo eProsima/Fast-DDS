@@ -34,7 +34,8 @@ Subscriber::Subscriber(
         const SubscriberQos& qos,
         SubscriberListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener)->impl_)
 {
 }
 
@@ -70,7 +71,8 @@ ReturnCode_t Subscriber::set_listener(
         SubscriberListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_mask_ = mask;
+    return impl_->set_listener(listener);
 }
 
 DataReader* Subscriber::create_datareader(

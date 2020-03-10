@@ -22,6 +22,7 @@
 #define OMG_DDS_CORE_STATUS_STATE_HPP_
 
 #include <bitset>
+#include <sstream>
 #include <dds/core/macros.hpp>
 
 
@@ -49,7 +50,8 @@ public:
      */
     SampleRejectedState()
         : std::bitset<OMG_DDS_STATE_BIT_COUNT>()
-    {}
+    {
+    }
 
     /**
      * Copy constructor.
@@ -61,7 +63,8 @@ public:
     SampleRejectedState(
             const SampleRejectedState& src)
         : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
-    {}
+    {
+    }
 
     /**
      * Construct a SampleRejectedState with existing MaskType.
@@ -71,7 +74,8 @@ public:
     SampleRejectedState(
             const MaskType& src)
         : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
-    {}
+    {
+    }
 
     /**
      * Get the NOT_REJECTED.
@@ -136,7 +140,9 @@ private:
     SampleRejectedState(
             uint32_t s)
         : std::bitset<OMG_DDS_STATE_BIT_COUNT>(s)
-    {}
+    {
+    }
+
 };
 
 /**
@@ -193,7 +199,9 @@ public:
 
     /** @cond */
     ~StatusMask()
-    {}
+    {
+    }
+
     /** @endcond */
 
     /**
@@ -206,6 +214,21 @@ public:
     {
         *this |= mask;
         return *this;
+    }
+
+    /**
+     * Shift (merge) given StatusMask bits into this StatusMask bitset.
+     *
+     * @return StatusMask this
+     */
+    inline StatusMask operator =(
+            const std::bitset<OMG_DDS_STATUS_COUNT>& mask) const
+    {
+        std::stringstream ss;
+        int number;
+        ss << std::hex << mask.to_ulong();
+        ss >> number;
+        return StatusMask(number);
     }
 
     /**
@@ -360,16 +383,17 @@ public:
         return StatusMask(0x00000001 << 14u);
     }
 
-    /**
-     * Get the statusmask associated with dds::core::status::AllDataDisposedTopicStatus
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * @return StatusMask subscription_matched
-     */
-    inline static StatusMask all_data_disposed_topic()
+    bool is_compatible(
+            StatusMask base) const
     {
-        return StatusMask(0x00000001u << 31u);
+        return (*this == all() || *this == base);
+    }
+
+    bool is_active(
+            StatusMask status)
+    {
+        bitset<16> r = *this & status;
+        return r == status;
     }
 
 };

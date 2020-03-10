@@ -36,6 +36,14 @@ namespace dds {
 class Entity
 {
 public:
+
+    RTPS_DllAPI Entity(
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
+        : status_mask_(mask)
+        , enable_(false)
+    {
+    }
+
     // TODO Implement StatusCondition
     // virtual const StatusCondition& get_statuscondition() const = 0;
 
@@ -50,7 +58,7 @@ public:
         enable_ = false;
     }
 
-    const ::dds::core::status::StatusMask& get_status_changes() const
+    const ::dds::core::status::StatusMask& get_status_mask() const
     {
         return status_mask_;
     }
@@ -60,10 +68,52 @@ public:
         return instance_handle_;
     }
 
-private:
+    /**
+     * @brief is_enabled Checks if the Entity is enabled
+     * @return true if enabled, false if not
+     */
+    RTPS_DllAPI bool is_enabled() const
+    {
+        if (enable_)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    RTPS_DllAPI bool operator ==(
+            const Entity& other) const
+    {
+        return (this->instance_handle_ == other.instance_handle_);
+    }
+
+protected:
+
+    RTPS_DllAPI void set_instance_handle(
+            const fastrtps::rtps::InstanceHandle_t& handle)
+    {
+        instance_handle_ = handle;
+    }
+
     ::dds::core::status::StatusMask status_mask_;
     fastrtps::rtps::InstanceHandle_t instance_handle_;
     bool enable_;
+
+};
+
+/**
+ * @brief The DomainEntity class Subclass of Entity created in order to differentiate between DomainParticipants
+ * and the rest of Entities
+ */
+class DomainEntity : public Entity
+{
+public:
+
+    RTPS_DllAPI DomainEntity(
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
+        : Entity(mask)
+    {
+    }
 
 };
 

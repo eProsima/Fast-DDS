@@ -40,13 +40,11 @@ SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
         const SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen,
-        const ::dds::core::status::StatusMask& mask)
+        SubscriberListener* listen)
     : participant_(p)
     , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? participant_->get_default_subscriber_qos() : qos)
     , att_(att)
     , listener_(listen)
-    , mask_(mask)
     , user_subscriber_(nullptr)
     , rtps_participant_(p->rtps_participant())
 {
@@ -116,11 +114,9 @@ SubscriberListener* SubscriberImpl::get_listener()
 }
 
 ReturnCode_t SubscriberImpl::set_listener(
-        SubscriberListener* listener,
-        const ::dds::core::status::StatusMask& mask)
+        SubscriberListener* listener)
 {
     listener_ = listener;
-    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -198,7 +194,7 @@ DataReader* SubscriberImpl::create_datareader(
         ratt.disable_positive_acks = true;
     }
 
-    if(listener == nullptr)
+    if (listener == nullptr)
     {
         listener = listener_;
     }
@@ -211,8 +207,7 @@ DataReader* SubscriberImpl::create_datareader(
         ratt,
         reader_qos,
         att_.historyMemoryPolicy,
-        listener,
-        mask);
+        listener);
 
     if (impl->reader_ == nullptr)
     {
@@ -221,7 +216,7 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    DataReader* reader = new DataReader(impl);
+    DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
 
     ReaderQos rqos = reader_qos.changeToReaderQos();
@@ -314,8 +309,7 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     {
         for (DataReaderImpl* dr : it.second)
         {
-            if (dr->mask_ == ::dds::core::status::StatusMask::all() ||
-                    dr->mask_ == ::dds::core::status::StatusMask::data_available())
+            if (dr->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::data_available()))
             {
                 dr->listener_->on_data_available(dr->user_datareader_);
             }

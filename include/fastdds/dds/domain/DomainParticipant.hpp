@@ -78,7 +78,7 @@ class TopicQos;
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DomainParticipant
+class RTPS_DllAPI DomainParticipant : public Entity
 {
 public:
 
@@ -493,7 +493,8 @@ public:
 
 private:
 
-    DomainParticipant();
+    DomainParticipant(
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DomainParticipant(
             DomainId_t did,

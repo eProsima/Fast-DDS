@@ -27,6 +27,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/Status.hpp>
+#include <fastdds/dds/core/Entity.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -65,7 +66,7 @@ class TopicQos;
  * DomainRTPSParticipant class should be used to correctly create this element.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI Subscriber
+class RTPS_DllAPI Subscriber : public DomainEntity
 {
     friend class SubscriberImpl;
     friend class DomainParticipantImpl;
@@ -76,9 +77,12 @@ class RTPS_DllAPI Subscriber
      * @param pimpl Actual implementation of the subscriber
      */
     Subscriber(
-            SubscriberImpl* pimpl)
-        : impl_(pimpl)
-    {}
+            SubscriberImpl* pimpl,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all())
+        : DomainEntity(mask)
+        , impl_(pimpl)
+    {
+    }
 
     Subscriber(
             const ::dds::domain::DomainParticipant& dp,
@@ -88,7 +92,9 @@ class RTPS_DllAPI Subscriber
 
 public:
 
-    virtual ~Subscriber() {}
+    virtual ~Subscriber()
+    {
+    }
 
     /**
      * Allows accessing the Subscriber Qos.

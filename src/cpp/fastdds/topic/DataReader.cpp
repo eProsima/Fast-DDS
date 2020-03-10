@@ -39,15 +39,17 @@ DataReader::DataReader(
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(
-        (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_((const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
 {
     impl_->set_topic(topic);
 }
 
 DataReader::DataReader(
-        DataReaderImpl* impl)
-    : impl_(impl)
+        DataReaderImpl* impl,
+        const ::dds::core::status::StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(impl)
 {
 }
 
@@ -168,7 +170,8 @@ ReturnCode_t DataReader::set_listener(
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_mask_ = mask;
+    return impl_->set_listener(listener);
 }
 
 const DataReaderListener* DataReader::get_listener() const

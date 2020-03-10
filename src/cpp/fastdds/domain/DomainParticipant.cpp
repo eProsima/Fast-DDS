@@ -26,8 +26,10 @@
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
-DomainParticipant::DomainParticipant()
-    : impl_(nullptr)
+DomainParticipant::DomainParticipant(
+        const ::dds::core::status::StatusMask& mask)
+    : Entity(mask)
+    , impl_(nullptr)
 {
 }
 

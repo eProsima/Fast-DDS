@@ -255,8 +255,8 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         listen = listener_;
     }
-    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen, mask);
-    Publisher* pub = new Publisher(pubimpl);
+    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen);
+    Publisher* pub = new Publisher(pubimpl, mask);
     pubimpl->user_publisher_ = pub;
     pubimpl->rtps_participant_ = rtps_participant_;
 
@@ -548,8 +548,8 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         listen = listener_;
     }
-    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen, mask);
-    Subscriber* sub = new Subscriber(subimpl);
+    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen);
+    Subscriber* sub = new Subscriber(subimpl, mask);
     subimpl->user_subscriber_ = sub;
     subimpl->rtps_participant_ = this->rtps_participant_;
 

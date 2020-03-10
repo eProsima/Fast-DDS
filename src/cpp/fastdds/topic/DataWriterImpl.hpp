@@ -80,8 +80,7 @@ class DataWriterImpl
             const fastrtps::rtps::WriterAttributes& att,
             const fastdds::dds::DataWriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
-            DataWriterListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            DataWriterListener* listener = nullptr);
 
 public:
 
@@ -233,7 +232,9 @@ public:
         {
         }
 
-        virtual ~InnerDataWriterListener() override {}
+        virtual ~InnerDataWriterListener() override
+        {
+        }
 
         void onWriterMatched(
                 fastrtps::rtps::RTPSWriter* writer,
@@ -260,7 +261,7 @@ public:
     fastrtps::rtps::TimedEvent* deadline_timer_;
 
     //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1,1000000> > deadline_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
     fastrtps::rtps::InstanceHandle_t timer_owner_;

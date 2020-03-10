@@ -35,18 +35,22 @@ DataWriter::DataWriter(
         const DataWriterQos& qos,
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(
-        (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener, mask)->impl_)
+    : DomainEntity(mask)
+    , impl_((const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
 {
 }
 
 DataWriter::DataWriter(
-        DataWriterImpl* impl)
-    : impl_(impl)
-{}
+        DataWriterImpl* impl,
+        const ::dds::core::status::StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(impl)
+{
+}
 
 DataWriter::~DataWriter()
-{}
+{
+}
 
 bool DataWriter::write(
         void* data)
@@ -124,7 +128,8 @@ ReturnCode_t DataWriter::set_listener(
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener, mask);
+    status_mask_ = mask;
+    return impl_->set_listener(listener);
 }
 
 const DataWriterListener* DataWriter::get_listener() const

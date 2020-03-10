@@ -76,8 +76,7 @@ class PublisherImpl
             DomainParticipantImpl* p,
             const PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
-            PublisherListener* p_listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            PublisherListener* p_listen = nullptr);
 
 public:
 
@@ -93,8 +92,7 @@ public:
     PublisherListener* get_listener();
 
     ReturnCode_t set_listener(
-            PublisherListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+            PublisherListener* listener);
 
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
@@ -186,8 +184,6 @@ private:
 
     //!PublisherListener
     PublisherListener* listener_;
-
-    ::dds::core::status::StatusMask mask_;
 
     Publisher* user_publisher_;
 
