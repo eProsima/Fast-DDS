@@ -29,6 +29,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/State.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 
 #include <mutex>
 #include <map>
@@ -51,7 +52,6 @@ namespace fastdds {
 namespace dds {
 
 class SubscriberListener;
-class DomainParticipant;
 class DomainParticipantImpl;
 class Subscriber;
 class DataReaderImpl;
@@ -162,7 +162,7 @@ public:
         return att_;
     }
 
-    const DomainParticipant* get_participant() const;
+    const DomainParticipant& get_participant() const;
 
     const fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {
@@ -207,47 +207,6 @@ private:
     SubscriberListener* listener_;
 
     ::dds::core::status::StatusMask mask_;
-
-    class SubscriberReaderListener : public DataReaderListener
-    {
-public:
-
-        SubscriberReaderListener(
-                SubscriberImpl* s)
-            : subscriber_(s)
-        {}
-
-        virtual ~SubscriberReaderListener() override {}
-
-        void on_data_available(
-                DataReader* reader) override;
-
-        void on_subscription_matched(
-                DataReader* reader,
-                const SubscriptionMatchedStatus& info) override;
-
-        void on_requested_deadline_missed(
-                DataReader* reader,
-                const fastrtps::RequestedDeadlineMissedStatus& status) override;
-
-        void on_liveliness_changed(
-                DataReader* reader,
-                const fastrtps::LivelinessChangedStatus& status) override;
-
-        void on_sample_rejected(
-                DataReader* reader,
-                const fastrtps::SampleRejectedStatus& status) override;
-
-        void on_requested_incompatible_qos(
-                DataReader* reader,
-                const RequestedIncompatibleQosStatus& status) override;
-
-        void on_sample_lost(
-                DataReader* reader,
-                const SampleLostStatus& status) override;
-
-        SubscriberImpl* subscriber_;
-    } subscriber_listener_;
 
     Subscriber* user_subscriber_;
 

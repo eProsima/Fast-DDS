@@ -213,7 +213,7 @@ public:
     /**
      * This operation returns the DomainParticipant to which the Publisher belongs.
      */
-    const DomainParticipant* get_participant() const;
+    const DomainParticipant& get_participant() const;
 
     /* TODO
        bool delete_contained_entities();

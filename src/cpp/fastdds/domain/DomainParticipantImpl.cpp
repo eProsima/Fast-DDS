@@ -84,6 +84,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     , mask_(mask)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
+    , subscriber_listener_(this)
 {
     participant_->impl_ = this;
 }
@@ -147,11 +148,10 @@ DomainParticipantImpl::~DomainParticipantImpl()
     participant_ = nullptr;
 }
 
-
 ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
-    if (participant_ != pub->get_participant())
+    if (participant_ != &pub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -177,7 +177,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 ReturnCode_t DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
-    if (participant_ != sub->get_participant())
+    if (participant_ != &sub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -220,26 +220,26 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
     if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
     if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
     if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Remote Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
@@ -509,26 +509,26 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
     if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
     if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
     if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
@@ -566,7 +566,6 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 
     return sub;
 }
-
 
 const TypeSupport DomainParticipantImpl::find_type(
         const std::string& type_name) const
@@ -720,6 +719,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
     }
 }
+
 #endif
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
@@ -1276,6 +1276,12 @@ std::string DomainParticipantImpl::get_inner_type_name(
         return static_cast<char>(std::tolower(c));
     });
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
-    std::replace(str.begin(), str.end(), '|','_');
+    std::replace(str.begin(), str.end(), '|', '_');
     return str;
+}
+
+void DomainParticipantImpl::Listener::on_data_on_readers(
+        Subscriber* subscriber)
+{
+    subscriber->notify_datareaders();
 }

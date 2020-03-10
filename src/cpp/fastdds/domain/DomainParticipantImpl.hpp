@@ -28,6 +28,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -57,7 +58,6 @@ namespace fastdds {
 namespace dds {
 
 class DomainParticipant;
-class DomainParticipantListener;
 class Publisher;
 class PublisherImpl;
 class PublisherListener;
@@ -389,10 +389,12 @@ public:
         MyRTPSParticipantListener(
                 DomainParticipantImpl* impl)
             : participant_(impl)
-        {}
+        {
+        }
 
         virtual ~MyRTPSParticipantListener() override
-        {}
+        {
+        }
 
         void onParticipantDiscovery(
                 fastrtps::rtps::RTPSParticipant* participant,
@@ -470,6 +472,28 @@ public:
 
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
+
+public:
+
+    class Listener : public DomainParticipantListener
+    {
+public:
+
+        Listener(
+                DomainParticipantImpl* dp)
+            : domain_participant_(dp)
+        {
+        }
+
+        ~Listener() override
+        {
+        }
+
+        void on_data_on_readers(
+                Subscriber* subscriber) override;
+
+        DomainParticipantImpl* domain_participant_;
+    } subscriber_listener_;
 };
 
 } /* namespace dds */

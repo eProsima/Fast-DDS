@@ -25,6 +25,7 @@
 #include <fastdds/rtps/common/Guid.h>
 
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
 
@@ -58,6 +59,7 @@ namespace dds {
 class Subscriber;
 class SubscriberImpl;
 class SampleInfo_t;
+class DomainParticipant;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.

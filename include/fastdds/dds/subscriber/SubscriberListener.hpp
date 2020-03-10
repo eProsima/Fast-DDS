@@ -20,11 +20,8 @@
 #define _FASTDDS_SUBLISTENER_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
-#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
-#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
-#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
+
+#include <fastdds/dds/topic/DataReaderListener.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -36,89 +33,26 @@ class Subscriber;
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI SubscriberListener
+class RTPS_DllAPI SubscriberListener : public DataReaderListener
 {
 public:
 
-    SubscriberListener(){}
+    SubscriberListener()
+    {
+    }
 
-    virtual ~SubscriberListener(){}
+    virtual ~SubscriberListener()
+    {
+    }
 
     /**
-     * Virtual function to be implemented by the user containing the actions to be performed when a new
-     * Data Message is received.
+     * Virtual method to be called when there is available data on the Subscriber
      * @param sub Subscriber
      */
-    virtual void on_new_data_message(
+    virtual void on_data_on_readers(
             Subscriber* sub)
     {
-        (void)sub;
-    }
-
-    /**
-     * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched);
-     * i.e., when a writer publishing in the same topic is discovered.
-     * @param sub Subscriber
-     * @param info Matching information
-     */
-    virtual void on_subscription_matched(
-            Subscriber* sub,
-            const SubscriptionMatchedStatus& info)
-    {
-        (void)sub;
-        (void)info;
-    }
-
-    /**
-     * Virtual method to be called when a topic misses the deadline period
-     * @param sub Subscriber
-     * @param status The requested deadline missed status
-     */
-    virtual void on_requested_deadline_missed(
-            Subscriber* sub,
-            const RequestedDeadlineMissedStatus& status)
-    {
-        (void)sub;
-        (void)status;
-    }
-
-    /**
-     * Virtual method to be called when the requested qos is icompatible with the one offered
-     * @param sub Subscriber
-     * @param status The requested incompatible qos status
-     */
-    virtual void on_requested_incompatible_qos(
-            Subscriber* sub,
-            const RequestedIncompatibleQosStatus& status)
-    {
-        (void)sub;
-        (void)status;
-    }
-
-    /**
-     * @brief Method called when the liveliness status associated to a subscriber changes
-     * @param sub The subscriber
-     * @param status The liveliness changed status
-     */
-    virtual void on_liveliness_changed(
-            Subscriber* sub,
-            const LivelinessChangedStatus& status)
-    {
-        (void)sub;
-        (void)status;
-    }
-
-    /**
-     * Virtual method to be called when a sample is rejected by the DataReader
-     * @param sub Subscriber
-     * @param status The sample rejected status
-     */
-    virtual void on_sample_rejected(
-            Subscriber* sub,
-            const SampleRejectedStatus& status)
-    {
-        (void)sub;
-        (void)status;
+        (void) sub;
     }
 
 };

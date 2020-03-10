@@ -118,7 +118,7 @@ void Publisher::wait_for_acknowledgments(
 
 const dds::domain::DomainParticipant& Publisher::participant() const
 {
-    eprosima::fastdds::dds::DomainParticipant p = *delegate()->get_participant();
+    eprosima::fastdds::dds::DomainParticipant p = delegate()->get_participant();
     std::shared_ptr<eprosima::fastdds::dds::DomainParticipant> ptr(&p);
     participant_->delegate().swap(ptr);
 

@@ -47,7 +47,6 @@ SubscriberImpl::SubscriberImpl(
     , att_(att)
     , listener_(listen)
     , mask_(mask)
-    , subscriber_listener_(this)
     , user_subscriber_(nullptr)
     , rtps_participant_(p->rtps_participant())
 {
@@ -436,87 +435,9 @@ bool SubscriberImpl::set_attributes(
     return updated;
 }
 
-const DomainParticipant* SubscriberImpl::get_participant() const
+const DomainParticipant& SubscriberImpl::get_participant() const
 {
-    return participant_->get_participant();
-}
-
-void SubscriberImpl::SubscriberReaderListener::on_data_available(
-        DataReader* /*reader*/)
-{
-    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::data_available()))
-    {
-        subscriber_->listener_->on_new_data_message(subscriber_->user_subscriber_);
-    }
-}
-
-void SubscriberImpl::SubscriberReaderListener::on_subscription_matched(
-        DataReader* /*reader*/,
-        const fastdds::dds::SubscriptionMatchedStatus& info)
-{
-    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::subscription_matched()))
-    {
-        subscriber_->listener_->on_subscription_matched(subscriber_->user_subscriber_, info);
-    }
-}
-
-void SubscriberImpl::SubscriberReaderListener::on_requested_deadline_missed(
-        DataReader* /*reader*/,
-        const fastrtps::RequestedDeadlineMissedStatus& status)
-{
-    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::requested_deadline_missed()))
-    {
-        subscriber_->listener_->on_requested_deadline_missed(subscriber_->user_subscriber_, status);
-    }
-}
-
-void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
-        DataReader* /*reader*/,
-        const fastrtps::LivelinessChangedStatus& status)
-{
-    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::liveliness_changed()))
-    {
-        subscriber_->listener_->on_liveliness_changed(subscriber_->user_subscriber_, status);
-    }
-}
-
-void SubscriberImpl::SubscriberReaderListener::on_sample_rejected(
-        DataReader* /*reader*/,
-        const fastrtps::SampleRejectedStatus& status)
-{
-    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::sample_rejected()))
-    {
-        subscriber_->listener_->on_sample_rejected(subscriber_->user_subscriber_, status);
-    }
-}
-
-void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
-        DataReader* /*reader*/,
-        const RequestedIncompatibleQosStatus& status)
-{
-    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::requested_incompatible_qos()))
-    {
-        subscriber_->listener_->on_requested_incompatible_qos(subscriber_->user_subscriber_, status);
-    }
-}
-
-void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
-        DataReader* /*reader*/,
-        const SampleLostStatus& /*status*/)
-{
-    /* TODO
-       if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::sample_lost()))
-       {
-        subscriber_->listener_->on_sample_lost(subscriber_->user_subscriber_, status);
-       }
-     */
+    return *participant_->get_participant();
 }
 
 const InstanceHandle_t& SubscriberImpl::get_instance_handle() const

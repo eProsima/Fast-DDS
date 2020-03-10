@@ -58,12 +58,7 @@ ReturnCode_t DomainParticipant::set_listener(
     return impl_->set_listener(listener, mask);
 }
 
-const DomainParticipantListener* DomainParticipant::get_listener() const
-{
-    return impl_->get_listener();
-}
-
-DomainParticipantListener* DomainParticipant::get_listener()
+DomainParticipantListener* DomainParticipant::get_listener() const
 {
     return impl_->get_listener();
 }

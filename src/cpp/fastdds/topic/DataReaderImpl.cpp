@@ -75,14 +75,14 @@ DataReaderImpl::DataReaderImpl(
     , lifespan_duration_us_(topic_.get_qos().lifespan.duration.to_ns() * 1e-3)
     , user_datareader_(nullptr)
 {
-    deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+    deadline_timer_ = new TimedEvent(subscriber_->get_participant().get_resource_event(),
                     [&]() -> bool
                 {
                     return deadline_missed();
                 },
                     qos_.deadline.period.to_ns() * 1e-6);
 
-    lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+    lifespan_timer_ = new TimedEvent(subscriber_->get_participant().get_resource_event(),
                     [&]() -> bool
                 {
                     return lifespan_expired();
@@ -403,7 +403,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
         if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
                 data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::data_available())
         {
-            data_reader_->subscriber_->subscriber_listener_.on_data_available(data_reader_->user_datareader_);
+            data_reader_->subscriber_->get_listener()->on_data_available(data_reader_->user_datareader_);
         }
     }
 }
@@ -422,7 +422,7 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
     if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
             data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::subscription_matched())
     {
-        data_reader_->subscriber_->subscriber_listener_.on_subscription_matched(data_reader_->user_datareader_, info);
+        data_reader_->subscriber_->get_listener()->on_subscription_matched(data_reader_->user_datareader_, info);
     }
 }
 
@@ -439,7 +439,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
             data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::liveliness_changed())
     {
-        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
+        data_reader_->subscriber_->get_listener()->on_liveliness_changed(data_reader_->user_datareader_, status);
     }
 
 }
@@ -457,7 +457,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
     if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
             data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::requested_incompatible_qos())
     {
-        data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_,
+        data_reader_->subscriber_->get_listener()->on_requested_incompatible_qos(data_reader_->user_datareader_,
                 status);
     }
 }
@@ -475,7 +475,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
     if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
             data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::sample_rejected())
     {
-        data_reader_->subscriber_->subscriber_listener_.on_sample_rejected(data_reader_->user_datareader_,
+        data_reader_->subscriber_->get_listener()->on_sample_rejected(data_reader_->user_datareader_,
                 status);
     }
 }
@@ -583,7 +583,7 @@ bool DataReaderImpl::deadline_missed()
     if (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
             subscriber_->mask_ == ::dds::core::status::StatusMask::requested_deadline_missed())
     {
-        subscriber_->subscriber_listener_.on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
+        subscriber_->get_listener()->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
     }
 
     deadline_missed_status_.total_count_change = 0;
@@ -713,7 +713,6 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
     // TODO add callback call subscriber_->subscriber_listener_->on_liveliness_changed
     return ReturnCode_t::RETCODE_OK;
 }
-
 
 ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
         RequestedIncompatibleQosStatus& status) const

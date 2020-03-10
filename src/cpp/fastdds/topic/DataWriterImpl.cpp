@@ -81,14 +81,14 @@ DataWriterImpl::DataWriterImpl(
     , lifespan_duration_us_(qos_.lifespan.duration.to_ns() * 1e-3)
     , user_datawriter_(nullptr)
 {
-    deadline_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
+    deadline_timer_ = new TimedEvent(publisher_->get_participant().get_resource_event(),
                     [&]() -> bool
                 {
                     return deadline_missed();
                 },
                     qos_.deadline.period.to_ns() * 1e-6);
 
-    lifespan_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
+    lifespan_timer_ = new TimedEvent(publisher_->get_participant().get_resource_event(),
                     [&]() -> bool
                 {
                     return lifespan_expired();
@@ -585,7 +585,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
             data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::publication_matched())
     {
 
-        data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
+        data_writer_->publisher_->get_listener()->on_publication_matched(data_writer_->user_datawriter_, info);
     }
 }
 
@@ -612,7 +612,7 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
     if (data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
             data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::liveliness_lost())
     {
-        data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+        data_writer_->publisher_->get_listener()->on_liveliness_lost(data_writer_->user_datawriter_, status);
     }
 }
 
@@ -629,7 +629,7 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
     if (data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
             data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::offered_incompatible_qos())
     {
-        data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_,
+        data_writer_->publisher_->get_listener()->on_offered_incompatible_qos(data_writer_->user_datawriter_,
                 status);
     }
 }
@@ -680,7 +680,7 @@ bool DataWriterImpl::deadline_missed()
     if (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
             publisher_->mask_ == ::dds::core::status::StatusMask::offered_deadline_missed())
     {
-        publisher_->publisher_listener_.on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        publisher_->get_listener()->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
     }
     deadline_missed_status_.total_count_change = 0;
 
