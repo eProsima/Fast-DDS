@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
 
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -56,10 +57,10 @@ class TimedEvent;
 namespace fastdds {
 namespace dds {
 
-class Subscriber;
 class SubscriberImpl;
 class SampleInfo_t;
 class DomainParticipant;
+class TopicDescription;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -166,6 +167,8 @@ public:
 
     const Topic& get_topic() const;
 
+    TopicDescription* get_topicdescription();
+
     ReturnCode_t set_listener(
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
@@ -251,7 +254,9 @@ public:
         {
         }
 
-        virtual ~InnerDataReaderListener() override {}
+        virtual ~InnerDataReaderListener() override
+        {
+        }
 
         void onReaderMatched(
                 fastrtps::rtps::RTPSReader* reader,

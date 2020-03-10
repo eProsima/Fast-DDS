@@ -65,6 +65,7 @@ class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
 class Topic;
+class TopicDescription;
 struct LivelinessChangedStatus;
 class SampleInfo_t;
 
@@ -175,6 +176,8 @@ public:
             const fastrtps::TopicAttributes& att);
 
     const fastrtps::TopicAttributes& get_topic() const;
+
+    TopicDescription* get_topicdescription();
 
     ReturnCode_t set_listener(
             DataReaderListener* listener,

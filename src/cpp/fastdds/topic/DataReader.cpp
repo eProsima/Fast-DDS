@@ -48,10 +48,12 @@ DataReader::DataReader(
 DataReader::DataReader(
         DataReaderImpl* impl)
     : impl_(impl)
-{}
+{
+}
 
 DataReader::~DataReader()
-{}
+{
+}
 
 bool DataReader::wait_for_unread_message(
         const fastrtps::Duration_t& timeout)
@@ -103,6 +105,11 @@ bool DataReader::set_topic(
         const TopicAttributes& topic_att)
 {
     return impl_->set_topic_attributes(topic_att);
+}
+
+TopicDescription* DataReader::get_topicdescription()
+{
+    return impl_->get_topicdescription();
 }
 
 const DataReaderQos& DataReader::get_qos() const
