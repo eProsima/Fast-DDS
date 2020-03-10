@@ -244,7 +244,7 @@ public:
      * The domain_id identifies the DDS domain to which the DomainParticipant belongs.
      * @return The Participant's domain_id
      */
-    uint8_t get_domain_id() const;
+    DomainId_t get_domain_id() const;
 
     /* TODO
        bool delete_contained_entities();

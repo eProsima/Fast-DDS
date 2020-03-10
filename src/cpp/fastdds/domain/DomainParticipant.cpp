@@ -181,7 +181,7 @@ ReturnCode_t DomainParticipant::unregister_type(
    }
  */
 
-uint8_t DomainParticipant::get_domain_id() const
+DomainId_t DomainParticipant::get_domain_id() const
 {
     return impl_->get_domain_id();
 }
