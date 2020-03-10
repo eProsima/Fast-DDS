@@ -740,7 +740,7 @@ public:
     /**
      * @return const reference to the internal raw data.
      */
-    inline const std::vector<rtps::octet>& dataVec() const
+    inline const collection_type& dataVec() const
     {
         return collection_;
     }
@@ -790,7 +790,7 @@ public:
      * Returns raw data vector.
      * @return raw data as vector of octets.
      * */
-    RTPS_DllAPI inline std::vector<rtps::octet> getDataVec() const
+    RTPS_DllAPI inline const collection_type& getDataVec() const
     {
         return collection_;
     }
@@ -800,7 +800,7 @@ public:
      * @param vec raw data to set.
      * */
     RTPS_DllAPI inline void setDataVec(
-            const std::vector<rtps::octet>& vec)
+            const collection_type& vec)
     {
         assign(vec.begin(), vec.end());
         length = (size() + 7) & ~3;
@@ -810,7 +810,7 @@ public:
      * Returns raw data vector.
      * @return raw data as vector of octets.
      * */
-    RTPS_DllAPI inline std::vector<rtps::octet> getValue() const
+    RTPS_DllAPI inline const collection_type& getValue() const
     {
         return collection_;
     }
@@ -820,7 +820,7 @@ public:
      * @param vec raw data to set.
      * */
     RTPS_DllAPI inline void setValue(
-            const std::vector<rtps::octet>& vec)
+            const collection_type& vec)
     {
         assign(vec.begin(), vec.end());
         length = (size() + 7) & ~3;
