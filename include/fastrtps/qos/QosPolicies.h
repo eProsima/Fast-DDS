@@ -856,10 +856,7 @@ public:
      * @param data data to copy in the newly created object
      */
     RTPS_DllAPI TemplateDataQosPolicy(
-            const TemplateDataQosPolicy& data)
-        : GenericDataQosPolicy(data)
-    {
-    }
+            const TemplateDataQosPolicy& data) = default;
 
     /**
      * Construct from underlying collection type.
@@ -876,6 +873,18 @@ public:
     }
 
     virtual RTPS_DllAPI ~TemplateDataQosPolicy() = default;
+
+    /**
+     * Copies another TemplateDataQosPolicy.
+     *
+     * The resulting TemplateDataQosPolicy will have the same size limit
+     * as the input parameter, so all data in the input will be copied.
+     *
+     * @param b object to be copied
+     * @return reference to the current object.
+     */
+    TemplateDataQosPolicy& operator =(
+            const TemplateDataQosPolicy& b) = default;
 
 };
 
