@@ -714,8 +714,8 @@ public:
     GenericDataQosPolicy& operator =(
             const GenericDataQosPolicy& b)
     {
-        QosPolicy::operator=(b);
-        Parameter_t::operator=(b);
+        QosPolicy::operator =(b);
+        Parameter_t::operator =(b);
         configuration_ = b.configuration_;
         collection_.reserve(b.collection_.capacity());
         collection_.assign(b.collection_.begin(), b.collection_.end());
@@ -840,6 +840,7 @@ public:
     {
         assign(vec.begin(), vec.end());
     }
+
 };
 
 /**
@@ -892,6 +893,7 @@ public:
     virtual RTPS_DllAPI ~TemplateDataQosPolicy()
     {
     }
+
 };
 
 using UserDataQosPolicy = TemplateDataQosPolicy<PID_USER_DATA>;
@@ -1213,8 +1215,8 @@ public:
     PartitionQosPolicy& operator =(
             const PartitionQosPolicy& b)
     {
-        QosPolicy::operator=(b);
-        Parameter_t::operator=(b);
+        QosPolicy::operator =(b);
+        Parameter_t::operator =(b);
         max_size_ = b.max_size_;
         partitions_.reserve(max_size_ != 0 ?
                 b.partitions_.max_size :
@@ -1460,7 +1462,6 @@ public:
     virtual RTPS_DllAPI ~ResourceLimitsQosPolicy()
     {
     }
-
 
     inline void clear() override
     {
