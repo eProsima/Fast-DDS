@@ -383,12 +383,6 @@ public:
         return StatusMask(0x00000001 << 14u);
     }
 
-    bool is_compatible(
-            StatusMask base) const
-    {
-        return (*this == all() || *this == base);
-    }
-
     bool is_active(
             StatusMask status)
     {

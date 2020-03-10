@@ -232,6 +232,9 @@ public:
 
     ReturnCode_t assert_liveliness();
 
+    ReturnCode_t get_matched_subscriptions(
+            std::vector<fastrtps::rtps::InstanceHandle_t>& subscription_handles) const;
+
 private:
 
     DataWriterImpl* impl_;

@@ -580,11 +580,12 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
             data_writer_->user_datawriter_, info);
     }
 
-    if (data_writer_->get_publisher()->get_status_mask().is_compatible(::dds::core::status::StatusMask::
+    else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
+    data_writer_->get_publisher()->get_status_mask().is_compatible(::dds::core::status::StatusMask::
             publication_matched()))
     {
-
-        data_writer_->publisher_->get_listener()->on_publication_matched(data_writer_->user_datawriter_, info);
+        DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
+        listener->on_publication_matched(data_writer_->user_datawriter_, info);
     }
 }
 
@@ -792,6 +793,13 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
         PublicationMatchedStatus& status)
 {
     status = writer_->publication_matched_status_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataWriterImpl::get_matched_subscriptions(
+        std::vector<InstanceHandle_t>& subscription_handles) const
+{
+    subscription_handles = matched_subscriptions_;
     return ReturnCode_t::RETCODE_OK;
 }
 

@@ -247,6 +247,12 @@ TypeSupport DataReader::type()
    }
  */
 
+ReturnCode_t DataReader::get_matched_publications(
+        std::vector<InstanceHandle_t>& publication_handles) const
+{
+    return impl_->get_matched_publications(publication_handles);
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

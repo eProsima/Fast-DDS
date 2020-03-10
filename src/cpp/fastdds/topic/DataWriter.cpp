@@ -188,6 +188,12 @@ ReturnCode_t DataWriter::assert_liveliness()
     return impl_->assert_liveliness();
 }
 
+ReturnCode_t DataWriter::get_matched_subscriptions(
+        std::vector<rtps::InstanceHandle_t>& subscription_handles) const
+{
+    return impl_->get_matched_subscriptions(subscription_handles);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

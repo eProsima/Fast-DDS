@@ -194,6 +194,9 @@ public:
 
     ReturnCode_t assert_liveliness();
 
+    ReturnCode_t get_matched_subscriptions(
+            std::vector<fastrtps::rtps::InstanceHandle_t>& subscription_handles) const;
+
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -276,6 +279,8 @@ public:
     std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
     DataWriter* user_datawriter_;
+
+    std::vector<fastrtps::rtps::InstanceHandle_t> matched_subscriptions_;
 
     /**
      *
