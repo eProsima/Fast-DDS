@@ -134,9 +134,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~DurabilityQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~DurabilityQosPolicy() = default;
 
     /**
      * Translates kind to rtps layer equivalent
@@ -223,9 +221,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~DeadlineQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~DeadlineQosPolicy() = default;
 
     bool operator ==(
             const DeadlineQosPolicy& b) const
@@ -280,9 +276,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~LatencyBudgetQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~LatencyBudgetQosPolicy() = default;
 
     bool operator ==(
             const LatencyBudgetQosPolicy& b) const
@@ -354,9 +348,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~LivelinessQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~LivelinessQosPolicy() = default;
 
     bool operator ==(
             const LivelinessQosPolicy& b) const
@@ -423,9 +415,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~ReliabilityQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~ReliabilityQosPolicy() = default;
 
     bool operator ==(
             const ReliabilityQosPolicy& b) const
@@ -506,9 +496,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~OwnershipQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~OwnershipQosPolicy() = default;
 
     bool operator ==(
             const OwnershipQosPolicy& b) const
@@ -574,9 +562,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~DestinationOrderQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~DestinationOrderQosPolicy() = default;
 
     bool operator ==(
             const DestinationOrderQosPolicy& b) const
@@ -679,9 +665,7 @@ public:
         length = (size() + 7) & ~3;
     }
 
-    virtual RTPS_DllAPI ~GenericDataQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~GenericDataQosPolicy() = default;
 
     /**
      * Copies data from underlying collection type.
@@ -895,9 +879,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~TemplateDataQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~TemplateDataQosPolicy() = default;
 };
 
 using UserDataQosPolicy = TemplateDataQosPolicy<PID_USER_DATA>;
@@ -920,9 +902,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy() = default;
 
     bool operator ==(
             const TimeBasedFilterQosPolicy& b) const
@@ -993,9 +973,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~PresentationQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~PresentationQosPolicy() = default;
 
     bool operator ==(
             const PresentationQosPolicy& b) const
@@ -1201,9 +1179,7 @@ public:
         partitions_.copy(&b.partitions_, b.max_size_ != 0);
     }
 
-    virtual RTPS_DllAPI ~PartitionQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~PartitionQosPolicy() = default;
 
     bool operator ==(
             const PartitionQosPolicy& b) const
@@ -1390,9 +1366,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~HistoryQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~HistoryQosPolicy() = default;
 
     bool operator ==(
             const HistoryQosPolicy& b) const
@@ -1459,9 +1433,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~ResourceLimitsQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~ResourceLimitsQosPolicy() = default;
 
     bool operator ==(
             const ResourceLimitsQosPolicy& b) const
@@ -1527,9 +1499,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~DurabilityServiceQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~DurabilityServiceQosPolicy() = default;
 
     bool operator ==(
             const DurabilityServiceQosPolicy& b) const
@@ -1593,9 +1563,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~LifespanQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~LifespanQosPolicy() = default;
 
     bool operator ==(
             const LifespanQosPolicy& b) const
@@ -1649,9 +1617,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~OwnershipStrengthQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~OwnershipStrengthQosPolicy() = default;
 
     bool operator ==(
             const OwnershipStrengthQosPolicy& b) const
@@ -1709,9 +1675,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~TransportPriorityQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~TransportPriorityQosPolicy() = default;
 
     bool operator ==(
             const TransportPriorityQosPolicy& b) const
@@ -1770,9 +1734,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~PublishModeQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~PublishModeQosPolicy() = default;
 
     inline void clear() override
     {
@@ -1806,9 +1768,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() override
-    {
-    }
+    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() override = default;
 
     /**
      * Compares the given policy to check if it's equal.
@@ -1883,9 +1843,7 @@ public:
         m_force_type_validation = false;
     }
 
-    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() override
-    {
-    }
+    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() override = default;
 
     bool operator ==(
             const TypeConsistencyEnforcementQosPolicy& b) const
@@ -1937,9 +1895,7 @@ public:
     {
     }
 
-    virtual RTPS_DllAPI ~DisablePositiveACKsQosPolicy()
-    {
-    }
+    virtual RTPS_DllAPI ~DisablePositiveACKsQosPolicy() = default;
 
     bool operator ==(
             const DisablePositiveACKsQosPolicy& b) const
@@ -2038,9 +1994,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeIdV1() override
-    {
-    }
+    virtual RTPS_DllAPI ~TypeIdV1() override = default;
 
     inline void clear() override
     {
@@ -2137,9 +2091,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeObjectV1() override
-    {
-    }
+    virtual RTPS_DllAPI ~TypeObjectV1() override = default;
 
     inline void clear() override
     {
@@ -2243,9 +2195,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeInformation() override
-    {
-    }
+    virtual RTPS_DllAPI ~TypeInformation() override = default;
 
     inline void clear() override
     {
