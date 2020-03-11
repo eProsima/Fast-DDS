@@ -84,6 +84,21 @@ DataReader* Subscriber::create_datareader(
     return impl_->create_datareader(topic, qos, listener, mask);
 }
 
+DataReader* Subscriber::create_datareader(
+        const TopicDescription& topic_desc,
+        const DataReaderQos& reader_qos,
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& mask)
+{
+    DomainParticipant dp = get_participant();
+    Topic* topic = dp.find_topic(topic_desc.get_name(), Duration_t(100, 0));
+    if (topic == nullptr)
+    {
+        topic = dp.create_topic(topic_desc.get_name(), topic_desc.get_type_name(), TOPIC_QOS_DEFAULT);
+    }
+    return impl_->create_datareader(topic, reader_qos, listener, mask);
+}
+
 ReturnCode_t Subscriber::delete_datareader(
         DataReader* reader)
 {

@@ -52,6 +52,7 @@ class DataReader;
 class DataReaderListener;
 class DataReaderQos;
 class Topic;
+class TopicDescription;
 class TopicQos;
 
 /**
@@ -135,8 +136,14 @@ public:
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     DataReader* create_datareader(
-            Topic* topic,                       //Change to TopicDescription when DomainParticipant::find_topic() is implemented
+            Topic* topic,
             const DataReaderQos& qos,
+            DataReaderListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+
+    DataReader* create_datareader(
+            const TopicDescription& topic_desc,
+            const DataReaderQos& reader_qos,
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
