@@ -218,6 +218,8 @@ DataReader* SubscriberImpl::create_datareader(
         readers_[topic->get_name()].push_back(impl);
     }
 
+    topic->get_readers()->push_back(reader);
+
     return reader;
 }
 
@@ -235,8 +237,19 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
         if (dr_it != it->second.end())
         {
+            std::vector<DataReader*>* topic_readers = (*dr_it)->get_topic()->get_readers();
+            auto t_it = std::find(topic_readers->begin(), topic_readers->end(), reader);
+            if (t_it != topic_readers->end())
+            {
+                topic_readers->erase(t_it);
+            }
             (*dr_it)->set_listener(nullptr);
             it->second.erase(dr_it);
+            delete *dr_it;
+            if (it->second.empty())
+            {
+                readers_.erase(it);
+            }
             return ReturnCode_t::RETCODE_OK;
         }
     }

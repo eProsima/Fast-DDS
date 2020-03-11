@@ -236,6 +236,8 @@ DataWriter* PublisherImpl::create_datawriter(
         writers_[topic->get_name()].push_back(impl);
     }
 
+    topic->get_writers()->push_back(writer);
+
     return writer;
 }
 
@@ -253,8 +255,19 @@ ReturnCode_t PublisherImpl::delete_datawriter(
         auto dw_it = std::find(vit->second.begin(), vit->second.end(), writer->impl_);
         if (dw_it != vit->second.end())
         {
+            std::vector<DataWriter*>* topic_writers = (*dw_it)->get_topic()->get_writers();
+            auto t_it = std::find(topic_writers->begin(), topic_writers->end(), writer);
+            if (t_it != topic_writers->end())
+            {
+                topic_writers->erase(t_it);
+            }
             (*dw_it)->set_listener(nullptr);
             vit->second.erase(dw_it);
+            delete *dw_it;
+            if (vit->second.empty())
+            {
+                writers_.erase(vit);
+            }
             return ReturnCode_t::RETCODE_OK;
         }
     }
