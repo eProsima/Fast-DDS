@@ -31,12 +31,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-<<<<<<< HEAD
-//TODO: Change when fastdds Rank is implemented
-class Rank
-=======
 struct Rank
->>>>>>> Feature/psm helloworld [6739] (#822)
 {
     //!Preview of the samples that follow within the sequence returned by the read or take operations.
     int32_t sample_rank = 0;

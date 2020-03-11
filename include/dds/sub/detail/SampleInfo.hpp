@@ -18,11 +18,7 @@
 #ifndef EPROSIMA_DDS_SUB_DETAIL_SAMPLE_INFO_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_SAMPLE_INFO_HPP_
 
-<<<<<<< HEAD
-//#include <dds/sub/detail/TSampleInfoImpl.hpp>
-=======
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
->>>>>>> Feature/psm helloworld [6739] (#822)
 
 /**
  * @cond
@@ -33,14 +29,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-<<<<<<< HEAD
-//TODO: Change when fastdds SampleInfo is implemented
-class SampleInfo
-{
-};
-=======
 using SampleInfo = eprosima::fastdds::dds::SampleInfo_t;
->>>>>>> Feature/psm helloworld [6739] (#822)
 
 } //namespace detail
 } //namespace sub

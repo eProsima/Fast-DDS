@@ -50,7 +50,7 @@ public:
 
     ~DynamicTypesTests()
     {
-        Log::KillThread();
+        eprosima::fastdds::dds::Log::KillThread();
     }
 
     virtual void TearDown()
