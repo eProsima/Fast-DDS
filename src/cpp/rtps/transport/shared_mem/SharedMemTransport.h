@@ -240,27 +240,23 @@ private:
 
     bool send(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-            const fastrtps::rtps::Locator_t& remote_locator,
-            const std::chrono::microseconds& timeout);
+            const fastrtps::rtps::Locator_t& remote_locator);
 
     std::shared_ptr<SharedMemManager::Port> find_port(
             uint32_t port_id);
 
     bool push_fail(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-            const fastrtps::rtps::Locator_t& remote_locator,
-            const std::chrono::microseconds& timeout);
+            const fastrtps::rtps::Locator_t& remote_locator);
 
     bool push_discard(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-            const fastrtps::rtps::Locator_t& remote_locator,
-            const std::chrono::microseconds& timeout);
+            const fastrtps::rtps::Locator_t& remote_locator);
 
     std::function<bool(
                 SharedMemTransport&,
                 const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-                const fastrtps::rtps::Locator_t& remote_locator,
-                const std::chrono::microseconds& timeout)> push_lambda_;
+                const fastrtps::rtps::Locator_t& remote_locator)> push_lambda_;
 };
 
 } // namespace rtps
