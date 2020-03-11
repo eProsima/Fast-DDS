@@ -142,9 +142,6 @@ class MockTransport : public TransportInterface
         std::vector<MockMessage> mockMessagesSent;
 
         // For the mock, port + direction tuples will have a 1:1 relatonship with channels
-
-        
-
         typedef uint32_t Port;
         std::vector<Port> mockOpenInputChannels;
 

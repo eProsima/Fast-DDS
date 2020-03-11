@@ -107,7 +107,7 @@ public:
     }
 
     /**
-     * Estimates the extra segment' space required for an allocation
+     * Estimates the extra segment space required for an allocation
      */
     static uint32_t compute_per_allocation_extra_size(
             size_t allocation_alignment)
@@ -127,7 +127,7 @@ public:
                 {
                     boost::interprocess::managed_shared_memory
                             test_segment(boost::interprocess::create_only, uuid.to_string().c_str(),
-                            (std::max)((size_t)1024, allocation_alignment* 4));
+                                (std::max)((size_t)1024, allocation_alignment* 4));
 
                     auto m1 = test_segment.get_free_memory();
                     test_segment.allocate_aligned(1, allocation_alignment);

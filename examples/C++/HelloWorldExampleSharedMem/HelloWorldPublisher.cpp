@@ -131,7 +131,7 @@ void HelloWorldPublisher::runThread(
         {
             if (publish(false))
             {
-                std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
+                std::cout << "Message: " << m_Hello->message() << " with index: " << m_Hello->index() << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
@@ -146,7 +146,7 @@ void HelloWorldPublisher::runThread(
             }
             else
             {
-                std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
+                std::cout << "Message: " << m_Hello->message() << " with index: " << m_Hello->index() << " SENT"<<std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
@@ -177,7 +177,7 @@ bool HelloWorldPublisher::publish(
 {
     if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
-        m_Hello->index(m_Hello->index()+1);
+        m_Hello->index(m_Hello->index() + 1);
         size_t data_size = m_Hello->data().size();
         std::string s = "BigData" + std::to_string(m_Hello->index() % 10);
         strcpy(&m_Hello->data()[data_size - s.length() - 1], s.c_str());

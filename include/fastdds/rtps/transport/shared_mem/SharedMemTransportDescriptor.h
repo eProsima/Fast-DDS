@@ -30,7 +30,10 @@ class TransportInterface;
  */
 typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 {
-    virtual ~SharedMemTransportDescriptor() {}
+    virtual ~SharedMemTransportDescriptor() 
+    {
+        
+    }
 
     virtual TransportInterface* create_transport() const override;
     uint32_t min_send_buffer_size() const override
@@ -54,6 +57,12 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
         return segment_size_;
     }
 
+    /**
+     * Sets the segment_size and the max_message_size.
+     * max_message must be <= segment_size
+     * @param [in] segment_size in bytes.
+     * @param [in] max_message_size in bytes.
+     */
     RTPS_DllAPI void segment_size(
             uint32_t segment_size,
             uint32_t max_message_size)

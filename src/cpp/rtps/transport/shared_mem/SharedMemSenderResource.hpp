@@ -32,9 +32,9 @@ public:
     {
         // Implementation functions are bound to the right transport parameters
         clean_up = []()
-                {
-                    // No cleanup is required
-                };
+            {
+                // No cleanup is required
+            };
 
         send_lambda_ = [&transport] (
             const fastrtps::rtps::octet* data,
@@ -44,8 +44,9 @@ public:
             const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
                 {
                     return transport.send(data, dataSize, destination_locators_begin, destination_locators_end,
-                                   max_blocking_time_point);
+                                    max_blocking_time_point);
                 };
+
     }
 
     virtual ~SharedMemSenderResource()

@@ -86,7 +86,7 @@ public:
     {
         friend class MockPortSharedMemGlobal;
 
-private:
+    private:
 
         std::unique_ptr<SharedMemSegment> port_segment_;
 
@@ -144,7 +144,7 @@ private:
             node_->empty_cv.notify_all();
         }
 
-public:
+    public:
 
         /**
          * Defines open sharing mode of a shared-memory port:
@@ -208,7 +208,9 @@ public:
         /**
          * Try to enqueue a buffer descriptor in the port.
          * If the port queue is full returns inmediatelly with false value.
+         * @param[in] buffer_descriptor buffer descriptor to be enqueued
          * @param[out] listeners_active false if no active listeners => buffer not enqueued
+         * @return false in overflow case, true otherwise.
          */
         bool try_push(
                 const BufferDescriptor& buffer_descriptor,
@@ -250,6 +252,9 @@ public:
 
         /**
          * Waits while the port is empty and listener is not closed
+         * @param[in] listener reference to the listener that will wait for an incoming buffer descriptor.
+         * @param[in] is_listener_closed this reference can become true in the middle of the waiting process,
+         * if that happens wait is aborted.
          */
         void wait_pop(
                 Listener& listener,
@@ -291,6 +296,7 @@ public:
          * forces wake-up all listeners on this port.
          * This function is used when destroying a listener waiting for messages
          * in the port.
+         * @param is_listener_closed pointer to the atomic is_closed flag of the Listener object.
          */
         void close_listener(
                 std::atomic<bool>* is_listener_closed)
@@ -305,7 +311,8 @@ public:
 
         /**
          * Removes the head buffer-descriptor from the listener's queue
-         * @param out was_cell_freed is true if the port's cell is freed because all listeners has poped the cell
+         * @param [in] listener reference to the listener that will pop the buffer descriptor.
+         * @param [out] was_cell_freed is true if the port's cell is freed because all listeners has poped the cell
          * @throw std::runtime_error if buffer is empty
          */
         void pop(
@@ -333,7 +340,9 @@ public:
 
         /**
          * Performs a check of the opened port.
-         * When a process crash with a port opened the port can be leave inoperative.
+         * When a process crashes with a port opened the port can be leave inoperative.
+         * @param [in] healthy_check_timeout_ms max timeout (milliseconds) allowed for the whole 
+         * healthy check operation.
          * @throw std::exception if the port is inoperative.
          */
         void healthy_check(
@@ -344,7 +353,10 @@ public:
             was_check_thread_detached_ = false;
 
             std::shared_ptr<std::mutex> notify_check_done_mutex = std::make_shared<std::mutex>();
-            std::shared_ptr<std::condition_variable> notify_check_done_cv = std::make_shared<std::condition_variable>();
+
+            std::shared_ptr<std::condition_variable> notify_check_done_cv = 
+                std::make_shared<std::condition_variable>();
+
             std::shared_ptr<bool> is_check_done_received = std::make_shared<bool>(false);
 
             std::thread check_thread([=]
@@ -393,9 +405,10 @@ public:
      * Open a shared-memory port. If the port doesn't exist in the system a port with port_id is created,
      * otherwise the existing port is opened.
      *
-     * @param port_id
-     * @param max_buffer_descriptors capacity of the port (only used if the port is created)
-     * @param healthy_check_timeout_ms timeout for healthy check test
+     * @param [in] port_id Identifies the port
+     * @param [in] max_buffer_descriptors Capacity of the port (only used if the port is created)
+     * @param [in] healthy_check_timeout_ms Timeout for healthy check test
+     * @param [in] open_mode Can be ReadShared, ReadExclusive or Write (see Port::OpenMode enum).
      *
      * @remarks This function performs a test to validate whether the existing port is OK, if the test
      * goes wrong the existing port is removed from shared-memory and a new port is created.
@@ -450,7 +463,7 @@ public:
                 if ( (port_node->is_opened_read_exclusive && open_mode != Port::OpenMode::Write) ||
                         (port_node->is_opened_for_reading && open_mode == Port::OpenMode::ReadExclusive))
                 {
-                    logInfo(RTPS_TRANSPORT_SHM, THREADID << "Couln't open Port "
+                    logError(RTPS_TRANSPORT_SHM, THREADID << "Couln't open Port "
                                                          << port_node->port_id << " (" << port_node->uuid.to_string() <<
                                         ") for reading because is exclusive");
 
@@ -470,7 +483,7 @@ public:
             {
                 auto port_uuid = port_node->uuid.to_string();
 
-                // Healthy check leaved a thread blocked at port resources
+                // Healthy check left a thread blocked at port resources
                 // So we leave port_segment unmanaged, better to leak memory than a crash
                 if (port->was_check_thread_detached())
                 {

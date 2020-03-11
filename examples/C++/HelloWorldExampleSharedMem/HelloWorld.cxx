@@ -39,7 +39,7 @@ HelloWorld::HelloWorld()
     // m_message com.eprosima.idl.parser.typecode.StringTypeCode@67784306
     m_message ="";
     // m_data com.eprosima.idl.parser.typecode.ArrayTypeCode@335eadca
-    memset(&m_data, 0, (DATA_SIZE) * 1);
+    memset(&m_data, 0, DATA_SIZE);
 
 }
 
@@ -111,7 +111,7 @@ size_t HelloWorld::getCdrSerializedSize(
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
-    current_alignment += ((DATA_SIZE) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += DATA_SIZE + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     return current_alignment - initial_alignment;
 }

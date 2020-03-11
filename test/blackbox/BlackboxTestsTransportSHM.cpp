@@ -27,7 +27,7 @@ using namespace eprosima::fastrtps;
 using SharedMemTransportDescriptor = eprosima::fastdds::rtps::SharedMemTransportDescriptor;
 using test_SharedMemTransportDescriptor = eprosima::fastdds::rtps::test_SharedMemTransportDescriptor;
 
-TEST(BlackBox, SHMTransportPubSub)
+TEST(SHM, TransportPubSub)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -68,7 +68,7 @@ TEST(BlackBox, SHMTransportPubSub)
     reader.wait_participant_undiscovery();
 }
 
-TEST(BlackBox, SHM300KFragmentation)
+TEST(SHM, Test300KFragmentation)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -122,7 +122,7 @@ TEST(BlackBox, SHM300KFragmentation)
     reader.wait_participant_undiscovery();
 }
 
-TEST(BlackBox, SHM300KNoFragmentation)
+TEST(SHM, Test300KNoFragmentation)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -176,7 +176,7 @@ TEST(BlackBox, SHM300KNoFragmentation)
     reader.wait_participant_undiscovery();
 }
 
-TEST(BlackBox, SHM_UDP_300KFragmentation)
+TEST(SHM, SHM_UDP_300KFragmentation)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -236,7 +236,7 @@ TEST(BlackBox, SHM_UDP_300KFragmentation)
     reader.wait_participant_undiscovery();
 }
 
-TEST(BlackBox, UDPvsSHM_UDP)
+TEST(SHM, UDPvsSHM_UDP)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -294,7 +294,7 @@ TEST(BlackBox, UDPvsSHM_UDP)
     reader.wait_participant_undiscovery();
 }
 
-TEST(BlackBox, SHM_UDPvsUDP)
+TEST(SHM, SHM_UDPvsUDP)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);

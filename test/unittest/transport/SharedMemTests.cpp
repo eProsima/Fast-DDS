@@ -41,11 +41,12 @@ static uint16_t g_default_port = 0;
 static uint16_t g_output_port = 0;
 static uint16_t g_input_port = 0;
 
-uint16_t get_port(uint16_t offset)
+uint16_t get_port(
+        uint16_t offset)
 {
     uint16_t port = static_cast<uint16_t>(GET_PID());
 
-    if(offset > port)
+    if (offset > port)
     {
         port += offset;
     }
@@ -53,21 +54,22 @@ uint16_t get_port(uint16_t offset)
     return port;
 }
 
-class SHMTransportTests: public ::testing::Test
+class SHMTransportTests : public ::testing::Test
 {
-    public:
-        SHMTransportTests()
-        {
-            eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
-        }
+public:
 
-        ~SHMTransportTests()
-        {
-            eprosima::fastdds::dds::Log::Flush();
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    SHMTransportTests()
+    {
+        eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
+    }
 
-        SharedMemTransportDescriptor descriptor;
+    ~SHMTransportTests()
+    {
+        eprosima::fastdds::dds::Log::Flush();
+        eprosima::fastdds::dds::Log::KillThread();
+    }
+
+    SharedMemTransportDescriptor descriptor;
 };
 
 class SHMRingBuffer : public ::testing::Test
@@ -483,7 +485,7 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
 
     Semaphore sem;
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     eprosima::fastrtps::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
@@ -492,23 +494,23 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     octet message[5] = { 'H','e','l','l','o' };
 
     std::function<void()> recCallback = [&]()
-    {
-        EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-        sem.post();
-    };
+        {
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
     msg_recv->setCallback(recCallback);
 
     LocatorList_t locator_list;
     locator_list.push_back(unicastLocator);
 
     auto sendThreadFunction = [&]()
-    {
-        Locators locators_begin(locator_list.begin());
-        Locators locators_end(locator_list.end());
+        {
+            Locators locators_begin(locator_list.begin());
+            Locators locators_end(locator_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    };
+            EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                    (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+        };
 
     std::unique_ptr<std::thread> sender_thread;
     sender_thread.reset(new std::thread(sendThreadFunction));
@@ -535,22 +537,22 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
 
     Semaphore sem;
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     uint32_t messages_received = 0;
     std::function<void()> recCallback = [&]()
-    {
-        // At the second message block
-        if(messages_received > 0)
         {
-            messages_received++;
-            sem.wait();
-        }
-        else
-        {
-            messages_received++;
-        }
-    };
+            // At the second message block
+            if (messages_received > 0)
+            {
+                messages_received++;
+                sem.wait();
+            }
+            else
+            {
+                messages_received++;
+            }
+        };
     msg_recv->setCallback(recCallback);
 
     Locator_t outputChannelLocator;
@@ -568,27 +570,27 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
     {
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
-        // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried 
+        // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried
         // to cause segment overflow
         octet message_big[4096] = { 'H','e','l','l'};
 
         ASSERT_FALSE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
     // At least 4 msgs of 4 bytes are allowed
-    for(int i=0;i<4;i++)
+    for (int i=0; i<4; i++)
     {
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
- 
+
         // At least 4 msgs of 4 bytes are allowed
         ASSERT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
     // Wait until the receiver get the first message
-    while(messages_received == 0)
+    while (messages_received == 0)
     {
         std::this_thread::yield();
     }
@@ -602,8 +604,8 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
         Locators locators_end(locator_list.end());
 
         ASSERT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    } 
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
 
     // Push a 5th will cause port overflow
     {
@@ -611,10 +613,10 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
         Locators locators_end(locator_list.end());
 
         ASSERT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    } 
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
 
-    sem.disable(); 
+    sem.disable();
 }
 
 TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
@@ -635,14 +637,14 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
 
     Semaphore sem;
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     bool is_first_message_received = false;
     std::function<void()> recCallback = [&]()
-    {
-        is_first_message_received = true;
-        sem.wait();
-    };
+            {
+                is_first_message_received = true;
+                sem.wait();
+            };
     msg_recv->setCallback(recCallback);
 
     Locator_t outputChannelLocator;
@@ -660,27 +662,27 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     {
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
-        // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried 
+        // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried
         // to cause segment overflow
         octet message_big[4096] = { 'H','e','l','l'};
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
     // At least 4 msgs of 4 bytes are allowed
-    for(int i=0;i<4;i++)
+    for (int i=0; i<4; i++)
     {
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
 
         // At least 4 msgs of 4 bytes are allowed
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     }
 
     // Wait until the receiver get the first message
-    while(!is_first_message_received)
+    while (!is_first_message_received)
     {
         std::this_thread::yield();
     }
@@ -694,8 +696,8 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    } 
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
 
     // Push a 5th will not cause overflow
     {
@@ -703,8 +705,8 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    } 
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
 
     sem.disable();
 }
@@ -720,30 +722,30 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
 
     auto global_port = shared_mem_global.open_port(0, 1, 1000);
 
-	Semaphore sem_lock_done;
-	Semaphore sem_end_thread_locker;
-	std::thread thread_locker([&] 
-		{
-			// lock has to be done in another thread because
-			// boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
-			auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
-			ASSERT_TRUE(port_mutex->try_lock());
-			sem_lock_done.post();
-			sem_end_thread_locker.wait();
-		}
-	);
+    Semaphore sem_lock_done;
+    Semaphore sem_end_thread_locker;
+    std::thread thread_locker([&]
+        {
+            // lock has to be done in another thread because
+            // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+            auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
+            ASSERT_TRUE(port_mutex->try_lock());
+            sem_lock_done.post();
+            sem_end_thread_locker.wait();
+        }
+            );
 
-	sem_lock_done.wait();
+    sem_lock_done.wait();
 
-	auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
-	ASSERT_FALSE(port_mutex->try_lock());
+    auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
+    ASSERT_FALSE(port_mutex->try_lock());
 
     auto global_port2 = shared_mem_global.open_port(0, 1, 1000);
 
     ASSERT_NO_THROW(global_port2->healthy_check(1000));
 
-	sem_end_thread_locker.post();
-	thread_locker.join();
+    sem_end_thread_locker.post();
+    thread_locker.join();
 }
 
 TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
@@ -755,20 +757,20 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
 
     auto global_port = shared_mem_global.open_port(0, 1, 1000);
 
-	Semaphore sem_lock_done;
-	Semaphore sem_end_thread_locker;
-	std::thread thread_locker([&]
-		{
-			// lock has to be done in another thread because
-			// boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
-			ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
-			sem_lock_done.post();
-			sem_end_thread_locker.wait();
-		}
-	);
+    Semaphore sem_lock_done;
+    Semaphore sem_end_thread_locker;
+    std::thread thread_locker([&]
+        {
+            // lock has to be done in another thread because
+            // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+            ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
+            sem_lock_done.post();
+            sem_end_thread_locker.wait();
+        }
+            );
 
-	sem_lock_done.wait();
-    
+    sem_lock_done.wait();
+
     ASSERT_FALSE(port_mocker.lock_empty_cv_mutex(*global_port));
 
     bool listerner_active;
@@ -777,8 +779,8 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
 
     ASSERT_THROW(global_port->healthy_check(1000), std::exception);
 
-	sem_end_thread_locker.post();
-	thread_locker.join();
+    sem_end_thread_locker.post();
+    thread_locker.join();
 }
 
 TEST_F(SHMTransportTests, dead_listener_port_recover)
@@ -788,16 +790,16 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
     SharedMemGlobal shared_mem_global(domain_name);
     auto deadlocked_port = shared_mem_global.open_port(0, 1, 1000);
     auto deadlocked_listener = deadlocked_port->create_listener();
-    
+
     // Simulates a deadlocked wait_pop
     std::atomic_bool is_listener_closed(false);
-    std::thread thread_wait_deadlock([&] 
+    std::thread thread_wait_deadlock([&]
         {
             MockPortSharedMemGlobal port_mocker;
-            port_mocker.wait_pop_deadlock(*deadlocked_port, *deadlocked_listener, is_listener_closed);                
+            port_mocker.wait_pop_deadlock(*deadlocked_port, *deadlocked_listener, is_listener_closed);
             (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
         });
-    
+
     // Assert the thread is waiting
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -819,7 +821,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 }
 
 /*TEST_F(SHMTransportTests, simple_latency)
-{
+   {
     int num_samples = 1000;
     char data[16] = { "" };
 
@@ -887,10 +889,10 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 
     thread_subscriber.join();
     thread_publisher.join();
-}*/
+   }*/
 
 /*TEST_F(SHMTransportTests, simple_latency2)
-{
+   {
     int num_samples = 1000;
     octet data[16] = { "" };
 
@@ -1009,10 +1011,10 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 
     thread_subscriber.join();
     thread_publisher.join();
-}*/
+   }*/
 
 /*TEST_F(SHMTransportTests, simple_throughput)
-{
+   {
     const size_t sample_size = 1024;
     int num_samples_per_batch = 100000;
 
@@ -1078,11 +1080,11 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
         , num_samples_per_batch
         , real_samples_received
         , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
-}*/
+   }*/
 
 // This test is linux only
 /*TEST_F(SHMTransportTests, simple_throughput_inter)
-{
+   {
     const size_t sample_size = 1024;
     int num_samples_per_batch = 100000;
 
@@ -1162,7 +1164,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
             , num_samples_per_batch
             , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
     }
-}*/
+   }*/
 
 /*INSTANTIATE_TEST_CASE_P(
     SHMTransportTests,
@@ -1177,9 +1179,11 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
         std::make_tuple(
             (std::max)((unsigned int)1, std::thread::hardware_concurrency())*2, 100,std::thread::hardware_concurrency())
     )
-);*/
+   );*/
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port(4000);
