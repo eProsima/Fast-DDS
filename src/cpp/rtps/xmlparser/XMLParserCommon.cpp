@@ -150,14 +150,17 @@ const char* NACK_RESP_DELAY = "nackResponseDelay";
 const char* NACK_SUPRESSION = "nackSupressionDuration";
 const char* BY_NAME = "durationbyname";
 const char* BY_VAL = "durationbyval";
-const char* DURATION_INFINITY = "DURATION_INFINITY";
-const char* DURATION_INFINITE_SEC = "DURATION_INFINITE_SEC";
-const char* DURATION_INFINITE_NSEC = "DURATION_INFINITE_NSEC";
 const char* SECONDS = "sec";
 const char* NANOSECONDS = "nanosec";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
-
+// For backward compatibility we allow any DURATION_XXX in duration_t element and any subelement
+// const char* DURATION_INFINITY = R"xsd(\s*DURATION_INFINITY\s*)xsd";
+// const char* DURATION_INFINITE_SEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*)xsd";
+// const char* DURATION_INFINITE_NSEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*)xsd";
+const char* DURATION_INFINITY = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC|DURATION_INFINITE_NSEC)\s*)xsd";
+const char* DURATION_INFINITE_SEC = DURATION_INFINITY; 
+const char* DURATION_INFINITE_NSEC = DURATION_INFINITY; 
 /// QOS
 const char* DURABILITY = "durability";
 const char* DURABILITY_SRV = "durabilityService";
