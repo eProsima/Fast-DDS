@@ -686,6 +686,7 @@ public:
             //If the object is size limited, already has max_size() allocated
             //assign() will always stop copying when reaching max_size()
             assign(b.begin(), b.end());
+            length = (size() + 7) & ~3;
             hasChanged = true;
         }
         return *this;
@@ -809,6 +810,7 @@ public:
             const collection_type& vec)
     {
         assign(vec.begin(), vec.end());
+        length = (size() + 7) & ~3;
     }
 
     /**
@@ -828,6 +830,7 @@ public:
             const collection_type& vec)
     {
         assign(vec.begin(), vec.end());
+        length = (size() + 7) & ~3;
     }
 
 };
