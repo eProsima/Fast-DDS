@@ -719,8 +719,8 @@ public:
     GenericDataQosPolicy& operator =(
             const GenericDataQosPolicy& b)
     {
-        QosPolicy::operator=(b);
-        Parameter_t::operator=(b);
+        QosPolicy::operator =(b);
+        Parameter_t::operator =(b);
         configuration_ = b.configuration_;
         collection_.reserve(b.collection_.capacity());
         collection_.assign(b.collection_.begin(), b.collection_.end());
@@ -845,6 +845,7 @@ public:
     {
         assign(vec.begin(), vec.end());
     }
+
 };
 
 /**
