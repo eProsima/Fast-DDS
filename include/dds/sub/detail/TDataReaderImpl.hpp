@@ -642,8 +642,8 @@ DataReader<T, DELEGATE>::listener() const
     //    return this->delegate()->listener();
 }
 
-}
-}
+} // namespace sub
+} // namespace dds
 
 
 
@@ -662,7 +662,6 @@ DataReader<T, DELEGATE>::listener() const
 #include <dds/sub/DataReaderListener.hpp>
 #include <dds/topic/Topic.hpp>
 #include <dds/topic/ContentFilteredTopic.hpp>
-//#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
 
 
 template<typename T>

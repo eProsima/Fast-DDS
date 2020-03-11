@@ -181,10 +181,6 @@ public:
      *  - dds::core::status::StatusMask::subscription_matched()
      *  - dds::core::status::StatusMask::all_data_disposed_topic()
      *
-     * When the entity is first created, or if the entity is not enabled,
-     * all communication statuses are in the untriggered state so the list
-     * returned by the status_changes operation will be empty.
-     *
      * Each status bit is declared as a constant and can be used in an AND operation to
      * check the status bit against the result of type StatusMask. Not all statuses are
      * relevant to all Entity objects. See the respective Listener interfaces for each

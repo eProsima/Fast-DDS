@@ -19,7 +19,6 @@
 #define EPROSIMA_DDS_SUB_DETAIL_SAMPLE_INFO_HPP_
 
 //#include <dds/sub/detail/TSampleInfoImpl.hpp>
-//#include <org/opensplice/sub/SampleInfoImpl.hpp>
 
 /**
  * @cond
@@ -30,7 +29,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-//typedef dds::sub::TSampleInfo<org::opensplice::sub::SampleInfoImpl> SampleInfo;
+//TODO: Change when fastdds SampleInfo is implemented
 class SampleInfo
 {
 };

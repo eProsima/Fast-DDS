@@ -125,9 +125,11 @@ public:
         auto retval = find_if(
             members_.begin(),
             members_.end(),
-            [&](const xtypes::MemberType& m){
-                            return m.name() == s;
-                        });
+            [&](const xtypes::MemberType& m)
+            {
+                return m.name() == s;
+            }
+        );
 
         COND_EXCEP_THROW(retval == members_.end(), "member" + s + "not found");
         return *retval;
@@ -144,9 +146,11 @@ public:
         auto rv = find_if(
             members_.begin(),
             members_.end(),
-            [&](xtypes::MemberType& t) {
-                            return t.name() == m.name();
-                        });
+            [&](xtypes::MemberType& t)
+            {
+                return t.name() == m.name();
+            }
+        );
 
         COND_EXCEP_THROW(rv == members_.end(), "could not find " + m.name() + " member");
         members_.erase(rv);
@@ -159,9 +163,10 @@ public:
             annotations_.begin(),
             annotations_.end(),
             [&]( xtypes::Annotation& aa)
-                        {
-                            return aa.akind() == a.akind();
-                        });
+            {
+                return aa.akind() == a.akind();
+            }
+        );
 
         COND_EXCEP_THROW(rv == annotations_.end(), "could not find such annotation");
         annotations_.erase(rv);

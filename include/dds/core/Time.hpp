@@ -154,8 +154,6 @@ public:
     bool operator <(
             const Time& that) const;
 
-public:
-
     /**
      * @param a_ti Duration to add
      * @return Time value + Duration
@@ -168,8 +166,6 @@ public:
      */
     Time& operator -=(
             const Duration& a_ti);
-
-public:
 
     /**
      * Returns this Time in milliseconds.

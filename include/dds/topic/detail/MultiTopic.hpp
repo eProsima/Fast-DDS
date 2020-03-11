@@ -32,6 +32,8 @@ namespace dds {
 namespace topic {
 namespace detail {
 
+//TODO: Change when fastdds MultiTopic is implemented
+
 template<typename T>
 //class MultiTopic : public org::opensplice::topic::TopicDescriptionDelegate
 //{

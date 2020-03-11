@@ -120,9 +120,10 @@ public:
             ann_.begin(),
             ann_.end(),
             [&]( xtypes::Annotation& b)
-                        {
-                            return b.akind() == a.akind();
-                        } );
+            {
+                return b.akind() == a.akind();
+            }
+        );
         if ( rem != ann_.end() )
         {
             ann_.erase(rem);
@@ -137,9 +138,10 @@ public:
             ann_.begin(),
             ann_.end(),
             [&]( xtypes::Annotation& a)
-                        {
-                            return (a.akind() == annotation_kind);
-                        } );
+            {
+                return (a.akind() == annotation_kind);
+            }
+        );
 
         if (retVal == ann_.end())
         {
@@ -156,9 +158,10 @@ public:
             ann_.begin(),
             ann_.end(),
             [&]( xtypes::Annotation& a)
-                        {
-                            return (a.akind() == annotation_kind);
-                        } );
+            {
+                return (a.akind() == annotation_kind);
+            }
+        );
     }
 
     bool is_optional()

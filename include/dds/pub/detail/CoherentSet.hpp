@@ -19,7 +19,6 @@
 #define EPROSIMA_DDS_PUB_DETAIL_COHERENT_SET_HPP_
 
 //#include <dds/pub/detail/TCoherentSetImpl.hpp>
-//#include <org/opensplice/pub/CoherentSetDelegate.hpp>
 
 /**
  * @cond
@@ -30,7 +29,7 @@ namespace dds {
 namespace pub {
 namespace detail {
 
-//typedef dds::pub::TCoherentSet<org::opensplice::pub::CoherentSetDelegate> CoherentSet;
+//TODO: Change when begin/end_coherent_changes methods are implemented in fastdds
 class CoherentSet
 {
 };

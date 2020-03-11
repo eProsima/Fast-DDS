@@ -21,8 +21,6 @@
 #include <dds/topic/Topic.hpp>
 //#include <dds/topic/detail/TTopicImpl.hpp>
 //#include <dds/topic/detail/TBuiltinTopicImpl.hpp>
-//#include <org/opensplice/topic/BuiltinTopicDelegate.hpp>
-//#include <org/opensplice/topic/BuiltinTopic.hpp>
 
 /**
  * @cond
@@ -33,22 +31,19 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//typedef dds::topic::TParticipantBuiltinTopicData<org::opensplice::topic::ParticipantBuiltinTopicDataDelegate> ParticipantBuiltinTopicData;
+//TODO: Make these classes inherit from fastdds BuiltinTopicData when it is implemented
 class ParticipantBuiltinTopicData
 {
 };
 
-//typedef dds::topic::TTopicBuiltinTopicData<org::opensplice::topic::TopicBuiltinTopicDataDelegate> TopicBuiltinTopicData;
 class TopicBuiltinTopicData
 {
 };
 
-//typedef dds::topic::TPublicationBuiltinTopicData<org::opensplice::topic::PublicationBuiltinTopicDataDelegate> PublicationBuiltinTopicData;
 class PublicationBuiltinTopicData
 {
 };
 
-//typedef dds::topic::TSubscriptionBuiltinTopicData<org::opensplice::topic::SubscriptionBuiltinTopicDataDelegate> SubscriptionBuiltinTopicData;
 class SubscriptionBuiltinTopicData
 {
 };

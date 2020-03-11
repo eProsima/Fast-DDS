@@ -19,7 +19,6 @@
 #define EPROSIMA_DDS_SUB_DETAIL_RANK_HPP_
 
 //#include <dds/sub/detail/TRankImpl.hpp>
-//#include <org/opensplice/sub/RankImpl.hpp>
 
 /**
  * @cond
@@ -30,7 +29,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-//typedef dds::sub::TRank< org::opensplice::sub::RankImpl > Rank;
+//TODO: Change when fastdds Rank is implemented
 class Rank
 {
 };

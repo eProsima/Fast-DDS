@@ -32,7 +32,7 @@ namespace core {
  */
 
 /**
- * Duration represents a time interval and can -
+ * Duration represents a time interval and -
  * * Can be incremented by durations expressed as seconds, nanoseconds
  *   milliseconds, or Duration objects.
  *

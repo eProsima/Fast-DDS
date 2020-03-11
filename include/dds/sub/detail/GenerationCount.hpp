@@ -19,7 +19,6 @@
 #define EPROSIMA_DDS_SUB_DETAIL_GENERATION_COUNT_HPP_
 
 //#include <dds/sub/detail/TGenerationCountImpl.hpp>
-//#include <org/opensplice/sub/GenerationCountImpl.hpp>
 
 /**
  * @cond
@@ -30,7 +29,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-//typedef dds::sub::TGenerationCount< org::opensplice::sub::GenerationCountImpl > GenerationCount;
+//TODO: Change when fastdds GenerationCount is implemented
 class GenerationCount
 {
 };

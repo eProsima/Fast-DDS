@@ -941,6 +941,7 @@ public:
      * and throw TimeoutError.
      *
      * @param i the instance to unregister
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
@@ -993,6 +994,7 @@ public:
      *
      * @param i the instance to unregister
      * @param timestamp the timestamp
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
@@ -1048,6 +1050,7 @@ public:
      * of an InstanceHandle.
      *
      * @param key sample of the instance to dispose
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
@@ -1104,6 +1107,7 @@ public:
      *
      * @param key sample of the instance to dispose
      * @param timestamp the timestamp
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
@@ -1211,6 +1215,7 @@ public:
      * TimeoutError.
      *
      * @param i the instance to dispose
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
@@ -1266,6 +1271,7 @@ public:
      *
      * @param i the instance to dispose
      * @param timestamp the timestamp
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
@@ -1317,6 +1323,7 @@ public:
      * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
      *
      * @param key sample of the instance to dispose
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
@@ -1368,6 +1375,7 @@ public:
      *
      * @param key sample of the instance to dispose
      * @param timestamp the timestamp
+     * @return a reference to the DataWriter
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::AlreadyClosedError
