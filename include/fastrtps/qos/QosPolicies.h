@@ -802,8 +802,12 @@ public:
     RTPS_DllAPI inline void setDataVec(
             const collection_type& vec)
     {
-        assign(vec.begin(), vec.end());
-        length = (size() + 7) & ~3;
+        if (collection_ != vec)
+        {
+            assign(vec.begin(), vec.end());
+            length = (size() + 7) & ~3;
+            hasChanged = true;
+        }
     }
 
     /**
@@ -822,8 +826,7 @@ public:
     RTPS_DllAPI inline void setValue(
             const collection_type& vec)
     {
-        assign(vec.begin(), vec.end());
-        length = (size() + 7) & ~3;
+        setDataVec(vec);
     }
 
 };
