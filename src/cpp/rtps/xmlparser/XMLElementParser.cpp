@@ -2266,14 +2266,14 @@ XMLP_ret XMLParser::getXMLDuration(
     if (text != nullptr && std::regex_match(text, infinite))
     {
         empty = false;
-        duration = c_TimeInfinite; 
-        
+        duration = c_TimeInfinite;
+
         if(elem->FirstChildElement() != nullptr)
         {
             logError(XMLPARSER, "If a Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
             " <nanosec> subelements.");
             return XMLP_ret::XML_ERROR;
-        }     
+        }
     }
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
@@ -2308,9 +2308,8 @@ XMLP_ret XMLParser::getXMLDuration(
             }
             else if (std::regex_match(text, infinite_sec))
             {
-                duration = c_TimeInfinite;
-
                 // if either SECONDS or NANOSECONDS is set to infinity then all of it is
+                duration = c_TimeInfinite;
                 return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
@@ -2343,9 +2342,8 @@ XMLP_ret XMLParser::getXMLDuration(
             }
             else if (std::regex_match(text, infinite_nsec))
             {
-                duration = c_TimeInfinite;
-
                 // if either SECONDS or NANOSECONDS is set to infinity then all of it is
+                duration = c_TimeInfinite;
                 return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
@@ -2364,7 +2362,8 @@ XMLP_ret XMLParser::getXMLDuration(
     // An empty Duration_t xml is forbidden
     if(empty)
     {
-        logError(XMLPARSER, "'durationType' elements cannot be empty. At least second or nanoseconds should be provided");
+        logError(XMLPARSER, "'durationType' elements cannot be empty."
+            "At least second or nanoseconds should be provided");
         return XMLP_ret::XML_ERROR;
     }
 
