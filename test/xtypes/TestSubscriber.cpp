@@ -81,14 +81,15 @@ bool TestSubscriber::init(
 
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-	    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
-	    if (mp_participant==nullptr)
-	    {
-	        return false;
-	    }
-	}
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
+        if (mp_participant == nullptr)
+        {
+            return false;
+        }
+    }
 
     //CREATE THE SUBSCRIBER
+    SubscriberQos subQos = SUBSCRIBER_QOS_DEFAULT;
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = topic_kind;
     Rparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
@@ -129,15 +130,19 @@ bool TestSubscriber::init(
     // Create sub and reader if topic was provided
     if (m_Type.get() != nullptr)
     {
-        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+        subQos.sub_attr = Rparam;
+        mp_subscriber = mp_participant->create_subscriber(subQos, nullptr);
 
         if (mp_subscriber == nullptr)
         {
             return false;
         }
 
+        TopicQos t_qos = TOPIC_QOS_DEFAULT;
+        t_qos.topic_attr = Rparam.topic;
+        Topic* topic = mp_participant->create_topic(topicName, Rparam.topic.topicDataType.c_str(), t_qos);
         reader_qos.changeToDataReaderQos(Rparam.qos);
-        reader_ = mp_subscriber->create_datareader(Rparam.topic, reader_qos, &m_subListener);
+        reader_ = mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
         m_Data = m_Type.create_data();
     }
 
@@ -237,12 +242,12 @@ void TestSubscriber::SubListener::on_subscription_matched(
     if (info.current_count_change > 0)
     {
         mParent->matched();
-        std::cout << mParent->m_Name << " matched."<<std::endl;
+        std::cout << mParent->m_Name << " matched." << std::endl;
     }
     else if (info.current_count_change < 0)
     {
         mParent->matched(true);
-        std::cout << mParent->m_Name << " unmatched."<<std::endl;
+        std::cout << mParent->m_Name << " unmatched." << std::endl;
     }
 }
 
@@ -299,12 +304,16 @@ void TestSubscriber::PartListener::on_type_information_received(
 
 DataReader* TestSubscriber::create_datareader()
 {
+    TopicQos qos = TOPIC_QOS_DEFAULT;
     if (mp_subscriber == nullptr)
     {
+        SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
         SubscriberAttributes Rparam;
         Rparam.topic = topic_att;
+        qos.topic_attr = Rparam.topic;
         Rparam.qos = reader_qos.changeToReaderQos();
-        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+        sub_qos.sub_attr = Rparam;
+        mp_subscriber = mp_participant->create_subscriber(sub_qos, nullptr);
 
         if (mp_subscriber == nullptr)
         {
@@ -312,7 +321,15 @@ DataReader* TestSubscriber::create_datareader()
         }
     }
     topic_att.topicDataType = disc_type_->get_name();
-    return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
+    qos.topic_attr.topicDataType = disc_type_->get_name();
+
+    Topic* topic = mp_participant->create_topic(topic_att.topicName.c_str(), topic_att.topicDataType.c_str(), qos);
+    if (topic == nullptr)
+    {
+        return nullptr;
+    }
+
+    return mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
 }
 
 void TestSubscriber::delete_datareader(

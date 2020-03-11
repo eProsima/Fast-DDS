@@ -25,8 +25,6 @@
 #include <fastdds/dds/topic/qos/ReaderQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
-#include <fastrtps/attributes/TopicAttributes.h>
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -132,9 +130,6 @@ public:
 
     RTPS_DllAPI void copyFromTopicQos(
             const TopicQos& topic_qos);
-
-    RTPS_DllAPI void copy_to_topic_attributes(
-            eprosima::fastrtps::TopicAttributes* topic_att) const;
 
     RTPS_DllAPI std::string search_qos_by_id(
             eprosima::fastdds::dds::QosPolicyId_t id);

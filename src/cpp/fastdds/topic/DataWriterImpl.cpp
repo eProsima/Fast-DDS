@@ -51,7 +51,7 @@ namespace dds {
 DataWriterImpl::DataWriterImpl(
         PublisherImpl* p,
         TypeSupport type,
-        const TopicAttributes& topic_att,
+        Topic* topic,
         const WriterAttributes& att,
         const DataWriterQos& qos,
         const MemoryManagementPolicy_t memory_policy,
@@ -59,10 +59,10 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , writer_(nullptr)
     , type_(type)
-    , topic_att_(topic_att)
+    , topic_(topic)
     , w_att_(att)
     , qos_(&qos == &DDS_DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
-    , history_(topic_att_, type_.get()->m_typeSize
+    , history_(topic_->get_topic_attributes(), type_.get()->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
             + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
@@ -496,7 +496,7 @@ ReturnCode_t DataWriterImpl::set_qos(
     qos_.setQos(qos, false);
     //Notify the participant that a Writer has changed its QOS
     fastrtps::WriterQos wqos_ = qos_.changeToWriterQos();
-    publisher_->rtps_participant()->updateWriter(writer_, topic_att_, wqos_);
+    publisher_->rtps_participant()->updateWriter(writer_, topic_->get_qos().topic_attr, wqos_);
     //publisher_->update_writer(this, topic_att_, qos_);
 
     // Deadline
@@ -532,11 +532,9 @@ const DataWriterQos& DataWriterImpl::get_qos() const
 }
 
 ReturnCode_t DataWriterImpl::set_listener(
-        DataWriterListener* listener,
-        const ::dds::core::status::StatusMask& mask)
+        DataWriterListener* listener)
 {
     listener_ = listener;
-    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -546,22 +544,15 @@ const DataWriterListener* DataWriterImpl::get_listener() const
 }
 
 bool DataWriterImpl::set_topic(
-        const TopicAttributes& att)
+        Topic& topic)
 {
-    //TOPIC ATTRIBUTES
-    if (topic_att_ != att)
-    {
-        logWarning(DATA_WRITER, "Topic Attributes cannot be updated");
-        return false;
-    }
-    //publisher_->update_writer(this, topic_att_, qos_);
-    //publisher_->rtps_participant()->updateWriter(writer_, topic_att_, qos_);
+    topic_ = &topic;
     return true;
 }
 
-const TopicAttributes& DataWriterImpl::get_topic() const
+Topic* DataWriterImpl::get_topic() const
 {
-    return topic_att_;
+    return topic_;
 }
 
 const Publisher* DataWriterImpl::get_publisher() const
@@ -574,14 +565,15 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         const PublicationMatchedStatus& info)
 {
     if (data_writer_->listener_ != nullptr &&
-            (data_writer_->mask_.is_compatible(::dds::core::status::StatusMask::publication_matched())))
+            (data_writer_->user_datawriter_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
+            publication_matched())))
     {
         data_writer_->listener_->on_publication_matched(
             data_writer_->user_datawriter_, info);
     }
 
     else if (data_writer_->publisher_->get_participant().get_listener() != nullptr &&
-    data_writer_->get_publisher()->get_status_mask().is_compatible(::dds::core::status::StatusMask::
+            data_writer_->get_publisher()->get_status_mask().is_compatible(::dds::core::status::StatusMask::
             publication_matched()))
     {
         DomainParticipantListener* listener = data_writer_->publisher_->get_participant().get_listener();
@@ -604,7 +596,8 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         const fastrtps::LivelinessLostStatus& status)
 {
     if (data_writer_->listener_ != nullptr &&
-            (data_writer_->mask_.is_compatible(::dds::core::status::StatusMask::liveliness_lost())))
+            (data_writer_->user_datawriter_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
+            liveliness_lost())))
     {
         data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
     }
@@ -620,7 +613,8 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         const OfferedIncompatibleQosStatus& status)
 {
     if (data_writer_->listener_ != nullptr &&
-            (data_writer_->mask_.is_compatible(::dds::core::status::StatusMask::offered_incompatible_qos())))
+            (data_writer_->user_datawriter_->get_status_mask().is_compatible(::dds::core::status::StatusMask::
+            offered_incompatible_qos())))
     {
         data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
     }
@@ -670,7 +664,7 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    if (mask_.is_compatible(::dds::core::status::StatusMask::offered_deadline_missed()))
+    if (user_datawriter_->get_status_mask().is_compatible(::dds::core::status::StatusMask::offered_deadline_missed()))
     {
         listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
     }

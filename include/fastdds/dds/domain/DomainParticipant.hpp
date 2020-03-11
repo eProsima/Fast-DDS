@@ -57,8 +57,6 @@ class TypeInformation;
 } // namespace types
 
 class ParticipantAttributes;
-class PublisherAttributes;
-class SubscriberAttributes;
 
 } //namespace fastrtps
 
@@ -110,7 +108,6 @@ public:
      */
     Publisher* create_publisher(
             const fastdds::dds::PublisherQos& qos,
-            const fastrtps::PublisherAttributes& att,
             PublisherListener* listen = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -132,7 +129,6 @@ public:
      */
     Subscriber* create_subscriber(
             const fastdds::dds::SubscriberQos& qos,
-            const fastrtps::SubscriberAttributes& att,
             SubscriberListener* listen = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -156,7 +152,6 @@ public:
     Topic* create_topic(
             std::string topic_name,
             std::string type_name,
-            const fastrtps::TopicAttributes& att = fastrtps::TopicAttributes(),
             const fastdds::dds::TopicQos& qos = TOPIC_QOS_DEFAULT,
             TopicListener* listen = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

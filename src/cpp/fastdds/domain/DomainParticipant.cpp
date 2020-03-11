@@ -67,11 +67,10 @@ DomainParticipantListener* DomainParticipant::get_listener() const
 
 Publisher* DomainParticipant::create_publisher(
         const fastdds::dds::PublisherQos& qos,
-        const fastrtps::PublisherAttributes& att,
         PublisherListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->create_publisher(qos, att, listen, mask);
+    return impl_->create_publisher(qos, listen, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_publisher(
@@ -82,11 +81,10 @@ ReturnCode_t DomainParticipant::delete_publisher(
 
 Subscriber* DomainParticipant::create_subscriber(
         const fastdds::dds::SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->create_subscriber(qos, att, listen, mask);
+    return impl_->create_subscriber(qos, listen, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_subscriber(
@@ -98,12 +96,11 @@ ReturnCode_t DomainParticipant::delete_subscriber(
 Topic* DomainParticipant::create_topic(
         std::string topic_name,
         std::string type_name,
-        const fastrtps::TopicAttributes& att,
         const fastdds::dds::TopicQos& qos,
         TopicListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->create_topic(topic_name, type_name, att, qos, listen, mask);
+    return impl_->create_topic(topic_name, type_name, qos, listen, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_topic(

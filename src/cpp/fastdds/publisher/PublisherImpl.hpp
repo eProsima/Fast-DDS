@@ -30,6 +30,7 @@
 
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <dds/core/status/State.hpp>
 
@@ -45,9 +46,6 @@ namespace rtps {
 class RTPSParticipant;
 
 } //namespace rtps
-
-class TopicAttributes;
-
 } // namespace fastrtps
 
 namespace fastdds {
@@ -75,7 +73,6 @@ class PublisherImpl
     PublisherImpl(
             DomainParticipantImpl* p,
             const PublisherQos& qos,
-            const fastrtps::PublisherAttributes& att,
             PublisherListener* p_listen = nullptr);
 
 public:
@@ -95,7 +92,7 @@ public:
             PublisherListener* listener);
 
     DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
+            Topic* topic,
             const DataWriterQos& writer_qos,
             DataWriterListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
@@ -172,8 +169,6 @@ private:
     DomainParticipantImpl* participant_;
 
     PublisherQos qos_;
-
-    fastrtps::PublisherAttributes att_;
 
     //! Map of Pointers to the associated Data Writers. Topic name is the key.
     std::map<std::string, std::vector<DataWriterImpl*> > writers_;

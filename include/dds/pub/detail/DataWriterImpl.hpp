@@ -58,7 +58,7 @@ DataWriter<T>::DataWriter(
     : dds::core::Reference<detail::DataWriter>(
         new detail::DataWriter(
             pub.delegate().get(),
-            *topic.delegate().get(),
+            topic.delegate().get(),
             qos,
             listener,
             mask))

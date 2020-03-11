@@ -27,7 +27,6 @@
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 
@@ -214,38 +213,37 @@ const GUID_t& DomainParticipantImpl::guid() const
 
 Publisher* DomainParticipantImpl::create_publisher(
         const PublisherQos& qos,
-        const fastrtps::PublisherAttributes& att,
         PublisherListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
     if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if (att.getUserDefinedID() <= 0)
+        if (qos.pub_attr.getUserDefinedID() <= 0)
         {
             logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
-    if (!att.unicastLocatorList.isValid())
+    if (!qos.pub_attr.unicastLocatorList.isValid())
     {
         logError(PARTICIPANT, "Unicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
-    if (!att.multicastLocatorList.isValid())
+    if (!qos.pub_attr.multicastLocatorList.isValid())
     {
         logError(PARTICIPANT, " Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
-    if (!att.remoteLocatorList.isValid())
+    if (!qos.pub_attr.remoteLocatorList.isValid())
     {
         logError(PARTICIPANT, "Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
-    if (!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
+    if (!qos.check_qos() || !qos.pub_attr.qos.checkQos() || !qos.pub_attr.topic.checkQos())
     {
         return nullptr;
     }
@@ -255,7 +253,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         listen = listener_;
     }
-    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen);
+    PublisherImpl* pubimpl = new PublisherImpl(this, qos, listen);
     Publisher* pub = new Publisher(pubimpl, mask);
     pubimpl->user_publisher_ = pub;
     pubimpl->rtps_participant_ = rtps_participant_;
@@ -276,9 +274,9 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
 
-    if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
+    if (qos.pub_attr.topic.auto_fill_type_object || qos.pub_attr.topic.auto_fill_type_information)
     {
-        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
+        register_dynamic_type_to_factories(qos.pub_attr.topic.getTopicDataType().to_string());
     }
 
     return pub;
@@ -442,6 +440,15 @@ bool DomainParticipantImpl::contains_entity(
         }
     }
 
+    // Look for topics
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+        if (topics_by_handle_.find(handle) != topics_by_handle_.end())
+        {
+            return true;
+        }
+    }
+
     if (recursive)
     {
         // Look into publishers
@@ -504,38 +511,37 @@ std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 
 Subscriber* DomainParticipantImpl::create_subscriber(
         const SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
     if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if (att.getUserDefinedID() <= 0)
+        if (qos.sub_attr.getUserDefinedID() <= 0)
         {
             logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
-    if (!att.unicastLocatorList.isValid())
+    if (!qos.sub_attr.unicastLocatorList.isValid())
     {
         logError(PARTICIPANT, "Unicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if (!att.multicastLocatorList.isValid())
+    if (!qos.sub_attr.multicastLocatorList.isValid())
     {
         logError(PARTICIPANT, " Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if (!att.remoteLocatorList.isValid())
+    if (!qos.sub_attr.remoteLocatorList.isValid())
     {
         logError(PARTICIPANT, "Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if (!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
+    if (!qos.check_qos() || !qos.sub_attr.qos.checkQos() || !qos.sub_attr.topic.checkQos())
     {
         return nullptr;
     }
@@ -545,7 +551,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         listen = listener_;
     }
-    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen);
+    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, listen);
     Subscriber* sub = new Subscriber(subimpl, mask);
     subimpl->user_subscriber_ = sub;
     subimpl->rtps_participant_ = this->rtps_participant_;
@@ -566,9 +572,9 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_by_handle_[sub_handle] = sub;
     subscribers_[sub] = subimpl;
 
-    if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
+    if (qos.sub_attr.topic.auto_fill_type_object || qos.sub_attr.topic.auto_fill_type_information)
     {
-        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
+        register_dynamic_type_to_factories(qos.sub_attr.topic.getTopicDataType().to_string());
     }
 
     return sub;
@@ -1305,7 +1311,6 @@ std::string DomainParticipantImpl::get_inner_type_name(
 Topic* DomainParticipantImpl::create_topic(
         std::string topic_name,
         std::string type_name,
-        const fastrtps::TopicAttributes& att,
         const TopicQos& qos,
         TopicListener* listen,
         const ::dds::core::status::StatusMask& mask)
@@ -1331,13 +1336,9 @@ Topic* DomainParticipantImpl::create_topic(
         return t;
     }
 
-    fastrtps::TopicAttributes t_att = att;
-    t_att.topicName = (fastrtps::string_255) topic_name;
-    t_att.topicDataType = (fastrtps::string_255) type_name;
-    TopicImpl* topicimpl = new TopicImpl(this->get_participant(), t_att, qos, listen);
+    TopicImpl* topicimpl = new TopicImpl(this->get_participant(), qos, listen);
     Topic* topic = new Topic(topicimpl, mask);
     topicimpl->user_topic_ = topic;
-
 
     // Create InstanceHandle for the new topic
     GUID_t topic_guid = guid();
@@ -1355,11 +1356,10 @@ Topic* DomainParticipantImpl::create_topic(
         topics_[topic] = topicimpl;
     }
 
-    if (att.auto_fill_type_object || att.auto_fill_type_information)
+    if (qos.topic_attr.auto_fill_type_object || qos.topic_attr.auto_fill_type_information)
     {
         register_dynamic_type_to_factories(type_name);
     }
-
     cv_topic_.notify_all();
 
     return topic;

@@ -27,13 +27,11 @@ namespace dds {
 
 TopicImpl::TopicImpl(
         DomainParticipant* dp,
-        fastrtps::TopicAttributes att,
         const TopicQos& qos,
         TopicListener* listener)
     : user_topic_(nullptr)
     , listener_(listener)
     , qos_(qos)
-    , topic_att_(att)
     , participant_(dp)
 {
 }
@@ -50,25 +48,7 @@ TopicImpl::~TopicImpl()
 
 fastrtps::TopicAttributes TopicImpl::get_topic_attributes() const
 {
-    return topic_att_;
-}
-
-fastrtps::TopicAttributes TopicImpl::get_topic_attributes(
-        const DataReaderQos& qos) const
-{
-    fastrtps::TopicAttributes att;
-    att = topic_att_;
-    qos.copy_to_topic_attributes(&att);
-    return att;
-}
-
-fastrtps::TopicAttributes TopicImpl::get_topic_attributes(
-        const DataWriterQos& qos) const
-{
-    fastrtps::TopicAttributes att;
-    att = topic_att_;
-    qos.copy_to_topic_attributes(&att);
-    return att;
+    return qos_.topic_attr;
 }
 
 ReturnCode_t TopicImpl::get_qos(

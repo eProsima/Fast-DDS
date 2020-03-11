@@ -51,10 +51,12 @@ class ParListener : public DomainParticipantListener
 public:
 
     ParListener()
-    {}
+    {
+    }
 
     virtual ~ParListener() override
-    {}
+    {
+    }
 
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
@@ -94,16 +96,19 @@ public:
             const eprosima::fastrtps::types::TypeInformation& type_information) override
     {
         std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-                [topic_name, type_name](const std::string& name, const types::DynamicType_ptr type)
+                [topic_name, type_name, participant](const std::string& name, const types::DynamicType_ptr type)
                 {
                     if (nullptr != g_subscriber)
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
-                        g_subscriber_attributes.topic.topicDataType = type_name;
+                        TopicQos t_qos = TOPIC_QOS_DEFAULT;
+                        t_qos.topic_attr = g_subscriber_attributes.topic;
+                        t_qos.topic_attr.topicDataType = type_name;
+                        Topic* topic = participant->create_topic(topic_name.c_str(), type_name.c_str(), t_qos);
                         DataReaderQos qos;
                         qos.changeToDataReaderQos(g_subscriber_attributes.qos);
                         g_subscriber->create_datareader(
-                            g_subscriber_attributes.topic,
+                            topic,
                             qos,
                             nullptr);
 
@@ -164,6 +169,7 @@ public:
                 " unauthorized participant " << info.guid << std::endl;
         }
     }
+
 #endif
 };
 
@@ -172,9 +178,13 @@ class SubListener : public SubscriberListener
 public:
 
     SubListener()
-        : number_samples_(0) {}
+        : number_samples_(0)
+    {
+    }
 
-    ~SubListener() override {}
+    ~SubListener() override
+    {
+    }
 
     void on_subscription_matched(
             DataReader* /*reader*/,
@@ -335,13 +345,15 @@ int main(
     SubListener listener;
 
     //CREATE THE SUBSCRIBER
+    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
     //Domain::getDefaultSubscriberAttributes(subscriber_attributes);
     g_subscriber_attributes.topic.topicKind = NO_KEY;
     //g_subscriber_attributes.topic.topicDataType = type.getName();
     g_subscriber_attributes.topic.topicName = topic.str();
     g_subscriber_attributes.qos.m_liveliness.lease_duration = 3;
     g_subscriber_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
-    g_subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, g_subscriber_attributes, &listener);
+    sub_qos.sub_attr = g_subscriber_attributes;
+    g_subscriber = participant->create_subscriber(sub_qos, &listener);
 
     if (g_subscriber == nullptr)
     {

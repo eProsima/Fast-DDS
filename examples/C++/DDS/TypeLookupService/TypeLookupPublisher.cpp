@@ -77,6 +77,7 @@ bool TypeLookupPublisher::init()
     mp_participant->register_type(m_type);
 
     //CREATE THE PUBLISHER
+    PublisherQos p_qos = PUBLISHER_QOS_DEFAULT;
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "TypeLookup";
@@ -89,9 +90,21 @@ bool TypeLookupPublisher::init()
     Wparam.topic.auto_fill_type_information = true; // Share the type with readers.
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
-    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
+    p_qos.pub_attr = Wparam;
+    mp_publisher = mp_participant->create_publisher(p_qos, nullptr);
 
     if (mp_publisher == nullptr)
+    {
+        return false;
+    }
+
+    //CREATE TOPIC
+    TopicQos topicQos = TOPIC_QOS_DEFAULT;
+    topicQos.topic_attr = Wparam.topic;
+
+    topic_ = mp_participant->create_topic("TypeLookupTopic", "TypeLookup", topicQos);
+
+    if (topic_ == nullptr)
     {
         return false;
     }
@@ -99,7 +112,7 @@ bool TypeLookupPublisher::init()
     // CREATE THE WRITER
     DataWriterQos wqos;
     wqos.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, wqos, &m_listener);
+    writer_ = mp_publisher->create_datawriter(topic_, wqos, &m_listener);
 
     if (writer_ == nullptr)
     {
@@ -119,6 +132,7 @@ void TypeLookupPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
+    std::cout << "On Publication Matched" << std::endl;
     if (info.current_count_change == 1)
     {
         n_matched++;

@@ -91,6 +91,7 @@ bool TestPublisher::init(
     }
 
     // CREATE THE PUBLISHER
+    PublisherQos p_qos = PUBLISHER_QOS_DEFAULT;
     PublisherAttributes Wparam;
     Wparam.topic.auto_fill_type_object = false;
     Wparam.topic.auto_fill_type_information = false;
@@ -129,15 +130,25 @@ bool TestPublisher::init(
 
     if (m_Type.get() != nullptr)
     {
-        mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
+        p_qos.pub_attr = Wparam;
+        mp_publisher = mp_participant->create_publisher(p_qos, nullptr);
         if (mp_publisher == nullptr)
         {
             return false;
         }
 
+        TopicQos tqos = TOPIC_QOS_DEFAULT;
+        tqos.topic_attr = Wparam.topic;
+        topic_ = mp_participant->create_topic(topicName.c_str(), Wparam.topic.topicDataType.c_str(), tqos);
+        if (topic_ == nullptr)
+        {
+            return false;
+        }
+
+
         DataWriterQos wqos;
         wqos.changeToDataWriterQos(Wparam.qos);
-        writer_ = mp_publisher->create_datawriter(Wparam.topic, wqos, &m_pubListener);
+        writer_ = mp_publisher->create_datawriter(topic_, wqos, &m_pubListener);
 
         m_Data = m_Type.create_data();
     }
@@ -232,7 +243,7 @@ void TestPublisher::PubListener::on_publication_matched(
     }
     else
     {
-        std::cout << mParent->m_Name << " unmatched."<<std::endl;
+        std::cout << mParent->m_Name << " unmatched." << std::endl;
     }
 }
 

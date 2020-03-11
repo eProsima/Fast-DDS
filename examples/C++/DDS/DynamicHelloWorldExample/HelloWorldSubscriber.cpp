@@ -136,24 +136,36 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
 
     std::cout << "Discovered type: " << m_type.get_type_name() << " from topic " << topic << std::endl;
 
+    TopicQos tqos = TOPIC_QOS_DEFAULT;
     if (subscriber_->mp_subscriber == nullptr)
     {
+        eprosima::fastdds::dds::SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
         eprosima::fastrtps::SubscriberAttributes Rparam;
         Rparam = subscriber_->att_;
         Rparam.topic = subscriber_->topic_;
         Rparam.topic.topicName = topic;
+        tqos.topic_attr = Rparam.topic;
         Rparam.qos = subscriber_->qos_.changeToReaderQos();
+        sub_qos.sub_attr = Rparam;
         subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
-            SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+            sub_qos, nullptr);
 
         if (subscriber_->mp_subscriber == nullptr)
         {
             return;
         }
     }
+    tqos.topic_attr.topicDataType = m_type.get_type_name();
+
+    Topic* mp_topic = subscriber_->mp_participant->create_topic(topic.c_str(), m_type.get_type_name().c_str(), tqos);
+    if (mp_topic == nullptr)
+    {
+        return;
+    }
+
     subscriber_->topic_.topicDataType = m_type.get_type_name();
     DataReader* reader = subscriber_->mp_subscriber->create_datareader(
-        subscriber_->topic_,
+        mp_topic,
         subscriber_->qos_,
         &subscriber_->m_listener);
 

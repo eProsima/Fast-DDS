@@ -35,7 +35,7 @@ Subscriber::Subscriber(
         SubscriberListener* listener,
         const ::dds::core::status::StatusMask& mask)
     : DomainEntity(mask)
-    , impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener)->impl_)
+    , impl_(dp.delegate()->create_subscriber(qos, listener)->impl_)
 {
 }
 
@@ -76,31 +76,12 @@ ReturnCode_t Subscriber::set_listener(
 }
 
 DataReader* Subscriber::create_datareader(
-        const fastrtps::TopicAttributes& topic_attr,
-        const DataReaderQos& reader_qos,
-        DataReaderListener* listener,
-        const ::dds::core::status::StatusMask& mask)
-{
-    DomainParticipant dp = get_participant();
-    Topic* topic = dp.create_topic(topic_attr.getTopicName().c_str(),
-                    topic_attr.getTopicDataType().c_str(), topic_attr);
-    return impl_->create_datareader(*topic, topic_attr, reader_qos, listener, mask);
-}
-
-DataReader* Subscriber::create_datareader(
-        const Topic& topic,
+        Topic* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicName = topic.get_name();
-    topic_attr.topicDataType = topic.get_type_name();
-    TopicQos topic_qos;
-    topic.get_qos(topic_qos);
-    topic_attr.historyQos = qos.history;
-
-    return impl_->create_datareader(topic, topic_attr, qos, listener, mask);
+    return impl_->create_datareader(topic, qos, listener, mask);
 }
 
 ReturnCode_t Subscriber::delete_datareader(

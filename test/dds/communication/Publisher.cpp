@@ -50,10 +50,12 @@ public:
     ParListener(
             bool exit_on_lost_liveliness)
         : exit_on_lost_liveliness_(exit_on_lost_liveliness)
-    {}
+    {
+    }
 
     virtual ~ParListener() override
-    {}
+    {
+    }
 
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant
@@ -107,6 +109,7 @@ public:
                 " unauthorized participant " << info.guid << std::endl;
         }
     }
+
 #endif
 
 private:
@@ -120,10 +123,12 @@ public:
 
     PubListener()
         : matched_(0)
-    {}
+    {
+    }
 
     ~PubListener() override
-    {}
+    {
+    }
 
     void on_publication_matched(
             DataWriter* /*writer*/,
@@ -258,6 +263,7 @@ int main(
     topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
     PublisherAttributes publisher_attributes;
     //Domain::getDefaultPublisherAttributes(publisher_attributes);
     publisher_attributes.topic.topicKind = NO_KEY;
@@ -266,17 +272,22 @@ int main(
     publisher_attributes.qos.m_liveliness.lease_duration = 3;
     publisher_attributes.qos.m_liveliness.announcement_period = 1;
     publisher_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
+    pub_qos.pub_attr = publisher_attributes;
 
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, publisher_attributes, &listener);
+    Publisher* publisher = participant->create_publisher(pub_qos, &listener);
     if (publisher == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);
         return 1;
     }
 
+    TopicQos tqos = TOPIC_QOS_DEFAULT;
+    tqos.topic_attr = publisher_attributes.topic;
+    Topic* mp_topic = participant->create_topic(topic.str(), type.get_type_name(), tqos);
+
     DataWriterQos qos;
     qos.changeToDataWriterQos(publisher_attributes.qos);
-    DataWriter* writer = publisher->create_datawriter(publisher_attributes.topic, qos, nullptr);
+    DataWriter* writer = publisher->create_datawriter(mp_topic, qos, nullptr);
     if (writer == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);

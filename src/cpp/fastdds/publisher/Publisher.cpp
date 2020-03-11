@@ -43,7 +43,7 @@ Publisher::Publisher(
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& mask)
     : DomainEntity(mask)
-    , impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener)->impl_)
+    , impl_(dp.delegate()->create_publisher(qos, listener)->impl_)
 {
 }
 
@@ -88,28 +88,12 @@ ReturnCode_t Publisher::set_listener(
 }
 
 DataWriter* Publisher::create_datawriter(
-        const fastrtps::TopicAttributes& topic_attr,
+        Topic* topic,
         const DataWriterQos& writer_qos,
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->create_datawriter(topic_attr, writer_qos, listener, mask);
-}
-
-DataWriter* Publisher::create_datawriter(
-        const Topic& topic,
-        const DataWriterQos& qos,
-        DataWriterListener* listener,
-        const ::dds::core::status::StatusMask& mask)
-{
-    fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicName = topic.get_name();
-    topic_attr.topicDataType = topic.get_type_name();
-    TopicQos topic_qos;
-    topic.get_qos(topic_qos);
-    topic_attr.historyQos = qos.history;
-
-    return impl_->create_datawriter(topic_attr, qos, listener, mask);
+    return impl_->create_datawriter(topic, writer_qos, listener, mask);
 }
 
 ReturnCode_t Publisher::delete_datawriter(

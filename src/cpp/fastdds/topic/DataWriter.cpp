@@ -31,7 +31,7 @@ namespace dds {
 
 DataWriter::DataWriter(
         const Publisher* pub,
-        const Topic& topic,
+        Topic* topic,
         const DataWriterQos& qos,
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& mask)
@@ -138,12 +138,12 @@ const DataWriterListener* DataWriter::get_listener() const
 }
 
 bool DataWriter::set_topic(
-        const TopicAttributes& att)
+        Topic& topic)
 {
-    return impl_->set_topic(att);
+    return impl_->set_topic(topic);
 }
 
-const TopicAttributes& DataWriter::get_topic() const
+Topic* DataWriter::get_topic() const
 {
     return impl_->get_topic();
 }

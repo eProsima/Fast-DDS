@@ -73,7 +73,6 @@ class SubscriberImpl
     SubscriberImpl(
             DomainParticipantImpl* p,
             const SubscriberQos& qos,
-            const fastrtps::SubscriberAttributes& attr,
             SubscriberListener* listen = nullptr);
 
 public:
@@ -91,10 +90,9 @@ public:
             SubscriberListener* listener);
 
     DataReader* create_datareader(
-            const Topic& topic,
-            const fastrtps::TopicAttributes& topic_attr,
-            const DataReaderQos& reader_qos,
-            DataReaderListener* listener,
+            Topic* topic,
+            const DataReaderQos& reader_qos = DDS_DATAREADER_QOS_DEFAULT,
+            DataReaderListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     ReturnCode_t delete_datareader(
@@ -154,7 +152,7 @@ public:
      */
     const fastrtps::SubscriberAttributes& get_attributes() const
     {
-        return att_;
+        return qos_.sub_attr;
     }
 
     const DomainParticipant& get_participant() const;
@@ -197,9 +195,6 @@ private:
     DomainParticipantImpl* participant_;
 
     SubscriberQos qos_;
-
-    //!Attributes of the Subscriber
-    fastrtps::SubscriberAttributes att_;
 
     //!Map of Pointer to associated DataReaders. Topic name is the key.
     std::map<std::string, std::vector<DataReaderImpl*> > readers_;

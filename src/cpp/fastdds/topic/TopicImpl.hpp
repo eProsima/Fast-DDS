@@ -50,7 +50,6 @@ class TopicImpl
 
     RTPS_DllAPI TopicImpl(
             DomainParticipant* dp,
-            fastrtps::TopicAttributes att,
             const TopicQos& qos,
             TopicListener* listener = nullptr);
 
@@ -60,12 +59,6 @@ public:
 
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
-
-    RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes(
-            const DataReaderQos& qos) const;
-
-    RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes(
-            const DataWriterQos& qos) const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;
@@ -98,8 +91,6 @@ private:
     TopicQos qos_;
 
     InconsistentTopicStatus status_;
-
-    fastrtps::TopicAttributes topic_att_;
 
     DomainParticipant* participant_;
 

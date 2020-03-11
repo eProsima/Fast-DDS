@@ -20,7 +20,8 @@
 #ifndef _FASTDDS_TOPICQOS_HPP
 #define _FASTDDS_TOPICQOS_HPP
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -39,44 +40,47 @@ public:
 
     TopicQos();
 
+    //!Topic Attributes
+    fastrtps::TopicAttributes topic_attr;
+
     //!Topic Data Qos, NOT implemented in the library.
-    fastrtps::TopicDataQosPolicy topic_data;
+    TopicDataQosPolicy topic_data;
 
     //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
+    DurabilityQosPolicy durability;
 
     //!Durability Service Qos, NOT implemented in the library.
-    fastrtps::DurabilityServiceQosPolicy durability_service;
+    DurabilityServiceQosPolicy durability_service;
 
     //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
+    DeadlineQosPolicy deadline;
 
     //!Latency Budget Qos, NOT implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
+    LatencyBudgetQosPolicy latency_budget;
 
     //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
+    LivelinessQosPolicy liveliness;
 
     //!Reliability Qos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
+    ReliabilityQosPolicy reliability;
 
     //!Destination Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
+    DestinationOrderQosPolicy destination_order;
 
     //!History Qos, implemented in the library.
-    fastrtps::HistoryQosPolicy history;
+    HistoryQosPolicy history;
 
     //!Resource Limits Qos, implemented in the library.
-    fastrtps::ResourceLimitsQosPolicy resource_limits;
+    ResourceLimitsQosPolicy resource_limits;
 
     //!Transport Priority Qos, NOT implemented in the library.
-    fastrtps::TransportPriorityQosPolicy transport_priority;
+    TransportPriorityQosPolicy transport_priority;
 
     //!Lifespan Qos, implemented in the library.
-    fastrtps::LifespanQosPolicy lifespan;
+    LifespanQosPolicy lifespan;
 
     //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
+    OwnershipQosPolicy ownership;
 
     bool operator ==(
             const TopicQos& b) const

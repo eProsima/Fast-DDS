@@ -40,9 +40,6 @@ class DataWriter;
 
 namespace eprosima {
 namespace fastrtps {
-
-class TopicAttributes;
-
 namespace rtps {
 
 class WriteParams;
@@ -80,7 +77,7 @@ class RTPS_DllAPI DataWriter : public DomainEntity
 
     DataWriter(
             const Publisher* pub,
-            const Topic& topic,
+            Topic* topic,
             const DataWriterQos& qos = DDS_DATAWRITER_QOS_DEFAULT,
             DataWriterListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
@@ -186,13 +183,13 @@ public:
     /**
      * Establishes the topic for this DataWriter.
      */
-    bool set_topic(
-            const fastrtps::TopicAttributes& att);
+    RTPS_DllAPI bool set_topic(
+            Topic& topic);
 
     /**
      * Retrieves the topic for this DataWriter.
      */
-    const fastrtps::TopicAttributes& get_topic() const;
+    RTPS_DllAPI Topic* get_topic() const;
 
     /**
      * Retrieves the listener for this DataWriter.

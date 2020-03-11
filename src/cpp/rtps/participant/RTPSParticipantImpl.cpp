@@ -128,19 +128,19 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
         case DiscoveryProtocol::BACKUP:
-        // Verify if listening ports are provided
-        for (auto& transportDescriptor : PParam.userTransports)
-        {
-            TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
-            if (pT && pT->listening_ports.empty())
+            // Verify if listening ports are provided
+            for (auto& transportDescriptor : PParam.userTransports)
             {
-                logError(RTPS_PARTICIPANT,
-                        "Participant " << m_att.getName() << " with GUID " << m_guid
-                                       << " tries to use discovery server over TCP without providing a proper listening port");
+                TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+                if (pT && pT->listening_ports.empty())
+                {
+                    logError(RTPS_PARTICIPANT,
+                            "Participant " << m_att.getName() << " with GUID " << m_guid
+                                           << " tries to use discovery server over TCP without providing a proper listening port");
+                }
             }
-        }
-    default:
-        break;
+        default:
+            break;
     }
 
     // User defined transports
@@ -1311,13 +1311,12 @@ bool RTPSParticipantImpl::get_new_entity_id(
 {
     if (entityId == c_EntityId_Unknown)
     {
-        EntityId_t entId;
         uint32_t idnum = ++IdCounter;
         octet* c = reinterpret_cast<octet*>(&idnum);
-        entId.value[2] = c[0];
-        entId.value[1] = c[1];
-        entId.value[0] = c[2];
-        entId.value[3] = 0x01; // Vendor specific
+        entityId.value[2] = c[0];
+        entityId.value[1] = c[1];
+        entityId.value[0] = c[2];
+        entityId.value[3] = 0x01; // Vendor specific
     }
     else
     {

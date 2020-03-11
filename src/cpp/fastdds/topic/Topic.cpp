@@ -41,18 +41,6 @@ fastrtps::TopicAttributes Topic::get_topic_attributes() const
     return impl_->get_topic_attributes();
 }
 
-fastrtps::TopicAttributes Topic::get_topic_attributes(
-        const DataReaderQos& qos) const
-{
-    return impl_->get_topic_attributes(qos);
-}
-
-fastrtps::TopicAttributes Topic::get_topic_attributes(
-        const DataWriterQos& qos) const
-{
-    return impl_->get_topic_attributes(qos);
-}
-
 ReturnCode_t Topic::get_qos(
         TopicQos& qos) const
 {

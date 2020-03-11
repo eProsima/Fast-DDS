@@ -50,10 +50,27 @@ bool HelloWorldSubscriber::init()
     type_.register_type(participant_, type_.get_type_name());
 
     //CREATE THE SUBSCRIBER
-    eprosima::fastrtps::SubscriberAttributes sub_att;
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
+    eprosima::fastdds::dds::SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_ = participant_->create_subscriber(sub_qos, nullptr);
 
     if (subscriber_ == nullptr)
+    {
+        return false;
+    }
+
+    //CREATE TOPIC
+    TopicQos topicQos = TOPIC_QOS_DEFAULT;
+    topicQos.topic_attr.topicDataType = "HelloWorld";
+    topicQos.topic_attr.topicName = "HelloWorldTopic";
+    topicQos.topic_attr.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    topicQos.topic_attr.historyQos.depth = 2;
+    topicQos.topic_attr.resourceLimitsQos.max_samples = 2;
+    topicQos.topic_attr.resourceLimitsQos.allocated_samples = 1;
+
+    topic_ = participant_->create_topic(topicQos.topic_attr.topicName.c_str(),
+                    topicQos.topic_attr.topicDataType.c_str(), topicQos);
+
+    if (topic_ == nullptr)
     {
         return false;
     }
@@ -61,14 +78,8 @@ bool HelloWorldSubscriber::init()
     // CREATE THE READER
     DataReaderQos rqos;
     rqos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-    eprosima::fastrtps::TopicAttributes topic_att;
-    topic_att.topicDataType = "HelloWorld";
-    topic_att.topicName = "HelloWorldTopic";
-    topic_att.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    topic_att.historyQos.depth = 2;
-    topic_att.resourceLimitsQos.max_samples = 2;
-    topic_att.resourceLimitsQos.allocated_samples = 1;
-    reader_ = subscriber_->create_datareader(topic_att, rqos, nullptr);
+
+    reader_ = subscriber_->create_datareader(topic_, rqos, nullptr);
 
     if (reader_ == nullptr)
     {

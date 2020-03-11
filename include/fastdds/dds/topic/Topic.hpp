@@ -66,12 +66,6 @@ public:
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
 
-    RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes(
-            const DataReaderQos& qos) const;
-
-    RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes(
-            const DataWriterQos& qos) const;
-
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;
 

@@ -41,12 +41,6 @@ class Publisher;
 } // dds
 
 namespace eprosima {
-namespace fastrtps {
-
-class TopicAttributes;
-
-} // namespace fastrtps
-
 namespace fastdds {
 namespace dds {
 
@@ -133,14 +127,8 @@ public:
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
+            Topic* topic,
             const DataWriterQos& writer_qos,
-            DataWriterListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
-
-    DataWriter* create_datawriter(
-            const Topic& topic,
-            const DataWriterQos& qos,
             DataWriterListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 

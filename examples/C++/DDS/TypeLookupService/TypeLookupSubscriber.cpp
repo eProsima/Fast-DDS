@@ -62,13 +62,13 @@ bool TypeLookupSubscriber::init()
     // CREATE THE COMMON READER ATTRIBUTES
     qos_.durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     qos_.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-    topic_.topicKind = NO_KEY;
-    topic_.topicDataType = "TypeLookup";
-    topic_.topicName = "TypeLookupTopic";
-    topic_.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    topic_.historyQos.depth = 30;
-    topic_.resourceLimitsQos.max_samples = 50;
-    topic_.resourceLimitsQos.allocated_samples = 20;
+    topic_att_.topicKind = NO_KEY;
+    topic_att_.topicDataType = "TypeLookup";
+    topic_att_.topicName = "TypeLookupTopic";
+    topic_att_.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    topic_att_.historyQos.depth = 30;
+    topic_att_.resourceLimitsQos.max_samples = 50;
+    topic_att_.resourceLimitsQos.allocated_samples = 20;
 
     return true;
 }
@@ -111,10 +111,6 @@ void TypeLookupSubscriber::SubListener::on_subscription_matched(
             subscriber_->datas_.erase(itd);
         }
 
-        if (subscriber_->mp_subscriber != nullptr)
-        {
-            subscriber_->mp_subscriber->delete_datareader(reader);
-        }
     }
     else
     {
@@ -160,28 +156,41 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-            [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
+            [this, type_name, topic_name](const std::string& name, const types::DynamicType_ptr type)
             {
                 std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
 
                 if (subscriber_->mp_subscriber == nullptr)
                 {
+                    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
                     SubscriberAttributes Rparam;
                     Rparam = subscriber_->att_;
-                    Rparam.topic = subscriber_->topic_;
+                    Rparam.topic = subscriber_->topic_att_;
                     Rparam.topic.topicName = topic_name;
                     Rparam.qos = subscriber_->qos_.changeToReaderQos();
+                    sub_qos.sub_attr = Rparam;
                     subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
-                        SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+                        sub_qos, nullptr);
 
                     if (subscriber_->mp_subscriber == nullptr)
                     {
                         return;
                     }
                 }
-                subscriber_->topic_.topicDataType = name;
+                subscriber_->topic_att_.topicDataType = name;
+
+                TopicQos tqos = TOPIC_QOS_DEFAULT;
+                tqos.topic_attr = subscriber_->topic_att_;
+
+                Topic* topic  = subscriber_->mp_participant->create_topic(topic_name.c_str(),
+                                type_name.c_str(), tqos);
+                if (topic == nullptr)
+                {
+                    return;
+                }
+
                 DataReader* reader = subscriber_->mp_subscriber->create_datareader(
-                    subscriber_->topic_,
+                    topic,
                     subscriber_->qos_,
                     &subscriber_->m_listener);
 

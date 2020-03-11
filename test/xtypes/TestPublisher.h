@@ -33,24 +33,26 @@
 #include <fastrtps/rtps/common/Types.h>
 #include <string>
 
-class TestPublisher {
+class TestPublisher
+{
 public:
+
     TestPublisher();
 
     virtual ~TestPublisher();
 
     //!Initialize
     bool init(
-        const std::string& topicName,
-        int domain,
-        eprosima::fastdds::dds::TypeSupport type,
-        const eprosima::fastrtps::types::TypeObject* type_object,
-        const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-        const eprosima::fastrtps::types::TypeInformation* type_info,
-        const std::string& name,
-        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-        eprosima::fastrtps::rtps::TopicKind_t topic_kind = eprosima::fastrtps::rtps::NO_KEY,
-        bool use_typelookup = false);
+            const std::string& topicName,
+            int domain,
+            eprosima::fastdds::dds::TypeSupport type,
+            const eprosima::fastrtps::types::TypeObject* type_object,
+            const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
+            const eprosima::fastrtps::types::TypeInformation* type_info,
+            const std::string& name,
+            const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
+            eprosima::fastrtps::rtps::TopicKind_t topic_kind = eprosima::fastrtps::rtps::NO_KEY,
+            bool use_typelookup = false);
 
     //!Publish a sample
     bool publish();
@@ -59,17 +61,30 @@ public:
     void run();
 
     // Auxiliar test methods
-    bool isInitialized() const { return m_bInitialized; }
+    bool isInitialized() const
+    {
+        return m_bInitialized;
+    }
 
-    void waitDiscovery(bool expectMatch = true, int maxWait = 10);
+    void waitDiscovery(
+            bool expectMatch = true,
+            int maxWait = 10);
 
-    void waitTypeDiscovery(bool expectMatch = true, int maxWait = 10);
+    void waitTypeDiscovery(
+            bool expectMatch = true,
+            int maxWait = 10);
 
     void matched();
 
-    bool isMatched() { return m_pubListener.n_matched > 0; }
+    bool isMatched()
+    {
+        return m_pubListener.n_matched > 0;
+    }
 
-    void send() { waitDiscovery(); publish(); }
+    void send()
+    {
+        waitDiscovery(); publish();
+    }
 
     eprosima::fastrtps::types::DynamicType_ptr discovered_type() const
     {
@@ -79,6 +94,7 @@ public:
     eprosima::fastdds::dds::DomainParticipant* participant();
 
 private:
+
     std::string m_Name;
 
     eprosima::fastdds::dds::TypeSupport m_Type;
@@ -89,7 +105,7 @@ private:
 
     int m_iWaitTime;
 
-    void *m_Data;
+    void* m_Data;
 
     bool m_bInitialized;
 
@@ -113,13 +129,24 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
+    eprosima::fastdds::dds::Topic* topic_;
+
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
 
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-    public:
-        PartListener(TestPublisher* parent) : parent_(parent), discovered_(false) {}
-        ~PartListener() override {}
+public:
+
+        PartListener(
+                TestPublisher* parent)
+            : parent_(parent)
+            , discovered_(false)
+        {
+        }
+
+        ~PartListener() override
+        {
+        }
 
         void on_type_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
@@ -140,21 +167,28 @@ private:
 
     } part_listener_;
 
-    class PubListener:public eprosima::fastdds::dds::DataWriterListener
+    class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-    public:
-        PubListener() {}
-        PubListener(TestPublisher* parent);
+public:
 
-        ~PubListener() override {}
+        PubListener()
+        {
+        }
+
+        PubListener(
+                TestPublisher* parent);
+
+        ~PubListener() override
+        {
+        }
 
         void on_publication_matched(
-            eprosima::fastdds::dds::DataWriter* writer,
-            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
         TestPublisher* mParent;
         int n_matched;
-    }m_pubListener;
+    } m_pubListener;
 
     void runThread();
 };

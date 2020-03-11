@@ -259,13 +259,6 @@ void DataWriterQos::copyFromTopicQos(
 
 }
 
-void DataWriterQos::copy_to_topic_attributes(
-        eprosima::fastrtps::TopicAttributes* topic_att) const
-{
-    topic_att->historyQos = this->history;
-    topic_att->resourceLimitsQos = this->resource_limits;
-}
-
 std::string DataWriterQos::search_qos_by_id(
         QosPolicyId_t id)
 {

@@ -21,6 +21,7 @@
 #define _FASTDDS_SUBSCRIBERQOS_HPP_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -36,13 +37,16 @@ namespace dds {
 class SubscriberQos
 {
 public:
+
     RTPS_DllAPI SubscriberQos()
-    {}
+    {
+    }
 
     RTPS_DllAPI virtual ~SubscriberQos()
-    {}
+    {
+    }
 
-    bool operator==(
+    bool operator ==(
             const SubscriberQos& b) const
     {
         return (this->durability == b.durability) &&
@@ -63,6 +67,8 @@ public:
                (this->entity_factory == b.entity_factory) &&
                (this->disable_positive_acks == b.disable_positive_acks);
     }
+
+    fastrtps::SubscriberAttributes sub_attr;
 
     //!Durability Qos, implemented in the library.
     DurabilityQosPolicy durability;

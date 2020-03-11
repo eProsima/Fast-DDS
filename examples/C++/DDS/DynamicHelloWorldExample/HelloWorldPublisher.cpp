@@ -83,16 +83,28 @@ bool HelloWorldPublisher::init()
     mp_participant->register_type(m_type);
 
     //CREATE THE PUBLISHER
-    //PublisherQos qos;
+    eprosima::fastdds::dds::PublisherQos p_qos = PUBLISHER_QOS_DEFAULT;
     eprosima::fastrtps::PublisherAttributes Wparam;
     Wparam.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "DDSDynHelloWorldTopic";
     Wparam.topic.auto_fill_type_object = true; // Share the type with readers.
     Wparam.topic.auto_fill_type_information = false;
-    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
+    p_qos.pub_attr = Wparam;
+    mp_publisher = mp_participant->create_publisher(p_qos, nullptr);
 
     if (mp_publisher == nullptr)
+    {
+        return false;
+    }
+
+    //CREATE TOPIC
+    TopicQos topicQos = TOPIC_QOS_DEFAULT;
+    topicQos.topic_attr = Wparam.topic;
+
+    topic_ = mp_participant->create_topic(Wparam.topic.topicName.c_str(), Wparam.topic.topicDataType.c_str(), topicQos);
+
+    if (topic_ == nullptr)
     {
         return false;
     }
@@ -100,7 +112,7 @@ bool HelloWorldPublisher::init()
     // CREATE THE WRITER
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, qos, &m_listener);
+    writer_ = mp_publisher->create_datawriter(topic_, qos, &m_listener);
 
     if (writer_ == nullptr)
     {

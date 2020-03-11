@@ -46,9 +46,6 @@ class SampleInfo;
 
 namespace eprosima {
 namespace fastrtps {
-
-class TopicAttributes;
-
 namespace rtps {
 class ReaderAttributes;
 struct GUID_t;
@@ -82,8 +79,8 @@ class RTPS_DllAPI DataReader : public DomainEntity
     friend class ::dds::sub::DataReader;
 
     DataReader(
-            const Subscriber* pub,
-            const Topic& topic,
+            Subscriber* sub,
+            Topic* topic,
             const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
             DataReaderListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
@@ -175,9 +172,9 @@ public:
             DataReaderQos& qos) const;
 
     bool set_topic(
-            const fastrtps::TopicAttributes& att);
+            Topic& topic);
 
-    const fastrtps::TopicAttributes& get_topic() const;
+    Topic* get_topic() const;
 
     TopicDescription* get_topicdescription();
 

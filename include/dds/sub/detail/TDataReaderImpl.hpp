@@ -27,11 +27,11 @@
 #include <dds/sub/detail/SamplesHolder.hpp>
 
 /***************************************************************************
- *
- * dds/sub/DataReader<> WRAPPER implementation.
- * Declaration can be found in dds/sub/TDataReader.hpp
- *
- ***************************************************************************/
+*
+* dds/sub/DataReader<> WRAPPER implementation.
+* Declaration can be found in dds/sub/TDataReader.hpp
+*
+***************************************************************************/
 
 // Implementation
 
@@ -59,7 +59,7 @@ namespace sub {
 
     //    impl_.instance(h);
     //    return *this;
-}
+   }
 
 
    template<typename T>
@@ -71,7 +71,7 @@ namespace sub {
 
     //    impl_.next_instance(h);
     //    return *this;
-}
+   }
 
 
    template<typename T>
@@ -83,7 +83,7 @@ namespace sub {
 
     //    impl_.filter_state(s);
     //    return *this;
-}
+   }
 
    template<typename T>
    typename DataReader<T>::Selector& DataReader<T>::Selector::content(
@@ -94,7 +94,7 @@ namespace sub {
 
     //    impl_.filter_content(query);
     //    return *this;
-}
+   }
 
    template<typename T>
    typename DataReader<T>::Selector& DataReader<T>::Selector::max_samples(
@@ -105,7 +105,7 @@ namespace sub {
 
     //    impl_.max_samples(n);
     //    return *this;
-}
+   }
 
    template<typename T>
    dds::sub::LoanedSamples<T> DataReader<T>::Selector::read()
@@ -114,7 +114,7 @@ namespace sub {
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
     //    return impl_.read();
-}
+   }
 
    template<typename T>
    dds::sub::LoanedSamples<T> DataReader<T>::Selector::take()
@@ -123,7 +123,7 @@ namespace sub {
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
     //    return impl_.take();
-}
+   }
 
    template<typename T>
    template<typename SamplesFWIterator>
@@ -135,7 +135,7 @@ namespace sub {
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
     //    return impl_.read(sfit, max_samples);
-}
+   }
 
    template<typename T>
    template<typename SamplesFWIterator>
@@ -146,7 +146,7 @@ namespace sub {
     //To implement
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
     //    return impl_.take(sfit, max_samples);
-}
+   }
 
    template<typename T>
    template<typename SamplesBIIterator>
@@ -156,7 +156,7 @@ namespace sub {
     //To implement
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
     //    return impl_.read(sbit);
-}
+   }
 
    template<typename T>
    template<typename SamplesBIIterator>
@@ -166,7 +166,7 @@ namespace sub {
     //To implement
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
     //    return impl_.take(sbit);
-}
+   }
 
    //--------------------------------------------------------------------------------
    //  DATAREADER::MANIPULATORSELECTOR
@@ -184,7 +184,7 @@ namespace sub {
     //To implement
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
     //    return impl_.read_mode();
-}
+   }
 
    template<typename T>
    void DataReader<T>::ManipulatorSelector::read_mode(
@@ -193,7 +193,7 @@ namespace sub {
     //To implement
     //    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
     //    impl_.read_mode(b);
-}
+   }
 
    template<typename T>
    typename DataReader<T>::ManipulatorSelector& DataReader<T>::ManipulatorSelector::instance(
@@ -204,7 +204,7 @@ namespace sub {
 
     //    impl_.instance(h);
     //    return *this;
-}
+   }
 
    template<typename T>
    typename DataReader<T>::ManipulatorSelector& DataReader<T>::ManipulatorSelector::next_instance(
@@ -215,7 +215,7 @@ namespace sub {
 
     //    impl_.next_instance(h);
     //    return *this;
-}
+   }
 
    template<typename T>
    typename DataReader<T>::ManipulatorSelector& DataReader<T>::ManipulatorSelector::operator >>(
@@ -226,7 +226,7 @@ namespace sub {
 
     //    impl_ >> samples;
     //    return *this;
-}
+   }
 
    template<typename T>
    typename DataReader<T>::ManipulatorSelector& DataReader<T>::ManipulatorSelector::operator >>(
@@ -237,7 +237,7 @@ namespace sub {
 
     //    manipulator(*this);
     //    return *this;
-}
+   }
 
    // @cond
    template<typename T>
@@ -250,8 +250,8 @@ namespace sub {
 
     //    f(*this);
     //    return *this;
-}
-// @endcond
+   }
+   // @endcond
 
    template<typename T>
    typename DataReader<T>::ManipulatorSelector& DataReader<T>::ManipulatorSelector::state(
@@ -262,7 +262,7 @@ namespace sub {
 
     //    impl_.filter_state(s);
     //    return *this;
-}
+   }
 
    template<typename T>
    typename DataReader<T>::ManipulatorSelector& DataReader<T>::ManipulatorSelector::content(
@@ -273,7 +273,7 @@ namespace sub {
 
     //    impl_.filter_content(query);
     //    return *this;
-}
+   }
 
    template<typename T>
    typename DataReader<T>::ManipulatorSelector& DataReader<T>::ManipulatorSelector::max_samples(
@@ -284,8 +284,8 @@ namespace sub {
 
     //    impl_.max_samples(n);
     //    return *this;
-}
-*/
+   }
+ */
 template<typename T>
 DataReader<T>::DataReader(
         const dds::sub::Subscriber& sub,
@@ -311,7 +311,7 @@ DataReader<T>::DataReader(
     : ::dds::core::Reference< detail::DataReader >(
         new detail::DataReader(
             sub.delegate().get(),
-            *topic.delegate().get(),
+            topic.delegate().get(),
             qos,
             listener,
             mask))
@@ -408,7 +408,7 @@ DataReader<T>& DataReader<T>::operator >>(
 
 template<typename T>
 typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>(
-        ManipulatorSelector& (manipulator)(ManipulatorSelector&))
+        ManipulatorSelector& (manipulator)(ManipulatorSelector &))
 {
     ManipulatorSelector selector(*this);
     manipulator(selector);
@@ -458,7 +458,6 @@ LoanedSamples<T> DataReader<T>::take()
 
     return result;
 }
-
 
 template<typename T>
 template<typename SamplesFWIterator>

@@ -56,6 +56,8 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
+    eprosima::fastdds::dds::Topic* topic_;
+
     bool stop;
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
@@ -65,9 +67,12 @@ public:
         PubListener()
             : n_matched(0)
             , firstConnected(false)
-        {}
+        {
+        }
 
-        ~PubListener() override {}
+        ~PubListener() override
+        {
+        }
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,

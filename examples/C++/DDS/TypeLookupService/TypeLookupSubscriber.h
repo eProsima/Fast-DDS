@@ -69,7 +69,7 @@ private:
 
     eprosima::fastdds::dds::DataReaderQos qos_;
 
-    eprosima::fastrtps::TopicAttributes topic_;
+    eprosima::fastrtps::TopicAttributes topic_att_;
 
     std::mutex mutex_;
 
@@ -84,9 +84,12 @@ public:
             : n_matched(0)
             , n_samples(0)
             , subscriber_(sub)
-        {}
+        {
+        }
 
-        ~SubListener() override {}
+        ~SubListener() override
+        {
+        }
 
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;

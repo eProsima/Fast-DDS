@@ -56,6 +56,8 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
+    eprosima::fastdds::dds::Topic* topic_;
+
     bool stop_;
 
     class PubListener : public eprosima::fastdds::dds::DomainParticipantListener

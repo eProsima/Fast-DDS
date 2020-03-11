@@ -39,11 +39,9 @@ namespace dds {
 SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
         const SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
     : participant_(p)
     , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? participant_->get_default_subscriber_qos() : qos)
-    , att_(att)
     , listener_(listen)
     , user_subscriber_(nullptr)
     , rtps_participant_(p->rtps_participant())
@@ -116,30 +114,29 @@ ReturnCode_t SubscriberImpl::set_listener(
 }
 
 DataReader* SubscriberImpl::create_datareader(
-        const Topic& topic,
-        const fastrtps::TopicAttributes& topic_att,
+        Topic* topic,
         const DataReaderQos& reader_qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
+    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name())
     //Look for the correct type registration
-    TypeSupport type_support = participant_->find_type(topic_att.getTopicDataType().to_string());
+    TypeSupport type_support = participant_->find_type(topic->get_type_name());
 
     /// Preconditions
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(SUBSCRIBER, "Type : " << topic_att.getTopicDataType() << " Not Registered");
+        logError(SUBSCRIBER, "Type : " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
-    if (topic_att.topicKind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
+    if (topic->get_topic_attributes().topicKind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
     {
         logError(SUBSCRIBER, "Keyed Topic needs getKey function");
         return nullptr;
     }
 
-    if (!reader_qos.checkQos() || !topic_att.checkQos())
+    if (!reader_qos.checkQos() || !topic->get_topic_attributes().checkQos())
     {
         return nullptr;
     }
@@ -147,31 +144,31 @@ DataReader* SubscriberImpl::create_datareader(
     ReaderAttributes ratt;
     ratt.endpoint.durabilityKind = reader_qos.durability.durabilityKind();
     ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = att_.multicastLocatorList;
+    ratt.endpoint.multicastLocatorList = qos_.sub_attr.multicastLocatorList;
     ratt.endpoint.reliabilityKind = reader_qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    ratt.endpoint.topicKind = topic_att.topicKind;
-    ratt.endpoint.unicastLocatorList = att_.unicastLocatorList;
-    ratt.endpoint.remoteLocatorList = att_.remoteLocatorList;
-    ratt.expectsInlineQos = att_.expectsInlineQos;
-    ratt.endpoint.properties = att_.properties;
+    ratt.endpoint.topicKind = topic->get_topic_attributes().topicKind;
+    ratt.endpoint.unicastLocatorList = qos_.sub_attr.unicastLocatorList;
+    ratt.endpoint.remoteLocatorList = qos_.sub_attr.remoteLocatorList;
+    ratt.expectsInlineQos = qos_.sub_attr.expectsInlineQos;
+    ratt.endpoint.properties = qos_.sub_attr.properties;
 
-    if (att_.getEntityID() > 0)
+    if (qos_.sub_attr.getEntityID() > 0)
     {
-        ratt.endpoint.setEntityID(static_cast<uint8_t>(att_.getEntityID()));
+        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos_.sub_attr.getEntityID()));
     }
 
-    if (att_.getUserDefinedID() > 0)
+    if (qos_.sub_attr.getUserDefinedID() > 0)
     {
-        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(att_.getUserDefinedID()));
+        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.sub_attr.getUserDefinedID()));
     }
 
-    ratt.times = att_.times;
+    ratt.times = qos_.sub_attr.times;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(topic_att.getTopicName().c_str());
+    property.value(topic->get_name());
     ratt.endpoint.properties.properties().push_back(std::move(property));
     if (qos_.partition.names().size() > 0)
     {
@@ -198,10 +195,9 @@ DataReader* SubscriberImpl::create_datareader(
         this,
         type_support,
         topic,
-        topic_att,
         ratt,
         reader_qos,
-        att_.historyMemoryPolicy,
+        qos_.sub_attr.historyMemoryPolicy,
         listener);
 
     if (impl->reader_ == nullptr)
@@ -215,11 +211,11 @@ DataReader* SubscriberImpl::create_datareader(
     impl->user_datareader_ = reader;
 
     ReaderQos rqos = reader_qos.changeToReaderQos();
-    rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
+    rtps_participant_->registerReader(impl->reader_, topic->get_topic_attributes(), rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic_att.getTopicName().to_string()].push_back(impl);
+        readers_[topic->get_name()].push_back(impl);
     }
 
     return reader;
@@ -233,7 +229,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    auto it = readers_.find(reader->get_topic().getTopicName().to_string());
+    auto it = readers_.find(reader->get_topic()->get_name());
     if (it != readers_.end())
     {
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
@@ -373,16 +369,16 @@ bool SubscriberImpl::set_attributes(
 {
     bool updated = true;
     bool missing = false;
-    if (att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
-            att.multicastLocatorList.size() != att_.multicastLocatorList.size())
+    if (att.unicastLocatorList.size() != qos_.sub_attr.unicastLocatorList.size() ||
+            att.multicastLocatorList.size() != qos_.sub_attr.multicastLocatorList.size())
     {
         logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
         updated &= false;
     }
     else
     {
-        for (LocatorListConstIterator lit1 = att_.unicastLocatorList.begin();
-                lit1 != att_.unicastLocatorList.end(); ++lit1)
+        for (LocatorListConstIterator lit1 = qos_.sub_attr.unicastLocatorList.begin();
+                lit1 != qos_.sub_attr.unicastLocatorList.end(); ++lit1)
         {
             missing = true;
             for (LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
@@ -400,8 +396,8 @@ bool SubscriberImpl::set_attributes(
                 logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
-        for (LocatorListConstIterator lit1 = att_.multicastLocatorList.begin();
-                lit1 != att_.multicastLocatorList.end(); ++lit1)
+        for (LocatorListConstIterator lit1 = qos_.sub_attr.multicastLocatorList.begin();
+                lit1 != qos_.sub_attr.multicastLocatorList.end(); ++lit1)
         {
             missing = true;
             for (LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
@@ -423,7 +419,7 @@ bool SubscriberImpl::set_attributes(
 
     if (updated)
     {
-        att_ = att;
+        qos_.sub_attr = att;
     }
 
     return updated;
@@ -446,7 +442,7 @@ bool SubscriberImpl::type_in_use(
     {
         for (DataReaderImpl* reader : it.second)
         {
-            if (reader->get_topic_attributes().getTopicDataType() == type_name)
+            if (reader->get_topic()->get_type_name() == type_name)
             {
                 return true; // Is in use
             }
