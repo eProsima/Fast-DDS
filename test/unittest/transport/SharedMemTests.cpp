@@ -22,6 +22,9 @@
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp"
 
+#include <string>
+#include <fstream>
+#include <streambuf>
 #include <memory>
 #include <gtest/gtest.h>
 #include <thread>
@@ -1180,6 +1183,78 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
             (std::max)((unsigned int)1, std::thread::hardware_concurrency())*2, 100,std::thread::hardware_concurrency())
     )
    );*/
+
+TEST_F(SHMTransportTests, dump_file)
+{
+    std::string log_file = "shm_transport_dump.txt";
+    std::remove(log_file.c_str());
+
+    {
+        SharedMemTransportDescriptor shm_descriptor;
+
+        shm_descriptor.rtps_dump_file(log_file);
+
+        SharedMemTransport transportUnderTest(shm_descriptor);
+        ASSERT_TRUE(transportUnderTest.init());
+
+        Locator_t unicastLocator;
+        unicastLocator.kind = LOCATOR_KIND_SHM;
+        unicastLocator.port = g_default_port;
+
+        Locator_t outputChannelLocator;
+        outputChannelLocator.kind = LOCATOR_KIND_SHM;
+        outputChannelLocator.port = g_default_port + 1;
+
+        Semaphore sem;
+        MockReceiverResource receiver(transportUnderTest, unicastLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+        eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+        ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
+        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        std::function<void()> recCallback = [&]()
+        {
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
+        msg_recv->setCallback(recCallback);
+
+        LocatorList_t locator_list;
+        locator_list.push_back(unicastLocator);
+
+        auto sendThreadFunction = [&]()
+        {
+            Locators locators_begin(locator_list.begin());
+            Locators locators_end(locator_list.end());
+
+            EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
+        };
+
+        std::unique_ptr<std::thread> sender_thread;
+        sender_thread.reset(new std::thread(sendThreadFunction));
+
+        sem.wait();
+        sender_thread->join();
+    }
+
+    {
+        std::ifstream dump_file(log_file.c_str());
+        std::string dump_text((std::istreambuf_iterator<char>(dump_file)),
+                    std::istreambuf_iterator<char>());
+
+        ASSERT_EQ(dump_text.length(), 312);
+        ASSERT_EQ(dump_text.c_str()[308], '6');
+        ASSERT_EQ(dump_text.c_str()[309], 'f');
+        ASSERT_EQ(dump_text.c_str()[310], 10);
+        ASSERT_EQ(dump_text.c_str()[311], 10);
+    }
+    
+    std::remove(log_file.c_str());
+}
 
 int main(
         int argc,

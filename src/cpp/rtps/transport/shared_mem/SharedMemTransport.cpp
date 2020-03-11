@@ -269,6 +269,15 @@ bool SharedMemTransport::init()
                         (std::chrono::steady_clock::now()+std::chrono::milliseconds(100)));
         memset(buffer->data(), 0, configuration_.segment_size());
         buffer.reset();
+
+        if (!configuration_.rtps_dump_file().empty())
+        {
+            auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
+                new SHMPacketFileConsumer(configuration_.rtps_dump_file()));
+
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer> >();
+            packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
+        }
     }
     catch (std::exception& e)
     {
@@ -315,7 +324,8 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
             configuration_.healthy_check_timeout_ms(),
             open_mode)->create_listener(),
         locator,
-        receiver);
+        receiver,
+        configuration_.rtps_dump_file());
 }
 
 bool SharedMemTransport::OpenOutputChannel(
@@ -424,6 +434,11 @@ bool SharedMemTransport::send(
                 }
 
                 ret &= send(shared_buffer, *it);
+
+                if (packet_logger_ && ret)
+                {
+                    packet_logger_->QueueLog({packet_logger_->now(), Locator_t(), * it, shared_buffer});
+                }
             }
 
             ++it;

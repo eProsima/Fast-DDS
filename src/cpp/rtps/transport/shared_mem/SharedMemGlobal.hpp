@@ -21,7 +21,8 @@
 
 #include <rtps/transport/shared_mem/SharedMemSegment.hpp>
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
-#include <rtps/transport/shared_mem/SharedMemLog.hpp>
+
+#define THREADID "(ID:" << std::this_thread::get_id() <<") "
 
 namespace eprosima {
 namespace fastdds {

@@ -35,13 +35,23 @@ public:
     SharedMemChannelResource(
             std::shared_ptr<SharedMemManager::Listener> listener,
             const fastrtps::rtps::Locator_t& locator,
-            TransportReceiverInterface* receiver)
+            TransportReceiverInterface* receiver,
+            const std::string& dump_file)
         : ChannelResource()
         , message_receiver_(receiver)
         , listener_(listener)
         , only_multicast_purpose_(false)
         , locator_(locator)
     {
+        if (!dump_file.empty())
+        {
+            auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
+                new SHMPacketFileConsumer(dump_file));
+
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer> >();
+            packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
+        }
+
         thread(std::thread(&SharedMemChannelResource::perform_listen_operation, this, locator));
     }
 
@@ -114,6 +124,11 @@ private:
                 continue;
             }
 
+            if (packet_logger_)
+            {
+                packet_logger_->QueueLog({packet_logger_->now(), input_locator, remote_locator, message});
+            }
+
             // Processes the data through the CDR Message interface.
             if (message_receiver() != nullptr)
             {
@@ -160,6 +175,9 @@ protected:
 private:
 
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
+
+    // Allows dumping of received packets to a file
+    std::shared_ptr<PacketsLog<SHMPacketFileConsumer>> packet_logger_;
 
 protected:
 

@@ -33,7 +33,7 @@ public:
             TransportReceiverInterface* receiver,
             uint32_t big_buffer_size,
             uint32_t* big_buffer_size_count)
-        : SharedMemChannelResource(listener, locator, receiver)
+        : SharedMemChannelResource(listener, locator, receiver, std::string())
         , big_buffer_size_(big_buffer_size)
         , big_buffer_size_count_(big_buffer_size_count)
     {

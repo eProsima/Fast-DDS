@@ -19,6 +19,7 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
+#include <rtps/transport/shared_mem/SharedMemLog.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -215,6 +216,8 @@ private:
     std::vector<SharedMemChannelResource*> input_channels_;
 
     std::shared_ptr<SharedMemManager::Segment> shared_mem_segment_;
+
+    std::shared_ptr<PacketsLog<SHMPacketFileConsumer>> packet_logger_;
 
     friend class SharedMemChannelResource;
 
