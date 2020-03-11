@@ -451,26 +451,22 @@ bool UDPTransportInterface::send(
 
     bool ret = true;
 
+    auto time_out = std::chrono::duration_cast<std::chrono::microseconds>(
+        max_blocking_time_point - std::chrono::steady_clock::now());
+
     while (it != *destination_locators_end)
     {
-        auto now = std::chrono::steady_clock::now();
-
-        if(now < max_blocking_time_point)
+        if (IsLocatorSupported(*it))
         {
             ret &= send(send_buffer, 
                 send_buffer_size, 
                 socket,
                 *it, 
                 only_multicast_purpose, 
-                std::chrono::duration_cast<std::chrono::microseconds>(max_blocking_time_point - now));
+                time_out);
+        }
 
-            ++it;
-        }
-        else // Time is out
-        {
-            ret = false;
-            break;
-        }
+        ++it;
     }
 
     return ret;
@@ -484,7 +480,7 @@ bool UDPTransportInterface::send(
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)
 {
-    if (!IsLocatorSupported(remote_locator) || send_buffer_size > configuration()->sendBufferSize)
+    if (send_buffer_size > configuration()->sendBufferSize)
     {
         return false;
     }

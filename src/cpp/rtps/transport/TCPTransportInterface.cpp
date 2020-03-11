@@ -998,7 +998,11 @@ bool TCPTransportInterface::send(
 
     while (it != *destination_locators_end)
     {
-        ret &= send(send_buffer, send_buffer_size, channel,*it);
+        if (IsLocatorSupported(*it))
+        {
+            ret &= send(send_buffer, send_buffer_size, channel,*it);
+        }
+
         ++it;
     }
 
@@ -1011,11 +1015,6 @@ bool TCPTransportInterface::send(
         std::shared_ptr<TCPChannelResource>& channel,
         const Locator_t& remote_locator)
 {
-    if (!IsLocatorSupported(remote_locator))
-    {
-        return false;
-    }
-
     bool locator_mismatch = false;
 
     if (channel->locator() != IPLocator::toPhysicalLocator(remote_locator))
