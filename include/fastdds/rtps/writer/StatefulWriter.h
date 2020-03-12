@@ -358,6 +358,7 @@ private:
     std::vector<std::unique_ptr<FlowController> > m_controllers;
 
     bool there_are_remote_readers_ = false;
+    bool there_are_local_readers_ = false;
 
     StatefulWriter& operator =(
             const StatefulWriter&) = delete;

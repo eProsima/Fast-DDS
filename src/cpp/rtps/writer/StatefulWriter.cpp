@@ -1113,17 +1113,23 @@ void StatefulWriter::update_reader_info(
         });
     }
 
-    // Check if readers have locators in common
+    // Check if we have local or remote readers
     size_t n_readers = matched_readers_.size();
     there_are_remote_readers_ = false;
+    there_are_local_readers_ = false;
 
-    for (size_t i = 0; i < n_readers && !there_are_remote_readers_; ++i)
+    size_t i = 0;
+    for (; i < n_readers && !there_are_remote_readers_; ++i)
     {
-        ReaderProxy* reader = matched_readers_.at(i);
-        if (!reader->is_local_reader())
-        {
-            there_are_remote_readers_ = true;
-        }
+        bool is_local = matched_readers_.at(i)->is_local_reader();
+        there_are_remote_readers_ |= !is_local;
+        there_are_local_readers_ |= is_local;
+    }
+
+    for (; i < n_readers && !there_are_local_readers_; ++i)
+    {
+        bool is_local = matched_readers_.at(i)->is_local_reader();
+        there_are_local_readers_ |= is_local;
     }
 }
 
