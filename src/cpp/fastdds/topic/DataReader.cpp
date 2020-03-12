@@ -251,6 +251,17 @@ ReturnCode_t DataReader::get_matched_publications(
     return impl_->get_matched_publications(publication_handles);
 }
 
+ReturnCode_t DataReader::enable()
+{
+    //Check if its factory is enabled
+    if (!get_subscriber()->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    Entity::enable();
+    return ReturnCode_t::RETCODE_OK;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

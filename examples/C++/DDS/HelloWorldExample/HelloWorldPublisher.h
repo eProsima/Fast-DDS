@@ -35,7 +35,8 @@ public:
     virtual ~HelloWorldPublisher();
 
     //!Initialize
-    bool init();
+    bool init(
+            int domain_id);
 
     //!Publish a sample
     bool publish(
@@ -85,6 +86,8 @@ public:
         int matched_;
 
         bool firstConnected_;
+
+        bool enable_ = true;
     } listener_;
 
     void runThread(

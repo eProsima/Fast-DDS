@@ -38,7 +38,8 @@ DomainParticipant::DomainParticipant(
         const DomainParticipantQos& qos,
         DomainParticipantListener* listen,
         const ::dds::core::status::StatusMask& mask)
-    : impl_(DomainParticipantFactory::get_instance()->create_participant(did, qos, listen, mask)->impl_)
+    : Entity(mask)
+    , impl_(DomainParticipantFactory::get_instance()->create_participant(did, qos, listen)->impl_)
 {
 }
 
@@ -269,11 +270,6 @@ TypeSupport DomainParticipant::find_type(
     return impl_->find_type(type_name);
 }
 
-const fastrtps::rtps::InstanceHandle_t& DomainParticipant::get_instance_handle() const
-{
-    return impl_->get_instance_handle();
-}
-
 const fastrtps::rtps::GUID_t& DomainParticipant::guid() const
 {
     return impl_->guid();
@@ -354,4 +350,11 @@ ReturnCode_t DomainParticipant::get_default_topic_qos(
 const fastdds::dds::TopicQos& DomainParticipant::get_default_topic_qos() const
 {
     return impl_->get_default_topic_qos();
+}
+
+ReturnCode_t DomainParticipant::enable()
+{
+    //As the DomainParticipantFactory is not an Entity, it is not needed to check if it is enabled
+    Entity::enable();
+    return impl_->autoenable_entities();
 }

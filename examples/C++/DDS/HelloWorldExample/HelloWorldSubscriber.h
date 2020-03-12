@@ -37,7 +37,8 @@ public:
     virtual ~HelloWorldSubscriber();
 
     //!Initialize the subscriber
-    bool init();
+    bool init(
+            int domain_id);
 
     //!RUN the subscriber
     void run();
@@ -94,6 +95,8 @@ public:
         int matched_;
 
         uint32_t samples_;
+
+        bool enable_ = true;
     } listener_;
 };
 

@@ -210,9 +210,14 @@ DataReader* SubscriberImpl::create_datareader(
     DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
 
+    if (qos_.entity_factory.autoenable_created_entities == true && user_subscriber_->is_enabled())
+    {
+        reader->enable();
+    }
+
     ReaderQos rqos = reader_qos.changeToReaderQos();
     rtps_participant_->registerReader(impl->reader_, topic->get_topic_attributes(), rqos);
-
+    reader->set_instance_handle(impl->reader_->getGuid());
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
         readers_[topic->get_name()].push_back(impl);
@@ -243,6 +248,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
             {
                 topic_readers->erase(t_it);
             }
+            BuiltinSubscriber::get_instance()->delete_subscription_data(reader->get_instance_handle());
             (*dr_it)->set_listener(nullptr);
             it->second.erase(dr_it);
             delete *dr_it;
@@ -309,16 +315,29 @@ bool SubscriberImpl::has_datareaders() const
 
 ReturnCode_t SubscriberImpl::notify_datareaders() const
 {
+    if (!user_subscriber_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     for (auto it : readers_)
     {
         for (DataReaderImpl* dr : it.second)
         {
-            if (dr->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::data_available()))
+            if (dr->user_datareader_->get_status_mask().is_compatible(::dds::core::status::StatusMask::data_available())
+                    && dr->user_datareader_->is_enabled() && dr->listener_ != nullptr)
             {
                 dr->listener_->on_data_available(dr->user_datareader_);
             }
+            else if (dr->get_subscriber()->get_participant().get_listener() != nullptr &&
+                    dr->get_subscriber()->get_participant().is_enabled() &&
+                    dr->get_subscriber()->get_participant().get_status_mask().is_compatible(::dds::core::status::
+                    StatusMask::data_available()))
+            {
+                dr->get_subscriber()->get_participant().get_listener()->on_data_available(dr->user_datareader_);
+            }
         }
     }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -333,6 +352,10 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const DataReaderQos& qos)
 {
+    if (!user_subscriber_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (&qos == &DDS_DATAREADER_QOS_DEFAULT)
     {
         default_datareader_qos_.setQos(DDS_DATAREADER_QOS_DEFAULT, true);
@@ -373,6 +396,10 @@ ReturnCode_t SubscriberImpl::copy_from_topic_qos(
         DataReaderQos& reader_qos,
         const TopicQos& topic_qos) const
 {
+    if (!user_subscriber_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     reader_qos.copyFromTopicQos(topic_qos);
     return ReturnCode_t::RETCODE_OK;
 }
@@ -443,11 +470,6 @@ DomainParticipant& SubscriberImpl::get_participant() const
     return *participant_->get_participant();
 }
 
-const InstanceHandle_t& SubscriberImpl::get_instance_handle() const
-{
-    return handle_;
-}
-
 bool SubscriberImpl::type_in_use(
         const std::string& type_name) const
 {
@@ -462,6 +484,25 @@ bool SubscriberImpl::type_in_use(
         }
     }
     return false;
+}
+
+ReturnCode_t SubscriberImpl::autoenable_entities()
+{
+    if (qos_.entity_factory.autoenable_created_entities)
+    {
+        std::lock_guard<std::mutex> lock(mtx_readers_);
+        for (auto topic : readers_)
+        {
+            for (auto reader: topic.second)
+            {
+                if (!reader->user_datareader_->is_enabled())
+                {
+                    reader->user_datareader_->enable();
+                }
+            }
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } /* namespace dds */

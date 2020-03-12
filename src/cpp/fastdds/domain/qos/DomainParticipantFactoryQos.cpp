@@ -17,26 +17,19 @@
  *
  */
 
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;
-
-void DomainParticipantQos::set_qos(
-        const DomainParticipantQos& qos)
+void DomainParticipantFactoryQos::set_qos(
+        const DomainParticipantFactoryQos& qos)
 {
     if (entity_factory.autoenable_created_entities != qos.entity_factory.autoenable_created_entities)
     {
         entity_factory = qos.entity_factory;
         entity_factory.hasChanged = true;
-    }
-    if (user_data.data_vec() != qos.user_data.data_vec())
-    {
-        user_data = qos.user_data;
-        user_data.hasChanged = true;
     }
 }
 

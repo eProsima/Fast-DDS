@@ -34,10 +34,11 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 {
 }
 
-bool HelloWorldSubscriber::init()
+bool HelloWorldSubscriber::init(
+        int domain_id)
 {
     eprosima::fastrtps::ParticipantAttributes participant_att;
-    participant_att.rtps.builtin.domainId = 0;
+    participant_att.rtps.builtin.domainId = domain_id;
     participant_att.rtps.setName("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
 
@@ -138,7 +139,8 @@ void HelloWorldSubscriber::SubListener::on_sample_rejected(
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (reader->take_next_sample(&hello_, &info_) == ReturnCode_t::RETCODE_OK)
+    ReturnCode_t code = reader->take_next_sample(&hello_, &info_);
+    if (code == ReturnCode_t::RETCODE_OK && enable_)
     {
         if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
         {
@@ -147,6 +149,11 @@ void HelloWorldSubscriber::SubListener::on_data_available(
             std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
             //std::this_thread::sleep_for(std::chrono::milliseconds(10000)); //-->Lost samples
         }
+    }
+    else if (code == ReturnCode_t::RETCODE_NOT_ENABLED && enable_)
+    {
+        enable_ = false;
+        std::cout << "Reader not enabled." << std::endl;
     }
 }
 

@@ -53,6 +53,7 @@ public:
     {
         DomainParticipantFactory::delete_instance();
     }
+
 };
 
 static bool g_instance_initialized = false;
@@ -201,8 +202,8 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         const ::dds::core::status::StatusMask& mask)
 {
     uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
-    DomainParticipant* dom_part = new DomainParticipant();
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, qos, listen, mask);
+    DomainParticipant* dom_part = new DomainParticipant(mask);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, qos, listen);
     RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
@@ -228,6 +229,11 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         }
 
         vector_it->second.push_back(dom_part_impl);
+    }
+
+    if (factory_qos_.entity_factory.autoenable_created_entities)
+    {
+        dom_part->enable();
     }
 
     part->set_check_type_function(

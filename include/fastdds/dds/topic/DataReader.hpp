@@ -221,6 +221,8 @@ public:
     ReturnCode_t get_matched_publications(
             std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const;
 
+    ReturnCode_t enable();
+
 private:
 
     DataReaderImpl* impl_;

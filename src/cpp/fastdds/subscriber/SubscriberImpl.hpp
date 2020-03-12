@@ -172,8 +172,6 @@ public:
         return user_subscriber_;
     }
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
-
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -188,6 +186,8 @@ public:
      */
     bool on_new_cache_change_added(
             const fastrtps::rtps::CacheChange_t* const change);
+
+    ReturnCode_t autoenable_entities();
 
 private:
 

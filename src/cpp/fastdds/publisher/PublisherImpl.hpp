@@ -155,14 +155,14 @@ public:
     bool set_attributes(
             const fastrtps::PublisherAttributes& att);
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
-
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
     //! Check if any writer uses the given type name
     bool type_in_use(
             const std::string& type_name) const;
+
+    ReturnCode_t autoenable_entities();
 
 private:
 

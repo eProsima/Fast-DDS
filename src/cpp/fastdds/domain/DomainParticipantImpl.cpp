@@ -81,14 +81,12 @@ DomainParticipantImpl::DomainParticipantImpl(
         const ParticipantAttributes& patt,
         DomainParticipant* pspart,
         const DomainParticipantQos& qos,
-        DomainParticipantListener* listen,
-        const ::dds::core::status::StatusMask& mask)
+        DomainParticipantListener* listen)
     : att_(patt)
     , qos_(qos)
     , rtps_participant_(nullptr)
     , participant_(pspart)
     , listener_(listen)
-    , mask_(mask)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
     , subscriber_listener_(this)
@@ -165,14 +163,14 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     auto pit = publishers_.find(pub);
 
-    if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_instance_handle())
+    if (pit != publishers_.end() && pub->get_instance_handle() == pit->first->get_instance_handle())
     {
         if (pub->has_datawriters())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
         pit->second->set_listener(nullptr);
-        publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
+        publishers_by_handle_.erase(publishers_by_handle_.find(pit->first->get_instance_handle()));
         delete pit->second;
         publishers_.erase(pit);
         return ReturnCode_t::RETCODE_OK;
@@ -191,25 +189,20 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
     std::lock_guard<std::mutex> lock(mtx_subs_);
     auto sit = subscribers_.find(sub);
 
-    if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_instance_handle())
+    if (sit != subscribers_.end() && sub->get_instance_handle() == sit->first->get_instance_handle())
     {
         if (sub->has_datareaders())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
         sit->second->set_listener(nullptr);
-        subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
+        subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->first->get_instance_handle()));
         delete sit->second;
         subscribers_.erase(sit);
         return ReturnCode_t::RETCODE_OK;
     }
 
     return ReturnCode_t::RETCODE_ERROR;
-}
-
-const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
-{
-    return static_cast<const InstanceHandle_t&>(rtps_participant_->getGuid());
 }
 
 const GUID_t& DomainParticipantImpl::guid() const
@@ -272,12 +265,17 @@ Publisher* DomainParticipantImpl::create_publisher(
         rtps_participant_->get_new_entity_id(pub_guid.entityId);
     } while (exists_entity_id(pub_guid.entityId));
 
-    InstanceHandle_t pub_handle(pub_guid);
-    pubimpl->handle_ = pub_handle;
+    pub->set_instance_handle(pub_guid);
+
+    //If the factory is disable all the created entities are disable
+    if (qos_.entity_factory.autoenable_created_entities == true && participant_->is_enabled())
+    {
+        pub->enable();
+    }
 
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_pubs_);
-    publishers_by_handle_[pub_handle] = pub;
+    publishers_by_handle_[pub_guid] = pub;
     publishers_[pub] = pubimpl;
 
     if (qos.pub_attr.topic.auto_fill_type_object || qos.pub_attr.topic.auto_fill_type_information)
@@ -348,6 +346,10 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
+    if (!participant_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (rtps_participant_->wlp() != nullptr)
     {
         if (rtps_participant_->wlp()->assert_liveliness_manual_by_participant())
@@ -365,6 +367,10 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
 ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
         const fastdds::dds::PublisherQos& qos)
 {
+    if (!participant_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
         default_pub_qos_.set_qos(PUBLISHER_QOS_DEFAULT, true);
@@ -386,6 +392,10 @@ const fastdds::dds::PublisherQos& DomainParticipantImpl::get_default_publisher_q
 ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         const fastdds::dds::SubscriberQos& qos)
 {
+    if (!participant_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
         default_sub_qos_.set_qos(SUBSCRIBER_QOS_DEFAULT, true);
@@ -590,12 +600,17 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         rtps_participant_->get_new_entity_id(sub_guid.entityId);
     } while (exists_entity_id(sub_guid.entityId));
 
-    InstanceHandle_t sub_handle(sub_guid);
-    subimpl->handle_ = sub_handle;
+    sub->set_instance_handle(sub_guid);
+
+    //If the factory is disable all the created entities are disable
+    if (qos_.entity_factory.autoenable_created_entities == true && participant_->is_enabled())
+    {
+        sub->enable();
+    }
 
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_subs_);
-    subscribers_by_handle_[sub_handle] = sub;
+    subscribers_by_handle_[sub_guid] = sub;
     subscribers_[sub] = subimpl;
 
     if (qos.sub_attr.topic.auto_fill_type_object || qos.sub_attr.topic.auto_fill_type_information)
@@ -742,6 +757,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         participant_->discovered_participants_.push_back(info.info.m_key);
@@ -771,6 +791,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
@@ -783,6 +808,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant* participant,
         ReaderDiscoveryInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
 
     if (info.status == fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
@@ -821,6 +851,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant* participant,
         WriterDiscoveryInfo&& info)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
     if (topic == nullptr &&
             !(fastrtps::rtps::InstanceHandle_t(participant->getGuid()) == info.info.RTPSParticipantKey()))
@@ -873,6 +908,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         const fastrtps::types::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_type_discovery(
@@ -892,6 +932,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
         const fastrtps::rtps::SampleIdentity& request_sample_id,
         const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_type_dependencies_reply(
@@ -907,6 +952,11 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
         const fastrtps::string_255& type_name,
         const fastrtps::types::TypeInformation& type_information)
 {
+    if (!participant_->get_participant()->is_enabled())
+    {
+        return;
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         if (type_information.complete().typeid_with_size().type_id()._d() > 0
@@ -1443,8 +1493,13 @@ Topic* DomainParticipantImpl::create_topic(
         rtps_participant_->get_new_entity_id(topic_guid.entityId);
     } while (exists_entity_id(topic_guid.entityId));
 
-    InstanceHandle_t topic_handle(topic_guid);
-    topic->set_instance_handle(topic_handle);
+    topic->set_instance_handle(topic_guid);
+
+    //If the factory is disable all the created entities are disable
+    if (qos_.entity_factory.autoenable_created_entities == true && participant_->is_enabled())
+    {
+        topic->enable();
+    }
 
     //SAVE THE TOPIC INTO MAPS
     {
@@ -1459,7 +1514,7 @@ Topic* DomainParticipantImpl::create_topic(
         register_dynamic_type_to_factories(type_name);
     }
 
-    BuiltinSubscriber::get_instance()->add_topic_data(topic_handle, topic_name, type_name, qos);
+    BuiltinSubscriber::get_instance()->add_topic_data(topic_guid, topic_name, type_name, qos);
 
     cv_topic_.notify_all();
 
@@ -1530,4 +1585,42 @@ void DomainParticipantImpl::Listener::on_data_on_readers(
         Subscriber* subscriber)
 {
     subscriber->notify_datareaders();
+}
+
+ReturnCode_t DomainParticipantImpl::autoenable_entities()
+{
+    if (qos_.entity_factory.autoenable_created_entities)
+    {
+        {
+            std::lock_guard<std::mutex> lock(mtx_pubs_);
+            for (auto pub: publishers_)
+            {
+                if (!pub.first->is_enabled())
+                {
+                    pub.first->enable();
+                }
+            }
+        }
+        {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
+            for (auto sub: subscribers_)
+            {
+                if (!sub.first->is_enabled())
+                {
+                    sub.first->enable();
+                }
+            }
+        }
+        {
+            std::lock_guard<std::mutex> lock(mtx_types_);
+            for (auto topic: topics_)
+            {
+                if (!topic.first->is_enabled())
+                {
+                    topic.first->enable();
+                }
+            }
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
 }

@@ -25,6 +25,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <thread>
 
@@ -37,12 +38,13 @@ HelloWorldPublisher::HelloWorldPublisher()
 {
 }
 
-bool HelloWorldPublisher::init()
+bool HelloWorldPublisher::init(
+        int domain_id)
 {
     hello_.index(0);
     hello_.message("HelloWorld");
     eprosima::fastrtps::ParticipantAttributes participant_att;
-    participant_att.rtps.builtin.domainId = 0;
+    participant_att.rtps.builtin.domainId = domain_id;
     participant_att.rtps.setName("Participant_pub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
 
@@ -188,8 +190,16 @@ bool HelloWorldPublisher::publish(
     if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
     {
         hello_.index(hello_.index() + 1);
-        writer_->write(&hello_);
-        return true;
+        ReturnCode_t code = writer_->write(&hello_);
+        if (code == ReturnCode_t::RETCODE_OK)
+        {
+            return true;
+        }
+        else if (code == ReturnCode_t::RETCODE_NOT_ENABLED)
+        {
+            std::cout << "Writer not enabled." << std::endl;
+            return false;
+        }
     }
     return false;
 }

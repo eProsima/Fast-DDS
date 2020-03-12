@@ -305,7 +305,7 @@ bool TestPublisher::publish()
 {
     if (m_pubListener.n_matched > 0)
     {
-        if (writer_->write(m_Data))
+        if (writer_->write(m_Data) == ReturnCode_t::RETCODE_OK)
         {
             ++m_sentSamples;
             //std::cout << m_Name << " sent a total of " << m_sentSamples << " samples." << std::endl;

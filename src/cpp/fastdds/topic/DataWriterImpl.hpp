@@ -93,7 +93,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(
+    ReturnCode_t write(
             void* data);
 
     /**
@@ -104,7 +104,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(
+    ReturnCode_t write(
             void* data,
             fastrtps::rtps::WriteParams& params);
 

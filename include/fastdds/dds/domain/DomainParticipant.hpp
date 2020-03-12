@@ -388,12 +388,6 @@ public:
     TypeSupport find_type(
             const std::string& type_name) const;
 
-    /**
-     * Returns the DomainParticipant's handle.
-     * @return InstanceHandle of this DomainParticipant.
-     */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
-
     // From here legacy RTPS methods.
 
     const fastrtps::rtps::GUID_t& guid() const;
@@ -470,6 +464,8 @@ public:
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
+
+    ReturnCode_t enable();
 
     virtual ~DomainParticipant();
 

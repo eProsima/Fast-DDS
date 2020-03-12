@@ -47,7 +47,7 @@ public:
     // TODO Implement StatusCondition
     // virtual const StatusCondition& get_statuscondition() const = 0;
 
-    fastrtps::types::ReturnCode_t enable()
+    virtual fastrtps::types::ReturnCode_t enable()
     {
         enable_ = true;
         return fastrtps::types::ReturnCode_t::RETCODE_OK;
@@ -96,7 +96,9 @@ protected:
     }
 
     ::dds::core::status::StatusMask status_mask_;
+
     fastrtps::rtps::InstanceHandle_t instance_handle_;
+
     bool enable_;
 
 };

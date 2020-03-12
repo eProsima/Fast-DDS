@@ -199,7 +199,14 @@ bool Publisher::set_attributes(
     return impl_->set_attributes(att);
 }
 
-const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
+ReturnCode_t Publisher::enable()
 {
-    return impl_->get_instance_handle();
+    //Check if its factory is enabled
+    if (!get_participant().is_enabled())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    Entity::enable();
+    return impl_->autoenable_entities();
+
 }
