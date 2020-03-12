@@ -107,10 +107,16 @@ public:
             uint32_t datasize);
 
     void print_stats(
+            uint32_t data_index,
             TimeStats& TS);
 
     void export_raw_data(
             uint32_t datasize);
+
+    void export_csv(
+        const std::string& data_name,
+        const std::string& str_reliable,
+        const std::stringstream& data_stream);
 
     /* Entities */
     eprosima::fastrtps::Participant* participant_;
@@ -142,8 +148,12 @@ public:
     int test_status_;
 
     /* Files */
-    std::stringstream output_file_minimum_;
-    std::stringstream output_file_average_;
+    constexpr static uint32_t MINIMUM_INDEX = 0;
+    constexpr static uint32_t AVERAGE_INDEX = 1;
+    constexpr static uint32_t DATA_BASE_INDEX = 2;
+    std::vector<std::shared_ptr<std::stringstream>> output_files_;
+    /*std::stringstream output_file_minimum_;
+    std::stringstream ;
     std::stringstream output_file_16_;
     std::stringstream output_file_32_;
     std::stringstream output_file_64_;
@@ -156,7 +166,7 @@ public:
     std::stringstream output_file_8192_;
     std::stringstream output_file_16384_;
     std::stringstream output_file_64000_;
-    std::stringstream output_file_131072_;
+    std::stringstream output_file_131072_;*/
     std::string xml_config_file_;
     std::string raw_data_file_;
     std::string export_prefix_;

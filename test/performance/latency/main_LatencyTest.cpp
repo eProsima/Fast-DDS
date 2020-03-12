@@ -164,7 +164,7 @@ const option::Descriptor usage[] = {
 #endif
     { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nPublisher/Both options:"},
     { SUBSCRIBERS,     0, "n", "subscribers",     Arg::Numeric,  "  -n <num>,    --subscribers=<arg>   Number of subscribers." },
-    { EXPORT_CSV,      0, "",  "export_csv",      Arg::None,     "               --export_cvs          Flag to export a CSV file." },
+    { EXPORT_CSV,      0, "",  "export_csv",      Arg::None,     "               --export_csv          Flag to export a CSV file." },
     { EXPORT_RAW_DATA, 0, "",  "export_raw_data", Arg::String,   "               --export_raw_data     File name to export all raw data as CSV." },
     { EXPORT_PREFIX,   0, "",  "export_prefix",   Arg::String,   "               --export_prefix       File prefix for the CSV file." },
     { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nSubscriber options:"},
