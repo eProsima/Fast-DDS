@@ -237,13 +237,18 @@ ReturnCode_t DomainParticipant::get_discovered_participant_data(
     return impl_->get_discovered_participant_data(participant_data, participant_handle);
 }
 
-/* TODO
-   bool DomainParticipant::get_discovered_topics(
+ReturnCode_t DomainParticipant::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
-   {
+{
     return impl_->get_discovered_topics(topic_handles);
-   }
- */
+}
+
+ReturnCode_t DomainParticipant::get_discovered_topic_data(
+        TopicBuiltinTopicData& topic_data,
+        const fastrtps::rtps::InstanceHandle_t& topic_handle) const
+{
+    return impl_->get_discovered_topic_data(topic_data, topic_handle);
+}
 
 bool DomainParticipant::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle,

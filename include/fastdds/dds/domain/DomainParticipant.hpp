@@ -351,16 +351,12 @@ public:
             ParticipantBuiltinTopicData& participant_data,
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
 
-    /* TODO
-       bool get_discovered_topics(
+    ReturnCode_t get_discovered_topics(
             std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const;
-     */
 
-    /* TODO
-       bool get_discovered_topic_data(
+    ReturnCode_t get_discovered_topic_data(
             TopicBuiltinTopicData& topic_data,
             const fastrtps::rtps::InstanceHandle_t& topic_handle) const;
-     */
 
     /**
      * This operation checks whether or not the given handle represents an Entity that was created from the

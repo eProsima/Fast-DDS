@@ -67,7 +67,7 @@ bool HelloWorldSubscriber::init()
     topicQos.topic_attr.resourceLimitsQos.max_samples = 2;
     topicQos.topic_attr.resourceLimitsQos.allocated_samples = 1;
 
-    TopicDescription topic_description_ = TopicDescription(participant_, "HelloWorld", "HelloWorldTopic");
+    TopicDescription topic_description_ = TopicDescription(participant_, "HelloWorldTopic", "HelloWorld");
 
     // CREATE THE READER
     DataReaderQos rqos;

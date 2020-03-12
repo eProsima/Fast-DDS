@@ -237,16 +237,12 @@ public:
             ParticipantBuiltinTopicData& participant_data,
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
 
-    /* TODO
-       bool get_discovered_topics(
+    ReturnCode_t get_discovered_topics(
             std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const;
-     */
 
-    /* TODO
-       bool get_discovered_topic_data(
+    ReturnCode_t get_discovered_topic_data(
             TopicBuiltinTopicData& topic_data,
             const fastrtps::rtps::InstanceHandle_t& topic_handle) const;
-     */
 
     bool contains_entity(
             const fastrtps::rtps::InstanceHandle_t& handle,
@@ -411,6 +407,8 @@ private:
     std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity> > parent_requests_;
 
     std::vector<fastrtps::rtps::InstanceHandle_t> discovered_participants_;
+
+    std::vector<fastrtps::rtps::InstanceHandle_t> discovered_topics_;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
