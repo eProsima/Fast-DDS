@@ -209,6 +209,14 @@ void StatefulWriter::unsent_change_added_to_history(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        mp_RTPSParticipant->wlp()->assert_liveliness(
+            getGuid(),
+            liveliness_kind_,
+            liveliness_lease_duration_);
+    }
+
 #if HAVE_SECURITY
     encrypt_cachechange(change);
 #endif
@@ -393,14 +401,6 @@ void StatefulWriter::unsent_change_added_to_history(
 
             ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
             ack_event_->restart_timer(max_blocking_time);
-        }
-
-        if (liveliness_lease_duration_ < c_TimeInfinite)
-        {
-            mp_RTPSParticipant->wlp()->assert_liveliness(
-                getGuid(),
-                liveliness_kind_,
-                liveliness_lease_duration_);
         }
     }
     else
