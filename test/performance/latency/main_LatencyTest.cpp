@@ -22,6 +22,7 @@
 #include <iomanip>
 #include <bitset>
 #include <cstdint>
+#include <fstream>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/Domain.h>
@@ -136,7 +137,8 @@ enum  optionIndex
     CERTS_PATH,
     XML_FILE,
     DYNAMIC_TYPES,
-    FORCED_DOMAIN
+    FORCED_DOMAIN,
+    FILE_R
 };
 
 enum TestAgent
@@ -167,8 +169,64 @@ const option::Descriptor usage[] = {
     { EXPORT_PREFIX,   0, "",  "export_prefix",   Arg::String,   "               --export_prefix       File prefix for the CSV file." },
     { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nSubscriber options:"},
     { ECHO_OPT,        0, "e", "echo",            Arg::Required, "  -e <arg>,    --echo=<arg>          Echo mode (\"true\"/\"false\")." },
+    { FILE_R,        0, "f", "file",            Arg::Required, "  -f <arg>,  --file=<arg>             File to read the payload demands from." },
     { 0, 0, 0, 0, 0, 0 }
 };
+
+bool load_demands_payload(const std::string& demands_file, std::vector<uint32_t>& demands)
+{
+    demands.clear();
+
+    std::ifstream fi(demands_file);
+
+    std::cout << "Reading demands file: " << demands_file << std::endl;
+    std::string DELIM = ";";
+    if (!fi.is_open())
+    {
+        std::cout << "Could not open demands file: " << demands_file << " , closing." << std::endl;
+        return false;
+    }
+
+    std::string line;
+    size_t start;
+    size_t end;
+    bool more = true;
+    while (std::getline(fi, line))
+    {
+        start = 0;
+        end = line.find(DELIM);
+        more = true;
+        while (more)
+        {
+            std::istringstream iss(line.substr(start, end - start));
+
+            uint32_t payload;
+            iss >> payload;
+            if (payload < 12)
+            {
+                std::cout << "Minimum payload is 16 bytes" << std::endl;
+                return false;
+            }
+
+            demands.push_back(payload-4);
+
+            start = end + DELIM.length();
+            end = line.find(DELIM, start);
+            if (end == std::string::npos)
+            {
+                more = false;
+                std::istringstream n_iss(line.substr(start, end - start));
+                if (n_iss >> payload)
+                {
+                    demands.push_back(payload-4);
+                }
+            }
+        }
+    }
+    fi.close();
+
+    return true;
+}
 
 int main(
         int argc,
@@ -209,6 +267,7 @@ int main(
     std::string xml_config_file = "";
     bool dynamic_types = false;
     int forced_domain = -1;
+    std::string demands_file = "";
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -359,6 +418,9 @@ int main(
                 certs_path = opt.arg;
                 break;
 #endif
+            case FILE_R:
+                demands_file = opt.arg;
+                break;
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
                 return 0;
@@ -413,6 +475,13 @@ int main(
         xmlparser::XMLProfileManager::loadXMLFile(xml_config_file);
     }
 
+    LatencyDataSizes data_sizes;
+
+    if(!demands_file.empty())
+    {
+        load_demands_payload(demands_file, data_sizes.sample_sizes());
+    }
+    
     uint8_t return_code = 0;
 
     if (test_agent == TestAgent::PUBLISHER)
@@ -422,7 +491,7 @@ int main(
         LatencyTestPublisher latency_publisher;
         if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
-                dynamic_types, forced_domain))
+                dynamic_types, forced_domain, data_sizes))
         {
             latency_publisher.run();
         }
@@ -436,7 +505,7 @@ int main(
     {
         LatencyTestSubscriber latency_subscriber;
         if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-                xml_config_file, dynamic_types, forced_domain))
+                xml_config_file, dynamic_types, forced_domain, data_sizes))
         {
             latency_subscriber.run();
         }
@@ -455,12 +524,12 @@ int main(
         LatencyTestPublisher latency_publisher;
         bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
                 export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
-                xml_config_file, dynamic_types, forced_domain);
+                xml_config_file, dynamic_types, forced_domain, data_sizes);
 
         // Initialize subscriber
         LatencyTestSubscriber latency_subscriber;
         bool sub_init = latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
-                sub_property_policy, xml_config_file, dynamic_types, forced_domain);
+                sub_property_policy, xml_config_file, dynamic_types, forced_domain, data_sizes);
 
         // Spawn run threads
         if (pub_init && sub_init)

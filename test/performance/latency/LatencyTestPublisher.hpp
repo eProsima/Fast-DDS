@@ -93,9 +93,12 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
             const std::string& xml_config_file,
             bool dynamic_data,
-            int forced_domain);
+            int forced_domain,
+            LatencyDataSizes& latency_data_sizes);
 
     void run();
+
+    bool load_demands_payload(const std::string& demands_file);
 
     bool test(
             uint32_t datasize);
@@ -177,6 +180,8 @@ public:
     eprosima::fastrtps::types::DynamicData* dynamic_data_type_out_;
     eprosima::fastrtps::types::DynamicPubSubType dynamic_pub_sub_type_;
     eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
+
+    std::vector<uint32_t> data_size_pub_;
 
     /* Data Listeners */
     class DataPubListener : public eprosima::fastrtps::PublisherListener

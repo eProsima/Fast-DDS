@@ -26,8 +26,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
-std::vector<uint32_t> data_size_sub;
-
 LatencyTestSubscriber::LatencyTestSubscriber()
     : participant_(nullptr)
     , data_publisher_(nullptr)
@@ -69,13 +67,10 @@ bool LatencyTestSubscriber::init(
         const PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_data,
-        int forced_domain)
+        int forced_domain,
+        LatencyDataSizes& latency_data_sizes)
 {
-    //data_size_sub.assign(dataspubsub, dataspubsub + sizeof(dataspubsub) / sizeof(uint32_t) );
-    LatencyDataSamples latency_data_samples;
-
-    //data_size_pub.assign(latency_data_samples.sample_sizes(), dataspubsub + sizeof(dataspubsub) / sizeof(uint32_t) );
-    data_size_sub = latency_data_samples.sample_sizes();
+    data_size_sub_ = latency_data_sizes.sample_sizes();
     
     xml_config_file_ = xml_config_file;
     echo_ = echo;
@@ -93,7 +88,7 @@ bool LatencyTestSubscriber::init(
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
                 DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub.back()
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub_.back()
                     ));
         struct_type_builder->set_name("LatencyType");
 
@@ -439,7 +434,7 @@ void LatencyTestSubscriber::run()
 
     std::cout << C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF << std::endl;
 
-    for (std::vector<uint32_t>::iterator payload = data_size_sub.begin(); payload != data_size_sub.end(); ++payload)
+    for (std::vector<uint32_t>::iterator payload = data_size_sub_.begin(); payload != data_size_sub_.end(); ++payload)
     {
         if (!this->test(*payload))
         {
