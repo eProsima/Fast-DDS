@@ -34,9 +34,6 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 using namespace std;
 
-std::vector<uint32_t> data_size_pub;
-
-
 LatencyTestPublisher::LatencyTestPublisher()
     : participant_(nullptr)
     , data_publisher_(nullptr)
@@ -87,7 +84,8 @@ bool LatencyTestPublisher::init(
         const PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_data,
-        int forced_domain)
+        int forced_domain,
+        LatencyDataSizes& latency_data_sizes)
 {
     // Initialize state
     xml_config_file_ = xml_config_file;
@@ -100,10 +98,7 @@ bool LatencyTestPublisher::init(
     forced_domain_ = forced_domain;
     raw_data_file_ = raw_data_file;
 
-    LatencyDataSamples latency_data_samples;
-
-    //data_size_pub.assign(latency_data_samples.sample_sizes(), dataspubsub + sizeof(dataspubsub) / sizeof(uint32_t) );
-    data_size_pub = latency_data_samples.sample_sizes();
+    data_size_pub_ = latency_data_sizes.sample_sizes();
     
     // Init dynamic data
     if (dynamic_data_)
@@ -115,7 +110,7 @@ bool LatencyTestPublisher::init(
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
                 DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_pub.back()
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_pub_.back()
                     ));
         struct_type_builder->set_name("LatencyType");
 
@@ -124,7 +119,7 @@ bool LatencyTestPublisher::init(
     }
 
     // Init output files
-    for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it)
+    for (std::vector<uint32_t>::iterator it = data_size_pub_.begin(); it != data_size_pub_.end(); ++it)
     {
         // Reliability
         std::string str_reliable = "besteffort";
@@ -136,7 +131,7 @@ bool LatencyTestPublisher::init(
         // Summary files
         output_file_minimum_ << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
         output_file_average_ << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
-        if (it != data_size_pub.end() - 1)
+        if (it != data_size_pub_.end() - 1)
         {
             output_file_minimum_ << ",";
             output_file_average_ << ",";
@@ -281,7 +276,7 @@ bool LatencyTestPublisher::init(
     }
     publisher_data_attributes.properties = property_policy;
 
-    publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {
@@ -321,7 +316,7 @@ bool LatencyTestPublisher::init(
     subscriber_data_attributes.properties = property_policy;
 
     subscriber_data_attributes.historyMemoryPolicy =
-            eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+            eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {
@@ -610,14 +605,14 @@ void LatencyTestPublisher::run()
     disc_lock.unlock();
     std::cout << C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF << std::endl;
 
-    for (std::vector<uint32_t>::iterator payload = data_size_pub.begin(); payload != data_size_pub.end(); ++payload)
+    for (std::vector<uint32_t>::iterator payload = data_size_pub_.begin(); payload != data_size_pub_.end(); ++payload)
     {
         if (!this->test(*payload))
         {
             break;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if (payload != data_size_pub.end() - 1)
+        if (payload != data_size_pub_.end() - 1)
         {
             output_file_minimum_ << ",";
             output_file_average_ << ",";
@@ -694,6 +689,7 @@ void LatencyTestPublisher::run()
         out_file.close();
     }
 }
+
 
 bool LatencyTestPublisher::test(
         uint32_t datasize)

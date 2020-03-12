@@ -27,20 +27,17 @@
 
 #define MAX_TYPE_SIZE 10*1024*1024
 
-class LatencyDataSamples
+class LatencyDataSizes
 {
 public:
 
-    LatencyDataSamples()
+    LatencyDataSizes()
     {
-        //sample_sizes_ = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
-        //sample_sizes_ = {12, 1024, 32*1024, 64*1024, 128*1024, 512*1024, 1024*1024};
-        //sample_sizes_ = {12, 1024, 32*1024, 64*1024, 128*1024};
-        sample_sizes_ = {8*1024-4, 16*1024-4, 32*1024-4, 64*1024-4, 128*1024-4, 256*1024-4, 512*1024-4, 1024*1024-4};
-        //sample_sizes_ = {16-4};
+        sample_sizes_ = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
+
     }
 
-    inline const std::vector<uint32_t>& sample_sizes()
+    inline std::vector<uint32_t>& sample_sizes()
     {
         return sample_sizes_;
     }
