@@ -1246,7 +1246,7 @@ TEST_F(SHMTransportTests, dump_file)
         std::string dump_text((std::istreambuf_iterator<char>(dump_file)),
                     std::istreambuf_iterator<char>());
 
-        ASSERT_EQ(dump_text.length(), 312);
+        ASSERT_EQ(dump_text.length(), 312u);
         ASSERT_EQ(dump_text.c_str()[308], '6');
         ASSERT_EQ(dump_text.c_str()[309], 'f');
         ASSERT_EQ(dump_text.c_str()[310], 10);

@@ -53,7 +53,7 @@ public:
 
             try
             {
-                mutex_name = "SHMPacketFile" + std::to_string(filename_hash) + "_mutex";
+                mutex_name = "log" + std::to_string(filename_hash) + "mtx";
 
                 f_mutex_ = SharedMemSegment::open_or_create_and_lock_named_mutex(mutex_name);
 
