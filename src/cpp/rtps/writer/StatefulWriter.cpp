@@ -866,57 +866,38 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
     uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
     if (there_are_remote_readers_ &&                          // intraprocess gaps are sent separatedly
         (next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
-        ( (history_size == 0) ||                              // a) History is empty
-          (min_history_seq + history_size != last_sequence))) // b) There is a hole in the history
+        (min_history_seq + history_size != last_sequence))    // There is a hole in the history
     {
         try
         {
             send_heartbeat_nts_(all_remote_readers_.size(), group, true);
             heartbeat_has_been_sent = true;
 
-            if (history_size == 0)
+            // Find holes in history from next_all_acked_notify_sequence_ to last_sequence - 1
+            RTPSGapBuilder gap_builder(group);
+
+            // Algorithm starts in next_all_acked_notify_sequence_
+            SequenceNumber_t seq = min_history_seq;
+
+            // Loop all history
+            for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
             {
-                // History is empty. Send single GAP from next_all_acked_notify_sequence_ to last_sequence - 1
-                SequenceNumberSet_t gap_end(last_sequence);
-                group.add_gap(next_all_acked_notify_sequence_, gap_end);
-            }
-            else
-            {
-                // Find holes in history from next_all_acked_notify_sequence_ to last_sequence - 1
-                RTPSGapBuilder gap_builder(group);
-
-                // Algorithm starts in next_all_acked_notify_sequence_
-                SequenceNumber_t seq = next_all_acked_notify_sequence_;
-
-                // Point to first change with sequence not less than next_all_acked_notify_sequence_
-                auto cit = std::lower_bound(
-                    mp_history->changesBegin(), mp_history->changesEnd(), seq,
-                    [](
-                        const CacheChange_t* change, const SequenceNumber_t& seq)
-                    {
-                        return change->sequenceNumber < seq;
-                    });
-
-                // Loop till the end of history
-                for (; cit != mp_history->changesEnd(); cit++)
-                {
-                    // Add all sequence numbers until the change's sequence number
-                    while (seq < (*cit)->sequenceNumber)
-                    {
-                        gap_builder.add(seq);
-                        seq++;
-                    }
-
-                    // Skip change's sequence number
-                    seq++;
-                }
-
-                // Add all sequence numbers above last change
-                while (seq < last_sequence)
+                // Add all sequence numbers until the change's sequence number
+                while (seq < (*cit)->sequenceNumber)
                 {
                     gap_builder.add(seq);
                     seq++;
                 }
+
+                // Skip change's sequence number
+                seq++;
+            }
+
+            // Add all sequence numbers above last change
+            while (seq < last_sequence)
+            {
+                gap_builder.add(seq);
+                seq++;
             }
         }
         catch (const RTPSMessageGroup::timeout&)
