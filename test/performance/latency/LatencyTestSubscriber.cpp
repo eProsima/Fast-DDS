@@ -437,7 +437,7 @@ void LatencyTestSubscriber::run()
     }
     disc_lock.unlock();
 
-    std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
+    std::cout << C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF << std::endl;
 
     for (std::vector<uint32_t>::iterator payload = data_size_sub.begin(); payload != data_size_sub.end(); ++payload)
     {

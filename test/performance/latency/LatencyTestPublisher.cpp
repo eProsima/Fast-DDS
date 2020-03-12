@@ -281,7 +281,7 @@ bool LatencyTestPublisher::init(
     }
     publisher_data_attributes.properties = property_policy;
 
-    publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {
@@ -321,7 +321,7 @@ bool LatencyTestPublisher::init(
     subscriber_data_attributes.properties = property_policy;
 
     subscriber_data_attributes.historyMemoryPolicy =
-            eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {
@@ -566,12 +566,12 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(
             latency_publisher_->dynamic_data_type_out_->set_uint32_value(0, 0);
 
             latency_publisher_->mutex_.lock();
-            if (latency_publisher_->data_msg_count_ == 0)
+            ++latency_publisher_->data_msg_count_;
+            if (latency_publisher_->data_msg_count_ >= latency_publisher_->subscribers_)
             {
-                ++latency_publisher_->data_msg_count_;
                 latency_publisher_->data_msg_cv_.notify_one();
             }
-            latency_publisher_->mutex_.unlock();
+            latency_publisher_->mutex_.unlock();    
         }
     }
     else
@@ -585,13 +585,12 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(
                     latency_publisher_->overhead_time_);
             latency_publisher_->received_count_++;
 
-            // Reset seqnum from out data
-            latency_publisher_->latency_type_out_->seqnum = 0;
-
             latency_publisher_->mutex_.lock();
-            if (latency_publisher_->data_msg_count_ == 0)
+            ++latency_publisher_->data_msg_count_;
+            if (latency_publisher_->data_msg_count_ >= latency_publisher_->subscribers_)
             {
-                ++latency_publisher_->data_msg_count_;
+                // Reset seqnum from out data
+                latency_publisher_->latency_type_out_->seqnum = 0;
                 latency_publisher_->data_msg_cv_.notify_one();
             }
             latency_publisher_->mutex_.unlock();
@@ -609,7 +608,7 @@ void LatencyTestPublisher::run()
         discovery_cv_.wait(disc_lock);
     }
     disc_lock.unlock();
-    std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
+    std::cout << C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF << std::endl;
 
     for (std::vector<uint32_t>::iterator payload = data_size_pub.begin(); payload != data_size_pub.end(); ++payload)
     {
@@ -624,9 +623,9 @@ void LatencyTestPublisher::run()
             output_file_average_ << ",";
         }
     }
-    std::cout << "REMOVING PUBLISHER" << std::endl;
+    std::cout << "Pub: REMOVING PUBLISHER" << std::endl;
     Domain::removePublisher(this->command_publisher_);
-    std::cout << "REMOVING SUBSCRIBER" << std::endl;
+    std::cout << "Pub: REMOVING SUBSCRIBER" << std::endl;
     Domain::removeSubscriber(command_subscriber_);
 
     // Print a summary table with the measurements
@@ -758,8 +757,8 @@ bool LatencyTestPublisher::test(
         }
 
         lock.lock();
-        data_msg_cv_.wait_for(lock, /*std::chrono::seconds(1)*/std::chrono::milliseconds(100), [&]() {
-            return data_msg_count_ > 0;
+        data_msg_cv_.wait_for(lock, std::chrono::seconds(1), [&]() {
+            return data_msg_count_ >= subscribers_;
         });
         data_msg_count_ = 0;
         lock.unlock();
