@@ -283,7 +283,7 @@ int main(
     Topic* mp_topic = participant->create_topic(topic.str(), type.get_type_name(), tqos);
 
     DataWriterQos qos;
-    qos.changeToDataWriterQos(pub_qos.pub_attr.qos);
+    qos.change_to_datawriterqos(pub_qos.pub_attr.qos);
     DataWriter* writer = publisher->create_datawriter(mp_topic, qos, nullptr);
     if (writer == nullptr)
     {

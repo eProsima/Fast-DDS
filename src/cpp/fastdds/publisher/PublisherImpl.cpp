@@ -148,7 +148,7 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
-    if (!topic->get_topic_attributes().checkQos() || !writer_qos.checkQos())
+    if (!topic->get_topic_attributes().checkQos() || !writer_qos.check_qos())
     {
         return nullptr;
     }
@@ -236,7 +236,7 @@ DataWriter* PublisherImpl::create_datawriter(
     }
 
     //REGISTER THE WRITER
-    WriterQos wqos = writer_qos.changeToWriterQos();
+    WriterQos wqos = writer_qos.change_to_writerqos();
     rtps_participant_->registerWriter(impl->writer_, topic->get_topic_attributes(), wqos);
     writer->set_instance_handle(impl->writer_->getGuid());
 
@@ -382,12 +382,12 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
     }
     if (&qos == &DDS_DATAWRITER_QOS_DEFAULT)
     {
-        default_datawriter_qos_.setQos(DDS_DATAWRITER_QOS_DEFAULT, true);
+        default_datawriter_qos_.set_qos(DDS_DATAWRITER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (qos.checkQos())
+    else if (qos.check_qos())
     {
-        default_datawriter_qos_.setQos(qos, true);
+        default_datawriter_qos_.set_qos(qos, true);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
@@ -406,7 +406,7 @@ ReturnCode_t PublisherImpl::copy_from_topic_qos(
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
-    reader_qos.copyFromTopicQos(topic_qos);
+    reader_qos.copy_from_topicqos(topic_qos);
     return ReturnCode_t::RETCODE_OK;
 }
 

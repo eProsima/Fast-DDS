@@ -508,18 +508,18 @@ ReturnCode_t DataWriterImpl::set_qos(
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if (!qos.checkQos())
+    if (!qos.check_qos())
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    else if (!qos_.canQosBeUpdated(qos))
+    else if (!qos_.can_qos_be_updated(qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.setQos(qos, false);
+    qos_.set_qos(qos, false);
     //Notify the participant that a Writer has changed its QOS
-    fastrtps::WriterQos wqos_ = qos_.changeToWriterQos();
+    fastrtps::WriterQos wqos_ = qos_.change_to_writerqos();
     publisher_->rtps_participant()->updateWriter(writer_, topic_->get_qos().topic_attr, wqos_);
 
     // Deadline
@@ -590,7 +590,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
     //TODO: Check if the DataReader should be ignored (DomainParticipant::ignore_subscription)
     if (data_writer_->listener_ != nullptr && data_writer_->user_datawriter_->is_enabled()
             && data_writer_->user_datawriter_->get_status_mask().is_compatible(
-            ::dds::core::status::StatusMask::publication_matched()))
+                ::dds::core::status::StatusMask::publication_matched()))
     {
         data_writer_->listener_->on_publication_matched(data_writer_->user_datawriter_, info);
     }

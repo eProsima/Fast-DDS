@@ -122,28 +122,28 @@ public:
     /* Set Qos from another class
      * @param qos Reference from a TopicQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).*/
-    RTPS_DllAPI void setQos(
+    RTPS_DllAPI void set_qos(
             const DataWriterQos& qos,
             bool first_time);
 
 
     /* Check if the Qos values are compatible between each other.
      * @return True if correct. */
-    RTPS_DllAPI bool checkQos() const;
+    RTPS_DllAPI bool check_qos() const;
 
 
     /* Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated. */
-    RTPS_DllAPI bool canQosBeUpdated(
+    RTPS_DllAPI bool can_qos_be_updated(
             const DataWriterQos& qos) const;
 
-    RTPS_DllAPI WriterQos changeToWriterQos() const;
+    RTPS_DllAPI WriterQos change_to_writerqos() const;
 
-    RTPS_DllAPI void changeToDataWriterQos(
+    RTPS_DllAPI void change_to_datawriterqos(
             const WriterQos& qos);
 
-    RTPS_DllAPI void copyFromTopicQos(
+    RTPS_DllAPI void copy_from_topicqos(
             const TopicQos& topic_qos);
 
     RTPS_DllAPI std::string search_qos_by_id(

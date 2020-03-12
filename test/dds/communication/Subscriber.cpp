@@ -106,7 +106,7 @@ public:
                         t_qos.topic_attr.topicDataType = type_name;
                         Topic* topic = participant->create_topic(topic_name.c_str(), type_name.c_str(), t_qos);
                         DataReaderQos qos;
-                        qos.changeToDataReaderQos(g_subscriber_attributes.qos);
+                        qos.change_to_datareaderqos(g_subscriber_attributes.qos);
                         g_subscriber->create_datareader(
                             topic,
                             qos,

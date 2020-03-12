@@ -58,7 +58,7 @@ DataReaderImpl::DataReaderImpl(
     , topic_(topic)
     , att_(att)
     , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
-    , rqos_(qos_.changeToReaderQos())
+    , rqos_(qos_.change_to_readerqos())
 #pragma warning (disable : 4355 )
     , history_(topic->get_topic_attributes(),
             type_.get(),
@@ -246,18 +246,18 @@ ReturnCode_t DataReaderImpl::set_qos(
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if (!qos.checkQos())
+    if (!qos.check_qos())
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    else if (!qos_.canQosBeUpdated(qos))
+    else if (!qos_.can_qos_be_updated(qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.setQos(qos, false);
+    qos_.set_qos(qos, false);
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    ReaderQos rqos = qos_.changeToReaderQos();
+    ReaderQos rqos = qos_.change_to_readerqos();
     subscriber_->rtps_participant()->updateReader(reader_, topic_->get_topic_attributes(), rqos);
 
     // Deadline
@@ -426,8 +426,8 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
-	bool matched = false;
-	
+    bool matched = false;
+
     //Update Matched Publications List
     if (info.current_count_change == 1) //MATCHED_MATCHING
     {

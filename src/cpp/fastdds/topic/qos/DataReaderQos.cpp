@@ -25,7 +25,7 @@ using namespace eprosima::fastdds::dds;
 const DataReaderQos eprosima::fastdds::dds::DDS_DATAREADER_QOS_DEFAULT;
 
 
-void DataReaderQos::setQos(
+void DataReaderQos::set_qos(
         const DataReaderQos& qos,
         bool first_time)
 {
@@ -112,7 +112,7 @@ void DataReaderQos::setQos(
     }
 }
 
-bool DataReaderQos::checkQos() const
+bool DataReaderQos::check_qos() const
 {
     if (durability.kind == PERSISTENT_DURABILITY_QOS)
     {
@@ -132,7 +132,7 @@ bool DataReaderQos::checkQos() const
     return true;
 }
 
-bool DataReaderQos::canQosBeUpdated(
+bool DataReaderQos::can_qos_be_updated(
         const DataReaderQos& qos) const
 {
     bool updatable = true;
@@ -179,7 +179,7 @@ bool DataReaderQos::canQosBeUpdated(
 }
 
 //TODO: Remove below methods when the rtps classes use DataReaderQos instead of ReaderQos
-ReaderQos DataReaderQos::changeToReaderQos() const
+ReaderQos DataReaderQos::change_to_readerqos() const
 {
     ReaderQos rqos;
     rqos.m_durability = this->durability;
@@ -197,7 +197,7 @@ ReaderQos DataReaderQos::changeToReaderQos() const
     return rqos;
 }
 
-void DataReaderQos::changeToDataReaderQos(
+void DataReaderQos::change_to_datareaderqos(
         const ReaderQos& qos)
 {
     this->durability = qos.m_durability;
@@ -214,7 +214,7 @@ void DataReaderQos::changeToDataReaderQos(
     this->disable_positive_ACKs = qos.m_disablePositiveACKs;
 }
 
-void DataReaderQos::copyFromTopicQos(
+void DataReaderQos::copy_from_topicqos(
         const TopicQos& topic_qos)
 {
     this->durability = topic_qos.durability;

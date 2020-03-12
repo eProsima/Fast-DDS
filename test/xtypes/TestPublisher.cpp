@@ -146,7 +146,7 @@ bool TestPublisher::init(
 
 
         DataWriterQos wqos;
-        wqos.changeToDataWriterQos(p_qos.pub_attr.qos);
+        wqos.change_to_datawriterqos(p_qos.pub_attr.qos);
         writer_ = mp_publisher->create_datawriter(topic_, wqos, &m_pubListener);
 
         m_Data = m_Type.create_data();

@@ -145,7 +145,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         sub_qos.sub_attr.topic = subscriber_->topic_;
         sub_qos.sub_attr.topic.topicName = topic;
         tqos.topic_attr = sub_qos.sub_attr.topic;
-        sub_qos.sub_attr.qos = subscriber_->qos_.changeToReaderQos();
+        sub_qos.sub_attr.qos = subscriber_->qos_.change_to_readerqos();
 
         subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
             sub_qos, nullptr);

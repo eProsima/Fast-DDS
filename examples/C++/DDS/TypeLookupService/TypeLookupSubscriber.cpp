@@ -167,7 +167,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     sub_qos.sub_attr = subscriber_->att_;
                     sub_qos.sub_attr.topic = subscriber_->topic_att_;
                     sub_qos.sub_attr.topic.topicName = topic_name;
-                    sub_qos.sub_attr.qos = subscriber_->qos_.changeToReaderQos();
+                    sub_qos.sub_attr.qos = subscriber_->qos_.change_to_readerqos();
 
                     subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
                         sub_qos, nullptr);

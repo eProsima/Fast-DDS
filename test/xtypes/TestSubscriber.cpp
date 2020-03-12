@@ -140,7 +140,7 @@ bool TestSubscriber::init(
         TopicQos t_qos = TOPIC_QOS_DEFAULT;
         t_qos.topic_attr = subQos.sub_attr.topic;
         Topic* topic = mp_participant->create_topic(topicName, subQos.sub_attr.topic.topicDataType.c_str(), t_qos);
-        reader_qos.changeToDataReaderQos(subQos.sub_attr.qos);
+        reader_qos.change_to_datareaderqos(subQos.sub_attr.qos);
         reader_ = mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
         m_Data = m_Type.create_data();
     }
@@ -309,7 +309,7 @@ DataReader* TestSubscriber::create_datareader()
         SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
         sub_qos.sub_attr.topic = topic_att;
         qos.topic_attr = sub_qos.sub_attr.topic;
-        sub_qos.sub_attr.qos = reader_qos.changeToReaderQos();
+        sub_qos.sub_attr.qos = reader_qos.change_to_readerqos();
 
         mp_subscriber = mp_participant->create_subscriber(sub_qos, nullptr);
 
