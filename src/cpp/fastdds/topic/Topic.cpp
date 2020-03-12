@@ -110,6 +110,25 @@ fastrtps::rtps::GUID_t Topic::get_guid() const
     return fastrtps::rtps::iHandle2GUID(get_instance_handle());
 }
 
+ReturnCode_t Topic::get_inconsistent_topic_status(
+        InconsistentTopicStatus& status)
+{
+    return impl_->get_inconsistent_topic_status(status);
+}
+
+void Topic::new_inconsistent_topic(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+
+    impl_->new_inconsistent_topic(handle);
+}
+
+bool Topic::is_entity_already_checked(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->is_entity_already_checked(handle);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

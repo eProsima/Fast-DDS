@@ -114,6 +114,20 @@ bool HelloWorldPublisher::init(
         }
     });
 
+    topic_->get_statuscondition()->set_handler([this]() -> void {
+        StatusMask triggered_status = topic_->get_status_changes();
+        if (triggered_status.is_active(StatusMask::inconsistent_topic()))
+        {
+            eprosima::fastdds::dds::InconsistentTopicStatus status;
+            topic_->get_inconsistent_topic_status(
+                status);
+            if (status.total_count_change == 1)
+            {
+                std::cout << "The discovered topic is inconsistent with topic " << topic_->get_instance_handle() << std::endl;
+            }
+        }
+    });
+
     return true;
 }
 

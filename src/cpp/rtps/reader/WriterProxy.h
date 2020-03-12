@@ -321,6 +321,11 @@ public:
         return is_on_same_process_;
     }
 
+    SequenceNumber_t get_low_mark()
+    {
+        return changes_from_writer_low_mark_;
+    }
+
 private:
 
     /**
@@ -352,7 +357,7 @@ private:
     bool is_alive_;
 
     using pool_allocator_t =
-                    foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+            foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
     //! Memory pool allocator for changes_received_
     pool_allocator_t changes_pool_;

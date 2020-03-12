@@ -242,6 +242,11 @@ void RTPSReader::sample_rejected_status_read()
     sample_rejected_status_.total_count_change = 0;
 }
 
+void RTPSReader::sample_lost_status_read()
+{
+    sample_lost_status_.total_count_change = 0;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

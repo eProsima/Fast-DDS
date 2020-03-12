@@ -285,6 +285,9 @@ ReturnCode_t SubscriberImpl::get_datareaders(
             readers.push_back(dr->user_datareader_);
         }
     }
+
+    user_subscriber_->get_statuscondition()->set_status_as_read(::dds::core::status::StatusMask::data_on_readers());
+
     return ReturnCode_t::RETCODE_OK;
 }
 

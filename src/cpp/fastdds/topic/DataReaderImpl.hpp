@@ -179,10 +179,8 @@ public:
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status) const;
 
-    /* TODO
-       bool get_sample_lost_status(
-            fastrtps::SampleLostStatus& status) const;
-     */
+    ReturnCode_t get_sample_lost_status(
+            SampleLostStatus& status) const;
 
     ReturnCode_t get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
@@ -266,6 +264,10 @@ public:
         void on_sample_rejected(
                 fastrtps::rtps::RTPSReader* reader,
                 const SampleRejectedStatus& status) override;
+
+        void on_sample_lost(
+                fastrtps::rtps::RTPSReader* reader,
+                const SampleLostStatus& status) override;
 
         DataReaderImpl* data_reader_;
     } reader_listener_;

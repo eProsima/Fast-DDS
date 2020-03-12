@@ -74,7 +74,6 @@ bool HelloWorldSubscriber::init(
         {
             data_available_handler(reader);
         }
-        subscriber_->get_statuscondition()->set_status_as_read(StatusMask::data_on_readers());
     });
 
     waitset_.attach_condition(subscriber_->get_statuscondition());
@@ -124,6 +123,23 @@ bool HelloWorldSubscriber::init(
 
     waitset_.attach_condition(reader_->get_statuscondition());
 
+    topic_ = reader_->get_topic();
+
+    topic_->get_statuscondition()->set_handler([this]() -> void {
+        StatusMask triggered_status = topic_->get_status_changes();
+        if (triggered_status.is_active(StatusMask::inconsistent_topic()))
+        {
+            eprosima::fastdds::dds::InconsistentTopicStatus status;
+            topic_->get_inconsistent_topic_status(status);
+            if (status.total_count_change == 1)
+            {
+                std::cout << "The discovered topic is inconsistent with topic " << topic_->get_instance_handle() << std::endl;
+            }
+        }
+    });
+
+    waitset_.attach_condition(topic_->get_statuscondition());
+
     return true;
 }
 
@@ -163,7 +179,6 @@ void HelloWorldSubscriber::data_available_handler(
                 std::endl;
         }
     }
-    reader->get_statuscondition()->set_status_as_read(StatusMask::data_available());
 }
 
 void HelloWorldSubscriber::liveliness_changed_handler()

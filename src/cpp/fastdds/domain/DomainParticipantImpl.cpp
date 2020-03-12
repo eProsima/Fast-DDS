@@ -812,6 +812,13 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
     }
 
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
+    if (topic != nullptr && strcmp(topic->get_type_name(), info.info.typeName().c_str()) != 0
+            && !topic->is_entity_already_checked(info.info.key()))
+    {
+        topic->new_inconsistent_topic(info.info.key());
+        topic->get_statuscondition()->notify_status_change(::dds::core::status::StatusMask::inconsistent_topic());
+        return;
+    }
 
     if (info.status == fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
     {
@@ -863,6 +870,13 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         qos.topic_attr.topicDataType = info.info.typeName();
         qos.topic_attr.topicKind = info.info.topicKind();
         topic = participant_->create_topic(info.info.topicName().c_str(), info.info.typeName().c_str(), qos);
+    }
+    if (topic != nullptr && strcmp(topic->get_type_name(), info.info.typeName().c_str()) != 0
+            && !topic->is_entity_already_checked(info.info.key()))
+    {
+        topic->new_inconsistent_topic(info.info.key());
+        topic->get_statuscondition()->notify_status_change(::dds::core::status::StatusMask::inconsistent_topic());
+        return;
     }
 
     if (info.status == fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)

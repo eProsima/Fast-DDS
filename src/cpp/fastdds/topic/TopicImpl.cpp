@@ -101,6 +101,43 @@ std::vector<DataReader*>* TopicImpl::get_readers()
     return &readers_;
 }
 
+ReturnCode_t TopicImpl::get_inconsistent_topic_status(
+        InconsistentTopicStatus& status)
+{
+    status = status_;
+    status_.total_count_change = 0;
+    user_topic_->get_statuscondition()->set_status_as_read(::dds::core::status::StatusMask::inconsistent_topic());
+    return ReturnCode_t::RETCODE_OK;
+}
+
+void TopicImpl::new_inconsistent_topic(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    status_.total_count++;
+    status_.total_count_change++;
+    entity_with_inconsistent_topic_.push_back(handle);
+
+    if (listener_ != nullptr)
+    {
+        listener_->on_inconsistent_topic(user_topic_, status_);
+        if (!user_topic_->get_statuscondition()->is_attached())
+        {
+            status_.total_count_change = 0;
+        }
+    }
+}
+
+bool TopicImpl::is_entity_already_checked(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    auto it = std::find(entity_with_inconsistent_topic_.begin(), entity_with_inconsistent_topic_.end(), handle);
+    if (it != entity_with_inconsistent_topic_.end())
+    {
+        return true;
+    }
+    return false;
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

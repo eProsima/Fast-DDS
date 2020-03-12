@@ -79,6 +79,15 @@ public:
 
     RTPS_DllAPI std::vector<DataReader*>* get_readers();
 
+    RTPS_DllAPI ReturnCode_t get_inconsistent_topic_status(
+            InconsistentTopicStatus& status);
+
+    void new_inconsistent_topic(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    bool is_entity_already_checked(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -96,6 +105,8 @@ private:
 
     std::vector<DataReader*> readers_;
     std::vector<DataWriter*> writers_;
+
+    std::vector<fastrtps::rtps::InstanceHandle_t> entity_with_inconsistent_topic_;
 };
 
 } // namespace eprosima

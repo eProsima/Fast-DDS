@@ -89,6 +89,9 @@ public:
             TopicListener* a_listener,
             const ::dds::core::status::StatusMask& mask);
 
+    RTPS_DllAPI fastrtps::types::ReturnCode_t get_inconsistent_topic_status(
+            InconsistentTopicStatus& status);
+
     RTPS_DllAPI DomainParticipant* get_participant() const;
 
     RTPS_DllAPI std::vector<DataWriter*>* get_writers();
@@ -99,6 +102,12 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     RTPS_DllAPI fastrtps::rtps::GUID_t get_guid() const;
+
+    void new_inconsistent_topic(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    bool is_entity_already_checked(
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
 private:
 

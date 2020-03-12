@@ -200,13 +200,11 @@ ReturnCode_t DataReader::get_requested_incompatible_qos_status(
     return impl_->get_requested_incompatible_qos_status(status);
 }
 
-/* TODO
-   bool DataReader::get_sample_lost_status(
+ReturnCode_t DataReader::get_sample_lost_status(
         SampleLostStatus& status) const
-   {
-    return impl_->get...;
-   }
- */
+{
+    return impl_->get_sample_lost_status(status);
+}
 
 ReturnCode_t DataReader::get_sample_rejected_status(
         SampleRejectedStatus& status) const

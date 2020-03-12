@@ -227,6 +227,7 @@ ReturnCode_t DataReaderImpl::take_next_sample(
         info->no_writers_generation_count = 0;
         return ReturnCode_t::RETCODE_OK;
     }
+    user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::data_available());
     return ReturnCode_t::RETCODE_ERROR;
 }
 
@@ -631,6 +632,46 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
     }
 }
 
+void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
+        RTPSReader* reader,
+        const SampleLostStatus& status)
+{
+    if (data_reader_->user_datareader_->is_enabled() &&
+            data_reader_->user_datareader_->get_status_mask().is_compatible(StatusMask::sample_lost()))
+    {
+        if (data_reader_->listener_ != nullptr)
+        {
+            data_reader_->listener_->on_sample_lost(data_reader_->user_datareader_, status);
+            if (!data_reader_->user_datareader_->get_statuscondition()->is_attached())
+            {
+                reader->sample_lost_status_read();
+            }
+        }
+        if (data_reader_->user_datareader_->get_statuscondition()->is_attached())
+        {
+            data_reader_->user_datareader_->get_statuscondition()->notify_status_change(StatusMask::sample_lost());
+        }
+    }
+    else if (data_reader_->subscriber_->get_participant().is_enabled() &&
+            data_reader_->subscriber_->get_participant().get_status_mask().is_compatible(StatusMask::sample_lost()))
+    {
+        if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
+        {
+            data_reader_->subscriber_->get_participant().get_listener()->on_sample_lost(data_reader_->user_datareader_,
+                    status);
+            if (!data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+            {
+                reader->sample_lost_status_read();
+            }
+        }
+        if (data_reader_->subscriber_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_reader_->subscriber_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::sample_lost());
+        }
+    }
+}
+
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
@@ -898,24 +939,15 @@ ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool DataReaderImpl::get_sample_lost_status(
+ReturnCode_t DataReaderImpl::get_sample_lost_status(
         SampleLostStatus& status) const
-   {
-    if (data_reader_->listener_ != nullptr && (data_reader_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->mask_ == ::dds::core::status::StatusMask::sample_lost()))
-    {
-        data_reader_->listener_->on_sample_lost(data_reader_->user_datareader_, status);
-    }
+{
+    status = reader_->sample_lost_status_;
+    reader_->sample_lost_status_read();
+    user_datareader_->get_statuscondition()->set_status_as_read(StatusMask::sample_lost());
+    return ReturnCode_t::RETCODE_OK;
 
-    if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::sample_lost())
-    {
-        data_reader_->subscriber_->subscriber_listener_.on_sample_lost(data_reader_->user_datareader_,
-                status);
-    }
-   }
- */
+}
 
 ReturnCode_t DataReaderImpl::get_sample_rejected_status(
         SampleRejectedStatus& status) const

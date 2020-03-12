@@ -196,10 +196,8 @@ public:
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status) const;
 
-    /* TODO
-       bool get_sample_lost_status(
-            fastrtps::SampleLostStatus& status) const;
-     */
+    ReturnCode_t get_sample_lost_status(
+            SampleLostStatus& status) const;
 
     ReturnCode_t get_sample_rejected_status(
             SampleRejectedStatus& status) const;

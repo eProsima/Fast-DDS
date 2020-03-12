@@ -26,6 +26,7 @@
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
@@ -258,11 +259,15 @@ public:
 
     fastdds::dds::SampleRejectedStatus sample_rejected_status_;
 
+    fastdds::dds::SampleLostStatus sample_lost_status_;
+
     void subscription_matched_status_read();
 
     void requested_incompatible_qos_status_read();
 
     void sample_rejected_status_read();
+
+    void sample_lost_status_read();
 
     void liveliness_changed_status_read();
 

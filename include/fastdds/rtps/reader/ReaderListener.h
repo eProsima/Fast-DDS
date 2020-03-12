@@ -25,6 +25,7 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 
 #include <mutex>
 
@@ -128,6 +129,20 @@ public:
         (void)reader;
         (void)status;
     }
+
+    /**
+     * Virtual method to be called when a sample is lost
+     * @param sub Reader
+     * @param status The sample lost status
+     */
+    virtual void on_sample_lost(
+            RTPSReader* reader,
+            const fastdds::dds::SampleLostStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
+
 };
 
 //Namespace enders
