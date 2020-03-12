@@ -1115,77 +1115,9 @@ void StatefulWriter::update_reader_info(
 
     // Check if readers have locators in common
     size_t n_readers = matched_readers_.size();
-    size_t first_remote = 0;
-    readers_dont_share_locators_ = true;
     there_are_remote_readers_ = false;
 
-    size_t i;
-    for (i = 0; (i < n_readers) && readers_dont_share_locators_; ++i)
-    {
-        ReaderProxy* reader = matched_readers_.at(i);
-        if (!reader->is_local_reader())
-        {
-            if (!there_are_remote_readers_)
-            {
-                there_are_remote_readers_ = true;
-                first_remote = i;
-            }
-            else
-            {
-                // Multicast locators will often match, so we check them first
-                for (const Locator_t& loc : reader->locator_selector_entry()->multicast)
-                {
-                    for (size_t j = first_remote; j < i; ++j)
-                    {
-                        ReaderProxy* other_reader = matched_readers_.at(j);
-                        if (!other_reader->is_local_reader())
-                        {
-                            const ResourceLimitedVector<Locator_t>& other_locs =
-                                other_reader->locator_selector_entry()->multicast;
-                            if (std::find(other_locs.begin(), other_locs.end(), loc) != other_locs.end())
-                            {
-                                readers_dont_share_locators_ = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!readers_dont_share_locators_)
-                    {
-                        break;
-                    }
-                }
-
-                if (readers_dont_share_locators_)
-                {
-                    for (const Locator_t& loc : reader->locator_selector_entry()->unicast)
-                    {
-                        for (size_t j = first_remote; j < i; ++j)
-                        {
-                            ReaderProxy* other_reader = matched_readers_.at(j);
-                            if (!other_reader->is_local_reader())
-                            {
-                                const ResourceLimitedVector<Locator_t>& other_locs =
-                                    other_reader->locator_selector_entry()->unicast;
-                                if (std::find(other_locs.begin(), other_locs.end(), loc) != other_locs.end())
-                                {
-                                    readers_dont_share_locators_ = false;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (!readers_dont_share_locators_)
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    for (; i < n_readers && !there_are_remote_readers_; ++i)
+    for (size_t i = 0; i < n_readers && !there_are_remote_readers_; ++i)
     {
         ReaderProxy* reader = matched_readers_.at(i);
         if (!reader->is_local_reader())
