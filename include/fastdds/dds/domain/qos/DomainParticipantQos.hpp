@@ -22,6 +22,7 @@
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastrtps/attributes/ParticipantAttributes.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -35,18 +36,23 @@ namespace dds {
 class DomainParticipantQos
 {
 public:
+
     RTPS_DllAPI DomainParticipantQos()
-    {}
+    {
+    }
 
     RTPS_DllAPI virtual ~DomainParticipantQos()
-    {}
+    {
+    }
 
     bool operator ==(
-        const DomainParticipantQos& b) const
+            const DomainParticipantQos& b) const
     {
         return (this->user_data == b.user_data) &&
                (this->entity_factory == b.entity_factory);
     }
+
+    fastrtps::ParticipantAttributes part_attr;
 
     //!UserData Qos, NOT implemented in the library.
     UserDataQosPolicy user_data;

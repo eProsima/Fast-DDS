@@ -70,9 +70,10 @@ bool HelloWorldPublisher::init()
     array->set_uint32_value(100, array->get_array_index({4, 1}));
     m_Hello->return_loaned_value(array);
 
-    eprosima::fastrtps::ParticipantAttributes PParam;
-    PParam.rtps.setName("Participant_pub");
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.setName("Participant_pub");
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+        part_qos.part_attr.rtps.builtin.domainId, part_qos);
 
     if (mp_participant == nullptr)
     {
@@ -84,13 +85,12 @@ bool HelloWorldPublisher::init()
 
     //CREATE THE PUBLISHER
     eprosima::fastdds::dds::PublisherQos p_qos = PUBLISHER_QOS_DEFAULT;
-    eprosima::fastrtps::PublisherAttributes Wparam;
-    Wparam.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
-    Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "DDSDynHelloWorldTopic";
-    Wparam.topic.auto_fill_type_object = true; // Share the type with readers.
-    Wparam.topic.auto_fill_type_information = false;
-    p_qos.pub_attr = Wparam;
+    p_qos.pub_attr.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
+    p_qos.pub_attr.topic.topicDataType = "HelloWorld";
+    p_qos.pub_attr.topic.topicName = "DDSDynHelloWorldTopic";
+    p_qos.pub_attr.topic.auto_fill_type_object = true; // Share the type with readers.
+    p_qos.pub_attr.topic.auto_fill_type_information = false;
+
     mp_publisher = mp_participant->create_publisher(p_qos, nullptr);
 
     if (mp_publisher == nullptr)
@@ -100,9 +100,10 @@ bool HelloWorldPublisher::init()
 
     //CREATE TOPIC
     TopicQos topicQos = TOPIC_QOS_DEFAULT;
-    topicQos.topic_attr = Wparam.topic;
+    topicQos.topic_attr = p_qos.pub_attr.topic;
 
-    topic_ = mp_participant->create_topic(Wparam.topic.topicName.c_str(), Wparam.topic.topicDataType.c_str(), topicQos);
+    topic_ = mp_participant->create_topic(
+        p_qos.pub_attr.topic.topicName.c_str(), p_qos.pub_attr.topic.topicDataType.c_str(), topicQos);
 
     if (topic_ == nullptr)
     {

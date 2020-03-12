@@ -43,10 +43,12 @@ bool HelloWorldPublisher::init(
 {
     hello_.index(0);
     hello_.message("HelloWorld");
-    eprosima::fastrtps::ParticipantAttributes participant_att;
-    participant_att.rtps.builtin.domainId = domain_id;
-    participant_att.rtps.setName("Participant_pub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
+
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.builtin.domainId = domain_id;
+    part_qos.part_attr.rtps.setName("Participant_pub");
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(
+        part_qos.part_attr.rtps.builtin.domainId, part_qos, &listener_);
 
     if (participant_ == nullptr)
     {
@@ -58,10 +60,9 @@ bool HelloWorldPublisher::init(
 
     //CREATE THE PUBLISHER
     PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
-    eprosima::fastrtps::PublisherAttributes pub_att;
-    pub_att.topic.topicDataType = "HelloWorld";
-    pub_att.topic.topicName = "HelloWorldTopic";
-    pub_qos.pub_attr = pub_att;
+    pub_qos.pub_attr.topic.topicDataType = "HelloWorld";
+    pub_qos.pub_attr.topic.topicName = "HelloWorldTopic";
+
     publisher_ = participant_->create_publisher(pub_qos, nullptr);
 
     DataWriterQos qos;
@@ -74,9 +75,10 @@ bool HelloWorldPublisher::init(
 
     //CREATE TOPIC
     TopicQos topicQos = TOPIC_QOS_DEFAULT;
-    topicQos.topic_attr = pub_att.topic;
+    topicQos.topic_attr = pub_qos.pub_attr.topic;
 
-    topic_ = participant_->create_topic(pub_att.topic.topicName.c_str(), pub_att.topic.topicDataType.c_str(), topicQos);
+    topic_ = participant_->create_topic(
+        pub_qos.pub_attr.topic.topicName.c_str(), pub_qos.pub_attr.topic.topicDataType.c_str(), topicQos);
 
     if (topic_ == nullptr)
     {

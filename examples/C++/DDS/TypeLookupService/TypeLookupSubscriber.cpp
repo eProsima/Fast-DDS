@@ -40,19 +40,20 @@ TypeLookupSubscriber::TypeLookupSubscriber()
 
 bool TypeLookupSubscriber::init()
 {
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.typelookup_config.use_client = true;
-    PParam.rtps.builtin.use_WriterLivelinessProtocol = false;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.setName("Participant_sub");
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
+    part_qos.part_attr.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    part_qos.part_attr.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    part_qos.part_attr.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_client = true;
+    part_qos.part_attr.rtps.builtin.use_WriterLivelinessProtocol = false;
+    part_qos.part_attr.rtps.builtin.domainId = 0;
+    part_qos.part_attr.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    part_qos.part_attr.rtps.setName("Participant_sub");
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+            part_qos.part_attr.rtps.builtin.domainId, part_qos, &m_listener);
         if (mp_participant == nullptr)
         {
             return false;
@@ -163,12 +164,11 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 if (subscriber_->mp_subscriber == nullptr)
                 {
                     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-                    SubscriberAttributes Rparam;
-                    Rparam = subscriber_->att_;
-                    Rparam.topic = subscriber_->topic_att_;
-                    Rparam.topic.topicName = topic_name;
-                    Rparam.qos = subscriber_->qos_.changeToReaderQos();
-                    sub_qos.sub_attr = Rparam;
+                    sub_qos.sub_attr = subscriber_->att_;
+                    sub_qos.sub_attr.topic = subscriber_->topic_att_;
+                    sub_qos.sub_attr.topic.topicName = topic_name;
+                    sub_qos.sub_attr.qos = subscriber_->qos_.changeToReaderQos();
+
                     subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
                         sub_qos, nullptr);
 

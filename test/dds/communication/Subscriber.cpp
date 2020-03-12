@@ -325,13 +325,13 @@ int main(
        }
      */
 
-    ParticipantAttributes participant_attributes;
-    DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_attributes);
-    participant_attributes.rtps.builtin.typelookup_config.use_client = true;
-    participant_attributes.rtps.builtin.domainId = seed % 230;
+    DomainParticipantQos part_qos;
+    DomainParticipantFactory::get_instance()->get_default_participant_qos(part_qos);
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_client = true;
+    part_qos.part_attr.rtps.builtin.domainId = seed % 230;
     ParListener participant_listener;
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        part_qos.part_attr.rtps.builtin.domainId, part_qos, &participant_listener);
 
     if (participant == nullptr)
     {

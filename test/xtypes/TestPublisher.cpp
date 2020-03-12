@@ -72,17 +72,18 @@ bool TestPublisher::init(
     m_Type = type;
     using_typelookup_ = use_typelookup;
 
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = domain;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
-    PParam.rtps.builtin.typelookup_config.use_client = using_typelookup_;
-    PParam.rtps.builtin.typelookup_config.use_server = using_typelookup_;
-    PParam.rtps.setName(m_Name.c_str());
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.builtin.domainId = domain;
+    part_qos.part_attr.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    part_qos.part_attr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_client = using_typelookup_;
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_server = using_typelookup_;
+    part_qos.part_attr.rtps.setName(m_Name.c_str());
 
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+            part_qos.part_attr.rtps.builtin.domainId, part_qos, &part_listener_);
 
         if (mp_participant == nullptr)
         {
@@ -92,11 +93,10 @@ bool TestPublisher::init(
 
     // CREATE THE PUBLISHER
     PublisherQos p_qos = PUBLISHER_QOS_DEFAULT;
-    PublisherAttributes Wparam;
-    Wparam.topic.auto_fill_type_object = false;
-    Wparam.topic.auto_fill_type_information = false;
-    Wparam.topic.topicKind = topic_kind;
-    Wparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
+    p_qos.pub_attr.topic.auto_fill_type_object = false;
+    p_qos.pub_attr.topic.auto_fill_type_information = false;
+    p_qos.pub_attr.topic.topicKind = topic_kind;
+    p_qos.pub_attr.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
 
     //REGISTER THE TYPE
     if (m_Type.get() != nullptr)
@@ -106,23 +106,23 @@ bool TestPublisher::init(
 
     std::ostringstream t;
     t << topicName << "_" << asio::ip::host_name() << "_" << domain;
-    Wparam.topic.topicName = t.str();
+    p_qos.pub_attr.topic.topicName = t.str();
     if (type_object != nullptr)
     {
-        Wparam.topic.type = *type_object;
+        p_qos.pub_attr.topic.type = *type_object;
     }
     if (type_identifier != nullptr)
     {
-        Wparam.topic.type_id = *type_identifier;
+        p_qos.pub_attr.topic.type_id = *type_identifier;
     }
     if (type_info != nullptr)
     {
-        Wparam.topic.type_information = *type_info;
+        p_qos.pub_attr.topic.type_information = *type_info;
     }
 
     if (dataRepresentationQos != nullptr)
     {
-        Wparam.qos.representation = *dataRepresentationQos;
+        p_qos.pub_attr.qos.representation = *dataRepresentationQos;
     }
     // Wparam.topic.dataRepresentationQos = XCDR_DATA_REPRESENTATION
     // Wparam.topic.dataRepresentationQos = XML_DATA_REPRESENTATION
@@ -130,7 +130,6 @@ bool TestPublisher::init(
 
     if (m_Type.get() != nullptr)
     {
-        p_qos.pub_attr = Wparam;
         mp_publisher = mp_participant->create_publisher(p_qos, nullptr);
         if (mp_publisher == nullptr)
         {
@@ -138,8 +137,8 @@ bool TestPublisher::init(
         }
 
         TopicQos tqos = TOPIC_QOS_DEFAULT;
-        tqos.topic_attr = Wparam.topic;
-        topic_ = mp_participant->create_topic(topicName.c_str(), Wparam.topic.topicDataType.c_str(), tqos);
+        tqos.topic_attr = p_qos.pub_attr.topic;
+        topic_ = mp_participant->create_topic(topicName.c_str(), p_qos.pub_attr.topic.topicDataType.c_str(), tqos);
         if (topic_ == nullptr)
         {
             return false;
@@ -147,7 +146,7 @@ bool TestPublisher::init(
 
 
         DataWriterQos wqos;
-        wqos.changeToDataWriterQos(Wparam.qos);
+        wqos.changeToDataWriterQos(p_qos.pub_attr.qos);
         writer_ = mp_publisher->create_datawriter(topic_, wqos, &m_pubListener);
 
         m_Data = m_Type.create_data();

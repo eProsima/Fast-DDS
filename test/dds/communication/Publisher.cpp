@@ -239,13 +239,13 @@ int main(
 
     xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
 
-    ParticipantAttributes participant_attributes;
-    DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_attributes);
-    participant_attributes.rtps.builtin.typelookup_config.use_server = true;
-    participant_attributes.rtps.builtin.domainId = seed % 230;
+    DomainParticipantQos part_qos;
+    DomainParticipantFactory::get_instance()->get_default_participant_qos(part_qos);
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_server = true;
+    part_qos.part_attr.rtps.builtin.domainId = seed % 230;
     ParListener participant_listener(exit_on_lost_liveliness);
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        part_qos.part_attr.rtps.builtin.domainId, part_qos, &participant_listener);
 
     if (participant == nullptr)
     {
@@ -264,15 +264,12 @@ int main(
 
     //CREATE THE PUBLISHER
     PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
-    PublisherAttributes publisher_attributes;
-    //Domain::getDefaultPublisherAttributes(publisher_attributes);
-    publisher_attributes.topic.topicKind = NO_KEY;
-    publisher_attributes.topic.topicDataType = type.get_type_name();
-    publisher_attributes.topic.topicName = topic.str();
-    publisher_attributes.qos.m_liveliness.lease_duration = 3;
-    publisher_attributes.qos.m_liveliness.announcement_period = 1;
-    publisher_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
-    pub_qos.pub_attr = publisher_attributes;
+    pub_qos.pub_attr.topic.topicKind = NO_KEY;
+    pub_qos.pub_attr.topic.topicDataType = type.get_type_name();
+    pub_qos.pub_attr.topic.topicName = topic.str();
+    pub_qos.pub_attr.qos.m_liveliness.lease_duration = 3;
+    pub_qos.pub_attr.qos.m_liveliness.announcement_period = 1;
+    pub_qos.pub_attr.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
     Publisher* publisher = participant->create_publisher(pub_qos, &listener);
     if (publisher == nullptr)
@@ -282,11 +279,11 @@ int main(
     }
 
     TopicQos tqos = TOPIC_QOS_DEFAULT;
-    tqos.topic_attr = publisher_attributes.topic;
+    tqos.topic_attr = pub_qos.pub_attr.topic;
     Topic* mp_topic = participant->create_topic(topic.str(), type.get_type_name(), tqos);
 
     DataWriterQos qos;
-    qos.changeToDataWriterQos(publisher_attributes.qos);
+    qos.changeToDataWriterQos(pub_qos.pub_attr.qos);
     DataWriter* writer = publisher->create_datawriter(mp_topic, qos, nullptr);
     if (writer == nullptr)
     {

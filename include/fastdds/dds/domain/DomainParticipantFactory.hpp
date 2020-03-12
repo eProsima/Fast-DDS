@@ -69,20 +69,6 @@ public:
             DomainParticipantListener* listen = nullptr);
 
     /**
-     * TODO: Legacy method. Remove once ParticipantAttributes is totally replaced by DomainParticipantQos and
-     * StatusMask implemented.
-     * Create a Participant.
-     * @param att Participant Attributes.
-     * @param listen ParticipantListener Pointer.
-     * @return Participant pointer. (nullptr if not created.)
-     */
-    RTPS_DllAPI DomainParticipant* create_participant(
-            const fastrtps::ParticipantAttributes& att,
-            DomainParticipantListener* listen = nullptr,
-            const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
-
-    /**
      * @brief create_participant
      * @param did
      * @param qos

@@ -56,17 +56,18 @@ bool TypeLookupPublisher::init()
     inner->set_byte_value(10, 0);
     m_Hello->return_loaned_value(inner);
 
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.typelookup_config.use_server = true;
-    PParam.rtps.builtin.use_WriterLivelinessProtocol = false;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.setName("Participant_pub");
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
+    part_qos.part_attr.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    part_qos.part_attr.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    part_qos.part_attr.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_server = true;
+    part_qos.part_attr.rtps.builtin.use_WriterLivelinessProtocol = false;
+    part_qos.part_attr.rtps.builtin.domainId = 0;
+    part_qos.part_attr.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    part_qos.part_attr.rtps.setName("Participant_pub");
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+        part_qos.part_attr.rtps.builtin.domainId, part_qos);
 
     if (mp_participant == nullptr)
     {
@@ -78,19 +79,18 @@ bool TypeLookupPublisher::init()
 
     //CREATE THE PUBLISHER
     PublisherQos p_qos = PUBLISHER_QOS_DEFAULT;
-    PublisherAttributes Wparam;
-    Wparam.topic.topicKind = NO_KEY;
-    Wparam.topic.topicDataType = "TypeLookup";
-    Wparam.topic.topicName = "TypeLookupTopic";
-    Wparam.topic.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 30;
-    Wparam.topic.resourceLimitsQos.max_samples = 50;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Wparam.topic.auto_fill_type_object = false;
-    Wparam.topic.auto_fill_type_information = true; // Share the type with readers.
-    Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
-    p_qos.pub_attr = Wparam;
+    p_qos.pub_attr.topic.topicKind = NO_KEY;
+    p_qos.pub_attr.topic.topicDataType = "TypeLookup";
+    p_qos.pub_attr.topic.topicName = "TypeLookupTopic";
+    p_qos.pub_attr.topic.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    p_qos.pub_attr.topic.historyQos.depth = 30;
+    p_qos.pub_attr.topic.resourceLimitsQos.max_samples = 50;
+    p_qos.pub_attr.topic.resourceLimitsQos.allocated_samples = 20;
+    p_qos.pub_attr.topic.auto_fill_type_object = false;
+    p_qos.pub_attr.topic.auto_fill_type_information = true; // Share the type with readers.
+    p_qos.pub_attr.times.heartbeatPeriod.seconds = 2;
+    p_qos.pub_attr.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
+
     mp_publisher = mp_participant->create_publisher(p_qos, nullptr);
 
     if (mp_publisher == nullptr)
@@ -100,7 +100,7 @@ bool TypeLookupPublisher::init()
 
     //CREATE TOPIC
     TopicQos topicQos = TOPIC_QOS_DEFAULT;
-    topicQos.topic_attr = Wparam.topic;
+    topicQos.topic_attr = p_qos.pub_attr.topic;
 
     topic_ = mp_participant->create_topic("TypeLookupTopic", "TypeLookup", topicQos);
 

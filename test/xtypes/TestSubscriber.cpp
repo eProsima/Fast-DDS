@@ -71,17 +71,18 @@ bool TestSubscriber::init(
     m_Name = name;
     m_Type = type;
     using_typelookup_ = use_typelookup;
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = domain;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
-    PParam.rtps.builtin.typelookup_config.use_client = using_typelookup_;
-    PParam.rtps.builtin.typelookup_config.use_server = using_typelookup_;
-    PParam.rtps.setName(m_Name.c_str());
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.builtin.domainId = domain;
+    part_qos.part_attr.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    part_qos.part_attr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_client = using_typelookup_;
+    part_qos.part_attr.rtps.builtin.typelookup_config.use_server = using_typelookup_;
+    part_qos.part_attr.rtps.setName(m_Name.c_str());
 
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+            part_qos.part_attr.rtps.builtin.domainId, part_qos, &part_listener_);
         if (mp_participant == nullptr)
         {
             return false;
@@ -90,11 +91,10 @@ bool TestSubscriber::init(
 
     //CREATE THE SUBSCRIBER
     SubscriberQos subQos = SUBSCRIBER_QOS_DEFAULT;
-    SubscriberAttributes Rparam;
-    Rparam.topic.topicKind = topic_kind;
-    Rparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
-    Rparam.topic.auto_fill_type_object = false;
-    Rparam.topic.auto_fill_type_information = false;
+    subQos.sub_attr.topic.topicKind = topic_kind;
+    subQos.sub_attr.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
+    subQos.sub_attr.topic.auto_fill_type_object = false;
+    subQos.sub_attr.topic.auto_fill_type_information = false;
 
     //REGISTER THE TYPE
     if (m_Type.get() != nullptr)
@@ -104,33 +104,32 @@ bool TestSubscriber::init(
 
     std::ostringstream t;
     t << topicName << "_" << asio::ip::host_name() << "_" << domain;
-    Rparam.topic.topicName = t.str();
+    subQos.sub_attr.topic.topicName = t.str();
     if (type_object != nullptr)
     {
-        Rparam.topic.type = *type_object;
+        subQos.sub_attr.topic.type = *type_object;
     }
     if (type_identifier != nullptr)
     {
-        Rparam.topic.type_id = *type_identifier;
+        subQos.sub_attr.topic.type_id = *type_identifier;
     }
     if (type_info != nullptr)
     {
-        Rparam.topic.type_information = *type_info;
+        subQos.sub_attr.topic.type_information = *type_info;
     }
 
     if (typeConsistencyQos != nullptr)
     {
-        Rparam.qos.type_consistency = *typeConsistencyQos;
+        subQos.sub_attr.qos.type_consistency = *typeConsistencyQos;
     }
     if (dataRepresentationQos != nullptr)
     {
-        Rparam.qos.representation = *dataRepresentationQos;
+        subQos.sub_attr.qos.representation = *dataRepresentationQos;
     }
 
     // Create sub and reader if topic was provided
     if (m_Type.get() != nullptr)
     {
-        subQos.sub_attr = Rparam;
         mp_subscriber = mp_participant->create_subscriber(subQos, nullptr);
 
         if (mp_subscriber == nullptr)
@@ -139,15 +138,15 @@ bool TestSubscriber::init(
         }
 
         TopicQos t_qos = TOPIC_QOS_DEFAULT;
-        t_qos.topic_attr = Rparam.topic;
-        Topic* topic = mp_participant->create_topic(topicName, Rparam.topic.topicDataType.c_str(), t_qos);
-        reader_qos.changeToDataReaderQos(Rparam.qos);
+        t_qos.topic_attr = subQos.sub_attr.topic;
+        Topic* topic = mp_participant->create_topic(topicName, subQos.sub_attr.topic.topicDataType.c_str(), t_qos);
+        reader_qos.changeToDataReaderQos(subQos.sub_attr.qos);
         reader_ = mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
         m_Data = m_Type.create_data();
     }
 
     m_bInitialized = true;
-    topic_att = Rparam.topic;
+    topic_att = subQos.sub_attr.topic;
 
     return true;
 }
@@ -308,11 +307,10 @@ DataReader* TestSubscriber::create_datareader()
     if (mp_subscriber == nullptr)
     {
         SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-        SubscriberAttributes Rparam;
-        Rparam.topic = topic_att;
-        qos.topic_attr = Rparam.topic;
-        Rparam.qos = reader_qos.changeToReaderQos();
-        sub_qos.sub_attr = Rparam;
+        sub_qos.sub_attr.topic = topic_att;
+        qos.topic_attr = sub_qos.sub_attr.topic;
+        sub_qos.sub_attr.qos = reader_qos.changeToReaderQos();
+
         mp_subscriber = mp_participant->create_subscriber(sub_qos, nullptr);
 
         if (mp_subscriber == nullptr)

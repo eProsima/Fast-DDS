@@ -185,26 +185,25 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         default_xml_profiles_loaded = true;
     }
 
-    ParticipantAttributes participant_att;
-    if (XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    if (XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, part_qos.part_attr))
     {
         logError(DOMAIN_PARTICIPANT_FACTORY, "Problem loading profile '" << participant_profile << "'");
         return nullptr;
     }
 
-    return create_participant(participant_att, listen);
+    return create_participant(part_qos.part_attr.rtps.builtin.domainId, part_qos, listen);
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
-        const ParticipantAttributes& att,
-        DomainParticipantListener* listen,
+        DomainId_t did,
         const DomainParticipantQos& qos,
+        DomainParticipantListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
-    uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
     DomainParticipant* dom_part = new DomainParticipant(mask);
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, qos, listen);
-    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, qos, listen);
+    RTPSParticipant* part = RTPSDomain::createParticipant(qos.part_attr.rtps, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
     {
@@ -218,13 +217,13 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
         using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*> >::iterator;
-        VectorIt vector_it = participants_.find(domain_id);
+        VectorIt vector_it = participants_.find(did);
 
         if (vector_it == participants_.end())
         {
             // Insert the vector
             std::vector<DomainParticipantImpl*> new_vector;
-            auto pair_it = participants_.insert(std::make_pair(domain_id, std::move(new_vector)));
+            auto pair_it = participants_.insert(std::make_pair(did, std::move(new_vector)));
             vector_it = pair_it.first;
         }
 
@@ -245,18 +244,6 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     BuiltinSubscriber::get_instance()->add_participant_data(dom_part->get_instance_handle(), qos);
 
     return dom_part;
-}
-
-DomainParticipant* DomainParticipantFactory::create_participant(
-        DomainId_t did,
-        const DomainParticipantQos& qos,
-        DomainParticipantListener* listen,
-        const ::dds::core::status::StatusMask& mask)
-{
-    // Minimal implementation to use current FASTRTPS behavior
-    ParticipantAttributes attr;
-    attr.rtps.builtin.domainId = did;
-    return create_participant(attr, listen, qos, mask);
 }
 
 DomainParticipant* DomainParticipantFactory::lookup_participant(

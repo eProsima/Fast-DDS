@@ -78,12 +78,10 @@ using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
 DomainParticipantImpl::DomainParticipantImpl(
-        const ParticipantAttributes& patt,
         DomainParticipant* pspart,
         const DomainParticipantQos& qos,
         DomainParticipantListener* listen)
-    : att_(patt)
-    , qos_(qos)
+    : qos_(qos)
     , rtps_participant_(nullptr)
     , participant_(pspart)
     , listener_(listen)
@@ -215,7 +213,7 @@ Publisher* DomainParticipantImpl::create_publisher(
         PublisherListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
-    if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (qos_.part_attr.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if (qos.pub_attr.getUserDefinedID() <= 0)
         {
@@ -333,7 +331,7 @@ BuiltinSubscriber* DomainParticipantImpl::get_builtin_subscriber()
 
 DomainId_t DomainParticipantImpl::get_domain_id() const
 {
-    return static_cast<uint8_t>(att_.rtps.builtin.domainId);
+    return static_cast<uint8_t>(qos_.part_attr.rtps.builtin.domainId);
 }
 
 /* TODO
@@ -550,7 +548,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         SubscriberListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
-    if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (qos_.part_attr.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if (qos.sub_attr.getUserDefinedID() <= 0)
         {

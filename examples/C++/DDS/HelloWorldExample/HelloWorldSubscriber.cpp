@@ -37,10 +37,11 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 bool HelloWorldSubscriber::init(
         int domain_id)
 {
-    eprosima::fastrtps::ParticipantAttributes participant_att;
-    participant_att.rtps.builtin.domainId = domain_id;
-    participant_att.rtps.setName("Participant_sub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.builtin.domainId = domain_id;
+    part_qos.part_attr.rtps.setName("Participant_sub");
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(
+        part_qos.part_attr.rtps.builtin.domainId, part_qos, &listener_);
 
     if (participant_ == nullptr)
     {

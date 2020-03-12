@@ -37,11 +37,12 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
 bool HelloWorldSubscriber::init()
 {
-    eprosima::fastrtps::ParticipantAttributes PParam;
-    PParam.rtps.setName("Participant_sub");
+    DomainParticipantQos part_qos = PARTICIPANT_QOS_DEFAULT;
+    part_qos.part_attr.rtps.setName("Participant_sub");
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+            part_qos.part_attr.rtps.builtin.domainId, part_qos, &m_listener);
 
         if (mp_participant == nullptr)
         {
@@ -140,13 +141,12 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
     if (subscriber_->mp_subscriber == nullptr)
     {
         eprosima::fastdds::dds::SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-        eprosima::fastrtps::SubscriberAttributes Rparam;
-        Rparam = subscriber_->att_;
-        Rparam.topic = subscriber_->topic_;
-        Rparam.topic.topicName = topic;
-        tqos.topic_attr = Rparam.topic;
-        Rparam.qos = subscriber_->qos_.changeToReaderQos();
-        sub_qos.sub_attr = Rparam;
+        sub_qos.sub_attr = subscriber_->att_;
+        sub_qos.sub_attr.topic = subscriber_->topic_;
+        sub_qos.sub_attr.topic.topicName = topic;
+        tqos.topic_attr = sub_qos.sub_attr.topic;
+        sub_qos.sub_attr.qos = subscriber_->qos_.changeToReaderQos();
+
         subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
             sub_qos, nullptr);
 

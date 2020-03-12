@@ -80,7 +80,6 @@ class DomainParticipantImpl
 private:
 
     DomainParticipantImpl(
-            const fastrtps::ParticipantAttributes& patt,
             DomainParticipant* pspart,
             const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
             DomainParticipantListener* listen = nullptr);
@@ -277,7 +276,7 @@ public:
      */
     inline const fastrtps::ParticipantAttributes& get_attributes() const
     {
-        return att_;
+        return qos_.part_attr;
     }
 
     std::vector<std::string> get_participant_names() const;
@@ -346,9 +345,6 @@ public:
     ReturnCode_t autoenable_entities();
 
 private:
-
-    //!Participant Attributes
-    fastrtps::ParticipantAttributes att_;
 
     //!Participant Qos
     DomainParticipantQos qos_;
