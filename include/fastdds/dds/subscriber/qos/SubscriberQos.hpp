@@ -85,7 +85,7 @@ public:
     fastrtps::DestinationOrderQosPolicy destination_order;
 
     //!UserData Qos, NOT implemented in the library.
-    fastrtps::UserDataQosPolicy user_data;
+    UserDataQosPolicy user_data;
 
     //!Time Based Filter Qos, NOT implemented in the library.
     fastrtps::TimeBasedFilterQosPolicy time_based_filter;

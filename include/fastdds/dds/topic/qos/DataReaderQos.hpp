@@ -62,7 +62,7 @@ public:
     fastrtps::ResourceLimitsQosPolicy resource_limits;
 
     //!User Data Qos, NOT implemented in the library.
-    fastrtps::UserDataQosPolicy user_data;
+    UserDataQosPolicy user_data;
 
     //!Ownership Qos, NOT implemented in the library.
     fastrtps::OwnershipQosPolicy ownership;
