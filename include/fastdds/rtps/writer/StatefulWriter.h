@@ -332,6 +332,9 @@ private:
             SequenceNumber_t max_sequence,
             bool& activateHeartbeatPeriod);
 
+    void send_all_intraprocess_changes(
+            SequenceNumber_t max_sequence);
+
     void send_all_unsent_changes(
             SequenceNumber_t max_sequence,
             bool& activateHeartbeatPeriod);
