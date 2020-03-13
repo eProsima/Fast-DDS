@@ -35,7 +35,7 @@ eProsima has received commercial proposals to implement a shared memory transpor
 
 * **Buffer descriptor**: Shared memory buffers can be referenced by buffers descriptors, these descriptors act like pointers to a buffer that can be copied between processes with a minimum cost. A descriptor contains the SegmentId and the offset to the data from the base of the segment.
 
-* **Shared memory port**: Is a communication channel identified by a port_id(uint32_t number). Through this channel, buffer descriptors are sent to other processes. It has a ring-buffer, in shared memory, where descriptors are stored. The same port can by opened by several processes for reading and writting operations. Multiple listeners can be registered in a port to be notified when descriptors are pushed to the ring-buffer. Multiple data producers can push descriptors to a port. The port containts an atomic counter with the number of listeners registered on it, each position in the ring-buffer has also a counter initialized to the number of listeners, as listeners read the descriptor, decrement the counter, so the ring-buffer position will be considered free when the counter is zero. The port also has an interprocess condition variable where the listeners will wait for incoming descriptors.
+* **Shared memory port**: Is a communication channel identified by a port_id(uint32_t number). Through this channel, buffer descriptors are sent to other processes. It has a ring-buffer, in shared memory, where descriptors are stored. The same port can by opened by several processes for reading and writing operations. Multiple listeners can be registered in a port to be notified when descriptors are pushed to the ring-buffer. Multiple data producers can push descriptors to a port. The port contains an atomic counter with the number of listeners registered on it, each position in the ring-buffer has also a counter initialized to the number of listeners, as listeners read the descriptor, decrement the counter, so the ring-buffer position will be considered free when the counter is zero. The port also has an interprocess condition variable where the listeners will wait for incoming descriptors.
 
 * **Listener**: Listeners listen to descriptors pushed to a port. The Listener provides an interface for the application to wait and access to the data referenced by the descriptors. When a consumer pops a descriptor from the port listener, look at the descriptor's SegmentId field to open the origin shared memory segment (if not already opened in this process), once the origin segment is mapped locally, the consumer is able to access the data using the offset field contained in the descriptor.
 
@@ -46,19 +46,19 @@ eProsima has received commercial proposals to implement a shared memory transpor
 
 Let's study the above example. There are three processes with a SharedMemManager per process, every process creates its own shared memory segment intended to store the buffers that will be shared with other processes.
 
-P1, P2 and P3 processes are participants in a RTPS-DDS environment. Discovery of participants is done using multicast so we have selected shared memory port0 as "multicast" port for discovery, therefore, first thing all participants do is to open shared memory port0. A listener attached to port0 is created too, by every participant, to read the incoming descriptors.
+P1, P2 and P3 processes are participants in a RTPS-DDS environment. Discovery of participants is done by using multicast, so we have selected shared memory port0 as "multicast" port for discovery, therefore, first thing all participants do is to open the shared memory port0. A listener attached to port0 is created too, by every participant, to read the incoming descriptors.
 
 Each participant opens a port to receive unicast messages, ports 1, 2 and 3 respectively, and create listeners associated to those ports.
 
-The first message the participants send is the multicast discovery message: "I'm here, and I am listening on portN". So they alloc a buffer in its local segment, write the message to that buffer and push the buffer's descriptor through the port0. Observe, in the global segment, how port0's ring-buffer store the descriptors to Data1a(P1), Data2a(P2), Data3a(P3). 
+The first message the participants send is the multicast discovery message: "I'm here, and I am listening on portN". So they alloc a buffer in its local segment, write that information to the buffer and push the buffer's descriptor through the port0. Observe how port0's ring-buffer store the descriptors to Data1a(P1), Data2a(P2), Data3a(P3) after all processes have pushed their discovery descriptors.
 
-After the discovery phase, participants know the other participants and its "unicast" ports so they can push messages to specific participants.
+After the discovery phase, participants know the other participants and their "unicast" ports so they can send messages to specific participants by pushing to the participant's unicast port.
 
-Finally, let's observe how P1 share Data1b with P3 and Data1c with P2 and P3, this is done by pushing the buffer's descriptors to the corresponding ports, the descriptors are stored in the port's ring-buffer and listeners registered in these ports are notified.
+Finally, let's observe how P1 is sharing Data1c with P2 and P3, this is done by pushing the buffer descriptor to P2 and P3 unicast ports. This way one shared memory buffer can be shared with several processes without making any copy of the buffer (just copy the descriptors). This is an important improvement with respect to transports like UDP and TCP.
 
 ### Design considerations
 
-* **Minimize global interprocess locks**: Interprocess locks are dangerous because, in the case of one of the involved processes crash or hung while holding an interprocess lock, all the collaborating processes could be affected. In this design, the global segment is the critical area, most of accesses will be lock-free reading operations. Interprocess-locks will only be required when registering / unregistering a new listener in a port. Once the setup has been established, the risk of a process locking the whole port is minimized.
+* **Minimize global interprocess locks**: Interprocess locks are dangerous because, in the case one of the involved processes crashes while holding an interprocess lock, all the collaborating processes could be affected. In this design, pushing data to a port and reading data from the port are lock-free operations. For performance reasons waiting for data on a port, when the port is empty, requires interprocess lock mecanishms like mutexes and condition variables. This is specially dangerous in multicast ports because if one listener crashes while waiting this could block the port for the rest of the listeners. More complex design features could be added to make the library fault-tolerance, but it will possibly be at a cost of losing performance.
 
 * **Scalable number of processes**: Every process creates its own shared memory segments to store the locally generated messages. This is more scalable than having a global segment shared between all the involved processes. 
 
@@ -68,19 +68,21 @@ Finally, let's observe how P1 share Data1b with P3 and Data1c with P2 and P3, th
 
 * **Fault tolerance**: As stated in the design considerations, the possibility of a process crashing holding interprocess resources is real. Implementing fault tolerance for these cases is not an easy task. Timeouts, keep alive checks and garbage collectors are some of the things that could be added to the initial design in order to achieve fault tolerance. This will be considered in future revisions.
 
-### Mapping the design to FastRTPS transport layer
+### Mapping the design to FastRTPS
 
-* **Locators**: LOCATOR_KIND_SHMEM (16) is defined to identify shared memory transport endpoints. Only the locator's port will be used to match the shared memory port_id.
+#### Transport Layer
+
+* **Locators**: LOCATOR_KIND_SHM Is defined to identify shared memory transport endpoints. Locator_t fields are filled in this way:
+    * kind: 16 (Is the RTPS vendor-specific range).
+    * port: The locator's port contains the shared memory port_id.
+    * address: The whole address is set to 0 except for the first byte that is used to mark unicast (address[0]='U') or multicast (address[0]='M').
 
 * **SharedMemTransportDescriptor**: The following values can be customized:
     * segment_size: Size of the shared memory segment reserved by the transport.
     * port_queue_capacity: Size, in number of messages, of the shared memory port message queue.
     * port_overflow_policy: DISCARD or FAIL.
     * segment_overflow_policy: DISCARD or FAIL
-
-    Non customizable values:
-    * min_send_buffer_size = 1
-    * max_message_size = 4.294.967.296
+    * max_message_size: By default max_message_size will be the segment_size, but is possible to specify a value <= segment_size. In that case fragmentation could occur.
 
 * **Default metatraffic multicast locator**: One locator, the port will be selected by the participant (will be the same as in the RTPS standard for UDP).
 
@@ -94,3 +96,10 @@ Finally, let's observe how P1 share Data1b with P3 and Data1c with P2 and P3, th
 
 ## Class design
 ![](interprocess_shared_mem2.png)
+
+#### RTPS Layer
+
+In FastRTPS transports are associated to participants, so the new SHM transport can used, by adding an instance of a SharedMemTransportDescriptor class to the list of participant's user transports.
+So there is a shared memory segment per participant that will be shared by all participant's publishers.
+
+Transport selection: As RTPSParticipant is able to have multiple transports, a transport selection mecanishm is necessary when communicating with other participants reachable by several transports. The defined behaviour here is: If the participants involved are in the same host and both have SHM transport configured, then SHM transport is selected for all communications between those participants.
