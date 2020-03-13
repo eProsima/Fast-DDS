@@ -334,13 +334,42 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
     return static_cast<uint8_t>(qos_.part_attr.rtps.builtin.domainId);
 }
 
-/* TODO
-   bool DomainParticipantImpl::delete_contained_entities()
-   {
-    logError(PARTICIPANT, "Not implemented.");
-    return false;
-   }
- */
+ReturnCode_t DomainParticipantImpl::delete_contained_entities()
+{
+    //TODO: Check if any of the contained entities is in a state that cannot be deleted
+    for (auto it : publishers_)
+    {
+        if (it.first->delete_contained_entities() != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        if (delete_publisher(it.first) != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    for (auto it : subscribers_)
+    {
+        if (it.first->delete_contained_entities() != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        if (delete_subscriber(it.first) != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    for (auto it: topics_)
+    {
+        if (delete_topic(it.first) != ReturnCode_t::RETCODE_OK)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {

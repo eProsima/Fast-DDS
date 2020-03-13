@@ -236,9 +236,26 @@ public:
      */
     DomainId_t get_domain_id() const;
 
-    /* TODO
-       bool delete_contained_entities();
+
+    /**
+     * This operation deletes all the entities that were created by means of the “create” operations on the
+     * DomainParticipant. That is, it deletes all contained Publisher, Subscriber, Topic, ContentFilteredTopic,
+     * and MultiTopic.
+     *
+     * Prior to deleting each contained entity, this operation will recursively call the corresponding
+     * delete_contained_entitiesoperation on each contained entity (if applicable). This pattern is applied
+     * recursively. In this manner the operation delete_contained_entities on the DomainParticipant will end up
+     * deleting all the entities recursively contained in the DomainParticipant, that is also the DataWriter,
+     * DataReader, as well as the QueryCondition and ReadCondition objects belonging to the contained DataReaders.
+     *
+     * The operation will return PRECONDITION_NOT_MET if the any of the contained entities is in a state where
+     * it cannot be deleted.
+     *
+     * Once delete_contained_entities returns successfully, the application may delete the DomainParticipant
+     * knowing that it has no contained entities.
+     * @return ReturnCode
      */
+    ReturnCode_t delete_contained_entities();
 
     /**
      * This operation manually asserts the liveliness of the DomainParticipant.

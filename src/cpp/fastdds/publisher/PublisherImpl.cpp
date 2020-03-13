@@ -453,22 +453,15 @@ const Publisher* PublisherImpl::get_publisher() const
 
 ReturnCode_t PublisherImpl::delete_contained_entities()
 {
-    if (!user_publisher_->is_enabled())
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
     for (auto it : writers_)
     {
         for (DataWriterImpl* writer : it.second)
         {
+            //TODO: Check if the DataWriter is in state that cannot be deleted
             ReturnCode_t code = delete_datawriter(writer->user_datawriter_);
-            if (code == ReturnCode_t::RETCODE_PRECONDITION_NOT_MET)
+            if (code != ReturnCode_t::RETCODE_OK)
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-            }
-            else if (code == ReturnCode_t::RETCODE_ERROR)
-            {
-                return ReturnCode_t::RETCODE_ERROR;
+                return code;
             }
         }
     }

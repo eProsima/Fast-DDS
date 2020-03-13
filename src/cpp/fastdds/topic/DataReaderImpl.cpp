@@ -861,7 +861,7 @@ const DataReaderListener* DataReaderImpl::get_listener() const
 
 ReturnCode_t DataReaderImpl::delete_contained_entities()
 {
-    //TODO: Update it to delete the read conditions created when implemented
+    //TODO: Update it to delete the ReadConditions and QueryConditions created when implemented
     return ReturnCode_t::RETCODE_OK;
 }
 

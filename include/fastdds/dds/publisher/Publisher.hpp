@@ -209,6 +209,10 @@ public:
     /**
      * This operation deletes all the entities that were created by means of the create methods on the Publisher.
      * That is, it deletes all contained DataWriter objects.
+     *
+     * Once delete_contained_entities returns successfully, the application may delete the Publisher knowing
+     * that it has no contained DataWriter objects.
+     *
      * @return PRECONDITION_NOT_MET if any of the contained entities is is a state where it cannot be deleted.
      * OK if all the DataWriter objects have been deleted correctly.
      */

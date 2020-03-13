@@ -366,10 +366,12 @@ ReturnCode_t SubscriberImpl::delete_contained_entities()
     {
         for (DataReaderImpl* dr : it.second)
         {
+            //TODO: Check if the DataReader is in a state that cannot be deleted
             if (dr->delete_contained_entities() != ReturnCode_t::RETCODE_OK)
             {
                 return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
             }
+            delete_datareader(dr->user_datareader_);
         }
     }
 

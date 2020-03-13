@@ -201,6 +201,23 @@ public:
      */
     ReturnCode_t notify_datareaders() const;
 
+    /**
+     * This operation deletes all the entities that were created by means of the “create” operations on the
+     * Subscriber. That is, it deletes all contained DataReader objects. This pattern is applied recursively.
+     * In this manner the operation delete_contained_entities on the Subscriber will end up deleting all the
+     * entities recursively contained in the Subscriber, that is also the QueryCondition and ReadCondition
+     * objects belonging to the contained DataReaders.
+     *
+     * The operation will return PRECONDITION_NOT_MET if any of the contained entities is in a state where
+     * it cannot be deleted. This will occur, for example, if a contained DataReader cannot be deleted
+     * because the application has called a read or takeoperation and has not called the corresponding
+     * return_loan operation to return the loaned samples.
+     *
+     * Once delete_contained_entities returns successfully, the application may delete the Subscriber knowing
+     * that it has no contained DataReader objects.
+     *
+     * @return ReturnCode
+     */
     ReturnCode_t delete_contained_entities();
 
     /**
