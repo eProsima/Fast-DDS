@@ -175,8 +175,9 @@ ReturnCode_t DataWriterImpl::write(
 #endif
         type_.get()->getKey(data, &instance_handle, is_key_protected);
     }
-    //Check if the handle is different from the special value HANDLE_NIL
-    //and it doe not correspond with the instance referred by the data
+
+    //Check if the Handle is different from the special value HANDLE_NIL and
+    //does not correspond with the instance referred by the data
     if (handle.isDefined() && handle.value != instance_handle.value)
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
@@ -204,8 +205,9 @@ ReturnCode_t DataWriterImpl::write_w_timestamp(
 #endif
         type_.get()->getKey(data, &instance_handle, is_key_protected);
     }
-    //Check if the handle is different from the special value HANDLE_NIL
-    //and it doe not correspond with the instance referred by the data
+
+    //Check if the Handle is different from the special value HANDLE_NIL and
+    //does not correspond with the instance referred by the data
     if (handle.isDefined() && handle.value != instance_handle.value)
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
@@ -387,7 +389,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                 // Note: high_mark will always be a value that can be casted to uint16_t)
                 ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
             }
-            ch->sourceTimestamp = timestamp;
+            ch->sourceTimestamp = timestamp; //Set source timestamp value
 
             ReturnCode_t code = this->history_.add_pub_change(ch, wparams, lock, max_blocking_time);
             if (code != ReturnCode_t::RETCODE_OK)
@@ -662,8 +664,11 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
             }
 
         }
-        data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
-            StatusMask::publication_matched());
+        if (data_writer_->user_datawriter_->get_statuscondition()->is_attached())
+        {
+            data_writer_->user_datawriter_->get_statuscondition()->notify_status_change(
+                StatusMask::publication_matched());
+        }
     }
     else if (data_writer_->publisher_->get_participant().is_enabled() &&
             data_writer_->publisher_->get_participant().get_status_mask().is_compatible(StatusMask::
@@ -679,8 +684,11 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
                 writer->publication_matched_status_read();
             }
         }
-        data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
-            StatusMask::publication_matched());
+        if (data_writer_->publisher_->get_participant().get_statuscondition()->is_attached())
+        {
+            data_writer_->publisher_->get_participant().get_statuscondition()->notify_status_change(
+                StatusMask::publication_matched());
+        }
     }
 
     //Update Matched Subscriptions List

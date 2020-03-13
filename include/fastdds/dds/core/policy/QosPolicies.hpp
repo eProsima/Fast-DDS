@@ -107,7 +107,7 @@ public:
 
     virtual inline void clear() = 0;
 
-    static uint32_t get_cdr_serialized_size(
+    RTPS_DllAPI static uint32_t get_cdr_serialized_size(
             const std::vector<fastrtps::rtps::octet>& data);
 
 protected:

@@ -39,12 +39,12 @@ class RTPS_DllAPI GuardCondition : public Condition
 {
 public:
 
-    GuardCondition()
+    RTPS_DllAPI GuardCondition()
     {
         trigger_value_ = false;
     }
 
-    ReturnCode_t set_trigger_value(
+    RTPS_DllAPI ReturnCode_t set_trigger_value(
             bool value)
     {
         trigger_value_ = value;
@@ -56,7 +56,7 @@ public:
      * @param obj
      * @return Always true
      */
-    inline bool operator ==(
+    RTPS_DllAPI inline bool operator ==(
             GuardCondition* obj) const
     {
         (void) obj;

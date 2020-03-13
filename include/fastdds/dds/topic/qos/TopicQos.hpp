@@ -82,7 +82,7 @@ public:
     //!Ownership Qos, NOT implemented in the library.
     OwnershipQosPolicy ownership;
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const TopicQos& b) const
     {
         return (this->topic_data == b.topic_data) &&
@@ -97,10 +97,11 @@ public:
                (this->resource_limits == b.resource_limits) &&
                (this->transport_priority == b.transport_priority) &&
                (this->lifespan == b.lifespan) &&
-               (this->ownership == b.ownership);
+               (this->ownership == b.ownership) &&
+               (this->topic_attr == b.topic_attr);
     }
 
-    TopicQos& operator <<(
+    RTPS_DllAPI TopicQos& operator <<(
             const fastrtps::ReliabilityQosPolicy& qos)
     {
         reliability = qos;

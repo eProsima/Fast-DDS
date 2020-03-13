@@ -23,6 +23,7 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -50,7 +51,6 @@ class PublisherImpl;
 class PublisherQos;
 class DataWriter;
 class DataWriterListener;
-class DataWriterQos;
 class Topic;
 class TopicQos;
 
@@ -58,7 +58,7 @@ class TopicQos;
  * Class Publisher, used to send data to associated subscribers.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI Publisher : public DomainEntity
+class Publisher : public DomainEntity
 {
     friend class PublisherImpl;
     friend class DomainParticipantImpl;
@@ -68,11 +68,11 @@ class RTPS_DllAPI Publisher : public DomainEntity
      * Create a publisher, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using create_publisher from Participant.
      */
-    Publisher(
+    RTPS_DllAPI Publisher(
             PublisherImpl* p,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
-    Publisher(
+    RTPS_DllAPI Publisher(
             const ::dds::domain::DomainParticipant& dp,
             const PublisherQos& qos,
             PublisherListener* listener = NULL,
@@ -80,18 +80,18 @@ class RTPS_DllAPI Publisher : public DomainEntity
 
 public:
 
-    virtual ~Publisher();
+    RTPS_DllAPI virtual ~Publisher();
 
     /**
      * Allows accessing the Publisher Qos.
      */
-    const PublisherQos& get_qos() const;
+    RTPS_DllAPI const PublisherQos& get_qos() const;
 
     /**
      * Retrieves the Publisher Qos.
      * @return true
      */
-    ReturnCode_t get_qos(
+    RTPS_DllAPI ReturnCode_t get_qos(
             PublisherQos& qos) const;
 
     /**
@@ -100,22 +100,22 @@ public:
      * @param qos
      * @return False if IMMUTABLE_POLICY or INCONSISTENT_POLICY occurs. True if updated.
      */
-    ReturnCode_t set_qos(
+    RTPS_DllAPI ReturnCode_t set_qos(
             const PublisherQos& qos);
 
     /**
      * Retrieves the attached PublisherListener.
      */
-    const PublisherListener* get_listener() const;
+    RTPS_DllAPI const PublisherListener* get_listener() const;
 
-    PublisherListener* get_listener();
+    RTPS_DllAPI PublisherListener* get_listener();
 
     /**
      * Modifies the PublisherListener.
      * @param listener
      * @return true
      */
-    ReturnCode_t set_listener(
+    RTPS_DllAPI ReturnCode_t set_listener(
             PublisherListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -126,10 +126,10 @@ public:
      * @param listener
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
-    DataWriter* create_datawriter(
+    RTPS_DllAPI DataWriter* create_datawriter(
             Topic* topic,
-            const DataWriterQos& writer_qos,
-            DataWriterListener* listener,
+            const DataWriterQos& writer_qos = DDS_DATAWRITER_QOS_DEFAULT,
+            DataWriterListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
@@ -144,7 +144,7 @@ public:
      * may also dispose all instances.
      * @param writer
      */
-    ReturnCode_t delete_datawriter(
+    RTPS_DllAPI ReturnCode_t delete_datawriter(
             DataWriter* writer);
 
     /**
@@ -155,7 +155,7 @@ public:
      * one of them. It is not specified which one.
      * @param topic_name
      */
-    DataWriter* lookup_datawriter(
+    RTPS_DllAPI DataWriter* lookup_datawriter(
             const std::string& topic_name) const;
 
     /**
@@ -163,14 +163,14 @@ public:
      * @param writers
      * @return true
      */
-    bool get_datawriters(
+    RTPS_DllAPI bool get_datawriters(
             std::vector<DataWriter*>& writers) const;
 
     /**
      * This operation checks if the publisher has DataWriters
      * @return true if the publisher has one or several DataWriters, false in other case
      */
-    bool has_datawriters() const;
+    RTPS_DllAPI bool has_datawriters() const;
 
     /* TODO
        bool suspend_publications();
@@ -197,14 +197,14 @@ public:
      * @param max_wait
      * @return False if timedout. True otherwise.
      */
-    ReturnCode_t wait_for_acknowledgments(
+    RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
      * This operation returns the DomainParticipant to which the Publisher belongs.
      * @return Reference to the DomainParticipant object.
      */
-    const DomainParticipant& get_participant() const;
+    RTPS_DllAPI const DomainParticipant& get_participant() const;
 
     /**
      * This operation deletes all the entities that were created by means of the create methods on the Publisher.
@@ -216,7 +216,7 @@ public:
      * @return PRECONDITION_NOT_MET if any of the contained entities is is a state where it cannot be deleted.
      * OK if all the DataWriter objects have been deleted correctly.
      */
-    ReturnCode_t delete_contained_entities();
+    RTPS_DllAPI ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataWriter QoS policies which will be used for newly created
@@ -230,7 +230,7 @@ public:
      * if the set_default_datawriter_qos operation had never been called.
      * @param qos
      */
-    ReturnCode_t set_default_datawriter_qos(
+    RTPS_DllAPI ReturnCode_t set_default_datawriter_qos(
             const DataWriterQos& qos);
 
     /**
@@ -242,7 +242,7 @@ public:
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
      * @return Current default DataWriterQos
      */
-    const DataWriterQos& get_default_datawriter_qos() const;
+    RTPS_DllAPI const DataWriterQos& get_default_datawriter_qos() const;
 
     /**
      * This operation retrieves the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -254,10 +254,10 @@ public:
      * @param qos Copy of the current default DataWriterQos.
      * @return Always true.
      */
-    ReturnCode_t get_default_datawriter_qos(
+    RTPS_DllAPI ReturnCode_t get_default_datawriter_qos(
             DataWriterQos& qos) const;
 
-    ReturnCode_t copy_from_topic_qos(
+    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
             DataWriterQos& writer_qos,
             const TopicQos& topic_qos) const;
 
@@ -265,17 +265,17 @@ public:
      * Get the Attributes of the Publisher.
      * @return Attributes of the publisher
      */
-    const fastrtps::PublisherAttributes& get_attributes() const;
+    RTPS_DllAPI const fastrtps::PublisherAttributes& get_attributes() const;
 
     /**
      * Update the Attributes of the publisher.
      * @param att Reference to a PublisherAttributes object to update the parameters.
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
      */
-    bool set_attributes(
+    RTPS_DllAPI bool set_attributes(
             const fastrtps::PublisherAttributes& att);
 
-    ReturnCode_t enable();
+    RTPS_DllAPI ReturnCode_t enable();
 
 private:
 

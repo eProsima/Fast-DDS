@@ -69,14 +69,14 @@ class DataWriterListener;
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DataWriter : public DomainEntity
+class DataWriter : public DomainEntity
 {
     friend class PublisherImpl;
     friend class DataWriterImpl;
     template<typename T>
     friend class ::dds::pub::DataWriter;
 
-    DataWriter(
+    RTPS_DllAPI DataWriter(
             const Publisher* pub,
             Topic* topic,
             const DataWriterQos& qos = DDS_DATAWRITER_QOS_DEFAULT,
@@ -87,13 +87,13 @@ class RTPS_DllAPI DataWriter : public DomainEntity
      * Create a data writer, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
-    DataWriter(
+    RTPS_DllAPI DataWriter(
             DataWriterImpl* impl,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 
-    virtual ~DataWriter();
+    RTPS_DllAPI virtual ~DataWriter();
 
     /**
      * Write data to the topic.
@@ -102,7 +102,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    ReturnCode_t write(
+    RTPS_DllAPI ReturnCode_t write(
             void* data);
 
     /**
@@ -113,7 +113,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    fastrtps::types::ReturnCode_t write(
+    RTPS_DllAPI fastrtps::types::ReturnCode_t write(
             void* data,
             fastrtps::rtps::WriteParams& params);
 
@@ -125,7 +125,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    ReturnCode_t write(
+    RTPS_DllAPI ReturnCode_t write(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
@@ -136,7 +136,7 @@ public:
      * @param timestamp Time_t used for the sample source timestamp
      * @return True if correct
      */
-    ReturnCode_t write_w_timestamp(
+    RTPS_DllAPI ReturnCode_t write_w_timestamp(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle,
             const fastrtps::rtps::Time_t& timestamp);
@@ -144,48 +144,48 @@ public:
     /**
      * Returns the DataWriter's GUID
      */
-    const fastrtps::rtps::GUID_t& guid();
+    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
 
     /**
      * Get topic data type
      * @return Topic data type
      */
-    TypeSupport get_type() const;
+    RTPS_DllAPI TypeSupport get_type() const;
 
     /**
      * Waits the current thread until all writers have received their acknowledgments.
      */
-    ReturnCode_t wait_for_acknowledgments(
+    RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param status Deadline missed status struct
      */
-    ReturnCode_t get_offered_deadline_missed_status(
+    RTPS_DllAPI ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
 
-    bool set_attributes(
+    RTPS_DllAPI bool set_attributes(
             const fastrtps::rtps::WriterAttributes& att);
 
-    const fastrtps::rtps::WriterAttributes& get_attributes() const;
+    RTPS_DllAPI const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
     /**
      * Establishes the DataWriterQos for this DataWriter.
      */
-    ReturnCode_t set_qos(
+    RTPS_DllAPI ReturnCode_t set_qos(
             const DataWriterQos& qos);
 
     /**
      * Retrieves the DataWriterQos for this DataWriter.
      */
-    const DataWriterQos& get_qos() const;
+    RTPS_DllAPI const DataWriterQos& get_qos() const;
 
     /**
      * Fills the DataWriterQos with the values of this DataWriter.
      * @return true
      */
-    ReturnCode_t get_qos(
+    RTPS_DllAPI ReturnCode_t get_qos(
             DataWriterQos& qos) const;
 
     /**
@@ -202,12 +202,12 @@ public:
     /**
      * Retrieves the listener for this DataWriter.
      */
-    const DataWriterListener* get_listener() const;
+    RTPS_DllAPI const DataWriterListener* get_listener() const;
 
     /**
      * Establishes the listener for this DataWriter.
      */
-    ReturnCode_t set_listener(
+    RTPS_DllAPI ReturnCode_t set_listener(
             DataWriterListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -217,39 +217,39 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
      */
 
-    ReturnCode_t dispose(
+    RTPS_DllAPI ReturnCode_t dispose(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
-    ReturnCode_t dispose(
+    RTPS_DllAPI ReturnCode_t dispose(
             void* data);
 
-    ReturnCode_t dispose_w_timestamp(
+    RTPS_DllAPI ReturnCode_t dispose_w_timestamp(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle,
             const fastrtps::rtps::Time_t& timestamp);
 
-    ReturnCode_t get_liveliness_lost_status(
+    RTPS_DllAPI ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
 
-    ReturnCode_t get_offered_incompatible_qos_status(
+    RTPS_DllAPI ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status);
 
-    ReturnCode_t get_publication_matched_status(
+    RTPS_DllAPI ReturnCode_t get_publication_matched_status(
             PublicationMatchedStatus& status);
 
-    const Publisher* get_publisher() const;
+    RTPS_DllAPI const Publisher* get_publisher() const;
 
-    ReturnCode_t assert_liveliness();
+    RTPS_DllAPI ReturnCode_t assert_liveliness();
 
-    ReturnCode_t get_matched_subscriptions(
+    RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<fastrtps::rtps::InstanceHandle_t>& subscription_handles) const;
 
-    ReturnCode_t get_matched_subscription_data(
+    RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             SubscriptionBuiltinTopicData& subscription_data,
             const fastrtps::rtps::InstanceHandle_t& subscription_handle) const;
 
-    ReturnCode_t enable();
+    RTPS_DllAPI ReturnCode_t enable();
 
 private:
 

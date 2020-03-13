@@ -77,7 +77,7 @@ public:
         dds::sub::cond::detail::QueryCondition)
 
     /** @cond */
-    ~TCondition();
+    OMG_DDS_API ~TCondition();
     /** @endcond */
 
     /**
@@ -93,12 +93,12 @@ public:
      * @throw  dds::core::Exception
      */
     template<typename Functor>
-    void handler(
+    OMG_DDS_API void handler(
             Functor& func);
 
     /** @copydoc dds::core::cond::TCondition::handler(Functor& func) */
     template<typename Functor>
-    void handler(
+    OMG_DDS_API void handler(
             const Functor& func);
 
     /**
@@ -110,7 +110,7 @@ public:
      * @return void
      * @throw  dds::core::Exception
      */
-    void reset_handler();
+    OMG_DDS_API void reset_handler();
 
     /**
      * Dispatches the functor that have been registered with the Condition.
@@ -121,7 +121,7 @@ public:
      * @return void
      * @throw  dds::core::Exception
      */
-    void dispatch();
+    OMG_DDS_API void dispatch();
 
     /**
      * This operation retrieves the trigger_value of the Condition.
@@ -133,7 +133,7 @@ public:
      * @return bool The boolean value to which the Condition is set.
      * @throw  dds::core::Exception
      */
-    bool trigger_value() const;
+    OMG_DDS_API bool trigger_value() const;
 
 };
 

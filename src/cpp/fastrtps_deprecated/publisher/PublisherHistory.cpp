@@ -39,17 +39,17 @@ PublisherHistory::PublisherHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                        topic_att.resourceLimitsQos.allocated_samples :
-                        topic_att.getTopicKind() == NO_KEY ?
-                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-                                     * topic_att.resourceLimitsQos.max_instances),
-                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                        topic_att.resourceLimitsQos.max_samples :
-                        topic_att.getTopicKind() == NO_KEY ?
-                            topic_att.historyQos.depth :
-                            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+            topic_att.resourceLimitsQos.allocated_samples :
+            topic_att.getTopicKind() == NO_KEY ?
+            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
+            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
+            * topic_att.resourceLimitsQos.max_instances),
+            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+            topic_att.resourceLimitsQos.max_samples :
+            topic_att.getTopicKind() == NO_KEY ?
+            topic_att.historyQos.depth :
+            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
@@ -147,7 +147,7 @@ bool PublisherHistory::add_pub_change(
 #endif
                 {
                     logInfo(RTPS_HISTORY,
-                            topic_att_.getTopicDataType() 
+                            topic_att_.getTopicDataType()
                             << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
                             << " and " << change->serializedPayload.length << " bytes");
                     returnedValue =  true;
@@ -337,11 +337,11 @@ bool PublisherHistory::get_next_deadline(
             keyed_changes_.begin(),
             keyed_changes_.end(),
             [](
-                    const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
-                    const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
-            {
-                return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-            });
+                const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+        {
+            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+        });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;

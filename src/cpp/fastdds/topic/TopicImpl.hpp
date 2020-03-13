@@ -57,7 +57,6 @@ public:
 
     virtual ~TopicImpl();
 
-
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
@@ -89,7 +88,7 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
+    RTPS_DllAPI void disable();
 
     Topic* user_topic_;
 

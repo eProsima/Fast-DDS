@@ -112,6 +112,14 @@ void DomainParticipantImpl::disable()
             sub_it->second->disable();
         }
     }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+        for (auto topic_it = topics_.begin(); topic_it != topics_.end(); ++topic_it)
+        {
+            topic_it->second->disable();
+        }
+    }
 }
 
 DomainParticipantImpl::~DomainParticipantImpl()
@@ -135,6 +143,19 @@ DomainParticipantImpl::~DomainParticipantImpl()
         }
         subscribers_.clear();
         subscribers_by_handle_.clear();
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+
+        for (auto topic_it = topics_.begin(); topic_it != topics_.end(); ++topic_it)
+        {
+            delete topic_it->second;
+        }
+        topics_.clear();
+        topics_by_handle_.clear();
+        topics_by_name_.clear();
+
     }
 
     if (rtps_participant_ != nullptr)
@@ -842,7 +863,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
 
     Topic* topic = participant_->find_topic(info.info.topicName().c_str(), Duration_t{});
     if (topic != nullptr && strcmp(topic->get_type_name(), info.info.typeName().c_str()) != 0
-            && !topic->is_entity_already_checked(info.info.key()))
+            && !topic->is_entity_already_checked(info.info.key()) && topic->get_statuscondition()->is_attached())
     {
         topic->new_inconsistent_topic(info.info.key());
         topic->get_statuscondition()->notify_status_change(::dds::core::status::StatusMask::inconsistent_topic());
@@ -901,7 +922,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         topic = participant_->create_topic(info.info.topicName().c_str(), info.info.typeName().c_str(), qos);
     }
     if (topic != nullptr && strcmp(topic->get_type_name(), info.info.typeName().c_str()) != 0
-            && !topic->is_entity_already_checked(info.info.key()))
+            && !topic->is_entity_already_checked(info.info.key()) && topic->get_statuscondition()->is_attached())
     {
         topic->new_inconsistent_topic(info.info.key());
         topic->get_statuscondition()->notify_status_change(::dds::core::status::StatusMask::inconsistent_topic());
