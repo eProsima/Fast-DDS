@@ -72,8 +72,9 @@ constexpr PresentationQosPolicyAccessScopeKind GROUP_PRESENTATION_QOS =
         PresentationQosPolicyAccessScopeKind::GROUP_PRESENTATION_QOS;
 using PresentationQosPolicy = fastdds::dds::PresentationQosPolicy;
 using PartitionQosPolicy = fastdds::dds::PartitionQosPolicy;
-using TopicDataQosPolicy = fastdds::dds::TemplateDataQosPolicy<fastdds::dds::PID_TOPIC_DATA>;
-using GroupDataQosPolicy = fastdds::dds::TemplateDataQosPolicy<fastdds::dds::PID_GROUP_DATA>;
+using UserDataQosPolicy = fastdds::dds::UserDataQosPolicy;
+using TopicDataQosPolicy = fastdds::dds::TopicDataQosPolicy;
+using GroupDataQosPolicy = fastdds::dds::GroupDataQosPolicy;
 using HistoryQosPolicyKind = fastdds::dds::HistoryQosPolicyKind;
 constexpr HistoryQosPolicyKind KEEP_LAST_HISTORY_QOS = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
 constexpr HistoryQosPolicyKind KEEP_ALL_HISTORY_QOS = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;

@@ -839,68 +839,68 @@ public:
 };
 
 /**
- * Class TemplateDataQosPolicy, base template for user data qos policies.
+ * Class TClassName, base template for user data qos policies.
  */
-template<ParameterId_t TPid>
-class TemplateDataQosPolicy : public GenericDataQosPolicy
-{
-public:
-
-    RTPS_DllAPI TemplateDataQosPolicy()
-        : GenericDataQosPolicy(TPid)
-    {
-    }
-
-    RTPS_DllAPI TemplateDataQosPolicy(
-            uint16_t in_length)
-        : GenericDataQosPolicy(TPid, in_length)
-    {
-    }
-
-    /**
-     * Construct from another TemplateDataQosPolicy.
-     *
-     * The resulting TemplateDataQosPolicy will have the same size limits
-     * as the input attribute
-     *
-     * @param data data to copy in the newly created object
-     */
-    RTPS_DllAPI TemplateDataQosPolicy(
-            const TemplateDataQosPolicy& data) = default;
-
-    /**
-     * Construct from underlying collection type.
-     *
-     * Useful to easy integration on old APIs where a traditional container was used.
-     * The resulting TemplateDataQosPolicy will always be unlimited in size
-     *
-     * @param data data to copy in the newly created object
-     */
-    RTPS_DllAPI TemplateDataQosPolicy(
-            const collection_type& data)
-        : GenericDataQosPolicy(TPid, data)
-    {
-    }
-
-    virtual RTPS_DllAPI ~TemplateDataQosPolicy() = default;
-
-    /**
-     * Copies another TemplateDataQosPolicy.
-     *
-     * The resulting TemplateDataQosPolicy will have the same size limit
-     * as the input parameter, so all data in the input will be copied.
-     *
-     * @param b object to be copied
-     * @return reference to the current object.
-     */
-    TemplateDataQosPolicy& operator =(
-            const TemplateDataQosPolicy& b) = default;
-
+#define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                     \
+class TClassName : public GenericDataQosPolicy                                         \
+{                                                                                      \
+public:                                                                                \
+                                                                                       \
+    RTPS_DllAPI TClassName()                                                           \
+        : GenericDataQosPolicy(TPid)                                                   \
+    {                                                                                  \
+    }                                                                                  \
+                                                                                       \
+    RTPS_DllAPI TClassName(                                                            \
+            uint16_t in_length)                                                        \
+        : GenericDataQosPolicy(TPid, in_length)                                        \
+    {                                                                                  \
+    }                                                                                  \
+                                                                                       \
+    /**                                                                                \
+     * Construct from another TClassName.                                              \
+     *                                                                                 \
+     * The resulting TClassName will have the same size limits                         \
+     * as the input attribute                                                          \
+     *                                                                                 \
+     * @param data data to copy in the newly created object                            \
+     */                                                                                \
+    RTPS_DllAPI TClassName(                                                            \
+            const TClassName& data) = default;                                         \
+                                                                                       \
+    /**                                                                                \
+     * Construct from underlying collection type.                                      \
+     *                                                                                 \
+     * Useful to easy integration on old APIs where a traditional container was used.  \
+     * The resulting TClassName will always be unlimited in size                       \
+     *                                                                                 \
+     * @param data data to copy in the newly created object                            \
+     */                                                                                \
+    RTPS_DllAPI TClassName(                                                            \
+            const collection_type& data)                                               \
+        : GenericDataQosPolicy(TPid, data)                                             \
+    {                                                                                  \
+    }                                                                                  \
+                                                                                       \
+    virtual RTPS_DllAPI ~TClassName() = default;                                       \
+                                                                                       \
+    /**                                                                                \
+     * Copies another TClassName.                                                      \
+     *                                                                                 \
+     * The resulting TClassName will have the same size limit                          \
+     * as the input parameter, so all data in the input will be copied.                \
+     *                                                                                 \
+     * @param b object to be copied                                                    \
+     * @return reference to the current object.                                        \
+     */                                                                                \
+    TClassName& operator =(                                                            \
+            const TClassName& b) = default;                                            \
+                                                                                       \
 };
 
-using UserDataQosPolicy = TemplateDataQosPolicy<PID_USER_DATA>;
-using TopicDataQosPolicy = TemplateDataQosPolicy<PID_TOPIC_DATA>;
-using GroupDataQosPolicy = TemplateDataQosPolicy<PID_GROUP_DATA>;
+TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
+TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
+TEMPLATE_DATA_QOS_POLICY(GroupDataQosPolicy, PID_GROUP_DATA)
 
 /**
  * Class TimeBasedFilterQosPolicy, to indicate the Time Based Filter Qos.

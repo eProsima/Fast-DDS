@@ -397,7 +397,7 @@ protected:
 
     RTPS_DllAPI static XMLP_ret getXMLUserDataQos(
             tinyxml2::XMLElement* elem,
-            fastdds::dds::UserDataQosPolicy& userData,
+            UserDataQosPolicy& userData,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLLifespanQos(

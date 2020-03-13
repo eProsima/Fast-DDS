@@ -71,7 +71,7 @@ public:
     fastrtps::LifespanQosPolicy lifespan;
 
     //!User Data Qos, implemented in the library.
-    UserDataQosPolicy user_data;
+    fastrtps::UserDataQosPolicy user_data;
 
     //!Ownership Qos, NOT implemented in the library.
     fastrtps::OwnershipQosPolicy ownership;
