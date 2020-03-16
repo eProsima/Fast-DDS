@@ -132,15 +132,13 @@ public:
     ReturnCode_t write_w_timestamp(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastrtps::rtps::Time_t& timestamp);
 
     /**
      *
      * @return
      */
     const fastrtps::rtps::GUID_t& guid();
-
-    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get topic data type
@@ -193,6 +191,11 @@ public:
 
     ReturnCode_t dispose(
             void* data);
+
+    ReturnCode_t dispose_w_timestamp(
+            void* data,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::rtps::Time_t& timestamp);
 
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
@@ -303,7 +306,7 @@ public:
      * @param  data
      * @return
      */
-    bool create_new_change(
+    ReturnCode_t create_new_change(
             fastrtps::rtps::ChangeKind_t kind,
             void* data);
 
@@ -314,7 +317,7 @@ public:
      * @param wparams
      * @return
      */
-    bool create_new_change_with_params(
+    ReturnCode_t create_new_change_with_params(
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams);
@@ -325,29 +328,15 @@ public:
      * @param  data
      * @param wparams
      * @param handle
-     * @return
-     */
-    bool create_new_change_with_params(
-            fastrtps::rtps::ChangeKind_t kind,
-            void* data,
-            fastrtps::rtps::WriteParams& wparams,
-            const fastrtps::rtps::InstanceHandle_t& handle);
-
-    /**
-     *
-     * @param kind
-     * @param  data
-     * @param wparams
-     * @param handle
      * @param timestamp
      * @return
      */
-    bool create_new_change_with_params(
+    ReturnCode_t create_new_change_with_params(
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastrtps::rtps::Time_t& timestamp = fastrtps::rtps::Time_t());
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -382,12 +371,12 @@ public:
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data);
 
-    bool perform_create_new_change(
+    ReturnCode_t perform_create_new_change(
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp = fastrtps::Time_t());
+            const fastrtps::rtps::Time_t& timestamp = fastrtps::rtps::Time_t());
 };
 
 } /* namespace dds */

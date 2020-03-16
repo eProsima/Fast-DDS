@@ -142,11 +142,7 @@ ReturnCode_t DataWriterImpl::write(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
     logInfo(DATA_WRITER, "Writing new data");
-    if (create_new_change(ALIVE, data))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change(ALIVE, data);
 }
 
 ReturnCode_t DataWriterImpl::write(
@@ -158,11 +154,7 @@ ReturnCode_t DataWriterImpl::write(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
     logInfo(DATA_WRITER, "Writing new data with WriteParams");
-    if (create_new_change_with_params(ALIVE, data, params))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(ALIVE, data, params);
 }
 
 ReturnCode_t DataWriterImpl::write(
@@ -173,45 +165,54 @@ ReturnCode_t DataWriterImpl::write(
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
-    //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
-    // but it need to check if there is an existing entity with that handle
-    // Needs the function register_instance to be implemented
-    //    if (!handle.isDefined())
-    //    {
-    //        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    //    }
+
+    InstanceHandle_t instance_handle;
+    if (type_.get()->m_isGetKeyDefined)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_.get()->getKey(data, &instance_handle, is_key_protected);
+    }
+    //Check if the handle is different from the special value HANDLE_NIL
+    //and it doe not correspond with the instance referred by the data
+    if (handle.isDefined() && handle.value != instance_handle.value)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    if (create_new_change_with_params(ALIVE, data, wparams, handle))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(ALIVE, data, wparams, handle);
 }
 
 ReturnCode_t DataWriterImpl::write_w_timestamp(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastrtps::rtps::Time_t& timestamp)
 {
     if (!user_datawriter_->is_enabled())
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
-    //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
-    // but it need to check if there is an existing entity with that handle
-    // Needs the function register_instance to be implemented
-    //    if (!handle.isDefined())
-    //    {
-    //        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    //    }
+    InstanceHandle_t instance_handle;
+    if (type_.get()->m_isGetKeyDefined)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_.get()->getKey(data, &instance_handle, is_key_protected);
+    }
+    //Check if the handle is different from the special value HANDLE_NIL
+    //and it doe not correspond with the instance referred by the data
+    if (handle.isDefined() && handle.value != instance_handle.value)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    if (create_new_change_with_params(ALIVE, data, wparams, handle, timestamp))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(ALIVE, data, wparams, handle, timestamp);
 }
 
 ReturnCode_t DataWriterImpl::dispose(
@@ -228,11 +229,7 @@ ReturnCode_t DataWriterImpl::dispose(
     }
     logInfo(DATA_WRITER, "Disposing of data");
     WriteParams wparams;
-    if (create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle);
 }
 
 ReturnCode_t DataWriterImpl::dispose(
@@ -243,14 +240,43 @@ ReturnCode_t DataWriterImpl::dispose(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
     logInfo(DATA_WRITER, "Disposing of data");
-    if (create_new_change(NOT_ALIVE_DISPOSED, data))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change(NOT_ALIVE_DISPOSED, data);
 }
 
-bool DataWriterImpl::create_new_change(
+ReturnCode_t DataWriterImpl::dispose_w_timestamp(
+        void* data,
+        const fastrtps::rtps::InstanceHandle_t& handle,
+        const fastrtps::rtps::Time_t& timestamp)
+{
+    if (!user_datawriter_->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    InstanceHandle_t instance_handle;
+    if (type_.get()->m_isGetKeyDefined)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_.get()->getKey(data, &instance_handle, is_key_protected);
+    }
+
+    //Check if the Handle is different from the special value HANDLE_NIL and
+    //does not correspond with the instance referred by the data
+    if (handle.isDefined() && handle.value != instance_handle.value)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    logInfo(DATA_WRITER, "Disposing of data");
+    WriteParams wparams;
+    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle, timestamp);
+
+}
+
+ReturnCode_t DataWriterImpl::create_new_change(
         ChangeKind_t changeKind,
         void* data)
 {
@@ -283,12 +309,12 @@ bool DataWriterImpl::check_new_change_preconditions(
     return true;
 }
 
-bool DataWriterImpl::perform_create_new_change(
+ReturnCode_t DataWriterImpl::perform_create_new_change(
         ChangeKind_t change_kind,
         void* data,
         WriteParams& wparams,
         const InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastrtps::rtps::Time_t& timestamp)
 {
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
@@ -311,7 +337,7 @@ bool DataWriterImpl::perform_create_new_change(
                 {
                     logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false");
                     history_.release_Cache(ch);
-                    return false;
+                    return ReturnCode_t::RETCODE_ERROR;
                 }
             }
 
@@ -353,7 +379,7 @@ bool DataWriterImpl::perform_create_new_change(
                             ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
                             final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
                     history_.release_Cache(ch);
-                    return false;
+                    return ReturnCode_t::RETCODE_ERROR;
                 }
 
                 /// Fragment the data.
@@ -363,10 +389,11 @@ bool DataWriterImpl::perform_create_new_change(
             }
             ch->sourceTimestamp = timestamp;
 
-            if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
+            ReturnCode_t code = this->history_.add_pub_change(ch, wparams, lock, max_blocking_time);
+            if (code != ReturnCode_t::RETCODE_OK)
             {
                 history_.release_Cache(ch);
-                return false;
+                return code;
             }
 
             if (qos_.deadline.period != c_TimeInfinite)
@@ -397,21 +424,21 @@ bool DataWriterImpl::perform_create_new_change(
                 lifespan_timer_->cancel_timer();
             }
 
-            return true;
+            return ReturnCode_t::RETCODE_OK;
         }
     }
 
-    return false;
+    return ReturnCode_t::RETCODE_TIMEOUT;
 }
 
-bool DataWriterImpl::create_new_change_with_params(
+ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams)
 {
     if (!check_new_change_preconditions(changeKind, data))
     {
-        return false;
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
     InstanceHandle_t handle;
@@ -427,30 +454,16 @@ bool DataWriterImpl::create_new_change_with_params(
     return perform_create_new_change(changeKind, data, wparams, handle);
 }
 
-bool DataWriterImpl::create_new_change_with_params(
-        ChangeKind_t changeKind,
-        void* data,
-        WriteParams& wparams,
-        const fastrtps::rtps::InstanceHandle_t& handle)
-{
-    if (!check_new_change_preconditions(changeKind, data))
-    {
-        return false;
-    }
-
-    return perform_create_new_change(changeKind, data, wparams, handle);
-}
-
-bool DataWriterImpl::create_new_change_with_params(
+ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams,
         const fastrtps::rtps::InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastrtps::rtps::Time_t& timestamp)
 {
     if (!check_new_change_preconditions(changeKind, data))
     {
-        return false;
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle, timestamp);
@@ -470,13 +483,6 @@ bool DataWriterImpl::remove_all_change(
 const GUID_t& DataWriterImpl::guid()
 {
     return writer_->getGuid();
-}
-
-InstanceHandle_t DataWriterImpl::get_instance_handle() const
-{
-    InstanceHandle_t handle;
-    handle = writer_->getGuid();
-    return handle;
 }
 
 bool DataWriterImpl::set_attributes(

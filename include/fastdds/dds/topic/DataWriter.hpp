@@ -139,17 +139,12 @@ public:
     ReturnCode_t write_w_timestamp(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastrtps::rtps::Time_t& timestamp);
 
     /**
      * Returns the DataWriter's GUID
      */
     const fastrtps::rtps::GUID_t& guid();
-
-    /**
-     * Returns the DataWriter's InstanceHandle
-     */
-    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get topic data type
@@ -228,6 +223,11 @@ public:
 
     ReturnCode_t dispose(
             void* data);
+
+    ReturnCode_t dispose_w_timestamp(
+            void* data,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastrtps::rtps::Time_t& timestamp);
 
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
