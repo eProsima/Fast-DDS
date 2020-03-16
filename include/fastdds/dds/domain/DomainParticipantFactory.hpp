@@ -22,6 +22,7 @@
 
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 
 #include <mutex>
@@ -71,6 +72,20 @@ public:
     RTPS_DllAPI DomainParticipant* create_participant(
             const fastrtps::ParticipantAttributes& att,
             DomainParticipantListener* listen = nullptr);
+
+    /**
+     * Create a Participant.
+     * @param domain_id Domain Id.
+     * @param qos DomainParticipantQos Reference.
+     * @param listener DomainParticipantListener Pointer.
+     * @param mask StatusMask Reference.
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     */
+    RTPS_DllAPI DomainParticipant* create_participant(
+            DomainId_t domain_id,
+            const DomainParticipantQos& qos,
+            DomainParticipantListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * This operation retrieves a previously created DomainParticipant belonging to specified domain_id.
