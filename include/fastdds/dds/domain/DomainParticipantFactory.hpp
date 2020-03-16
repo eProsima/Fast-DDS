@@ -23,6 +23,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 
 #include <mutex>
@@ -149,6 +150,7 @@ private:
 
     mutable bool default_xml_profiles_loaded;
 
+    DomainParticipantFactoryQos factory_qos_;
 
 };
 

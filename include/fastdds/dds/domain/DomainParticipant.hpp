@@ -28,6 +28,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/Entity.hpp>
 
 #include <utility>
 
@@ -65,7 +66,7 @@ class SubscriberListener;
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DomainParticipant
+class RTPS_DllAPI DomainParticipant : public Entity
 {
 public:
 

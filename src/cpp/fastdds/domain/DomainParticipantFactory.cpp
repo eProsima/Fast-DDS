@@ -263,10 +263,10 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         vector_it->second.push_back(dom_part_impl);
     }
 
-    //    if (factory_qos_.entity_factory.autoenable_created_entities)
-    //    {
-    //        dom_part->enable();
-    //    }
+    if (factory_qos_.entity_factory.autoenable_created_entities)
+    {
+        dom_part->enable();
+    }
 
     part->set_check_type_function(
         [dom_part](const std::string& type_name) -> bool
