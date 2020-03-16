@@ -27,6 +27,7 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 
 #include <utility>
 
@@ -412,7 +413,8 @@ public:
 
 private:
 
-    DomainParticipant();
+    DomainParticipant(
+            const StatusMask& mask = StatusMask::all());
 
     virtual ~DomainParticipant();
 

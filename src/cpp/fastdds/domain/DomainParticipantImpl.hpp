@@ -27,6 +27,7 @@
 
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
@@ -74,6 +75,11 @@ private:
     DomainParticipantImpl(
             const fastrtps::ParticipantAttributes& patt,
             DomainParticipant* pspart,
+            DomainParticipantListener* listen = nullptr);
+
+    DomainParticipantImpl(
+            DomainParticipant* dp,
+            const DomainParticipantQos& qos,
             DomainParticipantListener* listen = nullptr);
 
     virtual ~DomainParticipantImpl();

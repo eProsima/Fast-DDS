@@ -86,6 +86,20 @@ DomainParticipantImpl::DomainParticipantImpl(
     participant_->impl_ = this;
 }
 
+DomainParticipantImpl::DomainParticipantImpl(
+        DomainParticipant* dp,
+        const DomainParticipantQos& qos,
+        DomainParticipantListener* listen)
+    : att_(qos.participant_attr)
+    , rtps_participant_(nullptr)
+    , participant_(dp)
+    , listener_(listen)
+#pragma warning (disable : 4355 )
+    , rtps_listener_(this)
+{
+    participant_->impl_ = this;
+}
+
 void DomainParticipantImpl::disable()
 {
     participant_->set_listener(nullptr);
