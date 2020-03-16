@@ -22,6 +22,7 @@
 
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 
 #include <mutex>
 #include <map>
