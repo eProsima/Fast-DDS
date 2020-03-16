@@ -80,7 +80,7 @@ public:
      * @return previously created DomainParticipant
      */
     RTPS_DllAPI DomainParticipant* lookup_participant(
-            uint8_t domain_id) const;
+            DomainId_t domain_id) const;
 
     /**
      * Returns all participants that belongs to the specified domain_id.
@@ -88,16 +88,16 @@ public:
      * @return
      */
     RTPS_DllAPI std::vector<DomainParticipant*> lookup_participants(
-        uint8_t domain_id) const;
+            DomainId_t domain_id) const;
 
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
             fastrtps::ParticipantAttributes& participant_qos) const;
 
     /* TODO
-    RTPS_DllAPI ReturnCode_t set_default_participant_qos(
+       RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const fastrtps::ParticipantAttributes& participant_qos);
-    */
+     */
 
     /**
      * Remove a Participant and all associated publishers and subscribers.
@@ -121,7 +121,7 @@ private:
 
     friend class DomainParticipantFactoryReleaser;
 
-    std::map<uint8_t, std::vector<DomainParticipantImpl*>> participants_;
+    std::map<DomainId_t, std::vector<DomainParticipantImpl*> > participants_;
 
     DomainParticipantFactory();
 

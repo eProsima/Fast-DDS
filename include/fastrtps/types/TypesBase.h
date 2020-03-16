@@ -25,6 +25,12 @@
 #include <memory>
 
 namespace eprosima {
+namespace fastdds {
+namespace dds {
+using DomainId_t = uint32_t;
+} // dds
+} // namespace fastdds
+
 namespace fastcdr {
 class Cdr;
 } // namespace fastcdr
