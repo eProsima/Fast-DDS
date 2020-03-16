@@ -52,10 +52,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+template<typename UnaryFun>
 bool send_data_or_fragments(
         RTPSMessageGroup& group,
         CacheChange_t* change,
-        bool inline_qos)
+        bool inline_qos,
+        UnaryFun sent_fun)
 {
     bool sent_ok = true;
 
@@ -64,7 +66,11 @@ bool send_data_or_fragments(
         for (FragmentNumber_t frag = 1; frag <= change->getFragmentCount(); frag++)
         {
             sent_ok &= group.add_data_frag(*change, frag, inline_qos);
-            if (!sent_ok)
+            if (sent_ok)
+            {
+                sent_fun(frag);
+            }
+            else
             {
                 logError(RTPS_WRITER, "Error sending fragment ("
                     << change->sequenceNumber << ", " << frag << ")");
@@ -75,7 +81,11 @@ bool send_data_or_fragments(
     else
     {
         sent_ok = group.add_data(*change, inline_qos);
-        if (!sent_ok)
+        if (sent_ok)
+        {
+            sent_fun(0);
+        }
+        else
         {
             logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
         }
@@ -84,6 +94,11 @@ bool send_data_or_fragments(
     return sent_ok;
 }
     
+static void null_sent_fun(
+        FragmentNumber_t /*frag*/)
+{
+}
+
 using namespace std::chrono;
 
 StatefulWriter::StatefulWriter(
@@ -265,43 +280,29 @@ void StatefulWriter::unsent_change_added_to_history(
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
 
-                        uint32_t n_fragments = change->getFragmentCount();
-                        if (n_fragments > 0)
+                        auto sent_fun = [this, change](
+                                FragmentNumber_t frag)
                         {
-                            for (uint32_t frag = 1; frag <= n_fragments; frag++)
+                            if (frag > 0)
                             {
-                                if (group.add_data_frag(*change, frag, expectsInlineQos))
+                                for (ReaderProxy* it : matched_readers_)
                                 {
-                                    for (ReaderProxy* it : matched_readers_)
+                                    if (!it->is_local_reader())
                                     {
-                                        if (!it->is_local_reader())
-                                        {
-                                            bool allFragmentsSent = false;
-                                            it->mark_fragment_as_sent_for_change(
-                                                change->sequenceNumber,
-                                                frag,
-                                                allFragmentsSent);
-                                        }
+                                        bool allFragmentsSent = false;
+                                        it->mark_fragment_as_sent_for_change(
+                                            change->sequenceNumber,
+                                            frag,
+                                            allFragmentsSent);
                                     }
                                 }
-                                else
-                                {
-                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
-                                            ", " << frag << ")");
-                                }
                             }
-                        }
-                        else
-                        {
-                            if (!group.add_data(*change, expectsInlineQos))
-                            {
-                                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
-                            }
-                        }
-                        // Heartbeat piggyback.
-                        uint32_t last_processed = 0;
-                        send_heartbeat_piggyback_nts_(nullptr, group, last_processed);
+                        };
+
+                        send_data_or_fragments(group, change, expectsInlineQos, sent_fun);
+                        send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
                     }
+
                     for (ReaderProxy* it : matched_readers_)
                     {
                         if (it->is_local_reader())
@@ -651,6 +652,15 @@ void StatefulWriter::send_changes_separatedly(
                 }
 
                 RTPSGapBuilder gaps(group);
+
+                uint32_t lastBytesProcessed = 0;
+                auto sent_fun = [this, remoteReader, &lastBytesProcessed, &group](
+                        FragmentNumber_t /*frag*/)
+                {
+                    // Heartbeat piggyback.
+                    send_heartbeat_piggyback_nts_(remoteReader, group, lastBytesProcessed);
+                };
+
                 auto unsent_change_process =
                     [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                 {
@@ -659,7 +669,8 @@ void StatefulWriter::send_changes_separatedly(
                         bool sent_ok = send_data_or_fragments(
                             group,
                             unsentChange->getChange(),
-                            remoteReader->expects_inline_qos());
+                            remoteReader->expects_inline_qos(),
+                            sent_fun);
                         if (sent_ok)
                         {
                             remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
@@ -688,7 +699,8 @@ void StatefulWriter::send_changes_separatedly(
                         bool sent_ok = send_data_or_fragments(
                             group,
                             unsentChange->getChange(),
-                            remoteReader->expects_inline_qos());
+                            remoteReader->expects_inline_qos(),
+                            null_sent_fun);
                         if (sent_ok)
                         {
                             max_ack_seq = seqNum;
@@ -796,6 +808,14 @@ void StatefulWriter::send_all_unsent_changes(
             
         SequenceNumber_t seq = get_seq_num_min();
 
+        uint32_t lastBytesProcessed = 0;
+        auto sent_fun = [this, &lastBytesProcessed, &group](
+            FragmentNumber_t /*frag*/)
+        {
+            // Heartbeat piggyback.
+            send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
+        };
+
         // Add holes in history and send them to all readers
         for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
         {
@@ -834,7 +854,7 @@ void StatefulWriter::send_all_unsent_changes(
                 }
                 else
                 {
-                    bool sent_ok = send_data_or_fragments(group, *cit, inline_qos);
+                    bool sent_ok = send_data_or_fragments(group, *cit, inline_qos, sent_fun);
                     if (sent_ok)
                     {
                         bool tmp_bool = false;
@@ -868,17 +888,9 @@ void StatefulWriter::send_all_unsent_changes(
         }
 
         // Heartbeat piggyback.
-        if (!heartbeat_has_been_sent)
+        if (!heartbeat_has_been_sent && acknack_required)
         {
-            if (acknack_required)
-            {
-                send_heartbeat_nts_(all_remote_readers_.size(), group, false);
-            }
-            else
-            {
-                uint32_t last_processed = 0;
-                send_heartbeat_piggyback_nts_(nullptr, group, last_processed);
-            }
+            send_heartbeat_nts_(all_remote_readers_.size(), group, false);
         }
 
         group.flush_and_reset();
@@ -1106,11 +1118,11 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
                     logError(RTPS_WRITER, "Error sending change " << changeToSend.sequenceNumber);
                 }
             }
+
+            // Heartbeat piggyback.
+            send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
         }
 
-        // Heartbeat piggyback.
-        send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
-            
         group.flush_and_reset();
     }
     catch (const RTPSMessageGroup::timeout&)
