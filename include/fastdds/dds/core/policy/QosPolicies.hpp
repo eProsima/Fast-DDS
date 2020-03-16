@@ -105,6 +105,45 @@ protected:
     bool send_always_;
 };
 
+class EntityFactoryQosPolicy : public QosPolicy
+{
+public:
+
+    bool autoenable_created_entities;
+
+    RTPS_DllAPI EntityFactoryQosPolicy()
+        : QosPolicy(false)
+        , autoenable_created_entities(true)
+    {
+    }
+
+    RTPS_DllAPI EntityFactoryQosPolicy(
+            bool autoenable)
+        : QosPolicy(false)
+        , autoenable_created_entities(autoenable)
+    {
+    }
+
+    virtual RTPS_DllAPI ~EntityFactoryQosPolicy()
+    {
+    }
+
+    bool operator ==(
+            const EntityFactoryQosPolicy& qos) const
+    {
+        return autoenable_created_entities == qos.autoenable_created_entities;
+    }
+
+    inline void clear() override
+    {
+        EntityFactoryQosPolicy reset = EntityFactoryQosPolicy();
+        std::swap(*this, reset);
+    }
+
+};
+
+
+
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
  */
