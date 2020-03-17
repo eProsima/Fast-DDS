@@ -68,6 +68,9 @@ void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
     reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
 
     nack_supression_event_->reader_guid(reader_attributes_.guid);
+
+    acked_changes_set(SequenceNumber_t()); // Simulate initial acknack to set low mark
+
     timers_enabled_.store(reader_attributes_.endpoint.reliabilityKind == RELIABLE);
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
@@ -169,47 +172,56 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
     }
     else
     {
-        // Special case. Currently only used on Builtin StatefulWriters
-        // after losing lease duration.
+        future_low_mark = changes_low_mark_ + 1;
 
-        SequenceNumber_t current_sequence = seq_num;
-        SequenceNumber_t min_sequence = writer_->get_seq_num_min();
-        if (seq_num < min_sequence)
+        if (seq_num == SequenceNumber_t())
         {
-            current_sequence = min_sequence;
-        }
-        future_low_mark = current_sequence;
-
-        bool should_sort = false;
-        for (; current_sequence <= changes_low_mark_; ++current_sequence)
-        {
-            // Skip all consecutive changes already in the collection
-            ChangeConstIterator it = find_change(current_sequence);
-            while( it != changes_for_reader_.end() &&
-                current_sequence <= changes_low_mark_ &&
-                it->getSequenceNumber() == current_sequence)
+            // Special case. Currently only used on Builtin StatefulWriters
+            // after losing lease duration, and on late joiners to set
+            // changes_low_mark_ to match that of the writer.
+            SequenceNumber_t current_sequence = seq_num;
+            SequenceNumber_t min_sequence = writer_->get_seq_num_min();
+            if (seq_num < min_sequence)
             {
-                ++current_sequence;
-                ++it;
+                current_sequence = min_sequence;
             }
+            future_low_mark = current_sequence;
 
-            if (current_sequence <= changes_low_mark_)
+            bool should_sort = false;
+            for (; current_sequence <= changes_low_mark_; ++current_sequence)
             {
-                CacheChange_t* change = nullptr;
-                if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                // Skip all consecutive changes already in the collection
+                ChangeConstIterator it = find_change(current_sequence);
+                while( it != changes_for_reader_.end() &&
+                    current_sequence <= changes_low_mark_ &&
+                    it->getSequenceNumber() == current_sequence)
                 {
-                    should_sort = true;
-                    ChangeForReader_t cr(change);
-                    cr.setStatus(UNACKNOWLEDGED);
-                    changes_for_reader_.push_back(cr);
+                    ++current_sequence;
+                    ++it;
+                }
+
+                if (current_sequence <= changes_low_mark_)
+                {
+                    CacheChange_t* change = nullptr;
+                    if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                    {
+                        should_sort = true;
+                        ChangeForReader_t cr(change);
+                        cr.setStatus(UNACKNOWLEDGED);
+                        changes_for_reader_.push_back(cr);
+                    }
                 }
             }
-        }
 
-        // Keep changes sorted by sequence number
-        if (should_sort)
+            // Keep changes sorted by sequence number
+            if (should_sort)
+            {
+                std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
+            }
+        }
+        else
         {
-            std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
+            future_low_mark = writer_->next_sequence_number();
         }
     }
 
