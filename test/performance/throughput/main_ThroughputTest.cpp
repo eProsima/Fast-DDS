@@ -126,7 +126,8 @@ enum  optionIndex {
     CERTS_PATH,
     XML_FILE,
     DYNAMIC_TYPES,
-    FORCED_DOMAIN
+    FORCED_DOMAIN,
+    SUBSCRIBERS
 };
 
 enum TestAgent
@@ -150,6 +151,7 @@ const option::Descriptor usage[] = {
     { CERTS_PATH,    0, "",  "certs",           Arg::Required, "             --certs <arg>            Path where located certificates." },
 #endif
     { UNKNOWN_OPT,   0, "",  "",                Arg::None,     "\nPublisher/Both options:"},
+    { SUBSCRIBERS,     0, "n", "subscribers",     Arg::Numeric,  "  -n <num>,    --subscribers=<arg>   Number of subscribers." },
     { TIME,          0, "t", "time",            Arg::Numeric,  "  -t <num>,  --time=<num>             Time of the test in seconds." },
     { RECOVERY_TIME, 0, "",  "recovery_time",   Arg::Numeric,  "             --recovery_time=<num>    If a demand takes shorter to send than <recovery_time>, sleep the rest" },
     { RECOVERIES,    0, "",  "recoveries_file", Arg::String,   "             --recoveries_file=<num>  A CSV file with recovery times" },
@@ -196,6 +198,7 @@ int main(int argc, char** argv)
     std::string recoveries_file = "";
     bool dynamic_types = false;
     int forced_domain = -1;
+    uint32_t subscribers = 1;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
@@ -299,6 +302,10 @@ int main(int argc, char** argv)
 
             case HOSTNAME:
                 hostname = true;
+                break;
+
+            case SUBSCRIBERS:
+                subscribers = strtol(opt.arg, nullptr, 10);
                 break;
 
             case EXPORT_CSV:
@@ -450,7 +457,7 @@ int main(int argc, char** argv)
 
         if (throughput_publisher.ready())
         {
-            throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size);
+            throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size, subscribers);
         }
         else
         {
@@ -482,18 +489,38 @@ int main(int argc, char** argv)
         ThroughputPublisher throughput_publisher(reliable, seed, hostname, export_csv, pub_part_property_policy,
                 pub_property_policy, xml_config_file, file_name, recoveries_file, dynamic_types, forced_domain);
 
-        // Initialize subscriber
-        ThroughputSubscriber throughput_subscriber(reliable, seed, hostname, sub_part_property_policy,
-                sub_property_policy, xml_config_file, dynamic_types, forced_domain);
+        // Initialize subscribers
+        std::vector<std::shared_ptr<ThroughputSubscriber>> throughput_subscribers;
+        
+        bool are_subscribers_ready = true;
+        for (uint32_t i=0; i < subscribers; i++)
+        {
+            throughput_subscribers.push_back(std::make_shared<ThroughputSubscriber>(reliable, 
+                seed, hostname, sub_part_property_policy, sub_property_policy, 
+                xml_config_file, dynamic_types, forced_domain));
+
+            are_subscribers_ready &= throughput_subscribers.back()->ready();
+        }
 
         // Spawn run threads
-        if (throughput_publisher.ready() && throughput_subscriber.ready())
+        if (throughput_publisher.ready() && are_subscribers_ready)
         {
             std::thread pub_thread(&ThroughputPublisher::run, &throughput_publisher, test_time_sec, recovery_time_ms,
-                    demand, msg_size);
-            std::thread sub_thread(&ThroughputSubscriber::run, &throughput_subscriber);
+                    demand, msg_size, subscribers);
+
+            std::vector<std::thread> sub_threads;
+
+            for (auto& sub : throughput_subscribers)
+            {
+                sub_threads.emplace_back(&ThroughputSubscriber::run, sub.get());
+            }
+
             pub_thread.join();
-            sub_thread.join();
+
+            for (auto& sub : sub_threads)
+            {
+                sub.join();
+            }
         }
         else
         {
