@@ -11,7 +11,6 @@
                 <type>SHM</type>
                 <segment_size>2097152</segment_size>
             </transport_descriptor>
-        </transport_descriptors>
 
             <transport_descriptor>
                 <transport_id>throughput_subscriber_shm_transport</transport_id>

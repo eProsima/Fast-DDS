@@ -70,7 +70,8 @@ public:
             uint32_t test_time,
             uint32_t recovery_time_ms,
             int demand,
-            int msg_size);
+            int msg_size,
+            uint32_t subscribers);
 
 private:
 
@@ -133,6 +134,8 @@ private:
     std::string export_csv_;
     std::string xml_config_file_;
     std::string recoveries_file_;
+
+    uint32_t subscribers_;
 
     // Data listener
     class DataPubListener : public eprosima::fastrtps::PublisherListener
