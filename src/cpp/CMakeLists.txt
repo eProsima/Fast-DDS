@@ -196,6 +196,8 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
+
+    dds/domain/DomainParticipant.cpp
     )
 
 # SHM Transport

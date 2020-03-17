@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
@@ -27,6 +28,16 @@ DomainParticipant::DomainParticipant(
         const StatusMask& mask)
     : Entity(mask)
     , impl_(nullptr)
+{
+}
+
+DomainParticipant::DomainParticipant(
+        DomainId_t domain_id,
+        const DomainParticipantQos& qos,
+        DomainParticipantListener* listener,
+        const StatusMask& mask)
+    : Entity(mask)
+    , impl_(DomainParticipantFactory::get_instance()->create_participant(domain_id, qos, listener, mask)->impl_)
 {
 }
 
