@@ -17,9 +17,9 @@
  *
  */
 
-#include <dds/topic/DataReaderImpl.hpp>
+#include <fastdds/topic/DataReaderImpl.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
-#include <dds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/reader/StatefulReader.h>

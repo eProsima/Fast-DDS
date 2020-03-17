@@ -18,8 +18,7 @@
  */
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-
-#include <dds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
