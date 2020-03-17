@@ -526,24 +526,39 @@ int main(
                 export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
                 xml_config_file, dynamic_types, forced_domain, data_sizes);
 
-        // Initialize subscriber
-        LatencyTestSubscriber latency_subscriber;
-        bool sub_init = latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
+        // Initialize subscribers
+        std::vector<std::shared_ptr<LatencyTestSubscriber>> latency_subscribers;
+
+        bool sub_init = true;
+        for (int i=0; i < subscribers; i++)
+        {
+            latency_subscribers.push_back(std::make_shared<LatencyTestSubscriber>());
+            sub_init &= latency_subscribers.back()->init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
                 sub_property_policy, xml_config_file, dynamic_types, forced_domain, data_sizes);
+        }
 
         // Spawn run threads
         if (pub_init && sub_init)
         {
             std::thread pub_thread(&LatencyTestPublisher::run, &latency_publisher);
-            std::thread sub_thread(&LatencyTestSubscriber::run, &latency_subscriber);
+
+            std::vector<std::thread> sub_threads;
+            for (auto& sub : latency_subscribers)
+            {
+                sub_threads.emplace_back(&LatencyTestSubscriber::run, sub.get());
+            }
+
             pub_thread.join();
-            sub_thread.join();
+
+            for (auto& sub : sub_threads)
+            {
+                sub.join();
+            }
         }
         else
         {
             return_code = 1;
         }
-
     }
 
     if (return_code == 0)
