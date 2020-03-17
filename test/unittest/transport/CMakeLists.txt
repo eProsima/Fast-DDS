@@ -179,8 +179,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(SHAREDMEMTESTS_SOURCE
             SharedMemTests.cpp
             mock/MockReceiverResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
