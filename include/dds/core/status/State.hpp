@@ -217,18 +217,6 @@ public:
     }
 
     /**
-     * Assign given StatusMask bits into this StatusMask bitset.
-     *
-     * @return StatusMask this
-     */
-    inline StatusMask operator =(
-            const std::bitset<OMG_DDS_STATUS_COUNT>& mask) const
-    {
-        *this = mask;
-        return *this;
-    }
-
-    /**
      * Get all StatusMasks
      *
      * @return StatusMask all
