@@ -30,9 +30,17 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 
+#include <dds/domain/DomainParticipant.hpp>
+
 #include <utility>
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace domain {
+class DomainParticipant;
+}
+}
 
 namespace eprosima {
 namespace fastrtps {
@@ -55,6 +63,7 @@ namespace dds {
 
 class DomainParticipantImpl;
 class DomainParticipantListener;
+class DomainParticipantQos;
 class Publisher;
 class PublisherQos;
 class PublisherListener;
@@ -412,18 +421,26 @@ public:
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
+    virtual ~DomainParticipant();
+
 private:
 
     DomainParticipant(
             const StatusMask& mask = StatusMask::all());
 
-    virtual ~DomainParticipant();
+    DomainParticipant(
+            DomainId_t domain_id,
+            const DomainParticipantQos& qos,
+            DomainParticipantListener* listener,
+            const StatusMask& mask = StatusMask::all());
 
     DomainParticipantImpl* impl_;
 
     friend class DomainParticipantFactory;
 
     friend class DomainParticipantImpl;
+
+    friend class ::dds::domain::DomainParticipant;
 };
 
 } // namespace dds
