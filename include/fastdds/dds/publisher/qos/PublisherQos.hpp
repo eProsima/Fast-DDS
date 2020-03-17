@@ -87,7 +87,7 @@ public:
     fastrtps::LifespanQosPolicy lifespan;
 
     //!UserData Qos, NOT implemented in the library.
-    UserDataQosPolicy user_data;
+    fastrtps::UserDataQosPolicy user_data;
 
     //!Time Based Filter Qos, NOT implemented in the library.
     fastrtps::TimeBasedFilterQosPolicy time_based_filter;

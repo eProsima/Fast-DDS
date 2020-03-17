@@ -133,7 +133,7 @@ public:
     //!
     ParameterPropertyList_t m_properties;
     //!
-    fastdds::dds::UserDataQosPolicy m_userData;
+    UserDataQosPolicy m_userData;
     //!
     TimedEvent* lease_duration_event;
     //!
