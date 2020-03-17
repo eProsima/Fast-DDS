@@ -16,6 +16,8 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/core/types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -26,6 +28,15 @@ TEST(ParticipantTests, CreateDomainParticipant)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
     ASSERT_NE(participant, nullptr);
+
+}
+
+TEST(ParticipantTests, CreatePSMDomainParticipant)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::core::null;
+    participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_NE(participant, ::dds::core::null);
 
 }
 
