@@ -40,6 +40,14 @@ TEST(ParticipantTests, CreatePSMDomainParticipant)
 
 }
 
+TEST(ParticipantTests, DeleteDomainParticipant)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
