@@ -129,12 +129,12 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
     using PartVectorIt = std::vector<DomainParticipantImpl*>::iterator;
     using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*> >::iterator;
 
-    if (part->contains_entity(part->get_instance_handle()))
-    {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
     if (part != nullptr)
     {
+        if (part->has_active_entities())
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
         std::lock_guard<std::mutex> guard(mtx_participants_);
 
         VectorIt vit = participants_.find(part->get_domain_id());

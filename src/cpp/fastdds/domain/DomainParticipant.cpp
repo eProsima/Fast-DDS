@@ -277,3 +277,8 @@ bool DomainParticipant::register_remote_type(
 {
     return impl_->register_remote_type(type_information, type_name, callback);
 }
+
+bool DomainParticipant::has_active_entities()
+{
+    return impl_->has_active_entities();
+}

@@ -276,6 +276,13 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
+    /**
+     * This method checks if the DomainParticipant has created an entity that has not been
+     * deleted.
+     * @return true if the participant has no deleted entities, false otherwise
+     */
+    bool has_active_entities();
+
 private:
 
     //!Participant Qos
@@ -413,6 +420,7 @@ public:
 
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
+
 };
 
 } /* namespace dds */
