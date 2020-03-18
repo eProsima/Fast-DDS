@@ -128,6 +128,13 @@ TEST(ParticipantTests, CreatePSMSubscriber)
     ASSERT_NE(subscriber, ::dds::core::null);
 }
 
+TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    ASSERT_NE(factory, nullptr);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
