@@ -172,15 +172,13 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
     }
     else
     {
-        future_low_mark = changes_low_mark_ + 1;
-
-        if (seq_num == SequenceNumber_t())
+        // Special case. Currently only used on Builtin StatefulWriters
+        // after losing lease duration, and on late joiners to set
+        // changes_low_mark_ to match that of the writer.
+        SequenceNumber_t min_sequence = writer_->get_seq_num_min();
+        if (min_sequence != SequenceNumber_t::unknown())
         {
-            // Special case. Currently only used on Builtin StatefulWriters
-            // after losing lease duration, and on late joiners to set
-            // changes_low_mark_ to match that of the writer.
             SequenceNumber_t current_sequence = seq_num;
-            SequenceNumber_t min_sequence = writer_->get_seq_num_min();
             if (seq_num < min_sequence)
             {
                 current_sequence = min_sequence;
