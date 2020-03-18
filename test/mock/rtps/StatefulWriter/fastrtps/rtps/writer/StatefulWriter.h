@@ -50,6 +50,11 @@ class StatefulWriter : public RTPSWriter
 
         SequenceNumber_t get_seq_num_min() { return SequenceNumber_t(0, 0); }
 
+        SequenceNumber_t next_sequence_number() const
+        {
+            return mp_history->next_sequence_number();
+        }
+
     private:
 
         friend class ReaderProxy;
