@@ -61,16 +61,16 @@ namespace core {
  * The full list of exceptions is included in the file dds/core/Exceptions.hpp.
  *
  */
-class OMG_DDS_API Exception
+class Exception
 {
 protected:
 
-    Exception();
+    OMG_DDS_API Exception();
 
 public:
 
     /** @cond */
-    virtual ~Exception() throw();
+    OMG_DDS_API virtual ~Exception() throw();
     /** @endcond */
 
 public:
@@ -105,30 +105,30 @@ public:
      *
      * @return Exception information
      */
-    virtual const char* what() const throw() = 0;
+    OMG_DDS_API virtual const char* what() const throw() = 0;
 };
 
 /**
  * @brief
  * %Exception: Generic, unspecified error.
  */
-class OMG_DDS_API Error : public Exception, public std::logic_error
+class Error : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit Error(
+    OMG_DDS_API explicit Error(
             const std::string& msg);
 
-    Error(
+    OMG_DDS_API Error(
             const Error& src);
 
-    virtual ~Error() throw();
+    OMG_DDS_API virtual ~Error() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -136,23 +136,23 @@ public:
  * @brief
  * %Exception: The object target of this operation has already been closed.
  */
-class OMG_DDS_API AlreadyClosedError : public Exception, public std::logic_error
+class AlreadyClosedError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit AlreadyClosedError(
+    OMG_DDS_API explicit AlreadyClosedError(
             const std::string& msg);
 
-    AlreadyClosedError(
+    OMG_DDS_API AlreadyClosedError(
             const AlreadyClosedError& src);
 
-    virtual ~AlreadyClosedError() throw();
+    OMG_DDS_API virtual ~AlreadyClosedError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -164,23 +164,23 @@ public:
  *
  * There is no precondition that could be changed to make the operation succeed.
  */
-class OMG_DDS_API IllegalOperationError : public Exception, public std::logic_error
+class IllegalOperationError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit IllegalOperationError(
+    OMG_DDS_API explicit IllegalOperationError(
             const std::string& msg);
 
-    IllegalOperationError(
+    OMG_DDS_API IllegalOperationError(
             const IllegalOperationError& src);
 
-    virtual ~IllegalOperationError() throw();
+    OMG_DDS_API virtual ~IllegalOperationError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -188,23 +188,23 @@ public:
  * @brief
  * %Exception: Application attempted to modify an immutable QosPolicy.
  */
-class OMG_DDS_API ImmutablePolicyError : public Exception, public std::logic_error
+class ImmutablePolicyError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit ImmutablePolicyError(
+    OMG_DDS_API explicit ImmutablePolicyError(
             const std::string& msg);
 
-    ImmutablePolicyError(
+    OMG_DDS_API ImmutablePolicyError(
             const ImmutablePolicyError& src);
 
-    virtual ~ImmutablePolicyError() throw();
+    OMG_DDS_API virtual ~ImmutablePolicyError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -213,23 +213,23 @@ public:
  * %Exception: Application specified a set of policies that are not
  * consistent with each other.
  */
-class OMG_DDS_API InconsistentPolicyError : public Exception, public std::logic_error
+class InconsistentPolicyError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit InconsistentPolicyError(
+    OMG_DDS_API explicit InconsistentPolicyError(
             const std::string& msg);
 
-    InconsistentPolicyError(
+    OMG_DDS_API InconsistentPolicyError(
             const InconsistentPolicyError& src);
 
-    virtual ~InconsistentPolicyError() throw();
+    OMG_DDS_API virtual ~InconsistentPolicyError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -237,23 +237,23 @@ public:
  * @brief
  * %Exception: Application is passing an invalid argument.
  */
-class OMG_DDS_API InvalidArgumentError : public Exception, public std::invalid_argument
+class InvalidArgumentError : public Exception, public std::invalid_argument
 {
     /** @cond */
 
 public:
 
-    explicit InvalidArgumentError(
+    OMG_DDS_API explicit InvalidArgumentError(
             const std::string& msg);
 
-    InvalidArgumentError(
+    OMG_DDS_API InvalidArgumentError(
             const InvalidArgumentError& src);
 
-    virtual ~InvalidArgumentError() throw();
+    OMG_DDS_API virtual ~InvalidArgumentError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -261,23 +261,23 @@ public:
  * @brief
  * %Exception: Operation invoked on an Entity that is not yet enabled.
  */
-class OMG_DDS_API NotEnabledError : public Exception, public std::logic_error
+class NotEnabledError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit NotEnabledError(
+    OMG_DDS_API explicit NotEnabledError(
             const std::string& msg);
 
-    NotEnabledError(
+    OMG_DDS_API NotEnabledError(
             const NotEnabledError& src);
 
-    virtual ~NotEnabledError() throw();
+    OMG_DDS_API virtual ~NotEnabledError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -286,23 +286,23 @@ public:
  * %Exception: Service ran out of the resources needed to complete the
  * operation.
  */
-class OMG_DDS_API OutOfResourcesError : public Exception, public std::runtime_error
+class OutOfResourcesError : public Exception, public std::runtime_error
 {
     /** @cond */
 
 public:
 
-    explicit OutOfResourcesError(
+    OMG_DDS_API explicit OutOfResourcesError(
             const std::string& msg);
 
-    OutOfResourcesError(
+    OMG_DDS_API OutOfResourcesError(
             const OutOfResourcesError& src);
 
-    virtual ~OutOfResourcesError() throw();
+    OMG_DDS_API virtual ~OutOfResourcesError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -311,23 +311,23 @@ public:
  * @brief
  * %Exception: A pre-condition for the operation was not met.
  */
-class OMG_DDS_API PreconditionNotMetError : public Exception, public std::logic_error
+class PreconditionNotMetError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit PreconditionNotMetError(
+    OMG_DDS_API explicit PreconditionNotMetError(
             const std::string& msg);
 
-    PreconditionNotMetError(
+    OMG_DDS_API PreconditionNotMetError(
             const PreconditionNotMetError& src);
 
-    virtual ~PreconditionNotMetError() throw();
+    OMG_DDS_API virtual ~PreconditionNotMetError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -335,23 +335,23 @@ public:
  * @brief
  * %Exception: The operation timed out.
  */
-class OMG_DDS_API TimeoutError : public Exception, public std::runtime_error
+class TimeoutError : public Exception, public std::runtime_error
 {
     /** @cond */
 
 public:
 
-    explicit TimeoutError(
+    OMG_DDS_API explicit TimeoutError(
             const std::string& msg);
 
-    TimeoutError(
+    OMG_DDS_API TimeoutError(
             const TimeoutError& src);
 
-    virtual ~TimeoutError() throw();
+    OMG_DDS_API virtual ~TimeoutError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -361,23 +361,23 @@ public:
  *
  * This can only be thrown by operations that are optional.
  */
-class OMG_DDS_API UnsupportedError : public Exception, public std::logic_error
+class UnsupportedError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit UnsupportedError(
+    OMG_DDS_API explicit UnsupportedError(
             const std::string& msg);
 
-    UnsupportedError(
+    OMG_DDS_API UnsupportedError(
             const UnsupportedError& src);
 
-    virtual ~UnsupportedError() throw();
+    OMG_DDS_API virtual ~UnsupportedError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -385,23 +385,23 @@ public:
  * @brief
  * %Exception: Application has attempted to cast incompatible types.
  */
-class OMG_DDS_API InvalidDowncastError : public Exception, public std::runtime_error
+class InvalidDowncastError : public Exception, public std::runtime_error
 {
     /** @cond */
 
 public:
 
-    explicit InvalidDowncastError(
+    OMG_DDS_API explicit InvalidDowncastError(
             const std::string& msg);
 
-    InvalidDowncastError(
+    OMG_DDS_API InvalidDowncastError(
             const InvalidDowncastError& src);
 
-    virtual ~InvalidDowncastError() throw();
+    OMG_DDS_API virtual ~InvalidDowncastError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -419,23 +419,23 @@ public:
  * }
  * @endcode
  */
-class OMG_DDS_API NullReferenceError : public Exception, public std::runtime_error
+class NullReferenceError : public Exception, public std::runtime_error
 {
     /** @cond */
 
 public:
 
-    explicit NullReferenceError(
+    OMG_DDS_API explicit NullReferenceError(
             const std::string& msg);
 
-    NullReferenceError(
+    OMG_DDS_API NullReferenceError(
             const NullReferenceError& src);
 
-    virtual ~NullReferenceError() throw();
+    OMG_DDS_API virtual ~NullReferenceError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
@@ -443,23 +443,23 @@ public:
  * @brief
  * %Exception: Application provided invalid data
  */
-class OMG_DDS_API InvalidDataError : public Exception, public std::logic_error
+class InvalidDataError : public Exception, public std::logic_error
 {
     /** @cond */
 
 public:
 
-    explicit InvalidDataError(
+    OMG_DDS_API explicit InvalidDataError(
             const std::string& msg);
 
-    InvalidDataError(
+    OMG_DDS_API InvalidDataError(
             const InvalidDataError& src);
 
-    virtual ~InvalidDataError() throw();
+    OMG_DDS_API virtual ~InvalidDataError() throw();
 
 public:
 
-    virtual const char* what() const throw();
+    OMG_DDS_API virtual const char* what() const throw();
     /** @endcond */
 };
 
