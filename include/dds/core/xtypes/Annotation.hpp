@@ -19,6 +19,7 @@
 
 #ifndef OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
 #define OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <dds/core/xtypes/detail/Annotation.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
@@ -278,4 +279,5 @@ BitsetAnnotation bit_bound(
 } //namespace core
 } //namespace dds
 
+#endif
 #endif //OMG_DDS_CORE_XTYPES_TANNOTATION_HPP_
