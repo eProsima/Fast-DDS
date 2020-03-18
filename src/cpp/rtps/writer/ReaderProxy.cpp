@@ -107,6 +107,8 @@ void ReaderProxy::start(
     is_active_ = true;
     reader_attributes_ = reader_attributes;
 
+    acked_changes_set(SequenceNumber_t());  // Simulate initial acknack to set low mark
+
     timers_enabled_.store(is_remote_and_reliable());
     initial_heartbeat_event_->restart_timer();
 
@@ -262,7 +264,8 @@ void ReaderProxy::acked_changes_set(
         if (seq_num == SequenceNumber_t())
         {
             // Special case. Currently only used on Builtin StatefulWriters
-            // after losing lease duration.
+            // after losing lease duration, and on late joiners to set
+            // changes_low_mark_ to match that of the writer.
             SequenceNumber_t min_sequence = writer_->get_seq_num_min();
 
             if (min_sequence != SequenceNumber_t::unknown())
@@ -306,6 +309,10 @@ void ReaderProxy::acked_changes_set(
                     std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
                 }
             }
+        }
+        else if (!is_local_reader())
+        {
+            future_low_mark = writer_->next_sequence_number();
         }
     }
 
