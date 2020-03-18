@@ -37,7 +37,26 @@ TEST(ParticipantTests, CreatePSMDomainParticipant)
     participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
 
     ASSERT_NE(participant, ::dds::core::null);
+}
 
+TEST(ParticipantTests, LookupDomainParticipant)
+{
+    DomainId_t id = 0;
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(id);
+
+    DomainParticipant* participant2 = DomainParticipantFactory::get_instance()->lookup_participant(id);
+
+    ASSERT_NE(participant2, nullptr);
+    ASSERT_EQ(participant, participant2);
+
+}
+
+TEST(ParticipantTests, LookupDomainParticipantNoCreatedParticipant)
+{
+    DomainParticipant* participant2 = DomainParticipantFactory::get_instance()->lookup_participant(0);
+
+    ASSERT_EQ(participant2, nullptr);
 }
 
 } // namespace dds
