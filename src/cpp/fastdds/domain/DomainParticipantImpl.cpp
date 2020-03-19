@@ -155,8 +155,9 @@ DomainParticipantImpl::~DomainParticipantImpl()
         types_.clear();
     }
 
-    delete participant_;
+    free(participant_);
     participant_ = nullptr;
+
 }
 
 ReturnCode_t DomainParticipantImpl::delete_publisher(
