@@ -411,42 +411,6 @@ public:
     void copy(
             ReaderProxyData* rdata);
 
-    void drop_locators(int32_t locator_kind)
-    {
-        {
-            auto& locators_vector = remote_locators_.unicast;
-            auto it = locators_vector.begin();
-
-            while (it != locators_vector.end())
-            {
-                if (it->kind == locator_kind)
-                {
-                    it = locators_vector.erase(it);
-                }
-                else
-                {
-                    it++;
-                }
-            }
-        }
-
-        {
-            auto& locators_vector = remote_locators_.multicast;
-            auto it = locators_vector.begin();
-            while (it != locators_vector.end())
-            {
-                if (it->kind == locator_kind)
-                {
-                    it = locators_vector.erase(it);
-                }
-                else
-                {
-                    it++;
-                }
-            }
-        }
-    }
-
 private:
 
     //!GUID
