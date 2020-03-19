@@ -18,6 +18,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/types.hpp>
+#include <dds/domain/find.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -57,6 +58,29 @@ TEST(ParticipantTests, LookupDomainParticipantNoCreatedParticipant)
     DomainParticipant* participant2 = DomainParticipantFactory::get_instance()->lookup_participant(0);
 
     ASSERT_EQ(participant2, nullptr);
+}
+
+TEST(ParticipantTests, FindPSMDomainParticipant)
+{
+    uint32_t domain_id = 0;
+
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(domain_id, PARTICIPANT_QOS_DEFAULT);
+
+    ::dds::domain::DomainParticipant participant2 = ::dds::domain::find(domain_id);
+
+    ASSERT_NE(participant2, ::dds::core::null);
+    ASSERT_EQ(*participant.delegate().get(), *participant2.delegate().get());
+
+}
+
+TEST(ParticipantTests, FindPSMDomainParticipantNoCreatedParticipant)
+{
+    uint32_t domain_id = 0;
+
+    ::dds::domain::DomainParticipant participant = ::dds::domain::find(domain_id);
+
+    ASSERT_EQ(participant, ::dds::core::null);
+
 }
 
 } // namespace dds
