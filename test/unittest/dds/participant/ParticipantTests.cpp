@@ -133,6 +133,7 @@ TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
 
     ASSERT_NE(factory, nullptr);
+    ASSERT_EQ(factory, DomainParticipantFactory::get_instance());
 }
 
 } // namespace dds
