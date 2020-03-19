@@ -102,6 +102,18 @@ public:
     }
 
     /**
+     * Assign StatusMask bits to this StatusMask bitset.
+     *
+     * @return StatusMask this
+     */
+    inline StatusMask operator =(
+            const std::bitset<FASTDDS_STATUS_COUNT>& mask) const
+    {
+        *this = mask;
+        return *this;
+    }
+
+    /**
      * Get all StatusMasks
      *
      * @return StatusMask all
