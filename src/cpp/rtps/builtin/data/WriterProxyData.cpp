@@ -568,6 +568,17 @@ bool WriterProxyData::readFromCDRMessage(
             {
                 switch (pid)
                 {
+                    case fastdds::dds::PID_VENDORID:
+                    {
+                        ParameterVendorId_t p(pid, plength);
+                        if (!p.readFromCDRMessage(msg, plength))
+                        {
+                            return false;
+                        }
+
+                        is_shm_transport_available &= (p.vendorId == c_VendorId_eProsima);
+                        break;
+                    }
                     case fastdds::dds::PID_DURABILITY:
                     {
                         if (!m_qos.m_durability.readFromCDRMessage(msg, plength))

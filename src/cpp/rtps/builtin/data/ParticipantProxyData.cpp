@@ -419,6 +419,7 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                         m_VendorId[0] = p.vendorId[0];
                         m_VendorId[1] = p.vendorId[1];
+                        is_shm_transport_available &= (m_VendorId == c_VendorId_eProsima);
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
