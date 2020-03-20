@@ -263,16 +263,16 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool DomainParticipantFactory::set_default_participant_qos(
-        const fastrtps::ParticipantAttributes &participant_qos)
-   {
-    // TODO XMLProfileManager::setDefault...
-    (void)participant_qos;
-    logError(DOMAIN_PARTICIPANT_FACTORY, "Not implemented.");
-    return false;
-   }
- */
+ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
+        const DomainParticipantQos& participant_qos)
+{
+    if (!participant_qos.check_qos())
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    default_participant_qos_.set_qos(participant_qos);
+    return ReturnCode_t::RETCODE_OK;
+}
 
 bool DomainParticipantFactory::load_XML_profiles_file(
         const std::string& xml_profile_file)
