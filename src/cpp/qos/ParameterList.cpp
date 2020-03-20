@@ -234,6 +234,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 case PID_TOPIC_NAME:
                 case PID_TYPE_NAME:
                 case PID_ENTITY_NAME:
+                case PID_SERVICE_INSTANCE_NAME:
                 {
                     if (plength > 256)
                     {

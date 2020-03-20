@@ -25,6 +25,7 @@
 #include "EndpointAttributes.h"
 #include "../../qos/QosPolicies.h"
 #include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
+#include "../attributes/PropertyPolicy.h"
 
 #include <functional>
 
@@ -106,6 +107,9 @@ public:
 
     //! Define the allocation behaviour for matched-writer-dependent collections.
     ResourceLimitedContainerConfig matched_writers_allocation;
+
+    //! Property policies
+    PropertyPolicy properties;
 };
 
 } /* namespace rtps */
