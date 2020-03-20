@@ -21,7 +21,7 @@ set(CTEST_BUILD_NAME "${JENKINS_BUILD_NAME}")
 set(CTEST_BUILD_OPTIONS "${JENKINS_BUILD_OPTIONS}")
 set(CTEST_BUILD_CONFIGURATION "${JENKINS_BUILD_CONFIGURATION}")
 
-set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "${CTEST_MEMORYCHECK_COMMAND_OPTIONS} --quiet --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --gen-suppressions=yes --xml=yes --xml-file=test_%p_memcheck.xml \"--suppressions=${CTEST_SOURCE_DIRECTORY}/valgrind.supp\"")
+set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "${CTEST_MEMORYCHECK_COMMAND_OPTIONS} --quiet --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --xml=yes --xml-file=test_%p_memcheck.xml \"--suppressions=${CTEST_SOURCE_DIRECTORY}/valgrind.supp\"")
 
 set(CTEST_COVERAGE_C_FLAGS "-DCMAKE_C_FLAGS:STRING=-fwrapv -fprofile-arcs -ftest-coverage")
 set(CTEST_COVERAGE_CXX_FLAGS "-DCMAKE_CXX_FLAGS:STRING=-fwrapv -fprofile-arcs -ftest-coverage")
