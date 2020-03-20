@@ -97,6 +97,10 @@ StatelessWriter::StatelessWriter(
         (isAsync() || VOLATILE < m_att.durabilityKind) ?
             resource_limits_from_history(history->m_att) :
             ResourceLimitedContainerConfig::fixed_size_configuration(0))
+    , all_acked_changes_(
+        (isAsync() || VOLATILE < m_att.durabilityKind) ?
+            resource_limits_from_history(history->m_att) :
+            ResourceLimitedContainerConfig::fixed_size_configuration(0))
     , last_intraprocess_sequence_number_(0)
 {
     get_builtin_guid();
@@ -423,10 +427,13 @@ void StatelessWriter::send_all_unsent_changes()
     bool remote_destinations = there_are_remote_readers_ || !fixed_locators_.empty();
     bool bHasListener = mp_listener != nullptr;
 
-    while (!unsent_changes_.empty())
+    all_acked_changes_.clear();
+
+    // Send all changes first (will notify later)
+    for (ChangeForReader_t& unsentChange : unsent_changes_)
     {
-        ChangeForReader_t& unsentChange = unsent_changes_.front();
         CacheChange_t* cache_change = unsentChange.getChange();
+        all_acked_changes_.push_back(cache_change);
 
         uint64_t sequence_number = cache_change->sequenceNumber.to64long();
         // Filter intraprocess unsent changes
@@ -444,16 +451,22 @@ void StatelessWriter::send_all_unsent_changes()
 
         if (remote_destinations)
         {
-            if(!add_change_to_rtps_group(group, &unsentChange, is_inline_qos_expected_))
+            if (!add_change_to_rtps_group(group, &unsentChange, is_inline_qos_expected_))
             {
                 break;
             }
         }
+    }
 
-        unsent_changes_.erase(unsent_changes_.begin());
-        if (bHasListener)
+    // Clear unsent changes
+    unsent_changes_.clear();
+
+    // Notify if necessary
+    if (bHasListener)
+    {
+        for (auto it = all_acked_changes_.rbegin(); it != all_acked_changes_.rend(); ++it)
         {
-            mp_listener->onWriterChangeReceivedByAll(this, cache_change);
+            mp_listener->onWriterChangeReceivedByAll(this, *it);
         }
     }
 }

@@ -164,6 +164,7 @@ private:
     LocatorList_t fixed_locators_;
     ResourceLimitedVector<ReaderLocator> matched_readers_;
     ResourceLimitedVector<ChangeForReader_t, std::true_type> unsent_changes_;
+    ResourceLimitedVector<CacheChange_t*, std::false_type> all_acked_changes_;
     std::vector<std::unique_ptr<FlowController> > flow_controllers_;
     uint64_t last_intraprocess_sequence_number_;
     bool there_are_remote_readers_ = false;
