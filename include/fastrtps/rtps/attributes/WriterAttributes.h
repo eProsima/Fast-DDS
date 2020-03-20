@@ -25,7 +25,6 @@
 #include "EndpointAttributes.h"
 #include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
 #include "../../qos/QosPolicies.h"
-#include "../attributes/PropertyPolicy.h"
 
 #include <functional>
 
@@ -139,9 +138,6 @@ public:
 
     //! Keep duration to keep a sample before considering it has been acked
     Duration_t keep_duration;
-
-    //! Property policies
-    PropertyPolicy properties;
 };
 
 } /* namespace rtps */

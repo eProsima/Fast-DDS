@@ -28,7 +28,7 @@
 
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 class TopicAttributes;
 class WriterQos;
@@ -52,18 +52,22 @@ class RTPS_DllAPI RTPSParticipant
 {
     friend class RTPSParticipantImpl;
     friend class RTPSDomain;
+
 private:
+
     /**
      * Constructor. Requires a pointer to the implementation.
      * @param pimpl Implementation.
      */
-    RTPSParticipant(RTPSParticipantImpl* pimpl);
+    RTPSParticipant(
+            RTPSParticipantImpl* pimpl);
 
-    virtual ~ RTPSParticipant();
+    virtual ~RTPSParticipant();
 
 public:
+
     //!Get the GUID_t of the RTPSParticipant.
-    const GUID_t& getGuid() const ;
+    const GUID_t& getGuid() const;
 
     //!Force the announcement of the RTPSParticipant state.
     void announceRTPSParticipantState();
@@ -117,7 +121,8 @@ public:
     bool registerWriter(
             RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos);
+            const WriterQos& wqos,
+            const PropertyPolicy& properties);
 
     /**
      * Register a RTPSReader in the builtin Protocols.
@@ -129,7 +134,8 @@ public:
     bool registerReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos);
+            const ReaderQos& rqos,
+            const PropertyPolicy& properties);
 
     /**
      * Update writer QOS
@@ -165,7 +171,7 @@ public:
      * Get a copy of the actual state of the RTPSParticipantParameters
      * @return RTPSParticipantAttributes copy of the params.
      */
-    const RTPSParticipantAttributes & getRTPSParticipantAttributes() const;
+    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const;
 
     /**
      * Retrieves the maximum message size.

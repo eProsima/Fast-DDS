@@ -75,11 +75,12 @@ EDP::~EDP()
 bool EDP::newLocalReaderProxyData(
         RTPSReader* reader,
         const TopicAttributes& att,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const PropertyPolicy& properties)
 {
     logInfo(RTPS_EDP, "Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
 
-    auto init_fun = [this, reader, &att, &rqos](
+    auto init_fun = [this, reader, &att, &rqos, &properties](
         ReaderProxyData* rpd,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -173,8 +174,7 @@ bool EDP::newLocalReaderProxyData(
 
                 // Getting DDS-RPC service_instance_name.
                 const std::string* property_value = PropertyPolicyHelper::find_property(
-                    reader->getAttributes().properties,
-                    "dds.rpc.service_instance_name");
+                    properties, "dds.rpc.service_instance_name");
 
                 if (property_value)
                 {
@@ -203,11 +203,12 @@ bool EDP::newLocalReaderProxyData(
 bool EDP::newLocalWriterProxyData(
         RTPSWriter* writer,
         const TopicAttributes& att,
-        const WriterQos& wqos)
+        const WriterQos& wqos,
+        const PropertyPolicy& properties)
 {
     logInfo(RTPS_EDP, "Adding " << writer->getGuid().entityId << " in topic " << att.topicName);
 
-    auto init_fun = [this, writer, &att, &wqos](
+    auto init_fun = [this, writer, &att, &wqos, &properties](
         WriterProxyData* wpd,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -300,7 +301,7 @@ bool EDP::newLocalWriterProxyData(
                 }
                 // Getting DDS-RPC service_instance_name.
                 const std::string* property_value = PropertyPolicyHelper::find_property(
-                    writer->getAttributes().properties,
+                    properties,
                     "dds.rpc.service_instance_name");
 
                 if (property_value)

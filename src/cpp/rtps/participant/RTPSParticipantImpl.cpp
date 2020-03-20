@@ -76,8 +76,8 @@ static bool should_be_intraprocess_only(
 {
     return
         xmlparser::XMLProfileManager::library_settings().intraprocess_delivery == INTRAPROCESS_FULL &&
-        att.builtin.discovery_config.ignoreParticipantFlags == 
-            (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
+        att.builtin.discovery_config.ignoreParticipantFlags ==
+        (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 }
 
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
@@ -166,7 +166,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // Creation of metatraffic locator and receiver resources
     uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
     uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
-        static_cast<uint32_t>(m_att.participantID));
+                    static_cast<uint32_t>(m_att.participantID));
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
@@ -185,18 +185,18 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(),
             [&](Locator_t& locator)
-            {
-                m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
-            });
+                    {
+                        m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
+                    });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
         std::for_each(
             m_att.builtin.metatrafficUnicastLocatorList.begin(),
             m_att.builtin.metatrafficUnicastLocatorList.end(),
             [&](Locator_t& locator)
-            {
-                m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
-            });
+                    {
+                        m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+                    });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
@@ -211,10 +211,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         initial_peers.swap(m_att.builtin.initialPeersList);
 
         std::for_each(initial_peers.begin(), initial_peers.end(),
-            [&](Locator_t& locator)
-            {
-                m_network_Factory.configureInitialPeerLocator(locator, m_att);
-            });
+                [&](Locator_t& locator)
+                    {
+                        m_network_Factory.configureInitialPeerLocator(locator, m_att);
+                    });
     }
 
     // Creation of user locator and receiver resources
@@ -241,9 +241,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             m_att.defaultUnicastLocatorList.begin(),
             m_att.defaultUnicastLocatorList.end(),
             [&](Locator_t& loc)
-            {
-                m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
-            });
+                    {
+                        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+                    });
 
     }
 
@@ -253,8 +253,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     if (!hasLocatorsDefined)
     {
         logInfo(RTPS_PARTICIPANT, m_att.getName() <<
-            " Created with NO default Unicast Locator List, adding Locators:" <<
-            m_att.defaultUnicastLocatorList);
+                " Created with NO default Unicast Locator List, adding Locators:" <<
+                m_att.defaultUnicastLocatorList);
     }
 
     if (is_intraprocess_only())
@@ -263,12 +263,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultUnicastLocatorList.clear();
         m_att.defaultMulticastLocatorList.clear();
     }
-    
+
 #if HAVE_SECURITY
     // Start security
     // TODO(Ricardo) Get returned value in future.
     m_security_manager_initialized =
-        m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
+            m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
     if (!m_security_manager_initialized)
     {
         // Participant will be deleted, no need to allocate buffers or create builtin endpoints
@@ -409,8 +409,8 @@ bool RTPSParticipantImpl::createWriter(
         const EntityId_t& entityId,
         bool isBuiltin)
 {
-    logInfo(RTPS_PARTICIPANT, ((param.endpoint.reliabilityKind == RELIABLE) ? 
-        "Creating writer of type RELIABLE" : "Creating writer of type BEST_EFFORT"));
+    logInfo(RTPS_PARTICIPANT, ((param.endpoint.reliabilityKind == RELIABLE) ?
+            "Creating writer of type RELIABLE" : "Creating writer of type BEST_EFFORT"));
 
     EntityId_t entId;
     if (entityId == c_EntityId_Unknown)
@@ -498,14 +498,14 @@ bool RTPSParticipantImpl::createWriter(
     if (param.endpoint.reliabilityKind == BEST_EFFORT)
     {
         SWriter = (persistence == nullptr) ?
-            new StatelessWriter(this, guid, param, hist, listen) :
-            new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
+                new StatelessWriter(this, guid, param, hist, listen) :
+                new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
     }
     else if (param.endpoint.reliabilityKind == RELIABLE)
     {
         SWriter = (persistence == nullptr) ?
-            new StatefulWriter(this, guid, param, hist, listen) :
-            new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
+                new StatefulWriter(this, guid, param, hist, listen) :
+                new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
     }
 
     if (SWriter == nullptr)
@@ -572,7 +572,7 @@ bool RTPSParticipantImpl::createReader(
         bool enable)
 {
     logInfo(RTPS_PARTICIPANT, ((param.endpoint.reliabilityKind == RELIABLE) ?
-        "Creating reader of type RELIABLE" : "Creating writer of type BEST_EFFORT"));
+            "Creating reader of type RELIABLE" : "Creating writer of type BEST_EFFORT"));
 
     EntityId_t entId;
     if (entityId == c_EntityId_Unknown)
@@ -645,14 +645,14 @@ bool RTPSParticipantImpl::createReader(
     if (param.endpoint.reliabilityKind == BEST_EFFORT)
     {
         SReader = (persistence == nullptr) ?
-            new StatelessReader(this, guid, param, hist, listen) :
-            new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
+                new StatelessReader(this, guid, param, hist, listen) :
+                new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
     }
     else if (param.endpoint.reliabilityKind == RELIABLE)
     {
         SReader = (persistence == nullptr) ?
-            new StatefulReader(this, guid, param, hist, listen) :
-            new StatefulPersistentReader(this, guid, param, hist, listen, persistence);
+                new StatefulReader(this, guid, param, hist, listen) :
+                new StatefulPersistentReader(this, guid, param, hist, listen, persistence);
     }
 
     if (SReader == nullptr)
@@ -773,17 +773,19 @@ void RTPSParticipantImpl::disableReader(
 bool RTPSParticipantImpl::registerWriter(
         RTPSWriter* Writer,
         const TopicAttributes& topicAtt,
-        const WriterQos& wqos)
+        const WriterQos& wqos,
+        const PropertyPolicy& properties)
 {
-    return this->mp_builtinProtocols->addLocalWriter(Writer, topicAtt, wqos);
+    return this->mp_builtinProtocols->addLocalWriter(Writer, topicAtt, wqos, properties);
 }
 
 bool RTPSParticipantImpl::registerReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos)
+        const ReaderQos& rqos,
+        const PropertyPolicy& properties)
 {
-    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
+    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, properties);
 }
 
 bool RTPSParticipantImpl::updateLocalWriter(

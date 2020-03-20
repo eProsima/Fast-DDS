@@ -42,7 +42,7 @@
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
@@ -50,13 +50,13 @@ BuiltinProtocols::BuiltinProtocols()
     : mp_participantImpl(nullptr)
     , mp_PDP(nullptr)
     , mp_WLP(nullptr)
-    {
-    }
+{
+}
 
 BuiltinProtocols::~BuiltinProtocols()
 {
     // Send participant is disposed
-    if(mp_PDP != nullptr)
+    if (mp_PDP != nullptr)
     {
         mp_PDP->announceParticipantState(true, true);
     }
@@ -67,10 +67,9 @@ BuiltinProtocols::~BuiltinProtocols()
 
 }
 
-
 bool BuiltinProtocols::initBuiltinProtocols(
-    RTPSParticipantImpl* p_part,
-    BuiltinAttributes& attributes)
+        RTPSParticipantImpl* p_part,
+        BuiltinAttributes& attributes)
 {
     mp_participantImpl = p_part;
     m_att = attributes;
@@ -115,7 +114,8 @@ bool BuiltinProtocols::initBuiltinProtocols(
             return false;
     }
 
-    if (!mp_PDP->init(mp_participantImpl)) {
+    if (!mp_PDP->init(mp_participantImpl))
+    {
         logError(RTPS_PDP, "Participant discovery configuration failed");
         return false;
     }
@@ -127,7 +127,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
         mp_WLP->initWL(mp_participantImpl);
     }
 
-    if(m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SIMPLE ||
+    if (m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SIMPLE ||
             m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::CLIENT)
     {
         mp_PDP->enable();
@@ -163,22 +163,23 @@ void BuiltinProtocols::transform_server_remote_locators(
 }
 
 bool BuiltinProtocols::addLocalWriter(
-    RTPSWriter* w,
-    const fastrtps::TopicAttributes& topicAtt,
-    const fastrtps::WriterQos& wqos)
+        RTPSWriter* w,
+        const fastrtps::TopicAttributes& topicAtt,
+        const fastrtps::WriterQos& wqos,
+        const PropertyPolicy& properties)
 {
     bool ok = false;
-    if(mp_PDP!=nullptr)
+    if (mp_PDP != nullptr)
     {
-        ok |= mp_PDP->getEDP()->newLocalWriterProxyData(w,topicAtt,wqos);
+        ok |= mp_PDP->getEDP()->newLocalWriterProxyData(w, topicAtt, wqos, properties);
     }
     else
     {
         logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Writer is impossible");
     }
-    if(mp_WLP !=nullptr)
+    if (mp_WLP != nullptr)
     {
-        ok|= mp_WLP->add_local_writer(w,wqos);
+        ok |= mp_WLP->add_local_writer(w, wqos);
     }
     else
     {
@@ -188,14 +189,15 @@ bool BuiltinProtocols::addLocalWriter(
 }
 
 bool BuiltinProtocols::addLocalReader(
-    RTPSReader* R,
-    const fastrtps::TopicAttributes& topicAtt,
-    const fastrtps::ReaderQos& rqos)
+        RTPSReader* R,
+        const fastrtps::TopicAttributes& topicAtt,
+        const fastrtps::ReaderQos& rqos,
+        const PropertyPolicy& properties)
 {
     bool ok = false;
-    if(mp_PDP!=nullptr)
+    if (mp_PDP != nullptr)
     {
-        ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R, topicAtt, rqos);
+        ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R, topicAtt, rqos, properties);
     }
     else
     {
@@ -203,18 +205,18 @@ bool BuiltinProtocols::addLocalReader(
     }
     if (mp_WLP != nullptr)
     {
-        ok|= mp_WLP->add_local_reader(R, rqos);
+        ok |= mp_WLP->add_local_reader(R, rqos);
     }
     return ok;
 }
 
 bool BuiltinProtocols::updateLocalWriter(
-    RTPSWriter* W,
-    const TopicAttributes& topicAtt,
-    const WriterQos& wqos)
+        RTPSWriter* W,
+        const TopicAttributes& topicAtt,
+        const WriterQos& wqos)
 {
     bool ok = false;
-    if(mp_PDP!=nullptr && mp_PDP->getEDP()!=nullptr)
+    if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)
     {
         ok |= mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
     }
@@ -222,40 +224,42 @@ bool BuiltinProtocols::updateLocalWriter(
 }
 
 bool BuiltinProtocols::updateLocalReader(
-    RTPSReader* R,
-    const TopicAttributes& topicAtt,
-    const ReaderQos& rqos)
+        RTPSReader* R,
+        const TopicAttributes& topicAtt,
+        const ReaderQos& rqos)
 {
     bool ok = false;
-    if(mp_PDP!=nullptr && mp_PDP->getEDP()!=nullptr)
+    if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)
     {
         ok |= mp_PDP->getEDP()->updatedLocalReader(R, topicAtt, rqos);
     }
     return ok;
 }
 
-bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
+bool BuiltinProtocols::removeLocalWriter(
+        RTPSWriter* W)
 {
     bool ok = false;
-    if(mp_WLP !=nullptr)
+    if (mp_WLP != nullptr)
     {
         ok |= mp_WLP->remove_local_writer(W);
     }
-    if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
+    if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)
     {
         ok |= mp_PDP->getEDP()->removeLocalWriter(W);
     }
     return ok;
 }
 
-bool BuiltinProtocols::removeLocalReader(RTPSReader* R)
+bool BuiltinProtocols::removeLocalReader(
+        RTPSReader* R)
 {
     bool ok = false;
     if (mp_WLP != nullptr)
     {
         ok |= mp_WLP->remove_local_reader(R);
     }
-    if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
+    if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)
     {
         ok |= mp_PDP->getEDP()->removeLocalReader(R);
     }

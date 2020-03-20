@@ -58,22 +58,22 @@ ParticipantImpl::ParticipantImpl(
     , mp_listener(listen)
 #pragma warning (disable : 4355 )
     , m_rtps_listener(this)
-    {
-        mp_participant->mp_impl = this;
-    }
+{
+    mp_participant->mp_impl = this;
+}
 
 ParticipantImpl::~ParticipantImpl()
 {
-    while(m_publishers.size()>0)
+    while (m_publishers.size() > 0)
     {
         this->removePublisher(m_publishers.begin()->first);
     }
-    while(m_subscribers.size()>0)
+    while (m_subscribers.size() > 0)
     {
         this->removeSubscriber(m_subscribers.begin()->first);
     }
 
-    if(this->mp_rtpsParticipant != nullptr)
+    if (this->mp_rtpsParticipant != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
     }
@@ -81,12 +81,12 @@ ParticipantImpl::~ParticipantImpl()
     delete(mp_participant);
 }
 
-
-bool ParticipantImpl::removePublisher(Publisher* pub)
+bool ParticipantImpl::removePublisher(
+        Publisher* pub)
 {
-    for(auto pit = this->m_publishers.begin();pit!= m_publishers.end();++pit)
+    for (auto pit = this->m_publishers.begin(); pit != m_publishers.end(); ++pit)
     {
-        if(pit->second->getGuid() == pub->getGuid())
+        if (pit->second->getGuid() == pub->getGuid())
         {
             delete(pit->second);
             m_publishers.erase(pit);
@@ -96,11 +96,12 @@ bool ParticipantImpl::removePublisher(Publisher* pub)
     return false;
 }
 
-bool ParticipantImpl::removeSubscriber(Subscriber* sub)
+bool ParticipantImpl::removeSubscriber(
+        Subscriber* sub)
 {
-    for(auto sit = m_subscribers.begin();sit!= m_subscribers.end();++sit)
+    for (auto sit = m_subscribers.begin(); sit != m_subscribers.end(); ++sit)
     {
-        if(sit->second->getGuid() == sub->getGuid())
+        if (sit->second->getGuid() == sub->getGuid())
         {
             delete(sit->second);
             m_subscribers.erase(sit);
@@ -119,53 +120,55 @@ Publisher* ParticipantImpl::createPublisher(
         const PublisherAttributes& att,
         PublisherListener* listen)
 {
-    logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName());
+    logInfo(PARTICIPANT, "CREATING PUBLISHER IN TOPIC: " << att.topic.getTopicName());
     //Look for the correct type registration
 
     TopicDataType* p_type = nullptr;
 
     /// Preconditions
     // Check the type was registered.
-    if(!getRegisteredType(att.topic.getTopicDataType().c_str(),&p_type))
+    if (!getRegisteredType(att.topic.getTopicDataType().c_str(), &p_type))
     {
-        logError(PARTICIPANT,"Type : "<< att.topic.getTopicDataType() << " Not Registered");
+        logError(PARTICIPANT, "Type : " << att.topic.getTopicDataType() << " Not Registered");
         return nullptr;
     }
     // Check the type supports keys.
-    if(att.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
+    if (att.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
     {
-        logError(PARTICIPANT,"Keyed Topic needs getKey function");
+        logError(PARTICIPANT, "Keyed Topic needs getKey function");
         return nullptr;
     }
 
-    if(m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if(att.getUserDefinedID() <= 0)
+        if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
-    if(!att.unicastLocatorList.isValid())
+    if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
-    if(!att.multicastLocatorList.isValid())
+    if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
-    if(!att.remoteLocatorList.isValid())
+    if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Remote Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
-    if(!att.qos.checkQos() || !att.topic.checkQos())
+    if (!att.qos.checkQos() || !att.topic.checkQos())
+    {
         return nullptr;
+    }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    PublisherImpl* pubimpl = new PublisherImpl(this,p_type,att,listen);
+    PublisherImpl* pubimpl = new PublisherImpl(this, p_type, att, listen);
     Publisher* pub = new Publisher(pubimpl);
     pubimpl->mp_userPublisher = pub;
     pubimpl->mp_rtpsParticipant = this->mp_rtpsParticipant;
@@ -179,13 +182,14 @@ Publisher* ParticipantImpl::createPublisher(
     watt.endpoint.topicKind = att.topic.topicKind;
     watt.endpoint.unicastLocatorList = att.unicastLocatorList;
     watt.endpoint.remoteLocatorList = att.remoteLocatorList;
-    watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
+    watt.mode = att.qos.m_publishMode.kind ==
+            eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     watt.endpoint.properties = att.properties;
-    if(att.getEntityID()>0)
+    if (att.getEntityID() > 0)
     {
         watt.endpoint.setEntityID((uint8_t)att.getEntityID());
     }
-    if(att.getUserDefinedID()>0)
+    if (att.getUserDefinedID() > 0)
     {
         watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     }
@@ -201,11 +205,11 @@ Publisher* ParticipantImpl::createPublisher(
     property.name("topic_name");
     property.value(att.topic.getTopicName().c_str());
     watt.endpoint.properties.properties().push_back(std::move(property));
-    if(att.qos.m_partition.getNames().size() > 0)
+    if (att.qos.m_partition.getNames().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for(auto partition : att.qos.m_partition.getNames())
+        for (auto partition : att.qos.m_partition.getNames())
         {
             partitions += partition + ";";
         }
@@ -220,13 +224,13 @@ Publisher* ParticipantImpl::createPublisher(
     }
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
-                this->mp_rtpsParticipant,
-                watt,
-                (WriterHistory*)&pubimpl->m_history,
-                (WriterListener*)&pubimpl->m_writerListener);
-    if(writer == nullptr)
+        this->mp_rtpsParticipant,
+        watt,
+        (WriterHistory*)&pubimpl->m_history,
+        (WriterListener*)&pubimpl->m_writerListener);
+    if (writer == nullptr)
     {
-        logError(PARTICIPANT,"Problem creating associated Writer");
+        logError(PARTICIPANT, "Problem creating associated Writer");
         delete(pubimpl);
         return nullptr;
     }
@@ -238,12 +242,13 @@ Publisher* ParticipantImpl::createPublisher(
     m_publishers.push_back(pubpair);
 
     //REGISTER THE WRITER
-    this->mp_rtpsParticipant->registerWriter(writer, att.topic, att.qos);
+    this->mp_rtpsParticipant->registerWriter(writer, att.topic, att.qos, att.properties);
 
     return pub;
 }
 
-std::vector<std::string> ParticipantImpl::getParticipantNames() const {
+std::vector<std::string> ParticipantImpl::getParticipantNames() const
+{
     return mp_rtpsParticipant->getParticipantNames();
 }
 
@@ -251,48 +256,50 @@ Subscriber* ParticipantImpl::createSubscriber(
         const SubscriberAttributes& att,
         SubscriberListener* listen)
 {
-    logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName())
-        //Look for the correct type registration
+    logInfo(PARTICIPANT, "CREATING SUBSCRIBER IN TOPIC: " << att.topic.getTopicName())
+    //Look for the correct type registration
 
-        TopicDataType* p_type = nullptr;
+    TopicDataType* p_type = nullptr;
 
-    if(!getRegisteredType(att.topic.getTopicDataType().c_str(),&p_type))
+    if (!getRegisteredType(att.topic.getTopicDataType().c_str(), &p_type))
     {
-        logError(PARTICIPANT,"Type : "<< att.topic.getTopicDataType() << " Not Registered");
+        logError(PARTICIPANT, "Type : " << att.topic.getTopicDataType() << " Not Registered");
         return nullptr;
     }
-    if(att.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
+    if (att.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
     {
-        logError(PARTICIPANT,"Keyed Topic needs getKey function");
+        logError(PARTICIPANT, "Keyed Topic needs getKey function");
         return nullptr;
     }
-    if(m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if(att.getUserDefinedID() <= 0)
+        if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
-    if(!att.unicastLocatorList.isValid())
+    if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
-    if(!att.multicastLocatorList.isValid())
+    if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
-    if(!att.remoteLocatorList.isValid())
+    if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
-    if(!att.qos.checkQos() || !att.topic.checkQos())
+    if (!att.qos.checkQos() || !att.topic.checkQos())
+    {
         return nullptr;
+    }
 
-    SubscriberImpl* subimpl = new SubscriberImpl(this,p_type,att,listen);
+    SubscriberImpl* subimpl = new SubscriberImpl(this, p_type, att, listen);
     Subscriber* sub = new Subscriber(subimpl);
     subimpl->mp_userSubscriber = sub;
     subimpl->mp_rtpsParticipant = this->mp_rtpsParticipant;
@@ -307,10 +314,14 @@ Subscriber* ParticipantImpl::createSubscriber(
     ratt.endpoint.remoteLocatorList = att.remoteLocatorList;
     ratt.expectsInlineQos = att.expectsInlineQos;
     ratt.endpoint.properties = att.properties;
-    if(att.getEntityID()>0)
+    if (att.getEntityID() > 0)
+    {
         ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
-    if(att.getUserDefinedID()>0)
+    }
+    if (att.getUserDefinedID() > 0)
+    {
         ratt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
+    }
     ratt.times = att.times;
     ratt.matched_writers_allocation = att.matched_publisher_allocation;
     ratt.liveliness_kind_ = att.qos.m_liveliness.kind;
@@ -322,11 +333,11 @@ Subscriber* ParticipantImpl::createSubscriber(
     property.name("topic_name");
     property.value(att.topic.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
-    if(att.qos.m_partition.getNames().size() > 0)
+    if (att.qos.m_partition.getNames().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for(auto partition : att.qos.m_partition.getNames())
+        for (auto partition : att.qos.m_partition.getNames())
         {
             partitions += partition + ";";
         }
@@ -339,12 +350,12 @@ Subscriber* ParticipantImpl::createSubscriber(
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
-            ratt,
-            (ReaderHistory*)&subimpl->m_history,
-            (ReaderListener*)&subimpl->m_readerListener);
-    if(reader == nullptr)
+                    ratt,
+                    (ReaderHistory*)&subimpl->m_history,
+                    (ReaderListener*)&subimpl->m_readerListener);
+    if (reader == nullptr)
     {
-        logError(PARTICIPANT,"Problem creating associated Reader");
+        logError(PARTICIPANT, "Problem creating associated Reader");
         delete(subimpl);
         return nullptr;
     }
@@ -356,20 +367,19 @@ Subscriber* ParticipantImpl::createSubscriber(
     m_subscribers.push_back(subpair);
 
     //REGISTER THE READER
-    this->mp_rtpsParticipant->registerReader(reader,att.topic,att.qos);
+    this->mp_rtpsParticipant->registerReader(reader, att.topic, att.qos, att.properties);
 
     return sub;
 }
-
 
 bool ParticipantImpl::getRegisteredType(
         const char* typeName,
         TopicDataType** type)
 {
-    for(std::vector<TopicDataType*>::iterator it=m_types.begin();
-            it!=m_types.end();++it)
+    for (std::vector<TopicDataType*>::iterator it = m_types.begin();
+            it != m_types.end(); ++it)
     {
-        if(strcmp((*it)->getName(),typeName)==0)
+        if (strcmp((*it)->getName(), typeName) == 0)
         {
             *type = *it;
             return true;
@@ -378,20 +388,21 @@ bool ParticipantImpl::getRegisteredType(
     return false;
 }
 
-bool ParticipantImpl::registerType(TopicDataType* type)
+bool ParticipantImpl::registerType(
+        TopicDataType* type)
 {
     if (type->m_typeSize <= 0)
     {
         logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");
         return false;
     }
-    const char * name = type->getName();
+    const char* name = type->getName();
     if (strlen(name) <= 0)
     {
         logError(PARTICIPANT, "Registered Type must have a name");
         return false;
     }
-    for (auto ty = m_types.begin(); ty != m_types.end();++ty)
+    for (auto ty = m_types.begin(); ty != m_types.end(); ++ty)
     {
         if (strcmp((*ty)->getName(), type->getName()) == 0)
         {
@@ -404,36 +415,41 @@ bool ParticipantImpl::registerType(TopicDataType* type)
     return true;
 }
 
-bool ParticipantImpl::unregisterType(const char* typeName)
+bool ParticipantImpl::unregisterType(
+        const char* typeName)
 {
     bool retValue = true;
     std::vector<TopicDataType*>::iterator typeit;
 
     for (typeit = m_types.begin(); typeit != m_types.end(); ++typeit)
     {
-        if(strcmp((*typeit)->getName(), typeName) == 0)
+        if (strcmp((*typeit)->getName(), typeName) == 0)
         {
             break;
         }
     }
 
-    if(typeit != m_types.end())
+    if (typeit != m_types.end())
     {
         bool inUse = false;
 
-        for(auto sit = m_subscribers.begin(); !inUse && sit!= m_subscribers.end(); ++sit)
+        for (auto sit = m_subscribers.begin(); !inUse && sit != m_subscribers.end(); ++sit)
         {
-            if(strcmp(sit->second->getType()->getName(), typeName) == 0)
+            if (strcmp(sit->second->getType()->getName(), typeName) == 0)
+            {
                 inUse = true;
+            }
         }
 
-        for(auto pit = m_publishers.begin(); pit!= m_publishers.end(); ++pit)
+        for (auto pit = m_publishers.begin(); pit != m_publishers.end(); ++pit)
         {
-            if(strcmp(pit->second->getType()->getName(), typeName) == 0)
+            if (strcmp(pit->second->getType()->getName(), typeName) == 0)
+            {
                 inUse = true;
+            }
         }
 
-        if(!inUse)
+        if (!inUse)
         {
             m_types.erase(typeit);
         }
@@ -446,15 +462,14 @@ bool ParticipantImpl::unregisterType(const char* typeName)
     return retValue;
 }
 
-
-
 void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         rtps::ParticipantDiscoveryInfo&& info)
 {
-    if(this->mp_participantimpl->mp_listener!=nullptr)
+    if (this->mp_participantimpl->mp_listener != nullptr)
     {
-        this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant, std::move(info));
+        this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant, std::move(
+                    info));
     }
 }
 
@@ -463,20 +478,23 @@ void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(
         RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
-    if(this->mp_participantimpl->mp_listener != nullptr)
+    if (this->mp_participantimpl->mp_listener != nullptr)
     {
-        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, std::move(info));
+        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, std::move(
+                    info));
     }
 }
+
 #endif
 
 void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
         rtps::ReaderDiscoveryInfo&& info)
 {
-    if(this->mp_participantimpl->mp_listener!=nullptr)
+    if (this->mp_participantimpl->mp_listener != nullptr)
     {
-        this->mp_participantimpl->mp_listener->onSubscriberDiscovery(mp_participantimpl->mp_participant, std::move(info));
+        this->mp_participantimpl->mp_listener->onSubscriberDiscovery(mp_participantimpl->mp_participant,
+                std::move(info));
     }
 }
 
@@ -484,9 +502,10 @@ void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
         rtps::WriterDiscoveryInfo&& info)
 {
-    if(this->mp_participantimpl->mp_listener!=nullptr)
+    if (this->mp_participantimpl->mp_listener != nullptr)
     {
-        this->mp_participantimpl->mp_listener->onPublisherDiscovery(mp_participantimpl->mp_participant, std::move(info));
+        this->mp_participantimpl->mp_listener->onPublisherDiscovery(mp_participantimpl->mp_participant,
+                std::move(info));
     }
 }
 
@@ -496,9 +515,13 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(
         EndpointKind_t kind)
 {
     if (kind == WRITER)
+    {
         return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);
+    }
     else
+    {
         return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
+    }
 }
 
 bool ParticipantImpl::get_remote_writer_info(
