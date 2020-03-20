@@ -62,6 +62,7 @@ static DomainParticipantFactory* g_instance = nullptr;
 
 DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
+    , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
 {
 }
 
@@ -251,21 +252,17 @@ std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
 }
 
 ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
-        ParticipantAttributes& participant_attributes) const
+        DomainParticipantQos& participant_qos) const
 {
-    if (false == default_xml_profiles_loaded)
-    {
-        XMLProfileManager::loadDefaultXMLFile();
-        default_xml_profiles_loaded = true;
-    }
-
-    XMLProfileManager::getDefaultParticipantAttributes(participant_attributes);
+    participant_qos = default_participant_qos_;
     return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
         const DomainParticipantQos& participant_qos)
 {
+    //TODO: Change create_participant to use default_participant_qos_
+    //if the value passed is PARTICIPANT_QOS_DEFAULT
     if (!participant_qos.check_qos())
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
