@@ -42,22 +42,17 @@ namespace rtps {
 
 static bool add_change_to_rtps_group(
         RTPSMessageGroup& group,
-        ChangeForReader_t* reader_change,
+        CacheChange_t* change,
         bool inline_qos)
 {
     try
     {
-        CacheChange_t* change = reader_change->getChange();
         uint32_t n_fragments = change->getFragmentCount();
         if (n_fragments > 0)
         {
             for (uint32_t frag = 1; frag <= n_fragments; frag++)
             {
-                if (group.add_data_frag(*change, frag, inline_qos))
-                {
-                    reader_change->markFragmentsAsSent(frag);
-                }
-                else
+                if (!group.add_data_frag(*change, frag, inline_qos))
                 {
                     logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
                 }
@@ -232,26 +227,7 @@ void StatelessWriter::unsent_change_added_to_history(
                         else
                         {
                             RTPSMessageGroup group(mp_RTPSParticipant, this, it, max_blocking_time);
-
-                            uint32_t n_fragments = change->getFragmentCount();
-                            if (n_fragments > 0)
-                            {
-                                for (uint32_t frag = 1; frag <= n_fragments; frag++)
-                                {
-                                    if (!group.add_data_frag(*change, frag, is_inline_qos_expected_))
-                                    {
-                                        logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
-                                                ", " << frag << ")");
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (!group.add_data(*change, is_inline_qos_expected_))
-                                {
-                                    logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
-                                }
-                            }
+                            add_change_to_rtps_group(group, change, it.expects_inline_qos());
                         }
                     }
                 }
@@ -268,26 +244,7 @@ void StatelessWriter::unsent_change_added_to_history(
                     if (there_are_remote_readers_ || !fixed_locators_.empty())
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
-
-                        uint32_t n_fragments = change->getFragmentCount();
-                        if (n_fragments > 0)
-                        {
-                            for (uint32_t frag = 1; frag <= n_fragments; frag++)
-                            {
-                                if (!group.add_data_frag(*change, frag, is_inline_qos_expected_))
-                                {
-                                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber <<
-                                            ", " << frag << ")");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (!group.add_data(*change, is_inline_qos_expected_))
-                            {
-                                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
-                            }
-                        }
+                        add_change_to_rtps_group(group, change, is_inline_qos_expected_);
                     }
                 }
 
@@ -451,7 +408,7 @@ void StatelessWriter::send_all_unsent_changes()
 
         if (remote_destinations)
         {
-            if (!add_change_to_rtps_group(group, &unsentChange, is_inline_qos_expected_))
+            if (!add_change_to_rtps_group(group, unsentChange.getChange(), is_inline_qos_expected_))
             {
                 break;
             }
