@@ -93,7 +93,10 @@ StatelessWriter::StatelessWriter(
         history,
         listener)
     , matched_readers_(attributes.matched_readers_allocation)
-    , unsent_changes_(resource_limits_from_history(history->m_att))
+    , unsent_changes_(
+        (isAsync() || VOLATILE < m_att.durabilityKind) ?
+            resource_limits_from_history(history->m_att) :
+            ResourceLimitedContainerConfig::fixed_size_configuration(0))
     , last_intraprocess_sequence_number_(0)
 {
     get_builtin_guid();
@@ -331,14 +334,16 @@ bool StatelessWriter::intraprocess_delivery(
 bool StatelessWriter::change_removed_by_history(
         CacheChange_t* change)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-
-    unsent_changes_.remove_if(
-        [change](ChangeForReader_t& cptr)
-                {
-                    return cptr.getChange() == change ||
+    if (isAsync() || VOLATILE < m_att.durabilityKind)
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        unsent_changes_.remove_if(
+            [change](ChangeForReader_t& cptr)
+            {
+                return cptr.getChange() == change ||
                     cptr.getChange()->sequenceNumber == change->sequenceNumber;
-                });
+            });
+    }
 
     return true;
 }
