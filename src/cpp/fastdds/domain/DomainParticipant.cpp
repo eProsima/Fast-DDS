@@ -45,6 +45,18 @@ DomainParticipant::~DomainParticipant()
 {
 }
 
+ReturnCode_t DomainParticipant::set_qos(
+        const DomainParticipantQos& qos) const
+{
+    return impl_->set_qos(qos);
+}
+
+ReturnCode_t DomainParticipant::get_qos(
+        DomainParticipantQos& qos) const
+{
+    return impl_->get_qos(qos);
+}
+
 ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener)
 {

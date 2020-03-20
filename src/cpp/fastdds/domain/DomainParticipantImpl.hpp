@@ -81,6 +81,12 @@ private:
 
 public:
 
+    ReturnCode_t get_qos(
+            DomainParticipantQos& qos) const;
+
+    ReturnCode_t set_qos(
+            const DomainParticipantQos& qos);
+
     ReturnCode_t set_listener(
             DomainParticipantListener* listener)
     {

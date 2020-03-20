@@ -29,6 +29,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 #include <utility>
 
@@ -61,7 +62,6 @@ namespace dds {
 
 class DomainParticipantImpl;
 class DomainParticipantListener;
-class DomainParticipantQos;
 class Publisher;
 class PublisherQos;
 class PublisherListener;
@@ -76,6 +76,24 @@ class SubscriberListener;
 class DomainParticipant : public Entity
 {
 public:
+
+    /**
+     * This operation returns the value of the DomainParticipant QoS policies
+     * @param qos
+     * @return ReturnCode
+     */
+    RTPS_DllAPI ReturnCode_t get_qos(
+            DomainParticipantQos& qos) const;
+
+    /**
+     * This operation sets the value of the DomainParticipant QoS policies.
+     * This operation will check that the resulting policies are self consistent; if they are not,
+     * the operation will have no effect and return INCONSISTENT_POLICY.
+     * @param qos
+     * @return ReturnCode
+     */
+    RTPS_DllAPI ReturnCode_t set_qos(
+            const DomainParticipantQos& qos) const;
 
     /**
      * Allows modifying the DomainParticipantListener.

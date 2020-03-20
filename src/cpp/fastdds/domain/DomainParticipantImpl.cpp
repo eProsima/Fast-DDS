@@ -146,6 +146,28 @@ DomainParticipantImpl::~DomainParticipantImpl()
     participant_ = nullptr;
 }
 
+ReturnCode_t DomainParticipantImpl::set_qos(
+        const DomainParticipantQos& qos)
+{
+    if (!qos.check_qos())
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if (!qos_.can_qos_be_updated(qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    qos_.set_qos(qos);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantImpl::get_qos(
+        DomainParticipantQos& qos) const
+{
+    qos = qos_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
 ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
