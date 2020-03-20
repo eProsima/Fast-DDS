@@ -464,6 +464,7 @@ void StatelessWriter::send_all_unsent_changes()
     // Notify if necessary
     if (bHasListener)
     {
+        // Notify in reverse order to improve deletion on VOLATILE writers
         for (auto it = all_acked_changes_.rbegin(); it != all_acked_changes_.rend(); ++it)
         {
             mp_listener->onWriterChangeReceivedByAll(this, *it);
@@ -637,7 +638,10 @@ bool StatelessWriter::matched_reader_add(
     if (data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
     {
         unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
-        mp_RTPSParticipant->async_thread().wake_up(this);
+        if(!unsent_changes_.empty())
+        {
+            mp_RTPSParticipant->async_thread().wake_up(this);
+        }
     }
 
     logInfo(RTPS_READER, "Reader " << data.guid() << " added to " << m_guid.entityId);
@@ -706,7 +710,10 @@ void StatelessWriter::unsent_changes_reset()
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
-    mp_RTPSParticipant->async_thread().wake_up(this);
+    if (!unsent_changes_.empty())
+    {
+        mp_RTPSParticipant->async_thread().wake_up(this);
+    }
 }
 
 void StatelessWriter::add_flow_controller(
