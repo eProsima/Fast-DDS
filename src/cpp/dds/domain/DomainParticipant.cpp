@@ -103,18 +103,18 @@ DomainParticipant::~DomainParticipant()
 //        return core::Time(now.seconds, now.nanosec);
 //}
 
-//dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qos()
-//{
-//        qos::DomainParticipantQos qos;
-//        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->get_default_participant_qos(qos);
-//        return qos;
-//}
+dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qos()
+{
+    qos::DomainParticipantQos qos;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->get_default_participant_qos(qos);
+    return qos;
+}
 
-//void DomainParticipant::default_participant_qos(
-//        const ::dds::domain::qos::DomainParticipantQos& /*qos*/)
-//{
-//        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(qos);
-//}
+void DomainParticipant::default_participant_qos(
+        const ::dds::domain::qos::DomainParticipantQos& qos)
+{
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(qos);
+}
 
 //dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const
 //{
