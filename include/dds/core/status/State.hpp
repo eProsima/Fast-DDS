@@ -217,18 +217,15 @@ public:
     }
 
     /**
-     * Shift (merge) given StatusMask bits into this StatusMask bitset.
+     * Assign given StatusMask bits into this StatusMask bitset.
      *
      * @return StatusMask this
      */
     inline StatusMask operator =(
             const std::bitset<OMG_DDS_STATUS_COUNT>& mask) const
     {
-        std::stringstream ss;
-        int number;
-        ss << std::hex << mask.to_ulong();
-        ss >> number;
-        return StatusMask(number);
+        *this = mask;
+        return *this;
     }
 
     /**
@@ -386,14 +383,8 @@ public:
     bool is_active(
             StatusMask status)
     {
-        bitset<16> r = *this & status;
+        MaskType r = *this & status;
         return r == status;
-    }
-
-    bool is_compatible(
-            StatusMask base) const
-    {
-        return (*this == all() || *this == base);
     }
 
 };
