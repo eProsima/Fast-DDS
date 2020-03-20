@@ -333,6 +333,28 @@ fastrtps::rtps::RTPSParticipantAttributes DomainParticipantFactory::get_attribut
     return rtps_attr;
 }
 
+ReturnCode_t DomainParticipantFactory::get_qos(
+        DomainParticipantFactoryQos& qos) const
+{
+    qos = factory_qos_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::set_qos(
+        const DomainParticipantFactoryQos& qos)
+{
+    if (!qos.check_qos())
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if (!factory_qos_.can_qos_be_updated(qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    factory_qos_.set_qos(qos);
+    return ReturnCode_t::RETCODE_OK;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
