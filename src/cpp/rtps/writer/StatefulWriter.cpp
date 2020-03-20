@@ -72,8 +72,7 @@ bool send_data_or_fragments(
             }
             else
             {
-                logError(RTPS_WRITER, "Error sending fragment ("
-                    << change->sequenceNumber << ", " << frag << ")");
+                logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
                 break;
             }
         }
@@ -280,23 +279,9 @@ void StatefulWriter::unsent_change_added_to_history(
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
 
-                        auto sent_fun = [this, change](
-                                FragmentNumber_t frag)
+                        auto sent_fun = [](
+                                FragmentNumber_t /*frag*/)
                         {
-                            if (frag > 0)
-                            {
-                                for (ReaderProxy* it : matched_readers_)
-                                {
-                                    if (!it->is_local_reader())
-                                    {
-                                        bool allFragmentsSent = false;
-                                        it->mark_fragment_as_sent_for_change(
-                                            change->sequenceNumber,
-                                            frag,
-                                            allFragmentsSent);
-                                    }
-                                }
-                            }
                         };
 
                         send_data_or_fragments(group, change, expectsInlineQos, sent_fun);

@@ -474,6 +474,16 @@ public:
             const ChangeForReaderStatus_t status)
     {
         status_ = status;
+
+        if (status == REQUESTED)
+        {
+            markAllFragmentsAsUnsent();
+        }
+        else if (!unsent_fragments_.empty() && (status > REQUESTED) )
+        {
+            // Change has been completeley sent. Ensure all fragments are marked as sent.
+            unsent_fragments_.base(change_->getFragmentCount() + 1);
+        }
     }
 
     ChangeForReaderStatus_t getStatus() const

@@ -353,7 +353,6 @@ bool ReaderProxy::requested_changes_set(
                     if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
                     {
                         chit->setStatus(REQUESTED);
-                        chit->markAllFragmentsAsUnsent();
                         isSomeoneWasSetRequested = true;
                     }
                 });
