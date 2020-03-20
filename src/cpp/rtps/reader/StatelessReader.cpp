@@ -154,23 +154,18 @@ bool StatelessReader::matched_writer_is_matched(
 bool StatelessReader::change_received(
         CacheChange_t* change)
 {
-    // Only make visible the change if there is not other with bigger sequence number.
-    // TODO Revisar si no hay que incluirlo.
-    if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
+    if (mp_history->received_change(change, 0))
     {
-        if (mp_history->received_change(change, 0))
+        update_last_notified(change->writerGUID, change->sequenceNumber);
+        ++total_unread_;
+
+        if (getListener() != nullptr)
         {
-            update_last_notified(change->writerGUID, change->sequenceNumber);
-            ++total_unread_;
-
-            if (getListener() != nullptr)
-            {
-                getListener()->onNewCacheChangeAdded(this, change);
-            }
-
-            new_notification_cv_.notify_all();
-            return true;
+            getListener()->onNewCacheChangeAdded(this, change);
         }
+
+        new_notification_cv_.notify_all();
+        return true;
     }
 
     return false;
@@ -263,49 +258,52 @@ bool StatelessReader::processDataMsg(
 
         assert_writer_liveliness(change->writerGUID);
 
-        CacheChange_t* change_to_add;
-
-        //Reserve a new cache from the corresponding cache pool
-        if (reserveCache(&change_to_add, change->serializedPayload.length))
+        if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
         {
-#if HAVE_SECURITY
-            if (getAttributes().security_attributes().is_payload_protected)
+            CacheChange_t* change_to_add;
+
+            //Reserve a new cache from the corresponding cache pool
+            if (reserveCache(&change_to_add, change->serializedPayload.length))
             {
-                change_to_add->copy_not_memcpy(change);
-                if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
+#if HAVE_SECURITY
+                if (getAttributes().security_attributes().is_payload_protected)
+                {
+                    change_to_add->copy_not_memcpy(change);
+                    if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
                         change->serializedPayload,
                         change_to_add->serializedPayload, m_guid, change->writerGUID))
-                {
-                    releaseCache(change_to_add);
-                    logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                    return false;
+                    {
+                        releaseCache(change_to_add);
+                        logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                        return false;
+                    }
                 }
+                else
+                {
+#endif
+                    if (!change_to_add->copy(change))
+                    {
+                        logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
+                            << change->serializedPayload.length << " bytes and max size in reader "
+                            << m_guid << " is " << change_to_add->serializedPayload.max_size);
+                        releaseCache(change_to_add);
+                        return false;
+                    }
+#if HAVE_SECURITY
+                }
+#endif
             }
             else
             {
-#endif
-            if (!change_to_add->copy(change))
-            {
-                logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
-                        << change->serializedPayload.length << " bytes and max size in reader "
-                        << m_guid << " is " << change_to_add->serializedPayload.max_size);
-                releaseCache(change_to_add);
+                logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << m_guid);
                 return false;
             }
-#if HAVE_SECURITY
-        }
-#endif
-        }
-        else
-        {
-            logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << m_guid);
-            return false;
-        }
 
-        if (!change_received(change_to_add))
-        {
-            logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
-            releaseCache(change_to_add);
+            if (!change_received(change_to_add))
+            {
+                logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
+                releaseCache(change_to_add);
+            }
         }
     }
 
