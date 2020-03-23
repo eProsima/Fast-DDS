@@ -83,11 +83,7 @@ public:
      */
     RTPS_DllAPI bool is_enabled() const
     {
-        if (enable_)
-        {
-            return true;
-        }
-        return false;
+        return enable_;
     }
 
     RTPS_DllAPI bool operator ==(

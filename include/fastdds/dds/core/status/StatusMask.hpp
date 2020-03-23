@@ -46,7 +46,7 @@ class StatusMask : public std::bitset<FASTDDS_STATUS_COUNT>
 public:
 
     /**
-     * Convenience typedef for std::bitset<OMG_DDS_STATE_BIT_COUNT>.
+     * Convenience typedef for std::bitset<FASTDDS_STATUS_COUNT>.
      */
     typedef std::bitset<FASTDDS_STATUS_COUNT> MaskType;
 
@@ -99,21 +99,6 @@ public:
     {
         *this |= mask;
         return *this;
-    }
-
-    /**
-     * Shift (merge) given StatusMask bits into this StatusMask bitset.
-     *
-     * @return StatusMask this
-     */
-    inline StatusMask operator =(
-            const std::bitset<FASTDDS_STATUS_COUNT>& mask) const
-    {
-        std::stringstream ss;
-        int number;
-        ss << std::hex << mask.to_ulong();
-        ss >> number;
-        return StatusMask(number);
     }
 
     /**
@@ -271,14 +256,8 @@ public:
     bool is_active(
             StatusMask status)
     {
-        bitset<16> r = *this & status;
+        MaskType r = *this & status;
         return r == status;
-    }
-
-    bool is_compatible(
-            StatusMask base) const
-    {
-        return (*this == all() || *this == base);
     }
 
 };
