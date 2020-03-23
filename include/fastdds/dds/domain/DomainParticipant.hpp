@@ -85,6 +85,8 @@ public:
     RTPS_DllAPI ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
 
+    RTPS_DllAPI const DomainParticipantQos& get_qos() const;
+
     /**
      * This operation sets the value of the DomainParticipant QoS policies.
      * This operation will check that the resulting policies are self consistent; if they are not,

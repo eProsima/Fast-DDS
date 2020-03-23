@@ -84,6 +84,8 @@ public:
     ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
 
+    const DomainParticipantQos& get_qos() const;
+
     ReturnCode_t set_qos(
             const DomainParticipantQos& qos);
 

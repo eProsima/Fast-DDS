@@ -168,6 +168,11 @@ ReturnCode_t DomainParticipantImpl::get_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+const DomainParticipantQos& DomainParticipantImpl::get_qos() const
+{
+    return qos_;
+}
+
 ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {

@@ -70,16 +70,16 @@ DomainParticipant::~DomainParticipant()
 //    return dynamic_cast<Listener*>(this->delegate()->get_listener());
 //}
 
-//const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
-//{
-//        return this->delegate()->get_qos();
-//}
+const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
+{
+    return this->delegate()->get_qos();
+}
 
-//void DomainParticipant::qos(
-//        const dds::domain::qos::DomainParticipantQos& /*qos*/)
-//{
-//        this->delegate()->set_qos(qos);
-//}
+void DomainParticipant::qos(
+        const dds::domain::qos::DomainParticipantQos& qos)
+{
+    this->delegate()->set_qos(qos);
+}
 
 //uint32_t DomainParticipant::domain_id() const
 //{
@@ -157,19 +157,19 @@ DomainParticipant& DomainParticipant::default_publisher_qos(
 //    return *this;
 //}
 
-//DomainParticipant& DomainParticipant::operator <<(
-//        const dds::domain::qos::DomainParticipantQos& qos)
-//{
-//    this->qos(qos);
-//    return *this;
-//}
+DomainParticipant& DomainParticipant::operator <<(
+        const dds::domain::qos::DomainParticipantQos& qos)
+{
+    this->qos(qos);
+    return *this;
+}
 
-//const DomainParticipant& DomainParticipant::operator >>(
-//        dds::domain::qos::DomainParticipantQos& qos) const
-//{
-//    qos = this->qos();
-//    return *this;
-//}
+const DomainParticipant& DomainParticipant::operator >>(
+        dds::domain::qos::DomainParticipantQos& qos) const
+{
+    qos = this->qos();
+    return *this;
+}
 
 } //namespace domain
 } //namespace dds
