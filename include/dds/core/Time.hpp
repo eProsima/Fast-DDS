@@ -22,6 +22,7 @@
 #define OMG_DDS_CORE_TIME_HPP_
 
 #include <dds/core/types.hpp>
+#include <fastrtps/rtps/common/Time_t.h>
 
 namespace dds {
 namespace core {
@@ -80,6 +81,13 @@ public:
             int64_t sec,
             uint32_t nanosec = 0);
 
+    Time(
+            eprosima::fastrtps::Time_t& time)
+    {
+        this->sec((int64_t)time.seconds);
+        this->nanosec((uint32_t)time.nanosec);
+    }
+
     /**
      * @return number of seconds
      */
@@ -90,7 +98,10 @@ public:
      * @param s number of seconds
      */
     void sec(
-            int64_t s);
+            int64_t s)
+    {
+        this->sec_ = s;
+    }
 
     /**
      * @return number of nanoseconds
@@ -102,7 +113,10 @@ public:
      * @param ns number of nanoseconds
      */
     void nanosec(
-            uint32_t ns);
+            uint32_t ns)
+    {
+        this->nsec_ = ns;
+    }
 
     /**
      * Returns an integer indicating the result of a comparison

@@ -97,12 +97,12 @@ DomainParticipant::~DomainParticipant()
 //        return this->delegate()->contains_entity(handle);
 //}
 
-//dds::core::Time DomainParticipant::current_time() const
-//{
-//        eprosima::fastrtps::Time_t now;
-//        this->delegate()->get_current_time(now);
-//        return core::Time(now.seconds, now.nanosec);
-//}
+dds::core::Time DomainParticipant::current_time() const
+{
+    eprosima::fastrtps::Time_t now;
+    this->delegate()->get_current_time(now);
+    return now;
+}
 
 dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qos()
 {
