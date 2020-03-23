@@ -211,6 +211,19 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
 
 }
 
+TEST(ParticipantTests, DomainParticipantListenerMethods)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    ASSERT_EQ(participant->get_listener(), nullptr);
+
+    DomainParticipantListener* listener;
+    participant->set_listener(listener);
+
+    ASSERT_EQ(listener, participant->get_listener());
+
+}
+
 TEST(ParticipantTests, CreatePublisher)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
