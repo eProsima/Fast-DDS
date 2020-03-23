@@ -528,7 +528,7 @@ bool PDPServer::trimPDPWriterHistory()
     std::lock_guard<RecursiveTimedMutex> guardW(mp_PDPWriter->getMutex());
 
     std::copy_if(mp_PDPWriterHistory->changesBegin(),
-            mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
+            mp_PDPWriterHistory->changesEnd(), std::front_inserter(removal),
             [this](const CacheChange_t* chan)
                 {
                     return _demises.find(chan->instanceHandle) != _demises.cend();
@@ -567,6 +567,12 @@ bool PDPServer::addRelayedChangeToHistory(
 {
     assert(mp_PDPWriter && c.serializedPayload.max_size);
 
+    // If we are deserializing data then allow process
+    if(ongoingDeserialization())
+    {
+        return true;
+    }
+
     std::lock_guard<RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
     CacheChange_t* pCh = nullptr;
 
@@ -581,6 +587,7 @@ bool PDPServer::addRelayedChangeToHistory(
                 "A DATA(p) received by server " << mp_PDPWriter->getGuid()
                     << " from participant " << c.writerGUID
                     << " without a valid SampleIdentity");
+        return false;
     }
 
     if (wp.related_sample_identity() == SampleIdentity::unknown())
@@ -673,6 +680,61 @@ std::string PDPServer::GetPersistenceFileName()
 
 }
 #endif
+
+//! returns true if loading info from persistency database
+bool PDPServer::ongoingDeserialization()
+{
+    return !mp_sync->messages_enabled_;
+}
+
+void PDPServer::processPersistentData()
+{
+    // Protect the writer, reader doesn't need to be protected because message
+    // reception has not yet been enabled but we must take the mutex because
+    // it's unlock by the listener
+    {
+        StatefulReader* p_PDPReader = static_cast<StatefulReader*>(mp_PDPReader);
+        std::lock_guard<RecursiveTimedMutex> guardR(p_PDPReader->getMutex());
+        std::lock_guard<RecursiveTimedMutex> guardW(mp_PDPWriter->getMutex());
+
+        std::for_each(mp_PDPWriterHistory->changesBegin(),
+            mp_PDPWriterHistory->changesEnd(),
+            [p_PDPReader](CacheChange_t* change)
+        {
+            CacheChange_t* change_to_add = nullptr;
+
+            if (!p_PDPReader->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+            {
+                logError(RTPS_PDP, "Problem reserving CacheChange in PDPServer reader");
+                return;
+            }
+
+            if (!change_to_add->copy(change))
+            {
+                logWarning(RTPS_PDP,"Problem copying CacheChange, received data is: " 
+                    << change->serializedPayload.length << " bytes and max size in PDPServer reader"
+                    << " is " << change_to_add->serializedPayload.max_size);
+
+                p_PDPReader->releaseCache(change_to_add);
+                return ;
+            }
+
+            if (!p_PDPReader->change_received(change_to_add, nullptr))
+            {
+                logInfo(RTPS_PDP, "PDPServer couldn't process database data not add change "
+                    << change_to_add->sequenceNumber);
+                p_PDPReader->releaseCache(change_to_add);
+            }
+
+            // change_to_add would be released within change_received
+        });
+    }
+
+    EDPServer* pEDP = dynamic_cast<EDPServer*>(mp_EDP);
+    assert(pEDP);
+
+    pEDP->processPersistentData();
+}
 
 bool PDPServer::all_servers_acknowledge_PDP()
 {

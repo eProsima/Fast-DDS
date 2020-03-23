@@ -80,7 +80,8 @@ void PDPServerListener::onNewCacheChangeAdded(
     if(change->kind == ALIVE)
     {
         // Ignore announcement from own RTPSParticipant
-        if (guid == parent_pdp_->getRTPSParticipant()->getGuid())
+        if (guid == parent_pdp_->getRTPSParticipant()->getGuid()
+            && !parent_server_pdp_->ongoingDeserialization() )
         {
             logInfo(RTPS_PDP, "Message from own RTPSParticipant, removing");
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);

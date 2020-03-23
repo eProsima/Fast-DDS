@@ -214,6 +214,9 @@ protected:
             bool remove_same_instance,
             CacheChange_t** created_change);
 
+    //! Process the info recorded in the persistence database
+    static void processPersistentData(t_p_StatefulReader & reader, t_p_StatefulWriter & writer);
+
 private:
     /**
      * Create a cache change on a builtin writer and serialize a ProxyData on it.

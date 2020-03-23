@@ -181,7 +181,7 @@ bool EDPServer::trimWriterHistory(
     std::forward_list<CacheChange_t*> removal;
     std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
 
-    std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
+    std::copy_if(history.changesBegin(), history.changesEnd(), std::front_inserter(removal),
         [_demises](const CacheChange_t* chan)
         {
             return _demises.find(chan->instanceHandle) != _demises.cend();
@@ -215,6 +215,17 @@ bool EDPServer::trimWriterHistory(
 
 }
 
+bool EDPServer::ongoingDeserialization()
+{
+    return static_cast<PDPServer*>(mp_PDP)->ongoingDeserialization();
+}
+
+void EDPServer::processPersistentData()
+{
+    EDPSimple::processPersistentData(publications_reader_, publications_writer_);
+    EDPSimple::processPersistentData(subscriptions_reader_, subscriptions_writer_);
+}
+
 bool EDPServer::addEndpointFromHistory(
         StatefulWriter& writer,
         WriterHistory& history,
@@ -222,6 +233,11 @@ bool EDPServer::addEndpointFromHistory(
 {
     std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
     CacheChange_t* pCh = nullptr;
+
+    if(ongoingDeserialization())
+    {
+        return true;
+    }
 
     // validate the sample, if no sample data update it
     WriteParams& wp = c.write_params;
@@ -234,6 +250,7 @@ bool EDPServer::addEndpointFromHistory(
                 "A DATA(r|w) received by server " << writer.getGuid()
                     << " from participant " << c.writerGUID
                     << " without a valid SampleIdentity");
+        return false;
     }
 
     if (wp.related_sample_identity() == SampleIdentity::unknown())

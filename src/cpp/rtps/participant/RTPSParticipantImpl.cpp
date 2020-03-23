@@ -125,9 +125,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // Workaround TCP discovery issues when register
     switch (PParam.builtin.discovery_config.discoveryProtocol)
     {
+        case DiscoveryProtocol::BACKUP:
+            m_persistence_guid = m_guid;
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
-        case DiscoveryProtocol::BACKUP:
         // Verify if listening ports are provided
         for (auto& transportDescriptor : PParam.userTransports)
         {
