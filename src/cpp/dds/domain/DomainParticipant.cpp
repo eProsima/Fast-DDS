@@ -58,17 +58,18 @@ DomainParticipant::~DomainParticipant()
 {
 }
 
-//void DomainParticipant::listener(
-//        Listener* /*listener*/,
-//        const ::dds::core::status::StatusMask& /*event_mask*/)
-//{
-//    this->delegate()->set_listener(listener /*, event_mask*/);
-//}
 
-//typename DomainParticipant::Listener* DomainParticipant::listener() const
-//{
-//    return dynamic_cast<Listener*>(this->delegate()->get_listener());
-//}
+void DomainParticipant::listener(
+        Listener* listener,
+        const ::dds::core::status::StatusMask& event_mask)
+{
+    this->delegate()->set_listener(listener, event_mask);
+}
+
+typename DomainParticipant::Listener* DomainParticipant::listener() const
+{
+    return dynamic_cast<Listener*>(this->delegate()->get_listener());
+}
 
 const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
 {
