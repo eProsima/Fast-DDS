@@ -139,6 +139,17 @@ TEST(ParticipantTests, GetCurrentTime)
     ASSERT_GT(t2, t1);
 }
 
+TEST(ParticipantTests, GetCurrentTimePSM)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::core::Time t1, t2;
+    t1 = participant.current_time();
+    t2 = participant.current_time();
+    ASSERT_NE(t1, t2);
+    ASSERT_GT(t2, t1);
+
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

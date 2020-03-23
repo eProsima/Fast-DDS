@@ -43,7 +43,12 @@ class OMG_DDS_API Time
 {
 public:
 
-    static const Time invalid();       // {-1, 0xffffffff}
+    static const Time invalid()
+    {
+        static const Time inv(-1, 0x7fffffff);
+
+        return inv;
+    }
 
     /**
      * Create a Time from a number of microseconds
@@ -72,26 +77,37 @@ public:
     /**
      * Create a Time of zero seconds.
      */
-    Time();
+    Time()
+        : sec_(0)
+        , nsec_(0)
+    {
+    }
 
     /**
      * Create a Time elapsing a specific amount of time.
      */
     explicit Time(
             int64_t sec,
-            uint32_t nanosec = 0);
+            uint32_t nanosec = 0)
+        : sec_(sec)
+        , nsec_(nanosec)
+    {
+    }
 
     Time(
             eprosima::fastrtps::Time_t& time)
+        : sec_(time.seconds)
+        , nsec_(time.nanosec)
     {
-        this->sec((int64_t)time.seconds);
-        this->nanosec((uint32_t)time.nanosec);
     }
 
     /**
      * @return number of seconds
      */
-    int64_t sec() const;
+    int64_t sec() const
+    {
+        return sec_;
+    }
 
     /**
      * Set number of seconds
@@ -106,7 +122,10 @@ public:
     /**
      * @return number of nanoseconds
      */
-    uint32_t nanosec() const;
+    uint32_t nanosec() const
+    {
+        return nsec_;
+    }
 
     /**
      * Set number of nanoseconds
@@ -129,47 +148,161 @@ public:
      * @return comparison result
      */
     int compare(
-            const Time& that) const;
+            const Time& that) const
+    {
+        if (*this > that)
+        {
+            return 1;
+        }
+        else if (*this < that)
+        {
+            return -1;
+        }
+        else if (*this == that)
+        {
+            return 0;
+        }
+    }
 
     /**
      * @param that Time to compare
      * @return true if the Time is greater than the comparator
      */
     bool operator >(
-            const Time& that) const;
+            const Time& that) const
+    {
+        if (this->sec() > that.sec())
+        {
+            return true;
+        }
+        else if (this->sec() < that.sec())
+        {
+            return false;
+        }
+        else
+        {
+            if (this->nanosec() > that.nanosec())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
     /**
      * @param that Time to compare
      * @return true if the Time is greater than or equal to the comparator
      */
     bool operator >=(
-            const Time& that) const;
+            const Time& that) const
+    {
+        if (this->sec() > that.sec())
+        {
+            return true;
+        }
+        else if (this->sec() < that.sec())
+        {
+            return false;
+        }
+        else
+        {
+            if (this->nanosec() >= that.nanosec())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
     /**
      * @param that Time to compare
      * @return true if the Time is not equal to the comparator
      */
     bool operator !=(
-            const Time& that) const;
+            const Time& that) const
+    {
+        return !(*this == that);
+    }
 
     /**
      * @param that Time to compare
      * @return true if the Time is equal to the comparator
      */
     bool operator ==(
-            const Time& that) const;
+            const Time& that) const
+    {
+        if (this->sec() != that.sec())
+        {
+            return false;
+        }
+        if (this->nanosec() != that.nanosec())
+        {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * @param that Time to compare
      * @return true if the Time is less than or equal to the comparator
      */
     bool operator <=(
-            const Time& that) const;
+            const Time& that) const
+    {
+        if (this->sec() < that.sec())
+        {
+            return true;
+        }
+        else if (this->sec() > that.sec())
+        {
+            return false;
+        }
+        else
+        {
+            if (this->nanosec() <= that.nanosec())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
     /**
      * @param that Time to compare
      * @return true if the Time is less than the comparator
      */
     bool operator <(
-            const Time& that) const;
+            const Time& that) const
+    {
+        if (this->sec() < that.sec())
+        {
+            return true;
+        }
+        else if (this->sec() > that.sec())
+        {
+            return false;
+        }
+        else
+        {
+            if (this->nanosec() < that.nanosec())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
     /**
      * @param a_ti Duration to add
