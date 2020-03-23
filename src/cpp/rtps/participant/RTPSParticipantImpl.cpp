@@ -475,7 +475,8 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
-    // Update persistence guidPrefix
+    // Update persistence guidPrefix, restore this change later to keep param unblemished
+    GUID_t former_persistence_guid = param.endpoint.persistence_guid;
     if (param.endpoint.persistence_guid == c_Guid_Unknown && m_persistence_guid != c_Guid_Unknown)
     {
         param.endpoint.persistence_guid = GUID_t(
@@ -511,6 +512,9 @@ bool RTPSParticipantImpl::createWriter(
                 new StatefulWriter(this, guid, param, hist, listen) :
                 new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
     }
+
+    // restore attributes
+    param.endpoint.persistence_guid = former_persistence_guid;
 
     if (SWriter == nullptr)
     {

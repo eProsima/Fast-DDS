@@ -152,7 +152,7 @@ bool EDPListener::ongoingDeserialization(
     EDP* edp)
 {
     EDPServer * pServer = dynamic_cast<EDPServer*>(edp);
-    
+
     if(pServer)
     {
         return pServer->ongoingDeserialization();
