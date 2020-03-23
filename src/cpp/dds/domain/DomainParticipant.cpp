@@ -81,10 +81,10 @@ DomainParticipant::~DomainParticipant()
 //        this->delegate()->set_qos(qos);
 //}
 
-//uint32_t DomainParticipant::domain_id() const
-//{
-//        return this->delegate()->get_domain_id();
-//}
+uint32_t DomainParticipant::domain_id() const
+{
+    return this->delegate()->get_domain_id();
+}
 
 //void DomainParticipant::assert_liveliness()
 //{
