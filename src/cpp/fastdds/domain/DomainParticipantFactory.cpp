@@ -190,42 +190,10 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen)
 {
     DomainId_t domain_id = att.rtps.builtin.domainId;
-    DomainParticipant* dom_part = new DomainParticipant();
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, listen);
-    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
+    DomainParticipantQos qos = PARTICIPANT_QOS_DEFAULT;
+    qos.participant_attr = att;
 
-    if (part == nullptr)
-    {
-        logError(DOMAIN_PARTICIPANT_FACTORY, "Problem creating RTPSParticipant");
-        delete dom_part_impl;
-        return nullptr;
-    }
-
-    dom_part_impl->rtps_participant_ = part;
-
-    {
-        std::lock_guard<std::mutex> guard(mtx_participants_);
-        using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*> >::iterator;
-        VectorIt vector_it = participants_.find(domain_id);
-
-        if (vector_it == participants_.end())
-        {
-            // Insert the vector
-            std::vector<DomainParticipantImpl*> new_vector;
-            auto pair_it = participants_.insert(std::make_pair(domain_id, std::move(new_vector)));
-            vector_it = pair_it.first;
-        }
-
-        vector_it->second.push_back(dom_part_impl);
-    }
-
-    part->set_check_type_function(
-        [dom_part](const std::string& type_name) -> bool
-                {
-                    return dom_part->find_type(type_name).get() != nullptr;
-                });
-
-    return dom_part;
+    return create_participant(domain_id, qos, listen);
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
