@@ -105,13 +105,14 @@ public:
      * @return true if the listener was updated.
      */
     RTPS_DllAPI ReturnCode_t set_listener(
-            DomainParticipantListener* listener);
+            DomainParticipantListener* listener,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * Allows accessing the DomainParticipantListener.
      * @return DomainParticipantListener
      */
-    RTPS_DllAPI const DomainParticipantListener* get_listener() const;
+    RTPS_DllAPI DomainParticipantListener* get_listener() const;
 
     /**
      * Create a Publisher in this Participant.
