@@ -126,7 +126,8 @@ TEST(ParticipantTests, CreatePSMSubscriber)
     subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_NE(subscriber, ::dds::core::null);
-    
+}
+
 TEST(ParticipantTests, DomainId)
 {
     DomainId_t id = 2;
@@ -134,6 +135,16 @@ TEST(ParticipantTests, DomainId)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(id);
 
     ASSERT_EQ(participant->get_domain_id(), id);
+}
+
+
+TEST(ParticipantTests, PSMDomainId)
+{
+    uint32_t id = 8;
+
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(id, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_EQ(participant.domain_id(), id);
 }
 
 } // namespace dds
