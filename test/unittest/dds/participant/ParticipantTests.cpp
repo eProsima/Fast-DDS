@@ -21,6 +21,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
@@ -126,6 +127,16 @@ TEST(ParticipantTests, CreatePSMSubscriber)
     subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_NE(subscriber, ::dds::core::null);
+}
+
+TEST(ParticipantTests, GetCurrentTime)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    fastrtps::Time_t t1, t2;
+    participant->get_current_time(t1);
+    participant->get_current_time(t2);
+    ASSERT_NE(t1, t2);
+    ASSERT_GT(t2, t1);
 }
 
 } // namespace dds
