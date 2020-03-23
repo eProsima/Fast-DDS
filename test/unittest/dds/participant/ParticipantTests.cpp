@@ -16,6 +16,8 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
@@ -23,6 +25,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/domain/DomainParticipantListener.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
 #include <dds/sub/qos/SubscriberQos.hpp>
@@ -221,6 +224,19 @@ TEST(ParticipantTests, DomainParticipantListenerMethods)
     participant->set_listener(listener);
 
     ASSERT_EQ(listener, participant->get_listener());
+
+}
+
+TEST(ParticipantTests, DomainParticipantPSMListenerMethods)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_EQ(participant.listener(), nullptr);
+
+    ::dds::domain::DomainParticipantListener* listener;
+    participant.listener(listener, ::dds::core::status::StatusMask::all());
+
+    ASSERT_EQ(listener, participant.listener());
 
 }
 
