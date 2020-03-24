@@ -21,7 +21,6 @@
 #define _FASTDDS_DATAREADERQOS_HPP
 
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -21,7 +21,6 @@
 #define _FASTDDS_DATAWRITERQOS_HPP
 
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -19,8 +19,6 @@
 #define EPROSIMA_DDS_CORE_POLICY_DETAIL_CORE_POLICY_HPP_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
-#include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 
 /**
  * @cond
