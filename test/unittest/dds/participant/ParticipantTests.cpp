@@ -50,6 +50,15 @@ TEST(ParticipantTests, CreatePublisher)
     ASSERT_NE(publisher, nullptr);
 }
 
+TEST(ParticipantTests, CreatePSMPublisher)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::pub::Publisher publisher = ::dds::core::null;
+    publisher = ::dds::pub::Publisher(participant);
+
+    ASSERT_NE(publisher, ::dds::core::null);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
