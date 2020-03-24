@@ -24,6 +24,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
 #include <dds/core/types.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/pub/Publisher.hpp>
@@ -241,6 +242,22 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
 
     PublisherQos pqos;
     participant->get_default_publisher_qos(pqos);
+
+    ASSERT_TRUE(qos == pqos);
+    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+}
+
+TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::pub::qos::PublisherQos qos = participant.default_publisher_qos();
+    ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
+
+    qos.entity_factory.autoenable_created_entities = false;
+
+    participant.default_publisher_qos(qos);
+
+    ::dds::pub::qos::PublisherQos pqos = participant.default_publisher_qos();
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
