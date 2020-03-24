@@ -129,7 +129,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             m_persistence_guid = m_guid;
             // keep setting up transport
             #pragma warning(suppress:5030)
-            [[gnu::fallthrough]];
+            [[clang::fallthrough]];
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
         // Verify if listening ports are provided
