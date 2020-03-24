@@ -20,7 +20,8 @@
 #ifndef _FASTDDS_PUBLISHERQOS_HPP_
 #define _FASTDDS_PUBLISHERQOS_HPP_
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastrtps/attributes/PublisherAttributes.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -42,82 +43,38 @@ public:
 
     RTPS_DllAPI virtual ~PublisherQos();
 
-    bool operator==(
+    bool operator ==(
             const PublisherQos& b) const
     {
-        return (this->durability == b.durability) &&
-               (this->durability_service == b.durability_service) &&
-               (this->deadline == b.deadline) &&
-               (this->latency_budget == b.latency_budget) &&
-               (this->liveliness == b.liveliness) &&
-               (this->reliability == b.reliability) &&
-               (this->lifespan == b.lifespan) &&
-               (this->user_data == b.user_data) &&
-               (this->time_based_filter == b.time_based_filter) &&
-               (this->ownership == b.ownership) &&
-               (this->ownership_strength == b.ownership_strength) &&
-               (this->destination_order == b.destination_order) &&
+        return (this->partition == b.partition) &&
                (this->presentation == b.presentation) &&
-               (this->partition == b.partition) &&
-               (this->topic_data == b.topic_data) &&
                (this->group_data == b.group_data) &&
+               (this->entity_factory == b.entity_factory) &&
                (this->publish_mode == b.publish_mode) &&
-               (this->disable_positive_acks == b.disable_positive_acks);
+               (this->disable_positive_acks == b.disable_positive_acks) &&
+               (this->publisher_attr == b.publisher_attr);
     }
 
-    //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
-
-    //!Durability Service Qos, NOT implemented in the library.
-    fastrtps::DurabilityServiceQosPolicy durability_service;
-
-    //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
-
-    //!Latency Budget Qos, NOT implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
-
-    //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
-
-    //!Reliability Qos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
-
-    //!Lifespan Qos, NOT implemented in the library.
-    fastrtps::LifespanQosPolicy lifespan;
-
-    //!UserData Qos, NOT implemented in the library.
-    fastrtps::UserDataQosPolicy user_data;
-
-    //!Time Based Filter Qos, NOT implemented in the library.
-    fastrtps::TimeBasedFilterQosPolicy time_based_filter;
-
-    //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
-
-    //!Owenership Strength Qos, NOT implemented in the library.
-    fastrtps::OwnershipStrengthQosPolicy ownership_strength;
-
-    //!Destination Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
+    //!Publisher Attributes
+    fastrtps::PublisherAttributes publisher_attr;
 
     //!Presentation Qos, NOT implemented in the library.
-    fastrtps::PresentationQosPolicy presentation;
+    PresentationQosPolicy presentation;
 
     //!Partition Qos, implemented in the library.
-    fastrtps::PartitionQosPolicy partition;
-
-    //!Topic Data Qos, NOT implemented in the library.
-    fastrtps::TopicDataQosPolicy topic_data;
+    PartitionQosPolicy partition;
 
     //!Group Data Qos, NOT implemented in the library.
-    fastrtps::GroupDataQosPolicy group_data;
+    GroupDataQosPolicy group_data;
+
+    //!Entity Factory Qos, implemented in the library
+    EntityFactoryQosPolicy entity_factory;
 
     //!Publication Mode Qos, implemented in the library.
-    fastrtps::PublishModeQosPolicy publish_mode;
+    PublishModeQosPolicy publish_mode;
 
     //!Disable positive acks QoS, implemented in the library.
-    fastrtps::DisablePositiveACKsQosPolicy disable_positive_acks;
+    DisablePositiveACKsQosPolicy disable_positive_acks;
 
     /**
      * Set Qos from another class
