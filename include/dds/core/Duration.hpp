@@ -22,6 +22,7 @@
 #define OMG_DDS_CORE_DURATION_HPP_
 
 #include <dds/core/types.hpp>
+#include <dds/core/detail/Duration.hpp>
 
 namespace dds {
 namespace core {
@@ -39,24 +40,35 @@ namespace core {
  * * Can be converted to and from Durations expressed in
  *   milliseconds (or other units) as integer types.
  */
-class OMG_DDS_API Duration
+class OMG_DDS_API Duration : public dds::core::Value<detail::Duration>
 {
 public:
 
     /**
      * Create a Duration elapsing zero seconds.
      */
-    static const Duration zero();       // {0, 0}
+    static const Duration zero()
+    {
+        static Duration zero (0, 0);
+        return zero;
+    }
 
     /**
      * Create an infinite Duration.
      */
-    static const Duration infinite();   // {0x7fffffff, 0x7fffffff}
+    static const Duration infinite()
+    {
+        static Duration inf (TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS);
+        return inf;
+    }
 
     /**
      * Create a Duration elapsing the default amount of time (zero seconds).
      */
-    Duration();
+    Duration()
+        : Value<detail::Duration>(0, 0)
+    {
+    }
 
     /**
      * Create a Duration elapsing a specific amount of time.
@@ -66,13 +78,19 @@ public:
      */
     explicit Duration(
             int32_t sec,
-            uint32_t nanosec = 0);
+            uint32_t nanosec = 0)
+        : Value<detail::Duration>(sec, nanosec)
+    {
+    }
 
 #if __cplusplus >= 199711L
     /** @copydoc dds::core::Duration::Duration(int32_t sec, uint32_t nanosec = 0) */
     explicit Duration(
             int64_t sec,
-            uint32_t nanosec = 0);
+            uint32_t nanosec = 0)
+       : Value<detail::Duration>(sec, nanosec)
+   {
+   }
 #endif
 
     /**
@@ -80,45 +98,73 @@ public:
      * @param microseconds number of microseconds
      */
     static const Duration from_microsecs(
-            int64_t microseconds);
+            int64_t microseconds)
+    {
+        int32_t sec = microseconds/1000000;
+        uint32_t nano = (microseconds - (sec*1000000)) * 1000;
+        return Duration(sec, nano);
+    }
 
     /**
      * Create a Duration from a number of milliseconds
      * @param miliseconds number of milliseconds
      */
     static const Duration from_millisecs(
-            int64_t milliseconds);
+            int64_t milliseconds)
+    {
+        int32_t sec = milliseconds/1000;
+        uint32_t nano = (milliseconds - (sec*1000)) * 1000000;
+        return Duration(sec, nano);
+    }
+
 
     /**
      * Create a Duration from a number of seconds
      * @param seconds number of seconds
      */
     static const Duration from_secs(
-            double seconds);
+            double seconds)
+    {
+        int32_t sec = seconds;
+        uint32_t nano = (seconds - sec) * 1000000000;
+        return Duration(sec, nano);
+    }
 
     /**
      * Get seconds part of the Duration.
      * @return number of seconds
      */
-    int64_t sec() const;
+    int64_t sec() const
+    {
+        return delegate().seconds;
+    }
     /**
      * Set number of seconds
      * @param s number of seconds
      */
     void sec(
-            int64_t s);
+            int64_t s)
+    {
+        delegate().seconds = s;
+    }
 
     /**
      * Get nanoseconds part of the Duration.
      * @return number of nanoseconds
      */
-    uint32_t nanosec() const;
+    uint32_t nanosec() const
+    {
+        return delegate().nanosec;
+    }
     /**
      * Set number of nanoseconds
      * @param ns number of nanoseconds
      */
     void nanosec(
-            uint32_t ns);
+            uint32_t ns)
+    {
+        delegate().nanosec = ns;
+    }
 
     /**
      * Returns an integer value for a comparison of two Durations:
@@ -131,7 +177,18 @@ public:
      * @return comparison result
      */
     int compare(
-            const Duration& that) const;
+            const Duration& that) const
+    {
+        if (delegate() > that.delegate())
+        {
+            return 1;
+        }
+        if (delegate() < that.delegate())
+        {
+            return -1;
+        }
+        return 0;
+    }
 
     /**
      * Returns true if the Duration is greater than the comparator
@@ -140,14 +197,21 @@ public:
      * @return comparison result
      */
     bool operator >(
-            const Duration& that) const;
+            const Duration& that) const
+    {
+        return delegate() > that.delegate();
+    }
 
     /**
      * Returns true if the Duration is greater than or equal to the comparator
      * @param Duration &that
      */
     bool operator >=(
-            const Duration& that) const;
+            const Duration& that) const
+    {
+        return delegate() >= that.delegate();
+    }
+
 
     /**
      * Returns true if the Duration is not equal to the comparator
@@ -156,7 +220,11 @@ public:
      * @return comparison result
      */
     bool operator !=(
-            const Duration& that) const;
+            const Duration& that) const
+    {
+        return delegate() != that.delegate();
+    }
+
 
     /**
      * Returns true if the Duration is equal to the comparator
@@ -165,7 +233,11 @@ public:
      * @return comparison result
      */
     bool operator ==(
-            const Duration& that) const;
+            const Duration& that) const
+    {
+        return delegate() == that.delegate();
+    }
+
 
     /**
      * Returns true if the Duration is less than or equal to the comparator
@@ -174,7 +246,11 @@ public:
      * @return comparison result
      */
     bool operator <=(
-            const Duration& that) const;
+            const Duration& that) const
+    {
+        return delegate() <= that.delegate();
+    }
+
 
     /**
      * Returns true if the Duration is less than the comparator
@@ -183,7 +259,11 @@ public:
      * @return comparison result
      */
     bool operator <(
-            const Duration& that) const;
+            const Duration& that) const
+    {
+        return delegate() < that.delegate();
+    }
+
 
     /**
      * Add a Duration to this Duration
@@ -192,7 +272,11 @@ public:
      * @return this Duration + a_ti
      */
     Duration& operator +=(
-            const Duration& a_ti);
+            const Duration& a_ti)
+    {
+        delegate() = delegate() + a_ti.delegate();
+        return *this;
+    }
 
     /**
      * Subtract a Duration from this Duration
@@ -201,16 +285,11 @@ public:
      * @return this Duration - a_ti
      */
     Duration& operator -=(
-            const Duration& a_ti);
-
-    /**
-     * Multiply this Duration by a factor
-     *
-     * @param factor the factor to multiply this Duration by
-     * @return this Duration * factor
-     */
-    Duration& operator *=(
-            uint64_t factor);
+            const Duration& a_ti)
+    {
+        delegate() = delegate() - a_ti.delegate();
+        return *this;
+    }
 
     /**
      * Add a Duration to Duration
@@ -219,7 +298,12 @@ public:
      * @return Duration + other
      */
     const Duration operator +(
-            const Duration& other) const;
+            const Duration& other) const
+    {
+        Duration result (*this);
+        return (result += other);
+    }
+
 
     /**
      * Subtract a Duration from Duration
@@ -228,67 +312,46 @@ public:
      * @return the Duration - other
      */
     const Duration operator -(
-            const Duration& other) const;
+            const Duration& other) const
+    {
+        Duration result (*this);
+        return (result -= other);
+    }
+
     /**
      * Returns this Duration in milliseconds.
      *
      * @return the duration in milliseconds
      */
-    int64_t to_millisecs() const;
+    int64_t to_millisecs() const
+    {
+        int64_t ms = delegate().nanosec/1000000;
+        return ms + delegate().seconds*1000;
+    }
 
     /**
      * Returns this Duration in micro-seconds.
      *
      * @return the duration in micro-seconds
      */
-    int64_t to_microsecs() const;
+    int64_t to_microsecs() const
+    {
+        int64_t ms = delegate().nanosec/1000;
+        return ms + delegate().seconds*1000000;
+    }
 
     /**
      * Returns this Duration in seconds.
      *
      * @return the duration in seconds
      */
-    double to_secs() const;
+    double to_secs() const
+    {
+        double sec = delegate().nanosec/1000000000.0;
+        return sec + delegate().seconds;
+    }
 
-private:
-
-    int32_t sec_ = 0;
-    uint32_t nsec_ = 0;
 };
-
-/**
- * Multiply Duration by a factor
- *
- * @param lhs factor by which to multiply
- * @param rhs Duration to multiply
- *
- * @return factor * Duration
- */
-const Duration OMG_DDS_API operator *(
-        uint64_t lhs,
-        const Duration& rhs);
-
-/**
- * Multiply Duration by a factor
- *
- * @param lhs Duration to multiply
- * @param rhs factor by which to multiply
- *
- * @return Duration * factor
- */
-const Duration OMG_DDS_API operator *(
-        const Duration& lhs,
-        uint64_t rhs);
-
-/**
- * Divide Duration by a factor
- *
- * @param lhs Duration to divide
- * @param rhs factor by which to divide
- */
-const Duration OMG_DDS_API operator /(
-        const Duration& lhs,
-        uint64_t rhs);
 
 } //namespace core
 } //namespace dds
