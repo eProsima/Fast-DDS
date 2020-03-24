@@ -57,11 +57,21 @@ const DomainParticipantListener* DomainParticipant::get_listener() const
 }
 
 Publisher* DomainParticipant::create_publisher(
-        const fastdds::dds::PublisherQos& qos,
+        const PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
 {
-    return impl_->create_publisher(qos, att, listen);
+    PublisherQos pqos = qos;
+    pqos.publisher_attr = att;
+    return impl_->create_publisher(pqos, listen);
+}
+
+Publisher* DomainParticipant::create_publisher(
+        const PublisherQos& qos,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_publisher(qos, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_publisher(

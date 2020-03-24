@@ -99,9 +99,14 @@ public:
      * @return Pointer to the created Publisher.
      */
     RTPS_DllAPI Publisher* create_publisher(
-            const fastdds::dds::PublisherQos& qos,
+            const PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
             PublisherListener* listen = nullptr);
+
+    RTPS_DllAPI Publisher* create_publisher(
+            const PublisherQos& qos,
+            PublisherListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * Deletes an existing Publisher.

@@ -29,6 +29,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -100,9 +101,9 @@ public:
      * @return Pointer to the created Publisher.
      */
     Publisher* create_publisher(
-            const fastdds::dds::PublisherQos& qos,
-            const fastrtps::PublisherAttributes& att,
-            PublisherListener* listen = nullptr);
+            const PublisherQos& qos,
+            PublisherListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_publisher(
             Publisher* publisher);
