@@ -201,9 +201,9 @@ public:
     ReturnCode_t assert_liveliness();
 
     ReturnCode_t set_default_publisher_qos(
-            const fastdds::dds::PublisherQos& qos);
+            const PublisherQos& qos);
 
-    const fastdds::dds::PublisherQos& get_default_publisher_qos() const;
+    const PublisherQos& get_default_publisher_qos() const;
 
     ReturnCode_t set_default_subscriber_qos(
             const fastdds::dds::SubscriberQos& qos);
