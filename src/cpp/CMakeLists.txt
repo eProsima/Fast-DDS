@@ -197,6 +197,7 @@ set(${PROJECT_NAME}_source_files
     dds/core/types.cpp
     dds/core/status/Status.cpp
     dds/core/InstanceHandle.cpp
+    dds/core/policy/CorePolicy.cpp
     dds/domain/DomainParticipant.cpp
     )
 

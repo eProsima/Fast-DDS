@@ -77,7 +77,6 @@ struct DurabilityKind_def
                          *   value of TRUE will also dispose the affected data from the durability store, and
                          *   thus prevent it from remaining available to late joining readers.
                          */
-        #ifdef  OMG_DDS_PERSISTENCE_SUPPORT
         ,
         TRANSIENT,      /**< Some samples are available to late-joining
                          *   DataReaders (stored in memory). This means that the late-joining
@@ -99,7 +98,6 @@ struct DurabilityKind_def
                          *   DurabilityServiceQosPolicy settings are relevant for the behaviour of the
                          *   Data Distribution Service.
                          */
-        #endif  //OMG_DDS_PERSISTENCE_SUPPORT
     };
 };
 typedef dds::core::SafeEnum<DurabilityKind_def> DurabilityKind;

@@ -46,9 +46,9 @@ public: \
         static const std::string& name(); \
     };
 
-#define OMG_DDS_DEFINE_POLICY_TRAITS(POLICY, NAME) \
+#define OMG_DDS_DEFINE_POLICY_TRAITS(POLICY) \
     const std::string& dds::core::policy::policy_name<POLICY>::name() { \
-        static std::string name = #NAME; \
+        static std::string name = #POLICY; \
         return name; \
     }
 
@@ -103,7 +103,7 @@ public:
      *
      * @param sequence a sequence of octets
      */
-    UserData& value(
+    void value(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -114,7 +114,7 @@ public:
      * @param end an iterator pointing to the end of a sequence of octets
      */
     template<typename OCTET_ITER>
-    UserData& value(
+    void value(
             OCTET_ITER begin,
             OCTET_ITER end);
 
@@ -123,7 +123,7 @@ public:
      *
      * @return a sequence of octets
      */
-    const dds::core::ByteSeq value() const;
+    const dds::core::ByteSeq& value() const;
 
     /**
      * Gets a pointer to the first octet in the sequence
@@ -187,7 +187,7 @@ public:
      *
      * @param sequence a sequence of octets
      */
-    GroupData& value(
+    void value(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -198,7 +198,7 @@ public:
      * @param end an iterator pointing to the end of a sequence of octets
      */
     template<typename OCTET_ITER>
-    GroupData& value(
+    void value(
             OCTET_ITER begin,
             OCTET_ITER end);
 
@@ -207,7 +207,7 @@ public:
      *
      * @return a sequence of octets
      */
-    const dds::core::ByteSeq value() const;
+    const dds::core::ByteSeq& value() const;
 
     /**
      * Gets a pointer to the first octet in the sequence
@@ -271,7 +271,7 @@ public:
      *
      * @param sequence a sequence of octets
      */
-    TopicData& value(
+    void value(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -282,7 +282,7 @@ public:
      * @param end an iterator pointing to the end of a sequence of octets
      */
     template<typename OCTET_ITER>
-    TopicData& value(
+    void value(
             OCTET_ITER begin,
             OCTET_ITER end);
 
@@ -291,7 +291,7 @@ public:
      *
      * @return a sequence of octets
      */
-    const dds::core::ByteSeq value() const;
+    const dds::core::ByteSeq& value() const;
 
     /**
      * Gets a pointer to the first octet in the sequence
@@ -342,7 +342,7 @@ public:
      * @param autoenable_created_entities boolean indicating whether
      * created Entities should be automatically enabled
      */
-    EntityFactory& autoenable_created_entities(
+    void autoenable_created_entities(
             bool autoenable_created_entities);
 
     /**
@@ -396,7 +396,7 @@ public:
      *
      * @param priority the priority value
      */
-    TransportPriority& value(
+    void value(
             int32_t priority);
 
     /**
@@ -437,7 +437,7 @@ public:
      *
      * @param duration expiration duration
      */
-    Lifespan& duration(
+    void duration(
             const dds::core::Duration& duration);
 
     /**
@@ -478,7 +478,7 @@ public:
      *
      * @param period deadline period
      */
-    Deadline& period(
+    void period(
             const dds::core::Duration& period);
 
     /**
@@ -519,7 +519,7 @@ public:
      *
      * @param duration duration
      */
-    LatencyBudget& duration(
+    void duration(
             const dds::core::Duration& duration);
 
     /**
@@ -560,7 +560,7 @@ public:
      *
      * @param period minimum separation period
      */
-    TimeBasedFilter& minimum_separation(
+    void minimum_separation(
             const dds::core::Duration& period);
 
     /**
@@ -592,6 +592,15 @@ public:
             uint16_t in_length);
 
     /**
+     * Creates a Partition QoS instance
+     *
+     * @names a sequence containing multiple partition names
+     */
+    Partition(
+            const dds::core::StringSeq& names);
+
+
+    /**
      * Copies a Partition QoS instance
      *
      * @param other the Partition QoS instance to copy
@@ -600,19 +609,11 @@ public:
             const Partition& other);
 
     /**
-     * Sets the partition name
-     *
-     * @param name the partition name
-     */
-    Partition& name(
-            const std::string& name);
-
-    /**
      * Sets multiple partition names
      *
      * @param names a sequence containing multiple partition names
      */
-    Partition& names(
+    void names(
             dds::core::StringSeq& names);
 
     /**
@@ -666,7 +667,7 @@ public:
      *
      * @param kind the kind
      */
-    Ownership& kind(
+    void kind(
             dds::core::policy::OwnershipKind::Type kind);
 
     /**
@@ -733,7 +734,7 @@ public:
      *
      * @param strength the ownership strength value
      */
-    OwnershipStrength& value(
+    void value(
             int32_t strength);
 };
 
@@ -777,7 +778,7 @@ public:
      * @param autodispose_unregistered_instances a boolean indicating if unregistered
      * instances should be autodisposed
      */
-    WriterDataLifecycle& autodispose_unregistered_instances(
+    void autodispose_unregistered_instances(
             bool autodispose_unregistered_instances);
 
     /**
@@ -832,7 +833,7 @@ public:
      *
      * @param autopurge_nowriter_samples_delay the autopurge nowriter samples delay
      */
-    ReaderDataLifecycle& autopurge_nowriter_samples_delay(
+    void autopurge_nowriter_samples_delay(
             const dds::core::Duration& autopurge_nowriter_samples_delay);
 
     /**
@@ -847,7 +848,7 @@ public:
      *
      * @return the autopurge disposed samples delay
      */
-    ReaderDataLifecycle& autopurge_disposed_samples_delay(
+    void autopurge_disposed_samples_delay(
             const dds::core::Duration& autopurge_disposed_samples_delay);
 
     /**
@@ -896,7 +897,7 @@ public:
      *
      * @param kind the kind
      */
-    Durability& kind(
+    void kind(
             dds::core::policy::DurabilityKind::Type kind);
 
     /**
@@ -925,6 +926,7 @@ public:
      * @return a Durability QoS instance with the kind set to PERSISTENT
      */
     static Durability Persistent();
+
 
 private:
 
@@ -971,7 +973,7 @@ public:
      *
      * @param access_scope the access_scope kind
      */
-    Presentation& access_scope(
+    void access_scope(
             dds::core::policy::PresentationAccessScopeKind::Type access_scope);
 
     /**
@@ -986,7 +988,7 @@ public:
      *
      * @param coherent_access the coherent_access setting
      */
-    Presentation& coherent_access(
+    void coherent_access(
             bool coherent_access);
 
     /**
@@ -1001,7 +1003,7 @@ public:
      *
      * @param ordered_access the ordered_access setting
      */
-    Presentation& ordered_access(
+    void ordered_access(
             bool ordered_access);
 
     /**
@@ -1085,7 +1087,7 @@ public:
      *
      * @param kind the kind
      */
-    Reliability& kind(
+    void kind(
             dds::core::policy::ReliabilityKind::Type kind);
 
     /**
@@ -1100,7 +1102,7 @@ public:
      *
      * @param max_blocking_time the max_blocking_time
      */
-    Reliability& max_blocking_time(
+    void max_blocking_time(
             const dds::core::Duration& max_blocking_time);
 
     /**
@@ -1115,7 +1117,7 @@ public:
      * @return a Reliability QoS instance with the kind set to RELIABLE and the max_blocking_time
      * set to the supplied value
      */
-    static OMG_DDS_API Reliability Reliable(
+    static Reliability Reliable(
             const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
 
     /**
@@ -1165,7 +1167,7 @@ public:
      *
      * @param kind the kind
      */
-    DestinationOrder& kind(
+    void kind(
             dds::core::policy::DestinationOrderKind::Type kind);
 
     /**
@@ -1234,7 +1236,7 @@ public:
      *
      * @param kind the kind
      */
-    History& kind(
+    void kind(
             dds::core::policy::HistoryKind::Type kind);
 
     /**
@@ -1249,7 +1251,7 @@ public:
      *
      * @param the history depth
      */
-    History& depth(
+    void depth(
             int32_t depth);
 
     /**
@@ -1313,7 +1315,7 @@ public:
      *
      * @param max_samples the max_samples value
      */
-    ResourceLimits& max_samples(
+    void max_samples(
             int32_t max_samples);
 
     /**
@@ -1328,7 +1330,7 @@ public:
      *
      * @param max_instances the max_instances value
      */
-    ResourceLimits& max_instances(
+    void max_instances(
             int32_t max_instances);
 
     /**
@@ -1343,7 +1345,7 @@ public:
      *
      * @param max_samples_per_instance the max_samples_per_instance value
      */
-    ResourceLimits& max_samples_per_instance(
+    void max_samples_per_instance(
             int32_t max_samples_per_instance);
 
     /**
@@ -1386,7 +1388,7 @@ public:
      *
      * @param kind the kind
      */
-    Liveliness& kind(
+    void kind(
             dds::core::policy::LivelinessKind::Type kind);
 
     /**
@@ -1401,7 +1403,7 @@ public:
      *
      * @return the lease_duration
      */
-    Liveliness& lease_duration(
+    void lease_duration(
             const dds::core::Duration& lease_duration);
 
     /**
@@ -1482,7 +1484,7 @@ public:
      *
      * @param service_cleanup_delay the service_cleanup_delay value
      */
-    DurabilityService& service_cleanup_delay(
+    void service_cleanup_delay(
             const dds::core::Duration& service_cleanup_delay);
 
     /**
@@ -1497,7 +1499,7 @@ public:
      *
      * @param the history_kind
      */
-    DurabilityService& history_kind(
+    void history_kind(
             dds::core::policy::HistoryKind::Type history_kind);
 
     /**
@@ -1512,7 +1514,7 @@ public:
      *
      * @param history_depth the history_depth value
      */
-    DurabilityService& history_depth(
+    void history_depth(
             int32_t history_depth);
 
     /**
@@ -1527,7 +1529,7 @@ public:
      *
      * @param max_samples the max_samples value
      */
-    DurabilityService& max_samples(
+    void max_samples(
             int32_t max_samples);
 
     /**
@@ -1542,7 +1544,7 @@ public:
      *
      * @param max_instances the max_instances value
      */
-    DurabilityService& max_instances(
+    void max_instances(
             int32_t max_instances);
 
     /** Gets the max_instances value
@@ -1556,7 +1558,7 @@ public:
      *
      * @param max_samples_per_instance the max_samples_per_instance value
      */
-    DurabilityService& max_samples_per_instance(
+    void max_samples_per_instance(
             int32_t max_samples_per_instance);
 
     /**
@@ -1586,12 +1588,9 @@ public:
             const dds::core::policy::DataRepresentationIdSeq& value);
 
     DataRepresentation(
-            const DataRepresentation& other)
-        : dds::core::Value<detail::DataRepresentation>(other)
-    {
-    }
+            const DataRepresentation& other);
 
-    DataRepresentation& value(
+    void value(
             const dds::core::policy::DataRepresentationIdSeq& value);
 
     const dds::core::policy::DataRepresentationIdSeq value() const;
@@ -1619,24 +1618,27 @@ public:
     explicit TypeConsistencyEnforcement(
             dds::core::policy::TypeConsistencyEnforcementKind::Type kind);
 
-    TypeConsistencyEnforcement& kind(
+    TypeConsistencyEnforcement(
+            const TypeConsistencyEnforcement& other);
+
+    void kind(
             dds::core::policy::TypeConsistencyEnforcementKind::Type kind);
 
     dds::core::policy::TypeConsistencyEnforcementKind::Type  kind() const;
 
-    TypeConsistencyEnforcement& ignore_sequence_bounds(
+    void ignore_sequence_bounds(
             bool ignore_sequence_bounds);
 
-    TypeConsistencyEnforcement& ignore_string_bounds(
+    void ignore_string_bounds(
             bool ignore_string_bounds);
 
-    TypeConsistencyEnforcement& ignore_member_names(
+    void ignore_member_names(
             bool ignore_member_names);
 
-    TypeConsistencyEnforcement& prevent_type_widening(
+    void prevent_type_widening(
             bool prevent_type_widening);
 
-    TypeConsistencyEnforcement& force_type_validation(
+    void force_type_validation(
             bool force_type_validation);
 
     bool ignore_sequence_bounds();
@@ -1673,7 +1675,7 @@ OMG_DDS_POLICY_TRAITS(Deadline,             4)
 OMG_DDS_POLICY_TRAITS(LatencyBudget,        5)
 OMG_DDS_POLICY_TRAITS(Ownership,            6)
 
-//#ifdef OMG_DDS_OWNERSHIP_SUPPORT
+//#ifdef OMG_DDS_OWNERSHIP_SUPPORT            6)
 OMG_DDS_POLICY_TRAITS(OwnershipStrength,    7)
 //#endif  //OMG_DDS_OWNERSHIP_SUPPORT
 
