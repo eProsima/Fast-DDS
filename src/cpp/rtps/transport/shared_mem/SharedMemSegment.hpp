@@ -19,15 +19,15 @@
 
 // For gcc-9 disable a new warning that warns about copy operator implicitly
 // defined based on copy constructor.
-#if defined(__GNUC__)
+#if defined(__GNUC__) && ( __GNUC__ >= 9)
 #pragma GCC diagnostic error "-Wdeprecated-copy"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-copy"
 #endif
 
 #include <boost/interprocess/managed_shared_memory.hpp>
-
-#if defined(__GNUC__)
+            
+#if defined (__GNUC__) && ( __GNUC__ >= 9)
 #pragma GCC diagnostic pop
 #endif
 
