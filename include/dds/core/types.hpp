@@ -36,6 +36,11 @@ namespace core {
 typedef std::vector<uint8_t> ByteSeq;
 
 /**
+ * Use a std::vector<char> to hold a sequence of chars.
+ */
+typedef std::vector<char> CharSeq;
+
+/**
  * Use a std::vector<std::string> to hold a sequence of bytes.
  */
 typedef std::vector<std::string> StringSeq;
