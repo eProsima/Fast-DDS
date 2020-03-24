@@ -28,8 +28,10 @@ namespace dds {
 //! @brief A struct storing the base status
 struct BaseStatus
 {
+    //! @brief Total cumulative number of times the event occurred.
     int32_t total_count = 0;
 
+    //! @brief The change in total_count since the last time the listener was called or the status was read
     int32_t total_count_change = 0;
 };
 

@@ -40,7 +40,7 @@ struct DeadlineMissedStatus
     ~DeadlineMissedStatus()
     {}
 
-    //! @brief Total cumulative number of offered deadline periods epased during which a writer failed to provide data
+    //! @brief Total cumulative number of offered deadline periods during which a writer failed to provide data
     //! @details Missed deadlines accumulate, that is, each deadline period the total_count will be incremented by 1
     uint32_t total_count;
 

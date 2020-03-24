@@ -25,6 +25,7 @@
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 
 /**
  * @cond
@@ -34,6 +35,9 @@
 namespace dds {
 namespace core {
 namespace status {
+
+using StatusMask = eprosima::fastdds::dds::StatusMask;
+
 namespace detail {
 
 using InconsistentTopicStatus = eprosima::fastdds::dds::InconsistentTopicStatus;

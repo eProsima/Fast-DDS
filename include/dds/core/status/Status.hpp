@@ -21,12 +21,11 @@
 #ifndef OMG_DDS_CORE_STATUS_STATUS_HPP_
 #define OMG_DDS_CORE_STATUS_STATUS_HPP_
 
-#include <dds/core/status/State.hpp>
-
 #include <dds/core/Value.hpp>
 #include <dds/core/InstanceHandle.hpp>
 #include <dds/core/policy/CorePolicy.hpp>
 #include <dds/core/status/detail/Status.hpp>
+#include <dds/core/status/StatusKind.hpp>
 
 #include <cstdint>
 
@@ -49,10 +48,21 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The incremental number of inconsistent topics since the last time
      * the listener was called or the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
+
+    /**
+     * @brief Set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
+
 };
 
 /**
@@ -71,10 +81,21 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The incremental number of samples lost since the last time the listener
      * was called or the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
+
+    /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
+
 };
 
 
@@ -93,22 +114,43 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The incremental number of samples rejected since the last time the
      * listener was called or the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
 
     /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
+
+    /**
      * @return Reason for rejecting the last sample rejected. If no samples have been
      * rejected, the reason is the special value NOT_REJECTED.
      */
-    OMG_DDS_API const dds::core::status::SampleRejectedState last_reason() const;
+    OMG_DDS_API dds::core::status::SampleRejectedKind last_reason() const;
+
+    /**
+     * @brief set the last_reason.
+     */
+    OMG_DDS_API void last_reason(dds::core::status::SampleRejectedKind reason);
 
     /**
      * @return Handle to the instance being updated by the last sample that was
      * rejected.
      */
-    OMG_DDS_API const dds::core::InstanceHandle last_instance_handle() const;
+    OMG_DDS_API dds::core::InstanceHandle last_instance_handle() const;
+
+    /**
+     * @brief set the last_instance_handle.
+     */
+    OMG_DDS_API void last_instance_handle(const dds::core::InstanceHandle& handle);
+
 };
 
 /**
@@ -130,10 +172,20 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The change in total_count since the last time the listener was called or
      * the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
+
+    /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
 };
 
 /**
@@ -157,6 +209,11 @@ public:
     OMG_DDS_API int32_t alive_count() const;
 
     /**
+     * @brief Set the alive_count.
+     */
+    OMG_DDS_API void alive_count(int32_t count);
+
+    /**
      * @return The total count of currently DataWriters that write the Topic read by
      * the DataReader that are no longer asserting their liveliness. This count
      * increases when a DataWriter considered alive fails to assert its
@@ -167,10 +224,20 @@ public:
     OMG_DDS_API int32_t not_alive_count() const;
 
     /**
+     * @brief set the not_alive_count.
+     */
+    OMG_DDS_API void not_alive_count(int32_t count);
+
+    /**
      * @return The change in the alive_count since the last time the listener was
      * called or the status was read.
      */
     OMG_DDS_API int32_t alive_count_change() const;
+
+    /**
+     * @brief set the alive_count_change.
+     */
+    OMG_DDS_API void alive_count_change(int32_t count_change);
 
     /**
      * @return The change in the not_alive_count since the last time the listener was
@@ -179,10 +246,20 @@ public:
     OMG_DDS_API int32_t not_alive_count_change() const;
 
     /**
+     * @brief set the not_alive_count_change.
+     */
+    OMG_DDS_API void not_alive_count_change(int32_t count_change);
+
+    /**
      * @return Handle to the last DataWriter whose change in liveliness caused this
      * status to change.
      */
-    OMG_DDS_API const dds::core::InstanceHandle last_publication_handle() const;
+    OMG_DDS_API dds::core::InstanceHandle last_publication_handle() const;
+
+    /**
+     * @brief set the last_publication_handle.
+     */
+    OMG_DDS_API void last_publication_handle(const dds::core::InstanceHandle& handle);
 };
 
 /**
@@ -203,16 +280,31 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The change in total_count since the last time the listener was called or
      * the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
 
     /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
+
+    /**
      * @return Handle to the last instance in the DataWriter for which an offered
      * deadline was missed.
      */
-    OMG_DDS_API const dds::core::InstanceHandle last_instance_handle() const;
+    OMG_DDS_API dds::core::InstanceHandle last_instance_handle() const;
+
+    /**
+     * @brief set the last_instance_handle.
+     */
+    OMG_DDS_API void last_instance_handle(const dds::core::InstanceHandle& handle);
 };
 
 /**
@@ -233,16 +325,32 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The incremental number of deadlines detected since the last time the
      * listener was called or the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
 
+
+    /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
+
     /**
      * @return Handle to the last instance in the DataReader for which a deadline was
      * detected.
      */
-    OMG_DDS_API const dds::core::InstanceHandle last_instance_handle() const;
+    OMG_DDS_API dds::core::InstanceHandle last_instance_handle() const;
+
+    /**
+     * @brief set the last_instance_handle.
+     */
+    OMG_DDS_API void last_instance_handle(const dds::core::InstanceHandle& handle);
 };
 
 
@@ -263,16 +371,31 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The change in total_count since the last time the listener was called or
      * the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
 
     /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
+
+    /**
      * @return The PolicyId of one of the policies that was found to be
      * incompatible the last time an incompatibility was detected.
      */
-    OMG_DDS_API dds::core::policy::QosPolicyId last_policy_id() const;
+    OMG_DDS_API const dds::core::policy::QosPolicyId& last_policy_id() const;
+
+    /**
+     * @brief set the last_policy_id.
+     */
+    OMG_DDS_API void last_policy_id(const dds::core::policy::QosPolicyId& policy_id);
 
     /**
      * @return A list containing for each policy the total number of times that the
@@ -280,18 +403,13 @@ public:
      * with a requested QoS that is incompatible with that offered by the
      * DataWriter.
      */
-    OMG_DDS_API const dds::core::policy::QosPolicyCountSeq policies() const;
+    OMG_DDS_API const dds::core::policy::QosPolicyCountSeq& policies() const;
 
     /**
-     * @return A list containing for each policy the total number of times that the
-     * concerned DataWriter discovered a DataReader for the same Topic
-     * with a requested QoS that is incompatible with that offered by the
-     * DataWriter.
-     *
-     * @param dst The destination QosPolicyCountSeq the policies will be returned to
+     * @brief set the policies.
      */
-    OMG_DDS_API const dds::core::policy::QosPolicyCountSeq& policies(
-            dds::core::policy::QosPolicyCountSeq& dst) const;
+    OMG_DDS_API void policies(const dds::core::policy::QosPolicyCountSeq& policies);
+
 };
 
 /**
@@ -311,16 +429,31 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The change in total_count since the last time the listener was called or
      * the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
 
     /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
+
+    /**
      * @return The QosPolicyId of one of the policies that was found to be
      * incompatible the last time an incompatibility was detected.
      */
-    OMG_DDS_API dds::core::policy::QosPolicyId last_policy_id() const;
+    OMG_DDS_API const dds::core::policy::QosPolicyId& last_policy_id() const;
+
+    /**
+     * @brief set the last_policy_id.
+     */
+    OMG_DDS_API void last_policy_id(const dds::core::policy::QosPolicyId& policy_id);
 
     /**
      * @return A list containing for each policy the total number of times that the
@@ -328,18 +461,13 @@ public:
      * with an offered QoS that is incompatible with that requested by the
      * DataReader.
      */
-    OMG_DDS_API const dds::core::policy::QosPolicyCountSeq policies() const;
+    OMG_DDS_API const dds::core::policy::QosPolicyCountSeq& policies() const;
 
     /**
-     * @return A list containing for each policy the total number of times that the
-     * concerned DataReader discovered a DataWriter for the same Topic
-     * with an offered QoS that is incompatible with that requested by the
-     * DataReader.
-     *
-     * @param dst The destination QosPolicyCountSeq the policies will be returned to
+     * @brief set the policies.
      */
-    OMG_DDS_API const dds::core::policy::QosPolicyCountSeq& policies(
-            dds::core::policy::QosPolicyCountSeq& dst) const;
+    OMG_DDS_API void policies(const dds::core::policy::QosPolicyCountSeq& policies);
+
 };
 
 /**
@@ -360,10 +488,20 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The change in total_count since the last time the listener was called or
      * the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
+
+    /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
 
     /**
      * @return The number of DataReaders currently matched to the concerned
@@ -372,16 +510,31 @@ public:
     OMG_DDS_API int32_t current_count() const;
 
     /**
+     * @brief set the current_count.
+     */
+    OMG_DDS_API void current_count(int32_t count);
+
+    /**
      * @return The change in current_count since the last time the listener was called
      * or the status was read.
      */
     OMG_DDS_API int32_t current_count_change() const;
 
     /**
+     * @brief set the current_count_change.
+     */
+    OMG_DDS_API void current_count_change(int32_t count_change);
+
+    /**
      * @return Handle to the last DataReader that matched the DataWriter causing the
      * status to change.
      */
-    OMG_DDS_API const dds::core::InstanceHandle last_subscription_handle() const;
+    OMG_DDS_API dds::core::InstanceHandle last_subscription_handle() const;
+
+    /**
+     * @brief set the last_subscription_handle.
+     */
+    OMG_DDS_API void last_subscription_handle(const dds::core::InstanceHandle& handle);
 };
 
 /**
@@ -402,10 +555,20 @@ public:
     OMG_DDS_API int32_t total_count() const;
 
     /**
+     * @brief Set the total_count.
+     */
+    OMG_DDS_API void total_count(int32_t count);
+
+    /**
      * @return The change in total_count since the last time the listener was called or
      * the status was read.
      */
     OMG_DDS_API int32_t total_count_change() const;
+
+    /**
+     * @brief set the total_count_change.
+     */
+    OMG_DDS_API void total_count_change(int32_t count_change);
 
     /**
      * @return The number of DataWriters currently matched to the concerned
@@ -414,16 +577,31 @@ public:
     OMG_DDS_API int32_t current_count() const;
 
     /**
+     * @brief set the current_count.
+     */
+    OMG_DDS_API void current_count(int32_t count);
+
+    /**
      * @return The change in current_count since the last time the listener was called
      * or the status was read.
      */
     OMG_DDS_API int32_t current_count_change() const;
 
     /**
+     * @brief set the current_count_change.
+     */
+    OMG_DDS_API void current_count_change(int32_t count_change);
+
+    /**
      * @return Handle to the last DataWriter that matched the DataReader causing the
      * status to change.
      */
-    OMG_DDS_API const dds::core::InstanceHandle last_publication_handle() const;
+    OMG_DDS_API dds::core::InstanceHandle last_publication_handle() const;
+
+    /**
+     * @brief set the last_subscription_handle.
+     */
+    OMG_DDS_API void last_publication_handle(const dds::core::InstanceHandle& handle);
 };
 
 
@@ -437,6 +615,7 @@ class DataOnReadersStatus
 {
     // empty
 };
+
 
 // This trait is used to get the state associated with each status
 template<typename STATUS>
