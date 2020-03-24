@@ -32,7 +32,7 @@
 
 //#include <dds/topic/qos/TopicQos.hpp>
 
-//#include <dds/pub/qos/PublisherQos.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
 //#include <dds/sub/qos/SubscriberQos.hpp>
 
 #include <dds/domain/detail/DomainParticipant.hpp>
@@ -360,7 +360,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    OMG_DDS_API dds::pub::qos::PublisherQos default_publisher_qos() const;
+    OMG_DDS_API dds::pub::qos::PublisherQos default_publisher_qos() const;
 
     /**
      * Sets the default PublisherQos of the DomainParticipant.
@@ -387,8 +387,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    OMG_DDS_API DomainParticipant& default_publisher_qos(
-    //            const ::dds::pub::qos::PublisherQos& qos);
+    OMG_DDS_API DomainParticipant& default_publisher_qos(
+            const ::dds::pub::qos::PublisherQos& qos);
 
     /**
      * Gets the default SubscriberQos of the DomainParticipant.

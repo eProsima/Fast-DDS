@@ -170,18 +170,18 @@ ReturnCode_t DomainParticipant::assert_liveliness()
 }
 
 ReturnCode_t DomainParticipant::set_default_publisher_qos(
-        const fastdds::dds::PublisherQos& qos)
+        const PublisherQos& qos)
 {
     return impl_->set_default_publisher_qos(qos);
 }
 
-const fastdds::dds::PublisherQos& DomainParticipant::get_default_publisher_qos() const
+const PublisherQos& DomainParticipant::get_default_publisher_qos() const
 {
     return impl_->get_default_publisher_qos();
 }
 
 ReturnCode_t DomainParticipant::get_default_publisher_qos(
-        fastdds::dds::PublisherQos& qos) const
+        PublisherQos& qos) const
 {
     qos = impl_->get_default_publisher_qos();
     return ReturnCode_t::RETCODE_OK;

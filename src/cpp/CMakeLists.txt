@@ -196,6 +196,7 @@ set(${PROJECT_NAME}_source_files
 
     dds/core/types.cpp
     dds/domain/DomainParticipant.cpp
+    dds/pub/Publisher.cpp
     )
 
 # TLS Support
