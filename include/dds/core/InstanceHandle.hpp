@@ -95,24 +95,6 @@ public:
     OMG_DDS_API bool operator ==(
             const InstanceHandle& that) const;
 
-    /**
-     * Compare this InstanceHandle to another InstanceHandle
-     *
-     * @param that The InstanceHandle to compare
-     * @return true if this is less than that
-     */
-    OMG_DDS_API bool operator <(
-            const InstanceHandle& that) const;
-
-    /**
-     * Compare this InstanceHandle to another InstanceHandle
-     *
-     * @param that The InstanceHandle to compare
-     * @return true if this is greater than that
-     */
-    OMG_DDS_API bool operator >(
-            const InstanceHandle& that) const;
-
 public:
 
     /**
@@ -128,6 +110,12 @@ public:
      * @return true if the InstanceHandle is nil
      */
     OMG_DDS_API bool is_nil() const;
+
+protected:
+    /** @cond */
+    static const InstanceHandle nil_handle_;
+    /** @endcond */
+
 };
 
 typedef std::vector<InstanceHandle> InstanceHandleSeq;
