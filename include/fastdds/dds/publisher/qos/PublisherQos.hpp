@@ -39,9 +39,9 @@ class PublisherQos
 {
 public:
 
-    RTPS_DllAPI PublisherQos();
+    RTPS_DllAPI PublisherQos(){}
 
-    RTPS_DllAPI virtual ~PublisherQos();
+    RTPS_DllAPI virtual ~PublisherQos() = default;
 
     bool operator ==(
             const PublisherQos& b) const
@@ -52,23 +52,6 @@ public:
                (this->entity_factory_ == b.entity_factory());
     }
 
-    /**
-     * Set Qos from another class
-     * @param qos Reference from a PublisherQos object.
-     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-     */
-    RTPS_DllAPI void set_qos(
-            const PublisherQos& qos,
-            bool first_time);
-
-    /**
-     * Check if the Qos values are compatible between each other.
-     * @return True if correct.
-     */
-    RTPS_DllAPI bool check_qos() const;
-
-    RTPS_DllAPI bool can_qos_be_updated(
-            const PublisherQos& qos) const;
 
     /**
      * Getter for PresentationQosPolicy
