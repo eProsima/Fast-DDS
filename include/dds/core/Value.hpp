@@ -235,4 +235,6 @@ protected:
 } //namespace core
 } //namespace dds
 
+#include <dds/core/detail/Value.hpp>
+
 #endif //OMG_DDS_CORE_VALUE_HPP_
