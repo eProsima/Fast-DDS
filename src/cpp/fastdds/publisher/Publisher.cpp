@@ -27,8 +27,10 @@ using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
 Publisher::Publisher(
-        PublisherImpl* p)
-    : impl_(p)
+        PublisherImpl* p,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(p)
 {
 }
 
@@ -97,32 +99,32 @@ bool Publisher::has_datawriters() const
 }
 
 /* TODO
-bool Publisher::suspend_publications()
-{
+   bool Publisher::suspend_publications()
+   {
     return impl_->suspend_publications();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::resume_publications()
-{
+   bool Publisher::resume_publications()
+   {
     return impl_->resume_publications();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::begin_coherent_changes()
-{
+   bool Publisher::begin_coherent_changes()
+   {
     return impl_->begin_coherent_changes();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::end_coherent_changes()
-{
+   bool Publisher::end_coherent_changes()
+   {
     return impl_->end_coherent_changes();
-}
-*/
+   }
+ */
 
 ReturnCode_t Publisher::wait_for_acknowledgments(
         const fastrtps::Duration_t& max_wait)
@@ -136,11 +138,11 @@ const DomainParticipant* Publisher::get_participant() const
 }
 
 /* TODO
-bool Publisher::delete_contained_entities()
-{
+   bool Publisher::delete_contained_entities()
+   {
     return impl_->delete_contained_entities();
-}
-*/
+   }
+ */
 
 ReturnCode_t Publisher::set_default_datawriter_qos(
         const fastrtps::WriterQos& qos)
@@ -161,13 +163,13 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
 }
 
 /* TODO
-bool Publisher::copy_from_topic_qos(
+   bool Publisher::copy_from_topic_qos(
         fastrtps::WriterQos& writer_qos,
         const fastrtps::TopicAttributes& topic_qos) const
-{
+   {
     return impl_->copy_from_topic_qos(writer_qos, topic_qos);
-}
-*/
+   }
+ */
 
 const fastrtps::PublisherAttributes& Publisher::get_attributes() const
 {

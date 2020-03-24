@@ -71,7 +71,6 @@ class PublisherImpl
     PublisherImpl(
             DomainParticipantImpl* p,
             const PublisherQos& qos,
-            const fastrtps::PublisherAttributes& att,
             PublisherListener* p_listen = nullptr);
 
 public:
@@ -170,8 +169,6 @@ private:
 
     PublisherQos qos_;
 
-    fastrtps::PublisherAttributes att_;
-
     //! Map of Pointers to the associated Data Writers. Topic name is the key.
     std::map<std::string, std::vector<DataWriterImpl*> > writers_;
 
@@ -188,9 +185,12 @@ public:
         PublisherWriterListener(
                 PublisherImpl* p)
             : publisher_(p)
-        {}
+        {
+        }
 
-        virtual ~PublisherWriterListener() override {}
+        virtual ~PublisherWriterListener() override
+        {
+        }
 
         void on_publication_matched(
                 DataWriter* writer,

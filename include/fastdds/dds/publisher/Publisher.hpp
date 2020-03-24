@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/Entity.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -49,7 +50,7 @@ class WriterQos;
  * Class Publisher, used to send data to associated subscribers.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI Publisher
+class RTPS_DllAPI Publisher : public DomainEntity
 {
     friend class PublisherImpl;
     friend class DomainParticipantImpl;
@@ -60,7 +61,8 @@ class RTPS_DllAPI Publisher
      * Don't use directly, create Publisher using create_publisher from Participant.
      */
     Publisher(
-            PublisherImpl* p);
+            PublisherImpl* p,
+            const StatusMask& mask = StatusMask::all());
 
 public:
 
