@@ -121,6 +121,20 @@ struct RemoteLocatorList
     ResourceLimitedVector<Locator_t> multicast;
 };
 
+inline std::ostream& operator<<(std::ostream& output, const RemoteLocatorList& remote_locators)
+{
+    for (auto it = remote_locators.multicast.begin(); it != remote_locators.multicast.end(); ++it)
+    {
+        output << *it << ",";
+    }
+
+    for (auto it = remote_locators.unicast.begin(); it != remote_locators.unicast.end(); ++it)
+    {
+        output << *it << ",";
+    }
+    return output;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

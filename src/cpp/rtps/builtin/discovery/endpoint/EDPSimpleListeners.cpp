@@ -52,7 +52,8 @@ void EDPBasePUBListener::add_writer_from_change(
     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
-    if (temp_writer_data_.readFromCDRMessage(&tempMsg, network))
+    if (temp_writer_data_.readFromCDRMessage(&tempMsg, network,
+        edp->mp_RTPSParticipant->has_shm_transport()))
     {
         change->instanceHandle = temp_writer_data_.key();
         if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
@@ -155,7 +156,8 @@ void EDPBaseSUBListener::add_reader_from_change(
     //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
-    if (temp_reader_data_.readFromCDRMessage(&tempMsg, network))
+    if (temp_reader_data_.readFromCDRMessage(&tempMsg, network,
+        edp->mp_RTPSParticipant->has_shm_transport()))
     {
         change->instanceHandle = temp_reader_data_.key();
         if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)

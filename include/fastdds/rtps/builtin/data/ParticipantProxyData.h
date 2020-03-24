@@ -174,7 +174,8 @@ public:
     bool readFromCDRMessage(
             CDRMessage_t* msg,
             bool use_encapsulation,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool is_shm_transport_available);
 
     //! Clear the data (restore to default state).
     void clear();

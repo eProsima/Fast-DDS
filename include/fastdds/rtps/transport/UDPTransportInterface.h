@@ -134,6 +134,11 @@ public:
 
     virtual bool fillUnicastLocator(fastrtps::rtps::Locator_t &locator, uint32_t well_known_port) const override;
 
+    virtual uint32_t max_recv_buffer_size() const override
+    {
+        return configuration()->maxMessageSize;
+    }
+
 protected:
 
     friend class UDPChannelResource;

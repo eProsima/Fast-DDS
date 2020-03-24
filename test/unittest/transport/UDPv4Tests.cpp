@@ -626,6 +626,71 @@ TEST_F(UDPv4Tests, open_a_blocked_socket)
     }
 }
 
+TEST_F(UDPv4Tests, simple_throughput)
+{
+    const size_t sample_size = 1024;
+    int num_samples_per_batch = 100000;
+
+    std::atomic<int> samples_received(0);
+
+    Semaphore sem_end_subscriber;
+
+    octet sample_data[sample_size];
+    memset(sample_data, 0, sizeof(sample_data));
+
+    Locator_t sub_locator;
+    sub_locator.kind = LOCATOR_KIND_UDPv4;
+    sub_locator.port = 50000;
+    IPLocator::setIPv4(sub_locator, 127, 0, 0, 1);
+
+    UDPv4TransportDescriptor my_descriptor;
+
+    // Subscriber
+
+    UDPv4Transport sub_transport(my_descriptor);
+    ASSERT_TRUE(sub_transport.init());
+
+    MockReceiverResource sub_receiver(sub_transport, sub_locator);
+    MockMessageReceiver* sub_msg_recv = dynamic_cast<MockMessageReceiver*>(sub_receiver.CreateMessageReceiver());
+
+    std::function<void()> sub_callback = [&]()
+        {
+            samples_received.fetch_add(1);
+        };
+
+    sub_msg_recv->setCallback(sub_callback);
+
+    // Publisher
+
+    UDPv4Transport pub_transport(my_descriptor);
+    ASSERT_TRUE(pub_transport.init());
+
+    LocatorList_t send_locators_list;
+    send_locators_list.push_back(sub_locator);
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(pub_transport.OpenOutputChannel(send_resource_list, sub_locator));
+
+    auto t0 = std::chrono::high_resolution_clock::now();
+
+    for (int i=0; i<num_samples_per_batch; i++)
+    {
+        Locators locators_begin(send_locators_list.begin());
+        Locators locators_end(send_locators_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(sample_data, sizeof(sample_data), &locators_begin, &locators_end,
+                (std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
+    }
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+
+    auto real_samples_received = samples_received.load();
+    printf("Samples [sent,received] [%d,%d] send_time_per_sample %.3f(us)\n"
+        , num_samples_per_batch
+        , real_samples_received
+        , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
+}
+
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.maxMessageSize = 5;

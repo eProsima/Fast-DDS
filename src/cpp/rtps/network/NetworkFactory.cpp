@@ -30,7 +30,7 @@ namespace rtps{
 
 using SendResourceList = fastdds::rtps::SendResourceList;
 
-NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
+NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(std::numeric_limits<uint32_t>::max()),
     minSendBufferSize_(std::numeric_limits<uint32_t>::max())
 {
 }
@@ -49,8 +49,9 @@ bool NetworkFactory::build_send_resources(
     return returned_value;
 }
 
-bool NetworkFactory::BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize,
-    std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
+bool NetworkFactory::BuildReceiverResources(Locator_t& local,
+    std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list,
+    uint32_t receiver_max_message_size)
 {
     bool returnedValue = false;
     for (auto& transport : mRegisteredTransports)
@@ -59,8 +60,12 @@ bool NetworkFactory::BuildReceiverResources(Locator_t& local, uint32_t maxMsgSiz
         {
             if (!transport->IsInputChannelOpen(local))
             {
+                uint32_t max_recv_buffer_size = (std::min)(
+                    transport->max_recv_buffer_size(),
+                    receiver_max_message_size);
+
                 std::shared_ptr<ReceiverResource> newReceiverResource = std::shared_ptr<ReceiverResource>(
-                    new ReceiverResource(*transport, local, maxMsgSize));
+                    new ReceiverResource(*transport, local, max_recv_buffer_size));
 
                 if (newReceiverResource->mValid)
                 {
@@ -90,7 +95,7 @@ bool NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
 
     if(wasRegistered)
     {
-        if(descriptor->max_message_size() > maxMessageSizeBetweenTransports_)
+        if(descriptor->max_message_size() < maxMessageSizeBetweenTransports_)
             maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
 
         if(minSendBufferSize < minSendBufferSize_)

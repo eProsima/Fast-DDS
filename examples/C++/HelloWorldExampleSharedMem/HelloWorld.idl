@@ -1,0 +1,6 @@
+struct HelloWorld
+{
+	unsigned long index;
+	string message;
+	char data[1024*1024];
+};

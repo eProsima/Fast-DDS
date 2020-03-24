@@ -26,6 +26,8 @@ file(GLOB_RECURSE ALL_HEADERS
     ${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
     )
 
+add_definitions(-DNOMINMAX)
+
 endif(WIN32)
 
 set(${PROJECT_NAME}_source_files
@@ -115,10 +117,12 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/UDPv4Transport.cpp
     rtps/transport/TCPTransportInterface.cpp
     rtps/transport/UDPTransportInterface.cpp
+    rtps/transport/shared_mem/SharedMemTransport.cpp
     rtps/transport/TCPv4Transport.cpp
     rtps/transport/UDPv6Transport.cpp
     rtps/transport/TCPv6Transport.cpp
     rtps/transport/test_UDPv4Transport.cpp
+    rtps/transport/shared_mem/test_SharedMemTransport.cpp
     rtps/transport/tcp/TCPControlMessage.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp
 
@@ -338,6 +342,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
         $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
         $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+		$<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
         )
 
     # Define public headers

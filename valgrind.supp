@@ -27,3 +27,8 @@
     fun:store
     fun:*atomic*store*memory_order
 }
+{
+    <sem_open false positive depending of libc version>
+    Memcheck:Param
+    fun:sem_open
+}

@@ -383,6 +383,11 @@ public:
         return m_network_Factory;
     }
 
+    inline bool has_shm_transport()
+    {
+        return has_shm_transport_;
+    }
+
     uint32_t get_min_network_send_buffer_size()
     {
         return m_network_Factory.get_min_send_buffer_size();
@@ -565,6 +570,9 @@ private:
 #if HAVE_SECURITY
     security::ParticipantSecurityAttributes security_attributes_;
 #endif
+
+    //! Indicates whether the participant has shared-memory transport
+    bool has_shm_transport_;
 
     /**
      * Get persistence service from factory, using endpoint attributes (or participant

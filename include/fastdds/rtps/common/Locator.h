@@ -44,6 +44,7 @@ namespace rtps {
 #define LOCATOR_KIND_UDPv6 2
 #define LOCATOR_KIND_TCPv4 4
 #define LOCATOR_KIND_TCPv6 8
+#define LOCATOR_KIND_SHM 16
 
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.
@@ -58,6 +59,7 @@ public:
         * LOCATOR_KIND_UDPv6
         * LOCATOR_KIND_TCPv4
         * LOCATOR_KIND_TCPv6
+        * LOCATOR_KIND_SHM
         */
     int32_t kind;
     uint32_t port;
@@ -201,6 +203,18 @@ inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
         }
         output << ":" << loc.port;
     }
+    else if (loc.kind == LOCATOR_KIND_SHM)
+    {
+        if (loc.address[0] == 'M')
+        {
+            output << "SHM:M" << loc.port;
+        }
+        else
+        {
+            output << "SHM:" << loc.port;
+        }
+    }
+
     return output;
 }
 
@@ -208,7 +222,7 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
 typedef std::vector<Locator_t>::const_iterator LocatorListConstIterator;
 
 /**
- * Provides a Locator's iterator interface that can by used by different Locator's
+ * Provides a Locator's iterator interface that can be used by different Locator's
  * containers
  */
 class LocatorsIterator

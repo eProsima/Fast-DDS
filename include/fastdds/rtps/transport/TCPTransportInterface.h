@@ -241,7 +241,7 @@ public:
     virtual bool IsLocatorSupported(const fastrtps::rtps::Locator_t&) const override;
 
     //! Checks whether there are open and bound sockets for the given port.
-    bool is_output_channel_open_for(const fastrtps::rtps::Locator_t&) const ;
+    bool is_output_channel_open_for(const fastrtps::rtps::Locator_t&) const;
 
     /** Opens an input channel to receive incomming connections.
     *   If there is an existing channel it registers the receiver resource.
@@ -383,6 +383,11 @@ public:
     virtual bool fillUnicastLocator(
         fastrtps::rtps::Locator_t &locator,
         uint32_t well_known_port) const override;
+
+    virtual uint32_t max_recv_buffer_size() const override
+    {
+        return configuration()->maxMessageSize;
+    }
 
     void DeleteSocket(TCPChannelResource *channelResource);
 

@@ -21,6 +21,7 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #if defined(_WIN32)
+#pragma comment(lib, "Iphlpapi.lib")
 #include <stdio.h>
 #include <winsock2.h>
 #include <iphlpapi.h>

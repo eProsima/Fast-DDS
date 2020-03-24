@@ -37,6 +37,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 #include <fastdds/rtps/RTPSDomain.h>
 
@@ -112,6 +113,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_userParticipant(par)
     , mp_mutex(new std::recursive_mutex())
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
+    , has_shm_transport_(false)
 {
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
@@ -147,6 +149,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     for (const auto& transportDescriptor : PParam.userTransports)
     {
         m_network_Factory.RegisterTransport(transportDescriptor.get());
+
+        has_shm_transport_ |= (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
     }
 
     mp_userParticipant->mp_impl = this;
@@ -955,10 +959,18 @@ void RTPSParticipantImpl::createReceiverResources(
 {
     std::vector<std::shared_ptr<ReceiverResource> > newItemsBuffer;
 
-    uint32_t size = m_network_Factory.get_max_message_size_between_transports();
+#if HAVE_SECURITY
+    // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
+    // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
+    uint32_t max_receiver_buffer_size = 
+        is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
+#else
+    uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
+#endif
+
     for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
     {
-        bool ret = m_network_Factory.BuildReceiverResources(*it_loc, size, newItemsBuffer);
+        bool ret = m_network_Factory.BuildReceiverResources(*it_loc, newItemsBuffer, max_receiver_buffer_size);
         if (!ret && ApplyMutation)
         {
             uint32_t tries = 0;
@@ -966,7 +978,7 @@ void RTPSParticipantImpl::createReceiverResources(
             {
                 tries++;
                 *it_loc = applyLocatorAdaptRule(*it_loc);
-                ret = m_network_Factory.BuildReceiverResources(*it_loc, size, newItemsBuffer);
+                ret = m_network_Factory.BuildReceiverResources(*it_loc, newItemsBuffer, max_receiver_buffer_size);
             }
         }
 
@@ -976,7 +988,7 @@ void RTPSParticipantImpl::createReceiverResources(
             //Push the new items into the ReceiverResource buffer
             m_receiverResourcelist.emplace_back(*it_buffer);
             //Create and init the MessageReceiver
-            auto mr = new MessageReceiver(this, size);
+            auto mr = new MessageReceiver(this, (*it_buffer)->max_message_size());
             m_receiverResourcelist.back().mp_receiver = mr;
             //Start reception
             if (RegisterReceiver)
@@ -1211,7 +1223,19 @@ void RTPSParticipantImpl::assert_remote_participant_liveliness(
 
 uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 {
-    return m_network_Factory.get_max_message_size_between_transports();
+#if HAVE_SECURITY
+    // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
+    // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
+    // So the sender limits also its size.
+    uint32_t max_receiver_buffer_size = 
+        is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
+#else
+    uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
+#endif
+
+    return (std::min)(
+        m_network_Factory.get_max_message_size_between_transports(),
+        max_receiver_buffer_size);
 }
 
 uint32_t RTPSParticipantImpl::getMaxDataSize()

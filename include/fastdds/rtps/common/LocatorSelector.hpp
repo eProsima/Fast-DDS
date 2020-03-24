@@ -349,11 +349,11 @@ public:
             }
         }
 
-		iterator(const iterator& other)
-			: locator_selector_(other.locator_selector_)
-			, current_(other.current_)
-		{
-		}
+        iterator(const iterator& other)
+            : locator_selector_(other.locator_selector_)
+            , current_(other.current_)
+        {
+        }
 
         iterator& operator++()
         {

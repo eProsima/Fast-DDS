@@ -15,12 +15,12 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -359,6 +359,15 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 return ret;
             }
         }
+        else if(sType == SHM)
+        {
+            pDescriptor = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
+            ret = parseXMLCommonSharedMemTransportData(p_root, pDescriptor);
+            if (ret != XMLP_ret::XML_OK)
+            {
+                return ret;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Invalid transport type: '" << sType << "'");
@@ -439,7 +448,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             uint32_t uSize = 0;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
                 return XMLP_ret::XML_ERROR;
-            pDesc->maxMessageSize = uSize;
+            std::dynamic_pointer_cast<rtps::TransportDescriptorInterface>(p_transport)->maxMessageSize = uSize;
         }
         else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
         {
@@ -479,7 +488,11 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
             strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
             strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
-            strcmp(name, NON_BLOCKING_SEND) == 0 )
+            strcmp(name, NON_BLOCKING_SEND) == 0  || 
+            strcmp(name, SEGMENT_SIZE) == 0 || strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
+            strcmp(name, PORT_OVERFLOW_POLICY) == 0 || strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
+            strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
+            strcmp(name, RTPS_DUMP_FILE) == 0)
         {
             // Parsed outside of this method
         }
@@ -626,6 +639,109 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
     else
     {
         logError(XMLPARSER, "Error parsing TCP Transport data");
+        ret = XMLP_ret::XML_ERROR;
+    }
+
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
+{
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="segment_size" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="port_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="segment_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+                </xs:all>
+        </xs:complexType>
+    */
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> transport_descriptor =
+        std::dynamic_pointer_cast<fastdds::rtps::SharedMemTransportDescriptor>(p_transport);
+    if (transport_descriptor != nullptr)
+    {
+        tinyxml2::XMLElement *p_aux0 = nullptr;
+        const char* name = nullptr;
+        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+        {
+            uint32_t aux;
+            name = p_aux0->Name();
+            if (strcmp(name, SEGMENT_SIZE) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->segment_size(static_cast<uint32_t>(aux), static_cast<uint32_t>(aux));
+            }
+            else if (strcmp(name, PORT_QUEUE_CAPACITY) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->port_queue_capacity(static_cast<uint32_t>(aux));
+            }
+            else if (strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->healthy_check_timeout_ms(static_cast<uint32_t>(aux));
+            }
+            else if (strcmp(name, PORT_OVERFLOW_POLICY) == 0)
+            {
+                std::string str;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                    return XMLP_ret::XML_ERROR;
+                if(str == DISCARD)
+                {
+                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+                }
+                else if(str == FAIL)
+                {
+                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+                }
+                else
+                    return XMLP_ret::XML_ERROR;
+            }
+            else if (strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0)
+            {
+                std::string str;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                    return XMLP_ret::XML_ERROR;
+                if(str == DISCARD)
+                {
+                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+                }
+                else if(str == FAIL)
+                {
+                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+                }
+                else
+                    return XMLP_ret::XML_ERROR;
+            }
+            else if (strcmp(name, RTPS_DUMP_FILE) == 0)
+            {
+                std::string str;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->rtps_dump_file(str);
+            }
+            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 || strcmp(name, MAX_MESSAGE_SIZE) == 0)
+            {
+                // Parsed Outside of this method
+            }
+            else
+            {
+                logError(XMLPARSER, "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing SharedMem Transport data");
         ret = XMLP_ret::XML_ERROR;
     }
 
