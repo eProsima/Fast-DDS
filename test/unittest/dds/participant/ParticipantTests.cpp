@@ -16,6 +16,8 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/types.hpp>
 
@@ -38,6 +40,14 @@ TEST(ParticipantTests, CreatePSMDomainParticipant)
 
     ASSERT_NE(participant, ::dds::core::null);
 
+}
+
+TEST(ParticipantTests, CreatePublisher)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+
+    ASSERT_NE(publisher, nullptr);
 }
 
 } // namespace dds
