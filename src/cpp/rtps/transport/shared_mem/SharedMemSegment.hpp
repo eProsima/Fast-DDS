@@ -16,7 +16,21 @@
 #define _FASTDDS_SHAREDMEM_SEGMENT_H_
 
 #include <boostconfig.hpp>
+
+// For gcc-9 disable a new warning that warns about copy operator implicitly
+// defined based on copy constructor.
+#if defined(__GNUC__)
+#pragma GCC diagnostic error "-Wdeprecated-copy"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#endif
+
 #include <boost/interprocess/managed_shared_memory.hpp>
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/interprocess/sync/spin/wait.hpp>
@@ -227,6 +241,13 @@ public:
         const type& get() const
         {
             return uuid_;
+        }
+
+        Id& operator = (
+                const Id& other)
+        {
+            uuid_ = other.uuid_;
+            return *this;
         }
 
         bool operator == (
