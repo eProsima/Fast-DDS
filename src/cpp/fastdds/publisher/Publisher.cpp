@@ -34,6 +34,16 @@ Publisher::Publisher(
 {
 }
 
+Publisher::Publisher(
+        DomainParticipant* dp,
+        const PublisherQos& qos,
+        PublisherListener* listener,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(dp->create_publisher(qos, listener, mask)->impl_)
+{
+}
+
 Publisher::~Publisher()
 {
 }

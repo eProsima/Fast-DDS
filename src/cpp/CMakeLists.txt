@@ -200,6 +200,7 @@ set(${PROJECT_NAME}_source_files
     dds/core/types.cpp
     dds/core/Exception.cpp
     dds/domain/DomainParticipant.cpp
+    dds/pub/Publisher.cpp
     )
 
 # SHM Transport

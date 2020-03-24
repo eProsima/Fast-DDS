@@ -121,17 +121,17 @@ void DomainParticipant::default_participant_qos(
     }
 }
 
-//dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const
-//{
-//    return this->delegate()->get_default_publisher_qos();
-//}
+dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const
+{
+    return this->delegate()->get_default_publisher_qos();
+}
 
-//DomainParticipant& DomainParticipant::default_publisher_qos(
-//        const ::dds::pub::qos::PublisherQos& qos)
-//{
-//    this->delegate()->set_default_publisher_qos(qos);
-//    return *this;
-//}
+DomainParticipant& DomainParticipant::default_publisher_qos(
+        const ::dds::pub::qos::PublisherQos& qos)
+{
+    this->delegate()->set_default_publisher_qos(qos);
+    return *this;
+}
 
 //dds::sub::qos::SubscriberQos DomainParticipant::default_subscriber_qos() const
 //{
