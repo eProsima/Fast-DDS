@@ -715,6 +715,7 @@ bool StatefulReader::change_received(
                 {
                     if (mp_history->received_change(a_change, 0))
                     {
+                        Time_t::now(a_change->receptionTimestamp);
                         update_last_notified(a_change->writerGUID, a_change->sequenceNumber);
                         if (getListener() != nullptr)
                         {
@@ -737,6 +738,7 @@ bool StatefulReader::change_received(
     // inside the call to mp_history->received_change
     if (mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
+        Time_t::now(a_change->receptionTimestamp);
         GUID_t proxGUID = prox->guid();
 
         // If KEEP_LAST and history full, make older changes as lost.
