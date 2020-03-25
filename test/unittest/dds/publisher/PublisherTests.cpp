@@ -44,6 +44,22 @@ TEST(PublisherTests, ChangePublisherQos)
 
 }
 
+TEST(PublisherTests, ChangePSMPublisherQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
+
+    ::dds::pub::qos::PublisherQos qos = publisher.qos();
+    ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
+
+    qos.entity_factory.autoenable_created_entities = false;
+    publisher.qos(qos);
+    ::dds::pub::qos::PublisherQos pqos = publisher.qos();
+
+    ASSERT_TRUE(qos == pqos);
+    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+}
+
 
 } // namespace dds
 } // namespace fastdds
