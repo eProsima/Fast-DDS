@@ -113,7 +113,8 @@ public:
      * @return true
      */
     RTPS_DllAPI ReturnCode_t set_listener(
-            PublisherListener* listener);
+            PublisherListener* listener,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.

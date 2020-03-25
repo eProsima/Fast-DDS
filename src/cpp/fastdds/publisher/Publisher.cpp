@@ -72,8 +72,10 @@ const PublisherListener* Publisher::get_listener() const
 }
 
 ReturnCode_t Publisher::set_listener(
-        PublisherListener* listener)
+        PublisherListener* listener,
+        const StatusMask& mask)
 {
+    status_mask_ = mask;
     return impl_->set_listener(listener);
 }
 
