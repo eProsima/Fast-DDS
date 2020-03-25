@@ -92,7 +92,7 @@ const PublisherQos& PublisherImpl::get_qos() const
 ReturnCode_t PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
-    if (!qos.check_qos())
+    if (qos.check_qos())
     {
         if (!qos_.can_qos_be_updated(qos))
         {

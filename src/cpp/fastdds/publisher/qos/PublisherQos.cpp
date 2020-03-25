@@ -37,7 +37,9 @@ void PublisherQos::set_qos(
         const PublisherQos& qos,
         bool first_time)
 {
-    if (first_time)
+    if (first_time && (presentation.access_scope != qos.presentation.access_scope ||
+            presentation.coherent_access != qos.presentation.coherent_access ||
+            presentation.ordered_access != qos.presentation.ordered_access))
     {
         presentation = qos.presentation;
         presentation.hasChanged = true;
@@ -57,7 +59,8 @@ void PublisherQos::set_qos(
         group_data = qos.group_data;
         group_data.hasChanged = true;
     }
-    if (first_time)
+    if (first_time && (disable_positive_acks.enabled != qos.disable_positive_acks.enabled ||
+            disable_positive_acks.duration != qos.disable_positive_acks.duration))
     {
         disable_positive_acks = qos.disable_positive_acks;
         disable_positive_acks.hasChanged = true;
