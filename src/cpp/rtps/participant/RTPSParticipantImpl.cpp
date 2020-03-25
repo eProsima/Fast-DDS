@@ -122,14 +122,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.RegisterTransport(&descriptor);
     }
 
-    // Workaround TCP discovery issues when register
+    // BACKUP servers guid is its persistence one
+    if (PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+    {
+        m_persistence_guid = m_guid;
+    }
+
+    // Client-server discovery protocol requires that every TCP transport has a listening port
     switch (PParam.builtin.discovery_config.discoveryProtocol)
     {
         case DiscoveryProtocol::BACKUP:
-            m_persistence_guid = m_guid;
-            // keep setting up transport
-            #pragma warning(suppress:5030)
-            [[clang::fallthrough]];
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
         // Verify if listening ports are provided
@@ -277,6 +279,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultMulticastLocatorList.clear();
     }
 
+    // keep original metatraffic locatorList_t values to detect mutation 
+    LocatorList_t former_multicast(m_att.builtin.metatrafficMulticastLocatorList),
+        former_unicast(m_att.builtin.metatrafficUnicastLocatorList);
+
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
@@ -311,11 +317,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     if((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
         || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
-        && !(PParam.builtin.metatrafficUnicastLocatorList == m_att.builtin.metatrafficUnicastLocatorList))
+        && !(former_multicast == m_att.builtin.metatrafficMulticastLocatorList 
+            && former_unicast == m_att.builtin.metatrafficUnicastLocatorList))
     {
         logError(RTPS_PARTICIPANT, "Cannot create server participant,"
             " because the desired locators were not available.");
-        return;
     }
 
     mp_builtinProtocols = new BuiltinProtocols();
