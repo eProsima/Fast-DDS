@@ -23,21 +23,14 @@
  * Ignore this file in the API
  */
 
-//#include <fastdds/dds/core/conditions/GuardCondition.hpp>
+#include <fastdds/dds/core/conditions/GuardCondition.hpp>
 
 namespace dds {
 namespace core {
 namespace cond {
-
-template<typename DELEGATE>
-class TGuardCondition;
-
 namespace detail {
 
-//using GuardCondition = eprosima::fastdds::dds::GuardCondition;
-class GuardCondition
-{
-};
+using GuardCondition = eprosima::fastdds::dds::GuardCondition;
 
 } //namespace detail
 } //namespace cond

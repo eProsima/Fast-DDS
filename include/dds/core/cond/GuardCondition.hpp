@@ -21,8 +21,8 @@
 #ifndef OMG_DDS_CORE_COND_GUARDCONDITION_HPP_
 #define OMG_DDS_CORE_COND_GUARDCONDITION_HPP_
 
-#include <dds/core/cond/detail/GuardCondition.hpp>
 #include <dds/core/cond/Condition.hpp>
+#include <dds/core/cond/detail/GuardCondition.hpp>
 
 namespace dds {
 namespace core {
@@ -57,19 +57,19 @@ namespace cond {
  * @see @ref DCPS_Modules_Infrastructure_Waitset "WaitSet concept"
  * @see @ref anchor_dds_core_cond_waitset_examples "WaitSet examples"
  */
-template<typename DELEGATE>
-class TGuardCondition : public TCondition<DELEGATE>
+class GuardCondition : public TCondition<detail::GuardCondition>
 {
 public:
 
     OMG_DDS_REF_TYPE_NO_DC(
-        TGuardCondition,
+        GuardCondition,
         TCondition,
-        DELEGATE)
+        detail::GuardCondition)
 
-    OMG_DDS_EXPLICIT_REF_BASE(
-        TGuardCondition,
+    OMG_DDS_EXPLICIT_REF_BASE_DECL(
+        GuardCondition,
         dds::core::cond::Condition)
+
     /**
      * Create a dds::core::cond::GuardCondition.
      *
@@ -78,7 +78,11 @@ public:
      *
      * @throw  dds::core::Exception
      */
-    TGuardCondition();
+    GuardCondition()
+        : dds::core::Reference<detail::GuardCondition>(
+            new detail::GuardCondition())
+    {
+    }
 
     /**
      * Create a dds::core::cond::GuardCondition.
@@ -95,18 +99,34 @@ public:
      * @throw  dds::core::Exception
      */
     template<typename FUN>
-    TGuardCondition(
-            FUN& functor);
+    GuardCondition(
+            FUN& functor)
+    {
+        //To implement
+        //    ISOCPP_REPORT_STACK_NC_BEGIN();
+        //    this->set_ref(new DELEGATE);
+        //    this->delegate()->init(this->impl_);
+        //    this->delegate()->set_handler(functor);
+    }
 
     /**
      * @copydoc dds::core::cond::TGuardCondition::TGuardCondition(FUN& functor)
      */
     template<typename FUN>
-    TGuardCondition(
-            const FUN& functor);
+    GuardCondition(
+            const FUN& functor)
+    {
+        //To implement
+        //    ISOCPP_REPORT_STACK_NC_BEGIN();
+        //    this->set_ref(new DELEGATE);
+        //    this->delegate()->init(this->impl_);
+        //    this->delegate()->set_handler(functor);
+    }
 
     /** @cond */
-    ~TGuardCondition();
+    ~GuardCondition()
+    {
+    }
     /** @endcond */
 
     /**
@@ -123,20 +143,23 @@ public:
      * @throw dds::core::Exception
      */
     void trigger_value(
-            bool value);
+            bool value)
+    {
+        delegate()->set_trigger_value(value);
+    }
 
     /**
      * @copydoc dds::core::cond::TCondition::trigger_value()
      */
-    bool trigger_value();
+    bool trigger_value()
+    {
+        return TCondition<detail::GuardCondition>::trigger_value();
+    }
 };
 
-typedef dds::core::cond::detail::GuardCondition GuardCondition;
 
 } //namespace cond
 } //namespace core
 } //namespace dds
-
-#include <dds/core/cond/detail/TGuardConditionImpl.hpp>
 
 #endif //OMG_DDS_CORE_COND_GUARDCONDITION_HPP_
