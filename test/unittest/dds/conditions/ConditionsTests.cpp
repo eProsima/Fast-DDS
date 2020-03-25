@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/conditions/GuardCondition.hpp>
+#include <dds/core/cond/GuardCondition.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -29,6 +30,16 @@ TEST(ConsitionsTests, GuardConditionActivation)
     ASSERT_TRUE(cond.get_trigger_value());
     ASSERT_EQ(cond.set_trigger_value(false), ReturnCode_t::RETCODE_OK);
     ASSERT_FALSE(cond.get_trigger_value());
+}
+
+TEST(ConsitionsTests, PSMGuardConditionActivation)
+{
+    ::dds::core::cond::GuardCondition cond;
+    ASSERT_FALSE(cond.trigger_value());
+    ASSERT_NO_THROW(cond.trigger_value(true));
+    ASSERT_TRUE(cond.trigger_value());
+    ASSERT_NO_THROW(cond.trigger_value(false));
+    ASSERT_FALSE(cond.trigger_value());
 }
 
 
