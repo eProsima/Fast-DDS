@@ -44,6 +44,8 @@ public:
     {
     }
 
+    virtual ~Entity() = default;
+
     /**
      * @brief This operation enables the Entity
      * @return true
