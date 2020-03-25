@@ -220,10 +220,10 @@ TEST(ParticipantTests, DomainParticipantListenerMethods)
 
     ASSERT_EQ(participant->get_listener(), nullptr);
 
-    DomainParticipantListener* listener;
-    participant->set_listener(listener);
+    DomainParticipantListener listener = DomainParticipantListener();
+    participant->set_listener(&listener);
 
-    ASSERT_EQ(listener, participant->get_listener());
+    ASSERT_EQ(&listener, participant->get_listener());
 
 }
 
@@ -233,10 +233,10 @@ TEST(ParticipantTests, DomainParticipantPSMListenerMethods)
 
     ASSERT_EQ(participant.listener(), nullptr);
 
-    ::dds::domain::DomainParticipantListener* listener;
-    participant.listener(listener, ::dds::core::status::StatusMask::all());
+    ::dds::domain::DomainParticipantListener listener = ::dds::domain::DomainParticipantListener();
+    participant.listener(&listener, ::dds::core::status::StatusMask::all());
 
-    ASSERT_EQ(listener, participant.listener());
+    ASSERT_EQ(&listener, participant.listener());
 
 }
 
