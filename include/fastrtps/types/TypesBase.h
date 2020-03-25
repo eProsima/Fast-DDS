@@ -231,13 +231,13 @@ public:
     }
 
     bool operator ==(
-            const ReturnCode_t& c)
+            const ReturnCode_t& c) const
     {
         return value_ == c.value_;
     }
 
     bool operator !=(
-            const ReturnCode_t& c)
+            const ReturnCode_t& c) const
     {
         return value_ != c.value_;
     }
