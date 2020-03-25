@@ -40,6 +40,7 @@ public:
     RTPS_DllAPI Entity(
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
+        , status_changes_(StatusMask::none())
         , enable_(false)
     {
     }
@@ -65,12 +66,22 @@ public:
     }
 
     /**
-     * @brief get_status_mask Retrieves the set of relevant statuses for the Entity
+     * @brief Retrieves the set of statuses for the Entity
      * @return Reference to the StatusMask with the relevant statuses set to 1
      */
     RTPS_DllAPI const StatusMask& get_status_mask() const
     {
         return status_mask_;
+    }
+
+    /**
+     * @brief retrieves the list of communication statuses that are triggered.
+     * @detail Triggered statuses are those whose value has changed since the last
+     * time the application read the status
+     */
+    RTPS_DllAPI const StatusMask& get_status_changes() const
+    {
+        return status_changes_;
     }
 
     /**
@@ -106,6 +117,8 @@ protected:
     }
 
     StatusMask status_mask_;
+
+    StatusMask status_changes_;
 
     fastrtps::rtps::InstanceHandle_t instance_handle_;
 
