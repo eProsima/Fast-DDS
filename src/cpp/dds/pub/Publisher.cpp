@@ -99,17 +99,22 @@ Publisher::~Publisher()
 //    return qos::DataWriterQos();
 //}
 
-//void Publisher::listener(
-//        Listener* plistener,
-//        const dds::core::status::StatusMask& /*event_mask*/)
-//{
-//    delegate()->set_listener(plistener /*, event_mask*/);
-//}
+void Publisher::listener(
+        Listener* plistener,
+        const dds::core::status::StatusMask& event_mask)
+{
+    this->delegate()->set_listener(plistener, event_mask);
+}
 
-//typename Publisher::Listener* Publisher::listener() const
-//{
-//    return dynamic_cast<Listener*>(delegate()->get_listener());
-//}
+typename Publisher::Listener* Publisher::listener() const
+{
+    return dynamic_cast<Listener*>(this->delegate()->get_listener());
+}
+
+dds::core::status::StatusMask Publisher::get_status_mask()
+{
+    return this->delegate()->get_status_mask();
+}
 
 //void Publisher::wait_for_acknowledgments(
 //        const dds::core::Duration& timeout)

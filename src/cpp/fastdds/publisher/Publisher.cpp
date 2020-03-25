@@ -66,7 +66,7 @@ ReturnCode_t Publisher::set_qos(
     return impl_->set_qos(qos);
 }
 
-const PublisherListener* Publisher::get_listener() const
+PublisherListener* Publisher::get_listener() const
 {
     return impl_->get_listener();
 }

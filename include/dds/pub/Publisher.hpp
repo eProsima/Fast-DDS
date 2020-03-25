@@ -321,6 +321,8 @@ public:
      */
     const dds::domain::DomainParticipant& participant() const;
 
+    dds::core::status::StatusMask get_status_mask();
+
     dds::domain::DomainParticipant* participant_;
 
 };

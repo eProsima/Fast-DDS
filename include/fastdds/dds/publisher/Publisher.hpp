@@ -105,7 +105,7 @@ public:
     /**
      * Retrieves the attached PublisherListener.
      */
-    RTPS_DllAPI const PublisherListener* get_listener() const;
+    RTPS_DllAPI PublisherListener* get_listener() const;
 
     /**
      * Modifies the PublisherListener.

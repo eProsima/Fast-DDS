@@ -82,7 +82,7 @@ public:
     ReturnCode_t set_qos(
             const PublisherQos& qos);
 
-    const PublisherListener* get_listener() const;
+    PublisherListener* get_listener() const;
 
     ReturnCode_t set_listener(
             PublisherListener* listener);

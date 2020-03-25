@@ -104,7 +104,7 @@ ReturnCode_t PublisherImpl::set_qos(
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const PublisherListener* PublisherImpl::get_listener() const
+PublisherListener* PublisherImpl::get_listener() const
 {
     return listener_;
 }
