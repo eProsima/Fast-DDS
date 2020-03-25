@@ -420,6 +420,7 @@ public:
             uint32_t healthy_check_timeout_ms,
             Port::OpenMode open_mode = Port::OpenMode::ReadShared)
     {
+        std::string err_reason;
         std::shared_ptr<Port> port;
 
         auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
@@ -464,10 +465,12 @@ public:
                 if ( (port_node->is_opened_read_exclusive && open_mode != Port::OpenMode::Write) ||
                         (port_node->is_opened_for_reading && open_mode == Port::OpenMode::ReadExclusive))
                 {
-                    logError(RTPS_TRANSPORT_SHM, THREADID << "Couln't open Port "
-                                                         << port_node->port_id << " (" << port_node->uuid.to_string() <<
-                                        ") for reading because is exclusive");
+                    std::stringstream ss;
 
+                    ss << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                                        ") because is already opened ReadExclusive";
+
+                    err_reason = ss.str();
                     port.reset();
                 }
                 else
@@ -540,7 +543,7 @@ public:
 
         if (port == nullptr)
         {
-            throw std::runtime_error("Coulnd't open port ");
+            throw std::runtime_error("Coulnd't open port " + err_reason);
         }
 
         return port;
