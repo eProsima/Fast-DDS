@@ -63,6 +63,27 @@ TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
     ASSERT_EQ(wqos.deadline().period, 540);
 }
 
+TEST(PublisherTests, ChangePublisherQos)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+
+    PublisherQos qos;
+    publisher->get_qos(qos);
+
+    ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
+
+    qos.entity_factory.autoenable_created_entities = false;
+
+    publisher->set_qos(qos);
+    PublisherQos pqos;
+    publisher->get_qos(pqos);
+
+    ASSERT_TRUE(qos == pqos);
+    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+
+}
+
 
 } // namespace dds
 } // namespace fastdds
