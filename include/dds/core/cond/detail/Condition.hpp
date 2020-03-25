@@ -23,17 +23,14 @@
  * Ignore this file in the API
  */
 
-//#include <fastdds/dds/core/conditions/Condition.hpp>
+#include <fastdds/dds/core/conditions/Condition.hpp>
 
 namespace dds {
 namespace core {
 namespace cond {
 namespace detail {
 
-//using Condition = eprosima::fastdds::dds::Condition;
-class Condition
-{
-};
+using Condition = eprosima::fastdds::dds::Condition;
 
 } //namespace detail
 } //namespace cond

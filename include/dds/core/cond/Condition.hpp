@@ -33,6 +33,7 @@ namespace dds {
 namespace core {
 namespace cond {
 
+
 /**
  * @brief
  * This class is the base class for all the conditions that may be attached to a dds::core::cond::WaitSet.
@@ -68,6 +69,7 @@ public:
         TCondition,
         detail::GuardCondition)
 
+/*
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
         TCondition,
         dds::sub::cond::detail::ReadCondition)
@@ -75,9 +77,12 @@ public:
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
         TCondition,
         dds::sub::cond::detail::QueryCondition)
+*/
 
     /** @cond */
-    OMG_DDS_API ~TCondition();
+    OMG_DDS_API ~TCondition()
+    {
+    }
     /** @endcond */
 
     /**
@@ -94,12 +99,23 @@ public:
      */
     template<typename Functor>
     OMG_DDS_API void handler(
-            Functor& func);
+            Functor& func)
+    {
+        //To implement
+        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+        //    this->delegate()->set_handler(func);
+
+    }
 
     /** @copydoc dds::core::cond::TCondition::handler(Functor& func) */
     template<typename Functor>
     OMG_DDS_API void handler(
-            const Functor& func);
+            const Functor& func)
+    {
+        //To implement
+        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+        //        this->delegate()->set_handler(func);
+    }
 
     /**
      * Resets the handler for this Condition.
@@ -110,7 +126,12 @@ public:
      * @return void
      * @throw  dds::core::Exception
      */
-    OMG_DDS_API void reset_handler();
+    OMG_DDS_API void reset_handler()
+    {
+        //To implement
+        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+        //    this->delegate()->reset_handler();
+    }
 
     /**
      * Dispatches the functor that have been registered with the Condition.
@@ -121,7 +142,12 @@ public:
      * @return void
      * @throw  dds::core::Exception
      */
-    OMG_DDS_API void dispatch();
+    OMG_DDS_API void dispatch()
+    {
+        //To implement
+        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+        //    this->delegate()->dispatch();
+    }
 
     /**
      * This operation retrieves the trigger_value of the Condition.
@@ -133,16 +159,18 @@ public:
      * @return bool The boolean value to which the Condition is set.
      * @throw  dds::core::Exception
      */
-    OMG_DDS_API bool trigger_value() const;
+    OMG_DDS_API bool trigger_value() const
+    {
+        return this->delegate()->get_trigger_value();
+    }
 
 };
+
 
 typedef TCondition<detail::Condition> Condition;
 
 } //namespace cond
 } //namespace core
 } //namespace dds
-
-#include <dds/core/cond/detail/TConditionImpl.hpp>
 
 #endif  //OMG_DDS_CORE_COND_CONDITION_HPP_
