@@ -27,6 +27,17 @@ TEST(EntityTests, CreateEntityProvidesEmtpyStatusChange)
     ASSERT_EQ(entity.get_status_changes(), StatusMask::none());
 }
 
+TEST(EntityTests, EnableEntity)
+{
+    Entity entity;
+    ASSERT_FALSE(entity.is_enabled());
+    entity.enable();
+    ASSERT_TRUE(entity.is_enabled());
+    entity.close();
+    ASSERT_FALSE(entity.is_enabled());
+}
+
+
 
 } // namespace dds
 } // namespace fastdds
