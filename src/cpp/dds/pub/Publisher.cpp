@@ -57,30 +57,30 @@ Publisher::~Publisher()
 {
 }
 
-//const qos::PublisherQos& Publisher::qos() const
-//{
-//    return delegate()->get_qos();
-//}
+const qos::PublisherQos& Publisher::qos() const
+{
+    return delegate()->get_qos();
+}
 
-//void Publisher::qos(
-//        const qos::PublisherQos& pqos)
-//{
-//    delegate()->set_qos(pqos);
-//}
+void Publisher::qos(
+        const qos::PublisherQos& pqos)
+{
+    delegate()->set_qos(pqos);
+}
 
-//Publisher& Publisher::operator <<(
-//        const qos::PublisherQos& qos)
-//{
-//    this->qos(qos);
-//    return *this;
-//}
+Publisher& Publisher::operator <<(
+        const qos::PublisherQos& qos)
+{
+    this->qos(qos);
+    return *this;
+}
 
-//Publisher& Publisher::operator >>(
-//        qos::PublisherQos& qos)
-//{
-//    qos = this->qos();
-//    return *this;
-//}
+Publisher& Publisher::operator >>(
+        qos::PublisherQos& qos)
+{
+    qos = this->qos();
+    return *this;
+}
 
 //Publisher& Publisher::default_datawriter_qos(
 //        const qos::DataWriterQos& dwqos)
