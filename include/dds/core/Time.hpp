@@ -150,17 +150,17 @@ public:
     int compare(
             const Time& that) const
     {
-        if (*this > that)
+        if (*this == that)
+        {
+            return 0;
+        }
+        else if (*this > that)
         {
             return 1;
         }
-        else if (*this < that)
+        else
         {
             return -1;
-        }
-        else if (*this == that)
-        {
-            return 0;
         }
     }
 

@@ -28,6 +28,8 @@
 #include <dds/sub/Subscriber.hpp>
 #include <dds/pub/Publisher.hpp>
 
+#include <chrono>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -134,8 +136,8 @@ TEST(ParticipantTests, GetCurrentTime)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
     fastrtps::Time_t t1, t2;
     participant->get_current_time(t1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     participant->get_current_time(t2);
-    ASSERT_NE(t1, t2);
     ASSERT_GT(t2, t1);
 }
 
@@ -144,8 +146,8 @@ TEST(ParticipantTests, GetCurrentTimePSM)
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::core::Time t1, t2;
     t1 = participant.current_time();
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     t2 = participant.current_time();
-    ASSERT_NE(t1, t2);
     ASSERT_GT(t2, t1);
 
 }
