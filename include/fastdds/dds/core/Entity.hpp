@@ -45,7 +45,7 @@ public:
     }
 
     /**
-     * @brief enable This operation enables the Entity
+     * @brief This operation enables the Entity
      * @return true
      */
     virtual fastrtps::types::ReturnCode_t enable()
@@ -54,7 +54,10 @@ public:
         return fastrtps::types::ReturnCode_t::RETCODE_OK;
     }
 
-    void close()
+    /**
+     * @brief This operation disables the Entity and frees all resources held.
+     */
+    virtual void close()
     {
         enable_ = false;
     }
