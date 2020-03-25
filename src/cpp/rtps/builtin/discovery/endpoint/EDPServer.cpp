@@ -294,9 +294,11 @@ bool EDPServer::addEndpointFromHistory(
 void EDPServer::removePublisherFromHistory(
         const InstanceHandle_t& key)
 {
-    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+    {
+        std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+        _PUBdemises.insert(key);
+    }
 
-    _PUBdemises.insert(key);
     if ( !trimPUBWriterHistory() )
     {
         PDPServer* pS = dynamic_cast<PDPServer*>(mp_PDP);
@@ -308,9 +310,10 @@ void EDPServer::removePublisherFromHistory(
 void EDPServer::removeSubscriberFromHistory(
         const InstanceHandle_t& key)
 {
-    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
-
-    _SUBdemises.insert(key);
+    {
+        std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+        _SUBdemises.insert(key);
+    }
 
     if (!trimSUBWriterHistory())
     {

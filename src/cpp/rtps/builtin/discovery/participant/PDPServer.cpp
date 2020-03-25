@@ -485,7 +485,6 @@ void PDPServer::match_all_clients_EDP_endpoints()
 bool PDPServer::trimWriterHistory()
 {
     assert(mp_mutex && mp_PDPWriter);
-    std::lock_guard<std::recursive_mutex> guardP(*getMutex());
 
     logInfo(RTPS_PDPSERVER_TRIM, "Trying to trim the history. HistorySize:" << mp_PDPWriterHistory->getHistorySize()
         << " Demises:" << _demises.size());
@@ -639,11 +638,14 @@ bool PDPServer::addRelayedChangeToHistory(
 void PDPServer::removeParticipantFromHistory(
         const InstanceHandle_t& key)
 {
-    std::lock_guard<std::recursive_mutex> guardP(*mp_mutex);
+    {
+        std::lock_guard<std::recursive_mutex> guardP(*mp_mutex);
 
-    logInfo(RTPS_PDP,"PDPServer marks participant " << key << " for disposal");
+        logInfo(RTPS_PDP,"PDPServer marks participant " << key << " for disposal");
 
-    _demises.insert(key);
+        _demises.insert(key);
+    }
+
     trimWriterHistory();
 }
 
@@ -1051,8 +1053,6 @@ bool PDPServer::remove_remote_participant(
     // only DATA acknowledge by all clients would be actually removed
     if(res)
     {
-        std::lock_guard<std::recursive_mutex> lock(*getMutex());
-
         InstanceHandle_t ih;
 
         removeParticipantFromHistory(ih = partGUID);
