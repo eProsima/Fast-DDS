@@ -43,14 +43,21 @@ class RTPS_DllAPI Subscriber
 {
     friend class SubscriberImpl;
 
-    virtual ~Subscriber() {}
+    virtual ~Subscriber()
+    {
+    }
 
 public:
+
     /**
      * Constructor from a SubscriberImpl pointer
      * @param pimpl Actual implementation of the subscriber
      */
-    Subscriber(SubscriberImpl* pimpl) : mp_impl(pimpl) {}
+    Subscriber(
+            SubscriberImpl* pimpl)
+        : mp_impl(pimpl)
+    {
+    }
 
     /**
      * Get the associated GUID
@@ -75,7 +82,8 @@ public:
      * @return true in case unread samples are available.
      * In other case, false.
      */
-    bool wait_for_unread_samples(const Duration_t& timeout);
+    bool wait_for_unread_samples(
+            const Duration_t& timeout);
 
     /**
      * @brief Reads next unread sample from the Subscriber.
@@ -106,7 +114,8 @@ public:
      * @param att Reference to a SubscriberAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
      */
-    bool updateAttributes(const SubscriberAttributes& att);
+    bool updateAttributes(
+            const SubscriberAttributes& att);
 
     /**
      * Get the Attributes of the Subscriber.
@@ -141,15 +150,18 @@ public:
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
-    void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
+    void get_requested_deadline_missed_status(
+            RequestedDeadlineMissedStatus& status);
 
     /**
      * @brief Returns the liveliness changed status
      * @param status Liveliness changed status
      */
-    void get_liveliness_changed_status(LivelinessChangedStatus& status);
+    void get_liveliness_changed_status(
+            LivelinessChangedStatus& status);
 
 private:
+
     SubscriberImpl* mp_impl;
 };
 

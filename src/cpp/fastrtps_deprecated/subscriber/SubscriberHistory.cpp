@@ -71,14 +71,14 @@ SubscriberHistory::SubscriberHistory(
     if (topic_att.getTopicKind() == NO_KEY)
     {
         receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
         receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
     }
 }
 
@@ -157,7 +157,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
 
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance";);
+        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
     return false;
@@ -211,8 +211,8 @@ bool SubscriberHistory::add_received_change(
         }
 
         logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID; );
 
         return true;
     }
@@ -245,8 +245,8 @@ bool SubscriberHistory::add_received_change_with_key(
         instance_changes.push_back(a_change);
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID << " with KEY: " << a_change->instanceHandle;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 
         return true;
     }
@@ -274,7 +274,7 @@ bool SubscriberHistory::find_key_for_change(
     else if (!a_change->instanceHandle.isDefined())
     {
         logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_att_.topicName
-            << " and no method to obtain it";);
+                                                   << " and no method to obtain it"; );
         return false;
     }
 
@@ -348,7 +348,6 @@ bool SubscriberHistory::readNextData(
     return false;
 }
 
-
 bool SubscriberHistory::takeNextData(
         void* data,
         SampleInfo_t* info,
@@ -400,7 +399,7 @@ bool SubscriberHistory::find_key(
     }
     else
     {
-        for (vit = keyed_changes_.begin(); vit!= keyed_changes_.end(); ++vit)
+        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
         {
             if (vit->second.cache_changes.size() == 0)
             {
@@ -486,8 +485,8 @@ bool SubscriberHistory::set_next_deadline(
 }
 
 bool SubscriberHistory::get_next_deadline(
-        InstanceHandle_t &handle,
-        std::chrono::steady_clock::time_point &next_deadline_us)
+        InstanceHandle_t& handle,
+        std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -504,13 +503,13 @@ bool SubscriberHistory::get_next_deadline(
     else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         auto min = std::min_element(keyed_changes_.begin(),
-                                    keyed_changes_.end(),
-                                    [](
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
-                                        {
-                                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-                                        });
+                        keyed_changes_.end(),
+                        [](
+                            const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                            const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+                {
+                    return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                });
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
         return true;
