@@ -92,6 +92,14 @@ public:
     ///@}
 
     /**
+     * @brief Returns information about the first untaken sample.
+     * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     * @return true if sample info was returned. false if there is no sample to take.
+     */
+    bool get_first_untaken_info(
+            SampleInfo_t* info);
+
+    /**
      * This method is called to remove a change from the SubscriberHistory.
      * @param change Pointer to the CacheChange_t.
      * @return True if removed.

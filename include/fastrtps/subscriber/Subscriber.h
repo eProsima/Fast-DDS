@@ -110,6 +110,14 @@ public:
             SampleInfo_t* info);
 
     /**
+     * @brief Returns information about the first untaken sample.
+     * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     * @return true if sample info was returned. false if there is no sample to take.
+     */
+    bool get_first_untaken_info(
+            SampleInfo_t* info);
+
+    /**
      * Update the Attributes of the subscriber;
      * @param att Reference to a SubscriberAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated

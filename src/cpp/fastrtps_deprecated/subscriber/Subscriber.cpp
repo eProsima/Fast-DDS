@@ -50,6 +50,12 @@ bool Subscriber::takeNextData(
     return mp_impl->takeNextData(data, info);
 }
 
+bool Subscriber::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    return mp_impl->get_first_untaken_info(info);
+}
+
 bool Subscriber::updateAttributes(
         const SubscriberAttributes& att)
 {

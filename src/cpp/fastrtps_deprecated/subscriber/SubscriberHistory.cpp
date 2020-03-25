@@ -35,6 +35,20 @@ using namespace rtps;
 
 using eprosima::fastdds::dds::TopicDataType;
 
+static void get_sample_info(
+        SampleInfo_t* info,
+        CacheChange_t* change,
+        uint32_t ownership_strength)
+{
+    info->sampleKind = change->kind;
+    info->sample_identity.writer_guid(change->writerGUID);
+    info->sample_identity.sequence_number(change->sequenceNumber);
+    info->sourceTimestamp = change->sourceTimestamp;
+    info->ownershipStrength = ownership_strength;
+    info->iHandle = change->instanceHandle;
+    info->related_sample_identity = change->write_params.sample_identity();
+}
+
 SubscriberHistory::SubscriberHistory(
         const TopicAttributes& topic_att,
         TopicDataType* type,
@@ -298,14 +312,9 @@ bool SubscriberHistory::deserialize_change(
 
     if (info != nullptr)
     {
-        info->sampleKind = change->kind;
-        info->sample_identity.writer_guid(change->writerGUID);
-        info->sample_identity.sequence_number(change->sequenceNumber);
-        info->sourceTimestamp = change->sourceTimestamp;
-        info->ownershipStrength = ownership_strength;
         if (topic_att_.topicKind == WITH_KEY &&
-                change->instanceHandle == c_InstanceHandle_Unknown &&
-                change->kind == ALIVE)
+            change->instanceHandle == c_InstanceHandle_Unknown &&
+            change->kind == ALIVE)
         {
             bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -313,8 +322,8 @@ bool SubscriberHistory::deserialize_change(
 #endif
             type_->getKey(data, &change->instanceHandle, is_key_protected);
         }
-        info->iHandle = change->instanceHandle;
-        info->related_sample_identity = change->write_params.sample_identity();
+
+        get_sample_info(info, change, ownership_strength);
     }
 
     return true;
@@ -375,6 +384,23 @@ bool SubscriberHistory::takeNextData(
             bool removed = remove_change_sub(change);
             return (deserialized && removed);
         }
+    }
+
+    return false;
+}
+
+bool SubscriberHistory::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    std::lock_guard<RecursiveTimedMutex> lock(*mp_mutex);
+
+    CacheChange_t* change = nullptr;
+    WriterProxy* wp = nullptr;
+    if (mp_reader->nextUntakenCache(&change, &wp))
+    {
+        uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ? wp->ownership_strength() : 0;
+        get_sample_info(info, change, ownership);
+        return true;
     }
 
     return false;

@@ -124,6 +124,12 @@ bool SubscriberImpl::takeNextData(
     return this->m_history.takeNextData(data, info, max_blocking_time);
 }
 
+bool SubscriberImpl::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    return m_history.get_first_untaken_info(info);
+}
+
 const GUID_t& SubscriberImpl::getGuid()
 {
     return mp_reader->getGuid();
