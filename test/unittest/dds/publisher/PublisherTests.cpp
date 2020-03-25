@@ -20,6 +20,8 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/PublisherListener.hpp>
 #include <dds/core/types.hpp>
 
 namespace eprosima {
@@ -36,11 +38,26 @@ TEST(PublisherTests, ChangePublisherListener)
     PublisherListener listener = PublisherListener();
 
     publisher->set_listener(&listener, StatusMask::publication_matched());
-    const PublisherListener* plistener = publisher->get_listener();
+    PublisherListener* plistener = publisher->get_listener();
 
     ASSERT_EQ(plistener, &listener);
     ASSERT_EQ(publisher->get_status_mask(), StatusMask::publication_matched());
 
+}
+
+TEST(PublisherTests, ChangePSMPublisherListener)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
+
+    ASSERT_EQ(publisher.listener(), nullptr);
+
+    ::dds::pub::PublisherListener listener = ::dds::pub::PublisherListener();
+    publisher.listener(&listener, ::dds::core::status::StatusMask::liveliness_lost());
+    ::dds::pub::PublisherListener* plistener = publisher.listener();
+
+    ASSERT_EQ(&listener, plistener);
+    ASSERT_EQ(publisher.get_status_mask(), ::dds::core::status::StatusMask::liveliness_lost());
 }
 
 } // namespace dds
