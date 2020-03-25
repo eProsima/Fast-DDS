@@ -122,14 +122,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.RegisterTransport(&descriptor);
     }
 
-    // Workaround TCP discovery issues when register
+    // BACKUP servers guid is its persistence one
+    if (PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+    {
+        m_persistence_guid = m_guid;
+    }
+
+    // Client-server discovery protocol requires that every TCP transport has a listening port
     switch (PParam.builtin.discovery_config.discoveryProtocol)
     {
         case DiscoveryProtocol::BACKUP:
-            m_persistence_guid = m_guid;
-            // keep setting up transport
-            #pragma warning(suppress:5030)
-            [[clang::fallthrough]];
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
         // Verify if listening ports are provided
@@ -146,6 +148,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     default:
         break;
     }
+
 
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
