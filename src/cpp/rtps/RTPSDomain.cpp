@@ -137,6 +137,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     {
         // Make a new participant GuidPrefix_t up
         int pid = System::GetPID();
+        pid += static_cast<unsigned int>(time(NULL));
 
         guidP.value[0] = c_VendorId_eProsima[0];
         guidP.value[1] = c_VendorId_eProsima[1];

@@ -309,6 +309,15 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif
 
+    if((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
+        || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+        && !(PParam.builtin.metatrafficUnicastLocatorList == m_att.builtin.metatrafficUnicastLocatorList))
+    {
+        logError(RTPS_PARTICIPANT, "Cannot create server participant,"
+            " because the desired locators were not available.");
+        return;
+    }
+
     mp_builtinProtocols = new BuiltinProtocols();
 
     //Start reception

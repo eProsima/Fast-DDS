@@ -69,6 +69,8 @@ void PDPServerListener::onNewCacheChangeAdded(
     // update the PDP Writer with this reader info
     if (!parent_server_pdp_->addRelayedChangeToHistory(*change))
     {
+        logInfo(RTPS_PDP, "Ignoring a DATA(p) that was already received");
+
         parent_pdp_->mp_PDPReaderHistory->remove_change(change);
         return; // already there
     }
@@ -117,6 +119,8 @@ void PDPServerListener::onNewCacheChangeAdded(
 
             if(pdata == nullptr)
             {
+                logInfo(RTPS_PDP, "Registering a new participant: " << writer_guid);
+
                 // Create a new one when not found
                 pdata = parent_pdp_->createParticipantProxyData(local_data, writer_guid);
                 if (pdata != nullptr)
