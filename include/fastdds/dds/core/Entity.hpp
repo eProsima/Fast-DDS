@@ -21,6 +21,7 @@
 #define _FASTDDS_ENTITY_HPP_
 
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/conditions/StatusCondition.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -41,6 +42,7 @@ public:
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
         , status_changes_(StatusMask::none())
+        , status_condition_(this)
         , enable_(false)
     {
     }
@@ -85,6 +87,30 @@ public:
     }
 
     /**
+     * @brief Retrieves the StatusCondition associated with the Entity.
+     *
+     * The returned reference is not constant, so that the the enabled statuses can be changed.
+     * This StatusCondition can then be added to a WaitSet so that the application can wait for
+     * specific status changes that affect the Entity.
+     *
+     * @return Reference to the StatusCondition associated with the Entity.
+     */
+    RTPS_DllAPI StatusCondition& get_statuscondition()
+    {
+        return status_condition_;
+    }
+
+    /**
+     * @brief Retrieves the StatusCondition associated with the Entity.
+     *
+     * @return Const reference to the StatusCondition associated with the Entity.
+     */
+    RTPS_DllAPI const StatusCondition& get_statuscondition() const
+    {
+        return status_condition_;
+    }
+
+    /**
      * @brief get_instance_handle Retrieves the instance handler that represents the Entity
      * @return Reference to the InstanceHandle
      */
@@ -119,6 +145,8 @@ protected:
     StatusMask status_mask_;
 
     StatusMask status_changes_;
+
+    StatusCondition status_condition_;
 
     fastrtps::rtps::InstanceHandle_t instance_handle_;
 

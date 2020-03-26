@@ -30,6 +30,12 @@
 namespace dds {
 namespace core {
 
+namespace cond {
+
+class StatusCondition;
+
+} // namespace cond
+
 /**
  * @brief This class is the abstract base class for all the DCPS objects.
  *
@@ -204,6 +210,19 @@ public:
     }
 
     /**
+     * @brief Retrieves the StatusCondition associated with the Entity.
+     *
+     * The returned reference is not constant, so that the the enabled statuses can be changed.
+     * This StatusCondition can then be added to a WaitSet so that the application can dds::core::Entitwait for
+     * specific status changes that affect the Entity.
+     *
+     * @return Reference to the StatusCondition associated with the Entity.
+     */
+    OMG_DDS_API dds::core::cond::StatusCondition& statuscondition()
+    {
+        return this->delegate()->get_statuscondition();
+    }
+    /**
      * This operation returns the InstanceHandle_t that represents the Entity.
      *
      * The relevant state of some Entity objects are distributed using built-in topics.
@@ -265,7 +284,7 @@ public:
 
 };
 
-typedef dds::core::detail::Entity Entity;
+using Entity = dds::core::detail::Entity;
 
 } //namespace core
 } //namespace dds
