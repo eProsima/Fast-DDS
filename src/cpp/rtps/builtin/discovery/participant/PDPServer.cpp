@@ -485,7 +485,9 @@ void PDPServer::match_all_clients_EDP_endpoints()
 bool PDPServer::trimWriterHistory()
 {
     assert(mp_mutex && mp_PDPWriter);
-    std::lock_guard<std::recursive_mutex> guardP(*getMutex());
+
+    logInfo(RTPS_PDPSERVER_TRIM, "Trying to trim the history. HistorySize:" << mp_PDPWriterHistory->getHistorySize()
+        << " Demises:" << _demises.size());
 
     EDPServer* pEDP = dynamic_cast<EDPServer*>(mp_EDP);
     assert(pEDP);
@@ -501,6 +503,9 @@ bool PDPServer::trimWriterHistory()
 
 bool PDPServer::trimPDPWriterHistory()
 {
+    logInfo(RTPS_PDPSERVER_TRIM,"In trimPDPWriteHistory PDP history count: " << mp_PDPWriterHistory->getHistorySize()
+        << " demises:" << _demises.size() );
+
     // trim demises container
     key_list disposal, aux;
 
@@ -534,6 +539,9 @@ bool PDPServer::trimPDPWriterHistory()
                     return _demises.find(chan->instanceHandle) != _demises.cend();
                 });
 
+    logInfo(RTPS_PDPSERVER_TRIM,"I've classified the following PDP history data for removal "
+        << std::distance(removal.begin(), removal.end()) );
+
     if (removal.empty())
     {
         return true;
@@ -547,16 +555,26 @@ bool PDPServer::trimPDPWriterHistory()
     {
         if (mp_PDPWriter->is_acked_by_all(pC))
         {
+            logInfo(RTPS_PDPSERVER_TRIM, "PDPServer is removing DATA("
+                << (pC->kind == ALIVE ? "p" : "p[UD]" ) << ") of participant "
+                << pC->instanceHandle << " from history");
+
             mp_PDPWriterHistory->remove_change(pC);
         }
         else
         {
+            logInfo(RTPS_PDPSERVER_TRIM, "PDPServer is procrastinating DATA("
+                << (pC->kind == ALIVE ? "p" : "p[UD]" ) << ") " "of participant "
+                << pC->instanceHandle << " from history");
+
             pending.insert(pC->instanceHandle);
         }
     }
 
     // update demises
     _demises.swap(pending);
+
+    logInfo(RTPS_PDPSERVER_TRIM,"After trying to trim PDP we still must remove " << _demises.size() );
 
     return _demises.empty(); // finish?
 }
@@ -620,9 +638,14 @@ bool PDPServer::addRelayedChangeToHistory(
 void PDPServer::removeParticipantFromHistory(
         const InstanceHandle_t& key)
 {
-    std::lock_guard<std::recursive_mutex> guardP(*mp_mutex);
+    {
+        std::lock_guard<std::recursive_mutex> guardP(*mp_mutex);
 
-    _demises.insert(key);
+        logInfo(RTPS_PDP,"PDPServer marks participant " << key << " for disposal");
+
+        _demises.insert(key);
+    }
+
     trimWriterHistory();
 }
 
@@ -994,7 +1017,7 @@ bool PDPServer::remove_remote_participant(
 
         // Check if the DATA(p[UD]) is already in Reader
         if (!(mp_PDPReaderHistory->get_max_change(&pC) &&
-                pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
+                pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is a DATA(p[UD])
                 pC->instanceHandle == key )) // from the same participant I'm going to report
         {   // We must create the DATA(p[UD])
             if ((pC = mp_PDPWriter->new_change(
@@ -1024,11 +1047,12 @@ bool PDPServer::remove_remote_participant(
 
     }
 
+    bool res = PDP::remove_remote_participant(partGUID, reason);
+
     // Trigger the WriterHistory cleaning mechanism of demised participants DATA. Note that
     // only DATA acknowledge by all clients would be actually removed
+    if(res)
     {
-        std::lock_guard<std::recursive_mutex> lock(*getMutex());
-
         InstanceHandle_t ih;
 
         removeParticipantFromHistory(ih = partGUID);
@@ -1040,7 +1064,7 @@ bool PDPServer::remove_remote_participant(
         // and queueParticipantForEDPMatch
     }
 
-    return PDP::remove_remote_participant(partGUID, reason);
+    return res;
 }
 
 bool PDPServer::pendingHistoryCleaning()
