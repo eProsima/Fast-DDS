@@ -124,12 +124,18 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.RegisterTransport(&descriptor);
     }
 
-    // Workaround TCP discovery issues when register
+    // BACKUP servers guid is its persistence one
+    if (PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+    {
+        m_persistence_guid = m_guid;
+    }
+
+    // Client-server discovery protocol requires that every TCP transport has a listening port
     switch (PParam.builtin.discovery_config.discoveryProtocol)
     {
+        case DiscoveryProtocol::BACKUP:
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
-        case DiscoveryProtocol::BACKUP:
         // Verify if listening ports are provided
         for (auto& transportDescriptor : PParam.userTransports)
         {
@@ -144,6 +150,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     default:
         break;
     }
+
 
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
@@ -478,7 +485,8 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
-    // Update persistence guidPrefix
+    // Update persistence guidPrefix, restore this change later to keep param unblemished
+    GUID_t former_persistence_guid = param.endpoint.persistence_guid;
     if (param.endpoint.persistence_guid == c_Guid_Unknown && m_persistence_guid != c_Guid_Unknown)
     {
         param.endpoint.persistence_guid = GUID_t(
@@ -514,6 +522,9 @@ bool RTPSParticipantImpl::createWriter(
                 new StatefulWriter(this, guid, param, hist, listen) :
                 new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
     }
+
+    // restore attributes
+    param.endpoint.persistence_guid = former_persistence_guid;
 
     if (SWriter == nullptr)
     {
