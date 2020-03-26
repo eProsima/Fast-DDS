@@ -145,13 +145,13 @@ bool EDPServer::trimWriterHistory(
     WriterHistory& history,
     ProxyCont ParticipantProxyData::* pC)
 {
+    logInfo(RTPS_PDPSERVER_TRIM,"In trimWriteHistory EDP history count: " << history.getHistorySize());
+
     // trim demises container
     key_list disposal, aux;
 
     if (_demises.empty())
         return true;
-
-    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
 
     // sweep away any resurrected endpoint
     for (auto iD = mp_PDP->ParticipantProxiesBegin(); iD != mp_PDP->ParticipantProxiesEnd(); ++iD)
@@ -175,10 +175,13 @@ bool EDPServer::trimWriterHistory(
     std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
-        [_demises](const CacheChange_t* chan) 
-        { 
+        [_demises](const CacheChange_t* chan)
+        {
             return _demises.find(chan->instanceHandle) != _demises.cend();
         });
+
+    logInfo(RTPS_PDPSERVER_TRIM,"I've classified the following EDP history data for removal "
+        << std::distance(removal.begin(), removal.end()) );
 
     if (removal.empty())
         return true;
@@ -190,13 +193,27 @@ bool EDPServer::trimWriterHistory(
     for (auto pCh : removal)
     {
         if (writer.is_acked_by_all(pCh))
+        {
+            logInfo(RTPS_PDPSERVER_TRIM, "EDPServer is removing DATA("
+                << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
+                << pCh->instanceHandle << " from history");
+
             history.remove_change(pCh);
+        }
         else
+        {
+            logInfo(RTPS_PDPSERVER_TRIM, "EDPServer is procrastinating DATA("
+                << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
+                << pCh->instanceHandle << " from history");
+
             pending.insert(pCh->instanceHandle);
+        }
     }
 
     // update demises
     _demises.swap(pending);
+
+    logInfo(RTPS_PDPSERVER_TRIM,"After trying to trim EDP we still must remove " << _demises.size() );
 
     return _demises.empty(); // is finished?
 
@@ -248,9 +265,11 @@ bool EDPServer::addEndpointFromHistory(
 
 void EDPServer::removePublisherFromHistory(const InstanceHandle_t& key)
 {
-    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+    {
+        std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+        _PUBdemises.insert(key);
+    }
 
-    _PUBdemises.insert(key);
     if ( !trimPUBWriterHistory() )
     {
         PDPServer * pS = dynamic_cast<PDPServer*>(mp_PDP);
@@ -261,9 +280,10 @@ void EDPServer::removePublisherFromHistory(const InstanceHandle_t& key)
 
 void EDPServer::removeSubscriberFromHistory(const InstanceHandle_t& key)
 {
-    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
-
-    _SUBdemises.insert(key);
+    {
+        std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+        _SUBdemises.insert(key);
+    }
 
     if (!trimSUBWriterHistory())
     {
@@ -278,12 +298,15 @@ bool EDPServer::removeLocalReader(RTPSReader* R)
     logInfo(RTPS_EDP, R->getGuid().entityId);
 
     auto* writer = &subscriptions_writer_;
+    GUID_t guid = R->getGuid();
+    bool ret = mp_PDP->removeReaderProxyData(guid);
 
     if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
-        iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        iH = guid;
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
             {
                 return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
             },
@@ -305,7 +328,7 @@ bool EDPServer::removeLocalReader(RTPSReader* R)
             removeSubscriberFromHistory(change->instanceHandle);
         }
     }
-    return mp_PDP->removeReaderProxyData(R->getGuid());
+    return ret;
 }
 
 bool EDPServer::removeLocalWriter(RTPSWriter* W)
@@ -313,12 +336,15 @@ bool EDPServer::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_EDP, W->getGuid().entityId);
 
     auto* writer = &publications_writer_;
+    GUID_t guid = W->getGuid();
+    bool ret = mp_PDP->removeWriterProxyData(guid);
 
     if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
-        iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        iH = guid;
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
             {
                 return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
             },
@@ -340,7 +366,7 @@ bool EDPServer::removeLocalWriter(RTPSWriter* W)
             removePublisherFromHistory(change->instanceHandle);
         }
     }
-    return mp_PDP->removeWriterProxyData(W->getGuid());
+    return ret;
 }
 
 bool EDPServer::processLocalWriterProxyData(
