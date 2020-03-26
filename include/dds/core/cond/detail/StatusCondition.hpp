@@ -23,21 +23,14 @@
  * Ignore this file in the API
  */
 
-//#include <fastdds/dds/core/conditions/StatusCondition.hpp>
+#include <fastdds/dds/core/conditions/StatusCondition.hpp>
 
 namespace dds {
 namespace core {
 namespace cond {
-
-template<typename DELEGATE>
-class TStatusCondition;
-
 namespace detail {
 
-//using StatusCondition = eprosima::fastdds::dds::StatusCondition;
-class StatusCondition
-{
-};
+using StatusCondition = eprosima::fastdds::dds::StatusCondition;
 
 } //namespace detail
 } //namespace cond

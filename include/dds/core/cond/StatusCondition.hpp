@@ -23,7 +23,9 @@
 
 #include <dds/core/cond/detail/StatusCondition.hpp>
 #include <dds/core/cond/Condition.hpp>
+#include <dds/core/status/Status.hpp>
 #include <dds/core/Entity.hpp>
+
 
 namespace dds {
 namespace core {
@@ -71,18 +73,17 @@ namespace cond {
  * @see @ref DCPS_Modules_Infrastructure_Waitset "WaitSet concept"
  * @see @ref anchor_dds_core_cond_waitset_examples "WaitSet examples"
  */
-template<typename DELEGATE>
-class TStatusCondition : public TCondition<DELEGATE>
+class StatusCondition : public TCondition<detail::StatusCondition>
 {
 public:
 
-    OMG_DDS_REF_TYPE_DELEGATE_C(
-        TStatusCondition,
+    OMG_DDS_REF_TYPE_NO_DC(
+        StatusCondition,
         TCondition,
-        DELEGATE)
+        detail::StatusCondition)
 
-    OMG_DDS_EXPLICIT_REF_BASE(
-        TStatusCondition,
+    OMG_DDS_EXPLICIT_REF_BASE_DECL(
+        StatusCondition,
         dds::core::cond::Condition)
 
     /**
@@ -94,8 +95,14 @@ public:
      * @param  e The Entity to associate with the StatusCondition.
      * @throw  dds::core::Exception
      */
-    TStatusCondition(
-            const dds::core::Entity& e);
+    StatusCondition(
+            const dds::core::Entity& e)
+        : dds::core::Reference<detail::StatusCondition>(
+            new detail::StatusCondition(&e))
+    {
+
+    }
+
 
     /**
      * Create a dds::core::cond::StatusCondition associated with an Entity.
@@ -113,18 +120,18 @@ public:
      * @throw  dds::core::Exception
      */
     template<typename FUN>
-    TStatusCondition(
+    StatusCondition(
             const dds::core::Entity& e,
             FUN& functor);
 
     /** @copydoc dds::core::cond::TStatusCondition::TStatusCondition(const dds::core::Entity& e, FUN& functor) */
     template<typename FUN>
-    TStatusCondition(
+    StatusCondition(
             const dds::core::Entity& e,
             const FUN& functor);
 
     /** @cond */
-    ~TStatusCondition();
+    ~StatusCondition() = default;
     /** @endcond */
 
     /**
@@ -174,7 +181,10 @@ public:
      * @throw  dds::core::Error
      */
     void enabled_statuses(
-            const ::dds::core::status::StatusMask& status) const;
+            const ::dds::core::status::StatusMask& status) const
+    {
+        delegate()->set_enabled_statuses(status);
+    }
 
     /**
      * This operation returns the list of enabled communication statuses of the
@@ -217,7 +227,10 @@ public:
      *              account for the StatusCondition.
      * @throw  dds::core::Exception
      */
-    const ::dds::core::status::StatusMask enabled_statuses() const;
+    const ::dds::core::status::StatusMask enabled_statuses() const
+    {
+        return delegate()->get_enabled_statuses();
+    }
 
     /**
      * This operation returns the Entity associated with the StatusCondition
@@ -227,7 +240,10 @@ public:
      * @return dds::core::Entity The Entity associated with the StatusCondition.
      * @throw  dds::core::AlreadyClosedError
      */
-    const dds::core::Entity& entity() const;
+    dds::core::Entity& entity()
+    {
+        return delegate()->get_entity();
+    }
 
 };
 
@@ -237,6 +253,5 @@ typedef detail::StatusCondition StatusCondition;
 } //namespace core
 } //namespace dds
 
-#include <dds/core/cond/detail/TStatusConditionImpl.hpp>
 
 #endif //OMG_DDS_CORE_STATUSCONDITION_HPP_
