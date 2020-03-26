@@ -29,15 +29,15 @@ TEST(PublisherTests, ChangePublisherQos)
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
 
     PublisherQos qos;
-    publisher->get_qos(qos);
+    ASSERT_TRUE(publisher->get_qos(qos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
     qos.entity_factory.autoenable_created_entities = false;
 
-    publisher->set_qos(qos);
+    ASSERT_TRUE(publisher->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     PublisherQos pqos;
-    publisher->get_qos(pqos);
+    ASSERT_TRUE(publisher->get_qos(pqos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
@@ -53,7 +53,7 @@ TEST(PublisherTests, ChangePSMPublisherQos)
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
     qos.entity_factory.autoenable_created_entities = false;
-    publisher.qos(qos);
+    ASSERT_NO_THROW(publisher.qos(qos));
     ::dds::pub::qos::PublisherQos pqos = publisher.qos();
 
     ASSERT_TRUE(qos == pqos);
