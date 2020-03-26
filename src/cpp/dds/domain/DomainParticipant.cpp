@@ -21,6 +21,7 @@
 
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/DomainParticipantListener.hpp>
+#include <dds/core/Exception.hpp>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/common/Time_t.h>
@@ -113,7 +114,11 @@ dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qo
 void DomainParticipant::default_participant_qos(
         const ::dds::domain::qos::DomainParticipantQos& qos)
 {
-    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(qos);
+    if (eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(qos) ==
+            eprosima::fastrtps::types::ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
 }
 
 //dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const
