@@ -130,7 +130,7 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
     ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.entity_factory.autoenable_created_entities = false;
-    participant.qos(qos);
+    ASSERT_NO_THROW(participant.qos(qos));
     ::dds::domain::qos::DomainParticipantQos pqos;
     pqos = participant.qos();
 

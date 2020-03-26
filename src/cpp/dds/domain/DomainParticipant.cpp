@@ -78,7 +78,15 @@ const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
 void DomainParticipant::qos(
         const dds::domain::qos::DomainParticipantQos& qos)
 {
-    this->delegate()->set_qos(qos);
+    ReturnCode_t code = this->delegate()->set_qos(qos);
+    if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    {
+        throw dds::core::ImmutablePolicyError("Immutable Qos");
+    }
+    else if ( code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
 }
 
 //uint32_t DomainParticipant::domain_id() const
