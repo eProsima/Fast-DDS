@@ -113,6 +113,15 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescripto
     memcpy(wan_addr, t.wan_addr, 4);
 }
 
+TCPv4TransportDescriptor& TCPv4TransportDescriptor::operator=(
+        const TCPv4TransportDescriptor& t)
+{
+    *static_cast<TCPTransportDescriptor*>(this) = t;
+    memcpy(wan_addr, t.wan_addr, 4);
+
+    return *this;
+}
+
 TransportInterface* TCPv4TransportDescriptor::create_transport() const
 {
     return new TCPv4Transport(*this);
