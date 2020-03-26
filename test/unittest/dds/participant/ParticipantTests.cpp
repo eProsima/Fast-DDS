@@ -232,16 +232,16 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
     PublisherQos qos;
-    participant->get_default_publisher_qos(qos);
+    ASSERT_TRUE(participant->get_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
     qos.entity_factory.autoenable_created_entities = false;
 
-    participant->set_default_publisher_qos(qos);
+    ASSERT_TRUE(participant->set_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
 
     PublisherQos pqos;
-    participant->get_default_publisher_qos(pqos);
+    ASSERT_TRUE(participant->get_default_publisher_qos(pqos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
@@ -255,7 +255,7 @@ TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
 
     qos.entity_factory.autoenable_created_entities = false;
 
-    participant.default_publisher_qos(qos);
+    ASSERT_NO_THROW(participant.default_publisher_qos(qos));
 
     ::dds::pub::qos::PublisherQos pqos = participant.default_publisher_qos();
 
