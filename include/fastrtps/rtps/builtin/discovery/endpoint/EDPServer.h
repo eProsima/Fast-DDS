@@ -127,6 +127,12 @@ class EDPServer : public EDPSimple
             *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
     }
 
+    //! returns true if loading info from persistency database
+    bool ongoingDeserialization();
+
+    //! Process the info recorded in the persistence database
+    void processPersistentData();
+
     protected:
 
     /**

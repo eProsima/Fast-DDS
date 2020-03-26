@@ -48,7 +48,13 @@ public:
     /**
      * @param change
      */
-    bool computeKey(CacheChange_t* change);
+    bool computeKey(
+            CacheChange_t* change);
+
+protected:
+
+    //! returns true if loading info from persistency database
+    static bool ongoingDeserialization(EDP* edp);
 };
 
 /**

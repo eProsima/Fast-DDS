@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPServer.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include "../../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -54,7 +55,8 @@ void EDPBasePUBListener::add_writer_from_change(
     if (temp_writer_data_.readFromCDRMessage(&tempMsg, network))
     {
         change->instanceHandle = temp_writer_data_.key();
-        if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
+            && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
@@ -141,6 +143,19 @@ bool EDPListener::computeKey(CacheChange_t* change)
     return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }
 
+bool EDPListener::ongoingDeserialization(
+    EDP* edp)
+{
+    EDPServer * pServer = dynamic_cast<EDPServer*>(edp);
+
+    if(pServer)
+    {
+        return pServer->ongoingDeserialization();
+    }
+
+    return false;
+}
+
 void EDPBaseSUBListener::add_reader_from_change(
         RTPSReader* reader,
         CacheChange_t* change,
@@ -152,7 +167,8 @@ void EDPBaseSUBListener::add_reader_from_change(
     if (temp_reader_data_.readFromCDRMessage(&tempMsg, network))
     {
         change->instanceHandle = temp_reader_data_.key();
-        if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
+            && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;

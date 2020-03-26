@@ -62,6 +62,12 @@ bool DServerEvent::event(EventCode code)
         // messges_enabled is only modified from this thread
         if (!messages_enabled_)
         {
+            if(mp_PDP->_durability == TRANSIENT)
+            {
+                // backup servers must process its own data before before receiving any callbacks
+                mp_PDP->processPersistentData();
+            }
+
             messages_enabled_ = true;
             mp_PDP->getRTPSParticipant()->enableReader(mp_PDP->mp_PDPReader);
         }

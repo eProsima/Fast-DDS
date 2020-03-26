@@ -46,7 +46,7 @@ class EDPListener;
  * Inherits from EDP class.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPSimple : public EDP  
+class EDPSimple : public EDP
 {
     typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;
     typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
@@ -169,6 +169,9 @@ protected:
      * @return True if correct.
      */
     virtual bool createSEDPEndpoints();
+
+    //! Process the info recorded in the persistence database
+    static void processPersistentData(t_p_StatefulReader & reader, t_p_StatefulWriter & writer);
 
 private:
 

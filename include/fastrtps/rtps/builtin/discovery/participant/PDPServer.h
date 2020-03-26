@@ -227,6 +227,12 @@ public:
     //! Get filename for persistence database file
     std::string GetPersistenceFileName();
 
+    //! returns true if loading info from persistency database
+    bool ongoingDeserialization();
+
+    //! Process the info recorded in the persistence database
+    void processPersistentData();
+
     //! Wakes up the DServerEvent for new matching or trimming
     void awakeServerThread() { mp_sync->restart_timer(); }
 

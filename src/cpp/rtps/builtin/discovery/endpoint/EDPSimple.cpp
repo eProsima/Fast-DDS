@@ -149,7 +149,47 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
     return true;
 }
 
-void EDPSimple::set_builtin_reader_history_attributes(HistoryAttributes& attributes)
+//! Process the info recorded in the persistence database
+void EDPSimple::processPersistentData(t_p_StatefulReader & reader, t_p_StatefulWriter & writer)
+{
+    std::lock_guard<RecursiveTimedMutex> guardR(reader.first->getMutex());
+    std::lock_guard<RecursiveTimedMutex> guardW(writer.first->getMutex());
+
+    std::for_each(writer.second->changesBegin(),
+        writer.second->changesEnd(),
+        [&reader](CacheChange_t* change)
+    {
+        CacheChange_t* change_to_add = nullptr;
+
+        if (!reader.first->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+        {
+            logError(RTPS_EDP, "Problem reserving CacheChange in EDPServer reader");
+            return;
+        }
+
+        if (!change_to_add->copy(change))
+        {
+            logWarning(RTPS_EDP,"Problem copying CacheChange, received data is: " 
+                << change->serializedPayload.length << " bytes and max size in EDPServer reader"
+                << " is " << change_to_add->serializedPayload.max_size);
+
+            reader.first->releaseCache(change_to_add);
+            return ;
+        }
+
+        if (!reader.first->change_received(change_to_add, nullptr))
+        {
+            logInfo(RTPS_EDP, "EDPServer couldn't process database data not add change "
+                << change_to_add->sequenceNumber);
+            reader.first->releaseCache(change_to_add);
+        }
+
+        // change_to_add would be released within change_received
+    });
+}
+
+void EDPSimple::set_builtin_reader_history_attributes(
+        HistoryAttributes& attributes)
 {
     attributes.initialReservedCaches = edp_initial_reserved_caches;
     attributes.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
