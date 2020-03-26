@@ -199,7 +199,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
 
         add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
-        target_compile_definitions(BlackboxTests PRIVATE)
+        target_compile_definitions(BlackboxTests PRIVATE
+            $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+            )
         target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
         add_blackbox_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_TEST_SOURCE}

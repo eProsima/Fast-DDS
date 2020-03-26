@@ -47,35 +47,6 @@ using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using PortParameters = fastrtps::rtps::PortParameters;
 
-//*********************************************************
-// SharedMemTransportDescriptor
-//*********************************************************
-
-SharedMemTransportDescriptor::SharedMemTransportDescriptor()
-    : TransportDescriptorInterface(SharedMemTransport::default_segment_size, s_maximumInitialPeersRange)
-    , segment_size_(SharedMemTransport::default_segment_size)
-    , port_queue_capacity_(SharedMemTransport::default_port_queue_capacity)
-    , port_overflow_policy_(SharedMemTransport::default_overflow_policy)
-    , segment_overflow_policy_(SharedMemTransport::default_overflow_policy)
-    , healthy_check_timeout_ms_(SharedMemTransport::default_healthy_check_timeout_ms)
-    , rtps_dump_file_("")
-{
-    maxMessageSize = segment_size_;
-}
-
-SharedMemTransportDescriptor::SharedMemTransportDescriptor(
-        const SharedMemTransportDescriptor& t)
-    : TransportDescriptorInterface(t.segment_size_, s_maximumInitialPeersRange)
-    , segment_size_(t.segment_size_)
-    , port_queue_capacity_(t.port_queue_capacity_)
-    , port_overflow_policy_(t.port_overflow_policy_)
-    , segment_overflow_policy_(t.segment_overflow_policy_)
-    , healthy_check_timeout_ms_(t.healthy_check_timeout_ms_)
-    , rtps_dump_file_(t.rtps_dump_file_)
-{
-    maxMessageSize = t.segment_size_;
-}
-
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
     return new SharedMemTransport(*this);

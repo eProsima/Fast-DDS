@@ -148,9 +148,27 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
-        m_network_Factory.RegisterTransport(transportDescriptor.get());
-
-        has_shm_transport_ |= (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
+        if(m_network_Factory.RegisterTransport(transportDescriptor.get()))
+        {
+            has_shm_transport_ |= 
+                (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
+        }
+        else
+        {
+            // SHM transport could be disabled
+            if((dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr))
+            {
+                logError(RTPS_PARTICIPANT,
+                    "Unable to Register SHM Transport. SHM Transport is not supported in"
+                    " the current platform.");
+            }
+            else
+            {
+                logError(RTPS_PARTICIPANT,
+                    "User transport failed to register.");
+            }
+            
+        }   
     }
 
     mp_userParticipant->mp_impl = this;

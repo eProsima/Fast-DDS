@@ -117,12 +117,11 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/UDPv4Transport.cpp
     rtps/transport/TCPTransportInterface.cpp
     rtps/transport/UDPTransportInterface.cpp
-    rtps/transport/shared_mem/SharedMemTransport.cpp
+    rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
     rtps/transport/TCPv4Transport.cpp
     rtps/transport/UDPv6Transport.cpp
     rtps/transport/TCPv6Transport.cpp
     rtps/transport/test_UDPv4Transport.cpp
-    rtps/transport/shared_mem/test_SharedMemTransport.cpp
     rtps/transport/tcp/TCPControlMessage.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp
 
@@ -197,6 +196,14 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/PersistenceFactory.cpp
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
     )
+
+# SHM Transport
+if(IS_THIRDPARTY_BOOST_OK)
+    list(APPEND ${PROJECT_NAME}_source_files
+        rtps/transport/shared_mem/test_SharedMemTransport.cpp
+        rtps/transport/shared_mem/SharedMemTransport.cpp
+        )
+endif()
 
 # TLS Support
 if(TLS_FOUND)
@@ -342,7 +349,8 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
         $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
         $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
-		$<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+        $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
         )
 
     # Define public headers
