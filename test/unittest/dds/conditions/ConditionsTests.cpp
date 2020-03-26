@@ -17,12 +17,14 @@
 
 #include <fastdds/dds/core/conditions/GuardCondition.hpp>
 #include <dds/core/cond/GuardCondition.hpp>
+#include <fastdds/dds/core/Entity.hpp>
+#include <dds/core/Entity.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-TEST(ConsitionsTests, GuardConditionActivation)
+TEST(ConditionsTests, GuardConditionActivation)
 {
     GuardCondition cond;
     ASSERT_FALSE(cond.get_trigger_value());
@@ -32,7 +34,7 @@ TEST(ConsitionsTests, GuardConditionActivation)
     ASSERT_FALSE(cond.get_trigger_value());
 }
 
-TEST(ConsitionsTests, PSMGuardConditionActivation)
+TEST(ConditionsTests, PSMGuardConditionActivation)
 {
     ::dds::core::cond::GuardCondition cond;
     ASSERT_FALSE(cond.trigger_value());
@@ -42,6 +44,19 @@ TEST(ConsitionsTests, PSMGuardConditionActivation)
     ASSERT_FALSE(cond.trigger_value());
 }
 
+TEST(ConditionsTests, StatusCondition)
+{
+    Entity entity;
+    StatusCondition& cond = entity.get_statuscondition();
+    ASSERT_FALSE(cond.get_trigger_value());
+    ASSERT_EQ(cond.get_enabled_statuses(), StatusMask::all());
+
+    StatusMask mask = StatusMask::data_available();
+    ASSERT_NO_THROW(cond.set_enabled_statuses(mask));
+
+    StatusCondition& cond2 = entity.get_statuscondition();
+    ASSERT_EQ(cond2.get_enabled_statuses(), StatusMask::data_available());
+}
 
 } // namespace dds
 } // namespace fastdds
