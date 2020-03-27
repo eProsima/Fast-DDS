@@ -56,14 +56,6 @@
 namespace dds {
 namespace core {
 
-Exception::Exception()
-{
-}
-
-Exception::~Exception()
-{
-}
-
 DEFINE_LOGIC_ERROR_EXCEPTION(Error)
 DEFINE_LOGIC_ERROR_EXCEPTION(InvalidDataError)
 DEFINE_LOGIC_ERROR_EXCEPTION(PreconditionNotMetError)
