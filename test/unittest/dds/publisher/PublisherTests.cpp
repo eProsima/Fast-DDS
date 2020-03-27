@@ -35,7 +35,7 @@ TEST(PublisherTests, ChangePublisherListener)
 
     ASSERT_EQ(publisher->get_listener(), nullptr);
 
-    PublisherListener listener = PublisherListener();
+    PublisherListener listener;
 
     publisher->set_listener(&listener, StatusMask::publication_matched());
     PublisherListener* plistener = publisher->get_listener();
@@ -52,7 +52,7 @@ TEST(PublisherTests, ChangePSMPublisherListener)
 
     ASSERT_EQ(publisher.listener(), nullptr);
 
-    ::dds::pub::PublisherListener listener = ::dds::pub::PublisherListener();
+    ::dds::pub::PublisherListener listener;
     publisher.listener(&listener, ::dds::core::status::StatusMask::liveliness_lost());
     ::dds::pub::PublisherListener* plistener = publisher.listener();
 

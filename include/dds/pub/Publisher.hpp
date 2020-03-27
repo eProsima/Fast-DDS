@@ -128,7 +128,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    const qos::PublisherQos& qos() const;
+    OMG_DDS_API const qos::PublisherQos& qos() const;
 
 
     /**
@@ -145,15 +145,15 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void qos(
+    OMG_DDS_API void qos(
             const qos::PublisherQos& qos);
 
     /** @copydoc dds::pub::Publisher::qos(const dds::pub::qos::PublisherQos& qos) */
-    Publisher& operator <<(
+    OMG_DDS_API Publisher& operator <<(
             const qos::PublisherQos& qos);
 
     /** @copydoc dds::pub::Publisher::qos() */
-    Publisher& operator >>(
+    OMG_DDS_API Publisher& operator >>(
             qos::PublisherQos& qos);
 
     /**
@@ -240,7 +240,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void listener(
+    OMG_DDS_API void listener(
             Listener* plistener,
             const dds::core::status::StatusMask& mask);
 
@@ -253,7 +253,7 @@ public:
      * @throws dds::core::NullReferenceError
      *                  The entity was not properly created and references to dds::core::null.
      */
-    Listener* listener() const;
+    OMG_DDS_API Listener* listener() const;
 
     //==========================================================================
 
@@ -303,7 +303,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void wait_for_acknowledgments(
+    OMG_DDS_API void wait_for_acknowledgments(
             const dds::core::Duration& timeout);
 
     //==========================================================================
@@ -319,9 +319,9 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    const dds::domain::DomainParticipant& participant() const;
+    OMG_DDS_API const dds::domain::DomainParticipant& participant() const;
 
-    dds::core::status::StatusMask get_status_mask();
+    OMG_DDS_API dds::core::status::StatusMask get_status_mask();
 
     dds::domain::DomainParticipant* participant_;
 
