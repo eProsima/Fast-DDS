@@ -2,7 +2,7 @@ repositories:
     fastcdr:
         type: git
         url: https://github.com/eProsima/Fast-CDR.git
-        version: v1.0.11
+        version: v1.0.13
     fastrtps:
         type: git
         url: https://github.com/eProsima/Fast-RTPS.git
@@ -10,9 +10,8 @@ repositories:
     fastrtpsgen:
         type: git
         url: https://github.com/eProsima/Fast-RTPS-Gen.git
-        version: v1.0.2
+        version: v1.0.4
     fastrtpsgen/thirdparty/idl-parser:
         type: git
         url: https://github.com/eProsima/IDL-Parser.git
-        version: v1.0.1
-
+        version: v1.0.2
