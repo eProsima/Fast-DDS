@@ -21,7 +21,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-static constexpr uint32_t shm_maximum_message_size = (std::numeric_limits<uint32_t>::max)();
 static constexpr uint32_t shm_default_segment_size = 262144;
 static constexpr uint32_t shm_default_port_queue_capacity = 512;
 static constexpr SharedMemTransportDescriptor::OverflowPolicy shm_default_overflow_policy =
