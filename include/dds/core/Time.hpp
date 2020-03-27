@@ -199,25 +199,7 @@ public:
     bool operator >=(
             const Time& that) const
     {
-        if (this->sec() > that.sec())
-        {
-            return true;
-        }
-        else if (this->sec() < that.sec())
-        {
-            return false;
-        }
-        else
-        {
-            if (this->nanosec() >= that.nanosec())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        return !(*this < that);
     }
 
     /**
@@ -255,25 +237,7 @@ public:
     bool operator <=(
             const Time& that) const
     {
-        if (this->sec() < that.sec())
-        {
-            return true;
-        }
-        else if (this->sec() > that.sec())
-        {
-            return false;
-        }
-        else
-        {
-            if (this->nanosec() <= that.nanosec())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        return !(*this > that);
     }
 
     /**
@@ -283,25 +247,7 @@ public:
     bool operator <(
             const Time& that) const
     {
-        if (this->sec() < that.sec())
-        {
-            return true;
-        }
-        else if (this->sec() > that.sec())
-        {
-            return false;
-        }
-        else
-        {
-            if (this->nanosec() < that.nanosec())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        return !(*this > that || *this == that);
     }
 
     /**
