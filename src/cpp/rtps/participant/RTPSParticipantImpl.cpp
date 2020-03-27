@@ -125,7 +125,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.RegisterTransport(&descriptor);
 
         std::shared_ptr<SharedMemTransportDescriptor> shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-        m_network_Factory.RegisterTransport(shm_transport.get());
+        has_shm_transport_ |= m_network_Factory.RegisterTransport(shm_transport.get());
     }
 
     // BACKUP servers guid is its persistence one
