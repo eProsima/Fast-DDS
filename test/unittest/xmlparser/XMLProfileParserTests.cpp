@@ -552,6 +552,56 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
                 10u));
 }
 
+TEST_F(XMLProfileParserTests, XMLParserRequesterProfile)
+{
+    std::string requester_profile = std::string("test_requester_profile");
+    RequesterAttributes requester_atts;
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::fillRequesterAttributes(requester_profile, requester_atts));
+
+    PublisherAttributes &publisher_atts = requester_atts.publisher;
+    SubscriberAttributes &subscriber_atts = requester_atts.subscriber;
+
+    EXPECT_EQ(publisher_atts.topic.topicDataType, "request_type");
+    EXPECT_EQ(publisher_atts.topic.topicName, "service_name_Request");
+    EXPECT_EQ(publisher_atts.qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
+
+    EXPECT_EQ(subscriber_atts.topic.topicDataType, "reply_type");
+    EXPECT_EQ(subscriber_atts.topic.topicName, "service_name_Reply");
+    EXPECT_EQ(subscriber_atts.qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
+}
+
+TEST_F(XMLProfileParserTests, XMLParserReplierProfile)
+{
+    std::string replier_profile = std::string("test_replier_profile");
+    ReplierAttributes replier_atts;
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::fillReplierAttributes(replier_profile, replier_atts));
+
+    PublisherAttributes &publisher_atts = replier_atts.publisher;
+    SubscriberAttributes &subscriber_atts = replier_atts.subscriber;
+
+    EXPECT_EQ(publisher_atts.topic.topicDataType, "reply_type");
+    EXPECT_EQ(publisher_atts.topic.topicName, "reply_topic_name");
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
+
+    EXPECT_EQ(subscriber_atts.topic.topicDataType, "request_type");
+    EXPECT_EQ(subscriber_atts.topic.topicName, "request_topic_name");
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
+}
+
 #if HAVE_SECURITY
 
 TEST_F(XMLProfileParserTests, XMLParserSecurity)

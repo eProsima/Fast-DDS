@@ -49,6 +49,8 @@ extern const char* SUBSCRIBER;
 extern const char* RTPS;
 extern const char* TYPES;
 extern const char* LOG;
+extern const char* REQUESTER;
+extern const char* REPLIER;
 
 extern const char* TRANSPORT_DESCRIPTOR;
 extern const char* TRANSPORT_ID;
@@ -424,6 +426,13 @@ extern const char* TLS_VERIFY_NONE;
 extern const char* TLS_VERIFY_PEER;
 extern const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT;
 extern const char* TLS_VERIFY_CLIENT_ONCE;
+
+// Requester and Replier
+extern const char* SERVICE_NAME;
+extern const char* REQUEST_TYPE;
+extern const char* REPLY_TYPE;
+extern const char* REQUEST_TOPIC_NAME;
+extern const char* REPLY_TOPIC_NAME;
 
 } /* xmlparser */
 } /* namespace */

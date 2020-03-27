@@ -756,6 +756,32 @@
         <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
     </xs:complexType>
 
+    <xs:complexType name="requesterProfileType">
+        <xs:all>
+            <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
+            <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
+            <xs:element name="publisher" type="publisherProfileType"/>
+            <xs:element name="subscriber" type="subscriberProfileType"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="stringType" use="required"/>
+        <xs:attribute name="service_name" type="stringType" use="required"/>
+        <xs:attribute name="request_type" type="stringType" use="required"/>
+        <xs:attribute name="reply_type" type="stringType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="replierProfileType">
+        <xs:all>
+            <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
+            <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
+            <xs:element name="publisher" type="publisherProfileType"/>
+            <xs:element name="subscriber" type="subscriberProfileType"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="stringType" use="required"/>
+        <xs:attribute name="service_name" type="stringType" use="required"/>
+        <xs:attribute name="request_type" type="stringType" use="required"/>
+        <xs:attribute name="reply_type" type="stringType" use="required"/>
+    </xs:complexType>
+
     <xs:complexType name="TransportDescriptorListType">
       <xs:sequence>
         <xs:element name="transport_descriptor" type="rtpsTransportDescriptorType" maxOccurs="unbounded"/>
