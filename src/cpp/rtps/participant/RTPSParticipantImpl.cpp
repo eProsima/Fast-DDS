@@ -124,8 +124,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor);
 
-        std::shared_ptr<SharedMemTransportDescriptor> shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-        has_shm_transport_ |= m_network_Factory.RegisterTransport(shm_transport.get());
+        SharedMemTransportDescriptor shm_transport;
+        has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
     }
 
     // BACKUP servers guid is its persistence one
