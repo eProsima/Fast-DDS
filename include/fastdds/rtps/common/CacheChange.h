@@ -64,6 +64,8 @@ struct RTPS_DllAPI CacheChange_t
     bool isRead = false;
     //!Source TimeStamp (only used in Readers)
     Time_t sourceTimestamp;
+    //!Reception TimeStamp (only used in Readers)
+    Time_t receptionTimestamp;
 
     WriteParams write_params;
     bool is_untyped_ = true;

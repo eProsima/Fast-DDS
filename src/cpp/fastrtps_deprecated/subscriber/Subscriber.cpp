@@ -30,21 +30,34 @@ const GUID_t& Subscriber::getGuid()
     return mp_impl->getGuid();
 }
 
-bool Subscriber::wait_for_unread_samples(const Duration_t& timeout)
+bool Subscriber::wait_for_unread_samples(
+        const Duration_t& timeout)
 {
     return mp_impl->wait_for_unread_samples(timeout);
 }
 
-bool Subscriber::readNextData(void* data,SampleInfo_t* info)
+bool Subscriber::readNextData(
+        void* data,
+        SampleInfo_t* info)
 {
-    return mp_impl->readNextData(data,info);
-}
-bool Subscriber::takeNextData(void* data,SampleInfo_t* info)
-{
-    return mp_impl->takeNextData(data,info);
+    return mp_impl->readNextData(data, info);
 }
 
-bool Subscriber::updateAttributes(const SubscriberAttributes& att)
+bool Subscriber::takeNextData(
+        void* data,
+        SampleInfo_t* info)
+{
+    return mp_impl->takeNextData(data, info);
+}
+
+bool Subscriber::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    return mp_impl->get_first_untaken_info(info);
+}
+
+bool Subscriber::updateAttributes(
+        const SubscriberAttributes& att)
 {
     return mp_impl->updateAttributes(att);
 }
@@ -61,15 +74,17 @@ bool Subscriber::isInCleanState() const
 
 uint64_t Subscriber::get_unread_count() const
 {
-	return mp_impl->get_unread_count();
+    return mp_impl->get_unread_count();
 }
 
-void Subscriber::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
+void Subscriber::get_requested_deadline_missed_status(
+        RequestedDeadlineMissedStatus& status)
 {
     mp_impl->get_requested_deadline_missed_status(status);
 }
 
-void Subscriber::get_liveliness_changed_status(LivelinessChangedStatus &status)
+void Subscriber::get_liveliness_changed_status(
+        LivelinessChangedStatus& status)
 {
     mp_impl->get_liveliness_changed_status(status);
 }

@@ -35,6 +35,21 @@ using namespace rtps;
 
 using eprosima::fastdds::dds::TopicDataType;
 
+static void get_sample_info(
+        SampleInfo_t* info,
+        CacheChange_t* change,
+        uint32_t ownership_strength)
+{
+    info->sampleKind = change->kind;
+    info->sample_identity.writer_guid(change->writerGUID);
+    info->sample_identity.sequence_number(change->sequenceNumber);
+    info->sourceTimestamp = change->sourceTimestamp;
+    info->receptionTimestamp = change->receptionTimestamp;
+    info->ownershipStrength = ownership_strength;
+    info->iHandle = change->instanceHandle;
+    info->related_sample_identity = change->write_params.sample_identity();
+}
+
 SubscriberHistory::SubscriberHistory(
         const TopicAttributes& topic_att,
         TopicDataType* type,
@@ -71,14 +86,14 @@ SubscriberHistory::SubscriberHistory(
     if (topic_att.getTopicKind() == NO_KEY)
     {
         receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
         receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
     }
 }
 
@@ -157,7 +172,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
 
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance";);
+        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
     return false;
@@ -211,8 +226,8 @@ bool SubscriberHistory::add_received_change(
         }
 
         logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID; );
 
         return true;
     }
@@ -245,8 +260,8 @@ bool SubscriberHistory::add_received_change_with_key(
         instance_changes.push_back(a_change);
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID << " with KEY: " << a_change->instanceHandle;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 
         return true;
     }
@@ -274,7 +289,7 @@ bool SubscriberHistory::find_key_for_change(
     else if (!a_change->instanceHandle.isDefined())
     {
         logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_att_.topicName
-            << " and no method to obtain it";);
+                                                   << " and no method to obtain it"; );
         return false;
     }
 
@@ -298,14 +313,9 @@ bool SubscriberHistory::deserialize_change(
 
     if (info != nullptr)
     {
-        info->sampleKind = change->kind;
-        info->sample_identity.writer_guid(change->writerGUID);
-        info->sample_identity.sequence_number(change->sequenceNumber);
-        info->sourceTimestamp = change->sourceTimestamp;
-        info->ownershipStrength = ownership_strength;
         if (topic_att_.topicKind == WITH_KEY &&
-                change->instanceHandle == c_InstanceHandle_Unknown &&
-                change->kind == ALIVE)
+            change->instanceHandle == c_InstanceHandle_Unknown &&
+            change->kind == ALIVE)
         {
             bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -313,8 +323,8 @@ bool SubscriberHistory::deserialize_change(
 #endif
             type_->getKey(data, &change->instanceHandle, is_key_protected);
         }
-        info->iHandle = change->instanceHandle;
-        info->related_sample_identity = change->write_params.sample_identity();
+
+        get_sample_info(info, change, ownership_strength);
     }
 
     return true;
@@ -348,7 +358,6 @@ bool SubscriberHistory::readNextData(
     return false;
 }
 
-
 bool SubscriberHistory::takeNextData(
         void* data,
         SampleInfo_t* info,
@@ -381,6 +390,23 @@ bool SubscriberHistory::takeNextData(
     return false;
 }
 
+bool SubscriberHistory::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    std::lock_guard<RecursiveTimedMutex> lock(*mp_mutex);
+
+    CacheChange_t* change = nullptr;
+    WriterProxy* wp = nullptr;
+    if (mp_reader->nextUntakenCache(&change, &wp))
+    {
+        uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ? wp->ownership_strength() : 0;
+        get_sample_info(info, change, ownership);
+        return true;
+    }
+
+    return false;
+}
+
 bool SubscriberHistory::find_key(
         CacheChange_t* a_change,
         t_m_Inst_Caches::iterator* vit_out)
@@ -400,7 +426,7 @@ bool SubscriberHistory::find_key(
     }
     else
     {
-        for (vit = keyed_changes_.begin(); vit!= keyed_changes_.end(); ++vit)
+        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
         {
             if (vit->second.cache_changes.size() == 0)
             {
@@ -486,8 +512,8 @@ bool SubscriberHistory::set_next_deadline(
 }
 
 bool SubscriberHistory::get_next_deadline(
-        InstanceHandle_t &handle,
-        std::chrono::steady_clock::time_point &next_deadline_us)
+        InstanceHandle_t& handle,
+        std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -504,13 +530,13 @@ bool SubscriberHistory::get_next_deadline(
     else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         auto min = std::min_element(keyed_changes_.begin(),
-                                    keyed_changes_.end(),
-                                    [](
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
-                                        {
-                                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-                                        });
+                        keyed_changes_.end(),
+                        [](
+                            const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                            const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+                {
+                    return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                });
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
         return true;
