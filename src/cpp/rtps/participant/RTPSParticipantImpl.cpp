@@ -63,6 +63,7 @@ namespace rtps {
 
 using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
 using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
+using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
 
 static EntityId_t TrustedWriter(
         const EntityId_t& reader)
@@ -115,13 +116,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
     , has_shm_transport_(false)
 {
-    // Builtin transport by default
+    // Builtin transports by default
     if (PParam.useBuiltinTransports)
     {
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor);
+
+        std::shared_ptr<SharedMemTransportDescriptor> shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+        m_network_Factory.RegisterTransport(shm_transport.get());
     }
 
     // BACKUP servers guid is its persistence one
