@@ -21,7 +21,7 @@
 #
 m4_define([version_major],[1])
 m4_define([version_minor],[8])
-m4_define([version_micro],[3])
+m4_define([version_micro],[4])
 
 AC_INIT([fastrtps], [version_major.version_minor.version_micro], [support@eprosima.com], [eProsima FastRTPS], [http://eprosima.com/])
 CONFIG_ARGS="$*"
