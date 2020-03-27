@@ -182,6 +182,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
@@ -285,27 +286,30 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
         add_gtest(TCPv4Tests SOURCES ${TCPV4TESTS_SOURCE})
 
-        add_executable(SharedMemTests ${SHAREDMEMTESTS_SOURCE})
-        
-        target_compile_definitions(SharedMemTests PRIVATE FASTRTPS_NO_LIB
-        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>)
 
-        target_include_directories(SharedMemTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
-            ${THIRDPARTY_BOOST_INCLUDE_DIR}
-            )
-        target_link_libraries(SharedMemTests ${GTEST_LIBRARIES} ${MOCKS}
-                $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
-                ${THIRDPARTY_BOOST_LINK_LIBS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(SharedMemTests ${PRIVACY} iphlpapi Shlwapi )
-        else()
-            target_link_libraries(SharedMemTests ${PRIVACY} )
+        if(IS_THIRDPARTY_BOOST_OK)
+            add_executable(SharedMemTests ${SHAREDMEMTESTS_SOURCE})
+            
+            target_compile_definitions(SharedMemTests PRIVATE FASTRTPS_NO_LIB
+            $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>)
+
+            target_include_directories(SharedMemTests PRIVATE
+                ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp
+                ${THIRDPARTY_BOOST_INCLUDE_DIR}
+                )
+            target_link_libraries(SharedMemTests ${GTEST_LIBRARIES} ${MOCKS}
+                    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+                    ${THIRDPARTY_BOOST_LINK_LIBS})
+            if(MSVC OR MSVC_IDE)
+                target_link_libraries(SharedMemTests ${PRIVACY} iphlpapi Shlwapi )
+            else()
+                target_link_libraries(SharedMemTests ${PRIVACY} )
+            endif()
+            add_gtest(SharedMemTests SOURCES ${SHAREDMEMTESTS_SOURCE})
         endif()
-        add_gtest(SharedMemTests SOURCES ${SHAREDMEMTESTS_SOURCE})
     endif()
 endif()

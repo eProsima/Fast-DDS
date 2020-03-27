@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef FASTDDS_SHM_TRANSPORT_DISABLED
+        
 #include "BlackboxTests.hpp"
 
 #include "PubSubReader.hpp"
@@ -345,5 +347,7 @@ TEST(SHM, SHM_UDPvsUDP)
     // Check that reader receives the unmatched.
     reader.wait_participant_undiscovery();
 }
+
+#endif // EPROSIMA_SHM_TRANSPORT_DISABLED
 
 
