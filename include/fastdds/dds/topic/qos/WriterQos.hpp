@@ -21,6 +21,7 @@
 #define _FASTDDS_DDS_QOS_WRITERQOS_HPP_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+//#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -141,8 +142,6 @@ public:
 
     void clear();
 };
-
-RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;
 
 } //namespace dds
 } //namespace fastdds

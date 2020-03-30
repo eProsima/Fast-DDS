@@ -52,7 +52,7 @@ class PublisherListener;
 class PublisherImpl;
 class DataWriter;
 class DataWriterListener;
-class WriterQos;
+class DataWriterQos;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -124,7 +124,7 @@ public:
      */
     RTPS_DllAPI DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const WriterQos& writer_qos,
+            const DataWriterQos& writer_qos,
             DataWriterListener* listener);
 
     /**
@@ -217,7 +217,7 @@ public:
      * @param qos
      */
     RTPS_DllAPI ReturnCode_t set_default_datawriter_qos(
-            const WriterQos& qos);
+            const DataWriterQos& qos);
 
     /**
      * This operation returns the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -226,9 +226,9 @@ public:
      *
      * The values retrieved by get_default_datawriter_qos will match the set of values specified on the last
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
-     * @return Current default WriterQos
+     * @return Current default DataWriterQos
      */
-    RTPS_DllAPI const WriterQos& get_default_datawriter_qos() const;
+    RTPS_DllAPI const DataWriterQos& get_default_datawriter_qos() const;
 
     /**
      * This operation retrieves the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -237,15 +237,15 @@ public:
      *
      * The values retrieved by get_default_datawriter_qos will match the set of values specified on the last
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
-     * @param qos Copy of the current default WriterQos.
+     * @param qos Copy of the current default DataWriterQos.
      * @return Always true.
      */
     RTPS_DllAPI ReturnCode_t get_default_datawriter_qos(
-            WriterQos& qos) const;
+            DataWriterQos& qos) const;
 
     /* TODO
        bool copy_from_topic_qos(
-            WriterQos& writer_qos,
+            DataWriterQos& writer_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
      */
 

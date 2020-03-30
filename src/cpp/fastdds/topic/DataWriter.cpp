@@ -30,10 +30,12 @@ namespace dds {
 DataWriter::DataWriter(
         DataWriterImpl* impl)
     : impl_(impl)
-{}
+{
+}
 
 DataWriter::~DataWriter()
-{}
+{
+}
 
 bool DataWriter::write(
         void* data)
@@ -49,8 +51,8 @@ bool DataWriter::write(
 }
 
 ReturnCode_t DataWriter::write(
-            void* data,
-            const rtps::InstanceHandle_t& handle)
+        void* data,
+        const rtps::InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
@@ -90,18 +92,18 @@ const rtps::WriterAttributes& DataWriter::get_attributes() const
 }
 
 ReturnCode_t DataWriter::set_qos(
-        const WriterQos& qos)
+        const DataWriterQos& qos)
 {
     return impl_->set_qos(qos);
 }
 
-const WriterQos& DataWriter::get_qos() const
+const DataWriterQos& DataWriter::get_qos() const
 {
     return impl_->get_qos();
 }
 
 ReturnCode_t DataWriter::get_qos(
-        WriterQos& qos) const
+        DataWriterQos& qos) const
 {
     qos = impl_->get_qos();
     return ReturnCode_t::RETCODE_OK;
@@ -135,13 +137,13 @@ const Publisher* DataWriter::get_publisher() const
 }
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
-        const Duration_t &max_wait)
+        const Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }
 
 ReturnCode_t DataWriter::get_offered_deadline_missed_status(
-        OfferedDeadlineMissedStatus &status)
+        OfferedDeadlineMissedStatus& status)
 {
     return impl_->get_offered_deadline_missed_status(status);
 }

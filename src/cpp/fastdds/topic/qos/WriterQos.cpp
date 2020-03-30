@@ -27,8 +27,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-RTPS_DllAPI const WriterQos DATAWRITER_QOS_DEFAULT;
-
 WriterQos::WriterQos()
 {
     this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;

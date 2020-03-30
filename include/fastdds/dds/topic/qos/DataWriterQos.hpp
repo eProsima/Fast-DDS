@@ -20,7 +20,9 @@
 #ifndef _FASTDDS_DATAWRITERQOS_HPP
 #define _FASTDDS_DATAWRITERQOS_HPP
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/topic/qos/WriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 
 namespace eprosima {
@@ -37,50 +39,60 @@ namespace dds {
 class DataWriterQos
 {
 public:
+
     //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
+    DurabilityQosPolicy durability;
 
     //!Durability Service Qos, NOT implemented in the library.
-    fastrtps::DurabilityServiceQosPolicy durability_service;
+    DurabilityServiceQosPolicy durability_service;
 
     //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
+    DeadlineQosPolicy deadline;
 
     //!Latency Budget Qos, NOT implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
+    LatencyBudgetQosPolicy latency_budget;
 
     //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
+    LivelinessQosPolicy liveliness;
 
     //!Reliability Qos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
+    ReliabilityQosPolicy reliability;
 
     //!Destination Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
+    DestinationOrderQosPolicy destination_order;
 
     //!History Qos, implemented in the library.
-    fastrtps::HistoryQosPolicy history;
+    HistoryQosPolicy history;
 
     //!Resource Limits Qos, implemented in the library.
-    fastrtps::ResourceLimitsQosPolicy resource_limits;
+    ResourceLimitsQosPolicy resource_limits;
 
     //!Transport Priority Qos, NOT implemented in the library.
-    fastrtps::TransportPriorityQosPolicy transport_priority;
+    TransportPriorityQosPolicy transport_priority;
 
     //!Lifespan Qos, implemented in the library.
-    fastrtps::LifespanQosPolicy lifespan;
+    LifespanQosPolicy lifespan;
 
     //!User Data Qos, implemented in the library.
-    fastrtps::UserDataQosPolicy user_data;
+    UserDataQosPolicy user_data;
 
     //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
+    OwnershipQosPolicy ownership;
 
     //!Ownership Strength Qos, NOT implemented in the library.
-    fastrtps::OwnershipStrengthQosPolicy ownership_strength;
+    OwnershipStrengthQosPolicy ownership_strength;
 
     //!Writer Data Lifecycle Qos, NOT implemented in the library.
-    fastdds::dds::WriterDataLifecycleQosPolicy writer_data_lifecycle;
+    WriterDataLifecycleQosPolicy writer_data_lifecycle;
+
+    //!Publication Mode Qos, implemented in the library.
+    PublishModeQosPolicy publish_mode;
+
+    //!Data Representation Qos, implemented in the library.
+    DataRepresentationQosPolicy representation;
+
+    //!Disable positive acks QoS, implemented in the library.
+    DisablePositiveACKsQosPolicy disable_positive_acks;
 
     bool operator ==(
             const DataWriterQos& b) const
@@ -99,34 +111,45 @@ public:
                (this->user_data == b.user_data) &&
                (this->ownership == b.ownership) &&
                (this->ownership_strength == b.ownership_strength) &&
-               (this->writer_data_lifecycle == b.writer_data_lifecycle);
+               (this->writer_data_lifecycle == b.writer_data_lifecycle) &&
+               (this->publish_mode == b.publish_mode) &&
+               (this->representation == b.representation) &&
+               (this->disable_positive_acks == b.disable_positive_acks);
     }
 
     /* TODO: Implement this method
      * Set Qos from another class
      * @param qos Reference from a TopicQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
+     */
     RTPS_DllAPI void setQos(
             const DataWriterQos& qos,
             bool first_time);
-    */
 
     /* TODO: Implement this method
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
+     */
     RTPS_DllAPI bool checkQos() const;
-    */
 
     /* TODO: Implement this method
      * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
+     */
     RTPS_DllAPI bool canQosBeUpdated(
             const DataWriterQos& qos) const;
-    */
+
+
+    RTPS_DllAPI WriterQos get_writerqos(
+            const PublisherQos& pqos) const;
+
+    RTPS_DllAPI void to_datawriterqos(
+            const WriterQos& qos,
+            const PublisherQos& pqos);
 };
 
-//extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
+extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds
