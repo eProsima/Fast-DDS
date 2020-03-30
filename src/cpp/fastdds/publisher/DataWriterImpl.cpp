@@ -308,7 +308,11 @@ bool DataWriterImpl::perform_create_new_change(
                 {
                     if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
                     {
-                        deadline_timer_reschedule();
+                        if (deadline_timer_reschedule())
+                        {
+                            deadline_timer_->cancel_timer();
+                            deadline_timer_->restart_timer();
+                        }
                     }
                 }
             }
@@ -318,10 +322,7 @@ bool DataWriterImpl::perform_create_new_change(
                 lifespan_duration_us_ = duration<double, std::ratio<1, 1000000> >(
                     qos_.m_lifespan.duration.to_ns() * 1e-3);
                 lifespan_timer_->update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
-            }
-            else
-            {
-                lifespan_timer_->cancel_timer();
+                lifespan_timer_->restart_timer();
             }
 
             return true;
