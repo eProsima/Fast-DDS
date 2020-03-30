@@ -24,7 +24,7 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/dds/topic/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
@@ -50,10 +50,12 @@ class ParListener : public DomainParticipantListener
 public:
 
     ParListener()
-    {}
+    {
+    }
 
     virtual ~ParListener() override
-    {}
+    {
+    }
 
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
@@ -93,7 +95,7 @@ public:
             const eprosima::fastrtps::types::TypeInformation& type_information) override
     {
         std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-            [topic_name, type_name](const std::string& name, const types::DynamicType_ptr type)
+                [topic_name, type_name](const std::string& name, const types::DynamicType_ptr type)
                 {
                     if (nullptr != g_subscriber)
                     {
@@ -107,15 +109,15 @@ public:
                         if (type == nullptr)
                         {
                             const types::TypeIdentifier* ident =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
+                                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
 
                             if (nullptr != ident)
                             {
                                 const types::TypeObject* obj =
-                                    types::TypeObjectFactory::get_instance()->get_type_object(ident);
+                                        types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
                                 types::DynamicType_ptr dyn_type =
-                                    types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+                                        types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
                                 if (nullptr != dyn_type)
                                 {
@@ -161,6 +163,7 @@ public:
                 " unauthorized participant " << info.guid << std::endl;
         }
     }
+
 #endif
 };
 
@@ -169,9 +172,13 @@ class SubListener : public SubscriberListener
 public:
 
     SubListener()
-        : number_samples_(0) {}
+        : number_samples_(0)
+    {
+    }
 
-    ~SubListener() override {}
+    ~SubListener() override
+    {
+    }
 
     void on_subscription_matched(
             Subscriber* /*subscriber*/,
@@ -308,11 +315,11 @@ int main(
     }
 
     /* TODO - XMLProfileManager doesn't support DDS yet
-    if(xml_file)
-    {
+       if(xml_file)
+       {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
-    }
-    */
+       }
+     */
 
     ParticipantAttributes participant_attributes;
     DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_attributes);
@@ -320,7 +327,7 @@ int main(
     participant_attributes.rtps.builtin.domainId = seed % 230;
     ParListener participant_listener;
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
+            DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
 
     if (participant == nullptr)
     {

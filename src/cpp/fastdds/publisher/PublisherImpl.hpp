@@ -24,7 +24,7 @@
 
 #include <fastrtps/attributes/PublisherAttributes.h>
 
-#include <fastdds/dds/topic/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -188,9 +188,12 @@ public:
         PublisherWriterListener(
                 PublisherImpl* p)
             : publisher_(p)
-        {}
+        {
+        }
 
-        virtual ~PublisherWriterListener() override {}
+        virtual ~PublisherWriterListener() override
+        {
+        }
 
         void on_publication_matched(
                 DataWriter* writer,

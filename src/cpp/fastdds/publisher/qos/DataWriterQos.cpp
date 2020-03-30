@@ -13,41 +13,42 @@
 // limitations under the License.
 
 /**
- * @file DataReaderQos.cpp
+ * @file DataWriterQos.cpp
  *
  */
 
-#include <fastdds/dds/topic/qos/DataReaderQos.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 using namespace eprosima::fastdds::dds;
 
-//const DataReaderQos eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+// TODO: Commented while there is collision with the definition in WriterQos.cpp.
+// const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
 /* TODO: Implement this method
-void DataReaderQos::setQos(
-        const DataReaderQos& qos,
+   void DataWriterQos::setQos(
+        const DataWriterQos& qos,
         bool first_time)
-{
+   {
     //TODO: Implement this function
     (void)qos;
     (void)first_time;
-}
-*/
+   }
+ */
 
 /* TODO: Implement this method
-bool DataReaderQos::checkQos() const
-{
+   bool DataWriterQos::checkQos() const
+   {
     //TODO: Implement this function
     return true;
-}
-*/
+   }
+ */
 
 /* TODO: Implement this method
-bool DataReaderQos::canQosBeUpdated(
-        const DataReaderQos& qos) const
-{
+   bool DataWriterQos::canQosBeUpdated(
+        const DataWriterQos& qos) const
+   {
     //TODO: Implement this function
     (void)qos;
     return true;
-}
-*/
+   }
+ */

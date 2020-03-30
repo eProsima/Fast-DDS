@@ -18,12 +18,12 @@
  */
 
 #include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/topic/DataWriterImpl.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
-#include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>

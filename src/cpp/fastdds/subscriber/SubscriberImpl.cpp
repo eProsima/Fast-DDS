@@ -18,12 +18,12 @@
  */
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <fastdds/topic/DataReaderImpl.hpp>
+#include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/dds/topic/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>

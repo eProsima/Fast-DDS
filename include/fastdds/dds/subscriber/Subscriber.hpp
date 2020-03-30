@@ -22,7 +22,7 @@
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include <fastdds/dds/topic/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -64,10 +64,12 @@ class RTPS_DllAPI Subscriber
     Subscriber(
             SubscriberImpl* pimpl)
         : impl_(pimpl)
-    {}
+    {
+    }
 
-
-    virtual ~Subscriber() {}
+    virtual ~Subscriber()
+    {
+    }
 
 public:
 

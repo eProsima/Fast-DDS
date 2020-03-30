@@ -17,9 +17,9 @@
  *
  */
 
-#include <fastdds/topic/DataWriterImpl.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastdds/publisher/PublisherImpl.hpp>
 
@@ -80,18 +80,18 @@ DataWriterImpl::DataWriterImpl(
     , user_datawriter_(nullptr)
 {
     deadline_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
-            [&]() -> bool
-            {
-                return deadline_missed();
-            },
-            qos_.m_deadline.period.to_ns() * 1e-6);
+                    [&]() -> bool
+                {
+                    return deadline_missed();
+                },
+                    qos_.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
-            [&]() -> bool
-            {
-                return lifespan_expired();
-            },
-            qos_.m_lifespan.duration.to_ns() * 1e-6);
+                    [&]() -> bool
+                {
+                    return lifespan_expired();
+                },
+                    qos_.m_lifespan.duration.to_ns() * 1e-6);
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),

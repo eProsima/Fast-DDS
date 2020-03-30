@@ -29,7 +29,7 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/topic/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
 #include <asio.hpp>
@@ -81,7 +81,7 @@ bool TestSubscriber::init(
     {
         const std::lock_guard<std::mutex> lock(mutex_);
         mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
-        if(mp_participant==nullptr)
+        if (mp_participant == nullptr)
         {
             std::cout << "ERROR" << std::endl;
             return false;
@@ -162,19 +162,24 @@ eprosima::fastdds::dds::DomainParticipant* TestSubscriber::participant()
     return mp_participant;
 }
 
-TestSubscriber::SubListener::SubListener(TestSubscriber* parent)
+TestSubscriber::SubListener::SubListener(
+        TestSubscriber* parent)
     : mParent(parent)
     , n_matched(0)
     , n_samples(0)
 {
 }
 
-void TestSubscriber::waitDiscovery(bool expectMatch, int maxWait)
+void TestSubscriber::waitDiscovery(
+        bool expectMatch,
+        int maxWait)
 {
     std::unique_lock<std::mutex> lock(m_mDiscovery);
 
-    if(m_subListener.n_matched == 0)
+    if (m_subListener.n_matched == 0)
+    {
         m_cvDiscovery.wait_for(lock, std::chrono::seconds(maxWait));
+    }
 
     if (expectMatch)
     {
@@ -186,12 +191,16 @@ void TestSubscriber::waitDiscovery(bool expectMatch, int maxWait)
     }
 }
 
-void TestSubscriber::waitTypeDiscovery(bool expectMatch, int maxWait)
+void TestSubscriber::waitTypeDiscovery(
+        bool expectMatch,
+        int maxWait)
 {
     std::unique_lock<std::mutex> lock(mtx_type_discovery_);
 
-    if(!part_listener_.discovered_)
+    if (!part_listener_.discovered_)
+    {
         cv_type_discovery_.wait_for(lock, std::chrono::seconds(maxWait));
+    }
 
     if (expectMatch)
     {
@@ -203,7 +212,8 @@ void TestSubscriber::waitTypeDiscovery(bool expectMatch, int maxWait)
     }
 }
 
-void TestSubscriber::matched(bool unmatched)
+void TestSubscriber::matched(
+        bool unmatched)
 {
     std::unique_lock<std::mutex> lock(m_mDiscovery);
     if (unmatched)
@@ -214,23 +224,25 @@ void TestSubscriber::matched(bool unmatched)
     {
         ++m_subListener.n_matched;
     }
-    if(m_subListener.n_matched >= 1)
+    if (m_subListener.n_matched >= 1)
+    {
         m_cvDiscovery.notify_one();
+    }
 }
 
 void TestSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader*,
         const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    if(info.current_count_change > 0)
+    if (info.current_count_change > 0)
     {
         mParent->matched();
-        std::cout << mParent->m_Name << " matched."<<std::endl;
+        std::cout << mParent->m_Name << " matched." << std::endl;
     }
     else if (info.current_count_change < 0)
     {
         mParent->matched(true);
-        std::cout << mParent->m_Name << " unmatched."<<std::endl;
+        std::cout << mParent->m_Name << " unmatched." << std::endl;
     }
 }
 
@@ -273,13 +285,13 @@ void TestSubscriber::PartListener::on_type_information_received(
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-        [this, topic_name](const std::string&, const types::DynamicType_ptr type)
-    {
-        std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
-        parent_->tls_callback_called_ = true;
-        on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
-        parent_->tls_callback_called_ = false;
-    };
+            [this, topic_name](const std::string&, const types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+                parent_->tls_callback_called_ = true;
+                on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
+                parent_->tls_callback_called_ = false;
+            };
 
     std::cout << "Received type information: " << type_name << " on topic: " << topic_name << std::endl;
     parent_->participant()->register_remote_type(type_information, type_name.to_string(), callback);
@@ -303,7 +315,8 @@ DataReader* TestSubscriber::create_datareader()
     return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
 }
 
-void TestSubscriber::delete_datareader(eprosima::fastdds::dds::DataReader* reader)
+void TestSubscriber::delete_datareader(
+        eprosima::fastdds::dds::DataReader* reader)
 {
     mp_subscriber->delete_datareader(reader);
 }
