@@ -64,7 +64,7 @@ struct DurabilityKind_def
                          *   read the next written sample. This setting is typically used for data, which is
                          *   updated quickly.
                          */
-        TRANSIENT_LOCAL /**< Currently behaves identically to the
+        TRANSIENT_LOCAL,/**< Currently behaves identically to the
                          *   TRANSIENT_DURABILITY_QOS, except for its RxO properties. The desired
                          *   behaviour of TRANSIENT_LOCAL_DURABILITY_QOS can be achieved from the
                          *   TRANSIENT_DURABILITY_QOS with the default (TRUE) setting of the
@@ -77,7 +77,6 @@ struct DurabilityKind_def
                          *   value of TRUE will also dispose the affected data from the durability store, and
                          *   thus prevent it from remaining available to late joining readers.
                          */
-        ,
         TRANSIENT,      /**< Some samples are available to late-joining
                          *   DataReaders (stored in memory). This means that the late-joining
                          *   DataReaders are able to read these previously written samples. The

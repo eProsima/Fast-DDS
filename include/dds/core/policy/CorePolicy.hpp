@@ -1675,7 +1675,7 @@ OMG_DDS_POLICY_TRAITS(Deadline,             4)
 OMG_DDS_POLICY_TRAITS(LatencyBudget,        5)
 OMG_DDS_POLICY_TRAITS(Ownership,            6)
 
-//#ifdef OMG_DDS_OWNERSHIP_SUPPORT            6)
+//#ifdef OMG_DDS_OWNERSHIP_SUPPORT
 OMG_DDS_POLICY_TRAITS(OwnershipStrength,    7)
 //#endif  //OMG_DDS_OWNERSHIP_SUPPORT
 
