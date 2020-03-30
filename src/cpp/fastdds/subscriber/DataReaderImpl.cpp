@@ -158,6 +158,12 @@ ReturnCode_t DataReaderImpl::take_next_sample(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DataReaderImpl::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    return history_.get_first_untaken_info(info) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_NO_DATA;
+}
+
 const GUID_t& DataReaderImpl::guid()
 {
     return reader_->getGuid();

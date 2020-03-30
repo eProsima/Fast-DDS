@@ -112,6 +112,14 @@ public:
     ///@}
 
     /**
+     * @brief Returns information about the first untaken sample.
+     * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     * @return RETCODE_OK if sample info was returned. RETCODE_NO_DATA if there is no sample to take.
+     */
+    ReturnCode_t get_first_untaken_info(
+            fastrtps::SampleInfo_t* info);
+
+    /**
      * Get associated GUID
      * @return Associated GUID
      */

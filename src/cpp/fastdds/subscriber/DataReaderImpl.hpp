@@ -118,9 +118,17 @@ public:
     ///@}
 
     /**
-     * Get associated GUID
-     * @return Associated GUID
+     * @brief Returns information about the first untaken sample.
+     * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     * @return true if sample info was returned. false if there is no sample to take.
      */
+    ReturnCode_t get_first_untaken_info(
+            fastrtps::SampleInfo_t* info);
+
+    /**
+    * Get associated GUID
+    * @return Associated GUID
+    */
     const fastrtps::rtps::GUID_t& guid();
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
