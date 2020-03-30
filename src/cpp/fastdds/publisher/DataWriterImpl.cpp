@@ -286,8 +286,8 @@ bool DataWriterImpl::perform_create_new_change(
             {
                 // Fragment the data.
                 // Set the fragment size to the cachechange.
-                // Note: high_mark will always be a value that can be casted to uint16_t)
-                ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
+                ch->setFragmentSize(static_cast<uint16_t>(
+                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
             }
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
