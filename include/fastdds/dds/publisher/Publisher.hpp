@@ -228,7 +228,7 @@ public:
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
      * @return Current default DataWriterQos
      */
-    RTPS_DllAPI const DataWriterQos& get_default_datawriter_qos() const;
+    RTPS_DllAPI DataWriterQos& get_default_datawriter_qos();
 
     /**
      * This operation retrieves the default value of the DataWriter QoS, that is, the QoS policies which will be used

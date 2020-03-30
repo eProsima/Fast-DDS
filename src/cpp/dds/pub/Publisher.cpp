@@ -82,22 +82,17 @@ Publisher::~Publisher()
 //    return *this;
 //}
 
-//Publisher& Publisher::default_datawriter_qos(
-//        const qos::DataWriterQos& dwqos)
-//{
-//    // TODO Use DataWriterQos instead of WriterQos
-//    //delegate()->set_default_datawriter_qos(dwqos);
-//    (void)dwqos;
-//    return *this;
-//}
+Publisher& Publisher::default_datawriter_qos(
+        const qos::DataWriterQos& dwqos)
+{
+    delegate()->set_default_datawriter_qos(dwqos);
+    return *this;
+}
 
-//qos::DataWriterQos Publisher::default_datawriter_qos() const
-//{
-//    //    return this->delegate()->default_datawriter_qos();
-//    // TODO Use DataWriterQos instead of WriterQos
-//    //return delegate()->get_default_datawriter_qos();
-//    return qos::DataWriterQos();
-//}
+qos::DataWriterQos Publisher::default_datawriter_qos()
+{
+    return this->delegate()->get_default_datawriter_qos();
+}
 
 //void Publisher::listener(
 //        Listener* plistener,

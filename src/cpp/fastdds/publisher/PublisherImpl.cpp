@@ -384,7 +384,7 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const
+DataWriterQos& PublisherImpl::get_default_datawriter_qos()
 {
     return default_datawriter_qos_;
 }

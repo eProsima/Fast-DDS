@@ -134,7 +134,7 @@ public:
     ReturnCode_t set_default_datawriter_qos(
             const DataWriterQos& qos);
 
-    const DataWriterQos& get_default_datawriter_qos() const;
+    DataWriterQos& get_default_datawriter_qos();
 
     /* TODO
        bool copy_from_topic_qos(

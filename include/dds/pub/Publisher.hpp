@@ -23,7 +23,7 @@
 #include <dds/pub/detail/Publisher.hpp>
 
 #include <dds/core/Entity.hpp>
-//#include <dds/pub/qos/DataWriterQos.hpp>
+#include <dds/pub/qos/DataWriterQos.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
@@ -184,8 +184,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    Publisher& default_datawriter_qos(
-    //            const qos::DataWriterQos& qos);
+    Publisher& default_datawriter_qos(
+            const qos::DataWriterQos& qos);
 
     /**
      * Gets the default DataWriterQos of the Publisher.
@@ -210,7 +210,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    qos::DataWriterQos default_datawriter_qos() const;
+    qos::DataWriterQos default_datawriter_qos();
 
     //==========================================================================
 

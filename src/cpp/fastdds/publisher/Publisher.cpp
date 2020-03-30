@@ -160,7 +160,7 @@ ReturnCode_t Publisher::set_default_datawriter_qos(
     return impl_->set_default_datawriter_qos(qos);
 }
 
-const DataWriterQos& Publisher::get_default_datawriter_qos() const
+DataWriterQos& Publisher::get_default_datawriter_qos()
 {
     return impl_->get_default_datawriter_qos();
 }
