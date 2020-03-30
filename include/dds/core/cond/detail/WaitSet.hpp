@@ -22,17 +22,14 @@
  * @cond
  * Ignore this file in the API
  */
-//#include <fastdds/dds/core/conditions/WaitSet.hpp>
+#include <fastdds/dds/core/conditions/WaitSet.hpp>
 
 namespace dds {
 namespace core {
 namespace cond {
 namespace detail {
 
-//using WaitSet = eprosima::fastdds::dds::WaitSet;
-class WaitSet
-{
-};
+using WaitSet = eprosima::fastdds::dds::WaitSet;
 
 } //namespace detail
 } //namespace cond

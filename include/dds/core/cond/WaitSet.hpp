@@ -24,6 +24,8 @@
 #include <dds/core/cond/detail/WaitSet.hpp>
 #include <dds/core/Reference.hpp>
 #include <dds/core/cond/Condition.hpp>
+#include <dds/core/cond/GuardCondition.hpp>
+#include <dds/core/cond/StatusCondition.hpp>
 #include <dds/core/Duration.hpp>
 
 namespace dds {
@@ -50,7 +52,7 @@ namespace cond {
  *
  * // Create WaitSet and attach Condition
  * dds::core::cond::WaitSet waitset;
- * waitset.attach_condition(readerSC); // or waitset += readerSC;
+ * waitset.attach_condition(readerSC);
  *
  * dds::core::cond::WaitSet::ConditionSeq conditions;
  * while(true) {
@@ -86,7 +88,7 @@ namespace cond {
  *
  * // Create WaitSet and attach Condition
  * dds::core::cond::WaitSet waitset;
- * waitset.attach_condition(readerSC); // or waitset += readerSC;
+ * waitset.attach_condition(readerSC);
  *
  * while(true) {
  *     // Wait for any Condition to trigger.
@@ -98,8 +100,7 @@ namespace cond {
  *
  * @see @ref DCPS_Modules_Infrastructure_Waitset "WaitSet concept"
  */
-template<typename DELEGATE>
-class TWaitSet : public Reference<DELEGATE>
+class WaitSet : public Reference<detail::WaitSet>
 {
 public:
 
@@ -108,12 +109,12 @@ public:
 public:
 
     OMG_DDS_REF_TYPE_NO_DC(
-        TWaitSet,
+        WaitSet,
         Reference,
-        DELEGATE)
+        detail::WaitSet)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-        TWaitSet)
+        WaitSet)
 
     /**
      * Create a WaitSet instance.
@@ -124,85 +125,15 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TWaitSet();
+    WaitSet()
+        : Reference<detail::WaitSet>(
+            new detail::WaitSet())
+    {
+    }
 
     /** @cond */
-    ~TWaitSet();
+    ~WaitSet() = default;
     /** @endcond */
-
-    /**
-     * This operation allows an application thread to wait for the occurrence
-     * of at least one of the conditions that is attached to the WaitSet.
-     *
-     * This operation allows an application thread to wait for the occurrence
-     * of certain Conditions. If none of the Conditions attached to the
-     * WaitSet have a trigger_value of TRUE, the wait operation will block
-     * suspending the calling thread.
-     *
-     * The wait operation takes a timeout argument that specifies the maximum
-     * duration for the wait. If this duration is exceeded and none of
-     * the attached Condition objects is true, a TimeoutError will be thrown.
-     *
-     * It is not allowed for more than one application thread to be waiting
-     * on the same WaitSet. If the wait operation is invoked on a WaitSet that
-     * already has a thread blocking on it, the operation will immediately
-     * raise a PreconditionNotMetError exception.
-     *
-     * The result of the wait operation is the list of all the attached
-     * Conditions that have a trigger_value of TRUE (i.e., the Conditions
-     * that unblocked the wait).
-     *
-     * @param timeout   The maximum amount of time for which the wait
-     *                  should block while waiting for a Condition to be triggered.
-     * @return ConditionSeq
-     *                  A vector containing the triggered Conditions
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The WaitSet was not properly created and references to dds::core::null.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::TimeoutError
-     *                  The timeout has elapsed without any of the attached
-     *                  conditions becoming TRUE.
-     * @throws dds::core::PreconditionNotMetError
-     *                  When multiple thread try to invoke the function concurrently.
-     */
-    const ConditionSeq wait(
-            const dds::core::Duration& timeout);
-
-    /**
-     * This operation allows an application thread to wait for the occurrence
-     * of at least one of the conditions that is attached to the WaitSet.
-     *
-     * This operation allows an application thread to wait for the occurrence
-     * of certain Conditions. If none of the Conditions attached to the
-     * WaitSet have a trigger_value of TRUE, the wait operation will block
-     * suspending the calling thread.
-     *
-     * It is not allowed for more than one application thread to be waiting
-     * on the same WaitSet. If the wait operation is invoked on a WaitSet that
-     * already has a thread blocking on it, the operation will immediately
-     * raise a PreconditionNotMetError exception.
-     *
-     * The result of the wait operation is the list of all the attached
-     * Conditions that have a trigger_value of TRUE (i.e., the Conditions
-     * that unblocked the wait).
-     *
-     * @return ConditionSeq
-     *                  A vector containing the triggered Conditions
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The WaitSet was not properly created and references to dds::core::null.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::PreconditionNotMetError
-     *                  When multiple thread try to invoke the function concurrently.
-     */
-    const ConditionSeq wait();
 
     /**
      * This operation allows an application thread to wait for the occurrence
@@ -230,8 +161,6 @@ public:
      *                  triggered during the wait.
      * @param timeout   The maximum amount of time for which the wait should
      *                  block while waiting for a Condition to be triggered.
-     * @return ConditionSeq
-     *                  A vector containing the triggered Conditions
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::NullReferenceError
@@ -245,9 +174,30 @@ public:
      * @throws dds::core::PreconditionNotMetError
      *                  When multiple thread try to invoke the function concurrently.
      */
-    ConditionSeq& wait(
+    void wait(
             ConditionSeq& triggered,
-            const dds::core::Duration& timeout);
+            const dds::core::Duration& timeout)
+    {
+        triggered.clear();
+        std::vector<std::shared_ptr<detail::Condition>> conditions;
+        eprosima::fastrtps::types::ReturnCode_t result = delegate()->wait(conditions, timeout.delegate());
+
+        if (result == eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK)
+        {
+            for (auto cond : conditions)
+            {
+                triggered.push_back(Condition(cond));
+            }
+        }
+        else if (result == eprosima::fastrtps::types::ReturnCode_t::RETCODE_PRECONDITION_NOT_MET)
+        {
+            throw dds::core::PreconditionNotMetError("Waitset already waiting.");
+        }
+        else if (result == eprosima::fastrtps::types::ReturnCode_t::RETCODE_TIMEOUT)
+        {
+            throw dds::core::TimeoutError("Timeout waiting for conditions.");
+        }
+    }
 
     /**
      * This operation allows an application thread to wait for the occurrence
@@ -281,8 +231,11 @@ public:
      * @throws dds::core::PreconditionNotMetError
      *                  When multiple thread try to invoke the function concurrently.
      */
-    ConditionSeq& wait(
-            ConditionSeq& triggered);
+    void wait(
+            ConditionSeq& triggered)
+    {
+        wait(triggered, dds::core::Duration::infinite());
+    }
 
     /**
      * Waits for at least one of the attached Conditions to trigger and then
@@ -325,14 +278,6 @@ public:
     void dispatch(
             const dds::core::Duration& timeout);
 
-    /** @copydoc dds::core::cond::TWaitSet::attach_condition(const dds::core::cond::Condition& cond) */
-    TWaitSet& operator +=(
-            const Condition& cond);
-
-    /** @copydoc dds::core::cond::TWaitSet::detach_condition(const dds::core::cond::Condition& cond) */
-    TWaitSet& operator -=(
-            const Condition& cond);
-
     /**
      * This operation attaches a Condition to the WaitSet.
      *
@@ -354,8 +299,12 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TWaitSet& attach_condition(
-            const Condition& cond);
+    WaitSet& attach_condition(
+            const Condition& cond)
+    {
+        delegate()->attach_condition(cond.delegate());
+        return *this;
+    }
 
     /**
      * This operation detaches a Condition to the WaitSet.
@@ -364,8 +313,8 @@ public:
      * attached to the WaitSet, the operation will return false.
      *
      * @param cond      The Condition to detach from this WaitSet
-     * @return bool     True if the Condition was found and detached, False
-     *                  if the Condition was not part of the WaitSet.
+     * @return WaitSet  The WaitSet itself so that attaching Conditions
+     *                  can be chained.
      * @throws dds::core::Error
      *                  An internal error has occurred.
      * @throws dds::core::NullReferenceError
@@ -374,8 +323,16 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    bool detach_condition(
-            const Condition& cond);
+    WaitSet& detach_condition(
+            const Condition& cond)
+    {
+        eprosima::fastrtps::types::ReturnCode_t result = delegate()->detach_condition(cond.delegate());
+        if (result == eprosima::fastrtps::types::ReturnCode_t::RETCODE_PRECONDITION_NOT_MET)
+        {
+            throw dds::core::PreconditionNotMetError("Cannot detach a Condition that was not previously attached.");;
+        }
+        return *this;
+    }
 
     /**
      * This operation retrieves the list of attached Conditions.
@@ -394,31 +351,18 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    const ConditionSeq conditions() const;
+    void conditions(ConditionSeq& conditions) const
+    {
+        std::vector<std::shared_ptr<detail::Condition>> attached_conditions;
+        delegate()->get_conditions(attached_conditions);
+        for (auto cond : attached_conditions)
+        {
+            conditions.push_back(Condition(cond));
+        }
+    }
 
-    /**
-     * This operation retrieves the list of attached Conditions.
-     *
-     * The resulting sequence will either be an empty sequence, meaning there were
-     * no conditions attached, or will contain a list of ReadCondition,
-     * QueryCondition, StatusCondition and GuardCondition.
-     *
-     * @param conds     A ConditionSeq in which to put the attached Conditions.
-     * @return ConditionSeq
-     *                  The list of attached Conditions.
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The WaitSet was not properly created and references to dds::core::null.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     */
-    ConditionSeq& conditions(
-            ConditionSeq& conds) const;
+
 };
-
-typedef dds::core::cond::detail::WaitSet WaitSet;
 
 } //namespace cond
 } //namespace core
