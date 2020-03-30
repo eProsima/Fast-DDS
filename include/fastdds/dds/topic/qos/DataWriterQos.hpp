@@ -25,6 +25,8 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 
+#include <fastdds/dds/log/Log.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -39,6 +41,9 @@ namespace dds {
 class DataWriterQos
 {
 public:
+
+    //!Topic Attributes
+    fastrtps::TopicAttributes topic_attr;
 
     //!Durability Qos, implemented in the library.
     DurabilityQosPolicy durability;
@@ -114,7 +119,8 @@ public:
                (this->writer_data_lifecycle == b.writer_data_lifecycle) &&
                (this->publish_mode == b.publish_mode) &&
                (this->representation == b.representation) &&
-               (this->disable_positive_acks == b.disable_positive_acks);
+               (this->disable_positive_acks == b.disable_positive_acks) &&
+               (this->topic_attr == b.topic_attr);
     }
 
     /* TODO: Implement this method
@@ -122,7 +128,7 @@ public:
      * @param qos Reference from a TopicQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
      */
-    RTPS_DllAPI void setQos(
+    RTPS_DllAPI void set_qos(
             const DataWriterQos& qos,
             bool first_time);
 
@@ -130,14 +136,14 @@ public:
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
      */
-    RTPS_DllAPI bool checkQos() const;
+    RTPS_DllAPI bool check_qos() const;
 
     /* TODO: Implement this method
      * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
      */
-    RTPS_DllAPI bool canQosBeUpdated(
+    RTPS_DllAPI bool can_qos_be_updated(
             const DataWriterQos& qos) const;
 
 

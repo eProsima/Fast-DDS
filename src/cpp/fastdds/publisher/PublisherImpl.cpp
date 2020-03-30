@@ -171,7 +171,7 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
-    if (!topic_att.checkQos() || !qos.checkQos())
+    if (!topic_att.checkQos() || !qos.check_qos())
     {
         return nullptr;
     }
@@ -373,12 +373,12 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
 {
     if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
-        default_datawriter_qos_.setQos(DATAWRITER_QOS_DEFAULT, true);
+        default_datawriter_qos_.set_qos(DATAWRITER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (qos.checkQos())
+    else if (qos.check_qos())
     {
-        default_datawriter_qos_.setQos(qos, true);
+        default_datawriter_qos_.set_qos(qos, true);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;

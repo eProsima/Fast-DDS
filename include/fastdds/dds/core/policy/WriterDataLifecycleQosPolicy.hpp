@@ -14,31 +14,46 @@
 
 /**
  * @file WriterDataLifecycleQosPolicy.hpp
-*/
+ */
 
 #ifndef _FASTDDS_WRITERDATALIFECYCLEQOSPOLICY_HPP_
 #define _FASTDDS_WRITERDATALIFECYCLEQOSPOLICY_HPP_
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 //! @brief A struct storing the base status
-class WriterDataLifecycleQosPolicy
+class WriterDataLifecycleQosPolicy : public QosPolicy
 {
 public:
-    WriterDataLifecycleQosPolicy()
-        : autodispose_unregistered_instances(true)
-    {}
 
-    virtual RTPS_DllAPI ~WriterDataLifecycleQosPolicy() {}
+    WriterDataLifecycleQosPolicy()
+        : QosPolicy(false)
+        , autodispose_unregistered_instances(true)
+    {
+    }
+
+    virtual RTPS_DllAPI ~WriterDataLifecycleQosPolicy()
+    {
+    }
 
     bool operator ==(
             const WriterDataLifecycleQosPolicy& b) const
     {
         return (this->autodispose_unregistered_instances == b.autodispose_unregistered_instances);
     }
+
+    inline void clear() override
+    {
+        WriterDataLifecycleQosPolicy reset = WriterDataLifecycleQosPolicy();
+        std::swap(*this, reset);
+    }
+
 public:
+
     bool autodispose_unregistered_instances;
 
 };

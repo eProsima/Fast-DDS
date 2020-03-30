@@ -482,16 +482,16 @@ const WriterAttributes& DataWriterImpl::get_attributes() const
 ReturnCode_t DataWriterImpl::set_qos(
         const DataWriterQos& qos)
 {
-    if (!qos.checkQos())
+    if (!qos.check_qos())
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    else if (!qos_.canQosBeUpdated(qos))
+    else if (!qos_.can_qos_be_updated(qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.setQos(qos, false);
+    qos_.set_qos(qos, false);
     //Notify the participant that a Writer has changed its QOS
     WriterQos wqos = qos.get_writerqos(get_publisher()->get_qos());
     publisher_->rtps_participant()->updateWriter(writer_, topic_att_, wqos);

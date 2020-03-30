@@ -23,27 +23,174 @@ using namespace eprosima::fastdds::dds;
 
 const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
-void DataWriterQos::setQos(
+void DataWriterQos::set_qos(
         const DataWriterQos& qos,
         bool first_time)
 {
-    //TODO: Implement this function
-    (void)qos;
-    (void)first_time;
+    if (first_time && !(durability == qos.durability))
+    {
+        durability = qos.durability;
+        durability.hasChanged = true;
+    }
+    if (first_time && !(durability_service == qos.durability_service))
+    {
+        durability_service = qos.durability_service;
+        durability_service.hasChanged = true;
+    }
+    if (deadline.period != qos.deadline.period)
+    {
+        deadline = qos.deadline;
+        deadline.hasChanged = true;
+    }
+    if (latency_budget.duration != qos.latency_budget.duration)
+    {
+        latency_budget = qos.latency_budget;
+        latency_budget.hasChanged = true;
+    }
+    if (first_time && !(liveliness == qos.liveliness))
+    {
+        liveliness = qos.liveliness;
+        liveliness.hasChanged = true;
+    }
+    if (first_time && !(reliability == qos.reliability))
+    {
+        reliability = qos.reliability;
+        reliability.hasChanged = true;
+    }
+    if (first_time && !(destination_order == qos.destination_order))
+    {
+        destination_order = qos.destination_order;
+        destination_order.hasChanged = true;
+    }
+    if (first_time && !(history == qos.history))
+    {
+        history = qos.history;
+        history.hasChanged = true;
+    }
+    if (first_time && !(resource_limits == qos.resource_limits))
+    {
+        resource_limits = qos.resource_limits;
+        resource_limits.hasChanged = true;
+    }
+    if (transport_priority.value != qos.transport_priority.value)
+    {
+        transport_priority = qos.transport_priority;
+        transport_priority.hasChanged = true;
+    }
+    if (lifespan.duration != qos.lifespan.duration)
+    {
+        lifespan = qos.lifespan;
+        lifespan.hasChanged = true;
+    }
+    if (user_data.data_vec() != qos.user_data.data_vec())
+    {
+        user_data = qos.user_data;
+        user_data.hasChanged = true;
+    }
+    if (first_time && !(ownership == qos.ownership))
+    {
+        ownership = qos.ownership;
+        ownership.hasChanged = true;
+    }
+    if (qos.ownership_strength.value != ownership_strength.value)
+    {
+        ownership_strength = qos.ownership_strength;
+        ownership_strength.hasChanged = true;
+    }
+    if (writer_data_lifecycle.autodispose_unregistered_instances !=
+            qos.writer_data_lifecycle.autodispose_unregistered_instances)
+    {
+        writer_data_lifecycle = qos.writer_data_lifecycle;
+        writer_data_lifecycle.hasChanged = true;
+    }
+    if (first_time && !(disable_positive_acks == qos.disable_positive_acks))
+    {
+        disable_positive_acks = qos.disable_positive_acks;
+        disable_positive_acks.hasChanged = true;
+    }
+    // Writers only manages the first element in the list of data representations.
+    if (qos.representation.m_value.size() != representation.m_value.size() ||
+            (qos.representation.m_value.size() > 0 && representation.m_value.size() > 0 &&
+            *qos.representation.m_value.begin() != *representation.m_value.begin()))
+    {
+        representation = qos.representation;
+        representation.hasChanged = true;
+    }
 }
 
-bool DataWriterQos::checkQos() const
+bool DataWriterQos::check_qos() const
 {
-    //TODO: Implement this function
+    if (durability.kind == PERSISTENT_DURABILITY_QOS)
+    {
+        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
+        return false;
+    }
+    if (destination_order.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return false;
+    }
+    if (reliability.kind == BEST_EFFORT_RELIABILITY_QOS && ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
+        return false;
+    }
+    if (liveliness.kind == AUTOMATIC_LIVELINESS_QOS || liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        if (liveliness.lease_duration < eprosima::fastrtps::c_TimeInfinite &&
+                liveliness.lease_duration <= liveliness.announcement_period)
+        {
+            logError(DDS_QOS_CHECK, "DATAWRITERQOS: LeaseDuration <= announcement period.");
+            return false;
+        }
+    }
     return true;
 }
 
-bool DataWriterQos::canQosBeUpdated(
+bool DataWriterQos::can_qos_be_updated(
         const DataWriterQos& qos) const
 {
-    //TODO: Implement this function
-    (void)qos;
-    return true;
+    bool updatable = true;
+    if (durability.kind != qos.durability.kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a publisher.");
+    }
+
+    if (liveliness.kind !=  qos.liveliness.kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a publisher.");
+    }
+
+    if (liveliness.lease_duration != qos.liveliness.lease_duration)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a publisher.");
+    }
+
+    if (liveliness.announcement_period != qos.liveliness.announcement_period)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a publisher.");
+    }
+
+    if (reliability.kind != qos.reliability.kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a publisher.");
+    }
+    if (ownership.kind != qos.ownership.kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a publisher.");
+    }
+    if (destination_order.kind != qos.destination_order.kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a publisher.");
+    }
+    return updatable;
 }
 
 WriterQos DataWriterQos::get_writerqos(
