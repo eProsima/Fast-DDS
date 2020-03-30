@@ -22,6 +22,7 @@
 #define OMG_DDS_CORE_DURATION_HPP_
 
 #include <dds/core/types.hpp>
+#include <dds/core/Value.hpp>
 #include <dds/core/detail/Duration.hpp>
 
 namespace dds {
