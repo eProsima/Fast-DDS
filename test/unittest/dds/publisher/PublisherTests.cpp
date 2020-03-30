@@ -20,6 +20,8 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/DataWriterQos.hpp>
 #include <dds/core/types.hpp>
 
 namespace eprosima {
@@ -41,6 +43,24 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
 
     DataWriterQos wqos;
     publisher->get_default_datawriter_qos(wqos);
+
+    ASSERT_EQ(qos, wqos);
+    ASSERT_EQ(wqos.reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
+}
+
+TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant, PUBLISHER_QOS_DEFAULT);
+
+    ::dds::pub::qos::DataWriterQos qos = publisher.default_datawriter_qos();
+    ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
+
+    qos.reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+
+    ASSERT_NO_THROW(publisher.default_datawriter_qos(qos));
+
+    ::dds::pub::qos::DataWriterQos wqos = publisher.default_datawriter_qos();
 
     ASSERT_EQ(qos, wqos);
     ASSERT_EQ(wqos.reliability.kind, BEST_EFFORT_RELIABILITY_QOS);

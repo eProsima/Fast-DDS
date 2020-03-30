@@ -85,7 +85,10 @@ Publisher::~Publisher()
 Publisher& Publisher::default_datawriter_qos(
         const qos::DataWriterQos& dwqos)
 {
-    delegate()->set_default_datawriter_qos(dwqos);
+    if (delegate()->set_default_datawriter_qos(dwqos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
     return *this;
 }
 
