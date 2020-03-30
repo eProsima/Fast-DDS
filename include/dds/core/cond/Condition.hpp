@@ -102,7 +102,6 @@ public:
             Functor& func)
     {
         //To implement
-        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
         //    this->delegate()->set_handler(func);
 
     }
@@ -113,7 +112,6 @@ public:
             const Functor& func)
     {
         //To implement
-        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
         //        this->delegate()->set_handler(func);
     }
 
@@ -129,7 +127,6 @@ public:
     OMG_DDS_API void reset_handler()
     {
         //To implement
-        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
         //    this->delegate()->reset_handler();
     }
 
@@ -145,7 +142,6 @@ public:
     OMG_DDS_API void dispatch()
     {
         //To implement
-        //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
         //    this->delegate()->dispatch();
     }
 
