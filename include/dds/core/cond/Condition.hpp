@@ -56,10 +56,11 @@ class TCondition : public virtual Reference<DELEGATE>
 {
 public:
 
-    OMG_DDS_REF_TYPE_PROTECTED_DC(
+    OMG_DDS_REF_TYPE_DELEGATE_C(
         TCondition,
         dds::core::Reference,
         DELEGATE)
+
 
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
         TCondition,
