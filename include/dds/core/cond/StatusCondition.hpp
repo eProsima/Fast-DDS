@@ -247,8 +247,6 @@ public:
 
 };
 
-typedef detail::StatusCondition StatusCondition;
-
 } //namespace cond
 } //namespace core
 } //namespace dds

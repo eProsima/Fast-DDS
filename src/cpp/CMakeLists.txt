@@ -151,6 +151,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/core/policy/ParameterList.cpp
     fastdds/core/policy/ParameterTypes.cpp
     fastdds/core/policy/QosPolicies.cpp
+    fastdds/core/conditions/StatusCondition.cpp
     fastdds/topic/qos/WriterQos.cpp
     fastdds/topic/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp

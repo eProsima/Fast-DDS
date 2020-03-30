@@ -60,16 +60,7 @@ public:
      * @return true if the statuses are set.
      */
     RTPS_DllAPI ReturnCode_t set_enabled_statuses(
-            StatusMask mask)
-    {
-        enabled_statuses_ = mask;
-
-        //Recalculate the trigger_value with the new mask
-        StatusMask changed_statuses = entity_->get_status_changes();
-        trigger_value_ = (changed_statuses & mask).any();
-
-        return ReturnCode_t::RETCODE_OK;
-    }
+            StatusMask mask);
 
     /**
      * @brief This operation retrieves the list of statuses that are taken into account
