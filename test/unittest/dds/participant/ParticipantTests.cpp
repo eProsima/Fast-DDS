@@ -21,6 +21,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
@@ -126,6 +127,27 @@ TEST(ParticipantTests, CreatePSMSubscriber)
     subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_NE(subscriber, ::dds::core::null);
+}
+
+TEST(ParticipantTests, ChangeDefaultTopicQos)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    TopicQos qos;
+    participant->get_default_topic_qos(qos);
+
+    ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
+
+    ReliabilityQosPolicy reliability = qos.reliability();
+    reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    qos.reliability(reliability);
+
+    ASSERT_TRUE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    TopicQos tqos;
+    participant->get_default_topic_qos(tqos);
+
+    ASSERT_EQ(qos, tqos);
+    ASSERT_EQ(tqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
 }
 
 } // namespace dds
