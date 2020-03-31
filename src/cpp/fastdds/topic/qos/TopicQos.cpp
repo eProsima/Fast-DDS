@@ -23,28 +23,155 @@ using namespace eprosima::fastdds::dds;
 
 const TopicQos eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
 
-/* TODO: Implement this method
-void TopicQos::setQos(const TopicQos& qos, bool first_time)
+TopicQos::TopicQos()
 {
-    //TODO: Implement this function
-    (void)qos;
-    (void)first_time;
+    reliability_.kind = RELIABLE_RELIABILITY_QOS;
+    durability_.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
-*/
 
-/* TODO: Implement this method
-bool TopicQos::checkQos() const
+void TopicQos::set_qos(
+        const TopicQos& qos,
+        bool first_time)
 {
-    //TODO: Implement this function
+    if (first_time && !(durability_ == qos.durability()))
+    {
+        durability_ = qos.durability();
+        durability_.hasChanged = true;
+    }
+    if (first_time && !(durability_service_ == qos.durability_service()))
+    {
+        durability_service_ = qos.durability_service();
+        durability_service_.hasChanged = true;
+    }
+    if (deadline_.period != qos.deadline().period)
+    {
+        deadline_ = qos.deadline();
+        deadline_.hasChanged = true;
+    }
+    if (latency_budget_.duration != qos.latency_budget().duration)
+    {
+        latency_budget_ = qos.latency_budget();
+        latency_budget_.hasChanged = true;
+    }
+    if (first_time && !(liveliness_ == qos.liveliness()))
+    {
+        liveliness_ = qos.liveliness();
+        liveliness_.hasChanged = true;
+    }
+    if (first_time && !(reliability_ == qos.reliability()))
+    {
+        reliability_ = qos.reliability();
+        reliability_.hasChanged = true;
+    }
+    if (first_time && !(destination_order_ == qos.destination_order()))
+    {
+        destination_order_ = qos.destination_order();
+        destination_order_.hasChanged = true;
+    }
+    if (first_time && !(history_ == qos.history()))
+    {
+        history_ = qos.history_;
+        history_.hasChanged = true;
+    }
+    if (first_time && !(resource_limits_ == qos.resource_limits()))
+    {
+        resource_limits_ = qos.resource_limits();
+        resource_limits_.hasChanged = true;
+    }
+    if (transport_priority_.value != qos.transport_priority().value)
+    {
+        transport_priority_ = qos.transport_priority();
+        transport_priority_.hasChanged = true;
+    }
+    if (lifespan_.duration != qos.lifespan().duration)
+    {
+        lifespan_ = qos.lifespan();
+        lifespan_.hasChanged = true;
+    }
+    if (first_time && !(ownership_ == qos.ownership()))
+    {
+        ownership_ = qos.ownership();
+        ownership_.hasChanged = true;
+    }
+    if (topic_data_.getValue() != qos.topic_data().getValue())
+    {
+        topic_data_ = qos.topic_data();
+        topic_data_.hasChanged = true;
+    }
+}
+
+bool TopicQos::check_qos() const
+{
+    if (durability_.kind == PERSISTENT_DURABILITY_QOS)
+    {
+        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
+        return false;
+    }
+    if (destination_order_.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return false;
+    }
+    if (reliability_.kind == BEST_EFFORT_RELIABILITY_QOS && ownership_.kind == EXCLUSIVE_OWNERSHIP_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
+        return false;
+    }
+    if (liveliness_.kind == AUTOMATIC_LIVELINESS_QOS || liveliness_.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        if (liveliness_.lease_duration < eprosima::fastrtps::c_TimeInfinite &&
+                liveliness_.lease_duration <= liveliness_.announcement_period)
+        {
+            logError(DDS_QOS_CHECK, "DATAWRITERQOS: LeaseDuration <= announcement period.");
+            return false;
+        }
+    }
     return true;
 }
-*/
 
-/* TODO: Implement this method
-bool TopicQos::canQosBeUpdated(const TopicQos& qos) const
+bool TopicQos::can_qos_be_updated(
+        const TopicQos& qos) const
 {
-    //TODO: Implement this function
-    (void)qos;
-    return true;
+    bool updatable = true;
+    if (durability_.kind != qos.durability().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a publisher.");
+    }
+
+    if (liveliness_.kind !=  qos.liveliness().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a publisher.");
+    }
+
+    if (liveliness_.lease_duration != qos.liveliness().lease_duration)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a publisher.");
+    }
+
+    if (liveliness_.announcement_period != qos.liveliness().announcement_period)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a publisher.");
+    }
+
+    if (reliability_.kind != qos.reliability().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a publisher.");
+    }
+    if (ownership_.kind != qos.ownership().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a publisher.");
+    }
+    if (destination_order_.kind != qos.destination_order().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a publisher.");
+    }
+    return updatable;
+
 }
-*/
