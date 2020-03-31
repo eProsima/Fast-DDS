@@ -150,6 +150,24 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
     ASSERT_EQ(tqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
 }
 
+TEST(ParticipantTests, ChangePSMDefaultTopicQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::topic::qos::TopicQos qos = participant.default_topic_qos();
+
+    ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
+
+    OwnershipQosPolicy ownership = qos.ownership();
+    ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
+    qos.ownership(ownership);
+
+    ASSERT_NO_THROW(participant.default_topic_qos(qos));
+
+    ::dds::topic::qos::TopicQos tqos = participant.default_topic_qos();
+    ASSERT_EQ(qos, tqos);
+    ASSERT_EQ(tqos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
