@@ -71,17 +71,6 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
         maxMessageSize = max_message_size;
     }
 
-    RTPS_DllAPI OverflowPolicy port_overflow_policy() const
-    {
-        return port_overflow_policy_;
-    }
-
-    RTPS_DllAPI void port_overflow_policy(
-            OverflowPolicy port_overflow_policy)
-    {
-        port_overflow_policy_ = port_overflow_policy;
-    }
-
     RTPS_DllAPI uint32_t port_queue_capacity() const
     {
         return port_queue_capacity_;
@@ -91,17 +80,6 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
             uint32_t port_queue_capacity)
     {
         port_queue_capacity_ = port_queue_capacity;
-    }
-
-    RTPS_DllAPI OverflowPolicy segment_overflow_policy() const
-    {
-        return segment_overflow_policy_;
-    }
-
-    RTPS_DllAPI void segment_overflow_policy(
-            OverflowPolicy segment_overflow_policy)
-    {
-        segment_overflow_policy_ = segment_overflow_policy;
     }
 
     RTPS_DllAPI uint32_t healthy_check_timeout_ms() const
@@ -130,8 +108,6 @@ private:
 
     uint32_t segment_size_;
     uint32_t port_queue_capacity_;
-    OverflowPolicy port_overflow_policy_;
-    OverflowPolicy segment_overflow_policy_;
     uint32_t healthy_check_timeout_ms_;
     std::string rtps_dump_file_;
 

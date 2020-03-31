@@ -47,6 +47,19 @@ using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using PortParameters = fastrtps::rtps::PortParameters;
 
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+    
+static constexpr SharedMemTransportDescriptor::OverflowPolicy shm_default_overflow_policy =
+            SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
+
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
+
+
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
     return new SharedMemTransport(*this);
@@ -210,7 +223,7 @@ bool SharedMemTransport::init()
 {
     try
     {
-        switch (configuration_.port_overflow_policy())
+        switch (shm_default_overflow_policy)
         {
         case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
             push_lambda_ = &SharedMemTransport::push_discard;
@@ -222,7 +235,7 @@ bool SharedMemTransport::init()
             throw std::runtime_error("unknown port_overflow_policy");
         }
 
-        switch (configuration_.segment_overflow_policy())
+        switch (shm_default_overflow_policy)
         {
         case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
         case SharedMemTransportDescriptor::OverflowPolicy::FAIL:
@@ -421,7 +434,7 @@ bool SharedMemTransport::send(
 
         // Segment overflow with discard policy doesn't return error.
         if (!shared_buffer &&
-                configuration_.segment_overflow_policy() == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
+                shm_default_overflow_policy == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
         {
             ret = true;
         }
