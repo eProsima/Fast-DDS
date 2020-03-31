@@ -22,13 +22,14 @@
 
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/topic/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
 class HelloWorldPublisher
 {
 public:
+
     HelloWorldPublisher();
 
     virtual ~HelloWorldPublisher();
@@ -46,6 +47,7 @@ public:
             uint32_t sleep);
 
 private:
+
     HelloWorld hello_;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
@@ -58,14 +60,17 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-    public:
+public:
+
         PubListener()
             : matched_(0)
             , firstConnected_(false)
-        {}
+        {
+        }
 
         ~PubListener() override
-        {}
+        {
+        }
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
@@ -74,7 +79,7 @@ private:
         int matched_;
 
         bool firstConnected_;
-    }listener_;
+    } listener_;
 
     void runThread(
             uint32_t number,

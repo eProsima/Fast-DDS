@@ -35,8 +35,8 @@
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
-#include <fastdds/dds/topic/DataReader.hpp>
-#include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
@@ -145,7 +145,6 @@ DomainParticipantImpl::~DomainParticipantImpl()
     participant_ = nullptr;
 }
 
-
 ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
@@ -217,26 +216,26 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
     if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
     if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
     if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Remote Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT, "Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
@@ -276,52 +275,52 @@ Publisher* DomainParticipantImpl::create_publisher(
 }
 
 /* TODO
-Subscriber* DomainParticipantImpl::get_builtin_subscriber()
-{
+   Subscriber* DomainParticipantImpl::get_builtin_subscriber()
+   {
     logError(PARTICIPANT, "Not implemented.");
     return nullptr;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_participant(
+   bool DomainParticipantImpl::ignore_participant(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_topic(
+   bool DomainParticipantImpl::ignore_topic(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_publication(
+   bool DomainParticipantImpl::ignore_publication(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_subscription(
+   bool DomainParticipantImpl::ignore_subscription(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 uint8_t DomainParticipantImpl::get_domain_id() const
 {
@@ -329,12 +328,12 @@ uint8_t DomainParticipantImpl::get_domain_id() const
 }
 
 /* TODO
-bool DomainParticipantImpl::delete_contained_entities()
-{
+   bool DomainParticipantImpl::delete_contained_entities()
+   {
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
@@ -395,24 +394,24 @@ const fastdds::dds::SubscriberQos& DomainParticipantImpl::get_default_subscriber
 }
 
 /* TODO
-bool DomainParticipantImpl::get_discovered_participants(
+   bool DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
-{
+   {
     (void)participant_handles;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::get_discovered_topics(
+   bool DomainParticipantImpl::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
-{
+   {
     (void)topic_handles;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 bool DomainParticipantImpl::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle,
@@ -505,26 +504,26 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         if (att.getUserDefinedID() <= 0)
         {
-            logError(PARTICIPANT,"Static EDP requires user defined Id");
+            logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
     if (!att.unicastLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Unicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Unicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
     if (!att.multicastLocatorList.isValid())
     {
-        logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, " Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
     if (!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
+        logError(PARTICIPANT, "Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
@@ -562,7 +561,6 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 
     return sub;
 }
-
 
 const TypeSupport DomainParticipantImpl::find_type(
         const std::string& type_name) const
@@ -609,7 +607,7 @@ bool DomainParticipantImpl::register_type(
 }
 
 bool DomainParticipantImpl::register_dynamic_type_to_factories(
-    const std::string& type_name) const
+        const std::string& type_name) const
 {
     using namespace  eprosima::fastrtps::types;
     TypeSupport t = find_type(type_name);
@@ -632,8 +630,8 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
             dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
             // Minimal too
             dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
-            const TypeIdentifier *type_id2 = objectFactory->get_type_identifier(dpst->getName());
-            const TypeObject *type_obj = objectFactory->get_type_object(dpst->getName());
+            const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
+            const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
             if (type_id2 == nullptr)
             {
                 logError(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
@@ -643,8 +641,8 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
                 objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
 
                 // Complete, just to make sure it is generated
-                const TypeIdentifier *type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
-                const TypeObject *type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
+                const TypeIdentifier* type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
+                const TypeObject* type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
                 objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
                 return true;
             }
@@ -716,6 +714,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
     }
 }
+
 #endif
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
@@ -783,7 +782,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         if (type_information.complete().typeid_with_size().type_id()._d() > 0
-            || type_information.minimal().typeid_with_size().type_id()._d() > 0)
+                || type_information.minimal().typeid_with_size().type_id()._d() > 0)
         {
             participant_->listener_->on_type_information_received(
                 participant_->participant_, topic_name, type_name, type_information);
@@ -976,7 +975,8 @@ bool DomainParticipantImpl::check_get_type_request(
             if (pending != parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
             {
                 fastrtps::types::DynamicType_ptr dynamic =
-                    fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier, object);
+                        fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier,
+                                object);
 
                 if (nullptr != dynamic)
                 {
@@ -1244,11 +1244,11 @@ std::string DomainParticipantImpl::get_inner_type_name(
     ss << "type_" << id.writer_guid() << "_" << id.sequence_number();
     std::string str = ss.str();
     std::transform(str.begin(), str.end(), str.begin(),
-       [](unsigned char c)
-       {
-           return static_cast<char>(std::tolower(c));
-       });
+            [](unsigned char c)
+    {
+        return static_cast<char>(std::tolower(c));
+    });
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
-    std::replace(str.begin(), str.end(), '|' ,'_');
+    std::replace(str.begin(), str.end(), '|', '_');
     return str;
 }

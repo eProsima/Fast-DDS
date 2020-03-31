@@ -20,7 +20,7 @@
 #ifndef READERQOS_H_
 #define READERQOS_H_
 
-#include <fastdds/dds/topic/qos/ReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 
 #include <fastrtps/qos/QosPolicies.h>  // Needed for old enum constant values
 

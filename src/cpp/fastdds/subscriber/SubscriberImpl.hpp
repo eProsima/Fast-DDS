@@ -23,7 +23,7 @@
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include <fastdds/dds/topic/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -205,9 +205,12 @@ public:
         SubscriberReaderListener(
                 SubscriberImpl* s)
             : subscriber_(s)
-        {}
+        {
+        }
 
-        virtual ~SubscriberReaderListener() override {}
+        virtual ~SubscriberReaderListener() override
+        {
+        }
 
         void on_data_available(
                 DataReader* reader) override;

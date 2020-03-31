@@ -22,7 +22,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -122,12 +122,12 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     {
         n_matched = info.total_count;
         firstConnected = true;
-        std::cout << "Publisher matched"<<std::endl;
+        std::cout << "Publisher matched" << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         n_matched = info.total_count;
-        std::cout << "Publisher unmatched"<<std::endl;
+        std::cout << "Publisher unmatched" << std::endl;
     }
     else
     {
@@ -228,11 +228,11 @@ void HelloWorldPublisher::run(
 bool HelloWorldPublisher::publish(
         bool waitForListener)
 {
-    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);
-        m_Hello->set_uint32_value(index+1, 1);
+        m_Hello->set_uint32_value(index + 1, 1);
 
         eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
         array->set_uint32_value(10 + index, array->get_array_index({0, 0}));

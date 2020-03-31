@@ -24,7 +24,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -49,10 +49,12 @@ public:
     ParListener(
             bool exit_on_lost_liveliness)
         : exit_on_lost_liveliness_(exit_on_lost_liveliness)
-    {}
+    {
+    }
 
     virtual ~ParListener() override
-    {}
+    {
+    }
 
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant
@@ -106,6 +108,7 @@ public:
                 " unauthorized participant " << info.guid << std::endl;
         }
     }
+
 #endif
 
 private:
@@ -119,10 +122,12 @@ public:
 
     PubListener()
         : matched_(0)
-    {}
+    {
+    }
 
     ~PubListener() override
-    {}
+    {
+    }
 
     void on_publication_matched(
             Publisher* /*publisher*/,
@@ -225,11 +230,11 @@ int main(
     }
 
     /* TODO - XMLProfileManager doesn't support DDS yet
-    if (xml_file)
-    {
+       if (xml_file)
+       {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
-    }
-    */
+       }
+     */
 
     xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
 
@@ -239,7 +244,7 @@ int main(
     participant_attributes.rtps.builtin.domainId = seed % 230;
     ParListener participant_listener(exit_on_lost_liveliness);
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
+            DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
 
     if (participant == nullptr)
     {

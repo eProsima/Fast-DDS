@@ -20,7 +20,7 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
-#include <fastdds/dds/topic/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
 #include <fastrtps/types/DynamicPubSubType.h>
@@ -29,6 +29,7 @@
 class TypeLookupPublisher
 {
 public:
+
     TypeLookupPublisher();
 
     virtual ~TypeLookupPublisher();
@@ -46,6 +47,7 @@ public:
             uint32_t sleep);
 
 private:
+
     eprosima::fastrtps::types::DynamicData_ptr m_Hello;
 
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
@@ -58,13 +60,17 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-    public:
+public:
+
         PubListener()
             : n_matched(0)
             , firstConnected(false)
-        {}
+        {
+        }
 
-        ~PubListener() override {}
+        ~PubListener() override
+        {
+        }
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,

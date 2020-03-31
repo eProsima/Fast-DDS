@@ -20,7 +20,7 @@
 #ifndef WRITERQOS_H_
 #define WRITERQOS_H_
 
-#include <fastdds/dds/topic/qos/WriterQos.hpp>
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
 
 #include <fastrtps/qos/QosPolicies.h>  // Needed for old enum constant values
 

@@ -85,14 +85,14 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/subscriber/Subscriber.cpp
     fastrtps_deprecated/subscriber/SubscriberImpl.cpp
     fastrtps_deprecated/subscriber/SubscriberHistory.cpp
-    fastdds/topic/DataReader.cpp
-    fastdds/topic/DataWriter.cpp
-    fastdds/topic/DataReaderImpl.cpp
-    fastdds/topic/DataWriterImpl.cpp
+    fastdds/subscriber/DataReader.cpp
+    fastdds/publisher/DataWriter.cpp
+    fastdds/subscriber/DataReaderImpl.cpp
+    fastdds/publisher/DataWriterImpl.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/topic/qos/TopicQos.cpp
-    fastdds/topic/qos/DataWriterQos.cpp
-    fastdds/topic/qos/DataReaderQos.cpp
+    fastdds/publisher/qos/DataWriterQos.cpp
+    fastdds/subscriber/qos/DataReaderQos.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/publisher/PublisherImpl.cpp
     fastdds/publisher/qos/PublisherQos.cpp
@@ -153,8 +153,8 @@ set(${PROJECT_NAME}_source_files
     fastdds/core/policy/ParameterList.cpp
     fastdds/core/policy/ParameterTypes.cpp
     fastdds/core/policy/QosPolicies.cpp
-    fastdds/topic/qos/WriterQos.cpp
-    fastdds/topic/qos/ReaderQos.cpp
+    fastdds/publisher/qos/WriterQos.cpp
+    fastdds/subscriber/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp

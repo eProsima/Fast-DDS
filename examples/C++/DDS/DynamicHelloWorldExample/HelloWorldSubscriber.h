@@ -22,8 +22,8 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/topic/DataReader.hpp>
-#include <fastdds/dds/topic/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/rtps/common/Types.h>
 
@@ -37,6 +37,7 @@
 class HelloWorldSubscriber
 {
 public:
+
     HelloWorldSubscriber();
 
     virtual ~HelloWorldSubscriber();
@@ -54,6 +55,7 @@ public:
     eprosima::fastdds::dds::DomainParticipant* participant();
 
 private:
+
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
 
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
@@ -71,19 +73,24 @@ private:
     std::mutex mutex_;
 
 public:
+
     class SubListener
         : public eprosima::fastdds::dds::DataReaderListener
         , public eprosima::fastdds::dds::DomainParticipantListener
     {
-    public:
+public:
+
         SubListener(
                 HelloWorldSubscriber* sub)
             : n_matched(0)
             , n_samples(0)
             , subscriber_(sub)
-        {}
+        {
+        }
 
-        ~SubListener() override {}
+        ~SubListener() override
+        {
+        }
 
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
