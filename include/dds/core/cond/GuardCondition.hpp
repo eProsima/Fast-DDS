@@ -79,7 +79,7 @@ public:
      * @throw  dds::core::Exception
      */
     GuardCondition()
-        : dds::core::Reference<detail::GuardCondition>(
+        : Reference<detail::GuardCondition>(
             new detail::GuardCondition())
     {
     }
@@ -110,7 +110,7 @@ public:
     }
 
     /**
-     * @copydoc dds::core::cond::TGuardCondition::TGuardCondition(FUN& functor)
+     * @copydoc dds::core::cond::GuardCondition::GuardCondition(FUN& functor)
      */
     template<typename FUN>
     GuardCondition(
@@ -148,13 +148,9 @@ public:
         delegate()->set_trigger_value(value);
     }
 
-    /**
-     * @copydoc dds::core::cond::TCondition::trigger_value()
-     */
-    bool trigger_value()
-    {
-        return TCondition<detail::GuardCondition>::trigger_value();
-    }
+    //Redeclaration of base class trigger value to overcome name hiding
+    using TCondition<detail::GuardCondition>::trigger_value;
+
 };
 
 

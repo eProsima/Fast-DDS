@@ -24,8 +24,8 @@
 #include <dds/core/cond/detail/Condition.hpp>
 
 #include <dds/core/Reference.hpp>
-#include <dds/core/cond/detail/GuardCondition.hpp>
-#include <dds/core/cond/detail/StatusCondition.hpp>
+//#include <dds/core/cond/GuardCondition.hpp>
+//#include <dds/core/cond/StatusCondition.hpp>
 //#include <dds/sub/cond/detail/ReadCondition.hpp>
 //#include <dds/sub/cond/detail/QueryCondition.hpp>
 
@@ -61,15 +61,18 @@ public:
         dds::core::Reference,
         DELEGATE)
 
+    OMG_DDS_IMPLICIT_REF_BASE(
+        TCondition)
 
-    OMG_DDS_EXPLICIT_REF_BASE_DECL(
+/*
+    OMG_DDS_EXPLICIT_REF_BASE(
         TCondition,
         detail::StatusCondition)
 
-    OMG_DDS_EXPLICIT_REF_BASE_DECL(
+    OMG_DDS_EXPLICIT_REF_BASE(
         TCondition,
         detail::GuardCondition)
-
+*/
 /*
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
         TCondition,
@@ -163,8 +166,9 @@ public:
 
 };
 
-
 typedef TCondition<detail::Condition> Condition;
+
+
 
 } //namespace cond
 } //namespace core
