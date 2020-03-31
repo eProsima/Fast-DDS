@@ -145,17 +145,20 @@ DomainParticipant& DomainParticipant::default_publisher_qos(
 //    return *this;
 //}
 
-//dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
-//{
-//    return this->delegate()->get_default_topic_qos();
-//}
+dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
+{
+    return this->delegate()->get_default_topic_qos();
+}
 
-//DomainParticipant& DomainParticipant::default_topic_qos(
-//        const dds::topic::qos::TopicQos& qos)
-//{
-//    this->delegate()->set_default_topic_qos(qos);
-//    return *this;
-//}
+DomainParticipant& DomainParticipant::default_topic_qos(
+        const dds::topic::qos::TopicQos& qos)
+{
+    if (this->delegate()->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    return *this;
+}
 
 //DomainParticipant& DomainParticipant::operator <<(
 //        const dds::domain::qos::DomainParticipantQos& qos)
