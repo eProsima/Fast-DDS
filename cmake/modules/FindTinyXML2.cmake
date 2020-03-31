@@ -5,11 +5,21 @@
 option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast RTPS" OFF)
 
 if(NOT (TINYXML2_FROM_SOURCE OR THIRDPARTY))
-    find_package(TinyXML2 CONFIG QUIET)
+    if(DEFINED ENV{ROS_DISTRO})
+        set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${ROS_PACKAGE_PATH}/tinyxml2_vendor/cmake/Modules/FindTinyXML2.cmake")
+        find_package(TinyXML2 CONFIG QUIET)
+    else()
+        find_path(TINYXML2_INCLUDE_DIR "tinyxml2.h")
+        find_library(TinyXML2_LIBRARIES NAMES "tinyxml2")
+
+        if(TINYXML2_INCLUDE_DIR AND TinyXML2_LIBRARIES)
+            set(TinyXML2_FOUND TRUE CACHE BOOL "TinyXML2 was found or not" FORCE)
+        endif()
+    endif()
 endif()
 
 if(TinyXML2_FOUND AND NOT THIRDPARTY)
-    message(STATUS "Found TinyXML2: ${TinyXML2_DIR}")
+    message(STATUS "Found TinyXML2: ${TINYXML2_INCLUDE_DIR}")
     if(NOT TINYXML2_LIBRARY)
         # in this case, we're probably using TinyXML2 version 5.0.0 or greater
         # in which case tinyxml2 is an exported target and we should use that
