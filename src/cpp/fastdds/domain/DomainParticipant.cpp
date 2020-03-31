@@ -195,6 +195,24 @@ ReturnCode_t DomainParticipant::get_default_subscriber_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DomainParticipant::set_default_topic_qos(
+        const TopicQos& qos)
+{
+    return impl_->set_default_topic_qos(qos);
+}
+
+const TopicQos& DomainParticipant::get_default_topic_qos() const
+{
+    return impl_->get_default_topic_qos();
+}
+
+ReturnCode_t DomainParticipant::get_default_topic_qos(
+        TopicQos& qos) const
+{
+    qos = impl_->get_default_topic_qos();
+    return ReturnCode_t::RETCODE_OK;
+}
+
 /* TODO
    bool DomainParticipant::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const

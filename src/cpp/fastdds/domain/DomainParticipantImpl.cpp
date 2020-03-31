@@ -363,6 +363,26 @@ const fastdds::dds::SubscriberQos& DomainParticipantImpl::get_default_subscriber
     return default_sub_qos_;
 }
 
+ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
+        const TopicQos& qos)
+{
+    if (&qos == &TOPIC_QOS_DEFAULT)
+    {
+        default_topic_qos_.set_qos(TOPIC_QOS_DEFAULT, true);
+    }
+    else if (qos.check_qos())
+    {
+        default_topic_qos_.set_qos(qos, true);
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+}
+
+const TopicQos& DomainParticipantImpl::get_default_topic_qos() const
+{
+    return default_topic_qos_;
+}
+
 /* TODO
    bool DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
