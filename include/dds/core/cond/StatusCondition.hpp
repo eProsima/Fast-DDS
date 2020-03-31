@@ -92,24 +92,6 @@ public:
      * The StatusCondition can then be added to a dds::core::cond::WaitSet so that the
      * application can wait for specific status changes that affect the Entity.
      *
-     * @param  e The Entity to associate with the StatusCondition.
-     * @throw  dds::core::Exception
-     */
-    StatusCondition(
-            const dds::core::Entity& e)
-        : dds::core::Reference<detail::StatusCondition>(
-            new detail::StatusCondition(&e))
-    {
-
-    }
-
-
-    /**
-     * Create a dds::core::cond::StatusCondition associated with an Entity.
-     *
-     * The StatusCondition can then be added to a dds::core::cond::WaitSet so that the
-     * application can wait for specific status changes that affect the Entity.
-     *
      * The supplied functor will be called when this StatusCondition is triggered
      * and either the inherited dds::core::cond::Condition::dispatch() is called or the
      * dds::core::cond::WaitSet::dispatch() on the WaitSet to which this StatusCondition is
