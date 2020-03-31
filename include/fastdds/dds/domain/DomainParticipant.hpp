@@ -68,6 +68,7 @@ class PublisherListener;
 class Subscriber;
 class SubscriberQos;
 class SubscriberListener;
+class TopicQos;
 
 /**
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
@@ -310,7 +311,46 @@ public:
     RTPS_DllAPI ReturnCode_t get_default_subscriber_qos(
             SubscriberQos& qos) const;
 
-    // TODO Get/Set default Topic Qos
+
+    /**
+     * This operation sets a default value of the Topic QoS policies which will be used for newly created
+     * Topic entities in the case where the QoS policies are defaulted in the create_topic operation.
+     *
+     * This operation will check that the resulting policies are self consistent; if they are not, the operation
+     * will have no effect and return INCONSISTENT_POLICY.
+     *
+     * The special value TOPIC_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
+     * should be reset back to the initial values the factory would use, that is the values that would be used
+     * if the set_default_topic_qos operation had never been called.
+     * @param qos
+     * @return if given qos was applied as default.
+     */
+    ReturnCode_t set_default_topic_qos(
+            const TopicQos& qos);
+
+    /**
+     * This operation retrieves the default value of the Topic QoS, that is, the QoS policies that will be used
+     * for newly created Topic entities in the case where the QoS policies are defaulted in the create_topic
+     * operation.
+     *
+     * The values retrieved get_default_topic_qos will match the set of values specified on the last successful
+     * call to set_default_topic_qos, or else, if the call was never made.
+     * @return Current default topic qos.
+     */
+    const TopicQos& get_default_topic_qos() const;
+
+    /**
+     * This operation retrieves the default value of the Topic QoS, that is, the QoS policies that will be used
+     * for newly created Topic entities in the case where the QoS policies are defaulted in the create_topic
+     * operation.
+     *
+     * The values retrieved get_default_topic_qos will match the set of values specified on the last successful
+     * call to set_default_topic_qos, or else, if the call was never made.
+     * @param qos
+     * @return Always true.
+     */
+    ReturnCode_t get_default_topic_qos(
+            TopicQos& qos) const;
 
     /* TODO
        bool get_discovered_participants(
