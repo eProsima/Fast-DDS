@@ -22,6 +22,7 @@
 #include <dds/core/cond/WaitSet.hpp>
 #include <fastdds/dds/core/conditions/GuardCondition.hpp>
 #include <dds/core/cond/GuardCondition.hpp>
+#include <dds/core/Exception.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -39,7 +40,7 @@ protected:
 
     void TearDown() override
     {
-        if (thread_->joinable())
+        if (thread_ != nullptr && thread_->joinable())
         {
             thread_->join();
         }
@@ -100,18 +101,91 @@ private:
     std::thread* thread_;
 };
 
+class WaitsetPSMTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        thread_ = nullptr;
+        waiting_ = false;
+        timeout_ = ::dds::core::Duration(10, 0);
+    }
 
+    void TearDown() override
+    {
+        if (thread_ != nullptr && thread_->joinable())
+        {
+            thread_->join();
+        }
+        delete thread_;
+
+        active_conditions_.clear();
+    }
+
+    void run ()
+    {
+        std::unique_lock<std::mutex> guard(mtx_);
+        waiting_ = true;
+        guard.unlock();
+        cv_.notify_one();
+
+        ws_.wait(active_conditions_, timeout_);
+
+        guard.lock();
+        waiting_ = false;
+        guard.unlock();
+        cv_.notify_one();
+    }
+
+    bool start_waitset_wait(std::chrono::milliseconds timeout = std::chrono::seconds(1))
+    {
+        std::unique_lock<std::mutex> guard(mtx_);
+        if (waiting_)
+        {
+            return true;
+        }
+        thread_ = new std::thread(&WaitsetPSMTest::run, this);
+        return cv_.wait_for(guard, timeout, [&]()
+                {
+                    return waiting_;
+                });
+    }
+
+    bool wait_for_waitset_exit(std::chrono::milliseconds timeout = std::chrono::seconds(1))
+    {
+        std::unique_lock<std::mutex> guard(mtx_);
+        if (!waiting_)
+        {
+            return true;
+        }
+
+        return cv_.wait_for(guard, timeout, [&]()
+                {
+                    return !waiting_;
+                });
+    }
+
+    bool waiting_;
+    ::dds::core::cond::WaitSet::ConditionSeq active_conditions_;
+    ::dds::core::Duration timeout_;
+    ::dds::core::cond::WaitSet ws_;
+    std::condition_variable cv_;
+    std::mutex mtx_;
+
+private:
+    std::thread* thread_;
+};
 
 TEST_F(WaitsetTest, AttachingTriggeredConditionExitsWaitStatus)
 {
-    GuardCondition false_cond;
-    ASSERT_EQ(ws_.attach_condition(&false_cond), ReturnCode_t::RETCODE_OK);
+    std::shared_ptr<GuardCondition> false_cond = std::make_shared<GuardCondition>();
+    ASSERT_EQ(ws_.attach_condition(false_cond), ReturnCode_t::RETCODE_OK);
 
     start_waitset_wait();
 
-    GuardCondition true_cond;
-    ASSERT_EQ(true_cond.set_trigger_value(true), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(ws_.attach_condition(&true_cond), ReturnCode_t::RETCODE_OK);
+    std::shared_ptr<GuardCondition> true_cond = std::make_shared<GuardCondition>();
+    ASSERT_EQ(true_cond->set_trigger_value(true), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(ws_.attach_condition(true_cond), ReturnCode_t::RETCODE_OK);
 
     if (!wait_for_waitset_exit())
     {
@@ -119,20 +193,20 @@ TEST_F(WaitsetTest, AttachingTriggeredConditionExitsWaitStatus)
     }
 
     ASSERT_EQ(active_conditions_.size(), 1);
-    ASSERT_EQ(active_conditions_[0], &true_cond);
+    ASSERT_EQ(active_conditions_[0], true_cond);
 
-    ASSERT_EQ(ws_.detach_condition(&true_cond), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(ws_.detach_condition(&false_cond), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(ws_.detach_condition(true_cond), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(ws_.detach_condition(false_cond), ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(WaitsetTest, StartingWaitWithTriggeredConditionExitsWaitStatus)
 {
-    GuardCondition false_cond;
-    ASSERT_EQ(ws_.attach_condition(&false_cond), ReturnCode_t::RETCODE_OK);
+    std::shared_ptr<GuardCondition> false_cond = std::make_shared<GuardCondition>();
+    ASSERT_EQ(ws_.attach_condition(false_cond), ReturnCode_t::RETCODE_OK);
 
-    GuardCondition true_cond;
-    ASSERT_EQ(true_cond.set_trigger_value(true), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(ws_.attach_condition(&true_cond), ReturnCode_t::RETCODE_OK);
+    std::shared_ptr<GuardCondition> true_cond = std::make_shared<GuardCondition>();
+    ASSERT_EQ(true_cond->set_trigger_value(true), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(ws_.attach_condition(true_cond), ReturnCode_t::RETCODE_OK);
 
     start_waitset_wait();
     if (!wait_for_waitset_exit())
@@ -141,32 +215,86 @@ TEST_F(WaitsetTest, StartingWaitWithTriggeredConditionExitsWaitStatus)
     }
 
     ASSERT_EQ(active_conditions_.size(), 1);
-    ASSERT_EQ(active_conditions_[0], &true_cond);
+    ASSERT_EQ(active_conditions_[0], true_cond);
 
-    ASSERT_EQ(ws_.detach_condition(&true_cond), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(ws_.detach_condition(&false_cond), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(ws_.detach_condition(true_cond), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(ws_.detach_condition(false_cond), ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(WaitsetTest, WaitEndsAfterTimeout)
 {
-    GuardCondition false_cond;
-    ASSERT_EQ(ws_.attach_condition(&false_cond), ReturnCode_t::RETCODE_OK);
+    std::shared_ptr<GuardCondition> false_cond = std::make_shared<GuardCondition>();
+    ASSERT_EQ(ws_.attach_condition(false_cond), ReturnCode_t::RETCODE_OK);
     timeout_ = fastrtps::Duration_t(3, 0);
 
-    start_waitset_wait();
-    if (!wait_for_waitset_exit(std::chrono::seconds(10)))
-    {
-        ADD_FAILURE() << "Waitset ended wait before timeout";
-    }
+    ASSERT_EQ(ws_.wait(active_conditions_, timeout_), ReturnCode_t::RETCODE_TIMEOUT);
 
     ASSERT_TRUE(active_conditions_.empty());
 
-    ASSERT_EQ(ws_.detach_condition(&false_cond), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(ws_.detach_condition(false_cond), ReturnCode_t::RETCODE_OK);
 }
 
 
 
 
+
+TEST_F(WaitsetPSMTest, AttachingTriggeredConditionExitsWaitStatus)
+{
+    ::dds::core::cond::GuardCondition false_cond;
+    //ASSERT_NO_THROW(ws_.attach_condition(false_cond));
+    ws_.attach_condition(false_cond);
+    start_waitset_wait();
+
+    ::dds::core::cond::GuardCondition true_cond;
+    ASSERT_NO_THROW(true_cond.trigger_value(true));
+    ASSERT_NO_THROW(ws_.attach_condition(true_cond));
+
+    if (!wait_for_waitset_exit())
+    {
+        ADD_FAILURE() << "Timeout waiting for the waitset to exit from its wait";
+    }
+
+    ASSERT_EQ(active_conditions_.size(), 1);
+    //ASSERT_EQ(active_conditions_[0], true_cond);
+
+    ASSERT_NO_THROW(ws_.detach_condition(true_cond));
+    ASSERT_NO_THROW(ws_.detach_condition(false_cond));
+}
+
+TEST_F(WaitsetPSMTest, StartingWaitWithTriggeredConditionExitsWaitStatus)
+{
+    ::dds::core::cond::GuardCondition false_cond;
+    ASSERT_NO_THROW(ws_.attach_condition(false_cond));
+
+    ::dds::core::cond::GuardCondition true_cond;
+    ASSERT_NO_THROW(true_cond.trigger_value(true));
+    ASSERT_NO_THROW(ws_.attach_condition(true_cond));
+
+    start_waitset_wait();
+    if (!wait_for_waitset_exit())
+    {
+        ADD_FAILURE() << "Timeout waiting for the waitset to exit from its wait";
+    }
+
+    ASSERT_EQ(active_conditions_.size(), 1);
+    //ASSERT_EQ(active_conditions_[0], &true_cond);
+
+    ASSERT_NO_THROW(ws_.detach_condition(true_cond));
+    ASSERT_NO_THROW(ws_.detach_condition(false_cond));
+}
+
+TEST_F(WaitsetPSMTest, WaitEndsAfterTimeout)
+{
+    ::dds::core::cond::GuardCondition false_cond;
+    ASSERT_NO_THROW(ws_.attach_condition(false_cond));
+    timeout_ = ::dds::core::Duration(3, 0);
+
+    ASSERT_THROW(ws_.wait(active_conditions_, timeout_), ::dds::core::TimeoutError);
+
+    ASSERT_TRUE(active_conditions_.empty());
+
+    ASSERT_NO_THROW(ws_.detach_condition(false_cond));
+}
 
 
 } // namespace dds
