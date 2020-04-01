@@ -218,7 +218,7 @@ public:
 
     explicit operator bool() = delete;
 
-    bool operator !()
+    bool operator !() const
     {
         return value_ != ReturnCode_t::RETCODE_OK.value_;
     }
@@ -231,18 +231,18 @@ public:
     }
 
     bool operator ==(
-            const ReturnCode_t& c)
+            const ReturnCode_t& c) const
     {
         return value_ == c.value_;
     }
 
     bool operator !=(
-            const ReturnCode_t& c)
+            const ReturnCode_t& c) const
     {
         return value_ != c.value_;
     }
 
-    uint32_t operator ()()
+    uint32_t operator ()() const
     {
         return value_;
     }
