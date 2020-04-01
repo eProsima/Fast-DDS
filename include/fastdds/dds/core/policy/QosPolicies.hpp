@@ -135,8 +135,7 @@ public:
             const EntityFactoryQosPolicy& b) const
     {
         return
-            (this->autoenable_created_entities == b.autoenable_created_entities) &&
-            QosPolicy::operator ==(b);
+            (this->autoenable_created_entities == b.autoenable_created_entities);
     }
 
     inline void clear() override
