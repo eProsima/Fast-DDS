@@ -511,44 +511,44 @@ std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 
 Subscriber* DomainParticipantImpl::create_subscriber(
         const SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen)
+        SubscriberListener* listener,
+        const StatusMask& mask)
 {
     if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if (att.getUserDefinedID() <= 0)
+        if (qos.subscriber_attr.getUserDefinedID() <= 0)
         {
             logError(PARTICIPANT, "Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
-    if (!att.unicastLocatorList.isValid())
+    if (!qos.subscriber_attr.unicastLocatorList.isValid())
     {
         logError(PARTICIPANT, "Unicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if (!att.multicastLocatorList.isValid())
+    if (!qos.subscriber_attr.multicastLocatorList.isValid())
     {
         logError(PARTICIPANT, " Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if (!att.remoteLocatorList.isValid())
+    if (!qos.subscriber_attr.remoteLocatorList.isValid())
     {
         logError(PARTICIPANT, "Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if (!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
+    if (!qos.check_qos() || !qos.subscriber_attr.qos.checkQos() || !qos.subscriber_attr.topic.checkQos())
     {
         return nullptr;
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen);
-    Subscriber* sub = new Subscriber(subimpl);
+    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, listener);
+    Subscriber* sub = new Subscriber(subimpl, mask);
     subimpl->user_subscriber_ = sub;
     subimpl->rtps_participant_ = this->rtps_participant_;
 
@@ -568,9 +568,9 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_by_handle_[sub_handle] = sub;
     subscribers_[sub] = subimpl;
 
-    if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
+    if (qos.subscriber_attr.topic.auto_fill_type_object || qos.subscriber_attr.topic.auto_fill_type_information)
     {
-        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
+        register_dynamic_type_to_factories(qos.subscriber_attr.topic.getTopicDataType().to_string());
     }
 
     return sub;

@@ -24,6 +24,24 @@
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
+Subscriber::Subscriber(
+        SubscriberImpl* pimpl,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(pimpl)
+{
+}
+
+Subscriber::Subscriber(
+        DomainParticipant* dp,
+        const SubscriberQos& qos,
+        SubscriberListener* listener,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(dp->create_subscriber(qos, listener, mask)->impl_)
+{
+}
+
 const SubscriberQos& Subscriber::get_qos() const
 {
     return impl_->get_qos();

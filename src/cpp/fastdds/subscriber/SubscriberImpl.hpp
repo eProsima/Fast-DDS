@@ -70,7 +70,6 @@ class SubscriberImpl
     SubscriberImpl(
             DomainParticipantImpl* p,
             const SubscriberQos& qos,
-            const fastrtps::SubscriberAttributes& attr,
             SubscriberListener* listen = nullptr);
 
 public:
@@ -151,7 +150,7 @@ public:
      */
     const fastrtps::SubscriberAttributes& get_attributes() const
     {
-        return att_;
+        return qos_.subscriber_attr;
     }
 
     const DomainParticipant* get_participant() const;
@@ -186,9 +185,6 @@ private:
     DomainParticipantImpl* participant_;
 
     SubscriberQos qos_;
-
-    //!Attributes of the Subscriber
-    fastrtps::SubscriberAttributes att_;
 
     //!Map of Pointer to associated DataReaders. Topic name is the key.
     std::map<std::string, std::vector<DataReaderImpl*> > readers_;

@@ -121,9 +121,21 @@ public:
      * @return Pointer to the created Subscriber.
      */
     RTPS_DllAPI Subscriber* create_subscriber(
-            const fastdds::dds::SubscriberQos& qos,
+            const SubscriberQos& qos,
             const fastrtps::SubscriberAttributes& att,
             SubscriberListener* listen = nullptr);
+
+    /**
+     * Create a Subscriber in this Participant.
+     * @param qos QoS of the Subscriber.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask that holds statuses the listener responds to
+     * @return Pointer to the created Subscriber.
+     */
+    RTPS_DllAPI Subscriber* create_subscriber(
+            const SubscriberQos& qos,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * Deletes an existing Subscriber.
