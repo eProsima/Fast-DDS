@@ -26,8 +26,17 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace sub {
+
+class Subscriber;
+
+} // namespace sub
+} // namespace dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -42,7 +51,6 @@ namespace dds {
 class DomainParticipant;
 class SubscriberListener;
 class SubscriberImpl;
-class SubscriberQos;
 class DataReader;
 class DataReaderListener;
 class ReaderQos;
@@ -254,6 +262,8 @@ public:
 private:
 
     SubscriberImpl* impl_;
+
+    friend class ::dds::sub::Subscriber;
 };
 
 } /* namespace dds */

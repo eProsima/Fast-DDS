@@ -199,6 +199,7 @@ set(${PROJECT_NAME}_source_files
 
     dds/core/types.cpp
     dds/domain/DomainParticipant.cpp
+    dds/sub/Subscriber.cpp
     )
 
 # SHM Transport

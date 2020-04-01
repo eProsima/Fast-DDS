@@ -278,7 +278,7 @@ public:
      * @return if given qos was applied as default.
      */
     RTPS_DllAPI ReturnCode_t set_default_subscriber_qos(
-            const fastdds::dds::SubscriberQos& qos);
+            const SubscriberQos& qos);
 
     /**
      * This operation retrieves the default value of the Subscriber QoS, that is, the QoS policies which will be used
@@ -289,7 +289,7 @@ public:
      * call to set_default_subscriber_qos, or else, if the call was never made, the default values.
      * @return Current default subscriber qos.
      */
-    RTPS_DllAPI const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
+    RTPS_DllAPI const SubscriberQos& get_default_subscriber_qos() const;
 
     /**
      * This operation retrieves the default value of the Subscriber QoS, that is, the QoS policies which will be used
@@ -302,7 +302,7 @@ public:
      * @return Always true.
      */
     RTPS_DllAPI ReturnCode_t get_default_subscriber_qos(
-            fastdds::dds::SubscriberQos& qos) const;
+            SubscriberQos& qos) const;
 
     // TODO Get/Set default Topic Qos
 
