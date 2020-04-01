@@ -16,6 +16,8 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/types.hpp>
 
@@ -38,6 +40,14 @@ TEST(ParticipantTests, CreatePSMDomainParticipant)
 
     ASSERT_NE(participant, ::dds::core::null);
 
+}
+
+TEST(ParticipantTests, CreateSubscriber)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+    ASSERT_NE(subscriber, nullptr);
 }
 
 } // namespace dds
