@@ -19,6 +19,8 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
@@ -105,6 +107,14 @@ TEST(ParticipantTests, CreatePSMPublisher)
     publisher = ::dds::pub::Publisher(participant);
 
     ASSERT_NE(publisher, ::dds::core::null);
+}
+
+TEST(ParticipantTests, CreateSubscriber)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+    ASSERT_NE(subscriber, nullptr);
 }
 
 } // namespace dds
