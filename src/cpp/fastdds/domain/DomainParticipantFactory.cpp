@@ -166,37 +166,6 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
-        const std::string& participant_profile,
-        DomainParticipantListener* listen)
-{
-    if (false == default_xml_profiles_loaded)
-    {
-        XMLProfileManager::loadDefaultXMLFile();
-        default_xml_profiles_loaded = true;
-    }
-
-    ParticipantAttributes participant_att;
-    if (XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
-    {
-        logError(DOMAIN_PARTICIPANT_FACTORY, "Problem loading profile '" << participant_profile << "'");
-        return nullptr;
-    }
-
-    return create_participant(participant_att, listen);
-}
-
-DomainParticipant* DomainParticipantFactory::create_participant(
-        const ParticipantAttributes& att,
-        DomainParticipantListener* listen)
-{
-    DomainId_t domain_id = att.rtps.builtin.domainId;
-    DomainParticipantQos qos = PARTICIPANT_QOS_DEFAULT;
-    qos.participant_attr = att;
-
-    return create_participant(domain_id, qos, listen);
-}
-
-DomainParticipant* DomainParticipantFactory::create_participant(
         DomainId_t did,
         const DomainParticipantQos& qos,
         DomainParticipantListener* listen,
@@ -204,7 +173,9 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 {
     DomainParticipant* dom_part = new DomainParticipant(mask);
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, qos, listen);
-    RTPSParticipant* part = RTPSDomain::createParticipant(qos.participant_attr.rtps, &dom_part_impl->rtps_listener_);
+
+    fastrtps::rtps::RTPSParticipantAttributes rtps_attr = get_attributes(qos);
+    RTPSParticipant* part = RTPSDomain::createParticipant(rtps_attr, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
     {
@@ -317,6 +288,27 @@ bool DomainParticipantFactory::load_XML_profiles_file(
         return false;
     }
     return true;
+}
+
+fastrtps::rtps::RTPSParticipantAttributes DomainParticipantFactory::get_attributes(
+        const DomainParticipantQos& qos)
+{
+    fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
+    rtps_attr.allocation = qos.allocation();
+    rtps_attr.properties = qos.properties();
+    rtps_attr.setName(qos.name());
+    rtps_attr.prefix = qos.wire_protocol().prefix;
+    rtps_attr.participantID = qos.wire_protocol().participant_id;
+    rtps_attr.builtin = qos.wire_protocol().builtin;
+    rtps_attr.port = qos.wire_protocol().port;
+    rtps_attr.throughputController = qos.wire_protocol().throughput_controller;
+    rtps_attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
+    rtps_attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
+    rtps_attr.userTransports = qos.transport().user_transports;
+    rtps_attr.useBuiltinTransports = qos.transport().use_builtin_transports;
+    rtps_attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
+    rtps_attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
+    return rtps_attr;
 }
 
 } /* namespace dds */

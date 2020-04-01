@@ -73,11 +73,6 @@ class DomainParticipantImpl
 private:
 
     DomainParticipantImpl(
-            const fastrtps::ParticipantAttributes& patt,
-            DomainParticipant* pspart,
-            DomainParticipantListener* listen = nullptr);
-
-    DomainParticipantImpl(
             DomainParticipant* dp,
             const DomainParticipantQos& qos,
             DomainParticipantListener* listen = nullptr);
@@ -249,15 +244,6 @@ public:
 
     const fastrtps::rtps::GUID_t& guid() const;
 
-    /**
-     * Get the participant attributes
-     * @return Participant attributes
-     */
-    inline const fastrtps::ParticipantAttributes& get_attributes() const
-    {
-        return att_;
-    }
-
     std::vector<std::string> get_participant_names() const;
 
     /**
@@ -293,8 +279,8 @@ public:
 
 private:
 
-    //!Participant Attributes
-    fastrtps::ParticipantAttributes att_;
+    //!Participant Qos
+    DomainParticipantQos qos_;
 
     //!RTPSParticipant
     fastrtps::rtps::RTPSParticipant* rtps_participant_;

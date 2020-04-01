@@ -71,17 +71,19 @@ bool TestPublisher::init(
     m_Type.swap(type);
     using_typelookup_ = use_typelookup;
 
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = domain;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
-    PParam.rtps.builtin.typelookup_config.use_client = using_typelookup_;
-    PParam.rtps.builtin.typelookup_config.use_server = using_typelookup_;
-    PParam.rtps.setName(m_Name.c_str());
+    DomainParticipantQos pqos;
+    WireProtocolConfigQos wp = pqos.wire_protocol();
+    wp.builtin.domainId = domain;
+    wp.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    wp.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    wp.builtin.typelookup_config.use_client = using_typelookup_;
+    wp.builtin.typelookup_config.use_server = using_typelookup_;
+    pqos.wire_protocol(wp);
+    pqos.name(m_Name.c_str());
 
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(domain, pqos, &part_listener_);
 
         if (mp_participant == nullptr)
         {
@@ -159,12 +161,16 @@ eprosima::fastdds::dds::DomainParticipant* TestPublisher::participant()
     return mp_participant;
 }
 
-void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
+void TestPublisher::waitDiscovery(
+        bool expectMatch,
+        int maxWait)
 {
     std::unique_lock<std::mutex> lock(m_mDiscovery);
 
-    if(m_pubListener.n_matched == 0)
+    if (m_pubListener.n_matched == 0)
+    {
         m_cvDiscovery.wait_for(lock, std::chrono::seconds(maxWait));
+    }
 
     if (expectMatch)
     {
@@ -176,12 +182,16 @@ void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
     }
 }
 
-void TestPublisher::waitTypeDiscovery(bool expectMatch, int maxWait)
+void TestPublisher::waitTypeDiscovery(
+        bool expectMatch,
+        int maxWait)
 {
     std::unique_lock<std::mutex> lock(mtx_type_discovery_);
 
-    if(!part_listener_.discovered_)
+    if (!part_listener_.discovered_)
+    {
         cv_type_discovery_.wait_for(lock, std::chrono::seconds(maxWait));
+    }
 
     if (expectMatch)
     {
@@ -197,11 +207,14 @@ void TestPublisher::matched()
 {
     std::unique_lock<std::mutex> lock(m_mDiscovery);
     ++m_pubListener.n_matched;
-    if(m_pubListener.n_matched >= 1)
+    if (m_pubListener.n_matched >= 1)
+    {
         m_cvDiscovery.notify_one();
+    }
 }
 
-TestPublisher::PubListener::PubListener(TestPublisher* parent)
+TestPublisher::PubListener::PubListener(
+        TestPublisher* parent)
     : mParent(parent)
     , n_matched(0)
 {
@@ -211,14 +224,14 @@ void TestPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-    if(info.current_count_change > 0)
+    if (info.current_count_change > 0)
     {
         std::cout << mParent->m_Name << " matched." << std::endl;
         mParent->matched();
     }
     else
     {
-        std::cout << mParent->m_Name << " unmatched."<<std::endl;
+        std::cout << mParent->m_Name << " unmatched." << std::endl;
     }
 }
 
@@ -247,13 +260,13 @@ void TestPublisher::PartListener::on_type_information_received(
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-        [this, topic_name](const std::string&, const types::DynamicType_ptr type)
-    {
-        std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
-        parent_->tls_callback_called_ = true;
-        on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
-        parent_->tls_callback_called_ = false;
-    };
+            [this, topic_name](const std::string&, const types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+                parent_->tls_callback_called_ = true;
+                on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
+                parent_->tls_callback_called_ = false;
+            };
 
     std::cout << "Received type information: " << type_name << " on topic: " << topic_name << std::endl;
     parent_->participant()->register_remote_type(type_information, type_name.to_string(), callback);

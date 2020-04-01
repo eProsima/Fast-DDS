@@ -24,6 +24,9 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -2317,6 +2320,120 @@ private:
 };
 
 } // namespace xtypes
+
+//!Holds allocation limits affecting collections managed by a participant.
+using ParticipantResourceLimitsQos = fastrtps::rtps::RTPSParticipantAllocationAttributes;
+
+//! Property policies
+using PropertyPolicyQos = fastrtps::rtps::PropertyPolicy;
+
+class WireProtocolConfigQos : public QosPolicy
+{
+
+public:
+
+    RTPS_DllAPI WireProtocolConfigQos()
+        : QosPolicy(false)
+        , participant_id(-1)
+    {
+    }
+
+    virtual RTPS_DllAPI ~WireProtocolConfigQos() = default;
+
+    bool operator ==(
+            const WireProtocolConfigQos& b) const
+    {
+        return (this->prefix == b.prefix) &&
+               (this->participant_id == b.participant_id) &&
+               (this->builtin == b.builtin) &&
+               (this->port == b.port) &&
+               (this->throughput_controller == b.throughput_controller) &&
+               (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
+               (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
+               QosPolicy::operator ==(b);
+    }
+
+    inline void clear() override
+    {
+        WireProtocolConfigQos reset = WireProtocolConfigQos();
+        std::swap(*this, reset);
+    }
+
+    //! Optionally allows user to define the GuidPrefix_t
+    fastrtps::rtps::GuidPrefix_t prefix;
+
+    //!Participant ID
+    int32_t participant_id;
+
+    //! Builtin parameters.
+    fastrtps::rtps::BuiltinAttributes builtin;
+
+    //!Port Parameters
+    fastrtps::rtps::PortParameters port;
+
+    //!Throughput controller parameters. Leave default for uncontrolled flow.
+    fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
+
+    /**
+     * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
+     * that it was defined with NO UnicastLocators. At least ONE locator should be included in this list.
+     */
+    fastrtps::rtps::LocatorList_t default_unicast_locator_list;
+
+    /**
+     * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
+     * case that it was defined with NO UnicastLocators. This is usually left empty.
+     */
+    fastrtps::rtps::LocatorList_t default_multicast_locator_list;
+};
+
+class TransportConfigQos : public QosPolicy
+{
+public:
+
+    RTPS_DllAPI TransportConfigQos()
+        : QosPolicy(false)
+        , use_builtin_transports(true)
+        , send_socket_buffer_size(0)
+        , listen_socket_buffer_size(0)
+    {
+    }
+
+    virtual RTPS_DllAPI ~TransportConfigQos() = default;
+
+    bool operator ==(
+            const TransportConfigQos& b) const
+    {
+        return (this->user_transports == b.user_transports) &&
+               (this->use_builtin_transports == b.use_builtin_transports) &&
+               (this->send_socket_buffer_size == b.send_socket_buffer_size) &&
+               (this->listen_socket_buffer_size == b.listen_socket_buffer_size) &&
+               QosPolicy::operator ==(b);
+    }
+
+    inline void clear() override
+    {
+        TransportConfigQos reset = TransportConfigQos();
+        std::swap(*this, reset);
+    }
+
+    //!User defined transports to use alongside or in place of builtins.
+    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > user_transports;
+
+    //!Set as false to disable the default UDPv4 implementation.
+    bool use_builtin_transports;
+
+    /*!
+     * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
+     * Default value: 0.
+     */
+    uint32_t send_socket_buffer_size;
+
+    /*! Listen socket buffer for all listen resources. Zero value indicates to use default system buffer size.
+     * Default value: 0.
+     */
+    uint32_t listen_socket_buffer_size;
+};
 
 } // namespace dds
 } // namespace fastdds

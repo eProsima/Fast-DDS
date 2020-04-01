@@ -55,17 +55,19 @@ bool TypeLookupPublisher::init()
     inner->set_byte_value(10, 0);
     m_Hello->return_loaned_value(inner);
 
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.typelookup_config.use_server = true;
-    PParam.rtps.builtin.use_WriterLivelinessProtocol = false;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.setName("Participant_pub");
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
+    DomainParticipantQos pqos;
+    WireProtocolConfigQos wp = pqos.wire_protocol();
+    wp.builtin.discovery_config.discoveryProtocol = SIMPLE;
+    wp.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    wp.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    wp.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    wp.builtin.typelookup_config.use_server = true;
+    wp.builtin.use_WriterLivelinessProtocol = false;
+    wp.builtin.domainId = 0;
+    wp.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    pqos.wire_protocol(wp);
+    pqos.name("Participant_pub");
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(wp.builtin.domainId, pqos);
 
     if (mp_participant == nullptr)
     {

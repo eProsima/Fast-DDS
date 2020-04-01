@@ -99,7 +99,7 @@ const TopicAttributes& DataReader::get_topic() const
 }
 
 bool DataReader::set_attributes(
-        const rtps::ReaderAttributes& att)
+        const fastrtps::rtps::ReaderAttributes& att)
 {
     return impl_->set_attributes(att);
 }

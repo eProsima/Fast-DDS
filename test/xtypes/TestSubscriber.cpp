@@ -70,17 +70,19 @@ bool TestSubscriber::init(
     m_Name = name;
     m_Type.swap(type);
     using_typelookup_ = use_typelookup;
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = domain;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
-    PParam.rtps.builtin.typelookup_config.use_client = using_typelookup_;
-    PParam.rtps.builtin.typelookup_config.use_server = using_typelookup_;
-    PParam.rtps.setName(m_Name.c_str());
+    DomainParticipantQos pqos;
+    WireProtocolConfigQos wp = pqos.wire_protocol();
+    wp.builtin.domainId = domain;
+    wp.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    wp.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    wp.builtin.typelookup_config.use_client = using_typelookup_;
+    wp.builtin.typelookup_config.use_server = using_typelookup_;
+    pqos.wire_protocol(wp);
+    pqos.name(m_Name.c_str());
 
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(domain, pqos, &part_listener_);
         if (mp_participant == nullptr)
         {
             std::cout << "ERROR" << std::endl;

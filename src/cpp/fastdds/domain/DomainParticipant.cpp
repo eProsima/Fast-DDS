@@ -240,11 +240,6 @@ const fastrtps::rtps::GUID_t& DomainParticipant::guid() const
     return impl_->guid();
 }
 
-const fastrtps::ParticipantAttributes& DomainParticipant::get_attributes() const
-{
-    return impl_->get_attributes();
-}
-
 std::vector<std::string> DomainParticipant::get_participant_names() const
 {
     return impl_->get_participant_names();

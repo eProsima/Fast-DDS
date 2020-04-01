@@ -26,7 +26,8 @@ namespace dds {
 const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;
 
 void DomainParticipantQos::set_qos(
-        const DomainParticipantQos& qos)
+        const DomainParticipantQos& qos,
+        bool first_time)
 {
     if (entity_factory_.autoenable_created_entities != qos.entity_factory().autoenable_created_entities)
     {
@@ -37,6 +38,28 @@ void DomainParticipantQos::set_qos(
     {
         user_data_ = qos.user_data();
         user_data_.hasChanged = true;
+    }
+    if (first_time && !(allocation_ == qos.allocation()))
+    {
+        allocation_ = qos.allocation();
+    }
+    if (first_time && !(properties_ == qos.properties()))
+    {
+        properties_ = qos.properties();
+    }
+    if (first_time && !(wire_protocol_ == qos.wire_protocol()))
+    {
+        wire_protocol_ = qos.wire_protocol();
+        wire_protocol_.hasChanged = true;
+    }
+    if (first_time && !(transport_ == qos.transport()))
+    {
+        transport_ = qos.transport();
+        transport_.hasChanged = true;
+    }
+    if (first_time && name_ != qos.name())
+    {
+        name_ = qos.name();
     }
 }
 
@@ -49,9 +72,33 @@ bool DomainParticipantQos::check_qos() const
 bool DomainParticipantQos::can_qos_be_updated(
         const DomainParticipantQos& qos) const
 {
-    //All the DomainParticipantQos can be updated
-    (void) qos;
-    return true;
+    bool updatable = true;
+    if (!(allocation_ == qos.allocation()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "ParticipantResourceLimitsQos cannot be changed after the participant creation");
+    }
+    if (!(properties_ == qos.properties()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant creation");
+    }
+    if (!(wire_protocol_ == qos.wire_protocol()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant creation");
+    }
+    if (!(transport_ == qos.transport()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "TransportConfigQos cannot be changed after the participant creation");
+    }
+    if (!(name_ == qos.name()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant creation");
+    }
+    return updatable;
 }
 
 } /* namespace dds */

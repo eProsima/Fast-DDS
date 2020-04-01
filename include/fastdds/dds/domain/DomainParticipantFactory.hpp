@@ -55,26 +55,6 @@ public:
     RTPS_DllAPI static DomainParticipantFactory* get_instance();
 
     /**
-     * Create a Participant from a profile name.
-     * @param participant_profile Participant profile name.
-     * @param listen ParticipantListener Pointer.
-     * @return Participant pointer. (nullptr if not created.)
-     */
-    RTPS_DllAPI DomainParticipant* create_participant(
-            const std::string& participant_profile,
-            DomainParticipantListener* listen = nullptr);
-
-    /**
-     * Create a Participant.
-     * @param att Participant Attributes.
-     * @param listen ParticipantListener Pointer.
-     * @return Participant pointer. (nullptr if not created.)
-     */
-    RTPS_DllAPI DomainParticipant* create_participant(
-            const fastrtps::ParticipantAttributes& att,
-            DomainParticipantListener* listen = nullptr);
-
-    /**
      * Create a Participant.
      * @param domain_id Domain Id.
      * @param qos DomainParticipantQos Reference.
@@ -133,6 +113,9 @@ public:
             const std::string& xml_profile_file);
 
     // TODO set/get DomainParticipantFactoryQos
+
+    fastrtps::rtps::RTPSParticipantAttributes get_attributes(
+            const DomainParticipantQos& qos);
 
 private:
 

@@ -50,7 +50,11 @@ public:
     {
         return (this->user_data_ == b.user_data()) &&
                (this->entity_factory_ == b.entity_factory()) &&
-               (this->participant_attr == b.participant_attr);
+               (this->allocation_ == b.allocation()) &&
+               (this->properties_ == b.properties()) &&
+               (this->wire_protocol_ == b.wire_protocol()) &&
+               (this->transport_ == b.transport()) &&
+               (this->name_ == b.name());
     }
 
     /**
@@ -58,7 +62,8 @@ public:
      * @param qos Reference from a DomainParticipantQos object.
      */
     RTPS_DllAPI void set_qos(
-            const DomainParticipantQos& qos);
+            const DomainParticipantQos& qos,
+            bool first_time);
 
     /**
      * Check if the Qos values are compatible between each other.
@@ -73,6 +78,7 @@ public:
      */
     RTPS_DllAPI bool can_qos_be_updated(
             const DomainParticipantQos& qos) const;
+
 
     /**
      * Getter for UserDataQosPolicy
@@ -114,8 +120,62 @@ public:
         entity_factory_.hasChanged = true;
     }
 
-    //!Participant Attributes
-    fastrtps::ParticipantAttributes participant_attr;
+    const ParticipantResourceLimitsQos& allocation() const
+    {
+        return allocation_;
+    }
+
+    void allocation(
+            const ParticipantResourceLimitsQos& allocation)
+    {
+        allocation_ = allocation;
+    }
+
+    const PropertyPolicyQos& properties() const
+    {
+        return properties_;
+    }
+
+    void properties(
+            const PropertyPolicyQos& properties)
+    {
+        properties_ = properties;
+    }
+
+    const WireProtocolConfigQos& wire_protocol() const
+    {
+        return wire_protocol_;
+    }
+
+    void wire_protocol(
+            const WireProtocolConfigQos& wire_protocol)
+    {
+        wire_protocol_ = wire_protocol;
+        wire_protocol_.hasChanged = true;
+    }
+
+    const TransportConfigQos& transport() const
+    {
+        return transport_;
+    }
+
+    void transport(
+            const TransportConfigQos& transport)
+    {
+        transport_ = transport;
+        transport_.hasChanged = true;
+    }
+
+    fastrtps::string_255 name() const
+    {
+        return name_;
+    }
+
+    void name(
+            const fastrtps::string_255& value)
+    {
+        name_ = value;
+    }
 
 private:
 
@@ -125,6 +185,20 @@ private:
     //!Auto enable on creation
     EntityFactoryQosPolicy entity_factory_;
 
+    //!Participant allocation limits
+    ParticipantResourceLimitsQos allocation_;
+
+    //!Property policies
+    PropertyPolicyQos properties_;
+
+    //!Wire Protocol options
+    WireProtocolConfigQos wire_protocol_;
+
+    //!Transport options
+    TransportConfigQos transport_;
+
+    //!Name of the participant.
+    fastrtps::string_255 name_;
 
 };
 

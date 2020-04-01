@@ -356,12 +356,6 @@ public:
 
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
 
-    /**
-     * Get the participant attributes
-     * @return Participant attributes
-     */
-    RTPS_DllAPI const fastrtps::ParticipantAttributes& get_attributes() const;
-
     RTPS_DllAPI std::vector<std::string> get_participant_names() const;
 
     /**
