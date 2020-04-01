@@ -186,9 +186,9 @@ public:
     const fastdds::dds::PublisherQos& get_default_publisher_qos() const;
 
     ReturnCode_t set_default_subscriber_qos(
-            const fastdds::dds::SubscriberQos& qos);
+            const SubscriberQos& qos);
 
-    const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
+    const SubscriberQos& get_default_subscriber_qos() const;
 
     // TODO Get/Set default Topic Qos
 
