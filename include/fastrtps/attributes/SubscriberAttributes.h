@@ -91,6 +91,11 @@ class SubscriberAttributes
                 (this->properties == b.properties);
         }
 
+        bool operator!=(const SubscriberAttributes& b) const
+        {
+            return !(*this == b);
+        }
+
         /**
          * Get the user defined ID
          * @return User defined ID
