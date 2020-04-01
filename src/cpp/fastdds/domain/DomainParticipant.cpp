@@ -71,11 +71,11 @@ ReturnCode_t DomainParticipant::delete_publisher(
 }
 
 Subscriber* DomainParticipant::create_subscriber(
-        const fastdds::dds::SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen)
+        const SubscriberQos& qos,
+        SubscriberListener* listener,
+        const StatusMask& mask)
 {
-    return impl_->create_subscriber(qos, att, listen);
+    return impl_->create_subscriber(qos, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_subscriber(

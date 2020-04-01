@@ -128,13 +128,13 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
 
     if (subscriber_->mp_subscriber == nullptr)
     {
-        eprosima::fastrtps::SubscriberAttributes Rparam;
-        Rparam = subscriber_->att_;
-        Rparam.topic = subscriber_->topic_;
-        Rparam.topic.topicName = topic;
-        Rparam.qos = subscriber_->qos_;
+        //eprosima::fastrtps::SubscriberAttributes Rparam;
+        //Rparam = subscriber_->att_;
+        //Rparam.topic = subscriber_->topic_;
+        //Rparam.topic.topicName = topic;
+        //Rparam.qos = subscriber_->qos_;
         subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
-            SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+            SUBSCRIBER_QOS_DEFAULT, nullptr);
 
         if (subscriber_->mp_subscriber == nullptr)
         {

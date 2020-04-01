@@ -114,14 +114,14 @@ public:
     /**
      * Create a Subscriber in this Participant.
      * @param qos QoS of the Subscriber.
-     * @param att Attributes of the Subscriber. TopicAttributes and ReaderQos will be ignored using DDS interface.
-     * @param listen Pointer to the listener.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask that holds statuses the listener responds to
      * @return Pointer to the created Subscriber.
      */
     RTPS_DllAPI Subscriber* create_subscriber(
-            const fastdds::dds::SubscriberQos& qos,
-            const fastrtps::SubscriberAttributes& att,
-            SubscriberListener* listen = nullptr);
+            const SubscriberQos& qos,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * Deletes an existing Subscriber.

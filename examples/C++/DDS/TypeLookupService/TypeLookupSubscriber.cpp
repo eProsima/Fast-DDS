@@ -155,13 +155,13 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
 
                 if (subscriber_->mp_subscriber == nullptr)
                 {
-                    SubscriberAttributes Rparam;
-                    Rparam = subscriber_->att_;
-                    Rparam.topic = subscriber_->topic_;
-                    Rparam.topic.topicName = topic_name;
-                    Rparam.qos = subscriber_->qos_;
+                    //SubscriberAttributes Rparam;
+                    //Rparam = subscriber_->att_;
+                    //Rparam.topic = subscriber_->topic_;
+                    //Rparam.topic.topicName = topic_name;
+                    //Rparam.qos = subscriber_->qos_;
                     subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
-                        SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+                        SUBSCRIBER_QOS_DEFAULT, nullptr);
 
                     if (subscriber_->mp_subscriber == nullptr)
                     {
