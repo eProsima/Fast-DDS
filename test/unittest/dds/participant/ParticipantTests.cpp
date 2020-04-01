@@ -25,6 +25,7 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
+#include <dds/sub/qos/SubscriberQos.hpp>
 #include <dds/core/types.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/pub/Publisher.hpp>
@@ -313,6 +314,22 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
     ASSERT_EQ(participant->get_default_subscriber_qos(pqos), ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(pqos == qos);
+    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+}
+
+TEST(ParticipantTests, ChangePSMDefaultSubscriberQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::sub::qos::SubscriberQos qos = participant.default_subscriber_qos();
+    ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
+
+    qos.entity_factory.autoenable_created_entities = false;
+
+    ASSERT_NO_THROW(participant.default_subscriber_qos(qos));
+
+    ::dds::sub::qos::SubscriberQos pqos = participant.default_subscriber_qos();
+
+    ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
 }
 
