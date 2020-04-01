@@ -24,6 +24,7 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
+#include <dds/sub/Subscriber.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -115,6 +116,15 @@ TEST(ParticipantTests, CreateSubscriber)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_NE(subscriber, nullptr);
+}
+
+TEST(ParticipantTests, CreatePSMSubscriber)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::sub::Subscriber subscriber = ::dds::core::null;
+    subscriber = ::dds::sub::Subscriber(participant);
+
+    ASSERT_NE(subscriber, ::dds::core::null);
 }
 
 } // namespace dds
