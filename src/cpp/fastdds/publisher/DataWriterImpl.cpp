@@ -284,20 +284,10 @@ bool DataWriterImpl::perform_create_new_change(
             // If it is big data, fragment it.
             if (ch->serializedPayload.length > final_high_mark_for_frag)
             {
-                // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
-                if (qos_.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
-                {
-                    logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
-                            ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
-                            final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
-                    history_.release_Cache(ch);
-                    return false;
-                }
-
-                /// Fragment the data.
+                // Fragment the data.
                 // Set the fragment size to the cachechange.
-                // Note: high_mark will always be a value that can be casted to uint16_t)
-                ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
+                ch->setFragmentSize(static_cast<uint16_t>(
+                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
             }
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
@@ -318,7 +308,11 @@ bool DataWriterImpl::perform_create_new_change(
                 {
                     if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
                     {
-                        deadline_timer_reschedule();
+                        if (deadline_timer_reschedule())
+                        {
+                            deadline_timer_->cancel_timer();
+                            deadline_timer_->restart_timer();
+                        }
                     }
                 }
             }
@@ -328,10 +322,7 @@ bool DataWriterImpl::perform_create_new_change(
                 lifespan_duration_us_ = duration<double, std::ratio<1, 1000000> >(
                     qos_.m_lifespan.duration.to_ns() * 1e-3);
                 lifespan_timer_->update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
-            }
-            else
-            {
-                lifespan_timer_->cancel_timer();
+                lifespan_timer_->restart_timer();
             }
 
             return true;
@@ -666,40 +657,41 @@ bool DataWriterImpl::lifespan_expired()
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     CacheChange_t* earliest_change;
-    if (!history_.get_earliest_change(&earliest_change))
+    while (history_.get_earliest_change(&earliest_change))
     {
-        return false;
-    }
+        auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+        auto now = system_clock::now();
 
-    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    auto now = system_clock::now();
+        // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
+        if (now - source_timestamp < lifespan_duration_us_)
+        {
+            auto interval = source_timestamp - now + lifespan_duration_us_;
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            return true;
+        }
 
-    // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
-    if (now - source_timestamp < lifespan_duration_us_)
-    {
+        // The earliest change has expired
+        history_.remove_change_pub(earliest_change);
+
+        // Set the timer for the next change if there is one
+        if (!history_.get_earliest_change(&earliest_change))
+        {
+            return false;
+        }
+
+        // Calculate when the next change is due to expire and restart
+        source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+        now = system_clock::now();
         auto interval = source_timestamp - now + lifespan_duration_us_;
-        lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
-        return true;
+
+        if (interval.count() > 0)
+        {
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            return true;
+        }
     }
 
-    // The earliest change has expired
-    history_.remove_change_pub(earliest_change);
-
-    // Set the timer for the next change if there is one
-    if (!history_.get_earliest_change(&earliest_change))
-    {
-        return false;
-    }
-
-    // Calculate when the next change is due to expire and restart
-    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    now = system_clock::now();
-    auto interval = source_timestamp - now + lifespan_duration_us_;
-
-    assert(interval.count() > 0);
-
-    lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
-    return true;
+    return false;
 }
 
 ReturnCode_t DataWriterImpl::get_liveliness_lost_status(

@@ -158,6 +158,12 @@ ReturnCode_t DataReaderImpl::take_next_sample(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DataReaderImpl::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    return history_.get_first_untaken_info(info) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_NO_DATA;
+}
+
 const GUID_t& DataReaderImpl::guid()
 {
     return reader_->getGuid();
@@ -468,40 +474,41 @@ bool DataReaderImpl::lifespan_expired()
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     CacheChange_t* earliest_change;
-    if (!history_.get_earliest_change(&earliest_change))
+    while (history_.get_earliest_change(&earliest_change))
     {
-        return false;
-    }
+        auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+        auto now = system_clock::now();
 
-    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    auto now = system_clock::now();
+        // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
+        if (now - source_timestamp < lifespan_duration_us_)
+        {
+            auto interval = source_timestamp - now + lifespan_duration_us_;
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            return true;
+        }
 
-    // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
-    if (now - source_timestamp < lifespan_duration_us_)
-    {
+        // The earliest change has expired
+        history_.remove_change_sub(earliest_change);
+
+        // Set the timer for the next change if there is one
+        if (!history_.get_earliest_change(&earliest_change))
+        {
+            return false;
+        }
+
+        // Calculate when the next change is due to expire and restart
+        source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+        now = system_clock::now();
         auto interval = source_timestamp - now + lifespan_duration_us_;
-        lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
-        return true;
+
+        if (interval.count() > 0)
+        {
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            return true;
+        }
     }
 
-    // The earliest change has expired
-    history_.remove_change_sub(earliest_change);
-
-    // Set the timer for the next change if there is one
-    if (!history_.get_earliest_change(&earliest_change))
-    {
-        return false;
-    }
-
-    // Calculate when the next change is due to expire and restart
-    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    now = system_clock::now();
-    auto interval = source_timestamp - now + lifespan_duration_us_;
-
-    assert(interval.count() > 0);
-
-    lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
-    return true;
+    return false;
 }
 
 /* TODO

@@ -59,6 +59,12 @@ ReturnCode_t DataReader::take_next_sample(
     return impl_->take_next_sample(data, info);
 }
 
+ReturnCode_t DataReader::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    return impl_->get_first_untaken_info(info);
+}
+
 const GUID_t& DataReader::guid()
 {
     return impl_->guid();
