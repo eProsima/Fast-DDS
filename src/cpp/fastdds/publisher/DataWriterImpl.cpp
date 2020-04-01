@@ -657,7 +657,7 @@ bool DataWriterImpl::lifespan_expired()
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     CacheChange_t* earliest_change;
-    while (!history_.get_earliest_change(&earliest_change))
+    while (history_.get_earliest_change(&earliest_change))
     {
         auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
         auto now = system_clock::now();
