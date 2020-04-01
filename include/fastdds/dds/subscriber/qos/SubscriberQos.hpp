@@ -20,7 +20,8 @@
 #ifndef _FASTDDS_SUBSCRIBERQOS_HPP_
 #define _FASTDDS_SUBSCRIBERQOS_HPP_
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -36,86 +37,18 @@ namespace dds {
 class SubscriberQos
 {
 public:
-    RTPS_DllAPI SubscriberQos()
-    {}
+    RTPS_DllAPI SubscriberQos() = default;
 
-    RTPS_DllAPI virtual ~SubscriberQos()
-    {}
+    RTPS_DllAPI virtual ~SubscriberQos() = default;
 
     bool operator==(
             const SubscriberQos& b) const
     {
-        return (this->durability == b.durability) &&
-               (this->deadline == b.deadline) &&
-               (this->latency_budget == b.latency_budget) &&
-               (this->liveliness == b.liveliness) &&
-               (this->reliability == b.reliability) &&
-               (this->ownership == b.ownership) &&
-               (this->destination_order == b.destination_order) &&
-               (this->user_data == b.user_data) &&
-               (this->time_based_filter == b.time_based_filter) &&
-               (this->presentation == b.presentation) &&
-               (this->partition == b.partition) &&
-               (this->topic_data == b.topic_data) &&
-               (this->group_data == b.group_data) &&
-               (this->durability_service == b.durability_service) &&
-               (this->lifespan == b.lifespan) &&
-               (this->disable_positive_acks == b.disable_positive_acks);
+        return (presentation_ == b.presentation_) &&
+               (partition_ == b.partition_) &&
+               (group_data_ == b.group_data_) &&
+               (entity_factory_ == b.entity_factory_);
     }
-
-    //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
-
-    //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
-
-    //!Latency Budget Qos, NOT implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
-
-    //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
-
-    //!ReliabilityQos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
-
-    //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
-
-    //!Destinatio Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
-
-    //!UserData Qos, NOT implemented in the library.
-    UserDataQosPolicy user_data;
-
-    //!Time Based Filter Qos, NOT implemented in the library.
-    fastrtps::TimeBasedFilterQosPolicy time_based_filter;
-
-    //!Presentation Qos, NOT implemented in the library.
-    fastrtps::PresentationQosPolicy presentation;
-
-    //!Partition Qos, implemented in the library.
-    fastrtps::PartitionQosPolicy partition;
-
-    //!Topic Data Qos, NOT implemented in the library.
-    fastrtps::TopicDataQosPolicy topic_data;
-
-    //!GroupData Qos, NOT implemented in the library.
-    fastrtps::GroupDataQosPolicy group_data;
-
-    //!Durability Service Qos, NOT implemented in the library.
-    fastrtps::DurabilityServiceQosPolicy durability_service;
-
-    //!Lifespan Qos, NOT implemented in the library.
-    fastrtps::LifespanQosPolicy lifespan;
-
-    //!Data Representation Qos, implemented in the library.
-    fastrtps::DataRepresentationQosPolicy representation;
-
-    //!Type consistency enforcement Qos, NOT implemented in the library.
-    fastrtps::TypeConsistencyEnforcementQosPolicy type_consistency;
-
-    //!Disable positive ACKs QoS
-    fastrtps::DisablePositiveACKsQosPolicy disable_positive_acks;
 
     /**
      * Set Qos from another class
@@ -139,6 +72,133 @@ public:
      */
     RTPS_DllAPI bool can_qos_be_updated(
             const SubscriberQos& qos) const;
+
+
+    /**
+     * Getter for PresentationQosPolicy
+     * @return PresentationQosPolicy reference
+     */
+    const PresentationQosPolicy& presentation() const
+    {
+        return presentation_;
+    }
+
+    /**
+     * Getter for PresentationQosPolicy
+     * @return PresentationQosPolicy reference
+     */
+    PresentationQosPolicy& presentation()
+    {
+        return presentation_;
+    }
+
+    /**
+     * Setter for PresentationQosPolicy
+     * @param presentation
+     */
+    void presentation(
+            const PresentationQosPolicy& presentation)
+    {
+        presentation_ = presentation;
+    }
+
+    /**
+     * Getter for PartitionQosPolicy
+     * @return PartitionQosPolicy reference
+     */
+    const PartitionQosPolicy& partition() const
+    {
+        return partition_;
+    }
+
+    /**
+     * Getter for PartitionQosPolicy
+     * @return PartitionQosPolicy reference
+     */
+    PartitionQosPolicy& partition()
+    {
+        return partition_;
+    }
+
+    /**
+     * Setter for PartitionQosPolicy
+     * @param partition
+     */
+    void partition(
+            const PartitionQosPolicy& partition)
+    {
+        partition_ = partition;
+    }
+
+    /**
+     * Getter for GroupDataQosPolicy
+     * @return GroupDataQosPolicy reference
+     */
+    const GroupDataQosPolicy& group_data() const
+    {
+        return group_data_;
+    }
+
+    /**
+     * Getter for GroupDataQosPolicy
+     * @return GroupDataQosPolicy reference
+     */
+    GroupDataQosPolicy& group_data()
+    {
+        return group_data_;
+    }
+
+    /**
+     * Setter for GroupDataQosPolicy
+     * @param group_data
+     */
+    void group_data(
+            const GroupDataQosPolicy& group_data)
+    {
+        group_data_ = group_data;
+    }
+
+    /**
+     * Getter for EntityFactoryQosPolicy
+     * @return EntityFactoryQosPolicy reference
+     */
+    const EntityFactoryQosPolicy& entity_factory() const
+    {
+        return entity_factory_;
+    }
+
+    /**
+     * Getter for EntityFactoryQosPolicy
+     * @return EntityFactoryQosPolicy reference
+     */
+    EntityFactoryQosPolicy& entity_factory()
+    {
+        return entity_factory_;
+    }
+
+    /**
+     * Setter for EntityFactoryQosPolicy
+     * @param entity_factory
+     */
+    void entity_factory(
+            const EntityFactoryQosPolicy& entity_factory)
+    {
+        entity_factory_ = entity_factory;
+    }
+
+private:
+
+    //!Presentation Qos, NOT implemented in the library.
+    PresentationQosPolicy presentation_;
+
+    //!Partition Qos, implemented in the library.
+    PartitionQosPolicy partition_;
+
+    //!Group Data Qos, NOT implemented in the library.
+    GroupDataQosPolicy group_data_;
+
+    //!Entity Factory Qos, implemented in the library
+    EntityFactoryQosPolicy entity_factory_;
 };
 
 RTPS_DllAPI extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
