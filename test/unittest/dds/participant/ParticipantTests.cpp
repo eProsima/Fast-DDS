@@ -296,6 +296,26 @@ TEST(ParticipantTests, DeleteSubscriber)
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
 }
 
+TEST(ParticipantTests, ChangeDefaultSubscriberQos)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    SubscriberQos qos;
+    ASSERT_EQ(participant->get_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
+
+    qos.entity_factory.autoenable_created_entities = false;
+
+    ASSERT_EQ(participant->set_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
+
+    SubscriberQos pqos;
+    ASSERT_EQ(participant->get_default_subscriber_qos(pqos), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_TRUE(pqos == qos);
+    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+}
+
 TEST(ParticipantTests, ChangeDefaultTopicQos)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
