@@ -133,17 +133,21 @@ DomainParticipant& DomainParticipant::default_publisher_qos(
     return *this;
 }
 
-//dds::sub::qos::SubscriberQos DomainParticipant::default_subscriber_qos() const
-//{
-//    return this->delegate()->get_default_subscriber_qos();
-//}
+dds::sub::qos::SubscriberQos DomainParticipant::default_subscriber_qos() const
+{
+    return this->delegate()->get_default_subscriber_qos();
+}
 
-//DomainParticipant& DomainParticipant::default_subscriber_qos(
-//        const ::dds::sub::qos::SubscriberQos& qos)
-//{
-//    this->delegate()->set_default_subscriber_qos(qos);
-//    return *this;
-//}
+DomainParticipant& DomainParticipant::default_subscriber_qos(
+        const ::dds::sub::qos::SubscriberQos& qos)
+{
+    if (this->delegate()->set_default_subscriber_qos(qos) ==
+            ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    return *this;
+}
 
 //dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
 //{
