@@ -29,12 +29,9 @@
 #include <dds/core/Time.hpp>
 #include <dds/core/Entity.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
-
 //#include <dds/topic/qos/TopicQos.hpp>
-
 #include <dds/pub/qos/PublisherQos.hpp>
-//#include <dds/sub/qos/SubscriberQos.hpp>
-
+#include <dds/sub/qos/SubscriberQos.hpp>
 #include <dds/domain/detail/DomainParticipant.hpp>
 
 namespace dds {
@@ -411,7 +408,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    OMG_DDS_API dds::sub::qos::SubscriberQos default_subscriber_qos() const;
+    OMG_DDS_API dds::sub::qos::SubscriberQos default_subscriber_qos() const;
 
     /**
      * Sets the default SubscriberQos of the DomainParticipant.
@@ -438,8 +435,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    OMG_DDS_API DomainParticipant& default_subscriber_qos(
-    //            const ::dds::sub::qos::SubscriberQos& qos);
+    OMG_DDS_API DomainParticipant& default_subscriber_qos(
+            const ::dds::sub::qos::SubscriberQos& qos);
 
     /**
      * Gets the default TopicQos of the DomainParticipant.
