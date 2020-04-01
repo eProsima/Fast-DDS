@@ -475,8 +475,8 @@ public:
                 }
                 else
                 {
-                    port_node->is_opened_read_exclusive = (open_mode == Port::OpenMode::ReadExclusive);
-                    port_node->is_opened_for_reading |= (open_mode == Port::OpenMode::ReadShared);
+                    port_node->is_opened_read_exclusive |= (open_mode == Port::OpenMode::ReadExclusive);
+                    port_node->is_opened_for_reading |= (open_mode != Port::OpenMode::Write);
 
                     logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                                          << port_node->port_id << " (" << port_node->uuid.to_string() <<
