@@ -526,7 +526,8 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
 {
     SharedMemTransportDescriptor my_descriptor;
 
-    my_descriptor.segment_size(16, 16);
+    my_descriptor.segment_size(16);
+    my_descriptor.max_message_size(16);
     my_descriptor.port_queue_capacity(4);
 
     SharedMemTransport transportUnderTest(my_descriptor);

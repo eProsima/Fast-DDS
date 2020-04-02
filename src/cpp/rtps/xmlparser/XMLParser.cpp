@@ -681,7 +681,7 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
             {
                 if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
                     return XMLP_ret::XML_ERROR;
-                transport_descriptor->segment_size(static_cast<uint32_t>(aux), static_cast<uint32_t>(aux));
+                transport_descriptor->segment_size(static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, PORT_QUEUE_CAPACITY) == 0)
             {

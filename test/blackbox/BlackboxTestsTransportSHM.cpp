@@ -80,7 +80,8 @@ TEST(SHM, Test300KFragmentation)
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = static_cast<uint32_t>(data_size * 3 / 4);
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(segment_size);
+    shm_transport->max_message_size(segment_size);
     
     writer
         .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
@@ -134,7 +135,8 @@ TEST(SHM, Test300KNoFragmentation)
     
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(segment_size);
+    shm_transport->max_message_size(segment_size);
     
     writer
         .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
@@ -188,7 +190,8 @@ TEST(SHM, SHM_UDP_300KFragmentation)
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(segment_size);
+    shm_transport->max_message_size(segment_size);
 
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
@@ -248,7 +251,8 @@ TEST(SHM, UDPvsSHM_UDP)
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(segment_size);
+    shm_transport->max_message_size(segment_size);
     
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
@@ -306,7 +310,8 @@ TEST(SHM, SHM_UDPvsUDP)
 
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(segment_size);
+    shm_transport->max_message_size(segment_size);
     
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 

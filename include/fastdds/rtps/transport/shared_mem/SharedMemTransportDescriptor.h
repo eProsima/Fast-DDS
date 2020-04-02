@@ -56,18 +56,21 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
     {
         return segment_size_;
     }
-
-    /**
-     * Sets the segment_size and the max_message_size.
-     * max_message must be <= segment_size
-     * @param [in] segment_size in bytes.
-     * @param [in] max_message_size in bytes.
-     */
+    
     RTPS_DllAPI void segment_size(
-            uint32_t segment_size,
-            uint32_t max_message_size)
+            uint32_t segment_size)
     {
         segment_size_ = segment_size;
+    }
+
+    virtual uint32_t max_message_size() const override
+    { 
+        return maxMessageSize; 
+    }
+
+    RTPS_DllAPI void max_message_size(
+            uint32_t max_message_size)
+    {
         maxMessageSize = max_message_size;
     }
 

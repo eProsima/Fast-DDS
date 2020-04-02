@@ -221,6 +221,21 @@ bool SharedMemTransport::DoInputLocatorsMatch(
 
 bool SharedMemTransport::init()
 {
+    // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
+    static constexpr uint32_t shm_default_segment_size = 524288;
+
+    if(configuration_.segment_size() == 0)
+    {
+        configuration_.segment_size(shm_default_segment_size);
+    }
+
+    if(configuration_.segment_size() < configuration_.max_message_size())
+    {
+printf("%u < %u\n",configuration_.segment_size(), configuration_.max_message_size());
+        logError(RTPS_MSG_OUT, "max_message_size cannot be greater than segment_size");
+        return false;
+    }
+
     try
     {
         switch (shm_default_overflow_policy)

@@ -21,7 +21,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-static constexpr uint32_t shm_default_segment_size = 262144;
+static constexpr uint32_t shm_default_segment_size = 0;
 static constexpr uint32_t shm_default_port_queue_capacity = 512;
 static constexpr uint32_t shm_default_healthy_check_timeout_ms = 1000;
 
@@ -50,7 +50,7 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor(
     , healthy_check_timeout_ms_(t.healthy_check_timeout_ms_)
     , rtps_dump_file_(t.rtps_dump_file_)
 {
-    maxMessageSize = s_maximumMessageSize;
+    maxMessageSize = t.max_message_size();
 }
 
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
