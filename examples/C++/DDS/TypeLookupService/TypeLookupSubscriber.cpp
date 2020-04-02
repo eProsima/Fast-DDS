@@ -21,6 +21,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <fastrtps/types/DynamicDataHelper.hpp>
@@ -59,8 +60,8 @@ bool TypeLookupSubscriber::init()
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
-    qos_.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    qos_.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    qos_.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    qos_.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     topic_.topicKind = NO_KEY;
     topic_.topicDataType = "TypeLookup";
     topic_.topicName = "TypeLookupTopic";

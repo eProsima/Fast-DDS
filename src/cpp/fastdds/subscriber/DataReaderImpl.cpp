@@ -63,9 +63,9 @@ DataReaderImpl::DataReaderImpl(
             memory_policy)
     , listener_(listener)
     , reader_listener_(this)
-    , deadline_duration_us_(qos_.deadline.period.to_ns() * 1e-3)
+    , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , deadline_missed_status_()
-    , lifespan_duration_us_(qos_.lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
     , user_datareader_(nullptr)
 {
     deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
@@ -73,14 +73,14 @@ DataReaderImpl::DataReaderImpl(
                 {
                     return deadline_missed();
                 },
-                    qos_.deadline.period.to_ns() * 1e-6);
+                    qos_.deadline().period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
                     [&]() -> bool
                 {
                     return lifespan_expired();
                 },
-                    qos_.lifespan.duration.to_ns() * 1e-6);
+                    qos_.lifespan().duration.to_ns() * 1e-6);
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -195,11 +195,11 @@ ReturnCode_t DataReaderImpl::set_qos(
     subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
 
     // Deadline
-    if (qos_.deadline.period != c_TimeInfinite)
+    if (qos_.deadline().period != c_TimeInfinite)
     {
         deadline_duration_us_ =
-                duration<double, std::ratio<1, 1000000> >(qos_.deadline.period.to_ns() * 1e-3);
-        deadline_timer_->update_interval_millisec(qos_.deadline.period.to_ns() * 1e-6);
+                duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
+        deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
     }
     else
     {
@@ -207,11 +207,11 @@ ReturnCode_t DataReaderImpl::set_qos(
     }
 
     // Lifespan
-    if (qos_.lifespan.duration != c_TimeInfinite)
+    if (qos_.lifespan().duration != c_TimeInfinite)
     {
         lifespan_duration_us_ =
-                std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan.duration.to_ns() * 1e-3);
-        lifespan_timer_->update_interval_millisec(qos_.lifespan.duration.to_ns() * 1e-6);
+                std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
+        lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
     }
     else
     {
@@ -354,7 +354,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
-    if (qos_.deadline.period != c_TimeInfinite)
+    if (qos_.deadline().period != c_TimeInfinite)
     {
         std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -376,7 +376,7 @@ bool DataReaderImpl::on_new_cache_change_added(
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
 
-    if (qos_.lifespan.duration == c_TimeInfinite)
+    if (qos_.lifespan().duration == c_TimeInfinite)
     {
         return true;
     }
@@ -419,7 +419,7 @@ bool DataReaderImpl::on_new_cache_change_added(
 
 bool DataReaderImpl::deadline_timer_reschedule()
 {
-    assert(qos_.deadline.period != c_TimeInfinite);
+    assert(qos_.deadline().period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -437,7 +437,7 @@ bool DataReaderImpl::deadline_timer_reschedule()
 
 bool DataReaderImpl::deadline_missed()
 {
-    assert(qos_.deadline.period != c_TimeInfinite);
+    assert(qos_.deadline().period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 

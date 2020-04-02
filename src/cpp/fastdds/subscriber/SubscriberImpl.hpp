@@ -130,6 +130,8 @@ public:
 
     const DataReaderQos& get_default_datareader_qos() const;
 
+    DataReaderQos& get_default_datareader_qos();
+
     /* TODO
        bool copy_from_topic_qos(
             ReaderQos& reader_qos,

@@ -139,6 +139,11 @@ const DataReaderQos& Subscriber::get_default_datareader_qos() const
     return impl_->get_default_datareader_qos();
 }
 
+DataReaderQos& Subscriber::get_default_datareader_qos()
+{
+    return impl_->get_default_datareader_qos();
+}
+
 ReturnCode_t Subscriber::get_default_datareader_qos(
         DataReaderQos& qos) const
 {

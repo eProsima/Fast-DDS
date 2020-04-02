@@ -88,11 +88,12 @@ bool TestSubscriber::init(
     }
 
     //CREATE THE SUBSCRIBER
-    SubscriberAttributes Rparam;
-    Rparam.topic.topicKind = topic_kind;
-    Rparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
-    Rparam.topic.auto_fill_type_object = false;
-    Rparam.topic.auto_fill_type_information = false;
+    TopicAttributes topic;
+    eprosima::fastdds::dds::DataReaderQos qos;
+    topic.topicKind = topic_kind;
+    topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
+    topic.auto_fill_type_object = false;
+    topic.auto_fill_type_information = false;
 
     //REGISTER THE TYPE
     if (m_Type != nullptr)
@@ -102,27 +103,27 @@ bool TestSubscriber::init(
 
     std::ostringstream t;
     t << topicName << "_" << asio::ip::host_name() << "_" << domain;
-    Rparam.topic.topicName = t.str();
+    topic.topicName = t.str();
     if (type_object != nullptr)
     {
-        Rparam.topic.type = *type_object;
+        topic.type = *type_object;
     }
     if (type_identifier != nullptr)
     {
-        Rparam.topic.type_id = *type_identifier;
+        topic.type_id = *type_identifier;
     }
     if (type_info != nullptr)
     {
-        Rparam.topic.type_information = *type_info;
+        topic.type_information = *type_info;
     }
 
     if (typeConsistencyQos != nullptr)
     {
-        Rparam.qos.type_consistency = *typeConsistencyQos;
+        qos.type_consistency().type_consistency =*typeConsistencyQos;
     }
     if (dataRepresentationQos != nullptr)
     {
-        Rparam.qos.representation = *dataRepresentationQos;
+        qos.type_consistency().representation = *dataRepresentationQos;
     }
 
     // Create sub and reader if topic was provided
@@ -135,15 +136,13 @@ bool TestSubscriber::init(
             return false;
         }
 
-        DataReaderQos drqos;
-        drqos.to_datareaderqos(Rparam.qos, SUBSCRIBER_QOS_DEFAULT);
-        reader_ = mp_subscriber->create_datareader(Rparam.topic, drqos, &m_subListener);
+        reader_ = mp_subscriber->create_datareader(topic, qos, &m_subListener);
         m_Data = m_Type->createData();
     }
 
     m_bInitialized = true;
-    topic_att = Rparam.topic;
-    reader_qos = Rparam.qos;
+    topic_att = topic;
+    reader_qos = qos;
 
     return true;
 }
@@ -302,9 +301,6 @@ DataReader* TestSubscriber::create_datareader()
 {
     if (mp_subscriber == nullptr)
     {
-        SubscriberAttributes Rparam;
-        Rparam.topic = topic_att;
-        Rparam.qos = reader_qos;
         mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
         if (mp_subscriber == nullptr)
@@ -313,9 +309,7 @@ DataReader* TestSubscriber::create_datareader()
         }
     }
     topic_att.topicDataType = disc_type_->get_name();
-    DataReaderQos drqos;
-    drqos.to_datareaderqos(reader_qos, SUBSCRIBER_QOS_DEFAULT);
-    return mp_subscriber->create_datareader(topic_att, drqos, &m_subListener);
+    return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
 
 }
 

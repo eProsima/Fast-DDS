@@ -23,6 +23,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/rtps/common/Types.h>
@@ -66,7 +67,7 @@ private:
 
     eprosima::fastrtps::SubscriberAttributes att_;
 
-    eprosima::fastrtps::ReaderQos qos_;
+    eprosima::fastdds::dds::DataReaderQos qos_;
 
     eprosima::fastrtps::TopicAttributes topic_;
 

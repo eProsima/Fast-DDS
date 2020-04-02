@@ -142,29 +142,28 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    //TODO: Fix once the SubscriberAttributes are included in DataReaderQos
     ReaderAttributes ratt;
-    ratt.endpoint.durabilityKind = qos.durability.durabilityKind();
+    ratt.endpoint.durabilityKind = qos.durability().durabilityKind();
     ratt.endpoint.endpointKind = READER;
-    //ratt.endpoint.multicastLocatorList = qos_.subscriber_attr.multicastLocatorList;
-    ratt.endpoint.reliabilityKind = qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    ratt.endpoint.multicastLocatorList = qos.enpoint().multicastLocatorList;
+    ratt.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = topic_att.topicKind;
-    //ratt.endpoint.unicastLocatorList = qos_.subscriber_attr.unicastLocatorList;
-    //ratt.endpoint.remoteLocatorList = qos_.subscriber_attr.remoteLocatorList;
-    //ratt.expectsInlineQos = qos_.subscriber_attr.expectsInlineQos;
-    //ratt.endpoint.properties = qos_.subscriber_attr.properties;
+    ratt.endpoint.unicastLocatorList = qos.enpoint().unicastLocatorList;
+    ratt.endpoint.remoteLocatorList = qos.enpoint().remoteLocatorList;
+    ratt.expectsInlineQos = qos.expectsInlineQos();
+    ratt.endpoint.properties = qos.properties();
 
-    //if (qos_.subscriber_attr.getEntityID() > 0)
-    //{
-    //    ratt.endpoint.setEntityID(static_cast<uint8_t>(qos_.subscriber_attr.getEntityID()));
-    //}
+    if (qos.enpoint().m_entityID > 0)
+    {
+        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos.enpoint().m_entityID));
+    }
 
-    //if (qos_.subscriber_attr.getUserDefinedID() > 0)
-    //{
-    //    ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.subscriber_attr.getUserDefinedID()));
-    //}
+    if (qos.enpoint().m_userDefinedID > 0)
+    {
+        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.enpoint().m_userDefinedID));
+    }
 
-    //ratt.times = qos_.subscriber_attr.times;
+    ratt.times = qos.reliable_reader_qos().reader_times;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -183,7 +182,7 @@ DataReader* SubscriberImpl::create_datareader(
         property.value(std::move(partitions));
         ratt.endpoint.properties.properties().push_back(std::move(property));
     }
-    if (qos.disablePositiveACKs.enabled)
+    if (qos.reliable_reader_qos().disablePositiveACKs.enabled)
     {
         ratt.disable_positive_acks = true;
     }
@@ -194,8 +193,7 @@ DataReader* SubscriberImpl::create_datareader(
         topic_att,
         ratt,
         qos,
-        //qos_.subscriber_attr.historyMemoryPolicy,
-        fastrtps::rtps::MemoryManagementPolicy_t(),
+        qos.enpoint().historyMemoryPolicy,
         listener);
 
     if (impl->reader_ == nullptr)
@@ -329,6 +327,12 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
 }
 
 const DataReaderQos& SubscriberImpl::get_default_datareader_qos() const
+{
+    return default_datareader_qos_;
+}
+
+
+DataReaderQos& SubscriberImpl::get_default_datareader_qos()
 {
     return default_datareader_qos_;
 }

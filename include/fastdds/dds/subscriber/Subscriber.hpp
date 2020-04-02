@@ -26,7 +26,6 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/Entity.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -215,6 +214,18 @@ public:
      * @return Current default DataReaderQos.
      */
     RTPS_DllAPI const DataReaderQos& get_default_datareader_qos() const;
+
+
+    /**
+     * This operation returns the default value of the DataReader QoS, that is, the QoS policies which will be
+     * used for newly created DataReader entities in the case where the QoS policies are defaulted in the
+     * create_datareader operation.
+     *
+     * The values retrieved get_default_datareader_qos will match the set of values specified on the last successful
+     * call to get_default_datareader_qos, or else, if the call was never made, the default values.
+     * @return Current default DataReaderQos.
+     */
+    RTPS_DllAPI DataReaderQos& get_default_datareader_qos();
 
     /**
      * This operation retrieves the default value of the DataReader QoS, that is, the QoS policies which will be

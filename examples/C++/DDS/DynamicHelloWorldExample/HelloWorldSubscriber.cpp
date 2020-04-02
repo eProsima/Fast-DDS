@@ -21,6 +21,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <fastrtps/types/DynamicDataHelper.hpp>
@@ -50,7 +51,7 @@ bool HelloWorldSubscriber::init()
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
-    qos_.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
     topic_.topicKind = eprosima::fastrtps::rtps::NO_KEY;
     topic_.topicDataType = "HelloWorld";
     topic_.topicName = "DDSDynHelloWorldTopic";
