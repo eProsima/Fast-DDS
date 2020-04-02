@@ -292,6 +292,7 @@ public:
                 uint32_t size,
                 const std::chrono::steady_clock::time_point& max_blocking_time_point)
         {
+#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
             SharedMemSegment::spin_wait spin_wait;
 
             // Not enough avaible space
@@ -308,7 +309,9 @@ public:
                 // vs interprocess_mutex + interprocess_cv.
                 spin_wait.yield();
             }
-
+#else
+            (void)max_blocking_time_point;
+#endif
             if (segment_node_->free_bytes.load(std::memory_order_relaxed) < size)
             {
                 throw std::runtime_error("allocation timeout");
