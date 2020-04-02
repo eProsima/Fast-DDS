@@ -847,6 +847,15 @@ public:
     }
 
     /**
+     * Returns raw data vector.
+     * @return raw data as vector of octets.
+     * */
+    RTPS_DllAPI inline collection_type& data_vec()
+    {
+        return collection_;
+    }
+
+    /**
      * Sets raw data vector.
      * @param vec raw data to set.
      * */
