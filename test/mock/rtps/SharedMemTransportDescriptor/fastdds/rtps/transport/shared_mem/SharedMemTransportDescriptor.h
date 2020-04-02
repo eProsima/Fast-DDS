@@ -54,12 +54,6 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
     }
 
     uint32_t min_send_buffer_size() const override { return 0; }
-
-    enum class OverflowPolicy
-    {
-        DISCARD,
-        FAIL
-    };
     
     RTPS_DllAPI uint32_t segment_size() const
     {

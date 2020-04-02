@@ -40,13 +40,7 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
     {
         return 0;
     }
-
-    enum class OverflowPolicy
-    {
-        DISCARD,
-        FAIL
-    };
-
+    
     RTPS_DllAPI SharedMemTransportDescriptor();
 
     RTPS_DllAPI SharedMemTransportDescriptor(
