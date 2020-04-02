@@ -34,7 +34,7 @@
 #include <fastrtps/attributes/TopicAttributes.h>
 
 #include <fastrtps/utils/StringMatching.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps/types/TypeObjectFactory.h>
 
@@ -59,10 +59,12 @@ EDP::EDP(
     , mp_RTPSParticipant(part)
     , temp_reader_proxy_data_(
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+        part->getRTPSParticipantAttributes().allocation.data_limits)
     , temp_writer_proxy_data_(
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+        part->getRTPSParticipantAttributes().allocation.data_limits)
 {
 }
 
@@ -620,14 +622,14 @@ bool EDP::validMatching(
 
     //Partition check:
     bool matched = false;
-    if (wdata->m_qos.m_partition.names_.empty() && rdata->m_qos.m_partition.names_.empty())
+    if (wdata->m_qos.m_partition.empty() && rdata->m_qos.m_partition.empty())
     {
         matched = true;
     }
-    else if (wdata->m_qos.m_partition.names_.empty() && rdata->m_qos.m_partition.names_.size() > 0)
+    else if (wdata->m_qos.m_partition.empty() && rdata->m_qos.m_partition.size() > 0)
     {
-        for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names_.begin();
-                rnameit != rdata->m_qos.m_partition.names_.end(); ++rnameit)
+        for (auto rnameit = rdata->m_qos.m_partition.begin();
+                rnameit != rdata->m_qos.m_partition.end(); ++rnameit)
         {
             if (rnameit->size() == 0)
             {
@@ -636,10 +638,10 @@ bool EDP::validMatching(
             }
         }
     }
-    else if (wdata->m_qos.m_partition.names_.size() > 0 && rdata->m_qos.m_partition.names_.empty() )
+    else if (wdata->m_qos.m_partition.size() > 0 && rdata->m_qos.m_partition.empty() )
     {
-        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names_.begin();
-                wnameit !=  wdata->m_qos.m_partition.names_.end(); ++wnameit)
+        for (auto wnameit = wdata->m_qos.m_partition.begin();
+                wnameit !=  wdata->m_qos.m_partition.end(); ++wnameit)
         {
             if (wnameit->size() == 0)
             {
@@ -650,13 +652,13 @@ bool EDP::validMatching(
     }
     else
     {
-        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names_.begin();
-                wnameit !=  wdata->m_qos.m_partition.names_.end(); ++wnameit)
+        for (auto wnameit = wdata->m_qos.m_partition.begin();
+                wnameit !=  wdata->m_qos.m_partition.end(); ++wnameit)
         {
-            for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names_.begin();
-                    rnameit != rdata->m_qos.m_partition.names_.end(); ++rnameit)
+            for (auto rnameit = rdata->m_qos.m_partition.begin();
+                    rnameit != rdata->m_qos.m_partition.end(); ++rnameit)
             {
-                if (StringMatching::matchString(wnameit->c_str(), rnameit->c_str()))
+                if (StringMatching::matchString(wnameit->name(), rnameit->name()))
                 {
                     matched = true;
                     break;
@@ -819,14 +821,14 @@ bool EDP::validMatching(
 
     //Partition check:
     bool matched = false;
-    if (rdata->m_qos.m_partition.names_.empty() && wdata->m_qos.m_partition.names_.empty())
+    if (rdata->m_qos.m_partition.empty() && wdata->m_qos.m_partition.empty())
     {
         matched = true;
     }
-    else if (rdata->m_qos.m_partition.names_.empty() && wdata->m_qos.m_partition.names_.size() > 0)
+    else if (rdata->m_qos.m_partition.empty() && wdata->m_qos.m_partition.size() > 0)
     {
-        for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names_.begin();
-                rnameit != wdata->m_qos.m_partition.names_.end(); ++rnameit)
+        for (auto rnameit = wdata->m_qos.m_partition.begin();
+                rnameit != wdata->m_qos.m_partition.end(); ++rnameit)
         {
             if (rnameit->size() == 0)
             {
@@ -835,10 +837,10 @@ bool EDP::validMatching(
             }
         }
     }
-    else if (rdata->m_qos.m_partition.names_.size() > 0 && wdata->m_qos.m_partition.names_.empty() )
+    else if (rdata->m_qos.m_partition.size() > 0 && wdata->m_qos.m_partition.empty() )
     {
-        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names_.begin();
-                wnameit !=  rdata->m_qos.m_partition.names_.end(); ++wnameit)
+        for (auto wnameit = rdata->m_qos.m_partition.begin();
+                wnameit !=  rdata->m_qos.m_partition.end(); ++wnameit)
         {
             if (wnameit->size() == 0)
             {
@@ -849,13 +851,13 @@ bool EDP::validMatching(
     }
     else
     {
-        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names_.begin();
-                wnameit !=  rdata->m_qos.m_partition.names_.end(); ++wnameit)
+        for (auto wnameit = rdata->m_qos.m_partition.begin();
+                wnameit !=  rdata->m_qos.m_partition.end(); ++wnameit)
         {
-            for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names_.begin();
-                    rnameit != wdata->m_qos.m_partition.names_.end(); ++rnameit)
+            for (auto rnameit = wdata->m_qos.m_partition.begin();
+                    rnameit != wdata->m_qos.m_partition.end(); ++rnameit)
             {
-                if (StringMatching::matchString(wnameit->c_str(), rnameit->c_str()))
+                if (StringMatching::matchString(wnameit->name(), rnameit->name()))
                 {
                     matched = true;
                     break;
@@ -892,7 +894,7 @@ bool EDP::pairingReader(
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(auto & pair : *(*pit)->m_writers)
+        for (auto& pair : *(*pit)->m_writers)
         {
             WriterProxyData* wdatait = pair.second;
             bool valid = validMatching(&rdata, wdatait);
@@ -910,7 +912,7 @@ bool EDP::pairingReader(
 #else
                 if (R->matched_writer_add(*wdatait))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << writer_guid);
+                    logInfo(RTPS_EDP_MATCH, "WP:" << wdatait->guid() << " match R:" << R->getGuid() << ". RLoc:" << wdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if (R->getListener() != nullptr)
                     {
@@ -970,7 +972,7 @@ bool EDP::pairingWriter(
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(auto & pair : *(*pit)->m_readers)
+        for (auto& pair : *(*pit)->m_readers)
         {
             ReaderProxyData* rdatait = pair.second;
             const GUID_t& reader_guid = rdatait->guid();
@@ -992,7 +994,7 @@ bool EDP::pairingWriter(
 #else
                 if (W->matched_reader_add(*rdatait))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to readerProxy: " << reader_guid);
+                    logInfo(RTPS_EDP_MATCH, "RP:" << rdatait->guid() << " match W:" << W->getGuid() << ". WLoc:" << rdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if (W->getListener() != nullptr)
                     {
@@ -1003,7 +1005,7 @@ bool EDP::pairingWriter(
 
                         const GUID_t& writer_guid = W->getGuid();
                         const PublicationMatchedStatus& pub_info =
-                            update_publication_matched_status(reader_guid, writer_guid, 1);
+                                update_publication_matched_status(reader_guid, writer_guid, 1);
                         W->getListener()->onWriterMatched(W, pub_info);
                     }
                 }
@@ -1070,7 +1072,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 #else
                 if ((*wit)->matched_reader_add(*rdata))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
+                    logInfo(RTPS_EDP_MATCH, "RP:" << rdata->guid() << " match W:" << (*wit)->getGuid() << ". RLoc:" << rdata->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*wit)->getListener() != nullptr)
                     {
@@ -1250,7 +1252,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 #else
                 if ((*rit)->matched_writer_add(*wdata))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
+                    logInfo(RTPS_EDP_MATCH, "WP:" << wdata->guid() << " match R:" << (*rit)->getGuid() << ". WLoc:" << wdata->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*rit)->getListener() != nullptr)
                     {
@@ -1421,15 +1423,16 @@ bool EDP::hasTypeIdentifier(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata) const
 {
-    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
-           rdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00);
+    return wdata->has_type_id() && wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+           rdata->has_type_id() && rdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00);
 }
 
 bool EDP::checkTypeObject(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata) const
 {
-    if (wdata->type_information().assigned() && rdata->type_information().assigned())
+    if (wdata->has_type_information() && wdata->type_information().assigned() &&
+            rdata->has_type_information() && rdata->type_information().assigned())
     {
         const types::TypeIdentifier* rtype = nullptr;
         const types::TypeIdentifier* wtype = nullptr;
@@ -1476,8 +1479,8 @@ bool EDP::checkTypeObject(
         return false;
     }
 
-    if (wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
-            rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
+    if (wdata->has_type() && wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
+            rdata->has_type() && rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
     {
         // TODO - Remove once XCDR or XCDR2 is implemented.
         /*
@@ -1506,7 +1509,8 @@ bool EDP::hasTypeObject(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata) const
 {
-    if (wdata->type_information().assigned() && rdata->type_information().assigned())
+    if (wdata->has_type_information() && wdata->type_information().assigned() &&
+            rdata->has_type_information() && rdata->type_information().assigned())
     {
         if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
                 static_cast<uint8_t>(0x00) &&
@@ -1525,8 +1529,8 @@ bool EDP::hasTypeObject(
         return false;
     }
 
-    if (wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
-            rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
+    if (wdata->has_type() && wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
+            rdata->has_type() && rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
     {
         return true;
     }

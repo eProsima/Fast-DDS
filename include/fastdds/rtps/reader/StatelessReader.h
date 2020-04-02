@@ -179,6 +179,10 @@ public:
         return true;
     }
 
+    /**
+     * Get the RTPS participant
+     * @return Associated RTPS participant
+    */
     inline RTPSParticipantImpl* getRTPSParticipant() const
     {
         return mp_RTPSParticipant;
@@ -195,7 +199,8 @@ private:
     };
 
     bool acceptMsgFrom(
-            const GUID_t& entityId);
+            const GUID_t& entityId,
+            ChangeKind_t change_kind);
 
     bool thereIsUpperRecordOf(
             const GUID_t& guid,

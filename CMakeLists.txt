@@ -15,7 +15,8 @@
 ###############################################################################
 # CMake build rules for FastRTPS
 ###############################################################################
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
+cmake_policy(VERSION 3.5...3.13)
 
 set(IS_TOP_LEVEL TRUE)
 if(PROJECT_SOURCE_DIR)
@@ -193,7 +194,6 @@ endif()
 # Internal debug messages
 ###############################################################################
 
-option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
 if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER_MINION)
     set(INTERNAL_DEBUG ON)
 endif()
@@ -220,6 +220,7 @@ eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 find_package(foonathan_memory REQUIRED)
+find_package(ThirdpartyBoost REQUIRED)
 
 if(ANDROID)
     eprosima_find_thirdparty(android-ifaddrs android-ifaddrs)

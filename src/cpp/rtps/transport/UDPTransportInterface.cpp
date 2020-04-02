@@ -16,7 +16,7 @@
 #include <fastdds/rtps/transport/UDPTransportInterface.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <rtps/transport/UDPSenderResource.hpp>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
 
@@ -442,11 +442,45 @@ bool UDPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
-        const Locator_t& remote_locator,
+        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end,
+        bool only_multicast_purpose,
+        const std::chrono::steady_clock::time_point& max_blocking_time_point)
+{
+    fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
+
+    bool ret = true;
+
+    auto time_out = std::chrono::duration_cast<std::chrono::microseconds>(
+        max_blocking_time_point - std::chrono::steady_clock::now());
+
+    while (it != *destination_locators_end)
+    {
+        if (IsLocatorSupported(*it))
+        {
+            ret &= send(send_buffer, 
+                send_buffer_size, 
+                socket,
+                *it, 
+                only_multicast_purpose, 
+                time_out);
+        }
+
+        ++it;
+    }
+
+    return ret;
+}
+
+bool UDPTransportInterface::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        eProsimaUDPSocket& socket,
+        const fastrtps::rtps::Locator_t& remote_locator,
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)
 {
-    if (!IsLocatorSupported(remote_locator) || send_buffer_size > configuration()->sendBufferSize)
+    if (send_buffer_size > configuration()->sendBufferSize)
     {
         return false;
     }

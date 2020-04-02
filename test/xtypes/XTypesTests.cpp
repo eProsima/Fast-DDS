@@ -23,7 +23,7 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
@@ -55,7 +55,7 @@ public:
 
     xtypestests()
     {
-        //Log::SetVerbosity(Log::Info);
+        //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
         //Log::SetCategoryFilter(std::regex("(SECURITY)"));
 
         DOMAIN_ID_ = static_cast<int>(GET_PID()) % 230;

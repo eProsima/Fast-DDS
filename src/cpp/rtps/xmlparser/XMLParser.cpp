@@ -15,12 +15,12 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -29,8 +29,8 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 
-#include <fastrtps/log/StdoutConsumer.h>
-#include <fastrtps/log/FileConsumer.h>
+#include <fastdds/dds/log/FileConsumer.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
 
 #include <tinyxml2.h>
 #include <iostream>
@@ -98,6 +98,10 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                         root->addChild(std::move(profiles_node));
                     }
                 }
+                else if (strcmp(tag, LIBRARY_SETTINGS) == 0)
+                {
+                    ret = parseXMLLibrarySettings(node);
+                }
                 else if (strcmp(tag, PARTICIPANT) == 0)
                 {
                     ret = parseXMLParticipantProf(node, *root);
@@ -113,6 +117,14 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                 else if (strcmp(tag, TOPIC) == 0)
                 {
                     ret = parseXMLTopicData(node, *root);
+                }
+                else if (strcmp(tag, REQUESTER) == 0)
+                {
+                    ret = parseXMLRequesterProf(node, *root);
+                }
+                else if (strcmp(tag, REPLIER) == 0)
+                {
+                    ret = parseXMLReplierProf(node, *root);
                 }
                 else if (strcmp(tag, TYPES) == 0)
                 {
@@ -355,6 +367,15 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 return ret;
             }
         }
+        else if(sType == SHM)
+        {
+            pDescriptor = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
+            ret = parseXMLCommonSharedMemTransportData(p_root, pDescriptor);
+            if (ret != XMLP_ret::XML_OK)
+            {
+                return ret;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Invalid transport type: '" << sType << "'");
@@ -435,7 +456,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             uint32_t uSize = 0;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
                 return XMLP_ret::XML_ERROR;
-            pDesc->maxMessageSize = uSize;
+            std::dynamic_pointer_cast<rtps::TransportDescriptorInterface>(p_transport)->maxMessageSize = uSize;
         }
         else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
         {
@@ -475,7 +496,11 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
             strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
             strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
-            strcmp(name, NON_BLOCKING_SEND) == 0 )
+            strcmp(name, NON_BLOCKING_SEND) == 0  || 
+            strcmp(name, SEGMENT_SIZE) == 0 || strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
+            strcmp(name, PORT_OVERFLOW_POLICY) == 0 || strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
+            strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
+            strcmp(name, RTPS_DUMP_FILE) == 0)
         {
             // Parsed outside of this method
         }
@@ -622,6 +647,109 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
     else
     {
         logError(XMLPARSER, "Error parsing TCP Transport data");
+        ret = XMLP_ret::XML_ERROR;
+    }
+
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
+{
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="segment_size" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="port_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="segment_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+                </xs:all>
+        </xs:complexType>
+    */
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> transport_descriptor =
+        std::dynamic_pointer_cast<fastdds::rtps::SharedMemTransportDescriptor>(p_transport);
+    if (transport_descriptor != nullptr)
+    {
+        tinyxml2::XMLElement *p_aux0 = nullptr;
+        const char* name = nullptr;
+        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+        {
+            uint32_t aux;
+            name = p_aux0->Name();
+            if (strcmp(name, SEGMENT_SIZE) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->segment_size(static_cast<uint32_t>(aux), static_cast<uint32_t>(aux));
+            }
+            else if (strcmp(name, PORT_QUEUE_CAPACITY) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->port_queue_capacity(static_cast<uint32_t>(aux));
+            }
+            else if (strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->healthy_check_timeout_ms(static_cast<uint32_t>(aux));
+            }
+            else if (strcmp(name, PORT_OVERFLOW_POLICY) == 0)
+            {
+                std::string str;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                    return XMLP_ret::XML_ERROR;
+                if(str == DISCARD)
+                {
+                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+                }
+                else if(str == FAIL)
+                {
+                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+                }
+                else
+                    return XMLP_ret::XML_ERROR;
+            }
+            else if (strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0)
+            {
+                std::string str;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                    return XMLP_ret::XML_ERROR;
+                if(str == DISCARD)
+                {
+                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+                }
+                else if(str == FAIL)
+                {
+                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+                }
+                else
+                    return XMLP_ret::XML_ERROR;
+            }
+            else if (strcmp(name, RTPS_DUMP_FILE) == 0)
+            {
+                std::string str;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->rtps_dump_file(str);
+            }
+            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 || strcmp(name, MAX_MESSAGE_SIZE) == 0)
+            {
+                // Parsed Outside of this method
+            }
+            else
+            {
+                logError(XMLPARSER, "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing SharedMem Transport data");
         ret = XMLP_ret::XML_ERROR;
     }
 
@@ -2242,6 +2370,41 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     return memberBuilder;
 }
 
+XMLP_ret XMLParser::parseXMLLibrarySettings(tinyxml2::XMLElement* p_root)
+{
+    /*
+        <xs:complexType name="LibrarySettingsType">
+            <xs:all minOccurs="0">
+                <xs:element name="intraprocess_delivery" type="IntraprocessDeliveryType"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::string sId = "";
+
+    uint8_t ident = 1;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    p_aux0 = p_root->FirstChildElement(INTRAPROCESS_DELIVERY);
+    if (nullptr == p_aux0)
+    {
+        logError(XMLPARSER, "Not found '" << INTRAPROCESS_DELIVERY << "' attribute");
+        return XMLP_ret::XML_ERROR;
+    }
+    else
+    {
+        LibrarySettingsAttributes library_settings;
+        if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &library_settings.intraprocess_delivery, ident))
+        {
+            return XMLP_ret::XML_ERROR;
+        }
+
+        XMLProfileManager::library_settings(library_settings);
+    }
+
+    return ret;
+}
+
 XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
@@ -2311,12 +2474,47 @@ XMLP_ret XMLParser::parseXMLTopicData(tinyxml2::XMLElement* p_root, BaseNode& ro
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLRequesterProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    up_requester_t requester_atts{new RequesterAttributes};
+    up_node_requester_t requester_node{new node_requester_t{NodeType::REQUESTER, std::move(requester_atts)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *requester_node))
+    {
+        rootNode.addChild(std::move(requester_node));
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing requester profile");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLReplierProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    up_replier_t replier_atts{new ReplierAttributes};
+    up_node_replier_t replier_node{new node_replier_t{NodeType::REPLIER, std::move(replier_atts)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *replier_node))
+    {
+        rootNode.addChild(std::move(replier_node));
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing replier profile");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    return ret;
+}
+
 XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode)
 {
     /*
         <xs:element name="profiles">
             <xs:complexType>
                 <xs:sequence>
+                    <xs:element name="library_settings" type="LibrarySettingsType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="transport_descriptors" type="TransportDescriptorListType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
@@ -2339,6 +2537,10 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 parseOk &= parseXMLTransportsProf(p_profile) == XMLP_ret::XML_OK;
             }
+            else if (strcmp(tag, LIBRARY_SETTINGS) == 0)
+            {
+                parseOk &= parseXMLLibrarySettings(p_profile) == XMLP_ret::XML_OK;
+            }
             else if (strcmp(tag, PARTICIPANT) == 0)
             {
                 parseOk &= parseXMLParticipantProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
@@ -2359,6 +2561,14 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 parseOk &= parseXMLTypes(p_profile) == XMLP_ret::XML_OK;
             }
+            else if (strcmp(tag, REQUESTER) == 0)
+            {
+                parseOk &= parseXMLRequesterProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
+            }
+            else if (strcmp(tag, REPLIER) == 0)
+            {
+                parseOk &= parseXMLReplierProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
+            }
             else if (strcmp(tag, QOS_PROFILE) == 0)
             {
                 logError(XMLPARSER, "Field 'QOS_PROFILE' do not supported for now");
@@ -2373,6 +2583,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             }
             else
             {
+                parseOk = false;
                 logError(XMLPARSER, "Not expected tag: '" << tag << "'");
             }
         }
@@ -2434,7 +2645,7 @@ XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
                 }
                 if (!use_default)
                 {
-                    Log::ClearConsumers();
+                    eprosima::fastdds::dds::Log::ClearConsumers();
                 }
             }
             else if (strcmp(tag, CONSUMER) == 0)
@@ -2458,6 +2669,8 @@ XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
 
 XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
 {
+    using namespace eprosima::fastdds::dds;
+
     XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* p_element = consumer.FirstChildElement(CLASS);
 
@@ -2801,24 +3014,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
 
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
 {
-    /*
-        <xs:complexType name="publisherProfileType">
-            <xs:all minOccurs="0">
-                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
-                <xs:element name="qos" type="writerQosPoliciesType" minOccurs="0"/>
-                <xs:element name="times" type="writerTimesType" minOccurs="0"/>
-                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
-                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
-                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
-                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
-                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
-            </xs:all>
-            <xs:attribute name="profile_name" type="stringType" use="required"/>
-        </xs:complexType>
-    */
-
     if (nullptr == p_profile)
     {
         logError(XMLPARSER, "Bad parameters!");
@@ -2828,117 +3023,16 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
     addAllAttributes(p_profile, publisher_node);
 
     uint8_t ident = 1;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
-    const char* name = nullptr;
-    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    if (XMLP_ret::XML_OK != getXMLPublisherAttributes(p_profile, *publisher_node.get(), ident))
     {
-        name = p_aux0->Name();
-        if (strcmp(name, TOPIC) == 0)
-        {
-            // topic
-            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, publisher_node.get()->topic, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, QOS) == 0)
-        {
-            // qos
-            if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux0, publisher_node.get()->qos, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, TIMES) == 0)
-        {
-            // times
-            if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux0, publisher_node.get()->times, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, UNI_LOC_LIST) == 0)
-        {
-            // unicastLocatorList
-            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher_node.get()->unicastLocatorList, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, MULTI_LOC_LIST) == 0)
-        {
-            // multicastLocatorList
-            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher_node.get()->multicastLocatorList, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, REM_LOC_LIST) == 0)
-        {
-            // remoteLocatorList
-            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher_node.get()->remoteLocatorList, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, THROUGHPUT_CONT) == 0)
-        {
-            // throughputController
-            if (XMLP_ret::XML_OK !=
-                getXMLThroughputController(p_aux0, publisher_node.get()->throughputController, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, HIST_MEM_POLICY) == 0)
-        {
-            // historyMemoryPolicy
-            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, publisher_node.get()->historyMemoryPolicy, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, PROPERTIES_POLICY) == 0)
-        {
-            // propertiesPolicy
-            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, publisher_node.get()->properties, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, USER_DEF_ID) == 0)
-        {
-            // userDefinedID - int16type
-            int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
-                return XMLP_ret::XML_ERROR;
-            publisher_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
-        }
-        else if (strcmp(name, ENTITY_ID) == 0)
-        {
-            // entityID - int16Type
-            int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
-                return XMLP_ret::XML_ERROR;
-            publisher_node.get()->setEntityID(static_cast<uint8_t>(i));
-        }
-        else if (strcmp(name, MATCHED_SUBSCRIBERS_ALLOCATION) == 0)
-        {
-            // matchedSubscribersAllocation - containerAllocationConfigType
-            if(XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, publisher_node.get()->matched_subscriber_allocation, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else
-        {
-            logError(XMLPARSER, "Invalid element found into 'publisherProfileType'. Name: " << name);
-            return XMLP_ret::XML_ERROR;
-        }
+        return XMLP_ret::XML_ERROR;
     }
+
     return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
 {
-    /*
-        <xs:complexType name="subscriberProfileType">
-            <xs:all minOccurs="0">
-                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
-                <xs:element name="qos" type="readerQosPoliciesType" minOccurs="0"/>
-                <xs:element name="times" type="readerTimesType" minOccurs="0"/>
-                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
-                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
-                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
-                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
-                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
-            </xs:all>
-            <xs:attribute name="profile_name" type="stringType" use="required"/>
-        </xs:complexType>
-    */
-
     if (nullptr == p_profile)
     {
         logError(XMLPARSER, "Bad parameters!");
@@ -2948,123 +3042,235 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
     addAllAttributes(p_profile, subscriber_node);
 
     uint8_t ident = 1;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    if (XMLP_ret::XML_OK != getXMLSubscriberAttributes(p_profile, *subscriber_node.get(), ident))
+    {
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<RequesterAttributes>& requester_node)
+{
+    /*
+        <xs:complexType name="requesterProfileType">
+            <xs:all>
+                <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
+                <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
+                <xs:element name="publisher" type="publisherProfileType"/>
+                <xs:element name="subscriber" type="subscriberProfileType"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+            <xs:attribute name="service_name" type="stringType" use="required"/>
+            <xs:attribute name="request_type" type="stringType" use="required"/>
+            <xs:attribute name="reply_type" type="stringType" use="required"/>
+        </xs:complexType>
+    */
+
+    if (nullptr == p_profile)
+    {
+        logError(XMLPARSER, "Bad parameters!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    addAllAttributes(p_profile, requester_node);
+    auto found_attributes = requester_node.getAttributes();
+
+    auto it_attributes = found_attributes.find(SERVICE_NAME);
+    if (found_attributes.end() != it_attributes)
+    {
+        requester_node.get()->service_name = it_attributes->second;
+        requester_node.get()->request_topic_name = it_attributes->second + "_Request";
+        requester_node.get()->reply_topic_name = it_attributes->second + "_Reply";
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << SERVICE_NAME);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it_attributes = found_attributes.find(REQUEST_TYPE);
+    if (found_attributes.end() != it_attributes)
+    {
+        requester_node.get()->request_type = it_attributes->second;
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << REQUEST_TYPE);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it_attributes = found_attributes.find(REPLY_TYPE);
+    if (found_attributes.end() != it_attributes)
+    {
+        requester_node.get()->reply_type = it_attributes->second;
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << REPLY_TYPE);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    uint8_t ident = 1;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
+
     for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
-        if (strcmp(name, TOPIC) == 0)
+        if (strcmp(name, REQUEST_TOPIC_NAME) == 0)
         {
-            // topic
-            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, subscriber_node.get()->topic, ident))
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &requester_node.get()->request_topic_name, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, QOS) == 0)
+        else if (strcmp(name, REPLY_TOPIC_NAME) == 0)
         {
-            // qos
-            if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux0, subscriber_node.get()->qos, ident))
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &requester_node.get()->reply_topic_name, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, TIMES) == 0)
+        else if (strcmp(name, PUBLISHER) == 0)
         {
-            // times
-            if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux0, subscriber_node.get()->times, ident))
+            if (XMLP_ret::XML_OK != getXMLPublisherAttributes(p_aux0, requester_node.get()->publisher, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, UNI_LOC_LIST) == 0)
+        else if (strcmp(name, SUBSCRIBER) == 0)
         {
-            // unicastLocatorList
-            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->unicastLocatorList, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, MULTI_LOC_LIST) == 0)
-        {
-            // multicastLocatorList
-            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->multicastLocatorList, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, REM_LOC_LIST) == 0)
-        {
-            // remote LocatorList
-            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->remoteLocatorList, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, EXP_INLINE_QOS) == 0)
-        {
-            // expectsInlineQos - boolType
-            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber_node.get()->expectsInlineQos, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, HIST_MEM_POLICY) == 0)
-        {
-            // historyMemoryPolicy
-            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(
-                    p_aux0,
-                    subscriber_node.get()->historyMemoryPolicy,
-                    ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, PROPERTIES_POLICY) == 0)
-        {
-            // propertiesPolicy
-            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, subscriber_node.get()->properties, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, USER_DEF_ID) == 0)
-        {
-            // userDefinedID - int16Type
-            int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-            subscriber_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
-        }
-        else if (strcmp(name, ENTITY_ID) == 0)
-        {
-            // entityID - int16Type
-            int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-            subscriber_node.get()->setEntityID(static_cast<uint8_t>(i));
-        }
-        else if (strcmp(name, MATCHED_PUBLISHERS_ALLOCATION) == 0)
-        {
-            // matchedPublishersAllocation - containerAllocationConfigType
-            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(
-                    p_aux0,
-                    subscriber_node.get()->matched_publisher_allocation,
-                    ident))
+            if (XMLP_ret::XML_OK != getXMLSubscriberAttributes(p_aux0, requester_node.get()->subscriber, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
         else
         {
-            logError(XMLPARSER, "Invalid element found into 'subscriberProfileType'. Name: " << name);
+            logError(XMLPARSER, "Not expected tag: '" << name << "'");
+            return XMLP_ret::XML_ERROR;
+        }
+
+    }
+
+    requester_node.get()->publisher.topic.topicDataType = requester_node.get()->request_type;
+    requester_node.get()->publisher.topic.topicName = requester_node.get()->request_topic_name;
+
+    requester_node.get()->subscriber.topic.topicDataType = requester_node.get()->reply_type;
+    requester_node.get()->subscriber.topic.topicName = requester_node.get()->reply_topic_name;
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ReplierAttributes>& replier_node)
+{
+    /*
+        <xs:complexType name="replierProfileType">
+            <xs:all>
+                <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
+                <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
+                <xs:element name="publisher" type="publisherProfileType"/>
+                <xs:element name="subscriber" type="subscriberProfileType"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+            <xs:attribute name="service_name" type="stringType" use="required"/>
+            <xs:attribute name="request_type" type="stringType" use="required"/>
+            <xs:attribute name="reply_type" type="stringType" use="required"/>
+        </xs:complexType>
+    */
+
+    if (nullptr == p_profile)
+    {
+        logError(XMLPARSER, "Bad parameters!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    addAllAttributes(p_profile, replier_node);
+    auto found_attributes = replier_node.getAttributes();
+
+    auto it_attributes = found_attributes.find(SERVICE_NAME);
+    if (found_attributes.end() != it_attributes)
+    {
+        replier_node.get()->service_name = it_attributes->second;
+        replier_node.get()->request_topic_name = it_attributes->second + "_Request";
+        replier_node.get()->reply_topic_name = it_attributes->second + "_Reply";
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << SERVICE_NAME);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it_attributes = found_attributes.find(REQUEST_TYPE);
+    if (found_attributes.end() != it_attributes)
+    {
+        replier_node.get()->request_type = it_attributes->second;
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << REQUEST_TYPE);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it_attributes = found_attributes.find(REPLY_TYPE);
+    if (found_attributes.end() != it_attributes)
+    {
+        replier_node.get()->reply_type = it_attributes->second;
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << REPLY_TYPE);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    uint8_t ident = 1;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+
+    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, REQUEST_TOPIC_NAME) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &replier_node.get()->request_topic_name, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, REPLY_TOPIC_NAME) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &replier_node.get()->reply_topic_name, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, PUBLISHER) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLPublisherAttributes(p_aux0, replier_node.get()->publisher, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, SUBSCRIBER) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLSubscriberAttributes(p_aux0, replier_node.get()->subscriber, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Not expected tag: '" << name << "'");
             return XMLP_ret::XML_ERROR;
         }
     }
+
+    replier_node.get()->subscriber.topic.topicDataType = replier_node.get()->request_type;
+    replier_node.get()->subscriber.topic.topicName = replier_node.get()->request_topic_name;
+
+    replier_node.get()->publisher.topic.topicDataType = replier_node.get()->reply_type;
+    replier_node.get()->publisher.topic.topicName = replier_node.get()->reply_topic_name;
 
     return XMLP_ret::XML_OK;
 }

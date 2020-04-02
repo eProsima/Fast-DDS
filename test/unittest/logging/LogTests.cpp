@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-#include <fastrtps/log/Log.h>
-#include <fastrtps/log/StdoutConsumer.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
 #include "mock/MockConsumer.h"
 #include <gtest/gtest.h>
 #include <memory>
@@ -22,7 +22,7 @@
 #include <chrono>
 #include <sstream>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 using namespace std;
 
 class LogTests: public ::testing::Test

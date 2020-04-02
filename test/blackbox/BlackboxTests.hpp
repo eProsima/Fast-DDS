@@ -15,7 +15,7 @@
 #ifndef __BLACKBOX_BLACKBOXTESTS_HPP__
 #define __BLACKBOX_BLACKBOXTESTS_HPP__
 
-#define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
+#define TEST_TOPIC_NAME std::string(::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string("_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -50,64 +50,94 @@ extern uint16_t global_port;
 
 /****** Auxiliary print functions  ******/
 template<class Type>
-void default_receive_print(const Type&)
+void default_receive_print(
+        const Type&)
 {
     std::cout << "Received data" << std::endl;
 }
 
 template<>
-void default_receive_print(const HelloWorld& hello);
+void default_receive_print(
+        const HelloWorld& hello);
 
 template<>
-void default_receive_print(const FixedSized& hello);
+void default_receive_print(
+        const FixedSized& hello);
 
 template<>
-void default_receive_print(const String& str);
+void default_receive_print(
+        const KeyedHelloWorld& str);
 
 template<>
-void default_receive_print(const Data64kb& data);
+void default_receive_print(
+        const String& str);
 
 template<>
-void default_receive_print(const Data1mb& data);
+void default_receive_print(
+        const Data64kb& data);
+
+template<>
+void default_receive_print(
+        const Data1mb& data);
 
 template<class Type>
-void default_send_print(const Type&)
+void default_send_print(
+        const Type&)
 {
     std::cout << "Sent data" << std::endl;
 }
 
 template<>
-void default_send_print(const StringType&);
+void default_send_print(
+        const StringType&);
 
 template<>
-void default_send_print(const HelloWorld& hello);
+void default_send_print(
+        const HelloWorld& hello);
 
 template<>
-void default_send_print(const FixedSized& hello);
+void default_send_print(
+        const FixedSized& hello);
 
 template<>
-void default_send_print(const String& str);
+void default_send_print(
+        const KeyedHelloWorld& str);
 
 template<>
-void default_send_print(const Data64kb& data);
+void default_send_print(
+        const String& str);
 
 template<>
-void default_send_print(const Data1mb& data);
+void default_send_print(
+        const Data64kb& data);
+
+template<>
+void default_send_print(
+        const Data1mb& data);
 
 /****** Auxiliary data generators *******/
-std::list<HelloWorld> default_helloworld_data_generator(size_t max = 0);
+std::list<HelloWorld> default_helloworld_data_generator(
+        size_t max = 0);
 
-std::list<FixedSized> default_fixed_sized_data_generator(size_t max = 0);
+std::list<FixedSized> default_fixed_sized_data_generator(
+        size_t max = 0);
 
-std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max = 0);
+std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(
+        size_t max = 0);
 
-std::list<String> default_large_string_data_generator(size_t max = 0);
+std::list<String> default_large_string_data_generator(
+        size_t max = 0);
 
-std::list<Data64kb> default_data64kb_data_generator(size_t max = 0);
+std::list<Data64kb> default_data64kb_data_generator(
+        size_t max = 0);
 
-std::list<Data1mb> default_data300kb_data_generator(size_t max = 0);
+std::list<Data1mb> default_data300kb_data_generator(
+        size_t max = 0);
 
-std::list<Data1mb> default_data300kb_mix_data_generator(size_t max = 0);
+std::list<Data1mb> default_data300kb_mix_data_generator(
+        size_t max = 0);
+
+std::list<Data1mb> default_data96kb_data300kb_data_generator(size_t max = 0);
 
 /****** Auxiliary lambda functions  ******/
 extern const std::function<void(const HelloWorld&)>  default_helloworld_print;
@@ -123,15 +153,18 @@ extern const std::function<void(const Data64kb&)>  default_data64kb_print;
 extern const std::function<void(const Data1mb&)>  default_data300kb_print;
 
 template<typename T>
-void print_non_received_messages(const std::list<T>& data, const std::function<void(const T&)>& printer)
+void print_non_received_messages(
+        const std::list<T>& data,
+        const std::function<void(const T&)>& printer)
 {
-    if(data.size() != 0)
+    if (data.size() != 0)
     {
         std::cout << "Samples not received: ";
         std::for_each(data.begin(), data.end(), printer);
         std::cout << std::endl;
     }
 }
+
 /***** End auxiliary lambda function *****/
 
 #endif // __BLACKBOX_BLACKBOXTESTS_HPP__

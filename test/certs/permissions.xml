@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-Security/20170801/omg_shared_ca_permissions.xsd">
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-*20170801/omg_shared_ca_permissions.xsd">
     <permissions>
         <grant name="PublisherPermissions">
             <subject_name>emailAddress=mainpub@eprosima.com, CN=Main Publisher, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
@@ -17,7 +17,7 @@
                 <publish>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>BlackBox_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
+                        <topic>Security/Security_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
                     </topics>
                 </publish>
             </allow_rule>
@@ -39,7 +39,7 @@
                 <subscribe>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>BlackBox_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
+                        <topic>Security/Security_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
                         <topic>*temperature*</topic>
                     </topics>
                 </subscribe>

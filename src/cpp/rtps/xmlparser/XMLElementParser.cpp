@@ -19,7 +19,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -37,12 +37,17 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
                 <xs:element name="total_participants" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="total_readers" type="containerAllocationConfigType" minOccurs="0"/>
                 <xs:element name="total_writers" type="containerAllocationConfigType" minOccurs="0"/>
+                <xs:element name="send_buffers" type="sendBuffersAllocationConfigType" minOccurs="0"/>
+                <xs:element name="max_properties" type="uint32Type" minOccurs="0"/>
+                <xs:element name="max_user_data" type="uint32Type" minOccurs="0"/>
+                <xs:element name="max_partitions" type="uint32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
+    uint32_t tmp;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
@@ -77,6 +82,41 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
             {
                 return XMLP_ret::XML_ERROR;
             }
+        }
+        else if (strcmp(name, SEND_BUFFERS) == 0)
+        {
+            // send_buffers - sendBuffersAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLSendBuffersAllocationAttributes(p_aux0, allocation.send_buffers, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, MAX_PROPERTIES) == 0)
+        {
+            // max number of properties in incomming message - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.data_limits.max_properties = tmp;
+        }
+        else if (strcmp(name, MAX_USER_DATA) == 0)
+        {
+            // max number of user data in incomming message - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.data_limits.max_user_data = tmp;
+        }
+        else if (strcmp(name, MAX_PARTITIONS) == 0)
+        {
+            // max number of user data in incomming message - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.data_limits.max_partitions = tmp;
         }
         else
         {
@@ -136,6 +176,55 @@ XMLP_ret XMLParser::getXMLRemoteLocatorsAllocationAttributes(
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
+        tinyxml2::XMLElement* elem,
+        rtps::SendBuffersAllocationAttributes& allocation,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="sendBuffersAllocationConfigType">
+            <xs:all minOccurs="0">
+                <xs:element name="preallocated_number" type="uint32Type" minOccurs="0"/>
+                <xs:element name="dynamic" type="boolType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    uint32_t tmp;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, PREALLOCATED_NUMBER) == 0)
+        {
+            // preallocated_number - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.preallocated_number = tmp;
+        }
+        else if (strcmp(name, DYNAMIC_LC) == 0)
+        {
+            // dynamic - boolType
+            bool tmp_bool = false;
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &tmp_bool, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.dynamic = tmp_bool;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'sendBuffersAllocationConfigType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLDiscoverySettings(
         tinyxml2::XMLElement* elem,
         rtps::DiscoverySettings& settings,
@@ -170,11 +259,13 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(strcmp(name, IGNORE_PARTICIPANT_FLAGS) == 0)
+        else if (strcmp(name, IGNORE_PARTICIPANT_FLAGS) == 0)
         {
             // ignoreParticipantFlags - ParticipantFlags
-            if(XMLP_ret::XML_OK != getXMLEnum(p_aux0, &settings.ignoreParticipantFlags, ident))
+            if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &settings.ignoreParticipantFlags, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, _EDP) == 0)
         {
@@ -389,6 +480,22 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
         {
             // writerhistoryMemoryPolicy
             if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, builtin.writerHistoryMemoryPolicy, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, READER_PAYLOAD_SIZE) == 0)
+        {
+            // readerPayloadSize
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.readerPayloadSize, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, WRITER_PAYLOAD_SIZE) == 0)
+        {
+            // readerPayloadSize
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.writerPayloadSize, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -2127,41 +2234,83 @@ XMLP_ret XMLParser::getXMLDuration(
         uint8_t ident)
 {
     /*
-        <xs:complexType name="durationType">
-            <xs:all>
-                <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" minOccurs="0"/>
-                <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
-            </xs:all>
-        </xs:complexType>
+    <xs:complexType name="durationType" mixed="true">
+      <xs:sequence>
+        <xs:choice minOccurs="0">
+         <xs:sequence>
+          <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="0" maxOccurs="1"/>
+         </xs:sequence>
+         <xs:sequence>
+          <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" default="0" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+       </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
      */
+
+    // set default values
+    duration.seconds = 0;
+    duration.nanosec = 0;
+
+    // it's mandatory to provide a sec or nanocsec child item
+    bool empty = true;
+
+    // First we check if it matches the schema pattern
+    std::regex infinite(DURATION_INFINITY);
+    std::regex infinite_sec(DURATION_INFINITE_SEC);
+    std::regex infinite_nsec(DURATION_INFINITE_NSEC);
+    const char* text = elem->GetText();
+
+    if (text != nullptr && std::regex_match(text, infinite))
+    {
+        empty = false;
+        duration = c_TimeInfinite;
+
+        if(elem->FirstChildElement() != nullptr)
+        {
+            logError(XMLPARSER, "If a Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
+            " <nanosec> subelements.");
+            return XMLP_ret::XML_ERROR;
+        }
+    }
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
+        // there is at least a child element
+        empty = false;
+
         name = p_aux0->Name();
         if (strcmp(name, SECONDS) == 0)
         {
             /*
-                <xs:simpleType name="nonNegativeInteger_Duration_SEC">
-                    <xs:restriction base="xs:string">
-                        <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_SEC|([0-9])*)?"/>
-                    </xs:restriction>
+               <xs:simpleType name="nonNegativeInteger_Duration_SEC">
+                    <xs:union>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:unsignedInt"/>
+                        </xs:simpleType>
+                    </xs:union>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
+            text = p_aux0->GetText();
             if (nullptr == text)
             {
                 logError(XMLPARSER, "Node 'SECONDS' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, DURATION_INFINITY) == 0)
+            else if (std::regex_match(text, infinite_sec))
             {
+                // if either SECONDS or NANOSECONDS is set to infinity then all of it is
                 duration = c_TimeInfinite;
-            }
-            else if (strcmp(text, DURATION_INFINITE_SEC) == 0)
-            {
-                duration.seconds = c_TimeInfinite.seconds;
+                return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
             {
@@ -2173,24 +2322,29 @@ XMLP_ret XMLParser::getXMLDuration(
         {
             /*
                 <xs:simpleType name="nonNegativeInteger_Duration_NSEC">
-                    <xs:restriction base="xs:string">
-                        <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_NSEC|([0-9])*)?"/>
-                    </xs:restriction>
+                    <xs:union>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:unsignedInt"/>
+                        </xs:simpleType>
+                    </xs:union>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
+            text = p_aux0->GetText();
             if (nullptr == text)
             {
                 logError(XMLPARSER, "Node 'NANOSECONDS' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, DURATION_INFINITY) == 0)
+            else if (std::regex_match(text, infinite_nsec))
             {
+                // if either SECONDS or NANOSECONDS is set to infinity then all of it is
                 duration = c_TimeInfinite;
-            }
-            else if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
-            {
-                duration.nanosec = c_TimeInfinite.nanosec;
+                return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
             {
@@ -2204,6 +2358,15 @@ XMLP_ret XMLParser::getXMLDuration(
             return XMLP_ret::XML_ERROR;
         }
     }
+
+    // An empty Duration_t xml is forbidden
+    if(empty)
+    {
+        logError(XMLPARSER, "'durationType' elements cannot be empty."
+            "At least second or nanoseconds should be provided");
+        return XMLP_ret::XML_ERROR;
+    }
+
     return XMLP_ret::XML_OK;
 }
 
@@ -2902,6 +3065,53 @@ XMLP_ret XMLParser::getXMLBool(
 
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
+        IntraprocessDeliveryType* e,
+        uint8_t /*ident*/)
+{
+    //<xs:simpleType name="IntraprocessDeliveryType">
+    //    <xs:restriction base="xs:string">
+    //        <xs:enumeration value="OFF"/>
+    //        <xs:enumeration value="USER_DATA_ONLY"/>
+    //        <xs:enumeration value="FULL"/>
+    //    </xs:restriction>
+    //</xs:simpleType>
+
+    const char* text = nullptr;
+
+    if (nullptr == elem || nullptr == e)
+    {
+        logError(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (text = elem->GetText()))
+    {
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (strcmp(text, OFF) == 0)
+    {
+        *e = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    }
+    else if (strcmp(text, USER_DATA_ONLY) == 0)
+    {
+        *e = IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY;
+    }
+    else if (strcmp(text, FULL) == 0)
+    {
+        *e = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    }
+    else
+    {
+        logError(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+
+XMLP_ret XMLParser::getXMLEnum(
+        tinyxml2::XMLElement* elem,
         DiscoveryProtocol_t* e,
         uint8_t /*ident*/)
 {
@@ -2958,7 +3168,10 @@ XMLP_ret XMLParser::getXMLEnum(
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringFlags_t * e, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        ParticipantFilteringFlags_t* e,
+        uint8_t /*ident*/)
 {
     /*
         <xs:simpleType name="ParticipantFlags">
@@ -2966,16 +3179,16 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
                 <xs:pattern value="((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS)(\||\s)*)*" />
             </xs:restriction>
         </xs:simpleType>
-    */
+     */
 
     const char* text = nullptr;
 
-    if(nullptr == elem || nullptr == e)
+    if (nullptr == elem || nullptr == e)
     {
         logError(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if(nullptr == (text = elem->GetText()))
+    else if (nullptr == (text = elem->GetText()))
     {
         logError(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -2984,7 +3197,7 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
     // First we check if it matches the schema pattern
     std::regex schema("((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)*(\\||\\s)*)*");
 
-    if(!std::regex_match(text, schema))
+    if (!std::regex_match(text, schema))
     {
         logError(XMLPARSER, "provided flags doesn't match expected ParticipantFilteringFlags!");
         return XMLP_ret::XML_ERROR;
@@ -2992,22 +3205,22 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
 
     // Lets parse the flags, we assume the flags argument has been already flushed
     std::regex flags("FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS");
-    std::cregex_iterator it(text,text+strlen(text),flags);
+    std::cregex_iterator it(text, text + strlen(text), flags);
     uint32_t newflags = *e;
 
-    while(it != std::cregex_iterator())
+    while (it != std::cregex_iterator())
     {
         std::string flag(it++->str());
 
-        if(flag == FILTER_DIFFERENT_HOST )
+        if (flag == FILTER_DIFFERENT_HOST )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST;
         }
-        else if(flag == FILTER_DIFFERENT_PROCESS )
+        else if (flag == FILTER_DIFFERENT_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS;
         }
-        else if(flag == FILTER_SAME_PROCESS )
+        else if (flag == FILTER_SAME_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_SAME_PROCESS;
         }
@@ -3163,4 +3376,256 @@ XMLP_ret XMLParser::getXMLguidPrefix(
     std::istringstream is(text);
     return (is >> prefix ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR);
 
+}
+
+XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, PublisherAttributes &publisher, uint8_t ident)
+{
+    /*
+        <xs:complexType name="publisherProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+                <xs:element name="qos" type="writerQosPoliciesType" minOccurs="0"/>
+                <xs:element name="times" type="writerTimesType" minOccurs="0"/>
+                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, TOPIC) == 0)
+        {
+            // topic
+            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, publisher.topic, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, QOS) == 0)
+        {
+            // qos
+            if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux0, publisher.qos, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, TIMES) == 0)
+        {
+            // times
+            if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux0, publisher.times, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, UNI_LOC_LIST) == 0)
+        {
+            // unicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.unicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, MULTI_LOC_LIST) == 0)
+        {
+            // multicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.multicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, REM_LOC_LIST) == 0)
+        {
+            // remoteLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.remoteLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, THROUGHPUT_CONT) == 0)
+        {
+            // throughputController
+            if (XMLP_ret::XML_OK !=
+                getXMLThroughputController(p_aux0, publisher.throughputController, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, HIST_MEM_POLICY) == 0)
+        {
+            // historyMemoryPolicy
+            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, publisher.historyMemoryPolicy, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PROPERTIES_POLICY) == 0)
+        {
+            // propertiesPolicy
+            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, publisher.properties, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, USER_DEF_ID) == 0)
+        {
+            // userDefinedID - int16type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            publisher.setUserDefinedID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, ENTITY_ID) == 0)
+        {
+            // entityID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            publisher.setEntityID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, MATCHED_SUBSCRIBERS_ALLOCATION) == 0)
+        {
+            // matchedSubscribersAllocation - containerAllocationConfigType
+            if(XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, publisher.matched_subscriber_allocation, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'publisherProfileType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLSubscriberAttributes(tinyxml2::XMLElement *elem, SubscriberAttributes &subscriber, uint8_t ident)
+{
+    /*
+        <xs:complexType name="subscriberProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+                <xs:element name="qos" type="readerQosPoliciesType" minOccurs="0"/>
+                <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
+                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, TOPIC) == 0)
+        {
+            // topic
+            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, subscriber.topic, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, QOS) == 0)
+        {
+            // qos
+            if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux0, subscriber.qos, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, TIMES) == 0)
+        {
+            // times
+            if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux0, subscriber.times, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, UNI_LOC_LIST) == 0)
+        {
+            // unicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber.unicastLocatorList, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, MULTI_LOC_LIST) == 0)
+        {
+            // multicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber.multicastLocatorList, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, REM_LOC_LIST) == 0)
+        {
+            // remote LocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber.remoteLocatorList, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, EXP_INLINE_QOS) == 0)
+        {
+            // expectsInlineQos - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber.expectsInlineQos, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, HIST_MEM_POLICY) == 0)
+        {
+            // historyMemoryPolicy
+            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(
+                    p_aux0,
+                    subscriber.historyMemoryPolicy,
+                    ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, PROPERTIES_POLICY) == 0)
+        {
+            // propertiesPolicy
+            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, subscriber.properties, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, USER_DEF_ID) == 0)
+        {
+            // userDefinedID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            subscriber.setUserDefinedID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, ENTITY_ID) == 0)
+        {
+            // entityID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            subscriber.setEntityID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, MATCHED_PUBLISHERS_ALLOCATION) == 0)
+        {
+            // matchedPublishersAllocation - containerAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(
+                    p_aux0,
+                    subscriber.matched_publisher_allocation,
+                    ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'subscriberProfileType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
 }

@@ -23,6 +23,7 @@ const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
 const char* ROOT = "dds";
 const char* PROFILES = "profiles";
+const char* LIBRARY_SETTINGS = "library_settings";
 const char* TRANSPORT_DESCRIPTORS = "transport_descriptors";
 const char* PROFILE_NAME = "profile_name";
 const char* DEFAULT_PROF = "is_default_profile";
@@ -32,6 +33,8 @@ const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
 const char* TYPES = "types";
 const char* LOG = "log";
+const char* REQUESTER = "requester";
+const char* REPLIER = "replier";
 
 const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";
@@ -54,6 +57,18 @@ const char* METADATA_LOGICAL_PORT = "metadata_logical_port";
 const char* LISTENING_PORTS = "listening_ports";
 const char* CALCULATE_CRC = "calculate_crc";
 const char* CHECK_CRC = "check_crc";
+const char* SEGMENT_SIZE = "segment_size";
+const char* PORT_QUEUE_CAPACITY = "port_queue_capacity";
+const char* PORT_OVERFLOW_POLICY = "port_overflow_policy";
+const char* SEGMENT_OVERFLOW_POLICY = "segment_overflow_policy";
+const char* HEALTHY_CHECK_TIMEOUT_MS = "healthy_check_timeout_ms";
+const char* DISCARD = "DISCARD";
+const char* FAIL = "FAIL";
+const char* RTPS_DUMP_FILE = "rtps_dump_file";
+
+const char* OFF = "OFF";
+const char* USER_DATA_ONLY = "USER_DATA_ONLY";
+const char* FULL = "FULL";
 
 const char* QOS_PROFILE = "qos_profile";
 const char* APPLICATION = "application";
@@ -61,6 +76,9 @@ const char* TYPE = "type";
 // const char* TOPIC = "topic";
 const char* DATA_WRITER = "data_writer";
 const char* DATA_READER = "data_reader";
+
+/// RTPS Domain attributes
+const char* INTRAPROCESS_DELIVERY = "intraprocess_delivery";
 
 /// RTPS Participant attributes
 const char* ALLOCATION = "allocation";
@@ -87,6 +105,12 @@ const char* MAX_MULTICAST_LOCATORS = "max_multicast_locators";
 const char* TOTAL_PARTICIPANTS = "total_participants";
 const char* TOTAL_READERS = "total_readers";
 const char* TOTAL_WRITERS = "total_writers";
+const char* SEND_BUFFERS = "send_buffers";
+const char* PREALLOCATED_NUMBER = "preallocated_number";
+const char* DYNAMIC_LC = "dynamic";
+const char* MAX_PROPERTIES = "max_properties";
+const char* MAX_USER_DATA = "max_user_data";
+const char* MAX_PARTITIONS = "max_partitions";
 
 /// Publisher-subscriber attributes
 const char* TOPIC = "topic";
@@ -128,6 +152,7 @@ const char* UDPv4 = "UDPv4";
 const char* UDPv6 = "UDPv6";
 const char* TCPv4 = "TCPv4";
 const char* TCPv6 = "TCPv6";
+const char* SHM = "SHM";
 const char* INIT_ACKNACK_DELAY = "initialAcknackDelay";
 const char* HEARTB_RESP_DELAY = "heartbeatResponseDelay";
 const char* INIT_HEARTB_DELAY = "initialHeartbeatDelay";
@@ -136,14 +161,17 @@ const char* NACK_RESP_DELAY = "nackResponseDelay";
 const char* NACK_SUPRESSION = "nackSupressionDuration";
 const char* BY_NAME = "durationbyname";
 const char* BY_VAL = "durationbyval";
-const char* DURATION_INFINITY = "DURATION_INFINITY";
-const char* DURATION_INFINITE_SEC = "DURATION_INFINITE_SEC";
-const char* DURATION_INFINITE_NSEC = "DURATION_INFINITE_NSEC";
 const char* SECONDS = "sec";
 const char* NANOSECONDS = "nanosec";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
-
+// For backward compatibility we allow any DURATION_XXX in duration_t element and any subelement
+// const char* DURATION_INFINITY = R"xsd(\s*DURATION_INFINITY\s*)xsd";
+// const char* DURATION_INFINITE_SEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*)xsd";
+// const char* DURATION_INFINITE_NSEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*)xsd";
+const char* DURATION_INFINITY = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC|DURATION_INFINITE_NSEC)\s*)xsd";
+const char* DURATION_INFINITE_SEC = DURATION_INFINITY; 
+const char* DURATION_INFINITE_NSEC = DURATION_INFINITY; 
 /// QOS
 const char* DURABILITY = "durability";
 const char* DURABILITY_SRV = "durabilityService";
@@ -243,6 +271,8 @@ const char* PUBREADER_SUBWRITER = "PUBREADER_SUBWRITER";
 const char* STATIC_ENDPOINT_XML = "staticEndpointXMLFilename";
 const char* READER_HIST_MEM_POLICY = "readerHistoryMemoryPolicy";
 const char* WRITER_HIST_MEM_POLICY = "writerHistoryMemoryPolicy";
+const char* READER_PAYLOAD_SIZE = "readerPayloadSize";
+const char* WRITER_PAYLOAD_SIZE = "writerPayloadSize";
 const char* MUTATION_TRIES = "mutation_tries";
 const char* ACCESS_SCOPE = "access_scope";
 const char* ENABLED = "enabled";
@@ -379,6 +409,13 @@ const char* TLS_VERIFY_NONE = "VERIFY_NONE";
 const char* TLS_VERIFY_PEER = "VERIFY_PEER";
 const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT = "VERIFY_FAIL_IF_NO_PEER_CERT";
 const char* TLS_VERIFY_CLIENT_ONCE = "VERIFY_CLIENT_ONCE";
+
+// Requester and Replier
+const char* SERVICE_NAME = "service_name";
+const char* REQUEST_TYPE = "request_type";
+const char* REPLY_TYPE = "reply_type";
+const char* REQUEST_TOPIC_NAME = "request_topic_name";
+const char* REPLY_TOPIC_NAME = "reply_topic_name";
 
 } /* xmlparser */
 } /* namespace */

@@ -22,6 +22,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/qos/ParameterList.h>
+#include <fastrtps/qos/QosPolicies.h>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
@@ -35,10 +36,6 @@
 
 #include <chrono>
 
-#define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
-#define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
-#define DISCOVERY_PUBLICATION_DATA_MAX_SIZE 5000
-#define DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE 5000
 #define BUILTIN_PARTICIPANT_DATA_MAX_SIZE 100
 #define TYPELOOKUP_DATA_MAX_SIZE 5000
 
@@ -68,7 +65,7 @@
 #define DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR        (0x00000001 << 27)
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 struct CDRMessage_t;
@@ -84,128 +81,144 @@ template<class Proxy>
 class ProxyHashTable;
 
 /**
-* ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
-*@ingroup BUILTIN_MODULE
-*/
+ * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
+ *@ingroup BUILTIN_MODULE
+ */
 class ParticipantProxyData
 {
-    public:
+public:
 
-        ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation);
+    ParticipantProxyData(
+            const RTPSParticipantAllocationAttributes& allocation);
 
-        ParticipantProxyData(const ParticipantProxyData& pdata);
+    ParticipantProxyData(
+            const ParticipantProxyData& pdata);
 
-        virtual ~ParticipantProxyData();
+    virtual ~ParticipantProxyData();
 
-        //!Protocol version
-        ProtocolVersion_t m_protocolVersion;
-        //!GUID
-        GUID_t m_guid;
-        //!Vendor ID
-        VendorId_t m_VendorId;
-        //!Expects Inline QOS.
-        bool m_expectsInlineQos;
-        //!Available builtin endpoints
-        BuiltinEndpointSet_t m_availableBuiltinEndpoints;
-        //!Metatraffic locators
-        RemoteLocatorList metatraffic_locators;
-        //!Default locators
-        RemoteLocatorList default_locators;
-        //!Manual liveliness count
-        Count_t m_manualLivelinessCount;
-        //!Participant name
-        string_255 m_participantName;
-        //!
-        InstanceHandle_t m_key;
-        //!
-        Duration_t m_leaseDuration;
+    //!Protocol version
+    ProtocolVersion_t m_protocolVersion;
+    //!GUID
+    GUID_t m_guid;
+    //!Vendor ID
+    VendorId_t m_VendorId;
+    //!Expects Inline QOS.
+    bool m_expectsInlineQos;
+    //!Available builtin endpoints
+    BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+    //!Metatraffic locators
+    RemoteLocatorList metatraffic_locators;
+    //!Default locators
+    RemoteLocatorList default_locators;
+    //!Manual liveliness count
+    Count_t m_manualLivelinessCount;
+    //!Participant name
+    string_255 m_participantName;
+    //!
+    InstanceHandle_t m_key;
+    //!
+    Duration_t m_leaseDuration;
 #if HAVE_SECURITY
-        //!
-        IdentityToken identity_token_;
-        //!
-        PermissionsToken permissions_token_;
-        //!
-        security::ParticipantSecurityAttributesMask security_attributes_;
-        //!
-        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
+    //!
+    IdentityToken identity_token_;
+    //!
+    PermissionsToken permissions_token_;
+    //!
+    security::ParticipantSecurityAttributesMask security_attributes_;
+    //!
+    security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
 #endif
-        //!
-        bool isAlive;
-        //!
-        ParameterPropertyList_t m_properties;
-        //!
-        std::vector<octet> m_userData;
-        //!
-        TimedEvent* lease_duration_event;
-        //!
-        bool should_check_lease_duration;
-        //!
-        ProxyHashTable<ReaderProxyData> * m_readers = nullptr;
-        //!
-        ProxyHashTable<WriterProxyData> * m_writers = nullptr;
+    //!
+    bool isAlive;
+    //!
+    ParameterPropertyList_t m_properties;
+    //!
+    UserDataQosPolicy m_userData;
+    //!
+    TimedEvent* lease_duration_event;
+    //!
+    bool should_check_lease_duration;
+    //!
+    ProxyHashTable<ReaderProxyData>* m_readers = nullptr;
+    //!
+    ProxyHashTable<WriterProxyData>* m_writers = nullptr;
 
-        /**
-         * Update the data.
-         * @param pdata Object to copy the data from
-         * @return True on success
-         */
-        bool updateData(ParticipantProxyData& pdata);
+    /**
+     * Update the data.
+     * @param pdata Object to copy the data from
+     * @return True on success
+     */
+    bool updateData(
+            ParticipantProxyData& pdata);
 
-        /**
-         * Write as a parameter list on a CDRMessage_t
-         * @return True on success
-         */
-        bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
+    /**
+     * Get the size in bytes of the CDR serialization of this object.
+     * @param include_encapsulation Whether to include the size of the encapsulation info.
+     * @return size in bytes of the CDR serialization.
+     */
+    uint32_t get_serialized_size(
+            bool include_encapsulation) const;
 
-        /**
-         * Read the parameter list from a recevied CDRMessage_t
-         * @return True on success
-         */
-        bool readFromCDRMessage(
-                CDRMessage_t* msg,
-                bool use_encapsulation,
-                const NetworkFactory& network);
+    /**
+     * Write as a parameter list on a CDRMessage_t
+     * @return True on success
+     */
+    bool writeToCDRMessage(
+            CDRMessage_t* msg,
+            bool write_encapsulation);
 
-        //! Clear the data (restore to default state).
-        void clear();
+    /**
+     * Read the parameter list from a recevied CDRMessage_t
+     * @return True on success
+     */
+    bool readFromCDRMessage(
+            CDRMessage_t* msg,
+            bool use_encapsulation,
+            const NetworkFactory& network,
+            bool is_shm_transport_available);
 
-        /**
-         * Copy the data from another object.
-         * @param pdata Object to copy the data from
-         */
-        void copy(const ParticipantProxyData& pdata);
+    //! Clear the data (restore to default state).
+    void clear();
 
-        /**
-         * Set participant persistent GUID_t
-         * @param guid valid GUID_t
-         */
-        void set_persistence_guid(const GUID_t & guid);
+    /**
+     * Copy the data from another object.
+     * @param pdata Object to copy the data from
+     */
+    void copy(
+            const ParticipantProxyData& pdata);
 
-        /**
-         * Retrieve participant persistent GUID_t
-         * @return guid persistent GUID_t or c_Guid_Unknown
-         */
-        GUID_t get_persistence_guid() const;
+    /**
+     * Set participant persistent GUID_t
+     * @param guid valid GUID_t
+     */
+    void set_persistence_guid(
+            const GUID_t& guid);
 
-        void assert_liveliness();
+    /**
+     * Retrieve participant persistent GUID_t
+     * @return guid persistent GUID_t or c_Guid_Unknown
+     */
+    GUID_t get_persistence_guid() const;
 
-        const std::chrono::steady_clock::time_point& last_received_message_tm() const
-        {
-            return last_received_message_tm_;
-        }
+    void assert_liveliness();
 
-        const std::chrono::microseconds& lease_duration() const
-        {
-            return lease_duration_;
-        }
+    const std::chrono::steady_clock::time_point& last_received_message_tm() const
+    {
+        return last_received_message_tm_;
+    }
 
-    private:
+    const std::chrono::microseconds& lease_duration() const
+    {
+        return lease_duration_;
+    }
 
-        //! Store the last timestamp it was received a RTPS message from the remote participant.
-        std::chrono::steady_clock::time_point last_received_message_tm_;
+private:
 
-        //! Remote participant lease duration in microseconds.
-        std::chrono::microseconds lease_duration_;
+    //! Store the last timestamp it was received a RTPS message from the remote participant.
+    std::chrono::steady_clock::time_point last_received_message_tm_;
+
+    //! Remote participant lease duration in microseconds.
+    std::chrono::microseconds lease_duration_;
 };
 
 } /* namespace rtps */

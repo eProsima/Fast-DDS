@@ -16,29 +16,34 @@
 
 #if HAVE_SQLITE3
 
+#include <cstring>
+#include <thread>
+
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <gtest/gtest.h>
-
-#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBoxPersistence : public ::testing::Test
+class Persistence : public ::testing::TestWithParam<bool>
 {
 public:
+
     const std::string& db_file_name() const
     {
         return db_file_name_;
     }
+
     const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix() const
     {
         return guid_prefix_;
     }
+
     std::list<HelloWorld> not_received_data;
 
     void run_one_send_recv_test(
@@ -69,7 +74,7 @@ public:
         if (seq_check > 0)
         {
             std::cout << "Reader waiting for sequence " << seq_check << "." << std::endl;
-            reader.block_until_seq_number_greater_or_equal({ 0,seq_check });
+            reader.block_until_seq_number_greater_or_equal({ 0, seq_check });
         }
         else
         {
@@ -98,23 +103,36 @@ public:
     }
 
 protected:
+
     std::string db_file_name_;
     eprosima::fastrtps::rtps::GuidPrefix_t guid_prefix_;
 
     virtual void SetUp()
     {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
         // Get info about current test
         auto info = ::testing::UnitTest::GetInstance()->current_test_info();
 
         // Create DB file name from test name and PID
         std::ostringstream ss;
-        ss << info->test_case_name() << "_" << info->name() << "_" << GET_PID() << ".db";
+        std::string test_case_name(info->test_case_name());
+        std::string test_name(info->name());
+        ss <<
+            test_case_name.replace(test_case_name.find_first_of('/'), 1, "_") << "_" <<
+            test_name.replace(test_name.find_first_of('/'), 1, "_")  << "_" << GET_PID() << ".db";
         db_file_name_ = ss.str();
 
         // Fill guid prefix
-        int32_t* p_value = (int32_t*)guid_prefix_.value;
-        *p_value++ = info->line();
-        *p_value = GET_PID();
+        const int32_t info_line = info->line();
+        memcpy(guid_prefix_.value, &info_line, sizeof(info_line));
+        const int32_t pid = GET_PID();
+        memcpy(guid_prefix_.value + 4, &pid, sizeof(pid));
         guid_prefix_.value[8] = HAVE_SECURITY;
         guid_prefix_.value[9] = 3; //PREALLOCATED_MEMORY_MODE
         eprosima::fastrtps::rtps::LocatorList_t loc;
@@ -134,10 +152,17 @@ protected:
     virtual void TearDown()
     {
         std::remove(db_file_name_.c_str());
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
     }
+
 };
 
-TEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
+TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -148,7 +173,7 @@ TEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.make_persistent(db_file_name(), guid_prefix()).
-        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
+    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -171,7 +196,7 @@ TEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-TEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
+TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -182,8 +207,8 @@ TEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.make_persistent(db_file_name(), guid_prefix()).
-        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -204,14 +229,14 @@ TEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-TEST_F(BlackBoxPersistence, RTPSAsReliableWithPersistence)
+TEST_P(Persistence, RTPSAsReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -236,19 +261,19 @@ TEST_F(BlackBoxPersistence, RTPSAsReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-TEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
+TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.make_persistent(db_file_name(), guid_prefix()).history_depth(10).
-        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -271,4 +296,14 @@ TEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
+INSTANTIATE_TEST_CASE_P(Persistence,
+        Persistence,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<Persistence::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 #endif

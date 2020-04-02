@@ -1,0 +1,68 @@
+```plantuml
+@startuml
+
+hide empty members
+
+!define struct(x) class x << (S,CadetBlue) >>
+
+class SharedMemTransport {
+    ..Channel handling..
+    +OpenOutputChannel()
+    +OpenInputChannel()
+    +Send()
+    ..
+    -input_channels_
+}
+
+struct(SharedMemTransportDescriptor) {
+   ..Interface implementation..
+   +min_send_buffer_size()
+   +max_message_size()
+   ..Additional configuration..
+   +segment_size
+   +port_queue_capacity
+   +port_overflow_policy
+}
+
+class ChannelResource {
+    
+}
+
+class SharedMemChannelResource {
+    +Receive()
+}
+
+class SenderResource {
+}
+
+class SharedMemSenderResource {
+    -locators_ports_map
+}
+
+class SharedMemManager {
+    +create_segment()
+    +open_port()
+}
+
+class SharedMemManager::Port {
+    +push()
+    +create_listener()
+}
+
+class SharedMemManager::Listener {
+    +pop()
+}
+
+TransportInterface ()-- SharedMemTransport
+TransportDescriptorInterface ()-- SharedMemTransportDescriptor
+ChannelResource <|-- SharedMemChannelResource
+SharedMemTransport o-- SharedMemManager
+SharedMemTransport "1" *-- "n" SharedMemChannelResource
+SenderResource <|-- SharedMemSenderResource
+SharedMemTransport "1" *-- "1" SharedMemSenderResource
+SharedMemChannelResource "1" *-- "1" SharedMemManager::Listener : listen on
+SharedMemManager::Listener "1" o-- "1" SharedMemManager::Port
+SharedMemSenderResource "1" *-- "n" SharedMemManager::Port : send to
+
+@enduml
+```

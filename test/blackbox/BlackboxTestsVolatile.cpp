@@ -22,14 +22,42 @@
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 
 #include <gtest/gtest.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+using namespace eprosima::fastrtps;
+
+class Volatile : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+  }
+};
 
 // Test created to check bug #3020 (Github ros2/demos #238)
-TEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
+TEST_P(Volatile, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(10).
-        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -45,7 +73,7 @@ TEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 }
 
 // Test created to check bug #3087 (Github #230)
-TEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
+TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -55,9 +83,9 @@ TEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -77,21 +105,21 @@ TEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
 }
 
 // Test created to check a bug with writers that use BEST_EFFORT WITH VOLATILE that don't remove messages from history.
-TEST(BlackBox, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
+TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-        add_to_multicast_locator_list(ip, global_port).init();
+    add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-        durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
-        add_to_multicast_locator_list(ip, global_port).
-        auto_remove_on_volatile().init();
+    durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
+    add_to_multicast_locator_list(ip, global_port).
+    auto_remove_on_volatile().init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -114,14 +142,14 @@ TEST(BlackBox, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
 }
 
 // Test created to check bug #3290 (ROS2 #539)
-TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
+TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -131,13 +159,13 @@ TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
     uint32_t periodInMs = 50;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-        resource_limits_allocated_samples(9).
-        resource_limits_max_samples(9).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
-        init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    resource_limits_allocated_samples(9).
+    resource_limits_max_samples(9).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -149,7 +177,7 @@ TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
 
     reader.startReception(data);
     // Send data with some interval, to let async writer thread send samples
-    writer.send(data,300);
+    writer.send(data, 300);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
@@ -157,23 +185,23 @@ TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
 }
 
 // Test created to check bug #3290 (ROS2 #539)
-TEST(BlackBox, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
+TEST_P(Volatile, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-        resource_limits_allocated_samples(9).
-        resource_limits_max_samples(9).
-        init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    resource_limits_allocated_samples(9).
+    resource_limits_max_samples(9).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -193,24 +221,24 @@ TEST(BlackBox, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
 }
 
 // Test created to check bug #3290 (ROS2 #539)
-TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
+TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-        resource_limits_allocated_samples(9).
-        resource_limits_max_samples(9).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    resource_limits_allocated_samples(9).
+    resource_limits_max_samples(9).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -222,7 +250,7 @@ TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 
     reader.startReception(data);
     // Send data with some interval, to let async writer thread send samples
-    writer.send(data,300);
+    writer.send(data, 300);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
@@ -230,7 +258,7 @@ TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 }
 
 // Regression test of Refs #3376, github ros2/rmw_fastrtps #226
-TEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
+TEST_P(Volatile, ReqRepVolatileHelloworldRequesterCheckWriteParams)
 {
     ReqRepAsReliableHelloWorldRequester requester;
 
@@ -242,45 +270,55 @@ TEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
 }
 
 // Test created to check bug #5423, github ros2/ros2 #703
-TEST(BlackBox, AsyncVolatileSubBetweenPubs)
+TEST_P(Volatile, AsyncVolatileSubBetweenPubs)
 {
-	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-	PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-	writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-		reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-		durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-		resource_limits_allocated_samples(9).
-		resource_limits_max_samples(9).
-		asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-		heartbeat_period_seconds(3600).
-		init();
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    resource_limits_allocated_samples(9).
+    resource_limits_max_samples(9).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    heartbeat_period_seconds(3600).
+    init();
 
-	ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
 
-	HelloWorld hello;
-	hello.index(1);
-	hello.message("HelloWorld 1");
+    HelloWorld hello;
+    hello.index(1);
+    hello.message("HelloWorld 1");
 
-	writer.send_sample(hello);
+    writer.send_sample(hello);
 
-	reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-		reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-		durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-		init();
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    init();
 
-	ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
 
-	writer.wait_discovery();
-	reader.wait_discovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
-	auto data = default_helloworld_data_generator(1);
-	reader.startReception(data);
-	// Send data with some interval, to let async writer thread send samples
-	writer.send(data, 300);
-	// In this test all data should be sent.
-	ASSERT_TRUE(data.empty());
-	// Block reader until reception finished or timeout.
-	reader.block_for_all();
+    auto data = default_helloworld_data_generator(1);
+    reader.startReception(data);
+    // Send data with some interval, to let async writer thread send samples
+    writer.send(data, 300);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
 }
 
+INSTANTIATE_TEST_CASE_P(Volatile,
+        Volatile,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<Volatile::ParamType>& info) {
+              if (info.param)
+              {
+                  return "Intraprocess";
+              }
+              return "NonIntraprocess";
+            });

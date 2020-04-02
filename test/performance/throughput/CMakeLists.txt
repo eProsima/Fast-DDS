@@ -41,6 +41,8 @@ set(
     interprocess_reliable
     interprocess_best_effort_tcp
     interprocess_reliable_tcp
+    interprocess_best_effort_shm
+    interprocess_reliable_shm
 )
 
 ###########################################################################
@@ -92,14 +94,21 @@ if(PYTHONINTERP_FOUND)
             TEST performance.throughput.${throughput_test_name}
             APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
         )
+
+        # Add environment
         if(WIN32)
             set(WIN_PATH "$ENV{PATH}")
-            set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+            get_target_property(LINK_LIBRARIES_ ${PROJECT_NAME} LINK_LIBRARIES)
+            if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
+            list(APPEND LINK_LIBRARIES_ ${PROJECT_NAME})
+                foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
+                    if(TARGET ${LIBRARY_LINKED})
+                        set(WIN_PATH "$<TARGET_FILE_DIR:${LIBRARY_LINKED}>;${WIN_PATH}")
+                    endif()
+                endforeach()
+            endif()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-            set_property(
-                TEST performance.throughput.${throughput_test_name}
-                APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
-            )
+            set_property(TEST performance.throughput.${throughput_test_name}  APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
         endif()
 
         if(SECURITY AND (${throughput_test_name} MATCHES "^interprocess"))

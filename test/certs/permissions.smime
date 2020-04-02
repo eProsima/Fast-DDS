@@ -1,13 +1,13 @@
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----5C3BC8C0095B87A8C04CF3224C2D9B42"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----910B482A73CC44DF449F7711DFB38632"
 
 This is an S/MIME signed message
 
-------5C3BC8C0095B87A8C04CF3224C2D9B42
+------910B482A73CC44DF449F7711DFB38632
 Content-Type: text/plain
 
 <?xml version="1.0" encoding="utf-8"?>
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-Security/20170801/omg_shared_ca_permissions.xsd">
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-*20170801/omg_shared_ca_permissions.xsd">
     <permissions>
         <grant name="PublisherPermissions">
             <subject_name>emailAddress=mainpub@eprosima.com, CN=Main Publisher, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
@@ -25,7 +25,7 @@ Content-Type: text/plain
                 <publish>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>BlackBox_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
+                        <topic>Security/Security_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
                     </topics>
                 </publish>
             </allow_rule>
@@ -47,7 +47,7 @@ Content-Type: text/plain
                 <subscribe>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>BlackBox_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
+                        <topic>Security/Security_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
                         <topic>*temperature*</topic>
                     </topics>
                 </subscribe>
@@ -57,7 +57,7 @@ Content-Type: text/plain
     </permissions>
 </dds>
 
-------5C3BC8C0095B87A8C04CF3224C2D9B42
+------910B482A73CC44DF449F7711DFB38632
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -80,12 +80,12 @@ VQQIDAJNQTEUMBIGA1UEBwwLVHJlcyBDYW50b3MxETAPBgNVBAoMCGVQcm9zaW1h
 MREwDwYDVQQLDAhlUHJvc2ltYTEeMBwGA1UEAwwVZVByb3NpbWEgTWFpbiBUZXN0
 IENBMSIwIAYJKoZIhvcNAQkBFhNtYWluY2FAZXByb3NpbWEuY29tAgkAtnCmCjaz
 G2EwDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-BgkqhkiG9w0BCQUxDxcNMTkwNjExMDYxNjU0WjAvBgkqhkiG9w0BCQQxIgQgVPbA
-JfGBEgG7yoraMvA/eifH1SktvG/K0mFUGrko4QAweQYJKoZIhvcNAQkPMWwwajAL
+BgkqhkiG9w0BCQUxDxcNMTkxMTEyMTQxMDIxWjAvBgkqhkiG9w0BCQQxIgQgRq/+
+RJxf7uA6wZ+bkIoceuCwacVRD7jkqs93rQGRocEweQYJKoZIhvcNAQkPMWwwajAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0D
 BzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZI
-hvcNAwICASgwCgYIKoZIzj0EAwIERzBFAiAFN/qe+n+AK4xkhAtwUY2sQxNG2ZJ8
-XfrHW3eYKUqFiQIhAINklpw757aN0VzKBV+NL/iHyJ88G75IQobDVuM9pXTM
+hvcNAwICASgwCgYIKoZIzj0EAwIERzBFAiA+UOENZBH6lb0WeOa4dCDiD8psIO6H
+vdAbRXDlNwCnFgIhAI7m8vGdHvnl0J0NOWMkV1EeLnI4F+XsDOtaDziWPfN0
 
-------5C3BC8C0095B87A8C04CF3224C2D9B42--
+------910B482A73CC44DF449F7711DFB38632--
 

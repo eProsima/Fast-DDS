@@ -54,7 +54,6 @@ class IPFinder
         typedef struct info_IP
         {
             IPTYPE type;
-            uint32_t scope_id;
             std::string name;
             std::string dev;
             Locator_t locator;

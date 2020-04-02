@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps_deprecated/security/accesscontrol/GovernanceParser.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <cstring>
 #include <cassert>

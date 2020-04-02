@@ -21,11 +21,39 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, ParticipantRemoval)
+class Discovery : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+};
+
+TEST_P(Discovery, ParticipantRemoval)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -56,9 +84,9 @@ TEST(BlackBox, ParticipantRemoval)
     reader.wait_participant_undiscovery();
 }
 
-TEST(BlackBox, StaticDiscovery)
+TEST(Discovery, StaticDiscovery)
 {
-    //Log::SetVerbosity(Log::Info);
+    //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     char* value = nullptr;
     std::string TOPIC_RANDOM_NUMBER;
     std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
@@ -121,10 +149,10 @@ TEST(BlackBox, StaticDiscovery)
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     writer.static_discovery("PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-        setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+    unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+    setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
@@ -143,11 +171,11 @@ TEST(BlackBox, StaticDiscovery)
 
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     reader.static_discovery("PubSubReader.xml").
-        unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-        setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
+    setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -166,7 +194,7 @@ TEST(BlackBox, StaticDiscovery)
     reader.block_for_all();
 }
 
-TEST(BlackBox, EDPSlaveReaderAttachment)
+TEST_P(Discovery, EDPSlaveReaderAttachment)
 {
     PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
@@ -199,7 +227,7 @@ TEST(BlackBox, EDPSlaveReaderAttachment)
 }
 
 // Used to detect Github issue #155
-TEST(BlackBox, EndpointRediscovery)
+TEST(Discovery, EndpointRediscovery)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -238,7 +266,7 @@ TEST(BlackBox, EndpointRediscovery)
 }
 
 // Used to detect Github issue #457
-TEST(BlackBox, EndpointRediscovery_2)
+TEST(Discovery, EndpointRediscovery_2)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -281,7 +309,7 @@ TEST(BlackBox, EndpointRediscovery_2)
  * **Associated requirements:**
  * **Other requirements:**
  */
-TEST(BlackBox, ParticipantLivelinessAssertion)
+TEST(Discovery, ParticipantLivelinessAssertion)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -289,12 +317,12 @@ TEST(BlackBox, ParticipantLivelinessAssertion)
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport).
-        lease_duration({ 0, 800000000 }, { 0, 500000000 }).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    lease_duration({ 0, 800000000 }, { 0, 500000000 }).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport).
-        lease_duration({ 0, 800000000 }, { 0, 500000000 }).init();
+    lease_duration({ 0, 800000000 }, { 0, 500000000 }).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -305,17 +333,17 @@ TEST(BlackBox, ParticipantLivelinessAssertion)
     test_UDPv4Transport::always_drop_participant_builtin_topic_data = true;
 
     std::thread thread([&writer]()
-            {
-                HelloWorld msg;
-                for (int count = 0 ; count < 20; ++count)
-                {
-                    writer.send_sample(msg);
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                }
-            });
+    {
+        HelloWorld msg;
+        for (int count = 0; count < 20; ++count)
+        {
+            writer.send_sample(msg);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    });
 
-    ASSERT_FALSE(reader.wait_participant_undiscovery(std::chrono::seconds(1)));
-    ASSERT_FALSE(writer.wait_participant_undiscovery(std::chrono::seconds(1)));
+    EXPECT_FALSE(reader.wait_participant_undiscovery(std::chrono::seconds(1)));
+    EXPECT_FALSE(writer.wait_participant_undiscovery(std::chrono::seconds(1)));
 
     test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
 
@@ -323,7 +351,7 @@ TEST(BlackBox, ParticipantLivelinessAssertion)
 }
 
 // Regression test of Refs #2535, github micro-RTPS #1
-TEST(BlackBox, PubXmlLoadedPartition)
+TEST(Discovery, PubXmlLoadedPartition)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -332,10 +360,12 @@ TEST(BlackBox, PubXmlLoadedPartition)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    const std::string xml = R"(<profiles>
+    const std::string xml =
+            R"(<profiles>
   <publisher profile_name="partition_publisher_profile">
     <topic>
-      <name>)" + writer.topic_name() + R"(</name>
+      <name>)" + writer.topic_name() +
+            R"(</name>
       <dataType>HelloWorldType</dataType>
     </topic>
     <qos>
@@ -357,7 +387,7 @@ TEST(BlackBox, PubXmlLoadedPartition)
 }
 
 // Used to detect Github issue #154
-TEST(BlackBox, LocalInitialPeers)
+TEST(Discovery, LocalInitialPeers)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -372,8 +402,8 @@ TEST(BlackBox, LocalInitialPeers)
     reader_default_unicast_locator.push_back(loc_default_unicast);
 
     reader.metatraffic_unicast_locator_list(reader_default_unicast_locator).
-        initial_peers(reader_initial_peers).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    initial_peers(reader_initial_peers).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -385,7 +415,7 @@ TEST(BlackBox, LocalInitialPeers)
     writer_default_unicast_locator.push_back(loc_default_unicast);
 
     writer.metatraffic_unicast_locator_list(writer_default_unicast_locator).
-        initial_peers(writer_initial_peers).init();
+    initial_peers(writer_initial_peers).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -407,19 +437,19 @@ TEST(BlackBox, LocalInitialPeers)
 }
 
 // Test created to check bug #2010 (Github #90)
-TEST(BlackBox, PubSubAsReliableHelloworldPartitions)
+TEST_P(Discovery, PubSubAsReliableHelloworldPartitions)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(10).
-        partition("PartitionTests").
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    partition("PartitionTests").
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(10).
-        partition("PartitionTe*").init();
+    partition("PartitionTe*").init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -461,7 +491,7 @@ TEST(BlackBox, PubSubAsReliableHelloworldPartitions)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
+TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -471,27 +501,27 @@ TEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     int count = 0;
-    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool{
-            if(info.info.m_guid == writer.participant_guid())
+    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool {
+        if (info.info.m_guid == writer.participant_guid())
+        {
+            if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
-                if(info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
-                {
-                    std::cout << "Discovered participant " << info.info.m_guid << std::endl;
-                    ++count;
-                }
-                else if(info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                        info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
-                {
-                    std::cout << "Removed participant " << info.info.m_guid << std::endl;
-                    return ++count == 2;
-                }
+                std::cout << "Discovered participant " << info.info.m_guid << std::endl;
+                ++count;
             }
+            else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+            info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            {
+                std::cout << "Removed participant " << info.info.m_guid << std::endl;
+                return ++count == 2;
+            }
+        }
 
-            return false;
-        });
+        return false;
+    });
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -505,29 +535,32 @@ TEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
     reader.wait_discovery_result();
 }
 
-TEST(BlackBox, PubSubAsReliableHelloworldUserData)
+TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100).
-        userData({'a','b','c','d'}).init();
+    userData({'a', 'b', 'c', 'd'}).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool{
-            if(info.info.m_guid == writer.participant_guid())
+    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool {
+        if (info.info.m_guid == writer.participant_guid())
+        {
+            std::cout << "Received USER_DATA from the writer: ";
+            for (auto i: info.info.m_userData)
             {
-                std::cout << "Received USER_DATA from the writer: ";
-                for (auto i: info.info.m_userData) std::cout << i << ' ';
-                return info.info.m_userData == std::vector<octet>({'a','b','c','d'});
+                std::cout << i << ' ';
             }
+            return info.info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+        }
 
-            return false;
-        });
+        return false;
+    });
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -545,12 +578,12 @@ static void discoverParticipantsTest(
         uint32_t wait_ms,
         const std::string& topic_name)
 {
-    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
+    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType> > > pubsub;
     pubsub.reserve(n_participants);
 
     for (size_t i = 0; i < n_participants; ++i)
     {
-        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(topic_name));
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType> >(topic_name));
     }
 
     // Initialization of all the participants
@@ -572,10 +605,10 @@ static void discoverParticipantsTest(
         for (auto& ps : pubsub)
         {
             if ((ps->get_num_discovered_participants() < n_participants - 1) ||
-                (ps->get_num_discovered_publishers() < n_participants) ||
-                (ps->get_num_discovered_subscribers() < n_participants) ||
-                (ps->get_publication_matched() < n_participants) ||
-                (ps->get_subscription_matched() < n_participants))
+                    (ps->get_num_discovered_publishers() < n_participants) ||
+                    (ps->get_num_discovered_subscribers() < n_participants) ||
+                    (ps->get_publication_matched() < n_participants) ||
+                    (ps->get_subscription_matched() < n_participants))
             {
                 all_discovered = false;
                 break;
@@ -604,7 +637,7 @@ TEST(Discovery, TwentyParticipantsMulticast)
 }
 
 //! Tests discovery of 20 participants, having one publisher and one subscriber each, using unicast
-TEST(Discovery, TwentyParticipantsUnicast)
+TEST_P(Discovery, TwentyParticipantsUnicast)
 {
     discoverParticipantsTest(true, 20, 20, TEST_TOPIC_NAME);
 }
@@ -620,12 +653,12 @@ static void discoverParticipantsSeveralEndpointsTest(
     // Total number of discovered endpoints
     size_t n_total_endpoints = n_participants * n_topics;
 
-    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
+    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType> > > pubsub;
     pubsub.reserve(n_participants);
 
     for (unsigned int i = 0; i < n_participants; i++)
     {
-        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(topic_name));
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType> >(topic_name));
     }
 
     // Initialization of all the participants
@@ -648,10 +681,10 @@ static void discoverParticipantsSeveralEndpointsTest(
         for (auto& ps : pubsub)
         {
             if ((ps->get_num_discovered_participants() < n_participants - 1) ||
-                (ps->get_num_discovered_publishers() < n_total_endpoints) ||
-                (ps->get_num_discovered_subscribers() < n_total_endpoints) ||
-                (ps->get_publication_matched() < n_total_endpoints) ||
-                (ps->get_subscription_matched() < n_total_endpoints))
+                    (ps->get_num_discovered_publishers() < n_total_endpoints) ||
+                    (ps->get_num_discovered_subscribers() < n_total_endpoints) ||
+                    (ps->get_publication_matched() < n_total_endpoints) ||
+                    (ps->get_subscription_matched() < n_total_endpoints))
             {
                 all_discovered = false;
                 break;
@@ -680,7 +713,86 @@ TEST(Discovery, TwentyParticipantsSeveralEndpointsMulticast)
 }
 
 //! Regression for ROS2 #280 and #281, using unicast
-TEST(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
+TEST_P(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
 {
     discoverParticipantsSeveralEndpointsTest(true, 20, 20, 20, TEST_TOPIC_NAME);
 }
+
+//! Regression test for support case 7552 (CRM #353)
+TEST_P(Discovery, RepeatPubGuid)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
+
+    reader
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .participant_id(2)
+        .init();
+
+    writer
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .participant_id(1)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+
+    writer.destroy();
+    reader.wait_writer_undiscovery();
+    reader.wait_participant_undiscovery();
+
+    writer2
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .participant_id(1)
+        .init();
+
+    ASSERT_TRUE(writer2.isInitialized());
+
+    writer2.wait_discovery();
+    reader.wait_discovery();
+
+    data = default_helloworld_data_generator();
+    reader.startReception(data);
+
+    // Send data
+    writer2.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+INSTANTIATE_TEST_CASE_P(Discovery,
+        Discovery,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<Discovery::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
+
+
+

@@ -62,7 +62,6 @@ constexpr DestinationOrderQosPolicyKind BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_
 constexpr DestinationOrderQosPolicyKind BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS =
         DestinationOrderQosPolicyKind::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
 using DestinationOrderQosPolicy = fastdds::dds::DestinationOrderQosPolicy;
-using UserDataQosPolicy = fastdds::dds::UserDataQosPolicy;
 using TimeBasedFilterQosPolicy = fastdds::dds::TimeBasedFilterQosPolicy;
 using PresentationQosPolicyAccessScopeKind = fastdds::dds::PresentationQosPolicyAccessScopeKind;
 constexpr PresentationQosPolicyAccessScopeKind INSTANCE_PRESENTATION_QOS =
@@ -73,6 +72,7 @@ constexpr PresentationQosPolicyAccessScopeKind GROUP_PRESENTATION_QOS =
         PresentationQosPolicyAccessScopeKind::GROUP_PRESENTATION_QOS;
 using PresentationQosPolicy = fastdds::dds::PresentationQosPolicy;
 using PartitionQosPolicy = fastdds::dds::PartitionQosPolicy;
+using UserDataQosPolicy = fastdds::dds::UserDataQosPolicy;
 using TopicDataQosPolicy = fastdds::dds::TopicDataQosPolicy;
 using GroupDataQosPolicy = fastdds::dds::GroupDataQosPolicy;
 using HistoryQosPolicyKind = fastdds::dds::HistoryQosPolicyKind;

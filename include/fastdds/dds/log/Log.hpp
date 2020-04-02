@@ -242,9 +242,20 @@ protected:
 #ifndef LOG_NO_ERROR
 #define logError_(cat, msg)                                                                          \
     {                                                                                                \
+        using namespace eprosima::fastdds::dds;                                                      \
         std::stringstream ss;                                                                        \
         ss << msg;                                                                                   \
         Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
+    }
+#elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
+#define logError_(cat, msg)        \
+    {                              \
+        auto tmp_lambda = [&]()    \
+        {                          \
+            std::stringstream ss;  \
+            ss << msg;             \
+        };                         \
+        (void)tmp_lambda;          \
     }
 #else
 #define logError_(cat, msg)
@@ -253,12 +264,23 @@ protected:
 #ifndef LOG_NO_WARNING
 #define logWarning_(cat, msg)                                                                              \
     {                                                                                                      \
+        using namespace eprosima::fastdds::dds;                                                            \
         if (Log::GetVerbosity() >= Log::Kind::Warning)                                                     \
         {                                                                                                  \
             std::stringstream ss;                                                                          \
             ss << msg;                                                                                     \
             Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); \
         }                                                                                                  \
+    }
+#elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
+#define logWarning_(cat, msg)      \
+    {                              \
+        auto tmp_lambda = [&]()    \
+        {                          \
+            std::stringstream ss;  \
+            ss << msg;             \
+        };                         \
+        (void)tmp_lambda;          \
     }
 #else
 #define logWarning_(cat, msg)
@@ -268,12 +290,23 @@ protected:
     (!defined(LOG_NO_INFO))
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
+        using namespace eprosima::fastdds::dds;                                                         \
         if (Log::GetVerbosity() >= Log::Kind::Info)                                                     \
         {                                                                                               \
             std::stringstream ss;                                                                       \
             ss << msg;                                                                                  \
             Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); \
         }                                                                                               \
+    }
+#elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
+#define logInfo_(cat, msg)         \
+    {                              \
+        auto tmp_lambda = [&]()    \
+        {                          \
+            std::stringstream ss;  \
+            ss << msg;             \
+        };                         \
+        (void)tmp_lambda;          \
     }
 #else
 #define logInfo_(cat, msg)

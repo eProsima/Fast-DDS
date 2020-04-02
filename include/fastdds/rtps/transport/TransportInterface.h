@@ -173,6 +173,11 @@ public:
         uint32_t well_known_port) const = 0;
 
     /**
+     * @return The maximum datagram size for reception supported by the transport
+     */
+    virtual uint32_t max_recv_buffer_size() const = 0;
+
+    /**
      * Shutdown method to close the connections of the transports.
     */
     virtual void shutdown() {};

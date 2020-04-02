@@ -26,14 +26,16 @@ file(GLOB_RECURSE ALL_HEADERS
     ${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
     )
 
+add_definitions(-DNOMINMAX)
+
 endif(WIN32)
 
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
 
-    dds/log/Log.cpp
-    dds/log/StdoutConsumer.cpp
-    dds/log/FileConsumer.cpp
+    fastdds/log/Log.cpp
+    fastdds/log/StdoutConsumer.cpp
+    fastdds/log/FileConsumer.cpp
     fastrtps_deprecated/utils/eClock.cpp
     fastrtps_deprecated/utils/IPFinder.cpp
     fastrtps_deprecated/utils/md5.cpp
@@ -62,6 +64,8 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/RTPSReader.cpp
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
+    rtps/messages/RTPSGapBuilder.cpp
+    rtps/messages/SendBuffersManager.cpp
     rtps/messages/MessageReceiver.cpp
     rtps/messages/submessages/AckNackMsg.hpp
     rtps/messages/submessages/DataMsg.hpp
@@ -81,29 +85,29 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/subscriber/Subscriber.cpp
     fastrtps_deprecated/subscriber/SubscriberImpl.cpp
     fastrtps_deprecated/subscriber/SubscriberHistory.cpp
-    dds/topic/DataReader.cpp
-    dds/topic/DataWriter.cpp
-    dds/topic/DataReaderImpl.cpp
-    dds/topic/DataWriterImpl.cpp
-    dds/topic/TypeSupport.cpp
-    dds/topic/qos/TopicQos.cpp
-    dds/topic/qos/DataWriterQos.cpp
-    dds/topic/qos/DataReaderQos.cpp
-    dds/topic/TypeSupport.cpp
-    dds/publisher/PublisherImpl.cpp
-    dds/publisher/qos/PublisherQos.cpp
-    dds/publisher/Publisher.cpp
-    dds/subscriber/SubscriberImpl.cpp
-    dds/subscriber/qos/SubscriberQos.cpp
-    dds/subscriber/Subscriber.cpp
-    dds/domain/DomainParticipantFactory.cpp
-    dds/domain/DomainParticipantImpl.cpp
-    dds/domain/DomainParticipant.cpp
-    dds/builtin/typelookup/common/TypeLookupTypes.cpp
-    dds/builtin/common/RPCHeadersImpl.cpp
-    dds/builtin/typelookup/TypeLookupManager.cpp
-    dds/builtin/typelookup/TypeLookupRequestListener.cpp
-    dds/builtin/typelookup/TypeLookupReplyListener.cpp
+    fastdds/subscriber/DataReader.cpp
+    fastdds/publisher/DataWriter.cpp
+    fastdds/subscriber/DataReaderImpl.cpp
+    fastdds/publisher/DataWriterImpl.cpp
+    fastdds/topic/TypeSupport.cpp
+    fastdds/topic/qos/TopicQos.cpp
+    fastdds/publisher/qos/DataWriterQos.cpp
+    fastdds/subscriber/qos/DataReaderQos.cpp
+    fastdds/topic/TypeSupport.cpp
+    fastdds/publisher/PublisherImpl.cpp
+    fastdds/publisher/qos/PublisherQos.cpp
+    fastdds/publisher/Publisher.cpp
+    fastdds/subscriber/SubscriberImpl.cpp
+    fastdds/subscriber/qos/SubscriberQos.cpp
+    fastdds/subscriber/Subscriber.cpp
+    fastdds/domain/DomainParticipantFactory.cpp
+    fastdds/domain/DomainParticipantImpl.cpp
+    fastdds/domain/DomainParticipant.cpp
+    fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
+    fastdds/builtin/common/RPCHeadersImpl.cpp
+    fastdds/builtin/typelookup/TypeLookupManager.cpp
+    fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
+    fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
     rtps/transport/ChannelResource.cpp
     rtps/transport/UDPChannelResource.cpp
     rtps/transport/TCPChannelResource.cpp
@@ -113,6 +117,7 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/UDPv4Transport.cpp
     rtps/transport/TCPTransportInterface.cpp
     rtps/transport/UDPTransportInterface.cpp
+    rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
     rtps/transport/TCPv4Transport.cpp
     rtps/transport/UDPv6Transport.cpp
     rtps/transport/TCPv6Transport.cpp
@@ -145,11 +150,11 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
-    dds/core/policy/ParameterList.cpp
-    dds/core/policy/ParameterTypes.cpp
-    dds/core/policy/QosPolicies.cpp
-    dds/topic/qos/WriterQos.cpp
-    dds/topic/qos/ReaderQos.cpp
+    fastdds/core/policy/ParameterList.cpp
+    fastdds/core/policy/ParameterTypes.cpp
+    fastdds/core/policy/QosPolicies.cpp
+    fastdds/publisher/qos/WriterQos.cpp
+    fastdds/subscriber/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp
@@ -191,6 +196,14 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/PersistenceFactory.cpp
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
     )
+
+# SHM Transport
+if(IS_THIRDPARTY_BOOST_OK)
+    list(APPEND ${PROJECT_NAME}_source_files
+        rtps/transport/shared_mem/test_SharedMemTransport.cpp
+        rtps/transport/shared_mem/SharedMemTransport.cpp
+        )
+endif()
 
 # TLS Support
 if(TLS_FOUND)
@@ -326,6 +339,8 @@ elseif(NOT EPROSIMA_INSTALLER)
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
     set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
+    option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
+    
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         ${PROJECT_NAME_UPPER}_SOURCE
         BOOST_ASIO_STANDALONE
@@ -336,6 +351,8 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
         $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
         $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+        $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
         )
 
     # Define public headers
@@ -349,6 +366,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${ASIO_INCLUDE_DIR}
         ${TINYXML2_INCLUDE_DIR}
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+        ${THIRDPARTY_BOOST_INCLUDE_DIR}
         )
 
     # Made linked libraries PRIVATE to prevent local directories in Windows installer.
@@ -367,6 +385,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${TINYXML2_LIBRARY}
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+        ${THIRDPARTY_BOOST_LINK_LIBS}
         )
 
     if(MSVC OR MSVC_IDE)

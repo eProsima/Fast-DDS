@@ -237,14 +237,16 @@ class StatefulReader : public RTPSReader
                 bool heartbeat_was_final);
 
         /**
-         * Use the participant of this reader to send a message to certain locator.
-         * @param message Message to be sent.
-         * @param locator Destination locator.
-         * @param max_blocking_time_point Future time point where any blocking should end.
-         */
+        *Use the participant of this reader to send a message to certain locator.
+        *@param message Message to be sent.
+        *@param locators_begin Destination locators iterator begin.
+        *@param locators_end Destination locators iterator end.
+        *@param max_blocking_time_point Future time point where any blocking should end.
+        */
         bool send_sync_nts(
                 CDRMessage_t* message,
-                const Locator_t& locator,
+                const Locators& locators_begin,
+                const Locators& locators_end,
                 std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     private:

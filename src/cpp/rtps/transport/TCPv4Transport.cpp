@@ -16,7 +16,7 @@
 #include <utility>
 #include <cstring>
 #include <algorithm>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <asio.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
@@ -111,6 +111,15 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescripto
     : TCPTransportDescriptor(t)
 {
     memcpy(wan_addr, t.wan_addr, 4);
+}
+
+TCPv4TransportDescriptor& TCPv4TransportDescriptor::operator=(
+        const TCPv4TransportDescriptor& t)
+{
+    *static_cast<TCPTransportDescriptor*>(this) = t;
+    memcpy(wan_addr, t.wan_addr, 4);
+
+    return *this;
 }
 
 TransportInterface* TCPv4TransportDescriptor::create_transport() const

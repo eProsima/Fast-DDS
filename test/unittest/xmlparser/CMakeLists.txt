@@ -28,6 +28,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_duration.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_duration.xml
             COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_root_library_settings.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/test_xml_root_library_settings.xml
+            COPYONLY)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
             COPYONLY)
@@ -52,6 +55,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UDP_transport_descriptors_config.xml
             ${CMAKE_CURRENT_BINARY_DIR}/UDP_transport_descriptors_config.xml
             COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SHM_transport_descriptors_config.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/SHM_transport_descriptors_config.xml
+            COPYONLY)
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp
@@ -59,10 +65,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/QosPolicies.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/topic/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/topic/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
@@ -112,6 +118,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
         target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
@@ -129,14 +136,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/QosPolicies.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/topic/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/topic/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/FileConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
 
@@ -185,6 +192,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )

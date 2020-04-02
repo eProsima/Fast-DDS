@@ -35,7 +35,8 @@ bool RTPSMessageCreator::addMessageData(
 
     RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
 
-    RTPSMessageCreator::addSubmessageData(msg, change,topicKind,readerId,expectsInlineQos,inlineQos);
+    bool is_big_submessage;
+    RTPSMessageCreator::addSubmessageData(msg, change,topicKind,readerId,expectsInlineQos,inlineQos, &is_big_submessage);
 
     msg->length = msg->pos;
 
@@ -48,7 +49,8 @@ bool RTPSMessageCreator::addSubmessageData(
         TopicKind_t topicKind,
         const EntityId_t& readerId,
         bool expectsInlineQos,
-        InlineQosWriter* inlineQos)
+        InlineQosWriter* inlineQos,
+        bool* is_big_submessage)
 {
     octet flags = 0x0;
     //Find out flags
@@ -192,19 +194,28 @@ bool RTPSMessageCreator::addSubmessageData(
         //submsgElem.length += align;
     }
 
-
-    //TODO(Ricardo) Improve.
-    submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= reinterpret_cast<octet*>(&submessage_size);
-    if(msg->msg_endian == DEFAULT_ENDIAN)
+    uint32_t size32 = msg->pos - position_size_count_size;
+    if (size32 <= std::numeric_limits<uint16_t>::max())
     {
-        msg->buffer[submessage_size_pos] = *(o);
-        msg->buffer[submessage_size_pos+1] = *(o+1);
+        submessage_size = static_cast<uint16_t>(size32);
+        octet* o = reinterpret_cast<octet*>(&submessage_size);
+        if (msg->msg_endian == DEFAULT_ENDIAN)
+        {
+            msg->buffer[submessage_size_pos] = *(o);
+            msg->buffer[submessage_size_pos + 1] = *(o + 1);
+        }
+        else
+        {
+            msg->buffer[submessage_size_pos] = *(o + 1);
+            msg->buffer[submessage_size_pos + 1] = *(o);
+        }
+
+        *is_big_submessage = false;
     }
     else
     {
-        msg->buffer[submessage_size_pos] = *(o+1);
-        msg->buffer[submessage_size_pos+1] = *(o);
+        // Submessage > 64KB 
+        *is_big_submessage = true;
     }
 
     msg->msg_endian = old_endianess;
@@ -400,9 +411,10 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     // TODO(Ricardo) This should be on cachechange.
     // Align submessage to rtps alignment (4).
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    uint32_t align = (4 - msg->pos % 4) & 3;
-    for (uint32_t count = 0; count < align; ++count)
+    for (; submessage_size & 3; ++submessage_size)
+    {
         added_no_error &= CDRMessage::addOctet(msg, 0);
+    }
 
     //TODO(Ricardo) Improve.
     octet* o= reinterpret_cast<octet*>(&submessage_size);

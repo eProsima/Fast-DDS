@@ -32,6 +32,7 @@ namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
+class RTPSReader;
 
 /**
  * Class ReaderLocator, contains information about a remote reader, without saving its state.
@@ -59,6 +60,18 @@ class ReaderLocator : public RTPSMessageSenderInterface
         bool expects_inline_qos() const
         {
             return expects_inline_qos_;
+        }
+
+        bool is_local_reader() const
+        {
+            return is_local_reader_;
+        }
+
+        RTPSReader* local_reader();
+
+        void local_reader(RTPSReader* local_reader)
+        {
+            local_reader_ = local_reader;
         }
 
         const GUID_t& remote_guid() const
@@ -167,6 +180,8 @@ class ReaderLocator : public RTPSMessageSenderInterface
         RTPSParticipantImpl* owner_;
         LocatorSelectorEntry locator_info_;
         bool expects_inline_qos_;
+        bool is_local_reader_;
+        RTPSReader* local_reader_;
         std::vector<GuidPrefix_t> guid_prefix_as_vector_;
         std::vector<GUID_t> guid_as_vector_;
 };

@@ -25,7 +25,7 @@
 #include <cstdint>
 #include <gstreamer-1.0/gst/gst.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/Domain.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -168,7 +168,7 @@ int main(int argc, char** argv)
 {
     int columns;
 
-    Log::SetVerbosity(Log::Warning);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
 #if defined(_WIN32)
     char* buf = nullptr;

@@ -21,22 +21,13 @@
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastrtps/qos/ParameterList.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-RTPSMessageCreator::RTPSMessageCreator()
-{
-}
-
-RTPSMessageCreator::~RTPSMessageCreator() {
-    logInfo(RTPS_CDR_MSG,"RTPSMessageCreator destructor");
-}
-
 
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix,
         const ProtocolVersion_t& version,const VendorId_t& vendorId)

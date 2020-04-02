@@ -18,13 +18,41 @@
 #include "PubSubWriter.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, PubSubAsNonReliableHelloworld)
+class PubSubBasic : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+};
+
+TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -52,7 +80,7 @@ TEST(BlackBox, PubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
+TEST_P(PubSubBasic, AsyncPubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -62,8 +90,8 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -82,13 +110,13 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, PubSubAsReliableHelloworld)
+TEST_P(PubSubBasic, PubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -113,18 +141,18 @@ TEST(BlackBox, PubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
+TEST_P(PubSubBasic, AsyncPubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -145,7 +173,7 @@ TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-TEST(BlackBox, ReqRepAsReliableHelloworld)
+TEST_P(PubSubBasic, ReqRepAsReliableHelloworld)
 {
     ReqRepAsReliableHelloWorldRequester requester;
     ReqRepAsReliableHelloWorldReplier replier;
@@ -169,13 +197,13 @@ TEST(BlackBox, ReqRepAsReliableHelloworld)
     }
 }
 
-TEST(BlackBox, PubSubAsReliableData64kb)
+TEST_P(PubSubBasic, PubSubAsReliableData64kb)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(10).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -200,12 +228,12 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubMoreThan256Unacknowledged)
+TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -218,8 +246,8 @@ TEST(BlackBox, PubSubMoreThan256Unacknowledged)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -227,19 +255,19 @@ TEST(BlackBox, PubSubMoreThan256Unacknowledged)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
+TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        disable_multicast(0).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    disable_multicast(0).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        disable_multicast(1).init();
+    disable_multicast(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -259,4 +287,366 @@ TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 }
+
+TEST_P(PubSubBasic, ReceivedDynamicDataWithNoSizeLimit)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_depth(100)
+          .partition("A").partition("B").partition("C")
+          .userData({'a', 'b', 'c', 'd'}).init();
+
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.history_depth(100)
+          .partition("A")
+          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery(std::chrono::seconds(3));
+    writer.wait_discovery(std::chrono::seconds(3));
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_depth(100)
+          .partition("A").partition("B").partition("C")
+          .userData({'a', 'b', 'c', 'd'}).init();
+
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    const std::string xml =
+            R"(<profiles>
+                <participant><rtps>
+                    <allocation>
+                        <max_user_data> 4 </max_user_data>
+                        <max_partitions> 28 </max_partitions>
+                    </allocation>
+                </rtps></participant>
+            </profiles>)";
+
+    reader.load_participant_attr(xml)
+          .history_depth(100)
+          .partition("A")
+          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery(std::chrono::seconds(3));
+    writer.wait_discovery(std::chrono::seconds(3));
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_depth(100)
+          .userData({'a', 'b', 'c', 'd', 'e', 'f'}).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    const std::string xml =
+            R"(<profiles>
+                <participant><rtps>
+                    <allocation>
+                        <max_user_data> 4 </max_user_data>
+                    </allocation>
+                </rtps></participant>
+            </profiles>)";
+
+    reader.load_participant_attr(xml)
+          .history_depth(100)
+          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery(std::chrono::seconds(3));
+    writer.wait_discovery(std::chrono::seconds(3));
+
+    ASSERT_FALSE(writer.is_matched());
+    ASSERT_FALSE(reader.is_matched());
+}
+
+TEST_P(PubSubBasic, ReceivedPartitionDataExceedsSizeLimit)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_depth(100)
+          .partition("A").partition("B").partition("C")
+          .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    const std::string xml =
+            R"(<profiles>
+                <participant><rtps>
+                    <allocation>
+                        <max_partitions> 20 </max_partitions>
+                    </allocation>
+                </rtps></participant>
+            </profiles>)";
+
+    reader.load_participant_attr(xml)
+          .history_depth(100)
+          .partition("A")
+          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery(std::chrono::seconds(3));
+    writer.wait_discovery(std::chrono::seconds(3));
+
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_FALSE(reader.is_matched());
+}
+
+TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
+{
+    char* value = nullptr;
+    std::string TOPIC_RANDOM_NUMBER;
+    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string MULTICAST_PORT_RANDOM_NUMBER_STR;
+
+    // Get environment variables.
+    value = std::getenv("TOPIC_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        TOPIC_RANDOM_NUMBER = value;
+    }
+    else
+    {
+        TOPIC_RANDOM_NUMBER = "1";
+    }
+    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = "7411";
+    }
+    int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
+    value = std::getenv("R_UNICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = "7421";
+    }
+    int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
+    value = std::getenv("MULTICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
+    }
+    int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
+
+    Locator_t LocatorBuffer;
+
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    LocatorList_t WriterUnicastLocators;
+    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
+    LocatorBuffer.port = static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER);
+    IPLocator::setIPv4(LocatorBuffer, 127, 0, 0, 1);
+    WriterUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t WriterMulticastLocators;
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
+    WriterMulticastLocators.push_back(LocatorBuffer);
+
+    writer.static_discovery("PubSubWriter.xml").
+    unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+    setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    LocatorList_t ReaderUnicastLocators;
+    LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
+    ReaderUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t ReaderMulticastLocators;
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
+    ReaderMulticastLocators.push_back(LocatorBuffer);
+
+    //Expected properties have exactly size 52
+    const std::string xml =
+            R"(<profiles>
+                <participant><rtps>
+                    <allocation>
+                        <max_properties> 52 </max_properties>
+                    </allocation>
+                </rtps></participant>
+            </profiles>)";
+
+    reader.load_participant_attr(xml).
+    static_discovery("PubSubReader.xml").
+    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
+    setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_TRUE(reader.is_matched());
+}
+
+TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
+{
+    char* value = nullptr;
+    std::string TOPIC_RANDOM_NUMBER;
+    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string R_UNICAST_PORT_RANDOM_NUMBER_STR;
+    std::string MULTICAST_PORT_RANDOM_NUMBER_STR;
+
+    // Get environment variables.
+    value = std::getenv("TOPIC_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        TOPIC_RANDOM_NUMBER = value;
+    }
+    else
+    {
+        TOPIC_RANDOM_NUMBER = "1";
+    }
+    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        W_UNICAST_PORT_RANDOM_NUMBER_STR = "7411";
+    }
+    int32_t W_UNICAST_PORT_RANDOM_NUMBER = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
+    value = std::getenv("R_UNICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        R_UNICAST_PORT_RANDOM_NUMBER_STR = "7421";
+    }
+    int32_t R_UNICAST_PORT_RANDOM_NUMBER = stoi(R_UNICAST_PORT_RANDOM_NUMBER_STR);
+    value = std::getenv("MULTICAST_PORT_RANDOM_NUMBER");
+    if (value != nullptr)
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = value;
+    }
+    else
+    {
+        MULTICAST_PORT_RANDOM_NUMBER_STR = "7400";
+    }
+    int32_t MULTICAST_PORT_RANDOM_NUMBER = stoi(MULTICAST_PORT_RANDOM_NUMBER_STR);
+
+    Locator_t LocatorBuffer;
+
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    LocatorList_t WriterUnicastLocators;
+    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
+    LocatorBuffer.port = static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER);
+    IPLocator::setIPv4(LocatorBuffer, 127, 0, 0, 1);
+    WriterUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t WriterMulticastLocators;
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
+    WriterMulticastLocators.push_back(LocatorBuffer);
+
+    writer.static_discovery("PubSubWriter.xml").
+    unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+    setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    LocatorList_t ReaderUnicastLocators;
+    LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
+    ReaderUnicastLocators.push_back(LocatorBuffer);
+
+    LocatorList_t ReaderMulticastLocators;
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
+    ReaderMulticastLocators.push_back(LocatorBuffer);
+
+    //Expected properties have size 52
+    const std::string xml =
+            R"(<profiles>
+                <participant><rtps>
+                    <allocation>
+                        <max_properties> 50 </max_properties>
+                    </allocation>
+                </rtps></participant>
+            </profiles>)";
+
+    reader.load_participant_attr(xml).
+    static_discovery("PubSubReader.xml").
+    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
+    setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+
+    ASSERT_FALSE(writer.is_matched());
+    ASSERT_FALSE(reader.is_matched());
+}
+
+INSTANTIATE_TEST_CASE_P(PubSubBasic,
+        PubSubBasic,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<PubSubBasic::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 

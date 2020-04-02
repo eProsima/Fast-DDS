@@ -22,7 +22,7 @@ namespace rtps {
 using Log = fastdds::dds::Log;
 
 ChannelResource::ChannelResource()
-    : message_buffer_()
+    : message_buffer_(RTPSMESSAGE_DEFAULT_SIZE)
     , alive_(true)
 {
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);

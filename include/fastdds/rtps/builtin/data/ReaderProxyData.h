@@ -26,6 +26,7 @@
 #include <fastrtps/qos/ReaderQos.h>
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
@@ -53,18 +54,27 @@ public:
             const size_t max_unicast_locators,
             const size_t max_multicast_locators);
 
+    RTPS_DllAPI ReaderProxyData(
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits);
+
     RTPS_DllAPI virtual ~ReaderProxyData();
 
-    RTPS_DllAPI ReaderProxyData(const ReaderProxyData& readerInfo);
+    RTPS_DllAPI ReaderProxyData(
+            const ReaderProxyData& readerInfo);
 
-    RTPS_DllAPI ReaderProxyData& operator=(const ReaderProxyData& readerInfo);
+    RTPS_DllAPI ReaderProxyData& operator =(
+            const ReaderProxyData& readerInfo);
 
-    RTPS_DllAPI void guid(const GUID_t& guid)
+    RTPS_DllAPI void guid(
+            const GUID_t& guid)
     {
         m_guid = guid;
     }
 
-    RTPS_DllAPI void guid(GUID_t&& guid)
+    RTPS_DllAPI void guid(
+            GUID_t&& guid)
     {
         m_guid = std::move(guid);
     }
@@ -86,10 +96,11 @@ public:
 
     RTPS_DllAPI const RemoteLocatorList& remote_locators() const
     {
-            return remote_locators_;
+        return remote_locators_;
     }
 
-    RTPS_DllAPI void add_unicast_locator(const Locator_t& locator);
+    RTPS_DllAPI void add_unicast_locator(
+            const Locator_t& locator);
 
     void set_announced_unicast_locators(
             const LocatorList_t& locators);
@@ -98,7 +109,8 @@ public:
             const LocatorList_t& locators,
             const NetworkFactory& network);
 
-    RTPS_DllAPI void add_multicast_locator(const Locator_t& locator);
+    RTPS_DllAPI void add_multicast_locator(
+            const Locator_t& locator);
 
     void set_multicast_locators(
             const LocatorList_t& locators,
@@ -112,12 +124,14 @@ public:
             const NetworkFactory& network,
             bool use_multicast_locators);
 
-    RTPS_DllAPI void key(const InstanceHandle_t& key)
+    RTPS_DllAPI void key(
+            const InstanceHandle_t& key)
     {
         m_key = key;
     }
 
-    RTPS_DllAPI void key(InstanceHandle_t&& key)
+    RTPS_DllAPI void key(
+            InstanceHandle_t&& key)
     {
         m_key = std::move(key);
     }
@@ -132,12 +146,14 @@ public:
         return m_key;
     }
 
-    RTPS_DllAPI void RTPSParticipantKey(const InstanceHandle_t& RTPSParticipantKey)
+    RTPS_DllAPI void RTPSParticipantKey(
+            const InstanceHandle_t& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = RTPSParticipantKey;
     }
 
-    RTPS_DllAPI void RTPSParticipantKey(InstanceHandle_t&& RTPSParticipantKey)
+    RTPS_DllAPI void RTPSParticipantKey(
+            InstanceHandle_t&& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = std::move(RTPSParticipantKey);
     }
@@ -152,12 +168,14 @@ public:
         return m_RTPSParticipantKey;
     }
 
-    RTPS_DllAPI void typeName(const string_255& typeName)
+    RTPS_DllAPI void typeName(
+            const string_255& typeName)
     {
         m_typeName = typeName;
     }
 
-    RTPS_DllAPI void typeName(string_255&& typeName)
+    RTPS_DllAPI void typeName(
+            string_255&& typeName)
     {
         m_typeName = std::move(typeName);
     }
@@ -172,12 +190,14 @@ public:
         return m_typeName;
     }
 
-    RTPS_DllAPI void topicName(const string_255& topicName)
+    RTPS_DllAPI void topicName(
+            const string_255& topicName)
     {
         m_topicName = topicName;
     }
 
-    RTPS_DllAPI void topicName(string_255&& topicName)
+    RTPS_DllAPI void topicName(
+            string_255&& topicName)
     {
         m_topicName = std::move(topicName);
     }
@@ -192,7 +212,8 @@ public:
         return m_topicName;
     }
 
-    RTPS_DllAPI void userDefinedId(uint16_t userDefinedId)
+    RTPS_DllAPI void userDefinedId(
+            uint16_t userDefinedId)
     {
         m_userDefinedId = userDefinedId;
     }
@@ -207,7 +228,8 @@ public:
         return m_userDefinedId;
     }
 
-    RTPS_DllAPI void isAlive(bool isAlive)
+    RTPS_DllAPI void isAlive(
+            bool isAlive)
     {
         m_isAlive = isAlive;
     }
@@ -222,7 +244,8 @@ public:
         return m_isAlive;
     }
 
-    RTPS_DllAPI void topicKind(TopicKind_t topicKind)
+    RTPS_DllAPI void topicKind(
+            TopicKind_t topicKind)
     {
         m_topicKind = topicKind;
     }
@@ -237,49 +260,82 @@ public:
         return m_topicKind;
     }
 
-    RTPS_DllAPI void type_id(TypeIdV1 type_id)
+    RTPS_DllAPI void type_id(
+            const TypeIdV1& other_type_id)
     {
-        m_type_id = type_id;
+        type_id() = other_type_id;
     }
 
-    RTPS_DllAPI TypeIdV1 type_id() const
+    RTPS_DllAPI const TypeIdV1& type_id() const
     {
-        return m_type_id;
+        assert(m_type_id != nullptr);
+        return *m_type_id;
     }
 
     RTPS_DllAPI TypeIdV1& type_id()
     {
-        return m_type_id;
+        if (m_type_id == nullptr)
+        {
+            m_type_id = new TypeIdV1();
+        }
+        return *m_type_id;
     }
 
-    RTPS_DllAPI void type(TypeObjectV1 type)
+    RTPS_DllAPI bool has_type_id() const
     {
-        m_type = type;
+        return m_type_id != nullptr;
     }
 
-    RTPS_DllAPI TypeObjectV1 type() const
+    RTPS_DllAPI void type(
+            const TypeObjectV1& other_type)
     {
-        return m_type;
+        type() = other_type;
+    }
+
+    RTPS_DllAPI const TypeObjectV1& type() const
+    {
+        assert(m_type != nullptr);
+        return *m_type;
     }
 
     RTPS_DllAPI TypeObjectV1& type()
     {
-        return m_type;
+        if (m_type == nullptr)
+        {
+            m_type = new TypeObjectV1();
+        }
+        return *m_type;
     }
 
-    RTPS_DllAPI void type_information(const xtypes::TypeInformation& type_information)
+    RTPS_DllAPI bool has_type() const
     {
-        m_type_information = type_information;
+        return m_type != nullptr;
+    }
+
+    RTPS_DllAPI void type_information(
+            const xtypes::TypeInformation& other_type_information)
+    {
+        type_information() = other_type_information;
     }
 
     RTPS_DllAPI const xtypes::TypeInformation& type_information() const
     {
-        return m_type_information;
+        assert(m_type_information != nullptr);
+        return *m_type_information;
     }
 
     RTPS_DllAPI xtypes::TypeInformation& type_information()
     {
-        return m_type_information;
+        if (m_type_information == nullptr)
+        {
+            m_type_information = new xtypes::TypeInformation();
+        }
+        return *m_type_information;
+    }
+
+    RTPS_DllAPI bool has_type_information() const
+    {
+        return m_type_information != nullptr;
     }
 
     inline bool disable_positive_acks() const
@@ -288,20 +344,32 @@ public:
     }
 
     /**
-         * Write as a parameter list on a CDRMessage_t
-         * @return True on success
-         */
-    bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
+     * Get the size in bytes of the CDR serialization of this object.
+     * @param include_encapsulation Whether to include the size of the encapsulation info.
+     * @return size in bytes of the CDR serialization.
+     */
+    uint32_t get_serialized_size(
+            bool include_encapsulation) const;
 
     /**
-         *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
+     * Write as a parameter list on a CDRMessage_t
+     * @return True on success
+     */
+    bool writeToCDRMessage(
+            CDRMessage_t* msg,
+            bool write_encapsulation) const;
+
+    /**
+         *  Read the information from a CDRMessage_t. The position of the message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
          * @param network Reference to network factory for locator validation and transformation
+         * @param is_shm_transport_possible Indicates wether the Reader is reachable by SHM.
          * @return true on success
          */
     RTPS_DllAPI bool readFromCDRMessage(
             CDRMessage_t* msg,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool is_shm_transport_available);
 
     //!
     bool m_expectsInlineQos;
@@ -317,28 +385,31 @@ public:
 #endif
 
     /**
-         * Clear (put to default) the information.
-         */
+     * Clear (put to default) the information.
+     */
     void clear();
 
     /**
-         * Check if this object can be updated with the information on another object.
-         * @param rdata ReaderProxyData object to be checked.
-         * @return true if this object can be updated with the information on rdata.
-         */
-    bool is_update_allowed(const ReaderProxyData& rdata) const;
+     * Check if this object can be updated with the information on another object.
+     * @param rdata ReaderProxyData object to be checked.
+     * @return true if this object can be updated with the information on rdata.
+     */
+    bool is_update_allowed(
+            const ReaderProxyData& rdata) const;
 
     /**
-         * Update the information (only certain fields will be updated).
-         * @param rdata Poitner to the object from which we are going to update.
-         */
-    void update(ReaderProxyData* rdata);
+     * Update the information (only certain fields will be updated).
+     * @param rdata Poitner to the object from which we are going to update.
+     */
+    void update(
+            ReaderProxyData* rdata);
 
     /**
-         * Copy ALL the information from another object.
-         * @param rdata Pointer to the object from where the information must be copied.
-         */
-    void copy(ReaderProxyData* rdata);
+     * Copy ALL the information from another object.
+     * @param rdata Pointer to the object from where the information must be copied.
+     */
+    void copy(
+            ReaderProxyData* rdata);
 
 private:
 
@@ -361,11 +432,11 @@ private:
     //!Topic kind
     TopicKind_t m_topicKind;
     //!Type Identifier
-    TypeIdV1 m_type_id;
+    TypeIdV1* m_type_id;
     //!Type Object
-    TypeObjectV1 m_type;
+    TypeObjectV1* m_type;
     //!Type Information
-    xtypes::TypeInformation m_type_information;
+    xtypes::TypeInformation* m_type_information;
 };
 
 }

@@ -33,8 +33,7 @@
 
 namespace eprosima {
 namespace fastrtps {
-namespace rtps
-{
+namespace rtps {
 class RTPSReader;
 class RTPSParticipant;
 class TimedEvent;
@@ -53,7 +52,8 @@ class Subscriber;
 class SubscriberImpl
 {
     friend class ParticipantImpl;
-    public:
+
+public:
 
     /**
      * @param p
@@ -73,7 +73,8 @@ class SubscriberImpl
      * Method to block the current thread until an unread sasmple is available.
      * @param timeout Maximun time the function will be blocked if any sample is received.
      */
-    bool wait_for_unread_samples(const eprosima::fastrtps::Duration_t& timeout);
+    bool wait_for_unread_samples(
+            const eprosima::fastrtps::Duration_t& timeout);
 
 
     /** @name Read or take data methods.
@@ -82,17 +83,30 @@ class SubscriberImpl
 
     ///@{
 
-    bool readNextData(void* data,SampleInfo_t* info);
-    bool takeNextData(void* data,SampleInfo_t* info);
+    bool readNextData(
+            void* data,
+            SampleInfo_t* info);
+    bool takeNextData(
+            void* data,
+            SampleInfo_t* info);
 
     ///@}
+
+    /**
+     * @brief Returns information about the first untaken sample.
+     * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     * @return true if sample info was returned. false if there is no sample to take.
+     */
+    bool get_first_untaken_info(
+            SampleInfo_t* info);
 
     /**
      * Update the Attributes of the subscriber;
      * @param att Reference to a SubscriberAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
      */
-    bool updateAttributes(const SubscriberAttributes& att);
+    bool updateAttributes(
+            const SubscriberAttributes& att);
 
     /**
      * Get associated GUID
@@ -104,13 +118,19 @@ class SubscriberImpl
      * Get the Attributes of the Subscriber.
      * @return Attributes of the Subscriber.
      */
-    const SubscriberAttributes& getAttributes() const {return m_att;}
+    const SubscriberAttributes& getAttributes() const
+    {
+        return m_att;
+    }
 
     /**
      * Get topic data type
      * @return Topic data type
      */
-    fastdds::dds::TopicDataType* getType() {return mp_type;}
+    fastdds::dds::TopicDataType* getType()
+    {
+        return mp_type;
+    }
 
     /*!
      * @brief Returns there is a clean state with all Publishers.
@@ -131,19 +151,22 @@ class SubscriberImpl
      * @param change The cache change that has been added
      * @return True if the change was added (due to some QoS it could have been 'rejected')
      */
-    bool onNewCacheChangeAdded(const rtps::CacheChange_t* const change);
+    bool onNewCacheChangeAdded(
+            const rtps::CacheChange_t* const change);
 
     /**
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
-    void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
+    void get_requested_deadline_missed_status(
+            RequestedDeadlineMissedStatus& status);
 
     /**
      * @brief Returns the liveliness changed status
      * @param status Liveliness changed status
      */
-    void get_liveliness_changed_status(LivelinessChangedStatus& status);
+    void get_liveliness_changed_status(
+            LivelinessChangedStatus& status);
 
 private:
 
@@ -163,9 +186,18 @@ private:
 
     class SubscriberReaderListener : public rtps::ReaderListener
     {
-    public:
-        SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
-        virtual ~SubscriberReaderListener() {}
+public:
+
+        SubscriberReaderListener(
+                SubscriberImpl* s)
+            : mp_subscriberImpl(s)
+        {
+        }
+
+        virtual ~SubscriberReaderListener()
+        {
+        }
+
         void onReaderMatched(
                 rtps::RTPSReader* reader,
                 rtps::MatchingInfo& info) override;
@@ -185,7 +217,7 @@ private:
     //! A timer used to check for deadlines
     rtps::TimedEvent* deadline_timer_;
     //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the deadline timer
     rtps::InstanceHandle_t timer_owner_;
     //! Requested deadline missed status
@@ -194,7 +226,7 @@ private:
     //! A timed callback to remove expired samples
     rtps::TimedEvent* lifespan_timer_;
     //! The lifespan duration
-    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
     /**
      * @brief Method called when an instance misses the deadline

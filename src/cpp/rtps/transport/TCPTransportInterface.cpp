@@ -16,7 +16,7 @@
 #include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <rtps/transport/TCPSenderResource.hpp>
 //#include "TCPSenderResource.hpp"
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 #include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
@@ -983,6 +983,30 @@ bool TCPTransportInterface::Receive(
     success = success && receive_buffer_size > 0;
 
     return success;
+}
+
+bool TCPTransportInterface::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        std::shared_ptr<TCPChannelResource>& channel,
+        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end)
+{
+    fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
+
+    bool ret = true;
+
+    while (it != *destination_locators_end)
+    {
+        if (IsLocatorSupported(*it))
+        {
+            ret &= send(send_buffer, send_buffer_size, channel,*it);
+        }
+
+        ++it;
+    }
+
+    return ret;
 }
 
 bool TCPTransportInterface::send(

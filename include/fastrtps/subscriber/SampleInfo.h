@@ -34,18 +34,30 @@ namespace fastrtps {
  * Class SampleInfo_t with information that is provided along a sample when reading data from a Subscriber.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI SampleInfo_t {
+class RTPS_DllAPI SampleInfo_t
+{
 public:
-    SampleInfo_t():sampleKind(rtps::ALIVE), ownershipStrength(0),
-    sample_identity(rtps::SampleIdentity::unknown()), related_sample_identity(rtps::SampleIdentity::unknown()) {}
 
-    virtual ~SampleInfo_t(){};
+    SampleInfo_t()
+        : sampleKind(rtps::ALIVE)
+        , ownershipStrength(0)
+        , sample_identity(rtps::SampleIdentity::unknown())
+        , related_sample_identity(rtps::SampleIdentity::unknown())
+    {
+    }
+
+    virtual ~SampleInfo_t()
+    {
+    }
+
     //!Sample kind.
     rtps::ChangeKind_t sampleKind;
     //!Ownership Strength of the writer of the sample (0 if the ownership kind is set to SHARED_OWNERSHIP_QOS).
     uint32_t ownershipStrength;
     //!Source timestamp of the sample.
     rtps::Time_t sourceTimestamp;
+    //!Reception timestamp of the sample.
+    rtps::Time_t receptionTimestamp;
     //!InstanceHandle of the data
     rtps::InstanceHandle_t iHandle;
 
@@ -54,7 +66,7 @@ public:
     rtps::SampleIdentity related_sample_identity;
 };
 
-} /* namespace  */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* SAMPLEINFO_H_ */

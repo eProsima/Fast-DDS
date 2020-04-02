@@ -23,7 +23,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 
 #include <thread>
 
@@ -159,9 +159,9 @@ void HelloWorldPublisher::run(
 bool HelloWorldPublisher::publish(
         bool waitForListener)
 {
-    if (listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
+    if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
     {
-        hello_.index(hello_.index()+1);
+        hello_.index(hello_.index() + 1);
         writer_->write(&hello_);
         return true;
     }

@@ -22,7 +22,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/topic/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 
 using namespace eprosima::fastdds::dds;
 

@@ -19,7 +19,7 @@
 #include <thread>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-//#include <fastrtps/log/Log.h>
+//#include <fastdds/dds/log/Log.hpp>
 #include <memory>
 #include <asio.hpp>
 #include <MockReceiverResource.h>
@@ -165,7 +165,14 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, multicastLocator, std::chrono::microseconds(100)));
+        LocatorList_t locator_list;
+        locator_list.push_back(multicastLocator);
+
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -209,7 +216,14 @@ TEST_F(UDPv4Tests, send_to_loopback)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, multicastLocator, std::chrono::microseconds(100)));
+        LocatorList_t locator_list;
+        locator_list.push_back(multicastLocator);
+
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -236,10 +250,15 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     destinationLocator.kind = LOCATOR_KIND_UDPv4;
     destinationLocator.port = g_default_port + 1;
 
+    LocatorList_t locator_list;
+    locator_list.push_back(destinationLocator);
+    Locators locators_begin(locator_list.begin());
+    Locators locators_end(locator_list.end());
+
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
-                destinationLocator, std::chrono::microseconds(100)));
+                &locators_begin, &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
 }
 
 TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -294,10 +313,16 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
 
+    LocatorList_t locator_list;
+    locator_list.push_back(Locator_t());
+    Locators locators_begin(locator_list.begin());
+    Locators locators_end(locator_list.end());
+
     //Sending through a different IP will NOT work, except 0.0.0.0
     IPLocator::setIPv4(outputChannelLocator, 111, 111, 111, 111);
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), Locator_t(), std::chrono::microseconds(100)));
+    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin, &locators_end, 
+        (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
 }
 
 TEST_F(UDPv4Tests, send_to_blocked_interface)
@@ -349,10 +374,15 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
             remoteMulticastLocator.kind = LOCATOR_KIND_UDPv4;
             IPLocator::setIPv4(remoteMulticastLocator, 239, 255, 1, 4); // Loopback
 
+            LocatorList_t locator_list;
+            locator_list.push_back(remoteMulticastLocator);
+            Locators locators_begin(locator_list.begin());
+            Locators locators_end(locator_list.end());
+
             // Sending through a ALLOWED IP will work
             std::vector<octet> message = { 'H','e','l','l','o' };
             ASSERT_TRUE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(),
-                        remoteMulticastLocator, std::chrono::microseconds(100)));
+                        &locators_begin, &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
         }
     }
 }
@@ -384,6 +414,9 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
     unicastLocator.kind = LOCATOR_KIND_UDPv4;
     IPLocator::setIPv4(unicastLocator, "127.0.0.1");
 
+    LocatorList_t locator_list;
+    locator_list.push_back(unicastLocator);
+    
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
@@ -409,7 +442,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -435,6 +472,9 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
     unicastLocator.kind = LOCATOR_KIND_UDPv4;
     IPLocator::setIPv4(unicastLocator, interfaces.at(0).name);
 
+    LocatorList_t locator_list;
+    locator_list.push_back(unicastLocator);
+    
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
@@ -460,7 +500,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -486,6 +530,9 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
     unicastLocator.kind = LOCATOR_KIND_UDPv4;
     IPLocator::setIPv4(unicastLocator, "239.255.1.4");
 
+    LocatorList_t locator_list;
+    locator_list.push_back(unicastLocator);
+    
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
@@ -511,7 +558,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end, 
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -575,6 +626,71 @@ TEST_F(UDPv4Tests, open_a_blocked_socket)
     }
 }
 
+TEST_F(UDPv4Tests, simple_throughput)
+{
+    const size_t sample_size = 1024;
+    int num_samples_per_batch = 100000;
+
+    std::atomic<int> samples_received(0);
+
+    Semaphore sem_end_subscriber;
+
+    octet sample_data[sample_size];
+    memset(sample_data, 0, sizeof(sample_data));
+
+    Locator_t sub_locator;
+    sub_locator.kind = LOCATOR_KIND_UDPv4;
+    sub_locator.port = 50000;
+    IPLocator::setIPv4(sub_locator, 127, 0, 0, 1);
+
+    UDPv4TransportDescriptor my_descriptor;
+
+    // Subscriber
+
+    UDPv4Transport sub_transport(my_descriptor);
+    ASSERT_TRUE(sub_transport.init());
+
+    MockReceiverResource sub_receiver(sub_transport, sub_locator);
+    MockMessageReceiver* sub_msg_recv = dynamic_cast<MockMessageReceiver*>(sub_receiver.CreateMessageReceiver());
+
+    std::function<void()> sub_callback = [&]()
+        {
+            samples_received.fetch_add(1);
+        };
+
+    sub_msg_recv->setCallback(sub_callback);
+
+    // Publisher
+
+    UDPv4Transport pub_transport(my_descriptor);
+    ASSERT_TRUE(pub_transport.init());
+
+    LocatorList_t send_locators_list;
+    send_locators_list.push_back(sub_locator);
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(pub_transport.OpenOutputChannel(send_resource_list, sub_locator));
+
+    auto t0 = std::chrono::high_resolution_clock::now();
+
+    for (int i=0; i<num_samples_per_batch; i++)
+    {
+        Locators locators_begin(send_locators_list.begin());
+        Locators locators_end(send_locators_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(sample_data, sizeof(sample_data), &locators_begin, &locators_end,
+                (std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
+    }
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+
+    auto real_samples_received = samples_received.load();
+    printf("Samples [sent,received] [%d,%d] send_time_per_sample %.3f(us)\n"
+        , num_samples_per_batch
+        , real_samples_received
+        , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
+}
+
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.maxMessageSize = 5;
@@ -585,7 +701,7 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Warning);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);

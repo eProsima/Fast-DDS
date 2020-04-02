@@ -47,6 +47,9 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/AsyncWriterThread.h>
 
+#include "../messages/RTPSMessageGroup_t.hpp"
+#include "../messages/SendBuffersManager.hpp"
+
 #if HAVE_SECURITY
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -71,6 +74,7 @@ class TopicAttributes;
 class MessageReceiver;
 
 namespace rtps {
+
 class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -136,7 +140,7 @@ private:
 
         ReceiverControlBlock(
                 const ReceiverControlBlock&) = delete;
-        const ReceiverControlBlock& operator=(
+        const ReceiverControlBlock& operator =(
                 const ReceiverControlBlock&) = delete;
 
     } ReceiverControlBlock;
@@ -171,11 +175,20 @@ public:
 
     virtual ~RTPSParticipantImpl();
 
+    // Create receiver resources and start builtin protocols
+    void enable();
+
+    // Stop builtin protocols and delete receiver resources
+    void disable();
+
     /**
      * Get associated GUID
      * @return Associated GUID
      */
-    inline const GUID_t& getGuid() const { return m_guid; }
+    inline const GUID_t& getGuid() const
+    {
+        return m_guid;
+    }
 
     void setGuid(
             GUID_t& guid);
@@ -214,7 +227,10 @@ public:
      * Get the RTPSParticipant ID
      * @return RTPSParticipant ID
      */
-    inline uint32_t getRTPSParticipantID() const { return (uint32_t)m_att.participantID; };
+    inline uint32_t getRTPSParticipantID() const
+    {
+        return (uint32_t)m_att.participantID;
+    }
 
     //!Post to the resource semaphore
     void ResourceSemaphorePost();
@@ -223,22 +239,59 @@ public:
     void ResourceSemaphoreWait();
 
     //!Get Pointer to the Event Resource.
-    ResourceEvent& getEventResource() { return mp_event_thr; }
+    ResourceEvent& getEventResource()
+    {
+        return mp_event_thr;
+    }
 
-    //!Send Method - Deprecated - Stays here for reference purposes
+    /**
+     * Send a message to several locations
+     * @param msg Message to send.
+     * @param destination_locators_begin Iterator at the first destination locator.
+     * @param destination_locators_end Iterator at the end destination locator.
+     * @param max_blocking_time_point execution time limit timepoint.
+     * @return true if at least one locator has been sent.
+     */
+    template<class LocatorIteratorT>
     bool sendSync(
             CDRMessage_t* msg,
-            const Locator_t& destination_loc,
-            std::chrono::steady_clock::time_point& max_blocking_time_point);
+            const LocatorIteratorT& destination_locators_begin,
+            const LocatorIteratorT& destination_locators_end,
+            std::chrono::steady_clock::time_point& max_blocking_time_point)
+    {
+        bool ret_code = false;
+        std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
+
+        if (lock.try_lock_until(max_blocking_time_point))
+        {
+            ret_code = true;
+
+            for (auto& send_resource : send_resource_list_)
+            {
+                LocatorIteratorT locators_begin = destination_locators_begin;
+                LocatorIteratorT locators_end = destination_locators_end;
+                send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
+                        max_blocking_time_point);
+            }
+        }
+
+        return ret_code;
+    }
 
     //!Get the participant Mutex
-    std::recursive_mutex* getParticipantMutex() const { return mp_mutex; };
+    std::recursive_mutex* getParticipantMutex() const
+    {
+        return mp_mutex;
+    }
 
     /**
      * Get the participant listener
      * @return participant listener
      */
-    inline RTPSParticipantListener* getListener() { return mp_participantListener; }
+    inline RTPSParticipantListener* getListener()
+    {
+        return mp_participantListener;
+    }
 
     /**
      * @brief Modifies the participant listener
@@ -256,9 +309,15 @@ public:
      * Get the participant
      * @return participant
      */
-    inline RTPSParticipant* getUserRTPSParticipant() { return mp_userParticipant; }
+    inline RTPSParticipant* getUserRTPSParticipant()
+    {
+        return mp_userParticipant;
+    }
 
-    std::vector<std::unique_ptr<FlowController> >& getFlowControllers() { return m_controllers; }
+    std::vector<std::unique_ptr<FlowController> >& getFlowControllers()
+    {
+        return m_controllers;
+    }
 
     /*!
      * @remarks Non thread-safe.
@@ -278,15 +337,25 @@ public:
             uint32_t length);
 
 #if HAVE_SECURITY
-    security::SecurityManager& security_manager() { return m_security_manager; }
+    security::SecurityManager& security_manager()
+    {
+        return m_security_manager;
+    }
 
-    const security::ParticipantSecurityAttributes& security_attributes() {
+    const security::ParticipantSecurityAttributes& security_attributes()
+    {
         return security_attributes_;
     }
 
-    bool is_security_initialized() const { return m_security_manager_initialized; }
+    bool is_security_initialized() const
+    {
+        return m_security_manager_initialized;
+    }
 
-    bool is_secure() const { return m_is_security_active; }
+    bool is_secure() const
+    {
+        return m_is_security_active;
+    }
 
     bool pairing_remote_reader_with_local_writer_after_security(
             const GUID_t& local_writer,
@@ -304,13 +373,42 @@ public:
 
     fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
 
-    NetworkFactory& network_factory() { return m_network_Factory; }
+    bool is_intraprocess_only() const
+    {
+        return is_intraprocess_only_;
+    }
 
-    uint32_t get_min_network_send_buffer_size() {
+    NetworkFactory& network_factory()
+    {
+        return m_network_Factory;
+    }
+
+    inline bool has_shm_transport()
+    {
+        return has_shm_transport_;
+    }
+
+    uint32_t get_min_network_send_buffer_size()
+    {
         return m_network_Factory.get_min_send_buffer_size();
     }
 
-    AsyncWriterThread& async_thread() { return async_thread_; }
+    AsyncWriterThread& async_thread()
+    {
+        return async_thread_;
+    }
+
+    /***
+     * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
+     */
+    RTPSReader* find_local_reader(
+            const GUID_t& reader_guid);
+
+    /***
+     * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
+     */
+    RTPSWriter* find_local_writer(
+            const GUID_t& writer_guid);
 
     /**
      * @brief Fills a new entityId if set to unknown, or checks if a entity already exists with that
@@ -333,6 +431,10 @@ public:
         }
         return false;
     }
+
+    std::unique_ptr<RTPSMessageGroup_t> get_send_buffer();
+    void return_send_buffer(
+            std::unique_ptr <RTPSMessageGroup_t>&& buffer);
 
 private:
 
@@ -367,6 +469,8 @@ private:
     AsyncWriterThread async_thread_;
     //! Type cheking function
     std::function<bool(const std::string&)> type_check_fn_;
+    //!Pool of send buffers
+    std::unique_ptr<SendBuffersManager> send_buffers_;
 
 #if HAVE_SECURITY
     // Security manager
@@ -391,7 +495,7 @@ private:
     //!Pointer to the user participant
     RTPSParticipant* mp_userParticipant;
 
-    RTPSParticipantImpl& operator=(
+    RTPSParticipantImpl& operator =(
             const RTPSParticipantImpl&) = delete;
 
     /**
@@ -455,6 +559,9 @@ private:
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
 
+    //!Will this participant use intraprocess only?
+    bool is_intraprocess_only_;
+
     /*
      * Flow controllers for this participant.
      */
@@ -463,6 +570,9 @@ private:
 #if HAVE_SECURITY
     security::ParticipantSecurityAttributes security_attributes_;
 #endif
+
+    //! Indicates whether the participant has shared-memory transport
+    bool has_shm_transport_;
 
     /**
      * Get persistence service from factory, using endpoint attributes (or participant
@@ -567,7 +677,10 @@ public:
      * Get the participant attributes
      * @return Participant attributes
      */
-    inline RTPSParticipantAttributes& getAttributes() {return m_att;};
+    inline RTPSParticipantAttributes& getAttributes()
+    {
+        return m_att;
+    }
 
     /**
      * Delete a user endpoint
@@ -581,34 +694,48 @@ public:
      * Get the begin of the user reader list
      * @return Iterator pointing to the begin of the user reader list
      */
-    std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
+    std::vector<RTPSReader*>::iterator userReadersListBegin()
+    {
+        return m_userReaderList.begin();
+    }
 
     /**
      * Get the end of the user reader list
      * @return Iterator pointing to the end of the user reader list
      */
-    std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
+    std::vector<RTPSReader*>::iterator userReadersListEnd()
+    {
+        return m_userReaderList.end();
+    }
 
     /**
      * Get the begin of the user writer list
      * @return Iterator pointing to the begin of the user writer list
      */
-    std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
+    std::vector<RTPSWriter*>::iterator userWritersListBegin()
+    {
+        return m_userWriterList.begin();
+    }
 
     /**
      * Get the end of the user writer list
      * @return Iterator pointing to the end of the user writer list
      */
-    std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+    std::vector<RTPSWriter*>::iterator userWritersListEnd()
+    {
+        return m_userWriterList.end();
+    }
 
     /** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating
-       some and updating the list. DOES NOT associate endpoints with it.
-       @param Locator_list - Locator list to be used to create the ReceiverResources
-       @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
+     * some and updating the list. DOES NOT associate endpoints with it.
+     * @param Locator_list - Locator list to be used to create the ReceiverResources
+     * @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
+     * @param RegisterReceiver - True if we want the receiver to be registered. Useful for receivers created after participant is enabled.
      */
     void createReceiverResources(
             LocatorList_t& Locator_list,
-            bool ApplyMutation);
+            bool ApplyMutation,
+            bool RegisterReceiver);
 
     void createSenderResources(
             const LocatorList_t& locator_list);
@@ -625,6 +752,7 @@ public:
     {
         endpoint->supports_rtps_protection_ = support;
     }
+
 #endif
 };
 }

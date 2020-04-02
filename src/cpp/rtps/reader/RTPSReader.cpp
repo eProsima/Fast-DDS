@@ -19,7 +19,7 @@
 
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <rtps/reader/ReaderHistoryState.hpp>
 
 #include <fastdds/rtps/reader/ReaderListener.h>
@@ -125,11 +125,12 @@ void RTPSReader::remove_persistence_guid(
     GUID_t persistence_guid_stored = (c_Guid_Unknown == persistence_guid) ? guid : persistence_guid;
     history_state_->persistence_guid_map.erase(guid);
     auto count = --history_state_->persistence_guid_count[persistence_guid_stored];
-    if (count == 0)
+    if (count <= 0)
     {
         if (m_att.durabilityKind < TRANSIENT)
         {
             history_state_->history_record.erase(persistence_guid_stored);
+            history_state_->persistence_guid_count.erase(persistence_guid_stored);
         }
     }
 }

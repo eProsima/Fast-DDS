@@ -24,7 +24,9 @@ enum class NodeType
     DATA_READER,
     ROOT,
     TYPES,
-    LOG
+    LOG,
+    REQUESTER,
+    REPLIER
 };
 
 class BaseNode

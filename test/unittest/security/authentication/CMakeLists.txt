@@ -27,12 +27,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${ASIO_INCLUDE_DIR})
 
         set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
@@ -50,6 +50,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/authentication/PKIIdentityHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/authentication/PKIHandshakeHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/OpenSSLInit.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
         target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(BuiltinPKIDH PRIVATE
@@ -60,7 +63,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} foonathan_memory)
+        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} foonathan_memory $<$<BOOL:${WIN32}>:ws2_32>)
         add_gtest(BuiltinPKIDH
             SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

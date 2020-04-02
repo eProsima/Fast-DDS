@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 #include <thread>
 #include <memory>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <asio.hpp>
 #include <MockReceiverResource.h>
 
@@ -61,7 +61,7 @@ class UDPv6Tests: public ::testing::Test
 
         ~UDPv6Tests()
         {
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         void HELPER_SetDescriptorDefaults();
@@ -254,7 +254,7 @@ void UDPv6Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);

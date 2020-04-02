@@ -23,6 +23,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPServer.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -37,7 +38,7 @@
 
 #include <mutex>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -45,16 +46,19 @@ namespace rtps {
 
 void EDPBasePUBListener::add_writer_from_change(
         RTPSReader* reader,
+        ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp)
 {
     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
-    if (temp_writer_data_.readFromCDRMessage(&tempMsg, network))
+    if (temp_writer_data_.readFromCDRMessage(&tempMsg, network,
+        edp->mp_RTPSParticipant->has_shm_transport()))
     {
         change->instanceHandle = temp_writer_data_.key();
-        if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
+            && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
@@ -85,6 +89,9 @@ void EDPBasePUBListener::add_writer_from_change(
                 edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
         if (writer_data != nullptr)
         {
+            //Removing change from history
+            reader_history->remove_change(change);
+
             // At this point we can release reader lock, cause change is not used
             reader->getMutex().unlock();
 
@@ -121,7 +128,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        add_writer_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_writer_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
@@ -129,12 +137,10 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
         logInfo(RTPS_EDP, "Disposed Remote Writer, removing...");
         GUID_t writer_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeWriterProxyData(writer_guid);
+
+        //Removing change from history
+        reader_history->remove_change(change);
     }
-
-    //Removing change from history
-    reader_history->remove_change(change);
-
-    return;
 }
 
 bool EDPListener::computeKey(
@@ -143,18 +149,34 @@ bool EDPListener::computeKey(
     return ParameterList::readInstanceHandleFromCDRMsg(change, fastdds::dds::PID_ENDPOINT_GUID);
 }
 
+bool EDPListener::ongoingDeserialization(
+    EDP* edp)
+{
+    EDPServer * pServer = dynamic_cast<EDPServer*>(edp);
+
+    if(pServer)
+    {
+        return pServer->ongoingDeserialization();
+    }
+
+    return false;
+}
+
 void EDPBaseSUBListener::add_reader_from_change(
         RTPSReader* reader,
+        ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp)
 {
     //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
-    if (temp_reader_data_.readFromCDRMessage(&tempMsg, network))
+    if (temp_reader_data_.readFromCDRMessage(&tempMsg, network,
+        edp->mp_RTPSParticipant->has_shm_transport()))
     {
         change->instanceHandle = temp_reader_data_.key();
-        if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
+            && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;
@@ -185,6 +207,9 @@ void EDPBaseSUBListener::add_reader_from_change(
                 edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
         if (reader_data != nullptr) //ADDED NEW DATA
         {
+            // Remove change from history.
+            reader_history->remove_change(change);
+
             // At this point we can release reader lock, cause change is not used
             reader->getMutex().unlock();
 
@@ -221,7 +246,8 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        add_reader_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_reader_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
@@ -230,12 +256,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 
         GUID_t reader_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeReaderProxyData(reader_guid);
+
+        // Remove change from history.
+        reader_history->remove_change(change);
     }
-
-    // Remove change from history.
-    reader_history->remove_change(change);
-
-    return;
 }
 
 void EDPSimplePUBListener::onWriterChangeReceivedByAll(

@@ -32,7 +32,7 @@
 
 #include <mutex>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/builtin/discovery/participant/PDPServerListener.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
@@ -69,6 +69,8 @@ void PDPServerListener::onNewCacheChangeAdded(
     // update the PDP Writer with this reader info
     if (!parent_server_pdp_->addRelayedChangeToHistory(*change))
     {
+        logInfo(RTPS_PDP, "Ignoring a DATA(p) that was already received");
+
         parent_pdp_->mp_PDPReaderHistory->remove_change(change);
         return; // already there
     }
@@ -80,7 +82,8 @@ void PDPServerListener::onNewCacheChangeAdded(
     if(change->kind == ALIVE)
     {
         // Ignore announcement from own RTPSParticipant
-        if (guid == parent_pdp_->getRTPSParticipant()->getGuid())
+        if (guid == parent_pdp_->getRTPSParticipant()->getGuid()
+            && !parent_server_pdp_->ongoingDeserialization() )
         {
             logInfo(RTPS_PDP, "Message from own RTPSParticipant, removing");
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
@@ -91,7 +94,9 @@ void PDPServerListener::onNewCacheChangeAdded(
 
         // Load information on local_data
         CDRMessage_t msg(change->serializedPayload);
-        if(local_data.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
+        if(local_data.readFromCDRMessage(&msg, true, 
+            parent_pdp_->getRTPSParticipant()->network_factory(),
+            parent_pdp_->getRTPSParticipant()->has_shm_transport()))
         {
             change->instanceHandle = local_data.m_key;
             guid = local_data.m_guid;
@@ -116,6 +121,8 @@ void PDPServerListener::onNewCacheChangeAdded(
 
             if(pdata == nullptr)
             {
+                logInfo(RTPS_PDP, "Registering a new participant: " << writer_guid);
+
                 // Create a new one when not found
                 pdata = parent_pdp_->createParticipantProxyData(local_data, writer_guid);
                 if (pdata != nullptr)
@@ -187,8 +194,6 @@ void PDPServerListener::onNewCacheChangeAdded(
 
     //Remove change form history.
     parent_pdp_->mp_PDPReaderHistory->remove_change(change);
-
-    return;
 }
 
 

@@ -42,126 +42,147 @@ struct SubmessageHeader_t;
  */
 class MessageReceiver
 {
-    public:
-        /**
-         * @param participant
-         * @param rec_buffer_size
-         */
-        MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size);
+public:
 
-        virtual ~MessageReceiver();
-        //!Reset the MessageReceiver to process a new message.
-        void reset();
-        /** Init MessageReceiver. Does what the constructor used to do.
-          This is now on an independent function since MessageReceiver now stands inside
-          a struct.
-          @param rec_buffer_size
-         **/
-        void init(uint32_t rec_buffer_size);
+    /**
+     * @param participant
+     * @param rec_buffer_size
+     */
+    MessageReceiver(
+            RTPSParticipantImpl* participant,
+            uint32_t rec_buffer_size);
 
-        /**
-         * Process a new CDR message.
-         * @param[in] loc Locator indicating the sending address.
-         * @param[in] msg Pointer to the message
-         */
-        void processCDRMsg(const Locator_t& loc, CDRMessage_t*msg);
+    virtual ~MessageReceiver();
 
-        //!Pointer to the Listen Resource that contains this MessageReceiver.
+    /**
+     * Process a new CDR message.
+     * @param[in] loc Locator indicating the sending address.
+     * @param[in] msg Pointer to the message
+     */
+    void processCDRMsg(
+            const Locator_t& loc,
+            CDRMessage_t* msg);
 
-        //!Received message
+    // Functions to associate/remove associatedendpoints
+    void associateEndpoint(
+            Endpoint* to_add);
+    void removeEndpoint(
+            Endpoint* to_remove);
+
+private:
+
+    std::mutex mtx_;
+    std::vector<RTPSWriter*> associated_writers_;
+    std::unordered_map<EntityId_t, std::vector<RTPSReader*> > associated_readers_;
+
+    RTPSParticipantImpl* participant_;
+    //!Protocol version of the message
+    ProtocolVersion_t source_version_;
+    //!VendorID that created the message
+    VendorId_t source_vendor_id_;
+    //!GuidPrefix of the entity that created the message
+    GuidPrefix_t source_guid_prefix_;
+    //!GuidPrefix of the entity that receives the message. GuidPrefix of the RTPSParticipant.
+    GuidPrefix_t dest_guid_prefix_;
+    //!Has the message timestamp?
+    bool have_timestamp_;
+    //!Timestamp associated with the message
+    Time_t timestamp_;
+
 #if HAVE_SECURITY
-        CDRMessage_t m_crypto_msg;
+    CDRMessage_t crypto_msg_;
 #endif
-        // Functions to associate/remove associatedendpoints
-        void associateEndpoint(Endpoint *to_add);
-        void removeEndpoint(Endpoint *to_remove);
 
-    private:
-        std::vector<RTPSWriter*> AssociatedWriters;
-        std::unordered_map<EntityId_t, std::vector<RTPSReader*>> AssociatedReaders;
-        std::mutex mtx;
-        //!Protocol version of the message
-        ProtocolVersion_t sourceVersion;
-        //!VendorID that created the message
-        VendorId_t sourceVendorId;
-        //!GuidPrefix of the entity that created the message
-        GuidPrefix_t sourceGuidPrefix;
-        //!GuidPrefix of the entity that receives the message. GuidPrefix of the RTPSParticipant.
-        GuidPrefix_t destGuidPrefix;
-        //!Has the message timestamp?
-        bool haveTimestamp;
-        //!Timestamp associated with the message
-        Time_t timestamp;
-        //!Version of the protocol used by the receiving end.
-        ProtocolVersion_t destVersion;
+    //!Reset the MessageReceiver to process a new message.
+    void reset();
 
-        uint16_t mMaxPayload_;
+    /**
+     * Check the RTPSHeader of a received message.
+     * @param msg Pointer to the message.
+     * @return True if correct.
+     */
+    bool checkRTPSHeader(
+            CDRMessage_t* msg);
+    /**
+     * Read the submessage header of a message.
+     * @param msg Pointer to the CDRMessage_t to read.
+     * @param smh Pointer to the submessageheader structure.
+     * @return True if correctly read.
+     */
+    bool readSubmessageHeader(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
 
+    /**
+     * Find if there is a reader (in associated_readers_) that will accept a msg directed
+     * to the given entity ID.
+     */
+    bool willAReaderAcceptMsgDirectedTo(
+            const EntityId_t& readerID);
 
-        /**@name Processing methods.
-         * These methods are designed to read a part of the message
-         * and perform the corresponding actions:
-         * -Modify the message receiver state if necessary.
-         * -Add information to the history.
-         * -Return an error if the message is malformed.
-         * @param[in] msg Pointer to the message
-         * @param[out] params Different parameters depending on the message
-         * @return True if correct, false otherwise
-         */
+    /**
+     * Find all readers (in associated_readers_), with the given entity ID, and call the
+     * callback provided.
+     */
+    template<typename Functor>
+    void findAllReaders(
+            const EntityId_t& readerID,
+            const Functor& callback);
 
-        ///@{
-        /**
-         * Check the RTPSHeader of a received message.
-         * @param msg Pointer to the message.
-         * @return True if correct.
-         */
-        bool checkRTPSHeader(CDRMessage_t*msg);
-        /**
-         * Read the submessage header of a message.
-         * @param msg Pointer to the CDRMessage_t to read.
-         * @param smh Pointer to the submessageheader structure.
-         * @return True if correctly read.
-         */
-        bool readSubmessageHeader(CDRMessage_t*msg, SubmessageHeader_t* smh);
+    /**@name Processing methods.
+     * These methods are designed to read a part of the message
+     * and perform the corresponding actions:
+     * -Modify the message receiver state if necessary.
+     * -Add information to the history.
+     * -Return an error if the message is malformed.
+     * @param[in,out] msg Pointer to the message
+     * @param[in] smh Pointer to the submessage header
+     * @return True if correct, false otherwise
+     */
 
-        /**
-         * Find if there is a reader (in AssociatedReaders) that will accept a msg directed
-         * to the given entity ID.
-         */
-        bool willAReaderAcceptMsgDirectedTo(const EntityId_t & readerID);
-
-        /**
-         * Find all readers (in AssociatedReaders), with the given entity ID, and call the
-         * callback provided.
-         */
-        template<typename Functor>
-        void findAllReaders(
-                const EntityId_t & readerID,
-                const Functor & callback);
-
-        /**
-         *
-         * @param msg
-         * @param smh
-         * @return
-         */
-        bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_DataFrag(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_Acknack(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_Heartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_Gap(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_InfoTS(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_InfoDST(CDRMessage_t*msg,SubmessageHeader_t* smh);
-        bool proc_Submsg_InfoSRC(CDRMessage_t*msg,SubmessageHeader_t* smh);
-        bool proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_SecureMessage(CDRMessage_t*msg, SubmessageHeader_t* smh);
-        bool proc_Submsg_SecureSubMessage(CDRMessage_t*msg, SubmessageHeader_t* smh);
-
-        RTPSParticipantImpl* participant_;
+    ///@{
+    /**
+     *
+     * @param msg
+     * @param smh
+     * @return
+     */
+    bool proc_Submsg_Data(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_DataFrag(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_Acknack(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_Heartbeat(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_Gap(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_InfoTS(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_InfoDST(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_InfoSRC(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_NackFrag(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    bool proc_Submsg_HeartbeatFrag(
+            CDRMessage_t* msg,
+            SubmessageHeader_t* smh);
+    ///@}
 };
-}
+
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_ */

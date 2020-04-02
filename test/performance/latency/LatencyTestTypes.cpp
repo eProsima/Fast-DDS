@@ -19,6 +19,8 @@
 
 #include "LatencyTestTypes.hpp"
 
+#include <cstring>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -26,9 +28,9 @@ bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 {
     LatencyType* lt = (LatencyType*)data;
 
-
-    *(uint32_t*)payload->data = lt->seqnum;
-    *(uint32_t*)(payload->data+4) = (uint32_t)lt->data.size();
+    memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
+    const auto size = static_cast<uint32_t>(lt->data.size());
+    memcpy(payload->data + 4, &size, sizeof(size));
 
     //std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
     memcpy(payload->data + 8, lt->data.data(), lt->data.size());
@@ -39,9 +41,10 @@ bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
     LatencyType* lt = (LatencyType*)data;
-    lt->seqnum = *(uint32_t*)payload->data;
-    uint32_t siz = *(uint32_t*)(payload->data+4);
-    std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
+    memcpy(&lt->seqnum, payload->data, sizeof(lt->seqnum));
+    uint32_t size;
+    memcpy(&size, payload->data+4, sizeof(size));
+    std::copy(payload->data+8,payload->data+8+size,lt->data.begin());
     return true;
 }
 
@@ -73,7 +76,7 @@ void LatencyDataType::deleteData(void* data)
 bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
 {
     TestCommandType* t = (TestCommandType*)data;
-    *(TESTCOMMAND*)payload->data = t->m_command;
+    memcpy(payload->data, &t->m_command, sizeof(t->m_command));
     payload->length = 4;
     return true;
 }
@@ -82,7 +85,7 @@ bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
     TestCommandType* t = (TestCommandType*)data;
     //	cout << "PAYLOAD LENGTH: "<<payload->length << endl;
     //	cout << "PAYLOAD FIRST BYTE: "<< (int)payload->data[0] << endl;
-    t->m_command = *(TESTCOMMAND*)payload->data;
+    memcpy(&t->m_command, payload->data, sizeof(payload->length));
     //	cout << "COMMAND: "<<t->m_command<< endl;
     return true;
 }

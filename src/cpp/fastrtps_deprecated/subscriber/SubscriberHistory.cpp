@@ -24,7 +24,7 @@
 #include <rtps/reader/WriterProxy.h>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
 
@@ -34,6 +34,21 @@ namespace fastrtps {
 using namespace rtps;
 
 using eprosima::fastdds::dds::TopicDataType;
+
+static void get_sample_info(
+        SampleInfo_t* info,
+        CacheChange_t* change,
+        uint32_t ownership_strength)
+{
+    info->sampleKind = change->kind;
+    info->sample_identity.writer_guid(change->writerGUID);
+    info->sample_identity.sequence_number(change->sequenceNumber);
+    info->sourceTimestamp = change->sourceTimestamp;
+    info->receptionTimestamp = change->receptionTimestamp;
+    info->ownershipStrength = ownership_strength;
+    info->iHandle = change->instanceHandle;
+    info->related_sample_identity = change->write_params.sample_identity();
+}
 
 SubscriberHistory::SubscriberHistory(
         const TopicAttributes& topic_att,
@@ -71,14 +86,14 @@ SubscriberHistory::SubscriberHistory(
     if (topic_att.getTopicKind() == NO_KEY)
     {
         receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
         receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
     }
 }
 
@@ -96,7 +111,7 @@ bool SubscriberHistory::received_change(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -157,7 +172,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
 
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance";);
+        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
     return false;
@@ -211,8 +226,8 @@ bool SubscriberHistory::add_received_change(
         }
 
         logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID; );
 
         return true;
     }
@@ -245,8 +260,8 @@ bool SubscriberHistory::add_received_change_with_key(
         instance_changes.push_back(a_change);
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID << " with KEY: " << a_change->instanceHandle;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 
         return true;
     }
@@ -260,7 +275,7 @@ bool SubscriberHistory::find_key_for_change(
 {
     if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
     {
-        logInfo(RTPS_HISTORY, "Getting Key of change with no Key transmitted")
+        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted")
         type_->deserialize(&a_change->serializedPayload, get_key_object_);
         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -273,15 +288,15 @@ bool SubscriberHistory::find_key_for_change(
     }
     else if (!a_change->instanceHandle.isDefined())
     {
-        logWarning(RTPS_HISTORY, "NO KEY in topic: " << topic_att_.topicName
-            << " and no method to obtain it";);
+        logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_att_.topicName
+                                                   << " and no method to obtain it"; );
         return false;
     }
 
     return find_key(a_change, &map_it);
 }
 
-void SubscriberHistory::deserialize_change(
+bool SubscriberHistory::deserialize_change(
         CacheChange_t* change,
         uint32_t ownership_strength,
         void* data,
@@ -289,19 +304,18 @@ void SubscriberHistory::deserialize_change(
 {
     if (change->kind == ALIVE)
     {
-        type_->deserialize(&change->serializedPayload, data);
+        if (!type_->deserialize(&change->serializedPayload, data))
+        {
+            logError(SUBSCRIBER, "Deserialization of data failed");
+            return false;
+        }
     }
 
     if (info != nullptr)
     {
-        info->sampleKind = change->kind;
-        info->sample_identity.writer_guid(change->writerGUID);
-        info->sample_identity.sequence_number(change->sequenceNumber);
-        info->sourceTimestamp = change->sourceTimestamp;
-        info->ownershipStrength = ownership_strength;
         if (topic_att_.topicKind == WITH_KEY &&
-                change->instanceHandle == c_InstanceHandle_Unknown &&
-                change->kind == ALIVE)
+            change->instanceHandle == c_InstanceHandle_Unknown &&
+            change->kind == ALIVE)
         {
             bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -309,9 +323,11 @@ void SubscriberHistory::deserialize_change(
 #endif
             type_->getKey(data, &change->instanceHandle, is_key_protected);
         }
-        info->iHandle = change->instanceHandle;
-        info->related_sample_identity = change->write_params.sample_identity();
+
+        get_sample_info(info, change, ownership_strength);
     }
+
+    return true;
 }
 
 bool SubscriberHistory::readNextData(
@@ -321,7 +337,7 @@ bool SubscriberHistory::readNextData(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -336,13 +352,11 @@ bool SubscriberHistory::readNextData(
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
-            deserialize_change(change, ownership, data, info);
-            return true;
+            return deserialize_change(change, ownership, data, info);
         }
     }
     return false;
 }
-
 
 bool SubscriberHistory::takeNextData(
         void* data,
@@ -351,7 +365,7 @@ bool SubscriberHistory::takeNextData(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
@@ -367,10 +381,27 @@ bool SubscriberHistory::takeNextData(
                     " from writer: " << change->writerGUID);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
-            deserialize_change(change, ownership, data, info);
-            remove_change_sub(change);
-            return true;
+            bool deserialized = deserialize_change(change, ownership, data, info);
+            bool removed = remove_change_sub(change);
+            return (deserialized && removed);
         }
+    }
+
+    return false;
+}
+
+bool SubscriberHistory::get_first_untaken_info(
+        SampleInfo_t* info)
+{
+    std::lock_guard<RecursiveTimedMutex> lock(*mp_mutex);
+
+    CacheChange_t* change = nullptr;
+    WriterProxy* wp = nullptr;
+    if (mp_reader->nextUntakenCache(&change, &wp))
+    {
+        uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ? wp->ownership_strength() : 0;
+        get_sample_info(info, change, ownership);
+        return true;
     }
 
     return false;
@@ -395,7 +426,7 @@ bool SubscriberHistory::find_key(
     }
     else
     {
-        for (vit = keyed_changes_.begin(); vit!= keyed_changes_.end(); ++vit)
+        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
         {
             if (vit->second.cache_changes.size() == 0)
             {
@@ -409,48 +440,44 @@ bool SubscriberHistory::find_key(
     return false;
 }
 
-
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (topic_att_.getTopicKind() == NO_KEY)
+    if (topic_att_.getTopicKind() == WITH_KEY)
     {
-        if (remove_change(change))
-        {
-            m_isHistoryFull = false;
-            return true;
-        }
-        return false;
-    }
-    else
-    {
+        bool found = false;
         t_m_Inst_Caches::iterator vit;
-        if (!find_key(change, &vit))
+        if (find_key(change, &vit))
         {
-            return false;
-        }
-
-        for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
-        {
-            if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)
+            for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
             {
-                if (remove_change(change))
+                if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)
                 {
                     vit->second.cache_changes.erase(chit);
-                    m_isHistoryFull = false;
-                    return true;
+                    found = true;
+                    break;
                 }
             }
         }
-        logError(SUBSCRIBER, "Change not found, something is wrong");
+        if (!found)
+        {
+            logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+        }
     }
+
+    if (remove_change(change))
+    {
+        m_isHistoryFull = false;
+        return true;
+    }
+
     return false;
 }
 
@@ -460,7 +487,7 @@ bool SubscriberHistory::set_next_deadline(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
@@ -485,12 +512,12 @@ bool SubscriberHistory::set_next_deadline(
 }
 
 bool SubscriberHistory::get_next_deadline(
-        InstanceHandle_t &handle,
-        std::chrono::steady_clock::time_point &next_deadline_us)
+        InstanceHandle_t& handle,
+        std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
         return false;
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
@@ -503,13 +530,13 @@ bool SubscriberHistory::get_next_deadline(
     else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         auto min = std::min_element(keyed_changes_.begin(),
-                                    keyed_changes_.end(),
-                                    [](
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                        const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
-                                        {
-                                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-                                        });
+                        keyed_changes_.end(),
+                        [](
+                            const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                            const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+                {
+                    return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                });
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
         return true;

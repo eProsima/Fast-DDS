@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/log/Log.h>
-#include <fastrtps/log/FileConsumer.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
@@ -29,15 +30,25 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 
+using eprosima::fastdds::dds::Log;
+using eprosima::fastdds::dds::LogMock;
+using eprosima::fastdds::dds::LogConsumer;
+
+LogMock* log_mock = nullptr;
+
 // Initialize Log mock
-LogMock* log_mock;
-std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc =
-        [](std::unique_ptr<LogConsumer>&& c) {
-            log_mock->RegisterConsumer(std::move(c));
-        };
-std::function<void()> Log::ClearConsumersFunc = []() {
-            log_mock->ClearConsumers();
-        };
+void TestRegisterConsumerFunc(std::unique_ptr<LogConsumer>&& c)
+{
+    log_mock->RegisterConsumer(std::move(c));
+}
+
+void TestClearConsumersFunc()
+{
+    log_mock->ClearConsumers();
+}
+
+std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc = TestRegisterConsumerFunc;
+std::function<void()> Log::ClearConsumersFunc = TestClearConsumersFunc;
 
 class XMLProfileParserTests : public ::testing::Test
 {
@@ -62,6 +73,15 @@ protected:
 
 };
 
+TEST_F(XMLProfileParserTests, XMLParserRootLibrarySettings)
+{
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings.xml"));
+
+    const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
+    EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY);
+}
+
 TEST_F(XMLProfileParserTests, XMLoadProfiles)
 {
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
@@ -80,6 +100,15 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
             xmlparser::XMLProfileManager::fillParticipantAttributes("test_publisher_profile", participant_atts));
 }
 
+TEST_F(XMLProfileParserTests, XMLParserLibrarySettings)
+{
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+
+    const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
+    EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_FULL);
+}
+
 TEST_F(XMLProfileParserTests, XMLParserParcipant)
 {
     std::string participant_profile = std::string("test_participant_profile");
@@ -96,6 +125,20 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     LocatorListIterator loc_list_it;
     PortParameters& port = rtps_atts.port;
 
+    EXPECT_EQ(rtps_atts.allocation.locators.max_unicast_locators, 4u);
+    EXPECT_EQ(rtps_atts.allocation.locators.max_multicast_locators, 1u);
+    EXPECT_EQ(rtps_atts.allocation.participants.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.participants.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.participants.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.readers.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.readers.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.readers.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.writers.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.writers.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.writers.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.preallocated_number, 127u);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.dynamic, true);
+
     IPLocator::setIPv4(locator, 192, 168, 1, 2);
     locator.port = 2019;
     EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
@@ -108,8 +151,8 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -142,6 +185,8 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
     EXPECT_EQ(builtin.mutation_tries, 55u);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
@@ -184,8 +229,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -218,6 +263,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
     EXPECT_EQ(builtin.mutation_tries, 55u);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
@@ -505,6 +552,56 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
                 10u));
 }
 
+TEST_F(XMLProfileParserTests, XMLParserRequesterProfile)
+{
+    std::string requester_profile = std::string("test_requester_profile");
+    RequesterAttributes requester_atts;
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::fillRequesterAttributes(requester_profile, requester_atts));
+
+    PublisherAttributes &publisher_atts = requester_atts.publisher;
+    SubscriberAttributes &subscriber_atts = requester_atts.subscriber;
+
+    EXPECT_EQ(publisher_atts.topic.topicDataType, "request_type");
+    EXPECT_EQ(publisher_atts.topic.topicName, "service_name_Request");
+    EXPECT_EQ(publisher_atts.qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
+
+    EXPECT_EQ(subscriber_atts.topic.topicDataType, "reply_type");
+    EXPECT_EQ(subscriber_atts.topic.topicName, "service_name_Reply");
+    EXPECT_EQ(subscriber_atts.qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
+}
+
+TEST_F(XMLProfileParserTests, XMLParserReplierProfile)
+{
+    std::string replier_profile = std::string("test_replier_profile");
+    ReplierAttributes replier_atts;
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+
+    ASSERT_EQ(
+        xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::fillReplierAttributes(replier_profile, replier_atts));
+
+    PublisherAttributes &publisher_atts = replier_atts.publisher;
+    SubscriberAttributes &subscriber_atts = replier_atts.subscriber;
+
+    EXPECT_EQ(publisher_atts.topic.topicDataType, "reply_type");
+    EXPECT_EQ(publisher_atts.topic.topicName, "reply_topic_name");
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
+
+    EXPECT_EQ(subscriber_atts.topic.topicDataType, "request_type");
+    EXPECT_EQ(subscriber_atts.topic.topicName, "request_topic_name");
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
+}
+
 #if HAVE_SECURITY
 
 TEST_F(XMLProfileParserTests, XMLParserSecurity)
@@ -577,6 +674,8 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
+    using namespace eprosima::fastdds::dds;
+
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
@@ -590,6 +689,8 @@ TEST_F(XMLProfileParserTests, log_inactive)
 
 TEST_F(XMLProfileParserTests, file_and_default)
 {
+    using namespace eprosima::fastdds::dds;
+
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
 }
@@ -667,6 +768,30 @@ TEST_F(XMLProfileParserTests, UDP_transport_descriptors_config)
     EXPECT_EQ(descriptor->interfaceWhiteList[0], "192.168.1.41");
     EXPECT_EQ(descriptor->interfaceWhiteList[1], "127.0.0.1");
     EXPECT_EQ(descriptor->m_output_udp_socket, 5101u);
+}
+
+TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
+{
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::loadXMLFile("SHM_transport_descriptors_config.xml"));
+
+    xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
+
+    using SHMDescriptor = std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor>;
+    SHMDescriptor descriptor = std::dynamic_pointer_cast<eprosima::fastdds::rtps::SharedMemTransportDescriptor>(
+        transport);
+
+    ASSERT_NE(descriptor, nullptr);
+    ASSERT_EQ(descriptor->segment_size(), std::numeric_limits<uint32_t>::max());
+    ASSERT_EQ(descriptor->port_queue_capacity(), std::numeric_limits<uint32_t>::max());
+    ASSERT_EQ(descriptor->port_overflow_policy(),
+            eprosima::fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+    ASSERT_EQ(descriptor->segment_overflow_policy(),
+            eprosima::fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+    ASSERT_EQ(descriptor->healthy_check_timeout_ms(), std::numeric_limits<uint32_t>::max());
+    ASSERT_EQ(descriptor->rtps_dump_file(), "test_file.dump");
+    ASSERT_EQ(descriptor->maxMessageSize, 128000u);
+    ASSERT_EQ(descriptor->max_message_size(), 128000u);
 }
 
 int main(

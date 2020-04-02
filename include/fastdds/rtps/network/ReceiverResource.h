@@ -73,6 +73,11 @@ public:
      */
     void disable();
 
+    inline uint32_t max_message_size() const
+    {
+        return max_message_size_;
+    }
+
     /**
      * Resources can only be transfered through move semantics. Copy, assignment, and
      * construction outside of the factory are forbidden.
@@ -93,7 +98,7 @@ private:
 
     std::mutex mtx;
     MessageReceiver* receiver;
-    CDRMessage_t msg;
+    uint32_t max_message_size_;
 };
 
 } // namespace rtps

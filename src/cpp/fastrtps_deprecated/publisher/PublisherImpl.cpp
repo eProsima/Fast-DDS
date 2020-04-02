@@ -30,21 +30,15 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <functional>
-
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
-using namespace std::chrono;
-
-using namespace std::chrono;
-
 using namespace std::chrono;
 
 using eprosima::fastdds::dds::TopicDataType;
@@ -60,10 +54,10 @@ PublisherImpl::PublisherImpl(
     , m_att(att)
 #pragma warning (disable : 4355 )
     , m_history(att.topic,
-                pdatatype->m_typeSize
+            pdatatype->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-            + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
+            + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
 #endif
             , att.historyMemoryPolicy)
@@ -79,26 +73,16 @@ PublisherImpl::PublisherImpl(
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    return deadline_missed();
-                }
-
-                return false;
+                return deadline_missed();
             },
             att.qos.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    return lifespan_expired();
-                }
-
-                return false;
+                return lifespan_expired();
             },
             m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }
@@ -108,7 +92,7 @@ PublisherImpl::~PublisherImpl()
     delete(lifespan_timer_);
     delete(deadline_timer_);
 
-    if(mp_writer != nullptr)
+    if (mp_writer != nullptr)
     {
         logInfo(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
     }
@@ -116,8 +100,6 @@ PublisherImpl::~PublisherImpl()
     RTPSDomain::removeRTPSWriter(mp_writer);
     delete(this->mp_userPublisher);
 }
-
-
 
 bool PublisherImpl::create_new_change(
         ChangeKind_t changeKind,
@@ -140,98 +122,89 @@ bool PublisherImpl::create_new_change_with_params(
         return false;
     }
 
-    if(changeKind == NOT_ALIVE_UNREGISTERED || changeKind == NOT_ALIVE_DISPOSED ||
+    if (changeKind == NOT_ALIVE_UNREGISTERED || changeKind == NOT_ALIVE_DISPOSED ||
             changeKind == NOT_ALIVE_DISPOSED_UNREGISTERED)
     {
-        if(m_att.topic.topicKind == NO_KEY)
+        if (m_att.topic.topicKind == NO_KEY)
         {
-            logError(PUBLISHER,"Topic is NO_KEY, operation not permitted");
+            logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
             return false;
         }
     }
 
     InstanceHandle_t handle;
-    if(m_att.topic.topicKind == WITH_KEY)
+    if (m_att.topic.topicKind == WITH_KEY)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
 #endif
-        mp_type->getKey(data,&handle,is_key_protected);
+        mp_type->getKey(data, &handle, is_key_protected);
     }
 
     // Block lowlevel writer
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    auto max_blocking_time = steady_clock::now() +
+            microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
 
 #if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
-    if(lock.try_lock_until(max_blocking_time))
+    if (lock.try_lock_until(max_blocking_time))
 #else
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 #endif
     {
         CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
-        if(ch != nullptr)
+        if (ch != nullptr)
         {
-            if(changeKind == ALIVE)
+            if (changeKind == ALIVE)
             {
                 //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
-                if(!mp_type->serialize(data, &ch->serializedPayload))
+                if (!mp_type->serialize(data, &ch->serializedPayload))
                 {
-                    logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
+                    logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
                     m_history.release_Cache(ch);
                     return false;
                 }
             }
 
             //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
-            if(high_mark_for_frag_ == 0)
+            if (high_mark_for_frag_ == 0)
             {
                 uint32_t max_data_size = mp_writer->getMaxDataSize();
                 uint32_t writer_throughput_controller_bytes =
-                    mp_writer->calculateMaxDataSize(m_att.throughputController.bytesPerPeriod);
+                        mp_writer->calculateMaxDataSize(m_att.throughputController.bytesPerPeriod);
                 uint32_t participant_throughput_controller_bytes =
-                    mp_writer->calculateMaxDataSize(
-                            mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
+                        mp_writer->calculateMaxDataSize(
+                    mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
 
                 high_mark_for_frag_ =
-                    max_data_size > writer_throughput_controller_bytes ?
-                    writer_throughput_controller_bytes :
-                    (max_data_size > participant_throughput_controller_bytes ?
-                     participant_throughput_controller_bytes :
-                     max_data_size);
+                        max_data_size > writer_throughput_controller_bytes ?
+                        writer_throughput_controller_bytes :
+                        (max_data_size > participant_throughput_controller_bytes ?
+                        participant_throughput_controller_bytes :
+                        max_data_size);
+                high_mark_for_frag_ &= ~3;
             }
 
             uint32_t final_high_mark_for_frag = high_mark_for_frag_;
 
             // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
-            if(wparams.related_sample_identity() != SampleIdentity::unknown())
+            if (wparams.related_sample_identity() != SampleIdentity::unknown())
             {
                 final_high_mark_for_frag -= 32;
             }
 
             // If it is big data, fragment it.
-            if(ch->serializedPayload.length > final_high_mark_for_frag)
+            if (ch->serializedPayload.length > final_high_mark_for_frag)
             {
-                // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
-                if( m_att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
-                {
-                    logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
-                            ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
-                            final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
-                    m_history.release_Cache(ch);
-                    return false;
-                }
-
-                /// Fragment the data.
+                // Fragment the data.
                 // Set the fragment size to the cachechange.
-                // Note: high_mark will always be a value that can be casted to uint16_t)
-                ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
+                ch->setFragmentSize(static_cast<uint16_t>(
+                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
             }
 
             InstanceHandle_t change_handle = ch->instanceHandle;
-            if(!this->m_history.add_pub_change(ch, wparams, lock, max_blocking_time))
+            if (!this->m_history.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
                 m_history.release_Cache(ch);
                 return false;
@@ -260,7 +233,8 @@ bool PublisherImpl::create_new_change_with_params(
 
             if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
             {
-                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+                lifespan_duration_us_ = duration<double, std::ratio<1, 1000000> >(
+                    m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
                 lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
                 lifespan_timer_->restart_timer();
             }
@@ -272,13 +246,13 @@ bool PublisherImpl::create_new_change_with_params(
     return false;
 }
 
-
 bool PublisherImpl::removeMinSeqChange()
 {
     return m_history.removeMinChange();
 }
 
-bool PublisherImpl::removeAllChange(size_t* removed)
+bool PublisherImpl::removeAllChange(
+        size_t* removed)
 {
     return m_history.removeAllChange(removed);
 }
@@ -287,84 +261,86 @@ const GUID_t& PublisherImpl::getGuid()
 {
     return mp_writer->getGuid();
 }
+
 //
-bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
+bool PublisherImpl::updateAttributes(
+        const PublisherAttributes& att)
 {
     bool updated = true;
     bool missing = false;
-    if(this->m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+    if (this->m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     {
-        if(att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||
+        if (att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||
                 att.multicastLocatorList.size() != this->m_att.multicastLocatorList.size())
         {
-            logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+            logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
             updated &= false;
         }
         else
         {
-            for(LocatorListConstIterator lit1 = this->m_att.unicastLocatorList.begin();
-                    lit1!=this->m_att.unicastLocatorList.end();++lit1)
+            for (LocatorListConstIterator lit1 = this->m_att.unicastLocatorList.begin();
+                    lit1 != this->m_att.unicastLocatorList.end(); ++lit1)
             {
                 missing = true;
-                for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
-                        lit2!= att.unicastLocatorList.end();++lit2)
+                for (LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
+                        lit2 != att.unicastLocatorList.end(); ++lit2)
                 {
-                    if(*lit1 == *lit2)
+                    if (*lit1 == *lit2)
                     {
                         missing = false;
                         break;
                     }
                 }
-                if(missing)
+                if (missing)
                 {
-                    logWarning(PUBLISHER,"Locator: "<< *lit1 << " not present in new list");
-                    logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
-            for(LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
-                    lit1!=this->m_att.multicastLocatorList.end();++lit1)
+            for (LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
+                    lit1 != this->m_att.multicastLocatorList.end(); ++lit1)
             {
                 missing = true;
-                for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
-                        lit2!= att.multicastLocatorList.end();++lit2)
+                for (LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
+                        lit2 != att.multicastLocatorList.end(); ++lit2)
                 {
-                    if(*lit1 == *lit2)
+                    if (*lit1 == *lit2)
                     {
                         missing = false;
                         break;
                     }
                 }
-                if(missing)
+                if (missing)
                 {
-                    logWarning(PUBLISHER,"Locator: "<< *lit1<< " not present in new list");
-                    logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
         }
     }
 
     //TOPIC ATTRIBUTES
-    if(this->m_att.topic != att.topic)
+    if (this->m_att.topic != att.topic)
     {
-        logWarning(PUBLISHER,"Topic Attributes cannot be updated");
+        logWarning(PUBLISHER, "Topic Attributes cannot be updated");
         updated &= false;
     }
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if(!this->m_att.qos.canQosBeUpdated(att.qos))
+    if (!this->m_att.qos.canQosBeUpdated(att.qos))
     {
-        updated &=false;
+        updated &= false;
     }
-    if(updated)
+    if (updated)
     {
-        if(this->m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+        if (this->m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         {
             //UPDATE TIMES:
             StatefulWriter* sfw = (StatefulWriter*)mp_writer;
             sfw->updateTimes(att.times);
         }
 
-        this->m_att.qos.setQos(att.qos,false);
+        this->m_att.qos.setQos(att.qos, false);
         this->m_att = att;
         //Notify the participant that a Writer has changed its QOS
         mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
@@ -374,7 +350,7 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         if (m_att.qos.m_deadline.period != c_TimeInfinite)
         {
             deadline_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+                    duration<double, std::ratio<1, 1000000> >(m_att.qos.m_deadline.period.to_ns() * 1e-3);
             deadline_timer_->update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
         }
         else
@@ -387,7 +363,7 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
         {
             lifespan_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+                    duration<double, std::ratio<1, 1000000> >(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
             lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
         }
         else
@@ -403,7 +379,7 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
-    if( mp_publisherImpl->mp_listener != nullptr )
+    if ( mp_publisherImpl->mp_listener != nullptr )
     {
         mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher, info);
     }
@@ -420,20 +396,21 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
 }
 
 void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
-        RTPSWriter *writer,
-        const LivelinessLostStatus &status)
+        RTPSWriter* writer,
+        const LivelinessLostStatus& status)
 {
     (void)writer;
 
     if (mp_publisherImpl->mp_listener != nullptr)
     {
         mp_publisherImpl->mp_listener->on_liveliness_lost(
-                    mp_publisherImpl->mp_userPublisher,
-                    status);
+            mp_publisherImpl->mp_userPublisher,
+            status);
     }
 }
 
-bool PublisherImpl::wait_for_all_acked(const eprosima::fastrtps::Duration_t& max_wait)
+bool PublisherImpl::wait_for_all_acked(
+        const eprosima::fastrtps::Duration_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
 }
@@ -480,7 +457,8 @@ bool PublisherImpl::deadline_missed()
     return deadline_timer_reschedule();
 }
 
-void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+void PublisherImpl::get_offered_deadline_missed_status(
+        OfferedDeadlineMissedStatus& status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 
@@ -493,43 +471,45 @@ bool PublisherImpl::lifespan_expired()
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 
     CacheChange_t* earliest_change;
-    if (!m_history.get_earliest_change(&earliest_change))
+    while (m_history.get_earliest_change(&earliest_change))
     {
-        return false;
-    }
+        auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+        auto now = system_clock::now();
 
-    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    auto now = system_clock::now();
+        // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
+        if (now - source_timestamp < lifespan_duration_us_)
+        {
+            auto interval = source_timestamp - now + lifespan_duration_us_;
+            lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+            return true;
+        }
 
-    // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
-    if (now - source_timestamp < lifespan_duration_us_)
-    {
+        // The earliest change has expired
+        m_history.remove_change_pub(earliest_change);
+
+        // Set the timer for the next change if there is one
+        if (!m_history.get_earliest_change(&earliest_change))
+        {
+            return false;
+        }
+
+        // Calculate when the next change is due to expire and restart
+        source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+        now = system_clock::now();
         auto interval = source_timestamp - now + lifespan_duration_us_;
-        lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-        return true;
+
+        if (interval.count() > 0)
+        {
+            lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+            return true;
+        }
     }
 
-    // The earliest change has expired
-    m_history.remove_change_pub(earliest_change);
-
-    // Set the timer for the next change if there is one
-    if (!m_history.get_earliest_change(&earliest_change))
-    {
-        return false;
-    }
-
-    // Calculate when the next change is due to expire and restart
-    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    now = system_clock::now();
-    auto interval = source_timestamp - now + lifespan_duration_us_;
-
-    assert(interval.count() > 0);
-
-    lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-    return true;
+    return false;
 }
 
-void PublisherImpl::get_liveliness_lost_status(LivelinessLostStatus &status)
+void PublisherImpl::get_liveliness_lost_status(
+        LivelinessLostStatus& status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 

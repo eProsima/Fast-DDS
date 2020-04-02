@@ -44,6 +44,7 @@ namespace rtps {
 #define LOCATOR_KIND_UDPv6 2
 #define LOCATOR_KIND_TCPv4 4
 #define LOCATOR_KIND_TCPv6 8
+#define LOCATOR_KIND_SHM 16
 
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.
@@ -58,6 +59,7 @@ public:
         * LOCATOR_KIND_UDPv6
         * LOCATOR_KIND_TCPv4
         * LOCATOR_KIND_TCPv6
+        * LOCATOR_KIND_SHM
         */
     int32_t kind;
     uint32_t port;
@@ -201,11 +203,87 @@ inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
         }
         output << ":" << loc.port;
     }
+    else if (loc.kind == LOCATOR_KIND_SHM)
+    {
+        if (loc.address[0] == 'M')
+        {
+            output << "SHM:M" << loc.port;
+        }
+        else
+        {
+            output << "SHM:" << loc.port;
+        }
+    }
+
     return output;
 }
 
 typedef std::vector<Locator_t>::iterator LocatorListIterator;
 typedef std::vector<Locator_t>::const_iterator LocatorListConstIterator;
+
+/**
+ * Provides a Locator's iterator interface that can be used by different Locator's
+ * containers
+ */
+class LocatorsIterator
+{
+public:
+
+    virtual LocatorsIterator& operator++() = 0;
+    virtual bool operator==(
+            const LocatorsIterator& other) const = 0;
+    virtual bool operator!=(
+            const LocatorsIterator& other) const = 0;
+    virtual const Locator_t& operator*() const = 0;
+};
+
+/**
+ * Adapter class that provides a LocatorsIterator interface from a LocatorListConstIterator
+ */
+class Locators : public LocatorsIterator
+{
+public:
+
+    Locators(
+            const LocatorListConstIterator& it)
+        : it_(it)
+    {
+    }
+
+	Locators(
+		const Locators& other)
+		: it_(other.it_)
+	{
+	}
+
+    LocatorsIterator& operator++()
+    {
+        ++it_;
+        return *this;
+    }
+
+    bool operator==(
+            const LocatorsIterator& other) const
+    {
+        return it_ == static_cast<const Locators&>(other).it_;
+    }
+
+    bool operator!=(
+            const LocatorsIterator& other) const
+    {
+        return it_ != static_cast<const Locators&>(other).it_;
+    }
+
+    const Locator_t& operator*() const
+    {
+        return (*it_);
+    }
+
+private:
+
+    LocatorListConstIterator it_;
+};
+
 
 /**
     * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.

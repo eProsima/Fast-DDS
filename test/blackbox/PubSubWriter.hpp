@@ -437,7 +437,7 @@ public:
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
         liveliness_cv_.wait(lock, [&](){
-            return times_liveliness_lost_ == times;
+            return times_liveliness_lost_ >= times;
         });
     }
 
@@ -661,6 +661,20 @@ public:
             const int32_t max)
     {
         publisher_attr_.topic.resourceLimitsQos.max_samples = max;
+        return *this;
+    }
+
+    PubSubWriter& resource_limits_max_instances(
+            const int32_t max)
+    {
+        publisher_attr_.topic.resourceLimitsQos.max_instances = max;
+        return *this;
+    }
+
+    PubSubWriter& resource_limits_max_samples_per_instance(
+            const int32_t max)
+    {
+        publisher_attr_.topic.resourceLimitsQos.max_samples_per_instance = max;
         return *this;
     }
 
@@ -904,6 +918,13 @@ public:
         std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
         descriptor->maxInitialPeersRange = maxInitialPeerRange;
         participant_attr_.rtps.userTransports.push_back(descriptor);
+        return *this;
+    }
+
+    PubSubWriter& socket_buffer_size(
+            uint32_t sockerBufferSize)
+    {
+        participant_attr_.rtps.listenSocketBufferSize = sockerBufferSize;
         return *this;
     }
 

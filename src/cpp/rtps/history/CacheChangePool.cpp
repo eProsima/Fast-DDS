@@ -19,7 +19,7 @@
 
 #include <fastdds/rtps/history/CacheChangePool.h>
 #include <fastdds/rtps/common/CacheChange.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
 #include <cstring>

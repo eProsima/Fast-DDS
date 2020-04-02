@@ -21,13 +21,16 @@
 
 #include <rtps/reader/WriterProxy.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+
+#include "rtps/RTPSDomainImpl.hpp"
 
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
@@ -50,46 +53,41 @@ WriterProxy::~WriterProxy()
     delete(heartbeat_response_);
 }
 
-constexpr size_t changes_node_size = memory::set_node_size<std::pair<size_t, SequenceNumber_t>>::value;
+constexpr size_t changes_node_size = memory::set_node_size<std::pair<size_t, SequenceNumber_t> >::value;
 
 WriterProxy::WriterProxy(
         StatefulReader* reader,
         const RemoteLocatorsAllocationAttributes& loc_alloc,
         const ResourceLimitedContainerConfig& changes_allocation)
     : reader_(reader)
-    , attributes_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
     , heartbeat_response_(nullptr)
     , initial_acknack_(nullptr)
     , last_heartbeat_count_(0)
     , heartbeat_final_flag_(false)
     , is_alive_(false)
     , changes_pool_(
-            changes_node_size,
-            memory_pool_block_size<pool_allocator_t>(changes_node_size, changes_allocation))
+        changes_node_size,
+        memory_pool_block_size<pool_allocator_t>(changes_node_size, changes_allocation))
     , changes_received_(changes_pool_)
     , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
+    , is_on_same_process_(false)
+    , ownership_strength_(0)
+    , liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
+    , locators_entry_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
 {
     //Create Events
     heartbeat_response_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    perform_heartbeat_response();
-                }
-
+                perform_heartbeat_response();
                 return false;
             }, 0);
 
     initial_acknack_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    perform_initial_ack_nack();
-                }
-
+                perform_initial_ack_nack();
                 return false;
             }, 0 );
 
@@ -108,22 +106,32 @@ void WriterProxy::start(
     heartbeat_response_->update_interval(reader_->getTimes().heartbeatResponseDelay);
     initial_acknack_->update_interval(reader_->getTimes().initialAcknackDelay);
 
-    attributes_ = attributes;
-    guid_as_vector_.push_back(attributes_.guid());
-    guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
+    locators_entry_.remote_guid = attributes.guid();
+    guid_as_vector_.push_back(attributes.guid());
+    guid_prefix_as_vector_.push_back(attributes.guid().guidPrefix);
+    persistence_guid_ = attributes.persistence_guid();
     is_alive_ = true;
+    is_on_same_process_ = RTPSDomainImpl::should_intraprocess_between(reader_->getGuid(), attributes.guid());
+    ownership_strength_ = attributes.m_qos.m_ownershipStrength.value;
+    liveliness_kind_ = attributes.m_qos.m_liveliness.kind;
+    locators_entry_.unicast = attributes.remote_locators().unicast;
+    locators_entry_.multicast = attributes.remote_locators().multicast;
+
     initial_acknack_->restart_timer();
     loaded_from_storage(initial_sequence);
 }
 
-void WriterProxy::update(const WriterProxyData& attributes)
+void WriterProxy::update(
+        const WriterProxyData& attributes)
 {
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
     assert(is_alive_);
-    attributes_ = attributes;
+    ownership_strength_ = attributes.m_qos.m_ownershipStrength.value;
+    locators_entry_.unicast = attributes.remote_locators().unicast;
+    locators_entry_.multicast = attributes.remote_locators().multicast;
 }
 
 void WriterProxy::stop()
@@ -137,32 +145,37 @@ void WriterProxy::stop()
 void WriterProxy::clear()
 {
     is_alive_ = false;
-    attributes_.guid(c_Guid_Unknown);
+    locators_entry_.unicast.clear();
+    locators_entry_.multicast.clear();
+    locators_entry_.remote_guid = c_Guid_Unknown;
     last_heartbeat_count_ = 0;
     heartbeat_final_flag_.store(false);
     guid_as_vector_.clear();
     guid_prefix_as_vector_.clear();
     changes_received_.clear();
+    is_on_same_process_ = false;
     loaded_from_storage(SequenceNumber_t());
 }
 
-void WriterProxy::loaded_from_storage(const SequenceNumber_t& seq_num)
+void WriterProxy::loaded_from_storage(
+        const SequenceNumber_t& seq_num)
 {
     last_notified_ = seq_num;
     changes_from_writer_low_mark_ = seq_num;
     max_sequence_number_ = seq_num;
 }
 
-void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
+void WriterProxy::missing_changes_update(
+        const SequenceNumber_t& seq_num)
 {
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
-    logInfo(RTPS_READER,attributes_.guid().entityId<<": changes up to seq_num: " << seq_num << " missing.");
+    logInfo(RTPS_READER, guid().entityId << ": changes up to seq_num: " << seq_num << " missing.");
 
     // Check was not removed from container.
-    if(seq_num > changes_from_writer_low_mark_)
+    if (seq_num > changes_from_writer_low_mark_)
     {
         if (seq_num > max_sequence_number_)
         {
@@ -171,16 +184,17 @@ void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
     }
 }
 
-void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
+void WriterProxy::lost_changes_update(
+        const SequenceNumber_t& seq_num)
 {
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
-    logInfo(RTPS_READER, attributes_.guid().entityId << ": up to seq_num: " << seq_num);
+    logInfo(RTPS_READER, guid().entityId << ": up to seq_num: " << seq_num);
 
     // Check was not removed from container.
-    if(seq_num > changes_from_writer_low_mark_)
+    if (seq_num > changes_from_writer_low_mark_)
     {
         // Remove all received changes with a sequence lower than seq_num
         ChangeIterator it = std::lower_bound(changes_received_.begin(), changes_received_.end(), seq_num);
@@ -198,13 +212,15 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
     }
 }
 
-bool WriterProxy::received_change_set(const SequenceNumber_t& seq_num)
+bool WriterProxy::received_change_set(
+        const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER, attributes_.guid().entityId << ": seq_num: " << seq_num);
+    logInfo(RTPS_READER, guid().entityId << ": seq_num: " << seq_num);
     return received_change_set(seq_num, true);
 }
 
-bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seq_num)
+bool WriterProxy::irrelevant_change_set(
+        const SequenceNumber_t& seq_num)
 {
     return received_change_set(seq_num, false);
 }
@@ -218,15 +234,15 @@ bool WriterProxy::received_change_set(
 #endif
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
-    if(seq_num <= changes_from_writer_low_mark_)
+    if (seq_num <= changes_from_writer_low_mark_)
     {
         logInfo(RTPS_READER, "Change " << seq_num << " <= than max available sequence number "
-            << changes_from_writer_low_mark_);
+                                       << changes_from_writer_low_mark_);
         return false;
     }
 
     // If will be the last element, insert it at the end.
-    if(seq_num > max_sequence_number_)
+    if (seq_num > max_sequence_number_)
     {
         // If it is the next to be acknowledeg, not insert
         if (seq_num == changes_from_writer_low_mark_ + 1)
@@ -272,7 +288,7 @@ SequenceNumberSet_t WriterProxy::missing_changes() const
     SequenceNumber_t max_missing = std::min(first_missing + 256UL, max_sequence_number_ + 1);
     SequenceNumberSet_t sns(first_missing);
 
-    for(SequenceNumber_t seq : changes_received_)
+    for (SequenceNumber_t seq : changes_received_)
     {
         seq = std::min(seq, max_missing);
         sns.add_range(first_missing, seq);
@@ -291,7 +307,8 @@ SequenceNumberSet_t WriterProxy::missing_changes() const
     return sns;
 }
 
-bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
+bool WriterProxy::change_was_received(
+        const SequenceNumber_t& seq_num) const
 {
 #if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
@@ -315,7 +332,8 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
     return changes_from_writer_low_mark_;
 }
 
-void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
+void WriterProxy::change_removed_from_history(
+        const SequenceNumber_t& seq_num)
 {
 #if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
@@ -359,7 +377,7 @@ void WriterProxy::cleanup()
     ChangeIterator chit = changes_received_.begin();
 
     // Jump over all consecutive received changes starting on the next to low_mark
-    while(chit != changes_received_.end() && *chit == changes_from_writer_low_mark_ + 1)
+    while (chit != changes_received_.end() && *chit == changes_from_writer_low_mark_ + 1)
     {
         chit++;
         changes_from_writer_low_mark_++;
@@ -378,7 +396,8 @@ bool WriterProxy::are_there_missing_changes() const
     return changes_from_writer_low_mark_ < max_sequence_number_;
 }
 
-size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_num) const
+size_t WriterProxy::unknown_missing_changes_up_to(
+        const SequenceNumber_t& seq_num) const
 {
 #if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
@@ -386,7 +405,7 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
 
     uint32_t returnedValue = 0;
 
-    if(seq_num > changes_from_writer_low_mark_)
+    if (seq_num > changes_from_writer_low_mark_)
     {
         SequenceNumber_t first_missing = changes_from_writer_low_mark_ + 1;
         SequenceNumber_t max_missing = std::min(seq_num, max_sequence_number_ + 1);
@@ -437,7 +456,7 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
-    if(last_notified_ < changes_from_writer_low_mark_)
+    if (last_notified_ < changes_from_writer_low_mark_)
     {
         ++last_notified_;
         return last_notified_;
@@ -450,7 +469,19 @@ void WriterProxy::perform_initial_ack_nack() const
 {
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    reader_->send_acknack(this, sns, *this, false);
+    if (is_on_same_process_)
+    {
+        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+        if (writer)
+        {
+            bool tmp;
+            writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
+        }
+    }
+    else
+    {
+        reader_->send_acknack(this, sns, *this, false);
+    }
 }
 
 void WriterProxy::perform_heartbeat_response() const
@@ -485,19 +516,26 @@ bool WriterProxy::process_heartbeat(
         missing_changes_update(last_seq);
         heartbeat_final_flag_.store(final_flag);
 
-        //Analyze wheter a acknack message is needed:
-        if (!final_flag)
+        //Analyze whether a acknack message is needed:
+        if (!is_on_same_process_)
         {
-            if (!disable_positive || are_there_missing_changes())
+            if (!final_flag)
             {
-                heartbeat_response_->restart_timer();
+                if (!disable_positive || are_there_missing_changes())
+                {
+                    heartbeat_response_->restart_timer();
+                }
             }
-        }
-        else if (final_flag && !liveliness_flag)
-        {
-            if (are_there_missing_changes())
+            else if (final_flag && !liveliness_flag)
             {
-                heartbeat_response_->restart_timer();
+                if (are_there_missing_changes())
+                {
+                    heartbeat_response_->restart_timer();
+                }
+            }
+            else
+            {
+                assert_liveliness = liveliness_flag;
             }
         }
         else
@@ -511,7 +549,8 @@ bool WriterProxy::process_heartbeat(
     return false;
 }
 
-void WriterProxy::update_heartbeat_response_interval(const Duration_t& interval)
+void WriterProxy::update_heartbeat_response_interval(
+        const Duration_t& interval)
 {
     heartbeat_response_->update_interval(interval);
 }
@@ -520,15 +559,17 @@ bool WriterProxy::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    for (const Locator_t& locator : remote_locators_shrinked())
+    if (is_on_same_process_)
     {
-        if (!reader_->send_sync_nts(message, locator, max_blocking_time_point))
-        {
-            return false;
-        }
+        return true;
     }
 
-    return true;
+    ResourceLimitedVector<Locator_t> remote_locators = remote_locators_shrinked();
+    
+    return reader_->send_sync_nts(message,
+                   Locators(remote_locators.begin()),
+                   Locators(remote_locators.end()),
+                   max_blocking_time_point);
 }
 
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
@@ -542,6 +583,7 @@ int WriterProxy::get_thread_id() const
 {
     return syscall(__NR_gettid);
 }
+
 #endif
 
 } /* namespace rtps */

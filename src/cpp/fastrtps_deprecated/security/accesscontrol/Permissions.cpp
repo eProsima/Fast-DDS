@@ -21,7 +21,7 @@
 #include <fastrtps_deprecated/security/accesscontrol/GovernanceParser.h>
 #include <fastrtps_deprecated/security/accesscontrol/PermissionsParser.h>
 #include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/security/exceptions/SecurityException.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>

@@ -39,11 +39,14 @@ bool HelloWorldSubscriber::init()
 {
     eprosima::fastrtps::ParticipantAttributes PParam;
     PParam.rtps.setName("Participant_sub");
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
-
-    if (mp_participant == nullptr)
     {
-        return false;
+        const std::lock_guard<std::mutex> lock(mutex_);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
+
+        if (mp_participant == nullptr)
+        {
+            return false;
+        }
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
@@ -60,6 +63,12 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
     readers_.clear();
     datas_.clear();
+}
+
+eprosima::fastdds::dds::DomainParticipant* HelloWorldSubscriber::participant()
+{
+    const std::lock_guard<std::mutex> lock(mutex_);
+    return mp_participant;
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
@@ -113,7 +122,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    subscriber_->mp_participant->register_type(m_type);
+    subscriber_->participant()->register_type(m_type);
 
     std::cout << "Discovered type: " << m_type->getName() << " from topic " << topic << std::endl;
 

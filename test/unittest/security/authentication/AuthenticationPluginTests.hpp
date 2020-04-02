@@ -195,7 +195,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     eprosima::fastrtps::rtps::security::HandshakeMessageToken *handshake_message = nullptr;
     eprosima::fastrtps::rtps::ParticipantProxyData participant_data1(eprosima::fastrtps::rtps::c_default_RTPSParticipantAllocationAttributes);
     participant_data1.m_guid = adjusted_participant_key1;
-    eprosima::fastrtps::rtps::CDRMessage_t auxMsg;
+    eprosima::fastrtps::rtps::CDRMessage_t auxMsg(RTPSMESSAGE_DEFAULT_SIZE);
     auxMsg.msg_endian = eprosima::fastrtps::rtps::BIGEND;
     ASSERT_TRUE(participant_data1.writeToCDRMessage(&auxMsg, false));
 

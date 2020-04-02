@@ -26,86 +26,50 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 bool EDPClient::processLocalReaderProxyData(
-    RTPSReader* local_reader,
-    ReaderProxyData* rdata)
+        RTPSReader* local_reader,
+        ReaderProxyData* rdata)
 {
-    logInfo(RTPS_EDP,rdata->guid().entityId);
+    logInfo(RTPS_EDP, rdata->guid().entityId);
     (void)local_reader;
 
     auto* writer = &subscriptions_writer_;
 
 #if HAVE_SECURITY
-    if(local_reader->getAttributes().security_attributes().is_discovery_protected)
+    if (local_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
     }
 #endif
 
-    if(writer->first != nullptr)
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
+    if (change != nullptr)
     {
-        // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
-            {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
-                ALIVE,rdata->key());
+        // We must key-signed the CacheChange_t to avoid duplications:
+        WriteParams wp;
+        SampleIdentity local;
+        local.writer_guid(writer->first->getGuid());
+        local.sequence_number(writer->second->next_sequence_number());
+        wp.sample_identity(local);
+        wp.related_sample_identity(local);
 
-        if(change !=nullptr)
-        {
-            CDRMessage_t aux_msg(change->serializedPayload);
-
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
-#endif
-
-            rdata->writeToCDRMessage(&aux_msg, true);
-            change->serializedPayload.length = (uint16_t)aux_msg.length;
-
-            {
-                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
-                {
-                    if((*ch)->instanceHandle == change->instanceHandle)
-                    {
-                        writer->second->remove_change(*ch);
-                        break;
-                    }
-                }
-            }
-
-            // We must key-signed the CacheChange_t to avoid duplications:
-            WriteParams wp;
-            SampleIdentity local;
-            local.writer_guid(writer->first->getGuid());
-            local.sequence_number(writer->second->next_sequence_number());
-            wp.sample_identity(local);
-            wp.related_sample_identity(local);
-
-            writer->second->add_change(change, wp);
-
-            return true;
-        }
-
-        return false;
+        writer->second->add_change(change, wp);
     }
-
-    return true;
+    return ret_val;
 }
 
 bool EDPClient::processLocalWriterProxyData(
-    RTPSWriter* local_writer,
-    WriterProxyData* wdata)
+        RTPSWriter* local_writer,
+        WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP, wdata->guid().entityId);
     (void)local_writer;
@@ -113,90 +77,60 @@ bool EDPClient::processLocalWriterProxyData(
     auto* writer = &publications_writer_;
 
 #if HAVE_SECURITY
-    if(local_writer->getAttributes().security_attributes().is_discovery_protected)
+    if (local_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
     }
 #endif
 
-    if(writer->first !=nullptr)
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
+    if (change != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
-            {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
-                ALIVE, wdata->key());
-        if(change != nullptr)
-        {
-            //wdata->toParameterList();
+        // We must key-signed the CacheChange_t to avoid duplications:
+        WriteParams wp;
+        SampleIdentity local;
+        local.writer_guid(writer->first->getGuid());
+        local.sequence_number(writer->second->next_sequence_number());
+        wp.sample_identity(local);
+        wp.related_sample_identity(local);
 
-            CDRMessage_t aux_msg(change->serializedPayload);
-
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
-#endif
-
-            wdata->writeToCDRMessage(&aux_msg, true);
-            change->serializedPayload.length = (uint16_t)aux_msg.length;
-
-            {
-                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
-                {
-                    if((*ch)->instanceHandle == change->instanceHandle)
-                    {
-                        writer->second->remove_change(*ch);
-                        break;
-                    }
-                }
-            }
-
-            // We must key-signed the CacheChange_t to avoid duplications:
-            WriteParams wp;
-            SampleIdentity local;
-            local.writer_guid(writer->first->getGuid());
-            local.sequence_number(writer->second->next_sequence_number());
-            wp.sample_identity(local);
-            wp.related_sample_identity(local);
-
-            writer->second->add_change(change, wp);
-
-            return true;
-        }
-        return false;
+        writer->second->add_change(change, wp);
     }
-    return true;
+    return ret_val;
 }
 
-bool EDPClient::removeLocalWriter(RTPSWriter* W)
+bool EDPClient::removeLocalWriter(
+        RTPSWriter* W)
 {
-    logInfo(RTPS_EDP,W->getGuid().entityId);
+    logInfo(RTPS_EDP, W->getGuid().entityId);
 
     auto* writer = &publications_writer_;
 
 #if HAVE_SECURITY
-    if(W->getAttributes().security_attributes().is_discovery_protected)
+    if (W->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
     }
 #endif
 
-    if(writer->first!=nullptr)
+    if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
-            {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
-                NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
-        if(change != nullptr)
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        if (change != nullptr)
         {
             {
                 std::lock_guard<RecursiveTimedMutex> guard(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
-                    if((*ch)->instanceHandle == change->instanceHandle)
+                    if ((*ch)->instanceHandle == change->instanceHandle)
                     {
                         writer->second->remove_change(*ch);
                         break;
@@ -219,33 +153,37 @@ bool EDPClient::removeLocalWriter(RTPSWriter* W)
     return mp_PDP->removeWriterProxyData(W->getGuid());
 }
 
-bool EDPClient::removeLocalReader(RTPSReader* R)
+bool EDPClient::removeLocalReader(
+        RTPSReader* R)
 {
-    logInfo(RTPS_EDP,R->getGuid().entityId);
+    logInfo(RTPS_EDP, R->getGuid().entityId);
 
     auto* writer = &subscriptions_writer_;
 
 #if HAVE_SECURITY
-    if(R->getAttributes().security_attributes().is_discovery_protected)
+    if (R->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
     }
 #endif
 
-    if(writer->first!=nullptr)
+    if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
-            {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
-                NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
-        if(change != nullptr)
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        if (change != nullptr)
         {
             {
                 std::lock_guard<RecursiveTimedMutex> guard(*writer->second->getMutex());
-                for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
-                    if((*ch)->instanceHandle == change->instanceHandle)
+                    if ((*ch)->instanceHandle == change->instanceHandle)
                     {
                         writer->second->remove_change(*ch);
                         break;

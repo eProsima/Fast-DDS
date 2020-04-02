@@ -1,5 +1,5 @@
 #include <fastdds/rtps/writer/LivelinessManager.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <algorithm>
 
@@ -22,14 +22,9 @@ LivelinessManager::LivelinessManager(
     , timer_owner_(nullptr)
     , timer_(
         service,
-        [this](TimedEvent::EventCode code) -> bool
+        [this]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    return timer_expired();
-                }
-
-                return false;
+                return timer_expired();
             },
         0)
 {

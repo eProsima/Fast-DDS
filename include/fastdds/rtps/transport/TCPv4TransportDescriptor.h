@@ -56,6 +56,7 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
     RTPS_DllAPI TCPv4TransportDescriptor();
 
     RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t);
+    RTPS_DllAPI TCPv4TransportDescriptor& operator=(const TCPv4TransportDescriptor& t);
 } TCPv4TransportDescriptor;
 
 } // namespace rtps

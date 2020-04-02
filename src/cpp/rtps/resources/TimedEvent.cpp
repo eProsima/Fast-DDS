@@ -19,22 +19,24 @@
 
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <rtps/resources/TimedEventImpl.h>
 
-
+#include "TimedEventImpl.h"
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 TimedEvent::TimedEvent(
         ResourceEvent& service,
-        std::function<bool(EventCode)> callback,
+        std::function<bool()> callback,
         double milliseconds)
     : service_(service)
     , impl_(nullptr)
 {
-    impl_ = new TimedEventImpl(service_.get_io_service(), callback, std::chrono::microseconds((int64_t)(milliseconds*1000)));
+    impl_ = new TimedEventImpl(
+        callback,
+        std::chrono::microseconds(static_cast<int64_t>(milliseconds * 1000)));
+    service_.register_timer(impl_);
 }
 
 TimedEvent::~TimedEvent()
@@ -45,35 +47,37 @@ TimedEvent::~TimedEvent()
 
 void TimedEvent::cancel_timer()
 {
-    if(impl_->go_cancel())
+    if (impl_->go_cancel())
     {
         service_.notify(impl_);
     }
 }
-
 
 void TimedEvent::restart_timer()
 {
-    if(impl_->go_ready())
+    if (impl_->go_ready())
     {
         service_.notify(impl_);
     }
 }
 
-void TimedEvent::restart_timer(const std::chrono::steady_clock::time_point& timeout)
+void TimedEvent::restart_timer(
+        const std::chrono::steady_clock::time_point& timeout)
 {
-    if(impl_->go_ready())
+    if (impl_->go_ready())
     {
         service_.notify(impl_, timeout);
     }
 }
 
-bool TimedEvent::update_interval(const Duration_t& inter)
+bool TimedEvent::update_interval(
+        const Duration_t& inter)
 {
     return impl_->update_interval(inter);
 }
 
-bool TimedEvent::update_interval_millisec(double time_millisec)
+bool TimedEvent::update_interval_millisec(
+        double time_millisec)
 {
     return impl_->update_interval_millisec(time_millisec);
 }
@@ -88,6 +92,6 @@ double TimedEvent::getRemainingTimeMilliSec()
     return impl_->getRemainingTimeMilliSec();
 }
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

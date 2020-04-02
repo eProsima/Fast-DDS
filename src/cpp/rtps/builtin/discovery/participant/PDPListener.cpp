@@ -35,7 +35,7 @@
 
 #include <mutex>
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -98,7 +98,9 @@ void PDPListener::onNewCacheChangeAdded(
 
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
-        if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
+        temp_participant_data_.clear();
+        if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory(), 
+            parent_pdp_->getRTPSParticipant()->has_shm_transport()))
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;
@@ -127,6 +129,8 @@ void PDPListener::onNewCacheChangeAdded(
                     reader->getMutex().unlock();
                     lock.unlock();
 
+                    logInfo(RTPS_PDP_DISCOVERY, "New participant " << pdata->m_guid << " at " << "MTTLoc: " << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
+
                     parent_pdp_->announceParticipantState(false);
                     parent_pdp_->assignRemoteEndpoints(pdata);
                 }
@@ -137,6 +141,8 @@ void PDPListener::onNewCacheChangeAdded(
                 pdata->isAlive = true;
                 reader->getMutex().unlock();
                 lock.unlock();
+
+                logInfo(RTPS_PDP_DISCOVERY, "Update participant " << pdata->m_guid << " at " << "MTTLoc: " << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
 
                 if (parent_pdp_->updateInfoMatchesEDP())
                 {

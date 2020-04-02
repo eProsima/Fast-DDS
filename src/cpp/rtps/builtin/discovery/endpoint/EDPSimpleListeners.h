@@ -45,10 +45,17 @@ struct CacheChange_t;
 class EDPListener : public ReaderListener, public WriterListener
 {
 public:
+
     /**
      * @param change
      */
-    bool computeKey(CacheChange_t* change);
+    bool computeKey(
+            CacheChange_t* change);
+
+protected:
+
+    //! returns true if loading info from persistency database
+    static bool ongoingDeserialization(EDP* edp);
 };
 
 /**
@@ -58,10 +65,14 @@ public:
 class EDPBasePUBListener : public EDPListener
 {
 public:
-    EDPBasePUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation)
+
+    EDPBasePUBListener(
+            const RemoteLocatorsAllocationAttributes& locators_allocation,
+            const VariableLengthDataLimits& data_limits)
         : temp_writer_data_(
             locators_allocation.max_unicast_locators,
-            locators_allocation.max_multicast_locators)
+            locators_allocation.max_multicast_locators,
+            data_limits)
     {
     }
 
@@ -71,6 +82,7 @@ protected:
 
     void add_writer_from_change(
             RTPSReader* reader,
+            ReaderHistory* reader_history,
             CacheChange_t* change,
             EDP* edp);
 
@@ -85,10 +97,14 @@ protected:
 class EDPBaseSUBListener : public EDPListener
 {
 public:
-    EDPBaseSUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation)
+
+    EDPBaseSUBListener(
+            const RemoteLocatorsAllocationAttributes& locators_allocation,
+            const VariableLengthDataLimits& data_limits)
         : temp_reader_data_(
             locators_allocation.max_unicast_locators,
-            locators_allocation.max_multicast_locators)
+            locators_allocation.max_multicast_locators,
+            data_limits)
     {
     }
 
@@ -98,6 +114,7 @@ protected:
 
     void add_reader_from_change(
         RTPSReader* reader,
+        ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp);
 
@@ -111,43 +128,46 @@ protected:
  */
 class EDPSimplePUBListener : public EDPBasePUBListener
 {
-    public:
+public:
 
-        /*!
-          Constructor
-         * @param sedp Pointer to the EDPSimple associated with this listener.
-         */
-        EDPSimplePUBListener(EDPSimple* sedp)
-            : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
-            , sedp_(sedp)
-        {}
+    /*!
+       Constructor
+     * @param sedp Pointer to the EDPSimple associated with this listener.
+     */
+    EDPSimplePUBListener(
+            EDPSimple* sedp)
+        : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
+                sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
+        , sedp_(sedp)
+    {
+    }
 
-        virtual ~EDPSimplePUBListener() = default;
+    virtual ~EDPSimplePUBListener() = default;
 
-        /**
-         * Virtual method,
-         * @param reader
-         * @param change
-         */
-        void onNewCacheChangeAdded(
-                RTPSReader* reader,
-                const CacheChange_t* const  change) override;
+    /**
+     * Virtual method,
+     * @param reader
+     * @param change
+     */
+    void onNewCacheChangeAdded(
+            RTPSReader* reader,
+            const CacheChange_t* const change) override;
 
 
-        /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache
-         * change has been received.
-         * @param writer Pointer to the RTPSWriter.
-         * @param change Pointer to the affected CacheChange_t.
-         */
-        void onWriterChangeReceivedByAll(
-                RTPSWriter* writer,
-                CacheChange_t* change) override;
+    /*!
+     * This method is called when all the readers matched with this Writer acknowledge that a cache
+     * change has been received.
+     * @param writer Pointer to the RTPSWriter.
+     * @param change Pointer to the affected CacheChange_t.
+     */
+    void onWriterChangeReceivedByAll(
+            RTPSWriter* writer,
+            CacheChange_t* change) override;
 
-    protected:
+protected:
 
-        //!Pointer to the EDPSimple
-        EDPSimple* sedp_;
+    //!Pointer to the EDPSimple
+    EDPSimple* sedp_;
 };
 
 /*!
@@ -156,42 +176,44 @@ class EDPSimplePUBListener : public EDPBasePUBListener
  */
 class EDPSimpleSUBListener : public EDPBaseSUBListener
 {
-    public:
+public:
 
-        /*!
-          Constructor
-         * @param sedp Pointer to the EDPSimple associated with this listener.
-         */
-        EDPSimpleSUBListener(EDPSimple* sedp)
-            : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
-            , sedp_(sedp)
-        {
-        }
+    /*!
+       Constructor
+     * @param sedp Pointer to the EDPSimple associated with this listener.
+     */
+    EDPSimpleSUBListener(
+            EDPSimple* sedp)
+        : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
+                sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
+        , sedp_(sedp)
+    {
+    }
 
-        virtual ~EDPSimpleSUBListener() = default;
+    virtual ~EDPSimpleSUBListener() = default;
 
-        /**
-         * @param reader
-         * @param change
-         */
-        void onNewCacheChangeAdded(
-                RTPSReader* reader,
-                const CacheChange_t* const change) override;
+    /**
+     * @param reader
+     * @param change
+     */
+    void onNewCacheChangeAdded(
+            RTPSReader* reader,
+            const CacheChange_t* const change) override;
 
-        /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache
-         * change has been received.
-         * @param writer Pointer to the RTPSWriter.
-         * @param change Pointer to the affected CacheChange_t.
-         */
-        void onWriterChangeReceivedByAll(
-                RTPSWriter* writer,
-                CacheChange_t* change) override;
+    /*!
+     * This method is called when all the readers matched with this Writer acknowledge that a cache
+     * change has been received.
+     * @param writer Pointer to the RTPSWriter.
+     * @param change Pointer to the affected CacheChange_t.
+     */
+    void onWriterChangeReceivedByAll(
+            RTPSWriter* writer,
+            CacheChange_t* change) override;
 
-    private:
+private:
 
-        //!Pointer to the EDPSimple
-        EDPSimple* sedp_;
+    //!Pointer to the EDPSimple
+    EDPSimple* sedp_;
 };
 
 } /* namespace rtps */

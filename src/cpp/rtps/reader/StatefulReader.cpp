@@ -20,7 +20,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/WriterProxy.h>
@@ -30,6 +30,8 @@
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
+
+#include "rtps/RTPSDomainImpl.hpp"
 
 #include <mutex>
 #include <thread>
@@ -97,15 +99,20 @@ bool StatefulReader::matched_writer_add(
         return false;
     }
 
+    bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+
     for (WriterProxy* it : matched_writers_)
     {
         if (it->guid() == wdata.guid())
         {
             logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
             it->update(wdata);
-            for (const Locator_t& locator : it->remote_locators_shrinked())
+            if (!is_same_process)
             {
-                getRTPSParticipant()->createSenderResources(locator);
+                for (const Locator_t& locator : it->remote_locators_shrinked())
+                {
+                    getRTPSParticipant()->createSenderResources(locator);
+                }
             }
             return false;
         }
@@ -134,9 +141,12 @@ bool StatefulReader::matched_writer_add(
         matched_writers_pool_.pop_back();
     }
 
-    for (const Locator_t& locator : wp->remote_locators_shrinked())
+    if (!is_same_process)
     {
-        getRTPSParticipant()->createSenderResources(locator);
+        for (const Locator_t& locator : wp->remote_locators_shrinked())
+        {
+            getRTPSParticipant()->createSenderResources(locator);
+        }
     }
 
     SequenceNumber_t initial_sequence;
@@ -204,7 +214,7 @@ bool StatefulReader::matched_writer_remove(
 
                 wproxy = *it;
                 matched_writers_.erase(it);
-                remove_persistence_guid(wproxy->guid(), wproxy->attributes().persistence_guid());
+                remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid());
                 break;
             }
         }
@@ -301,7 +311,7 @@ bool StatefulReader::processDataMsg(
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                    pWP->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 auto wlp = this->mp_RTPSParticipant->wlp();
                 if (wlp != nullptr)
@@ -367,9 +377,10 @@ bool StatefulReader::processDataMsg(
                 releaseCache(change_to_add);
             }
         }
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::processDataFragMsg(
@@ -394,7 +405,7 @@ bool StatefulReader::processDataFragMsg(
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                    pWP->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 auto wlp = this->mp_RTPSParticipant->wlp();
                 if ( wlp != nullptr)
@@ -529,7 +540,7 @@ bool StatefulReader::processHeartbeatMsg(
                 if (liveliness_lease_duration_ < c_TimeInfinite)
                 {
                     if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                            writer->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                            writer->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
                     {
                         auto wlp = this->mp_RTPSParticipant->wlp();
                         if ( wlp != nullptr)
@@ -550,9 +561,10 @@ bool StatefulReader::processHeartbeatMsg(
             // Maybe now we have to notify user from new CacheChanges.
             NotifyChanges(writer);
         }
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::processGapMsg(
@@ -610,9 +622,11 @@ bool StatefulReader::processGapMsg(
 
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::acceptMsgFrom(
@@ -701,6 +715,7 @@ bool StatefulReader::change_received(
                 {
                     if (mp_history->received_change(a_change, 0))
                     {
+                        Time_t::now(a_change->receptionTimestamp);
                         update_last_notified(a_change->writerGUID, a_change->sequenceNumber);
                         if (getListener() != nullptr)
                         {
@@ -723,6 +738,7 @@ bool StatefulReader::change_received(
     // inside the call to mp_history->received_change
     if (mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
+        Time_t::now(a_change->receptionTimestamp);
         GUID_t proxGUID = prox->guid();
 
         // If KEEP_LAST and history full, make older changes as lost.
@@ -951,7 +967,7 @@ void StatefulReader::send_acknack(
         bool is_final)
 {
 
-    std::lock_guard<RecursiveTimedMutex> guard_reader(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     if (!writer->is_alive())
     {
@@ -963,8 +979,25 @@ void StatefulReader::send_acknack(
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    RTPSMessageGroup group(getRTPSParticipant(), this, sender);
-    group.add_acknack(sns, acknack_count_, is_final);
+    if (!writer->is_on_same_process())
+    {
+        RTPSMessageGroup group(getRTPSParticipant(), this, sender);
+        group.add_acknack(sns, acknack_count_, is_final);
+    }
+    else
+    {
+        GUID_t reader_guid = m_guid;
+        uint32_t acknack_count = acknack_count_;
+        lock.unlock(); //For local writers only call when initial ack, and we have to avoid deadlock with common
+                       //calls writer -> reader
+        RTPSWriter* writer_ptr = RTPSDomainImpl::find_local_writer(writer->guid());
+
+        if (writer_ptr)
+        {
+            bool result;
+            writer_ptr->process_acknack(writer->guid(), reader_guid, acknack_count, sns, is_final, result);
+        }
+    }
 }
 
 void StatefulReader::send_acknack(
@@ -1015,7 +1048,7 @@ void StatefulReader::send_acknack(
                     FragmentNumberSet_t frag_sns;
                     uncomplete_change->get_missing_fragments(frag_sns);
                     ++nackfrag_count_;
-                    logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns; );
+                    logInfo(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
 
                     group.add_nackfrag(seq, frag_sns, nackfrag_count_);
                 }
@@ -1037,8 +1070,9 @@ void StatefulReader::send_acknack(
 
 bool StatefulReader::send_sync_nts(
         CDRMessage_t* message,
-        const Locator_t& locator,
+        const Locators& locators_begin,
+        const Locators& locators_end,
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    return mp_RTPSParticipant->sendSync(message, locator, max_blocking_time_point);
+    return mp_RTPSParticipant->sendSync(message, locators_begin, locators_end, max_blocking_time_point);
 }

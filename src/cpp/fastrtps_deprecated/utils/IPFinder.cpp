@@ -21,6 +21,7 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #if defined(_WIN32)
+#pragma comment(lib, "Iphlpapi.lib")
 #include <stdio.h>
 #include <winsock2.h>
 #include <iphlpapi.h>
@@ -38,6 +39,8 @@
 #include <net/if.h>
 #endif
 
+#include <cstddef>
+#include <cstring>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -105,11 +108,6 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                     {
                         parseIP6(info);
                     }
-                    if (info.type == IP6 || info.type == IP6_LOCAL)
-                    {
-                        sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
-                        info.scope_id = so->sin6_scope_id;
-                    }
 
                     if(return_loopback || (info.type != IP6_LOCAL && info.type != IP4_LOCAL))
                     {
@@ -173,15 +171,12 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                 freeifaddrs(ifaddr);
                 exit(EXIT_FAILURE);
             }
-            struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
             info_IP info;
             info.type = IP6;
             info.name = std::string(host);
             info.dev = std::string(ifa->ifa_name);
             if(parseIP6(info))
             {
-                info.scope_id = so->sin6_scope_id;
-
                 if (return_loopback || info.type != IP6_LOCAL)
                     vec_name->push_back(info);
             }

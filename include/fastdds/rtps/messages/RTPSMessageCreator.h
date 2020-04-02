@@ -51,15 +51,8 @@ class RTPSMessageCreator
 {
     public:
 
-        RTPSMessageCreator();
-        virtual ~RTPSMessageCreator();
-
-        //!
-        CDRMessage_t rtpsmc_submsgElem;
-        //!
-        CDRMessage_t rtpsmc_submsgHeader;
-
-
+        RTPSMessageCreator() = delete;
+        ~RTPSMessageCreator() = delete;
 
         /**
          * Create a Header to the serialized message.
@@ -111,8 +104,10 @@ class RTPSMessageCreator
 
         static bool addMessageData(CDRMessage_t* msg, GuidPrefix_t& guidprefix, const CacheChange_t* change,
                 TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, InlineQosWriter* inlineQos);
+
         static bool addSubmessageData(CDRMessage_t* msg, const CacheChange_t* change,
-                TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, InlineQosWriter* inlineQos);
+                TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, InlineQosWriter* inlineQos, 
+                bool* is_big_submessage);
 
         static bool addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& guidprefix, const CacheChange_t* change, uint32_t fragment_number,
                 TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, InlineQosWriter* inlineQos);

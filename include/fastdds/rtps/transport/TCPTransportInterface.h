@@ -172,6 +172,15 @@ protected:
      */
     std::string get_password() const;
 
+    /**
+     * Send a buffer to a destination
+     */
+    bool send(
+            const fastrtps::rtps::octet* send_buffer,
+            uint32_t send_buffer_size,
+            std::shared_ptr<TCPChannelResource>& channel,
+            const fastrtps::rtps::Locator_t& remote_locator);
+
 public:
     friend class RTCPMessageManager;
 
@@ -232,7 +241,7 @@ public:
     virtual bool IsLocatorSupported(const fastrtps::rtps::Locator_t&) const override;
 
     //! Checks whether there are open and bound sockets for the given port.
-    bool is_output_channel_open_for(const fastrtps::rtps::Locator_t&) const ;
+    bool is_output_channel_open_for(const fastrtps::rtps::Locator_t&) const;
 
     /** Opens an input channel to receive incomming connections.
     *   If there is an existing channel it registers the receiver resource.
@@ -292,13 +301,17 @@ public:
     * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
     * It must not exceed the send_buffer_size fed to this class during construction.
     * @param channel channel we're sending from.
-    * @param remote_locator Locator describing the remote destination we're sending to.
+    * @param destination_locators_begin pointer to destination locators iterator begin, the iterator can be advanced inside this fuction
+    * so should not be reuse.
+    * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
+    * so should not be reuse.
     */
     bool send(
         const fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
         std::shared_ptr<TCPChannelResource>& channel,
-        const fastrtps::rtps::Locator_t& remote_locator);
+        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end);
 
     /**
      * Performs the locator selection algorithm for this transport.
@@ -370,6 +383,11 @@ public:
     virtual bool fillUnicastLocator(
         fastrtps::rtps::Locator_t &locator,
         uint32_t well_known_port) const override;
+
+    virtual uint32_t max_recv_buffer_size() const override
+    {
+        return configuration()->maxMessageSize;
+    }
 
     void DeleteSocket(TCPChannelResource *channelResource);
 

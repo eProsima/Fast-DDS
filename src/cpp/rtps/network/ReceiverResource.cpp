@@ -15,7 +15,7 @@
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <cassert>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
 
@@ -26,16 +26,19 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator, uint32_t max_size)
+ReceiverResource::ReceiverResource(
+			TransportInterface& transport,
+			const Locator_t& locator,
+			uint32_t max_recv_buffer_size)
         : Cleanup(nullptr)
         , LocatorMapsToManagedChannel(nullptr)
         , mValid(false)
         , mtx()
         , receiver(nullptr)
-        , msg(0)
+        , max_message_size_(max_recv_buffer_size)
 {
     // Internal channel is opened and assigned to this resource.
-    mValid = transport.OpenInputChannel(locator, this, max_size);
+    mValid = transport.OpenInputChannel(locator, this, max_message_size_);
     if (!mValid)
     {
         return; // Invalid resource to be discarded by the factory.
@@ -55,7 +58,7 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
     rValueResource.receiver = nullptr;
     mValid = rValueResource.mValid;
     rValueResource.mValid = false;
-    msg = std::move(rValueResource.msg);
+    max_message_size_ = rValueResource.max_message_size_;
 }
 
 bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
@@ -91,10 +94,12 @@ void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
 
     if (rcv != nullptr)
     {
+        CDRMessage_t msg(0);
         msg.wraps = true;
         msg.buffer = const_cast<octet*>(data);
         msg.length = size;
         msg.max_size = size;
+        msg.reserved_size = size;
 
         // TODO: Should we unlock in case UnregisterReceiver is called from callback ?
         rcv->processCDRMsg(remoteLocator, &msg);

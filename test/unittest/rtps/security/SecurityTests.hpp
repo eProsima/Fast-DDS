@@ -124,7 +124,8 @@ class SecurityTest : public ::testing::Test
         crypto_plugin_(new MockCryptographyPlugin()),
         stateless_writer_(nullptr), stateless_reader_(nullptr),
         volatile_writer_(nullptr), volatile_reader_(nullptr),
-        manager_(&participant_), participant_data_(c_default_RTPSParticipantAllocationAttributes) {}
+        manager_(&participant_), participant_data_(c_default_RTPSParticipantAllocationAttributes),
+        default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE){}
 
         ~SecurityTest()
         {

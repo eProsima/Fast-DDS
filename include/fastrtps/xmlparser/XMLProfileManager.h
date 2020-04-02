@@ -40,6 +40,10 @@ using subscriber_map_t = std::map<std::string, up_subscriber_t>;
 using subs_map_iterator_t = subscriber_map_t::iterator;
 using topic_map_t = std::map<std::string, up_topic_t>;
 using topic_map_iterator_t = topic_map_t::iterator;
+using requester_map_t = std::map<std::string, up_requester_t>;
+using requester_map_iterator_t = requester_map_t::iterator;
+using replier_map_t = std::map<std::string, up_replier_t>;
+using replier_map_iterator_t = replier_map_t::iterator;
 using xmlfiles_map_t = std::map<std::string, XMLP_ret>;
 using xmlfile_map_iterator_t = xmlfiles_map_t::iterator;
 
@@ -89,6 +93,19 @@ public:
      */
     RTPS_DllAPI static XMLP_ret loadXMLDynamicTypes(
             tinyxml2::XMLElement& types);
+
+    /**
+     * Library settings setter.
+     * @param library_settings New value for library settings.
+     */
+    RTPS_DllAPI static void library_settings(
+            const LibrarySettingsAttributes& library_settings);
+
+    /**
+     * Library settings getter.
+     * @return const ref to current library settings.
+     */
+    RTPS_DllAPI static const LibrarySettingsAttributes& library_settings();
 
     /**
      * Search for the profile specified and fill the structure.
@@ -170,6 +187,27 @@ public:
     RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(
             const std::string& type_name);
 
+
+    /**
+     * Search for the profile specified and fill the structure.
+     * @param profile_name Name for the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret fillRequesterAttributes(
+            const std::string& profile_name,
+            RequesterAttributes& atts);
+
+    /**
+     * Search for the profile specified and fill the structure.
+     * @param profile_name Name for the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret fillReplierAttributes(
+            const std::string& profile_name,
+            ReplierAttributes& atts);
+
     /**
      * Deletes the XMLProsileManager instance.
      * FastRTPS's Domain calls this method automatically on its destructor, but
@@ -235,7 +273,17 @@ private:
             up_base_node_t& profile,
             const std::string& filename);
 
+    RTPS_DllAPI static XMLP_ret extractRequesterProfile(
+            up_base_node_t& profile,
+            const std::string& filename);
+
+    RTPS_DllAPI static XMLP_ret extractReplierProfile(
+            up_base_node_t& profile,
+            const std::string& filename);
+
     static BaseNode* root;
+
+    static LibrarySettingsAttributes library_settings_;
 
     static participant_map_t participant_profiles_;
 
@@ -244,6 +292,10 @@ private:
     static subscriber_map_t subscriber_profiles_;
 
     static topic_map_t topic_profiles_;
+
+    static requester_map_t requester_profiles_;
+
+    static replier_map_t replier_profiles_;
 
     static xmlfiles_map_t xml_files_;
 

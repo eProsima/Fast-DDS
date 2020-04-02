@@ -19,7 +19,7 @@
 #include <fastdds/rtps/transport/tcp/RTCPHeader.h>
 #include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <fastdds/rtps/transport/TCPChannelResource.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 #include <fastdds/rtps/transport/TCPTransportInterface.h>
@@ -138,7 +138,7 @@ bool RTCPMessageManager::sendData(
 
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
-    CDRMessage_t msg;
+    CDRMessage_t msg(this->mTransport->get_configuration()->max_message_size());
     fastrtps::rtps::CDRMessage::initCDRMsg(&msg);
     const ResponseCode* code = (respCode != RETCODE_VOID) ? &respCode : nullptr;
 

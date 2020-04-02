@@ -302,6 +302,7 @@ public:
         total_msgs_ = msgs;
         number_samples_expected_ = total_msgs_.size();
         current_received_count_ = 0;
+        last_seq = eprosima::fastrtps::rtps::SequenceNumber_t();
         mutex_.unlock();
 
         bool ret = false;
@@ -417,14 +418,14 @@ public:
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ == times; });
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ >= times; });
     }
 
     void wait_liveliness_lost(unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&](){ return times_liveliness_lost_ == times; });
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_lost_ >= times; });
     }
 
 #if HAVE_SECURITY
@@ -460,6 +461,12 @@ public:
     PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
     {
         subscriber_attr_.qos.m_reliability.kind = kind;
+        return *this;
+    }
+
+    PubSubReader& mem_policy(const eprosima::fastrtps::rtps::MemoryManagementPolicy mem_policy)
+    {
+        subscriber_attr_.historyMemoryPolicy = mem_policy;
         return *this;
     }
 
@@ -565,6 +572,18 @@ public:
         return *this;
     }
 
+    PubSubReader& resource_limits_max_instances(const int32_t max)
+    {
+        subscriber_attr_.topic.resourceLimitsQos.max_instances = max;
+        return *this;
+    }
+
+    PubSubReader& resource_limits_max_samples_per_instance(const int32_t max)
+    {
+        subscriber_attr_.topic.resourceLimitsQos.max_samples_per_instance = max;
+        return *this;
+    }
+
     PubSubReader& matched_writers_allocation(size_t initial, size_t maximum)
     {
         subscriber_attr_.matched_publisher_allocation.initial = initial;
@@ -652,6 +671,12 @@ public:
     PubSubReader& initial_peers(eprosima::fastrtps::rtps::LocatorList_t initial_peers)
     {
         participant_attr_.rtps.builtin.initialPeersList = initial_peers;
+        return *this;
+    }
+
+    PubSubReader& socket_buffer_size(uint32_t sockerBufferSize)
+    {
+        participant_attr_.rtps.listenSocketBufferSize = sockerBufferSize;
         return *this;
     }
 

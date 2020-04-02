@@ -14,7 +14,7 @@
 
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include "idl/TypesTypeObject.h"
 #include "idl/WideEnumTypeObject.h"
 #include <gtest/gtest.h>
@@ -33,7 +33,7 @@ class XTypesTests: public ::testing::Test
         ~XTypesTests()
         {
             TypeObjectFactory::delete_instance();
-            Log::KillThread();
+            eprosima::fastdds::dds::Log::KillThread();
         }
 
         virtual void TearDown()
@@ -733,7 +733,7 @@ TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
 
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -50,6 +50,42 @@ struct RemoteLocatorsAllocationAttributes
 };
 
 /**
+ * @brief Holds limits for send buffers allocations.
+ */
+struct SendBuffersAllocationAttributes
+{
+    /** Initial number of send buffers to allocate.
+     *
+     * This attribute controls the initial number of send buffers to be allocated.
+     * The default value of 0 will perform an initial guess of the number of buffers
+     * required, based on the number of threads from which a send operation could be
+     * started.
+     */
+    size_t preallocated_number = 0u;
+
+    /** Whether the number of send buffers is allowed to grow.
+     *
+     * This attribute controls how the buffer manager behaves when a send buffer is not
+     * available. When true, a new buffer will be created. When false, it will wait for a
+     * buffer to be returned. This is a tradeoff between latency and dynamic allocations.
+     */
+    bool dynamic = false;
+};
+
+/**
+ * @brief Holds limits for variable-length data.
+ */
+struct VariableLengthDataLimits
+{
+    //! Defines the maximum size (in octets) of properties data in the local or remote participant
+    size_t max_properties = 0;
+    //! Defines the maximum size (in octets) of user data in the local or remote participant
+    size_t max_user_data = 0;
+    //! Defines the maximum size (in octets) of partitions data
+    size_t max_partitions = 0;
+};
+
+/**
  * @brief Holds allocation limits affecting collections managed by a participant.
  */
 struct RTPSParticipantAllocationAttributes
@@ -62,6 +98,10 @@ struct RTPSParticipantAllocationAttributes
     ResourceLimitedContainerConfig readers;
     //! Defines the allocation behaviour for collections dependent on the total number of writers per participant.
     ResourceLimitedContainerConfig writers;
+    //! Defines the allocation behaviour for the send buffer manager.
+    SendBuffersAllocationAttributes send_buffers;
+    //! Holds limits for variable-length data
+    VariableLengthDataLimits data_limits;
 
     //! @return the allocation config for the total of readers in the system (participants * readers)
     ResourceLimitedContainerConfig total_readers() const
@@ -76,7 +116,9 @@ struct RTPSParticipantAllocationAttributes
     }
 
 private:
-    ResourceLimitedContainerConfig total_endpoints(const ResourceLimitedContainerConfig& endpoints) const
+
+    ResourceLimitedContainerConfig total_endpoints(
+            const ResourceLimitedContainerConfig& endpoints) const
     {
         constexpr size_t max = std::numeric_limits<size_t>::max();
         size_t initial;
@@ -85,15 +127,16 @@ private:
 
         initial = participants.initial * endpoints.initial;
         maximum = (participants.maximum == max || endpoints.maximum == max)
-            ? max : participants.maximum * endpoints.maximum;
+                ? max : participants.maximum * endpoints.maximum;
         increment = std::max(participants.increment, endpoints.increment);
 
         return { initial, maximum, increment };
     }
+
 };
 
 const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAttributes
-        = RTPSParticipantAllocationAttributes();
+    = RTPSParticipantAllocationAttributes();
 
 } /* namespace rtps */
 } /* namespace fastrtps */
