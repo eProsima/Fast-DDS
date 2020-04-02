@@ -36,6 +36,7 @@ class Authentication;
 class SecurityException;
 struct ParticipantSecurityAttributes;
 struct EndpointSecurityAttributes;
+class Logging;
 
 class AccessControl
 {
@@ -152,6 +153,16 @@ public:
             const std::vector<std::string>& partitions,
             EndpointSecurityAttributes& attributes,
             SecurityException& exception) = 0;
+
+    bool set_logger(Logging* logger, SecurityException& /*exception*/) { logger_ = logger; return true; }
+
+protected:
+
+    const Logging* get_logger() { return logger_; }
+
+private:
+
+    Logging* logger_ = nullptr;
 };
 
 } //namespace security

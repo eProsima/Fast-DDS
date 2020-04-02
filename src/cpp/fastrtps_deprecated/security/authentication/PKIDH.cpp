@@ -19,6 +19,7 @@
 #include <fastrtps_deprecated/security/authentication/PKIDH.h>
 #include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
 #include <fastrtps/log/Log.h>
+#include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
@@ -1102,6 +1103,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (PropertyPolicyHelper::length(auth_properties) == 0)
     {
         exception = _SecurityException_("Not found any dds.sec.auth.builtin.PKI-DH property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1110,6 +1112,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (identity_ca == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.identity_ca property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1118,6 +1121,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (identity_cert == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.identity_certificate property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1128,6 +1132,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (private_key == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.private_key property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1161,6 +1166,7 @@ ValidationResult_t PKIDH::validate_local_identity(
             else
             {
                 delete ih;
+                EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
                 return ValidationResult_t::VALIDATION_FAILED;
             }
         }
@@ -1215,6 +1221,8 @@ ValidationResult_t PKIDH::validate_local_identity(
             }
         }
     }
+
+    EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
 
     delete ih;
 

@@ -20,6 +20,7 @@
 #include <fastrtps_deprecated/security/authentication/PKIDH.h>
 #include <fastrtps_deprecated/security/accesscontrol/Permissions.h>
 #include <fastrtps_deprecated/security/cryptography/AESGCMGMAC.h>
+#include <fastrtps_deprecated/security/logging/LogTopic.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
@@ -70,6 +71,23 @@ Cryptography* SecurityPluginFactory::create_cryptography_plugin(const PropertyPo
         if(crypto_plugin_property->compare("builtin.AES-GCM-GMAC") == 0)
         {
             plugin = new AESGCMGMAC();
+        }
+    }
+
+    return plugin;
+}
+
+Logging* SecurityPluginFactory::create_logging_plugin(const PropertyPolicy& property_policy)
+{
+    Logging* plugin = nullptr;
+    const std::string* logging_plugin_property = PropertyPolicyHelper::find_property(property_policy,
+            "dds.sec.log.plugin");
+
+    if(logging_plugin_property != nullptr)
+    {
+        if(logging_plugin_property->compare("builtin.DDS_LogTopic") == 0)
+        {
+            plugin = new LogTopic();
         }
     }
 

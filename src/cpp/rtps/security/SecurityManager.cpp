@@ -85,6 +85,7 @@ SecurityManager::SecurityManager(RTPSParticipantImpl *participant)
     , participant_volatile_message_secure_writer_history_(nullptr)
     , participant_volatile_message_secure_reader_(nullptr)
     , participant_volatile_message_secure_reader_history_(nullptr)
+    , logging_plugin_(nullptr)
     , authentication_plugin_(nullptr)
     , access_plugin_(nullptr)
     , crypto_plugin_(nullptr)
@@ -123,12 +124,93 @@ bool SecurityManager::init(
     security_activated = false;
 
     SecurityException exception;
+
     domain_id_ = participant_->getRTPSParticipantAttributes().builtin.domainId;
+
+    const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
+          participant_->getRTPSParticipantAttributes().properties,
+          "dds.sec.log.builtin.DDS_LogTopic.");
+
+    // length(log_properties) == 0 considered as logging disable.
+    if (PropertyPolicyHelper::length(log_properties) > 0)
+    {
+      logging_plugin_ = factory_.create_logging_plugin(participant_properties);
+
+      if (logging_plugin_ != nullptr)
+      {
+        LogOptions log_options;
+        log_options.distribute = false;
+        log_options.log_level = LoggingLevel::ERROR_LEVEL;
+        log_options.log_file = "";
+
+        const auto init_logging_fail = [this](SecurityException& exception){
+          logError(SECURITY, "Logging plugin not configured. Security logging will be disabled. ("
+                   << exception.what() << ").");
+          delete logging_plugin_;
+          logging_plugin_ = nullptr;
+          return false;
+        };
+
+        const std::string* const distribute = PropertyPolicyHelper::find_property(log_properties, "distribute");
+        if (distribute != nullptr)
+        {
+          if (!distribute->compare("true") || !distribute->compare("1"))
+          {
+            log_options.distribute = true;
+          }
+          else if (!distribute->compare("false") || !distribute->compare("0"))
+          {
+            log_options.distribute = false;
+          }
+          else
+          {
+            exception = SecurityException("Unknown value '" + *distribute + "' for LogOptions::distribute.");
+            return init_logging_fail(exception);
+          }
+        }
+
+        const std::string* const log_level = PropertyPolicyHelper::find_property(log_properties, "logging_level");
+        if (log_level != nullptr)
+        {
+          if (!string_to_LogLevel(*log_level, log_options.log_level, exception))
+          {
+            return init_logging_fail(exception);
+          }
+        }
+
+        const std::string* const log_file = PropertyPolicyHelper::find_property(log_properties, "log_file");
+        if (log_file != nullptr)
+        {
+          log_options.log_file = *log_file;
+        }
+
+        if (!(logging_plugin_->set_guid(participant_->getGuid(), exception) &&
+              logging_plugin_->set_domain_id(domain_id_, exception)))
+        {
+          return init_logging_fail(exception);
+        }
+
+        if (!( logging_plugin_->set_log_options(log_options, exception) &&
+               logging_plugin_->enable_logging(exception) ))
+        {
+          return init_logging_fail(exception);
+        }
+      }
+      else
+      {
+        //TODO(artivis): If the factory fails instantiating 'authentication_plugin_',
+        // a logInfo is issued and this init function returns true. Is it a bug?
+        // in the meantime we'll adopt a similar behavior here.
+        logInfo(SECURITY, "Could not create logging plugin. Security logging will be disabled.");
+      }
+    }
 
     authentication_plugin_ = factory_.create_authentication_plugin(participant_properties);
 
     if (authentication_plugin_ != nullptr)
     {
+        authentication_plugin_->set_logger(logging_plugin_, exception);
+
         // Validate local participant
         GUID_t adjusted_participant_key;
         ValidationResult_t ret = VALIDATION_FAILED;
@@ -155,6 +237,8 @@ bool SecurityManager::init(
 
             if (access_plugin_ != nullptr)
             {
+                access_plugin_->set_logger(logging_plugin_, exception);
+
                 local_permissions_handle_ = access_plugin_->validate_local_permissions(
                         *authentication_plugin_, *local_identity_handle_,
                         domain_id_,
@@ -248,6 +332,8 @@ bool SecurityManager::init(
 
                 if (crypto_plugin_ != nullptr)
                 {
+                    crypto_plugin_->set_logger(logging_plugin_, exception);
+
                     local_participant_crypto_handle_ = crypto_plugin_->cryptokeyfactory()->register_local_participant(
                             *local_identity_handle_,
                             *local_permissions_handle_,
@@ -428,6 +514,12 @@ void SecurityManager::destroy()
             delete authentication_plugin_;
             authentication_plugin_ = nullptr;
         }
+    }
+
+    if (logging_plugin_ != nullptr)
+    {
+        delete logging_plugin_;
+        logging_plugin_ = nullptr;
     }
 }
 

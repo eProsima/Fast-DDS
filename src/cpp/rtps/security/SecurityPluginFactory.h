@@ -21,6 +21,7 @@
 #include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/security/accesscontrol/AccessControl.h>
 #include <fastdds/rtps/security/cryptography/Cryptography.h>
+#include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
@@ -49,6 +50,14 @@ class SecurityPluginFactory
          * @param Pointer to the new Cryptographic plugin. In case of error nullptr will be returned.
          */
         Cryptography* create_cryptography_plugin(const PropertyPolicy& property_policy);
+
+        /**
+         * @brief Create a loggin plugin described in the PropertyPolicy.
+         * @param property_policy PropertyPolicy containing the definition of the Logging
+         * plugin that has to be created.
+         * @return Pointer to the new Logging plugin. In case of error nullptr will be returned.
+         */
+        Logging* create_logging_plugin(const PropertyPolicy& property_policy);
 };
 
 } //namespace security
