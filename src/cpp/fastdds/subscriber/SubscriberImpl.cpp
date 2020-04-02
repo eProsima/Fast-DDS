@@ -46,6 +46,7 @@ SubscriberImpl::SubscriberImpl(
     , subscriber_listener_(this)
     , user_subscriber_(nullptr)
     , rtps_participant_(p->rtps_participant())
+    , default_datareader_qos_(DATAREADER_QOS_DEFAULT)
 {
 }
 
@@ -116,7 +117,7 @@ ReturnCode_t SubscriberImpl::set_listener(
 
 DataReader* SubscriberImpl::create_datareader(
         const fastrtps::TopicAttributes& topic_att,
-        const fastrtps::ReaderQos& reader_qos,
+        const DataReaderQos& qos,
         DataReaderListener* listener)
 {
     logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
@@ -136,17 +137,17 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    if (!reader_qos.checkQos() || !topic_att.checkQos())
+    if (!qos.check_qos() || !topic_att.checkQos())
     {
         return nullptr;
     }
 
     //TODO: Fix once the SubscriberAttributes are included in DataReaderQos
     ReaderAttributes ratt;
-    ratt.endpoint.durabilityKind = reader_qos.m_durability.durabilityKind();
+    ratt.endpoint.durabilityKind = qos.durability.durabilityKind();
     ratt.endpoint.endpointKind = READER;
     //ratt.endpoint.multicastLocatorList = qos_.subscriber_attr.multicastLocatorList;
-    ratt.endpoint.reliabilityKind = reader_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    ratt.endpoint.reliabilityKind = qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = topic_att.topicKind;
     //ratt.endpoint.unicastLocatorList = qos_.subscriber_attr.unicastLocatorList;
     //ratt.endpoint.remoteLocatorList = qos_.subscriber_attr.remoteLocatorList;
@@ -171,18 +172,18 @@ DataReader* SubscriberImpl::create_datareader(
     property.name("topic_name");
     property.value(topic_att.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
-    if (reader_qos.m_partition.names().size() > 0)
+    if (qos_.partition().names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for (auto partition : reader_qos.m_partition.names())
+        for (auto partition : qos_.partition().names())
         {
             partitions += partition + ";";
         }
         property.value(std::move(partitions));
         ratt.endpoint.properties.properties().push_back(std::move(property));
     }
-    if (reader_qos.m_disablePositiveACKs.enabled)
+    if (qos.disablePositiveACKs.enabled)
     {
         ratt.disable_positive_acks = true;
     }
@@ -192,7 +193,7 @@ DataReader* SubscriberImpl::create_datareader(
         type_support,
         topic_att,
         ratt,
-        reader_qos,
+        qos,
         //qos_.subscriber_attr.historyMemoryPolicy,
         fastrtps::rtps::MemoryManagementPolicy_t(),
         listener);
@@ -207,7 +208,8 @@ DataReader* SubscriberImpl::create_datareader(
     DataReader* reader = new DataReader(impl);
     impl->user_datareader_ = reader;
 
-    rtps_participant_->registerReader(impl->reader_, topic_att, reader_qos);
+    ReaderQos rqos = qos.get_readerqos(qos_);
+    rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
@@ -311,22 +313,22 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
  */
 
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
-        const fastrtps::ReaderQos& qos)
+        const DataReaderQos& qos)
 {
     if (&qos == &DATAREADER_QOS_DEFAULT)
     {
-        default_datareader_qos_.setQos(DATAREADER_QOS_DEFAULT, true);
+        default_datareader_qos_.set_qos(DATAREADER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (qos.checkQos())
+    else if (qos.check_qos())
     {
-        default_datareader_qos_.setQos(qos, true);
+        default_datareader_qos_.set_qos(qos, true);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const fastrtps::ReaderQos& SubscriberImpl::get_default_datareader_qos() const
+const DataReaderQos& SubscriberImpl::get_default_datareader_qos() const
 {
     return default_datareader_qos_;
 }
@@ -351,7 +353,7 @@ bool SubscriberImpl::contains_entity(
 
 /* TODO
    bool SubscriberImpl::copy_from_topic_qos(
-        fastrtps::ReaderQos&,
+        DataReaderQos&,
         const fastrtps::TopicAttributes&) const
    {
     logError(PUBLISHER, "Operation not implemented");

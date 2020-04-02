@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
 
-#include <fastrtps/qos/ReaderQos.h>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
@@ -72,7 +72,7 @@ class DataReaderImpl
             TypeSupport type,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
-            const fastrtps::ReaderQos& qos,
+            const DataReaderQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataReaderListener* listener = nullptr);
 
@@ -152,9 +152,9 @@ public:
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastrtps::ReaderQos& qos);
+            const DataReaderQos& qos);
 
-    const fastrtps::ReaderQos& get_qos() const;
+    const DataReaderQos& get_qos() const;
 
     bool set_topic(
             const fastrtps::TopicAttributes& att);
@@ -216,7 +216,7 @@ private:
     //!Attributes of the Subscriber
     fastrtps::rtps::ReaderAttributes att_;
 
-    fastrtps::ReaderQos qos_;
+    DataReaderQos qos_;
 
     //!History
     fastrtps::SubscriberHistory history_;

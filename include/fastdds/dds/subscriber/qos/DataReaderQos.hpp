@@ -20,7 +20,9 @@
 #ifndef _FASTDDS_DATAREADERQOS_HPP
 #define _FASTDDS_DATAREADERQOS_HPP
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
 
 namespace eprosima {
@@ -38,83 +40,115 @@ class DataReaderQos
 {
 public:
     //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
+    DurabilityQosPolicy durability;
 
     //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
+    DeadlineQosPolicy deadline;
 
     //!Latency Budget Qos, implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
+    LatencyBudgetQosPolicy latency_budget;
 
     //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
+    LivelinessQosPolicy liveliness;
 
     //!Reliability Qos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
+    ReliabilityQosPolicy reliability;
 
     //!Destination Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
+    DestinationOrderQosPolicy destination_order;
 
     //!History Qos, implemented in the library.
-    fastrtps::HistoryQosPolicy history;
+    HistoryQosPolicy history;
 
     //!Resource Limits Qos, implemented in the library.
-    fastrtps::ResourceLimitsQosPolicy resource_limits;
+    ResourceLimitsQosPolicy resource_limits;
 
     //!User Data Qos, NOT implemented in the library.
-    fastrtps::UserDataQosPolicy user_data;
+    UserDataQosPolicy user_data;
 
     //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
+    OwnershipQosPolicy ownership;
 
     //!Time Based Filter Qos, NOT implemented in the library.
-    fastrtps::TimeBasedFilterQosPolicy time_based_filter;
+    TimeBasedFilterQosPolicy time_based_filter;
 
     //!Reader Data Lifecycle Qos, NOT implemented in the library.
-    fastdds::dds::ReaderDataLifecycleQosPolicy reader_data_lifecycle;
+    ReaderDataLifecycleQosPolicy reader_data_lifecycle;
+
+
+    //!Lifespan Qos (Extension).
+    LifespanQosPolicy lifespan;
+
+    //!Topic Data Qos (Extension).
+    TopicDataQosPolicy topicData;
+
+    //!Durability Service Qos (Extension).
+    DurabilityServiceQosPolicy durabilityService;
+
+    //!Disable positive ACKs QoS (Extension)
+    DisablePositiveACKsQosPolicy disablePositiveACKs;
+
+    //!Type consistency enforcement Qos (Extension).
+    TypeConsistencyEnforcementQosPolicy type_consistency;
+
+    //!Data Representation Qos (Extension).
+    DataRepresentationQosPolicy representation;
 
     bool operator ==(
             const DataReaderQos& b) const
     {
-        return (this->durability == b.durability) &&
-               (this->deadline == b.deadline) &&
-               (this->latency_budget == b.latency_budget) &&
-               (this->liveliness == b.liveliness) &&
-               (this->reliability == b.reliability) &&
-               (this->destination_order == b.destination_order) &&
-               (this->history == b.history) &&
-               (this->resource_limits == b.resource_limits) &&
-               (this->user_data == b.user_data) &&
-               (this->ownership == b.ownership) &&
-               (this->time_based_filter == b.time_based_filter) &&
-               (this->reader_data_lifecycle == b.reader_data_lifecycle);
+        return (durability == b.durability) &&
+               (deadline == b.deadline) &&
+               (latency_budget == b.latency_budget) &&
+               (liveliness == b.liveliness) &&
+               (reliability == b.reliability) &&
+               (destination_order == b.destination_order) &&
+               (history == b.history) &&
+               (resource_limits == b.resource_limits) &&
+               (user_data == b.user_data) &&
+               (ownership == b.ownership) &&
+               (time_based_filter == b.time_based_filter) &&
+               (reader_data_lifecycle == b.reader_data_lifecycle) &&
+               (lifespan == b.lifespan) &&
+               (topicData == b.topicData) &&
+               (durabilityService == b.durabilityService) &&
+               (disablePositiveACKs == b.disablePositiveACKs) &&
+               (type_consistency == b.type_consistency) &&
+               (representation == b.representation);
     }
 
-    /* TODO: Implement this method
-     * Set Qos from another class
+
+    /* Set Qos from another class
      * @param qos Reference from a DataReaderQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-    RTPS_DllAPI void setQos(
+     */
+    RTPS_DllAPI void set_qos(
             const DataReaderQos& qos,
             bool first_time);
-    */
 
-    /* TODO: Implement this method
-     * Check if the Qos values are compatible between each other.
+
+    /* Check if the Qos values are compatible between each other.
      * @return True if correct.
-    RTPS_DllAPI bool checkQos() const;
-    */
+     */
+    RTPS_DllAPI bool check_qos() const;
 
-    /* TODO: Implement this method
-     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+
+    /* Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
-    RTPS_DllAPI bool canQosBeUpdated(
+     */
+    RTPS_DllAPI bool can_qos_be_updated(
             const DataReaderQos& qos) const;
-    */
+
+    RTPS_DllAPI ReaderQos get_readerqos(
+            const SubscriberQos& pqos) const;
+
+    RTPS_DllAPI void to_datareaderqos(
+            const ReaderQos& qos,
+            const SubscriberQos& pqos);
 };
 
-//extern const DataReaderQos DATAREADER_QOS_DEFAULT;
+extern const DataReaderQos DATAREADER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

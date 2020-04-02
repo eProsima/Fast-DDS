@@ -73,7 +73,7 @@ ReturnCode_t Subscriber::set_listener(
 
 DataReader* Subscriber::create_datareader(
         const fastrtps::TopicAttributes& topic_attr,
-        const fastrtps::ReaderQos& reader_qos,
+        const DataReaderQos& reader_qos,
         DataReaderListener* listener)
 {
     return impl_->create_datareader(topic_attr, reader_qos, listener);
@@ -129,18 +129,18 @@ bool Subscriber::delete_contained_entities()
 */
 
 ReturnCode_t Subscriber::set_default_datareader_qos(
-        const fastrtps::ReaderQos& qos)
+        const DataReaderQos& qos)
 {
     return impl_->set_default_datareader_qos(qos);
 }
 
-const fastrtps::ReaderQos& Subscriber::get_default_datareader_qos() const
+const DataReaderQos& Subscriber::get_default_datareader_qos() const
 {
     return impl_->get_default_datareader_qos();
 }
 
 ReturnCode_t Subscriber::get_default_datareader_qos(
-        fastrtps::ReaderQos& qos) const
+        DataReaderQos& qos) const
 {
     qos = impl_->get_default_datareader_qos();
     return ReturnCode_t::RETCODE_OK;
@@ -148,7 +148,7 @@ ReturnCode_t Subscriber::get_default_datareader_qos(
 
 /* TODO
 bool Subscriber::copy_from_topic_qos(
-        fastrtps::ReaderQos& reader_qos,
+        DataReaderQos& reader_qos,
         const fastrtps::TopicAttributes& topic_qos) const
 {
     return impl_->copy_from_topic_qos(reader_qos, topic_qos);

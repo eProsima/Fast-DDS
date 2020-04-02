@@ -101,9 +101,11 @@ public:
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
                         g_subscriber_attributes.topic.topicDataType = type_name;
+                        DataReaderQos qos;
+                        qos.to_datareaderqos(g_subscriber_attributes.qos, SUBSCRIBER_QOS_DEFAULT);
                         g_subscriber->create_datareader(
                             g_subscriber_attributes.topic,
-                            g_subscriber_attributes.qos,
+                            qos,
                             nullptr);
 
                         if (type == nullptr)

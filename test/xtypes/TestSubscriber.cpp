@@ -135,7 +135,9 @@ bool TestSubscriber::init(
             return false;
         }
 
-        reader_ = mp_subscriber->create_datareader(Rparam.topic, Rparam.qos, &m_subListener);
+        DataReaderQos drqos;
+        drqos.to_datareaderqos(Rparam.qos, SUBSCRIBER_QOS_DEFAULT);
+        reader_ = mp_subscriber->create_datareader(Rparam.topic, drqos, &m_subListener);
         m_Data = m_Type->createData();
     }
 
@@ -311,7 +313,10 @@ DataReader* TestSubscriber::create_datareader()
         }
     }
     topic_att.topicDataType = disc_type_->get_name();
-    return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
+    DataReaderQos drqos;
+    drqos.to_datareaderqos(reader_qos, SUBSCRIBER_QOS_DEFAULT);
+    return mp_subscriber->create_datareader(topic_att, drqos, &m_subListener);
+
 }
 
 void TestSubscriber::delete_datareader(
