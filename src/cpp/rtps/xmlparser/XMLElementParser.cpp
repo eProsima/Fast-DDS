@@ -188,9 +188,9 @@ XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
                 <xs:element name="dynamic" type="boolType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     uint32_t tmp;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
@@ -404,7 +404,6 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
         <xs:all minOccurs="0">
             <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
-            <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
@@ -432,14 +431,6 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
         {
             // use_WriterLivelinessProtocol - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.use_WriterLivelinessProtocol, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, DOMAIN_ID) == 0)
-        {
-            // domainId - uint32Type
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.domainId, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -2234,8 +2225,8 @@ XMLP_ret XMLParser::getXMLDuration(
         uint8_t ident)
 {
     /*
-    <xs:complexType name="durationType" mixed="true">
-      <xs:sequence>
+       <xs:complexType name="durationType" mixed="true">
+       <xs:sequence>
         <xs:choice minOccurs="0">
          <xs:sequence>
           <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="1" maxOccurs="1"/>
@@ -2246,8 +2237,8 @@ XMLP_ret XMLParser::getXMLDuration(
           <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" default="0" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
        </xs:choice>
-      </xs:sequence>
-    </xs:complexType>
+       </xs:sequence>
+       </xs:complexType>
      */
 
     // set default values
@@ -2268,10 +2259,10 @@ XMLP_ret XMLParser::getXMLDuration(
         empty = false;
         duration = c_TimeInfinite;
 
-        if(elem->FirstChildElement() != nullptr)
+        if (elem->FirstChildElement() != nullptr)
         {
             logError(XMLPARSER, "If a Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
-            " <nanosec> subelements.");
+                    " <nanosec> subelements.");
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -2360,10 +2351,10 @@ XMLP_ret XMLParser::getXMLDuration(
     }
 
     // An empty Duration_t xml is forbidden
-    if(empty)
+    if (empty)
     {
         logError(XMLPARSER, "'durationType' elements cannot be empty."
-            "At least second or nanoseconds should be provided");
+                "At least second or nanoseconds should be provided");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -3109,7 +3100,6 @@ XMLP_ret XMLParser::getXMLEnum(
     return XMLP_ret::XML_OK;
 }
 
-
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
         DiscoveryProtocol_t* e,
@@ -3378,7 +3368,10 @@ XMLP_ret XMLParser::getXMLguidPrefix(
 
 }
 
-XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, PublisherAttributes &publisher, uint8_t ident)
+XMLP_ret XMLParser::getXMLPublisherAttributes(
+        tinyxml2::XMLElement* elem,
+        PublisherAttributes& publisher,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="publisherProfileType">
@@ -3396,9 +3389,9 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, Publis
             </xs:all>
             <xs:attribute name="profile_name" type="stringType" use="required"/>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -3407,63 +3400,83 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, Publis
         {
             // topic
             if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, publisher.topic, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, QOS) == 0)
         {
             // qos
             if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux0, publisher.qos, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, TIMES) == 0)
         {
             // times
             if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux0, publisher.times, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, UNI_LOC_LIST) == 0)
         {
             // unicastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.unicastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MULTI_LOC_LIST) == 0)
         {
             // multicastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.multicastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, REM_LOC_LIST) == 0)
         {
             // remoteLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.remoteLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, THROUGHPUT_CONT) == 0)
         {
             // throughputController
             if (XMLP_ret::XML_OK !=
-                getXMLThroughputController(p_aux0, publisher.throughputController, ident))
+                    getXMLThroughputController(p_aux0, publisher.throughputController, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HIST_MEM_POLICY) == 0)
         {
             // historyMemoryPolicy
             if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, publisher.historyMemoryPolicy, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PROPERTIES_POLICY) == 0)
         {
             // propertiesPolicy
             if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, publisher.properties, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, USER_DEF_ID) == 0)
         {
             // userDefinedID - int16type
             int i = 0;
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             publisher.setUserDefinedID(static_cast<uint8_t>(i));
         }
         else if (strcmp(name, ENTITY_ID) == 0)
@@ -3471,14 +3484,19 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, Publis
             // entityID - int16Type
             int i = 0;
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             publisher.setEntityID(static_cast<uint8_t>(i));
         }
         else if (strcmp(name, MATCHED_SUBSCRIBERS_ALLOCATION) == 0)
         {
             // matchedSubscribersAllocation - containerAllocationConfigType
-            if(XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, publisher.matched_subscriber_allocation, ident))
+            if (XMLP_ret::XML_OK !=
+                    getXMLContainerAllocationConfig(p_aux0, publisher.matched_subscriber_allocation, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -3489,7 +3507,10 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, Publis
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLSubscriberAttributes(tinyxml2::XMLElement *elem, SubscriberAttributes &subscriber, uint8_t ident)
+XMLP_ret XMLParser::getXMLSubscriberAttributes(
+        tinyxml2::XMLElement* elem,
+        SubscriberAttributes& subscriber,
+        uint8_t ident)
 {
     /*
         <xs:complexType name="subscriberProfileType">
@@ -3507,9 +3528,9 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(tinyxml2::XMLElement *elem, Subsc
             </xs:all>
             <xs:attribute name="profile_name" type="stringType" use="required"/>
         </xs:complexType>
-    */
+     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -3574,9 +3595,9 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(tinyxml2::XMLElement *elem, Subsc
         {
             // historyMemoryPolicy
             if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(
-                    p_aux0,
-                    subscriber.historyMemoryPolicy,
-                    ident))
+                        p_aux0,
+                        subscriber.historyMemoryPolicy,
+                        ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -3613,9 +3634,9 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(tinyxml2::XMLElement *elem, Subsc
         {
             // matchedPublishersAllocation - containerAllocationConfigType
             if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(
-                    p_aux0,
-                    subscriber.matched_publisher_allocation,
-                    ident))
+                        p_aux0,
+                        subscriber.matched_publisher_allocation,
+                        ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

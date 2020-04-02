@@ -42,7 +42,6 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.setName("DynHelloWorld_sub");
     mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
     if (mp_participant == nullptr)
@@ -70,7 +69,7 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.topicDataType = "HelloWorld";
     Rparam.topic.topicName = "HelloWorldTopic";
 
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
 
     if (mp_subscriber == nullptr)
     {
@@ -114,11 +113,11 @@ void HelloWorldSubscriber::PartListener::onParticipantDiscovery(
     {
         std::cout << "Participant " << info.info.m_participantName << " discovered" << std::endl;
     }
-    else if(info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
         std::cout << "Participant " << info.info.m_participantName << " removed" << std::endl;
     }
-    else if(info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
     {
         std::cout << "Participant " << info.info.m_participantName << " dropped" << std::endl;
     }
@@ -142,7 +141,6 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(
         }
     }
 }
-
 
 void HelloWorldSubscriber::run()
 {

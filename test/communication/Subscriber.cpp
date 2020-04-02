@@ -44,7 +44,7 @@ bool Subscriber::init(
 {
     eprosima::fastrtps::ParticipantAttributes participant_attributes;
     eprosima::fastrtps::Domain::getDefaultParticipantAttributes(participant_attributes);
-    participant_attributes.rtps.builtin.domainId = seed % 230;
+    participant_attributes.domainId = seed % 230;
     participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attributes, this);
 
     if (nullptr == participant_)

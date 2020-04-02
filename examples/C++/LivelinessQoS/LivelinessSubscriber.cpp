@@ -42,11 +42,10 @@ bool LivelinessSubscriber::init(
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.use_WriterLivelinessProtocol = true;
     PParam.rtps.setName("Participant_sub");
     participant_ = Domain::createParticipant(PParam, &part_listener_);
-    if(participant_==nullptr)
+    if (participant_ == nullptr)
     {
         return false;
     }
@@ -64,7 +63,7 @@ bool LivelinessSubscriber::init(
     Rparam.qos.m_liveliness.announcement_period = Duration_t(liveliness_ms * 1e-3 * 0.5);
     Rparam.qos.m_liveliness.kind = kind;
     subscriber_ = Domain::createSubscriber(participant_, Rparam, &listener_);
-    if(subscriber_ == nullptr)
+    if (subscriber_ == nullptr)
     {
         return false;
     }
@@ -77,36 +76,39 @@ LivelinessSubscriber::~LivelinessSubscriber()
     Domain::removeParticipant(participant_);
 }
 
-void LivelinessSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void LivelinessSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
 }
 
-void LivelinessSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void LivelinessSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
-    if(sub->takeNextData((void*)&topic, &m_info))
+    if (sub->takeNextData((void*)&topic, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             this->n_samples++;
 
-            std::cout << "Message with index " << topic.index()<< " RECEIVED" << std::endl;
+            std::cout << "Message with index " << topic.index() << " RECEIVED" << std::endl;
         }
     }
 }
 
 void LivelinessSubscriber::SubListener::on_liveliness_changed(
-        Subscriber *sub,
-        const LivelinessChangedStatus &status)
+        Subscriber* sub,
+        const LivelinessChangedStatus& status)
 {
     (void)sub;
 
@@ -126,11 +128,12 @@ void LivelinessSubscriber::run()
     std::cin.ignore();
 }
 
-void LivelinessSubscriber::run(uint32_t number)
+void LivelinessSubscriber::run(
+        uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
+    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
 
-    while(number > this->listener_.n_samples)
+    while (number > this->listener_.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

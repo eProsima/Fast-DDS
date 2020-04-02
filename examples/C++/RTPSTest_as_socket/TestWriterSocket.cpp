@@ -56,7 +56,7 @@ bool TestWriterSocket::init(
     RTPSParticipantAttributes PParam;
     PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::NONE;
     PParam.builtin.use_WriterLivelinessProtocol = false;
-    mp_participant = RTPSDomain::createParticipant(PParam);
+    mp_participant = RTPSDomain::createParticipant(0, PParam);
     if (mp_participant == nullptr)
     {
         return false;
@@ -70,7 +70,7 @@ bool TestWriterSocket::init(
     //CREATE WRITER
     WriterAttributes watt;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
-    mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history);
+    mp_writer = RTPSDomain::createRTPSWriter(mp_participant, watt, mp_history);
     if (mp_writer == nullptr)
     {
         return false;
@@ -87,19 +87,22 @@ bool TestWriterSocket::init(
     return true;
 }
 
-void TestWriterSocket::run(uint16_t nmsgs)
+void TestWriterSocket::run(
+        uint16_t nmsgs)
 {
-    for(int i = 0;i<nmsgs;++i )
+    for (int i = 0; i < nmsgs; ++i )
     {
-        CacheChange_t * ch = mp_writer->new_change([]() -> uint32_t { return 255; }, ALIVE);
+        CacheChange_t* ch = mp_writer->new_change([]() -> uint32_t {
+            return 255;
+        }, ALIVE);
 #if defined(_WIN32)
         ch->serializedPayload.length =
-            sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
+                sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;
 #else
         ch->serializedPayload.length =
-            sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
+                sprintf((char*)ch->serializedPayload.data, "My example string %d", i) + 1;
 #endif
-        printf("Sending: %s\n",(char*)ch->serializedPayload.data);
+        printf("Sending: %s\n", (char*)ch->serializedPayload.data);
         mp_history->add_change(ch);
     }
 }

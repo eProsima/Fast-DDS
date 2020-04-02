@@ -72,13 +72,10 @@ bool TestPublisher::init(
     using_typelookup_ = use_typelookup;
 
     DomainParticipantQos pqos;
-    WireProtocolConfigQos wp = pqos.wire_protocol();
-    wp.builtin.domainId = domain;
-    wp.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    wp.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
-    wp.builtin.typelookup_config.use_client = using_typelookup_;
-    wp.builtin.typelookup_config.use_server = using_typelookup_;
-    pqos.wire_protocol(wp);
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    pqos.wire_protocol().builtin.typelookup_config.use_client = using_typelookup_;
+    pqos.wire_protocol().builtin.typelookup_config.use_server = using_typelookup_;
     pqos.name(m_Name.c_str());
 
     {

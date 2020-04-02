@@ -41,21 +41,17 @@ TypeLookupSubscriber::TypeLookupSubscriber()
 bool TypeLookupSubscriber::init()
 {
     DomainParticipantQos pqos;
-    WireProtocolConfigQos wp = pqos.wire_protocol();
-    wp.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    wp.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    wp.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    wp.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    wp.builtin.typelookup_config.use_client = true;
-    wp.builtin.use_WriterLivelinessProtocol = false;
-    wp.builtin.domainId = 0;
-    wp.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    pqos.wire_protocol(wp);
+    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = SIMPLE;
+    pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
+    pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
     pqos.name("Participant_sub");
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(wp.builtin.domainId, pqos,
-                        &m_listener);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener);
         if (mp_participant == nullptr)
         {
             return false;

@@ -154,6 +154,7 @@ public:
      * @param plisten
      */
     RTPSParticipantImpl(
+            uint32_t domain_id,
             const RTPSParticipantAttributes& param,
             const GuidPrefix_t& guidP,
             RTPSParticipant* part,
@@ -167,6 +168,7 @@ public:
      * @param plisten
      */
     RTPSParticipantImpl(
+            uint32_t domain_id,
             const RTPSParticipantAttributes& param,
             const GuidPrefix_t& guidP,
             const GuidPrefix_t& persistence_guid,
@@ -436,8 +438,12 @@ public:
     void return_send_buffer(
             std::unique_ptr <RTPSMessageGroup_t>&& buffer);
 
+    uint32_t get_domain_id() const;
+
 private:
 
+    //! DomainId
+    uint32_t domain_id_;
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;
     //!Guid of the RTPSParticipant.

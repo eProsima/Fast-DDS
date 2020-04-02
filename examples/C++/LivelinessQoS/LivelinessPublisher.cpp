@@ -47,15 +47,14 @@ bool LivelinessPublisher::init(
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.use_WriterLivelinessProtocol = true;
     PParam.rtps.setName("Participant_pub");
     participant_ = Domain::createParticipant(PParam);
-    if(participant_==nullptr)
+    if (participant_ == nullptr)
     {
         return false;
     }
-    Domain::registerType(participant_,&type_);
+    Domain::registerType(participant_, &type_);
 
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
@@ -68,7 +67,7 @@ bool LivelinessPublisher::init(
     Wparam.qos.m_liveliness.announcement_period = Duration_t(liveliness_ms * 1e-3 * 0.5);
     Wparam.qos.m_liveliness.kind = kind;
     publisher_ = Domain::createPublisher(participant_, Wparam, &listener_);
-    if(publisher_ == nullptr)
+    if (publisher_ == nullptr)
     {
         return false;
     }
@@ -80,9 +79,11 @@ LivelinessPublisher::~LivelinessPublisher()
     Domain::removeParticipant(participant_);
 }
 
-void LivelinessPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void LivelinessPublisher::PubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         first_connected = true;
@@ -96,13 +97,15 @@ void LivelinessPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
 }
 
 void LivelinessPublisher::PubListener::on_liveliness_lost(
-        Publisher *pub,
-        const LivelinessLostStatus &status)
+        Publisher* pub,
+        const LivelinessLostStatus& status)
 {
     std::cout << "Publisher " << pub->getGuid() << " lost liveliness: " << status.total_count << std::endl;
 }
 
-void LivelinessPublisher::run(uint32_t samples, uint32_t sleep)
+void LivelinessPublisher::run(
+        uint32_t samples,
+        uint32_t sleep)
 {
     std::thread thread1(&LivelinessPublisher::runThread, this, publisher_, samples, sleep);
     thread1.join();
@@ -114,15 +117,16 @@ void LivelinessPublisher::runThread(
         uint32_t sleep)
 {
 
-    for(uint32_t i = 0;i<samples;++i)
+    for (uint32_t i = 0; i < samples; ++i)
     {
-        if(!publish(pub))
+        if (!publish(pub))
         {
             --i;
         }
         else
         {
-            std::cout << "Message with index: " << topic_.index()<< " SENT by publisher " << pub->getGuid() << std::endl;
+            std::cout << "Message with index: " << topic_.index() << " SENT by publisher " << pub->getGuid() <<
+                    std::endl;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
     }
@@ -134,9 +138,9 @@ bool LivelinessPublisher::publish(
         Publisher* pub,
         bool waitForListener)
 {
-    if(listener_.first_connected || !waitForListener || listener_.n_matched > 0)
+    if (listener_.first_connected || !waitForListener || listener_.n_matched > 0)
     {
-        topic_.index(topic_.index()+1);
+        topic_.index(topic_.index() + 1);
         pub->write((void*)&topic_);
         return true;
     }

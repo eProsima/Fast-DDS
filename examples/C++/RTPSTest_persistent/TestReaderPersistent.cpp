@@ -35,10 +35,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TestReaderPersistent::TestReaderPersistent():
-mp_participant(nullptr),
-mp_reader(nullptr),
-mp_history(nullptr)
+TestReaderPersistent::TestReaderPersistent()
+    : mp_participant(nullptr)
+    , mp_reader(nullptr)
+    , mp_history(nullptr)
 {
 
 
@@ -56,9 +56,11 @@ bool TestReaderPersistent::init()
     RTPSParticipantAttributes PParam;
     PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
     PParam.builtin.use_WriterLivelinessProtocol = true;
-    mp_participant = RTPSDomain::createParticipant(PParam);
-    if(mp_participant==nullptr)
+    mp_participant = RTPSDomain::createParticipant(0, PParam);
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
     //CREATE READERHISTORY
     HistoryAttributes hatt;
     hatt.payloadMaxSize = 255;
@@ -76,9 +78,11 @@ bool TestReaderPersistent::init()
     ratt.endpoint.persistence_guid.guidPrefix.value[11] = 2;
     ratt.endpoint.persistence_guid.entityId.value[3] = 1;
     ratt.endpoint.properties = property_policy;
-    mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
-    if(mp_reader == nullptr)
+    mp_reader = RTPSDomain::createRTPSReader(mp_participant, ratt, mp_history, &m_listener);
+    if (mp_reader == nullptr)
+    {
         return false;
+    }
 
     return true;
 }
@@ -102,9 +106,9 @@ void TestReaderPersistent::run()
 
 void TestReaderPersistent::MyListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t * const change)
+        const CacheChange_t* const change)
 {
-    printf("Received: %s\n",change->serializedPayload.data);
+    printf("Received: %s\n", change->serializedPayload.data);
     reader->getHistory()->remove_change((CacheChange_t*)change);
     n_received++;
 }

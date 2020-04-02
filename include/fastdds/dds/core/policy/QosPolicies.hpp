@@ -71,8 +71,8 @@ public:
     bool operator ==(
             const QosPolicy& b) const
     {
-        return (this->hasChanged == b.hasChanged) &&
-               (this->send_always_ == b.send_always_);
+        // hastChanged field isn't needed to be compared to being equal two QosPolicy objects.
+        return (this->send_always_ == b.send_always_);
     }
 
     QosPolicy& operator =(
@@ -910,7 +910,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName &data) = default;                                         \
+            const TClassName& data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -921,7 +921,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type &data)                                               \
+            const collection_type& data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
@@ -938,7 +938,7 @@ public:                                                                         
          * @return reference to the current object. \
          */                                                                            \
         TClassName& operator =(                                                            \
-            const TClassName &b) = default;                                            \
+            const TClassName& b) = default;                                            \
                                                                                        \
     };
 

@@ -23,10 +23,12 @@ using namespace eprosima::fastrtps::rtps;
 
 my_ReaderListener::my_ReaderListener()
     : n_received(0)
-{}
+{
+}
 
 my_ReaderListener::~my_ReaderListener()
-{}
+{
+}
 
 void my_ReaderListener::onNewCacheChangeAdded(
         RTPSReader*,
@@ -42,7 +44,6 @@ void my_ReaderListener::onReaderMatched(
 {
     std::cout << "Matched with a Writer" << std::endl;
 }
-
 
 UserDefinedTransportExampleReader::UserDefinedTransportExampleReader()
     : my_participant(nullptr)
@@ -68,26 +69,26 @@ void UserDefinedTransportExampleReader::init()
 
     pattr.userTransports.push_back(customTransport);
     pattr.useBuiltinTransports = false;
-    my_participant = RTPSDomain::createParticipant(pattr);
+    my_participant = RTPSDomain::createParticipant(0, pattr);
 
     //Creation of the Reader
     my_listener = new my_ReaderListener();
     my_history = new ReaderHistory(hattr);
-    my_reader= RTPSDomain::createRTPSReader(my_participant, rattr, my_history, my_listener);
+    my_reader = RTPSDomain::createRTPSReader(my_participant, rattr, my_history, my_listener);
 
     // Register type
     tattr.topicKind = NO_KEY;
     tattr.topicDataType = "string";
     tattr.topicName = "ExampleTopic";
-    my_participant->registerReader(my_reader,tattr, rqos);
+    my_participant->registerReader(my_reader, tattr, rqos);
     initialized_ = true;
 }
 
 bool UserDefinedTransportExampleReader::read()
 {
-    while(my_listener->n_received < 9)
+    while (my_listener->n_received < 9)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)) ;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     return true;
 }

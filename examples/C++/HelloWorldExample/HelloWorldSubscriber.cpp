@@ -27,8 +27,9 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
-mp_subscriber(nullptr)
+HelloWorldSubscriber::HelloWorldSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
 {
 }
 
@@ -39,16 +40,17 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //REGISTER THE TYPE
 
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(mp_participant, &m_type);
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
@@ -60,48 +62,53 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
 
-    if(mp_subscriber == nullptr)
+    if (mp_subscriber == nullptr)
+    {
         return false;
+    }
 
 
     return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber() {
+HelloWorldSubscriber::~HelloWorldSubscriber()
+{
     // TODO Auto-generated destructor stub
     Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
 }
 
-void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void HelloWorldSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
-    if(sub->takeNextData((void*)&m_Hello, &m_info))
+    if (sub->takeNextData((void*)&m_Hello, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             this->n_samples++;
             // Print your structure data here.
-            std::cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
+            std::cout << "Message " << m_Hello.message() << " " << m_Hello.index() << " RECEIVED" << std::endl;
         }
     }
 
 }
-
 
 void HelloWorldSubscriber::run()
 {
@@ -109,10 +116,11 @@ void HelloWorldSubscriber::run()
     std::cin.ignore();
 }
 
-void HelloWorldSubscriber::run(uint32_t number)
+void HelloWorldSubscriber::run(
+        uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
-    while(number > this->m_listener.n_samples)
+    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
+    while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

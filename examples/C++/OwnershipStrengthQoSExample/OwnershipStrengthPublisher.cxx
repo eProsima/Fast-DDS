@@ -32,17 +32,22 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 OwnershipStrengthPublisher::OwnershipStrengthPublisher()
-   :mp_participant(nullptr),
-    mp_publisher(nullptr),
-    m_strength(DefaultStrength),
-    m_messagesSent(0) 
-    {}
-
-OwnershipStrengthPublisher::~OwnershipStrengthPublisher() {	Domain::removeParticipant(mp_participant);}
-
-void OwnershipStrengthPublisher::setOwnershipStrength(unsigned int strength)
+    : mp_participant(nullptr)
+    , mp_publisher(nullptr)
+    , m_strength(DefaultStrength)
+    , m_messagesSent(0)
 {
-   m_strength = strength;
+}
+
+OwnershipStrengthPublisher::~OwnershipStrengthPublisher()
+{
+    Domain::removeParticipant(mp_participant);
+}
+
+void OwnershipStrengthPublisher::setOwnershipStrength(
+        unsigned int strength)
+{
+    m_strength = strength;
 }
 
 bool OwnershipStrengthPublisher::init()
@@ -50,16 +55,17 @@ bool OwnershipStrengthPublisher::init()
     // Create RTPSParticipant
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_publisher");
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant == nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //Register the type
 
-    Domain::registerType(mp_participant,(TopicDataType*) &myType);
+    Domain::registerType(mp_participant, (TopicDataType*) &myType);
 
     // Create Publisher
 
@@ -67,14 +73,18 @@ bool OwnershipStrengthPublisher::init()
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
     Wparam.topic.topicName = "OwnershipStrengthPubSubTopic";
-    mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
-    if(mp_publisher == nullptr)
+    mp_publisher = Domain::createPublisher(mp_participant, Wparam, (PublisherListener*)&m_listener);
+    if (mp_publisher == nullptr)
+    {
         return false;
+    }
     std::cout << "Publisher created, waiting for Subscribers." << std::endl;
     return true;
 }
 
-void OwnershipStrengthPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void OwnershipStrengthPublisher::PubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -90,7 +100,7 @@ void OwnershipStrengthPublisher::PubListener::onPublicationMatched(Publisher* /*
 
 void OwnershipStrengthPublisher::run()
 {
-    while(m_listener.n_matched == 0)
+    while (m_listener.n_matched == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
@@ -98,7 +108,7 @@ void OwnershipStrengthPublisher::run()
     char ch = 'y';
     do
     {
-        if(ch == 'y')
+        if (ch == 'y')
         {
             ExampleMessage st;
             std::stringstream ss;
@@ -110,9 +120,10 @@ void OwnershipStrengthPublisher::run()
             mp_publisher->write(&st);
 
             m_messagesSent++;
-            std::cout << "Sending message, index = " << m_messagesSent << " with strength " << m_strength << ", send another sample?(y-yes,n-stop): ";
+            std::cout << "Sending message, index = " << m_messagesSent << " with strength " << m_strength <<
+                    ", send another sample?(y-yes,n-stop): ";
         }
-        else if(ch == 'n')
+        else if (ch == 'n')
         {
             std::cout << "Stopping execution " << std::endl;
             break;
@@ -122,5 +133,5 @@ void OwnershipStrengthPublisher::run()
             std::cout << "Command " << ch << " not recognized, please enter \"y/n\":";
         }
 
-    } while(std::cin >> ch);
+    } while (std::cin >> ch);
 }

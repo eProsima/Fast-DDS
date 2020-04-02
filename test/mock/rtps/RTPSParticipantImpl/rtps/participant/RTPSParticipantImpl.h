@@ -56,7 +56,9 @@ class MockParticipantListener : public RTPSParticipantListener
 {
 public:
 
-    void onParticipantDiscovery(RTPSParticipant* participant, ParticipantDiscoveryInfo&& info) override
+    void onParticipantDiscovery(
+            RTPSParticipant* participant,
+            ParticipantDiscoveryInfo&& info) override
     {
         onParticipantDiscovery(participant, info);
     }
@@ -64,7 +66,9 @@ public:
     MOCK_METHOD2(onParticipantDiscovery, void (RTPSParticipant*, const ParticipantDiscoveryInfo&));
 
 #if HAVE_SECURITY
-    void onParticipantAuthentication(RTPSParticipant* participant, ParticipantAuthenticationInfo&& info) override
+    void onParticipantAuthentication(
+            RTPSParticipant* participant,
+            ParticipantAuthenticationInfo&& info) override
     {
         onParticipantAuthentication(participant, info);
     }
@@ -82,51 +86,67 @@ public:
         events_.init_thread();
     }
 
-    MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
+    MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes& ());
 
-    MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+    MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
 
-    MOCK_CONST_METHOD0(network_factory, const NetworkFactory&());
+    MOCK_CONST_METHOD0(network_factory, const NetworkFactory& ());
 
 #if HAVE_SECURITY
-    MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes&());
+    MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes& ());
 
     MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_security, bool(const GUID_t&, const ReaderProxyData&));
 
-    MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security,bool(const GUID_t&, const WriterProxyData& remote_writer_data));
+    MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security,
+            bool(const GUID_t&, const WriterProxyData& remote_writer_data));
 #endif
 
-    MOCK_METHOD1(setGuid, void(GUID_t&));
+    MOCK_METHOD1(setGuid, void(GUID_t &));
 
-    MOCK_METHOD6(createWriter_mock, bool (RTPSWriter** writer, WriterAttributes& param, WriterHistory* hist,WriterListener* listen,
-                                         const EntityId_t& entityId, bool isBuiltin));
+    MOCK_METHOD6(createWriter_mock,
+            bool (RTPSWriter * *writer, WriterAttributes & param, WriterHistory * hist,
+            WriterListener * listen,
+            const EntityId_t& entityId, bool isBuiltin));
 
-    MOCK_METHOD7(createReader_mock, bool (RTPSReader** reader, ReaderAttributes& param, ReaderHistory* hist,ReaderListener* listen,
-                                         const EntityId_t& entityId, bool isBuiltin, bool enable));
+    MOCK_METHOD7(createReader_mock,
+            bool (RTPSReader * *reader, ReaderAttributes & param, ReaderHistory * hist,
+            ReaderListener * listen,
+            const EntityId_t& entityId, bool isBuiltin, bool enable));
 
     MOCK_METHOD0(userWritersListBegin, std::vector<RTPSWriter*>::iterator ());
     MOCK_METHOD0(userWritersListEnd, std::vector<RTPSWriter*>::iterator ());
 
-    MOCK_METHOD0(async_thread, AsyncWriterThread& ());
+    MOCK_METHOD0(async_thread, AsyncWriterThread & ());
 
     MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
 
-    bool createWriter(RTPSWriter** writer, WriterAttributes& param, WriterHistory* hist, WriterListener* listen,
-                      const EntityId_t& entityId, bool isBuiltin)
+    bool createWriter(
+            RTPSWriter** writer,
+            WriterAttributes& param,
+            WriterHistory* hist,
+            WriterListener* listen,
+            const EntityId_t& entityId,
+            bool isBuiltin)
     {
-        bool ret = createWriter_mock(writer, param , hist, listen, entityId, isBuiltin);
-        if(*writer != nullptr)
+        bool ret = createWriter_mock(writer, param, hist, listen, entityId, isBuiltin);
+        if (*writer != nullptr)
         {
             (*writer)->history_ = hist;
         }
         return ret;
     }
 
-    bool createReader(RTPSReader** reader, ReaderAttributes& param, ReaderHistory* hist,ReaderListener* listen,
-                      const EntityId_t& entityId, bool isBuiltin, bool enable)
+    bool createReader(
+            RTPSReader** reader,
+            ReaderAttributes& param,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            const EntityId_t& entityId,
+            bool isBuiltin,
+            bool enable)
     {
         bool ret = createReader_mock(reader, param, hist, listen, entityId, isBuiltin, enable);
-        if(*reader != nullptr)
+        if (*reader != nullptr)
         {
             (*reader)->history_ = hist;
             (*reader)->listener_ = listen;
@@ -134,22 +154,49 @@ public:
         return ret;
     }
 
-    void deleteUserEndpoint(Endpoint* endpoint) { delete endpoint; }
+    void deleteUserEndpoint(
+            Endpoint* endpoint)
+    {
+        delete endpoint;
+    }
 
-    MOCK_METHOD0(pdpsimple, PDPSimple*());
+    MOCK_METHOD0(pdpsimple, PDPSimple * ());
 
-    MockParticipantListener* getListener() { return &listener_; }
+    MockParticipantListener* getListener()
+    {
+        return &listener_;
+    }
 
-    RTPSParticipant* getUserRTPSParticipant() { return nullptr; }
+    RTPSParticipant* getUserRTPSParticipant()
+    {
+        return nullptr;
+    }
 
-    ResourceEvent& getEventResource() { return events_; }
+    ResourceEvent& getEventResource()
+    {
+        return events_;
+    }
 
-    void set_endpoint_rtps_protection_supports(Endpoint* /*endpoint*/, bool /*support*/) {}
+    void set_endpoint_rtps_protection_supports(
+            Endpoint* /*endpoint*/,
+            bool /*support*/)
+    {
+    }
 
-    void ResourceSemaphoreWait() {}
-    void ResourceSemaphorePost() {}
+    void ResourceSemaphoreWait()
+    {
+    }
 
-    uint32_t getMaxMessageSize() const { return 65536; }
+    void ResourceSemaphorePost()
+    {
+    }
+
+    uint32_t getMaxMessageSize() const
+    {
+        return 65536;
+    }
+
+    MOCK_CONST_METHOD0(get_domain_id, uint32_t());
 
 private:
 

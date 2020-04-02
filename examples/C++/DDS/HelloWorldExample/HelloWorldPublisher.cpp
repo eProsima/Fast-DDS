@@ -41,11 +41,8 @@ bool HelloWorldPublisher::init()
     hello_.index(0);
     hello_.message("HelloWorld");
     DomainParticipantQos pqos;
-    WireProtocolConfigQos wp = pqos.wire_protocol();
-    wp.builtin.domainId = 0;
-    pqos.wire_protocol(wp);
     pqos.name("Participant_pub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(wp.builtin.domainId, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
     {

@@ -463,6 +463,7 @@ TEST_F(XMLParserTests, Data)
     }
 
     ASSERT_TRUE(participant_profile);
+    EXPECT_EQ(participant_atts.domainId, 2019102u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin           = rtps_atts.builtin;
     Locator_t locator;
@@ -482,7 +483,6 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
@@ -556,6 +556,7 @@ TEST_F(XMLParserTests, DataBuffer)
     }
 
     ASSERT_TRUE(participant_profile);
+    EXPECT_EQ(participant_atts.domainId, 2019102u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin           = rtps_atts.builtin;
     Locator_t locator;
@@ -575,7 +576,6 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);

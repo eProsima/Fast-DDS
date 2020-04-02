@@ -56,18 +56,15 @@ bool TypeLookupPublisher::init()
     m_Hello->return_loaned_value(inner);
 
     DomainParticipantQos pqos;
-    WireProtocolConfigQos wp = pqos.wire_protocol();
-    wp.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    wp.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    wp.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    wp.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    wp.builtin.typelookup_config.use_server = true;
-    wp.builtin.use_WriterLivelinessProtocol = false;
-    wp.builtin.domainId = 0;
-    wp.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    pqos.wire_protocol(wp);
+    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = SIMPLE;
+    pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    pqos.wire_protocol().builtin.typelookup_config.use_server = true;
+    pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
     pqos.name("Participant_pub");
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(wp.builtin.domainId, pqos);
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (mp_participant == nullptr)
     {

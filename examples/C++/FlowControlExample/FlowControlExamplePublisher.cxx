@@ -32,28 +32,35 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-FlowControlExamplePublisher::FlowControlExamplePublisher() : mp_participant(nullptr),
-                                                             mp_fast_publisher(nullptr),
-                                                             mp_slow_publisher(nullptr){}
+FlowControlExamplePublisher::FlowControlExamplePublisher()
+    : mp_participant(nullptr)
+    , mp_fast_publisher(nullptr)
+    , mp_slow_publisher(nullptr)
+{
+}
 
-FlowControlExamplePublisher::~FlowControlExamplePublisher() {	Domain::removeParticipant(mp_participant);}
+FlowControlExamplePublisher::~FlowControlExamplePublisher()
+{
+    Domain::removeParticipant(mp_participant);
+}
 
 bool FlowControlExamplePublisher::init()
 {
     // Create RTPSParticipant
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
 
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant == nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //Register the type
 
-    Domain::registerType(mp_participant,(TopicDataType*) &myType);
+    Domain::registerType(mp_participant, (TopicDataType*) &myType);
 
     // Create fast publisher, which has no controller of its own.
     PublisherAttributes WparamFast;
@@ -62,9 +69,11 @@ bool FlowControlExamplePublisher::init()
     WparamFast.topic.topicName = "FlowControlExamplePubSubTopic";
     WparamFast.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
 
-    mp_fast_publisher = Domain::createPublisher(mp_participant,WparamFast,(PublisherListener*)&m_listener);
-    if(mp_fast_publisher == nullptr)
+    mp_fast_publisher = Domain::createPublisher(mp_participant, WparamFast, (PublisherListener*)&m_listener);
+    if (mp_fast_publisher == nullptr)
+    {
         return false;
+    }
     std::cout << "Fast publisher created, waiting for Subscribers." << std::endl;
 
     // Create slow publisher, with its own controller
@@ -78,14 +87,18 @@ bool FlowControlExamplePublisher::init()
     ThroughputControllerDescriptor slowPublisherThroughputController{300000, 1000};
     WparamSlow.throughputController = slowPublisherThroughputController;
 
-    mp_slow_publisher = Domain::createPublisher(mp_participant,WparamSlow,(PublisherListener*)&m_listener);
-    if(mp_slow_publisher == nullptr)
+    mp_slow_publisher = Domain::createPublisher(mp_participant, WparamSlow, (PublisherListener*)&m_listener);
+    if (mp_slow_publisher == nullptr)
+    {
         return false;
+    }
     std::cout << "Slow publisher created, waiting for Subscribers." << std::endl;
     return true;
 }
 
-void FlowControlExamplePublisher::PubListener::onPublicationMatched(Publisher*, MatchingInfo& info)
+void FlowControlExamplePublisher::PubListener::onPublicationMatched(
+        Publisher*,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -101,7 +114,7 @@ void FlowControlExamplePublisher::PubListener::onPublicationMatched(Publisher*, 
 
 void FlowControlExamplePublisher::run()
 {
-    while(m_listener.n_matched == 0)
+    while (m_listener.n_matched == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
@@ -117,21 +130,25 @@ void FlowControlExamplePublisher::run()
     char ch;
     std::cout << "Flow Control example." << std::endl;
     std::cout << "Press \"f\" to send a sample through the fast writer, which has unlimited bandwidth" << std::endl;
-    std::cout << "Press \"s\" to send a sample through the slow writer, which is also limited by its own Flow Controller" << std::endl;
+    std::cout <<
+            "Press \"s\" to send a sample through the slow writer, which is also limited by its own Flow Controller" <<
+            std::endl;
     std::cout << "Press \"q\" quit" << std::endl;
-    while(std::cin >> ch)
+    while (std::cin >> ch)
     {
-        if(ch == 'f')
+        if (ch == 'f')
         {
             st.wasFast(true);
             mp_fast_publisher->write(&st);  ++msgsent_fast;
-            std::cout << "Sending sample, count=" << msgsent_fast << " through the fast writer. Send another sample? (f-fast,s-slow,q-quit): ";
+            std::cout << "Sending sample, count=" << msgsent_fast <<
+                    " through the fast writer. Send another sample? (f-fast,s-slow,q-quit): ";
         }
-        else if(ch == 's')
+        else if (ch == 's')
         {
             st.wasFast(false);
             mp_slow_publisher->write(&st);  ++msgsent_slow;
-            std::cout << "Sending sample, count=" << msgsent_slow << " through the slow writer. Send another sample? (f-fast,s-slow,q-quit): ";
+            std::cout << "Sending sample, count=" << msgsent_slow <<
+                    " through the slow writer. Send another sample? (f-fast,s-slow,q-quit): ";
         }
         else if (ch == 'q')
         {

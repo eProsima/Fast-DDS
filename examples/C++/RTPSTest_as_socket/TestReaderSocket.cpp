@@ -33,10 +33,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TestReaderSocket::TestReaderSocket():
-mp_participant(nullptr),
-mp_reader(nullptr),
-mp_history(nullptr)
+TestReaderSocket::TestReaderSocket()
+    : mp_participant(nullptr)
+    , mp_reader(nullptr)
+    , mp_history(nullptr)
 {
 
 
@@ -48,15 +48,19 @@ TestReaderSocket::~TestReaderSocket()
     delete(mp_history);
 }
 
-bool TestReaderSocket::init(std::string ip, uint32_t port)
+bool TestReaderSocket::init(
+        std::string ip,
+        uint32_t port)
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
     PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol_t::NONE;
     PParam.builtin.use_WriterLivelinessProtocol = false;
-    mp_participant = RTPSDomain::createParticipant(PParam);
-    if(mp_participant==nullptr)
+    mp_participant = RTPSDomain::createParticipant(0, PParam);
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
     //CREATE READERHISTORY
     HistoryAttributes hatt;
     hatt.payloadMaxSize = 255;
@@ -69,10 +73,12 @@ bool TestReaderSocket::init(std::string ip, uint32_t port)
     IPLocator::setIPv4(loc, ip);
     loc.port = static_cast<uint16_t>(port);
     ratt.endpoint.multicastLocatorList.push_back(loc);
-    mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
+    mp_reader = RTPSDomain::createRTPSReader(mp_participant, ratt, mp_history, &m_listener);
     mp_reader->enableMessagesFromUnkownWriters(true);
-    if(mp_reader == nullptr)
+    if (mp_reader == nullptr)
+    {
         return false;
+    }
 
     return true;
 }
@@ -86,9 +92,9 @@ void TestReaderSocket::run()
 
 void TestReaderSocket::MyListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t * const change)
+        const CacheChange_t* const change)
 {
-    printf("Received: %s\n",change->serializedPayload.data);
+    printf("Received: %s\n", change->serializedPayload.data);
     reader->getHistory()->remove_change((CacheChange_t*)change);
     m_received++;
 }

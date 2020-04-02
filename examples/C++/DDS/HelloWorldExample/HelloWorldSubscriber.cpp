@@ -36,11 +36,8 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 bool HelloWorldSubscriber::init()
 {
     DomainParticipantQos pqos;
-    WireProtocolConfigQos wp = pqos.wire_protocol();
-    wp.builtin.domainId = 0;
-    pqos.wire_protocol(wp);
     pqos.name("Participant_sub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(wp.builtin.domainId, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
     {

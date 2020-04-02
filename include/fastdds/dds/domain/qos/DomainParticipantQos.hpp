@@ -90,6 +90,15 @@ public:
     }
 
     /**
+     * Getter for UserDataQosPolicy
+     * @return UserDataQosPolicy reference
+     */
+    UserDataQosPolicy& user_data()
+    {
+        return user_data_;
+    }
+
+    /**
      * Setter for UserDataQosPolicy
      * @param value
      */
@@ -97,7 +106,6 @@ public:
             const UserDataQosPolicy& value)
     {
         user_data_ = value;
-        user_data_.hasChanged = true;
     }
 
     /**
@@ -110,6 +118,15 @@ public:
     }
 
     /**
+     * Getter for EntityFactoryQosPolicy
+     * @return EntityFactoryQosPolicy reference
+     */
+    EntityFactoryQosPolicy& entity_factory()
+    {
+        return entity_factory_;
+    }
+
+    /**
      * Setter for EntityFactoryQosPolicy
      * @param value
      */
@@ -117,10 +134,14 @@ public:
             const EntityFactoryQosPolicy& value)
     {
         entity_factory_ = value;
-        entity_factory_.hasChanged = true;
     }
 
     const ParticipantResourceLimitsQos& allocation() const
+    {
+        return allocation_;
+    }
+
+    ParticipantResourceLimitsQos& allocation()
     {
         return allocation_;
     }
@@ -136,6 +157,11 @@ public:
         return properties_;
     }
 
+    PropertyPolicyQos& properties()
+    {
+        return properties_;
+    }
+
     void properties(
             const PropertyPolicyQos& properties)
     {
@@ -147,14 +173,23 @@ public:
         return wire_protocol_;
     }
 
+    WireProtocolConfigQos& wire_protocol()
+    {
+        return wire_protocol_;
+    }
+
     void wire_protocol(
             const WireProtocolConfigQos& wire_protocol)
     {
         wire_protocol_ = wire_protocol;
-        wire_protocol_.hasChanged = true;
     }
 
     const TransportConfigQos& transport() const
+    {
+        return transport_;
+    }
+
+    TransportConfigQos& transport()
     {
         return transport_;
     }
@@ -163,10 +198,14 @@ public:
             const TransportConfigQos& transport)
     {
         transport_ = transport;
-        transport_.hasChanged = true;
     }
 
-    fastrtps::string_255 name() const
+    const fastrtps::string_255& name() const
+    {
+        return name_;
+    }
+
+    fastrtps::string_255& name()
     {
         return name_;
     }

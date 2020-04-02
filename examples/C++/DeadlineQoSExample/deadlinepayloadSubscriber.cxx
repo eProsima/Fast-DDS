@@ -37,21 +37,23 @@ deadlinepayloadSubscriber::~deadlinepayloadSubscriber()
     Domain::removeParticipant(mp_participant);
 }
 
-bool deadlinepayloadSubscriber::init(double deadline_ms)
+bool deadlinepayloadSubscriber::init(
+        double deadline_ms)
 {
     // Create RTPSParticipant
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant == nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //Register the type
 
-    Domain::registerType(mp_participant,(TopicDataType*) &myType);		
+    Domain::registerType(mp_participant, (TopicDataType*) &myType);
 
     // Create Subscriber
 
@@ -59,17 +61,21 @@ bool deadlinepayloadSubscriber::init(double deadline_ms)
     Rparam.topic.topicKind = WITH_KEY;
     Rparam.topic.topicDataType = myType.getName();
     Rparam.topic.topicName = "deadlinepayloadPubSubTopic";
-    Rparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
+    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_deadline.period = deadline_ms * 1e-3;
     Rparam.topic.historyQos.depth = 5;
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
-    if(mp_subscriber == nullptr)
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
+    if (mp_subscriber == nullptr)
+    {
         return false;
+    }
 
     return true;
 }
 
-void deadlinepayloadSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void deadlinepayloadSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -83,12 +89,13 @@ void deadlinepayloadSubscriber::SubListener::onSubscriptionMatched(Subscriber* /
     }
 }
 
-void deadlinepayloadSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void deadlinepayloadSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
     HelloMsg st;
-    if(sub->readNextData(&st, &m_info))
+    if (sub->readNextData(&st, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             std::cout << "Message with key " << st.deadlinekey() << " received" << std::endl;
         }
@@ -97,7 +104,7 @@ void deadlinepayloadSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 
 void deadlinepayloadSubscriber::SubListener::on_requested_deadline_missed(
         Subscriber* sub,
-        const RequestedDeadlineMissedStatus &status)
+        const RequestedDeadlineMissedStatus& status)
 {
     (void)sub;
     std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;
@@ -108,4 +115,3 @@ void deadlinepayloadSubscriber::run()
     std::cout << "Subscriber running. Press Enter to stop the Subscriber. " << std::endl;
     std::cin.ignore();
 }
-

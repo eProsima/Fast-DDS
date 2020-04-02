@@ -322,13 +322,11 @@ int main(
      */
 
     DomainParticipantQos participant_qos;
-    WireProtocolConfigQos wp = participant_qos.wire_protocol();
-    wp.builtin.typelookup_config.use_client = true;
-    wp.builtin.domainId = seed % 230;
-    participant_qos.wire_protocol(wp);
+    participant_qos.wire_protocol().builtin.typelookup_config.use_client = true;
     ParListener participant_listener;
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos, &participant_listener);
+            DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,
+                    &participant_listener);
 
     if (participant == nullptr)
     {

@@ -2,9 +2,9 @@
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
     <profiles>
         <participant profile_name="participant_profile">
+            <domainId>80</domainId>
             <rtps>
                 <builtin>
-                    <domainId>80</domainId>
                     <discovery_config>
                         <leaseDuration>
                             <sec>DURATION_INFINITY</sec>

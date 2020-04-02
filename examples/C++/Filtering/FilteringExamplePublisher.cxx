@@ -23,25 +23,34 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-FilteringExamplePublisher::FilteringExamplePublisher() : mp_participant(nullptr), mp_fast_publisher(nullptr), mp_slow_publisher(nullptr) {}
+FilteringExamplePublisher::FilteringExamplePublisher()
+    : mp_participant(nullptr)
+    , mp_fast_publisher(nullptr)
+    , mp_slow_publisher(nullptr)
+{
+}
 
-FilteringExamplePublisher::~FilteringExamplePublisher() {	Domain::removeParticipant(mp_participant);}
+FilteringExamplePublisher::~FilteringExamplePublisher()
+{
+    Domain::removeParticipant(mp_participant);
+}
 
 bool FilteringExamplePublisher::init()
 {
     // Create RTPSParticipant
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant == nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //Register the type
 
-    Domain::registerType(mp_participant,(TopicDataType*) &myType);
+    Domain::registerType(mp_participant, (TopicDataType*) &myType);
 
     // Create Publishers
 
@@ -53,7 +62,9 @@ bool FilteringExamplePublisher::init()
     Wparam_fast.qos.m_partition.push_back("Fast_Partition");
     mp_fast_publisher = Domain::createPublisher(mp_participant, Wparam_fast, (PublisherListener*)&m_listener);
     if (mp_fast_publisher == nullptr)
+    {
         return false;
+    }
     std::cout << "Fast Publisher created, waiting for Subscribers." << std::endl;
 
     // Create "Slow" Publisher
@@ -64,14 +75,18 @@ bool FilteringExamplePublisher::init()
     Wparam_slow.qos.m_partition.push_back("Slow_Partition");
     mp_slow_publisher = Domain::createPublisher(mp_participant, Wparam_slow, (PublisherListener*)&m_listener);
     if (mp_slow_publisher == nullptr)
+    {
         return false;
+    }
     std::cout << "Slow Publisher created, waiting for Subscribers." << std::endl;
 
     return true;
 
 }
 
-void FilteringExamplePublisher::PubListener::onPublicationMatched(Publisher*, MatchingInfo& info)
+void FilteringExamplePublisher::PubListener::onPublicationMatched(
+        Publisher*,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -87,7 +102,7 @@ void FilteringExamplePublisher::PubListener::onPublicationMatched(Publisher*, Ma
 
 void FilteringExamplePublisher::run()
 {
-    while(m_listener.n_matched == 0)
+    while (m_listener.n_matched == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
@@ -98,7 +113,8 @@ void FilteringExamplePublisher::run()
 
     int sampleNumber = 0;
 
-    while (1) {
+    while (1)
+    {
         sampleNumber++;
         st.sampleNumber(sampleNumber);
         mp_fast_publisher->write(&st);

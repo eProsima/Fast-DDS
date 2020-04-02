@@ -187,7 +187,7 @@ ThroughputPublisher::ThroughputPublisher(
     ParticipantAttributes participant_attributes;
 
     // Default domain
-    participant_attributes.rtps.builtin.domainId = pid % 230;
+    participant_attributes.domainId = pid % 230;
 
     // Default participant name
     participant_attributes.rtps.setName("throughput_test_publisher");
@@ -207,7 +207,7 @@ ThroughputPublisher::ThroughputPublisher(
     // Apply user's force domain
     if (forced_domain_ >= 0)
     {
-        participant_attributes.rtps.builtin.domainId = forced_domain_;
+        participant_attributes.domainId = forced_domain_;
     }
 
     // If the user has specified a participant property policy with command line arguments, it overrides whatever the

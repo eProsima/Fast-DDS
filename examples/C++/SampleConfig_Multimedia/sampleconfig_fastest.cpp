@@ -17,28 +17,30 @@ using namespace eprosima::fastrtps::rtps;
 
 void fastest();
 
-int main(){
+int main()
+{
     fastest();
     return 0;
 }
 
-void fastest(){
+void fastest()
+{
 
     samplePubSubType sampleType;
     sample my_sample;
     SampleInfo_t sample_info;
 
     ParticipantAttributes PparamPub;
-    PparamPub.rtps.builtin.domainId = 0;
     PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
-    Participant *PubParticipant = Domain::createParticipant(PparamPub);
-    if(PubParticipant == nullptr){
+    Participant* PubParticipant = Domain::createParticipant(PparamPub);
+    if (PubParticipant == nullptr)
+    {
         std::cout << " Something went wrong while creating the Publisher Participant..." << std::endl;
         return;
     }
-    Domain::registerType(PubParticipant,(TopicDataType*) &sampleType);
+    Domain::registerType(PubParticipant, (TopicDataType*) &sampleType);
 
 
     //Publisher config
@@ -52,24 +54,25 @@ void fastest(){
     Pparam.topic.historyQos.depth =  5;
 
     std::cout << "Creating Best-Effort Publisher..." << std::endl;
-    Publisher *myPub= Domain::createPublisher(PubParticipant, Pparam, nullptr);
-    if(myPub == nullptr){
+    Publisher* myPub = Domain::createPublisher(PubParticipant, Pparam, nullptr);
+    if (myPub == nullptr)
+    {
         std::cout << "Something went wrong while creating the Publisher..." << std::endl;
         return;
     }
 
 
     ParticipantAttributes PparamSub;
-    PparamSub.rtps.builtin.domainId = 0;
     PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
-    Participant *SubParticipant = Domain::createParticipant(PparamSub);
-    if(SubParticipant == nullptr){
+    Participant* SubParticipant = Domain::createParticipant(PparamSub);
+    if (SubParticipant == nullptr)
+    {
         std::cout << " Something went wrong while creating the Subscriber Participant..." << std::endl;
         return;
     }
-    Domain::registerType(SubParticipant,(TopicDataType*) &sampleType);
+    Domain::registerType(SubParticipant, (TopicDataType*) &sampleType);
 
     // Sub
     SubscriberAttributes Rparam;
@@ -82,16 +85,18 @@ void fastest(){
     Rparam.topic.historyQos.depth =  5;
 
     std::cout << "Creating Subscriber..." << std::endl;
-    Subscriber *mySub1= Domain::createSubscriber(PubParticipant, Rparam, nullptr);
-    if(myPub == nullptr){
+    Subscriber* mySub1 = Domain::createSubscriber(PubParticipant, Rparam, nullptr);
+    if (myPub == nullptr)
+    {
         std::cout << "something went wrong while creating the Subscriber..." << std::endl;
         return;
     }
 
     //Send 20 samples
     std::cout << "Publishing 10 samples on the topic..." << std::endl;
-    for(uint8_t j=0; j < 10; j++){
-        my_sample.index(j+1);
+    for (uint8_t j = 0; j < 10; j++)
+    {
+        my_sample.index(j + 1);
         my_sample.key_value(1);
         myPub->write(&my_sample);
     }
@@ -99,8 +104,9 @@ void fastest(){
     std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
-        std::cout << "The Reliable Subscriber (with a history depth of 5) holds: " << std::endl;
-    while(mySub1->readNextData(&my_sample, &sample_info)){
+    std::cout << "The Reliable Subscriber (with a history depth of 5) holds: " << std::endl;
+    while (mySub1->readNextData(&my_sample, &sample_info))
+    {
         std::cout << std::to_string(my_sample.index()) << " ";
     }
     std::cout << std::endl;

@@ -175,7 +175,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, qos, listen);
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr = get_attributes(qos);
-    RTPSParticipant* part = RTPSDomain::createParticipant(rtps_attr, &dom_part_impl->rtps_listener_);
+    RTPSParticipant* part = RTPSDomain::createParticipant(did, rtps_attr, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
     {

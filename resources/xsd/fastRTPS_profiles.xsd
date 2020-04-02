@@ -368,7 +368,6 @@
         <xs:all minOccurs="0">
             <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
-            <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
@@ -714,6 +713,7 @@
 
     <xs:complexType name="participantProfileType">
         <xs:sequence>
+            <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
             <xs:element name="rtps" type="rtpsParticipantAttributesType"/>
         </xs:sequence>
         <xs:attribute name="profile_name" type="stringType" use="required"/>

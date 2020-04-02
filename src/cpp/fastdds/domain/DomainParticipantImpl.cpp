@@ -325,7 +325,7 @@ Publisher* DomainParticipantImpl::create_publisher(
 
 DomainId_t DomainParticipantImpl::get_domain_id() const
 {
-    return qos_.wire_protocol().builtin.domainId;
+    return rtps_participant_->get_domain_id();
 }
 
 /* TODO

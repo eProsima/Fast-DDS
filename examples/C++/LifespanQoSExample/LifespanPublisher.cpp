@@ -35,22 +35,22 @@ LifespanPublisher::LifespanPublisher()
 {
 }
 
-bool LifespanPublisher::init(uint32_t lifespan_ms)
+bool LifespanPublisher::init(
+        uint32_t lifespan_ms)
 {
     hello_.index(0);
     hello_.message("Lifespan");
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
     participant_ = Domain::createParticipant(PParam);
-    if( participant_ == nullptr )
+    if ( participant_ == nullptr )
     {
         return false;
     }
 
-    Domain::registerType(participant_,&type_);
+    Domain::registerType(participant_, &type_);
 
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
@@ -62,7 +62,7 @@ bool LifespanPublisher::init(uint32_t lifespan_ms)
     Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     Wparam.qos.m_lifespan.duration = lifespan_ms * 1e-3;
     publisher_ = Domain::createPublisher(participant_, Wparam, (PublisherListener*) &listener);
-    if( publisher_ == nullptr )
+    if ( publisher_ == nullptr )
     {
         return false;
     }
@@ -75,29 +75,34 @@ LifespanPublisher::~LifespanPublisher()
     Domain::removeParticipant(participant_);
 }
 
-void LifespanPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void LifespanPublisher::PubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         first_connected = true;
-        std::cout << "Publisher matched"<<std::endl;
+        std::cout << "Publisher matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Publisher unmatched"<<std::endl;
+        std::cout << "Publisher unmatched" << std::endl;
     }
 }
 
-void LifespanPublisher::run(uint32_t samples, uint32_t write_sleep_ms, uint32_t sleep_ms)
+void LifespanPublisher::run(
+        uint32_t samples,
+        uint32_t write_sleep_ms,
+        uint32_t sleep_ms)
 {
     std::cout << "Publisher running" << std::endl;
 
     samples = ( samples == 0 ) ? 10 : samples;
-    for( uint32_t i = 0; i < samples; ++i )
+    for ( uint32_t i = 0; i < samples; ++i )
     {
-        if( !publish() )
+        if ( !publish() )
         {
             --i;
         }
@@ -121,11 +126,12 @@ void LifespanPublisher::run(uint32_t samples, uint32_t write_sleep_ms, uint32_t 
     std::cin.ignore();
 }
 
-bool LifespanPublisher::publish(bool waitForListener)
+bool LifespanPublisher::publish(
+        bool waitForListener)
 {
-    if(listener.first_connected || !waitForListener || listener.n_matched>0)
+    if (listener.first_connected || !waitForListener || listener.n_matched > 0)
     {
-        hello_.index(hello_.index()+1);
+        hello_.index(hello_.index() + 1);
         publisher_->write((void*)&hello_);
         return true;
     }
