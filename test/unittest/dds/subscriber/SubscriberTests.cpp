@@ -18,6 +18,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <dds/sub/Subscriber.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -44,6 +45,21 @@ TEST(SubscriberTests, ChangeSubscriberQos)
 
 }
 
+TEST(SubscriberTests, ChangePSMSubscriberQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant);
+
+    ::dds::sub::qos::SubscriberQos qos = subscriber.qos();
+    ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
+
+    qos.entity_factory.autoenable_created_entities = false;
+    ASSERT_NO_THROW(subscriber.qos(qos));
+    ::dds::sub::qos::SubscriberQos pqos = subscriber.qos();
+
+    ASSERT_TRUE(qos == pqos);
+    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+}
 
 } // namespace dds
 } // namespace fastdds
