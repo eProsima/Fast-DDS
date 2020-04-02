@@ -379,12 +379,16 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
         else
         {
             logError(XMLPARSER, "Invalid transport type: '" << sType << "'");
+            return XMLP_ret::XML_ERROR;
         }
 
-        ret = parseXMLCommonTransportData(p_root, pDescriptor);
-        if (ret != XMLP_ret::XML_OK)
+        if (sType != SHM)
         {
-            return ret;
+            ret = parseXMLCommonTransportData(p_root, pDescriptor);
+            if (ret != XMLP_ret::XML_OK)
+            {
+                return ret;
+            }
         }
 
         XMLProfileManager::insertTransportById(sId, pDescriptor);
@@ -658,6 +662,8 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
     /*
         <xs:complexType name="rtpsTransportDescriptorType">
             <xs:all minOccurs="0">
+                <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="segment_size" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>                
                 <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
@@ -702,7 +708,23 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
                     return XMLP_ret::XML_ERROR;
                 transport_descriptor->rtps_dump_file(str);
             }
-            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 || strcmp(name, MAX_MESSAGE_SIZE) == 0)
+            else if (strcmp(name, MAX_MESSAGE_SIZE) == 0)
+            {
+                // maxMessageSize - uint32Type
+                uint32_t uSize = 0;
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->max_message_size(uSize);
+            }
+            else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
+            {
+                // maxInitialPeersRange - uint32Type
+                uint32_t uRange = 0;
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uRange, 0))
+                    return XMLP_ret::XML_ERROR;
+                transport_descriptor->maxInitialPeersRange = uRange;
+            }
+            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0)
             {
                 // Parsed Outside of this method
             }
