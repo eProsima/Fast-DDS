@@ -64,12 +64,15 @@ bool LogTopic::enable_logging_impl(SecurityException& exception)
     return false;
   }
 
-  file_stream_.open(options.log_file, std::ios::out | std::ios::app);
-
-  if ( (file_stream_.rdstate() & std::ofstream::failbit ) != 0 )
+  if (!options.log_file.empty())
   {
-    exception = SecurityException("Error opening file: " + options.log_file);
-    return false;
+    file_stream_.open(options.log_file, std::ios::out | std::ios::app);
+
+    if ( (file_stream_.rdstate() & std::ofstream::failbit ) != 0 )
+    {
+      exception = SecurityException("Error opening file: " + options.log_file);
+      return false;
+    }
   }
 
   return true;
