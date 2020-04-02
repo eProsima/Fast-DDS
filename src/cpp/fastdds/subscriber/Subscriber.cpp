@@ -60,14 +60,16 @@ ReturnCode_t Subscriber::set_qos(
     return impl_->set_qos(qos);
 }
 
-const SubscriberListener* Subscriber::get_listener() const
+SubscriberListener* Subscriber::get_listener() const
 {
     return impl_->get_listener();
 }
 
 ReturnCode_t Subscriber::set_listener(
-        SubscriberListener* listener)
+        SubscriberListener* listener,
+        const StatusMask& mask)
 {
+    status_mask_ = mask;
     return impl_->set_listener(listener);
 }
 

@@ -81,7 +81,7 @@ public:
     ReturnCode_t set_qos(
             const SubscriberQos& qos);
 
-    const SubscriberListener* get_listener() const;
+    SubscriberListener* get_listener() const;
 
     ReturnCode_t set_listener(
             SubscriberListener* listener);

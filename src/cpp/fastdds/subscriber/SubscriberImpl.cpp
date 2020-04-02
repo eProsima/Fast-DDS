@@ -102,7 +102,7 @@ ReturnCode_t SubscriberImpl::set_qos(
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const SubscriberListener* SubscriberImpl::get_listener() const
+SubscriberListener* SubscriberImpl::get_listener() const
 {
     return listener_;
 }
