@@ -18,6 +18,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <dds/sub/Subscriber.hpp>
 
 namespace eprosima {
@@ -59,6 +60,23 @@ TEST(SubscriberTests, ChangePSMSubscriberQos)
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+}
+
+TEST(SubscriberTests, ChangeSubscriberListener)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+    ASSERT_EQ(subscriber->get_listener(), nullptr);
+
+    SubscriberListener listener;
+
+    ASSERT_EQ(subscriber->set_listener(&listener, StatusMask::publication_matched()),
+            ReturnCode_t::RETCODE_OK);
+    SubscriberListener* plistener = subscriber->get_listener();
+
+    ASSERT_EQ(plistener, &listener);
+    ASSERT_EQ(subscriber->get_status_mask(), StatusMask::publication_matched());
 }
 
 } // namespace dds
