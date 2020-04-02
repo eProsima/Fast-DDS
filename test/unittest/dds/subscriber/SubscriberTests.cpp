@@ -20,6 +20,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <dds/sub/Subscriber.hpp>
+#include <dds/sub/SubscriberListener.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -77,6 +78,21 @@ TEST(SubscriberTests, ChangeSubscriberListener)
 
     ASSERT_EQ(plistener, &listener);
     ASSERT_EQ(subscriber->get_status_mask(), StatusMask::publication_matched());
+}
+
+TEST(SubscriberTests, ChangePSMSubscriberListener)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant);
+
+    ASSERT_EQ(subscriber.listener(), nullptr);
+
+    ::dds::sub::SubscriberListener listener;
+    ASSERT_NO_THROW(subscriber.listener(&listener, ::dds::core::status::StatusMask::liveliness_lost()));
+    ::dds::sub::SubscriberListener* plistener = subscriber.listener();
+
+    ASSERT_EQ(&listener, plistener);
+    ASSERT_EQ(subscriber.get_status_mask(), ::dds::core::status::StatusMask::liveliness_lost());
 }
 
 } // namespace dds
