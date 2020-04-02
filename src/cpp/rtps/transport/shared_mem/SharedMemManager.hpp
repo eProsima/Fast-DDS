@@ -155,7 +155,9 @@ public:
                 uint32_t payload_size)
             : segment_id_()
             , overflows_count_(0)
+#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
             , max_payload_size_(payload_size)
+#endif
         {
             segment_id_.generate();
 
@@ -262,7 +264,10 @@ public:
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
         uint64_t overflows_count_;
+
+#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
         uint32_t max_payload_size_;
+#endif
 
         void release_buffer(
                 BufferNode* buffer_node)
