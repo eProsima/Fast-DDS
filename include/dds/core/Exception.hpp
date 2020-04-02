@@ -65,12 +65,17 @@ class Exception
 {
 protected:
 
-    OMG_DDS_API Exception();
+    OMG_DDS_API Exception()
+    {
+    }
 
 public:
 
     /** @cond */
-    OMG_DDS_API virtual ~Exception() throw();
+    OMG_DDS_API virtual ~Exception() throw()
+    {
+    }
+
     /** @endcond */
 
 public:
