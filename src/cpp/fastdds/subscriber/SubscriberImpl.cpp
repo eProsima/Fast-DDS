@@ -90,7 +90,7 @@ const SubscriberQos& SubscriberImpl::get_qos() const
 ReturnCode_t SubscriberImpl::set_qos(
         const SubscriberQos& qos)
 {
-    if (!qos.check_qos())
+    if (qos.check_qos())
     {
         if (!qos_.can_qos_be_updated(qos))
         {
