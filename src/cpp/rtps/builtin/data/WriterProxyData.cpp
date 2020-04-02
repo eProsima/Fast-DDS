@@ -737,7 +737,6 @@ bool WriterProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_guid = p.guid;
                         memcpy(m_RTPSParticipantKey.value, p.guid.guidPrefix.value, 12);
                         memcpy(m_RTPSParticipantKey.value + 12, p.guid.entityId.value, 4);
                         break;
@@ -750,6 +749,7 @@ bool WriterProxyData::readFromCDRMessage(
                             return false;
                         }
 
+                        m_guid = p.guid;
                         memcpy(m_key.value, p.guid.guidPrefix.value, 12);
                         memcpy(m_key.value + 12, p.guid.entityId.value, 4);
                         break;
