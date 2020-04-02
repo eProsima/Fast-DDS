@@ -81,7 +81,7 @@ bool LogTopic::enable_logging_impl(SecurityException& exception)
 void LogTopic::publish(BuiltinLoggingType& builtin_msg)
 {
   SecurityException exception;
-  if (!compose_header(file_stream_, builtin_msg, exception))
+  if (!file_stream_.is_open() || !compose_header(file_stream_, builtin_msg, exception))
   {
     return;
   }
