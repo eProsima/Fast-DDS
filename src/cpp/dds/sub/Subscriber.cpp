@@ -56,30 +56,38 @@ Subscriber::~Subscriber()
 {
 }
 
-//const qos::SubscriberQos& Subscriber::qos() const
-//{
-//    return delegate()->get_qos();
-//}
+const qos::SubscriberQos& Subscriber::qos() const
+{
+    return delegate()->get_qos();
+}
 
-//void Subscriber::qos(
-//        const qos::SubscriberQos& pqos)
-//{
-//    delegate()->set_qos(pqos);
-//}
+void Subscriber::qos(
+        const qos::SubscriberQos& pqos)
+{
+    ReturnCode_t result = delegate()->set_qos(pqos);
+    if (result == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    {
+        throw dds::core::ImmutablePolicyError("Immutable Qos");
+    }
+    else if (result == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+}
 
-//Subscriber& Subscriber::operator <<(
-//        const qos::SubscriberQos& qos)
-//{
-//    this->qos(qos);
-//    return *this;
-//}
+Subscriber& Subscriber::operator <<(
+        const qos::SubscriberQos& qos)
+{
+    this->qos(qos);
+    return *this;
+}
 
-//Subscriber& Subscriber::operator >>(
-//        qos::SubscriberQos& qos)
-//{
-//    qos = this->qos();
-//    return *this;
-//}
+Subscriber& Subscriber::operator >>(
+        qos::SubscriberQos& qos)
+{
+    qos = this->qos();
+    return *this;
+}
 
 Subscriber& Subscriber::default_datareader_qos(
         const qos::DataReaderQos& drqos)
