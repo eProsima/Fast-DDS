@@ -106,17 +106,22 @@ Subscriber& Subscriber::operator >>(
 //    return qos::DataReaderQos();
 //}
 
-//void Subscriber::listener(
-//        Listener* plistener,
-//        const dds::core::status::StatusMask& /*event_mask*/)
-//{
-//    delegate()->set_listener(plistener /*, event_mask*/);
-//}
+void Subscriber::listener(
+        Listener* plistener,
+        const dds::core::status::StatusMask& event_mask)
+{
+    delegate()->set_listener(plistener , event_mask);
+}
 
-//typename Subscriber::Listener* Subscriber::listener() const
-//{
-//    return dynamic_cast<Listener*>(delegate()->get_listener());
-//}
+typename Subscriber::Listener* Subscriber::listener() const
+{
+    return dynamic_cast<Listener*>(delegate()->get_listener());
+}
+
+dds::core::status::StatusMask Subscriber::get_status_mask()
+{
+    return this->delegate()->get_status_mask();
+}
 
 //const dds::domain::DomainParticipant& Subscriber::participant() const
 //{

@@ -258,6 +258,8 @@ public:
      */
     OMG_DDS_API const dds::domain::DomainParticipant& participant() const;
 
+    OMG_DDS_API dds::core::status::StatusMask get_status_mask();
+
     dds::domain::DomainParticipant* participant_;
 
 };
