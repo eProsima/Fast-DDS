@@ -30,8 +30,6 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 
-#include <dds/domain/DomainParticipant.hpp>
-
 #include <utility>
 
 using eprosima::fastrtps::types::ReturnCode_t;
