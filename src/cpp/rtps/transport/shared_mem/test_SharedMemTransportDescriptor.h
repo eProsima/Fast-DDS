@@ -37,7 +37,8 @@ typedef struct test_SharedMemTransportDescriptor : public SharedMemTransportDesc
     virtual TransportInterface* create_transport() const override;
 
     uint32_t big_buffer_size_;
-    uint32_t* big_buffer_size_count_;
+    uint32_t* big_buffer_size_send_count_;
+    uint32_t* big_buffer_size_recv_count_;
 
 }test_SharedMemTransportDescriptor;
 

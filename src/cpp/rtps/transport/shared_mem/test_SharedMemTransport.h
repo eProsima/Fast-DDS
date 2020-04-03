@@ -44,7 +44,8 @@ public:
 private:
 
     uint32_t big_buffer_size_;
-    uint32_t* big_buffer_size_count_;
+    uint32_t* big_buffer_size_send_count_;
+    uint32_t* big_buffer_size_recv_count_;
 };
 
 
