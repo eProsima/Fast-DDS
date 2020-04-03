@@ -26,7 +26,8 @@ test_SharedMemTransportDescriptor::test_SharedMemTransportDescriptor()
     : SharedMemTransportDescriptor()
 {
     big_buffer_size_ = std::numeric_limits<uint32_t>::max();
-    big_buffer_size_count_ = nullptr;
+    big_buffer_size_send_count_ = nullptr;
+    big_buffer_size_recv_count_ = nullptr;
 }
 
 test_SharedMemTransportDescriptor::test_SharedMemTransportDescriptor(
@@ -40,7 +41,8 @@ test_SharedMemTransport::test_SharedMemTransport(
     : SharedMemTransport(t)
 {
     big_buffer_size_ = t.big_buffer_size_;
-    big_buffer_size_count_ = t.big_buffer_size_count_;
+    big_buffer_size_send_count_ = t.big_buffer_size_send_count_;
+    big_buffer_size_recv_count_ = t.big_buffer_size_recv_count_;
 }
 
 TransportInterface* test_SharedMemTransportDescriptor::create_transport() const
@@ -57,7 +59,7 @@ bool test_SharedMemTransport::send(
 {
     if (send_buffer_size >= big_buffer_size_)
     {
-        (*big_buffer_size_count_)++;
+        (*big_buffer_size_send_count_)++;
     }
 
     return SharedMemTransport::send(send_buffer, send_buffer_size, destination_locators_begin,
@@ -84,5 +86,5 @@ SharedMemChannelResource* test_SharedMemTransport::CreateInputChannelResource(
         locator,
         receiver,
         big_buffer_size_,
-        big_buffer_size_count_);
+        big_buffer_size_recv_count_);
 }

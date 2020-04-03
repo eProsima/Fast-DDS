@@ -82,20 +82,22 @@ TEST(SHM, Test300KFragmentation)
     const uint32_t segment_size = static_cast<uint32_t>(data_size * 3 / 4);
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
+
+    uint32_t big_buffers_send_count = 0;
+    uint32_t big_buffers_recv_count = 0;
+    shm_transport->big_buffer_size_ = shm_transport->segment_size() / 3;
+    shm_transport->big_buffer_size_send_count_= &big_buffers_send_count;
+    shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
     
     writer
-        .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
         .disable_builtin_transport()
         .add_user_transport_to_pparams(shm_transport)
         .init();
 
-    uint32_t big_buffers_count = 0;
-    shm_transport->big_buffer_size_ = shm_transport->segment_size()/3;
-    shm_transport->big_buffer_size_count_ = &big_buffers_count;
-
     reader
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
         .disable_builtin_transport()
         .add_user_transport_to_pparams(shm_transport)
         .init();
@@ -111,12 +113,7 @@ TEST(SHM, Test300KFragmentation)
     // Send data with some interval, to let async writer thread send samples
     writer.send(data, 300);
 
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-
-    ASSERT_EQ(big_buffers_count, 2u);
+    ASSERT_EQ(big_buffers_send_count, 2u);
 
     // Destroy the writer participant.
     writer.destroy();
@@ -137,20 +134,22 @@ TEST(SHM, Test300KNoFragmentation)
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
+
+    uint32_t big_buffers_send_count = 0;
+    uint32_t big_buffers_recv_count = 0;
+    shm_transport->big_buffer_size_ = static_cast<uint32_t>(data_size);
+    shm_transport->big_buffer_size_send_count_ = &big_buffers_send_count;
+    shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
     
     writer
-        .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
         .disable_builtin_transport()
         .add_user_transport_to_pparams(shm_transport)
-        .init();
-
-    uint32_t big_buffers_count = 0;
-    shm_transport->big_buffer_size_ = static_cast<uint32_t>(data_size);
-    shm_transport->big_buffer_size_count_ = &big_buffers_count;
+        .init();    
 
     reader
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
         .disable_builtin_transport()
         .add_user_transport_to_pparams(shm_transport)
         .init();
@@ -171,7 +170,8 @@ TEST(SHM, Test300KNoFragmentation)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    ASSERT_EQ(big_buffers_count, 1u);
+    ASSERT_EQ(big_buffers_send_count, 1u);
+    ASSERT_EQ(big_buffers_recv_count, 1u);
 
     // Destroy the writer participant.
     writer.destroy();
@@ -195,6 +195,12 @@ TEST(SHM, SHM_UDP_300KFragmentation)
 
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
+    uint32_t big_buffers_send_count = 0;
+    uint32_t big_buffers_recv_count = 0;
+    shm_transport->big_buffer_size_ = 32 * 1024; // 32K
+    shm_transport->big_buffer_size_send_count_ = &big_buffers_send_count;
+    shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
+
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
@@ -202,10 +208,6 @@ TEST(SHM, SHM_UDP_300KFragmentation)
         .add_user_transport_to_pparams(shm_transport)
         .add_user_transport_to_pparams(udp_transport)
         .init();
-
-    uint32_t big_buffers_count = 0;
-    shm_transport->big_buffer_size_ = 32*1024; // 32K
-    shm_transport->big_buffer_size_count_ = &big_buffers_count;
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
@@ -232,7 +234,8 @@ TEST(SHM, SHM_UDP_300KFragmentation)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    ASSERT_EQ(big_buffers_count, std::ceil(data_size / (float)udp_transport->maxMessageSize));
+    ASSERT_EQ(big_buffers_send_count, std::ceil(data_size / (float)udp_transport->maxMessageSize));
+    ASSERT_EQ(big_buffers_recv_count, std::ceil(data_size / (float)udp_transport->maxMessageSize));
 
     // Destroy the writer participant.
     writer.destroy();
@@ -256,16 +259,18 @@ TEST(SHM, UDPvsSHM_UDP)
     
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
+    uint32_t big_buffers_send_count = 0;
+    uint32_t big_buffers_recv_count = 0;
+    shm_transport->big_buffer_size_ = 32 * 1024; // 32K
+    shm_transport->big_buffer_size_send_count_ = &big_buffers_send_count;
+    shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
+
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
         .disable_builtin_transport()
         .add_user_transport_to_pparams(udp_transport)
         .init();
-
-    uint32_t big_buffers_count = 0;
-    shm_transport->big_buffer_size_ = 32*1024; // 32K
-    shm_transport->big_buffer_size_count_ = &big_buffers_count;
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
@@ -291,7 +296,8 @@ TEST(SHM, UDPvsSHM_UDP)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    ASSERT_EQ(big_buffers_count, 0u);
+    ASSERT_EQ(big_buffers_send_count, 0u);
+    ASSERT_EQ(big_buffers_recv_count, 0u);
 
     // Destroy the writer participant.
     writer.destroy();
