@@ -149,15 +149,20 @@ DomainParticipantImpl::~DomainParticipantImpl()
 ReturnCode_t DomainParticipantImpl::set_qos(
         const DomainParticipantQos& qos)
 {
-    if (!qos.check_qos())
-    {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
-    }
-    if (!qos_.can_qos_be_updated(qos))
+    if (!can_qos_be_updated_from(qos_, qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    qos_.set_qos(qos);
+    if (qos_.entity_factory().autoenable_created_entities !=
+            qos.entity_factory().autoenable_created_entities)
+    {
+        qos_.entity_factory(qos.entity_factory());
+    }
+    if (qos_.user_data().data_vec() != qos.user_data().data_vec())
+    {
+        qos_.user_data(qos.user_data());
+        qos_.user_data().hasChanged = true;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1235,4 +1240,37 @@ bool DomainParticipantImpl::has_active_entities()
         return true;
     }
     return false;
+}
+
+bool DomainParticipantImpl::can_qos_be_updated_from(
+        const DomainParticipantQos& to,
+        const DomainParticipantQos& from)
+{
+    bool updatable = true;
+    if (!(to.allocation() == from.allocation()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "ParticipantResourceLimitsQos cannot be changed after the participant creation");
+    }
+    if (!(to.properties() == from.properties()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant creation");
+    }
+    if (!(to.wire_protocol() == from.wire_protocol()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant creation");
+    }
+    if (!(to.transport() == from.transport()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "TransportConfigQos cannot be changed after the participant creation");
+    }
+    if (!(to.name() == from.name()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant creation");
+    }
+    return updatable;
 }

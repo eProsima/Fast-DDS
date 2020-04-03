@@ -430,6 +430,9 @@ public:
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
 
+    bool can_qos_be_updated_from(
+            const DomainParticipantQos& to,
+            const DomainParticipantQos& from);
 };
 
 } /* namespace dds */

@@ -108,22 +108,20 @@ protected:
     bool send_always_;
 };
 
-class EntityFactoryQosPolicy : public QosPolicy
+class EntityFactoryQosPolicy
 {
 public:
 
     bool autoenable_created_entities;
 
     RTPS_DllAPI EntityFactoryQosPolicy()
-        : QosPolicy(false)
-        , autoenable_created_entities(true)
+        : autoenable_created_entities(true)
     {
     }
 
     RTPS_DllAPI EntityFactoryQosPolicy(
             bool autoenable)
-        : QosPolicy(false)
-        , autoenable_created_entities(autoenable)
+        : autoenable_created_entities(autoenable)
     {
     }
 
@@ -135,11 +133,10 @@ public:
             const EntityFactoryQosPolicy& b) const
     {
         return
-            (this->autoenable_created_entities == b.autoenable_created_entities) &&
-            QosPolicy::operator ==(b);
+            (this->autoenable_created_entities == b.autoenable_created_entities);
     }
 
-    inline void clear() override
+    inline void clear()
     {
         EntityFactoryQosPolicy reset = EntityFactoryQosPolicy();
         std::swap(*this, reset);
@@ -919,7 +916,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName& data) = default;                                         \
+            const TClassName &data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -930,7 +927,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type& data)                                               \
+            const collection_type &data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
@@ -947,7 +944,7 @@ public:                                                                         
          * @return reference to the current object. \
          */                                                                            \
         TClassName& operator =(                                                            \
-            const TClassName& b) = default;                                            \
+            const TClassName &b) = default;                                            \
                                                                                        \
     };
 
