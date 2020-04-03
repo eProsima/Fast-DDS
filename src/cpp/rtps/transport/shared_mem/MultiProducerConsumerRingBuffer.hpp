@@ -296,9 +296,9 @@ public:
      * Copies the currenty enqueued cells to a vector
      * @param [out] enqueued_cells pointers vector to where cells will be copied.
      * @remark This is an unsafe operation, that means the caller must assure
-     * that no write operations are perform on the buffer while executing the copy.
+     * that no write operations are performed on the buffer while executing the copy.
      */
-        void copy(
+    void copy(
             std::vector<const T*>* enqueued_cells)
     {
         if (node_->registered_listeners_ > 0)
@@ -352,7 +352,7 @@ private:
         return (loop_flag << 31) | value;
     }
 
-        uint32_t pointer_to_head(
+    uint32_t pointer_to_head(
             const Pointer& pointer) const
     {
         // Init the head as write pointer in previous loop
@@ -367,7 +367,7 @@ private:
         }
 
         // Skip the free cells
-        value = value + pointer.free_cells % node_->total_cells_;
+        value = (value + pointer.free_cells) % node_->total_cells_;
 
         // Bit 31 is loop_flag, 0-30 are value
         return (loop_flag << 31) | value;

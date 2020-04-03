@@ -39,7 +39,7 @@ public:
     // Long names for SHM files could cause problems on some platforms
     static constexpr uint32_t MAX_DOMAIN_NAME_LENGTH = 16; 
 
-        SharedMemGlobal(
+    SharedMemGlobal(
         const std::string& domain_name)
         : domain_name_(domain_name)
     {
@@ -223,8 +223,12 @@ public:
              */
             void wake_up()
             {
-                std::lock_guard<std::mutex> lock(wake_run_mutex_);
-                wake_run_ = true;
+                {
+                    std::lock_guard<std::mutex> lock(wake_run_mutex_);
+                    wake_run_ = true;
+                }
+                
+                wake_run_cv_.notify_one();
             }
 
         private:
