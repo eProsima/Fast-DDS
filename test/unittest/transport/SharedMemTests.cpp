@@ -679,12 +679,13 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
 {
     const std::string domain_name("SHMTests");
 
-    SharedMemGlobal shared_mem_global(domain_name);
+    SharedMemManager shared_mem_manager(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
     MockPortSharedMemGlobal port_mocker;
 
     port_mocker.remove_port_mutex(domain_name, 0);
 
-    auto global_port = shared_mem_global.open_port(0, 1, 1000);
+    auto global_port = shared_mem_global->open_port(0, 1, 1000);
 
     Semaphore sem_lock_done;
     Semaphore sem_end_thread_locker;
@@ -704,7 +705,7 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
     auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
     ASSERT_FALSE(port_mutex->try_lock());
 
-    auto global_port2 = shared_mem_global.open_port(0, 1, 1000);
+    auto global_port2 = shared_mem_global->open_port(0, 1, 1000);
 
     ASSERT_NO_THROW(global_port2->healthy_check());
 
@@ -716,11 +717,11 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
 {
     const std::string domain_name("SHMTests");
 
-    SharedMemGlobal shared_mem_global(domain_name);
     SharedMemManager shared_mem_manager(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
 
     uint32_t listener1_index;
-    auto port1 = shared_mem_global.open_port(0, 1, 1000);
+    auto port1 = shared_mem_global->open_port(0, 1, 1000);
     auto listener1 = port1->create_listener(&listener1_index);
 
     auto listener2 = shared_mem_manager.open_port(0, 1, 1000)->create_listener();
@@ -803,11 +804,11 @@ TEST_F(SHMTransportTests, on_port_failure_free_enqueued_descriptors)
 {
     const std::string domain_name("SHMTests");
 
-    SharedMemGlobal shared_mem_global(domain_name);
     SharedMemManager shared_mem_manager(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
 
     uint32_t listener1_index;
-    auto port1 = shared_mem_global.open_port(0, 4, 1000);
+    auto port1 = shared_mem_global->open_port(0, 4, 1000);
     auto listener1 = port1->create_listener(&listener1_index);
 
     auto listener2 = shared_mem_manager.open_port(0, 1, 1000)->create_listener();
@@ -897,10 +898,11 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
 {
     const std::string domain_name("SHMTests");
 
-    SharedMemGlobal shared_mem_global(domain_name);
+    SharedMemManager shared_mem_manager(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
     MockPortSharedMemGlobal port_mocker;
 
-    auto global_port = shared_mem_global.open_port(0, 1, 1000);
+    auto global_port = shared_mem_global->open_port(0, 1, 1000);
 
     Semaphore sem_lock_done;
     Semaphore sem_end_thread_locker;
@@ -932,8 +934,10 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 {
     const std::string domain_name("SHMTests");
 
-    SharedMemGlobal shared_mem_global(domain_name);
-    auto deadlocked_port = shared_mem_global.open_port(0, 1, 1000);
+    SharedMemManager shared_mem_manager(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
+    
+    auto deadlocked_port = shared_mem_global->open_port(0, 1, 1000);
     uint32_t listener_index;
     auto deadlocked_listener = deadlocked_port->create_listener(&listener_index);
 
@@ -951,7 +955,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     // Open the deadlocked port
-    auto port = shared_mem_global.open_port(0, 1, 1000);
+    auto port = shared_mem_global->open_port(0, 1, 1000);
     auto listener = port->create_listener(&listener_index);
     bool listerners_active;
     SharedMemSegment::Id random_id;

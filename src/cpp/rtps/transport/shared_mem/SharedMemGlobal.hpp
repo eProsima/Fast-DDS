@@ -36,11 +36,17 @@ class SharedMemGlobal
 {
 public:
 
+    struct BufferDescriptor;
+    typedef std::function<void(const std::vector<
+                const SharedMemGlobal::BufferDescriptor*>&,
+                const std::string& domain_name)> PortFailureHandler;
+
     // Long names for SHM files could cause problems on some platforms
     static constexpr uint32_t MAX_DOMAIN_NAME_LENGTH = 16; 
 
     SharedMemGlobal(
-        const std::string& domain_name)
+        const std::string& domain_name,
+        PortFailureHandler failure_handler)
         : domain_name_(domain_name)
     {
         if (domain_name.length() > MAX_DOMAIN_NAME_LENGTH)
@@ -51,6 +57,8 @@ public:
                     std::to_string(MAX_DOMAIN_NAME_LENGTH) +
                     " characters");
         }
+
+        Port::on_failure_buffer_descriptors_handler(failure_handler);
     }
 
     ~SharedMemGlobal()
@@ -227,7 +235,7 @@ public:
                     std::lock_guard<std::mutex> lock(wake_run_mutex_);
                     wake_run_ = true;
                 }
-                
+
                 wake_run_cv_.notify_one();
             }
 

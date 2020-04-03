@@ -57,7 +57,13 @@ public:
 
     SharedMemManager(
             const std::string& domain_name)
-        : global_segment_(domain_name)
+        : global_segment_(
+            domain_name,
+            []( const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
+                    const std::string& domain_name) 
+                    {
+                        on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
+                    })
     {
         if (domain_name.length() > SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH)
         {
@@ -621,6 +627,15 @@ public:
         return std::make_shared<Port>(this,
                        global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms, open_mode),
                        open_mode);
+    }
+
+    /**
+     * @return Pointer to the underlying global segment. The pointer is only valid
+     * while this SharedMemManager is alive. 
+     */
+    SharedMemGlobal* global_segment()
+    {
+        return &global_segment_;
     }
 
     private:
