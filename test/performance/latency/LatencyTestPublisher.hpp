@@ -96,9 +96,7 @@ public:
             int forced_domain,
             LatencyDataSizes& latency_data_sizes);
 
-    void run();
-
-    bool load_demands_payload(const std::string& demands_file);
+    void run();    
 
     bool test(
             uint32_t datasize);
@@ -151,22 +149,7 @@ public:
     constexpr static uint32_t MINIMUM_INDEX = 0;
     constexpr static uint32_t AVERAGE_INDEX = 1;
     constexpr static uint32_t DATA_BASE_INDEX = 2;
-    std::vector<std::shared_ptr<std::stringstream>> output_files_;
-    /*std::stringstream output_file_minimum_;
-    std::stringstream ;
-    std::stringstream output_file_16_;
-    std::stringstream output_file_32_;
-    std::stringstream output_file_64_;
-    std::stringstream output_file_128_;
-    std::stringstream output_file_256_;
-    std::stringstream output_file_512_;
-    std::stringstream output_file_1024_;
-    std::stringstream output_file_2048_;
-    std::stringstream output_file_4096_;
-    std::stringstream output_file_8192_;
-    std::stringstream output_file_16384_;
-    std::stringstream output_file_64000_;
-    std::stringstream output_file_131072_;*/
+    std::vector<std::shared_ptr<std::stringstream>> output_files_;    
     std::string xml_config_file_;
     std::string raw_data_file_;
     std::string export_prefix_;
