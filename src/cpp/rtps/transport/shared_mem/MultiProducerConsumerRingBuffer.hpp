@@ -103,7 +103,7 @@ public:
          * if the counter reaches 0 the cell becomes dirty
          * and free_cells are incremented
          * @return true if the cell ref_counter is 0 after pop
-         * @throw int if buffer is empty
+         * @throw std::exception if buffer is empty
          */
         bool pop()
         {
@@ -292,6 +292,36 @@ public:
         node->pointer_.store({0,total_cells}, std::memory_order_relaxed);
     }
 
+    /**
+     * Copies the currenty enqueued cells to a vector
+     * @param [out] enqueued_cells pointers vector to where cells will be copied.
+     * @remark This is an unsafe operation, that means the caller must assure
+     * that no write operations are performed on the buffer while executing the copy.
+     */
+    void copy(
+            std::vector<const T*>* enqueued_cells)
+    {
+        if (node_->registered_listeners_ > 0)
+        {
+            auto pointer = node_->pointer_.load(std::memory_order_relaxed);
+
+            uint32_t p = pointer_to_head(pointer);
+
+            while (p != pointer.write_p)
+            {
+                auto cell = &cells_[get_pointer_value(p)];
+
+                // If the cell has not been read by any listener
+                if (cell->ref_counter() > 0)
+                {
+                    enqueued_cells->push_back(&cell->data());
+                }
+
+                p = inc_pointer(p);
+            }
+        }
+    }
+
 private:
 
     Node* node_;
@@ -306,7 +336,7 @@ private:
     }
 
     uint32_t inc_pointer(
-            const uint32_t pointer)
+            const uint32_t pointer) const
     {
         uint32_t value = pointer & 0x7FFFFFFF;
         uint32_t loop_flag = pointer >> 31;
@@ -317,6 +347,27 @@ private:
         {
             loop_flag ^= 1;
         }
+
+        // Bit 31 is loop_flag, 0-30 are value
+        return (loop_flag << 31) | value;
+    }
+
+    uint32_t pointer_to_head(
+            const Pointer& pointer) const
+    {
+        // Init the head as write pointer in previous loop
+        uint32_t head = pointer.write_p ^ 0x80000000;
+
+        uint32_t value = head & 0x7FFFFFFF;
+        uint32_t loop_flag = head >> 31;
+
+        if (value +  pointer.free_cells >= node_->total_cells_)
+        {
+            loop_flag ^= 1;
+        }
+
+        // Skip the free cells
+        value = (value + pointer.free_cells) % node_->total_cells_;
 
         // Bit 31 is loop_flag, 0-30 are value
         return (loop_flag << 31) | value;

@@ -41,7 +41,7 @@ private:
     {
         struct
         {
-            std::atomic<uint32_t> ref_count;
+            std::atomic<int> ref_count;
             uint32_t data_size;
         }header;
         uint8_t data[1];
@@ -57,8 +57,31 @@ public:
 
     SharedMemManager(
             const std::string& domain_name)
-        : global_segment_(domain_name)
+        : global_segment_(
+            domain_name,
+            []( const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
+                    const std::string& domain_name) 
+                    {
+                        on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
+                    })
     {
+        if (domain_name.length() > SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH)
+        {
+            throw std::runtime_error(
+                    domain_name +
+                    " too long for domain name (max " +
+                    std::to_string(SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH) +
+                    " characters");
+        }
+
+        SharedMemGlobal::Port::on_failure_buffer_descriptors_handler(
+            []( const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
+                const std::string& domain_name) 
+                {
+                    on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
+                }
+        );
+            
         per_allocation_extra_size_ =
                 SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
     }
@@ -280,7 +303,9 @@ public:
             auto node_it = allocated_nodes_.begin();
             while (node_it != allocated_nodes_.end())
             {
-                if ((*node_it)->header.ref_count.load() == 0)
+                // This shouldn't normally be negative, but when processes crashes
+                // due to fault-tolerance mecanishms it could happen.
+                if ((*node_it)->header.ref_count.load() <= 0)
                 {
                     release_buffer(*node_it);
 
@@ -337,59 +362,120 @@ public:
     public:
 
         Listener(
-                SharedMemManager& shared_mem_manager,
+                SharedMemManager* shared_mem_manager,
                 std::shared_ptr<SharedMemGlobal::Port> port)
             : global_port_(port)
             , shared_mem_manager_(shared_mem_manager)
             , is_closed_(false)
         {
-            global_listener_ = global_port_->create_listener();
+            global_listener_ = global_port_->create_listener(&listener_index_);
         }
 
+        ~Listener()
+        {
+            global_listener_.reset();
+            if (global_port_)
+            {
+                global_port_->unregister_listener();
+            }
+        }
+
+        Listener& operator = (
+                Listener&& other)
+        {
+            global_listener_ = other.global_listener_;
+            other.global_listener_.reset();
+            global_port_ = other.global_port_;
+            other.global_port_.reset();
+            shared_mem_manager_ = other.shared_mem_manager_;
+            is_closed_.exchange(other.is_closed_);
+
+            return *this;
+        }
+                
         /**
          * Extract the first buffer enqued in the port.
          * If the queue is empty, blocks until a buffer is pushed
          * to the port.
+         * @return A shared_ptr to the buffer, this shared_ptr can be nullptr if the 
+         * wait was interrupted because errors or close operations.
          * @remark Multithread not supported.
          */
         std::shared_ptr<Buffer> pop()
         {
-            bool was_cell_freed;
             std::shared_ptr<Buffer> buffer_ref;
 
-            SharedMemGlobal::PortCell* head_cell = nullptr;
-
-            while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
+            try
             {
-                // Wait until threre's data to pop
-                global_port_->wait_pop(*global_listener_, is_closed_);
+                bool was_cell_freed;
+                
+                SharedMemGlobal::PortCell* head_cell = nullptr;
+
+                while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
+                {
+                    // Wait until there's data to pop
+                    global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
+                }
+
+                if (!head_cell)
+                {
+                    return nullptr;
+                }
+
+                if (!global_port_->is_port_ok())
+                {
+                    throw std::runtime_error("");
+                }
+
+                SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
+
+                SegmentNode* segment_node;
+                auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id, &segment_node);
+                auto buffer_node =
+                        static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.buffer_node_offset));
+
+                // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
+                buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id, buffer_node,
+                                segment_node);
+
+                // If the cell has been read by all listeners
+                global_port_->pop(*global_listener_, was_cell_freed);
+
+                if (was_cell_freed)
+                {
+                    buffer_node->header.ref_count.fetch_sub(1);
+                }
             }
+            catch(const std::exception& e)
+            {   
+                if (global_port_->is_port_ok())
+                {
+                    throw;
+                }
+                else
+                {
+                    logWarning(RTPS_TRANSPORT_SHM, "SHM Listener on port " << global_port_->port_id() << " failure: "
+                        << e.what());
 
-            if (!head_cell)
-            {
-                return nullptr;
-            }
-
-            SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
-
-            SegmentNode* segment_node;
-            auto segment = shared_mem_manager_.find_segment(buffer_descriptor.source_segment_id, &segment_node);
-            auto buffer_node =
-                    static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.buffer_node_offset));
-
-            // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
-            buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id, buffer_node,
-                            segment_node);
-
-            // If the cell has been read by all listeners
-            global_port_->pop(*global_listener_, was_cell_freed);
-
-            if (was_cell_freed)
-            {
-                buffer_node->header.ref_count.fetch_sub(1);
+                    regenerate_port();
+                }
             }
 
             return buffer_ref;
+        }
+
+        void regenerate_port()
+        {
+            auto new_port = shared_mem_manager_->open_port(
+                global_port_->port_id(), 
+                global_port_->max_buffer_descriptors(),
+                global_port_->healthy_check_timeout_ms(),
+                global_port_->open_mode()
+                );
+
+            auto new_listener = new_port->create_listener();
+
+            *this = std::move(*new_listener);
         }
 
         /**
@@ -406,10 +492,12 @@ public:
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
 
         std::shared_ptr<SharedMemGlobal::Listener> global_listener_;
+        uint32_t listener_index_;
 
-        SharedMemManager& shared_mem_manager_;
+        SharedMemManager* shared_mem_manager_;
 
         std::atomic<bool> is_closed_;
+        
     }; // Listener
 
     /**
@@ -420,11 +508,24 @@ public:
     public:
 
         Port(
-                SharedMemManager& shared_mem_manager,
-                std::shared_ptr<SharedMemGlobal::Port> port)
+                SharedMemManager* shared_mem_manager,
+                std::shared_ptr<SharedMemGlobal::Port> port,
+                SharedMemGlobal::Port::OpenMode open_mode)
             : shared_mem_manager_(shared_mem_manager)
             , global_port_(port)
+            , open_mode_(open_mode)
         {
+        }
+
+        Port& operator = (
+                Port&& other)
+        {
+            shared_mem_manager_ = other.shared_mem_manager_;
+            open_mode_ = other.open_mode_;
+            global_port_ = other.global_port_;
+            other.global_port_.reset();
+
+            return *this;
         }
 
         /**
@@ -452,10 +553,22 @@ public:
                     shared_mem_buffer->decrease_ref();
                 }
             }
-            catch (std::exception&)
+            catch (std::exception& e)
             {
                 shared_mem_buffer->decrease_ref();
-                throw;
+
+                if (!global_port_->is_port_ok())
+                {
+                    logWarning(RTPS_TRANSPORT_SHM, "SHM Port " << global_port_->port_id() << " failure: "
+                        << e.what());
+
+                    regenerate_port();
+                    ret = false;
+                }
+                else
+                {
+                    throw;
+                }
             }
 
             return ret;
@@ -468,9 +581,22 @@ public:
 
     private:
 
-        SharedMemManager& shared_mem_manager_;
+        void regenerate_port()
+        {
+            auto new_port = shared_mem_manager_->open_port(
+                global_port_->port_id(),
+                global_port_->max_buffer_descriptors(),
+                global_port_->healthy_check_timeout_ms(),
+                open_mode_);
+
+            *this = std::move(*new_port);
+        }
+
+        SharedMemManager* shared_mem_manager_;
 
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
+
+        SharedMemGlobal::Port::OpenMode open_mode_;
 
     }; // Port
 
@@ -498,8 +624,18 @@ public:
             uint32_t healthy_check_timeout_ms,
             SharedMemGlobal::Port::OpenMode open_mode = SharedMemGlobal::Port::OpenMode::ReadShared)
     {
-        return std::make_shared<Port>(*this,
-                       global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms, open_mode));
+        return std::make_shared<Port>(this,
+                       global_segment_.open_port(port_id, max_descriptors, healthy_check_timeout_ms, open_mode),
+                       open_mode);
+    }
+
+    /**
+     * @return Pointer to the underlying global segment. The pointer is only valid
+     * while this SharedMemManager is alive. 
+     */
+    SharedMemGlobal* global_segment()
+    {
+        return &global_segment_;
     }
 
     private:
@@ -591,6 +727,43 @@ public:
         }
 
         return segment;
+    }
+
+    /**
+     * Called by PortWatchdog when a dead listener has been detected.
+     * At this point the port is marked as not OK, and a vector of
+     * the recovered descriptors, from the port, are passed to
+     * this function that performs their release.
+     */     
+    static void on_failure_buffer_descriptor_handler(
+            const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
+            const std::string& domain_name)
+    {
+        try
+        {
+            SharedMemManager shared_mem_manager(domain_name);
+
+            for (auto buffer_descriptor : buffer_descriptors)
+            {
+                SegmentNode* segment_node;
+                auto segment = shared_mem_manager.find_segment(buffer_descriptor->source_segment_id, &segment_node);
+                auto buffer_node =
+                        static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor->buffer_node_offset));
+
+                int32_t buffer_size = buffer_node->header.data_size;
+
+                // Last reference to the buffer
+                if (buffer_node->header.ref_count.fetch_sub(1) == 1)
+                {
+                    // Anotate the new free space
+                    segment_node->free_bytes.fetch_add(buffer_size);
+                }
+            }
+        }
+        catch (const std::exception& e)
+        {
+            logError(RTPS_TRANSPORT_SHM, e.what());
+        }
     }
 };
 

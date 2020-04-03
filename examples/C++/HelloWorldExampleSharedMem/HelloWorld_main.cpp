@@ -31,7 +31,7 @@ int main(
         char** argv)
 {
     Log::SetVerbosity(Log::Warning);
-    //Log::SetCategoryFilter(std::regex("RTPS_EDP_MATCH|RTPS_PDP_DISCOVERY|RTPS_PARTICIPANT_LISTEN|SHM"));
+    //Log::SetCategoryFilter(std::regex("RTPS_TRANSPORT_SHM"));
 
 
     std::cout << "Starting "<< std::endl;
