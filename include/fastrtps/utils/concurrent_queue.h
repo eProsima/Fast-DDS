@@ -54,7 +54,7 @@ public:
 
   /**
    * @brief push. Move an object to the queue.
-   * @param item.
+   * @param item. The object to push to the queue.
    */
   template <typename O>
   void push(O&& item)
@@ -94,7 +94,7 @@ public:
 
   /**
    * @brief wait_pop. Wait until an object is popped.
-   * @param popped_item.
+   * @return The object popped out of the queue.
    *
    * @see try_pop
    */
@@ -110,7 +110,7 @@ public:
   }
 
   /**
-   * @brief empty.
+   * @brief empty. Whether the queue is empty or not
    * @return true if empty, false othewise.
    */
   bool empty() const noexcept
@@ -120,7 +120,7 @@ public:
   }
 
   /**
-   * @brief size.
+   * @brief size. The queue size
    * @return size of the queue.
    */
   std::size_t size() const noexcept
