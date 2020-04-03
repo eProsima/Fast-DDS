@@ -35,10 +35,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TestReaderRegistered::TestReaderRegistered():
-mp_participant(nullptr),
-mp_reader(nullptr),
-mp_history(nullptr)
+TestReaderRegistered::TestReaderRegistered()
+    : mp_participant(nullptr)
+    , mp_reader(nullptr)
+    , mp_history(nullptr)
 {
 
 
@@ -56,9 +56,11 @@ bool TestReaderRegistered::init()
     RTPSParticipantAttributes PParam;
     PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
     PParam.builtin.use_WriterLivelinessProtocol = true;
-    mp_participant = RTPSDomain::createParticipant(PParam);
-    if(mp_participant==nullptr)
+    mp_participant = RTPSDomain::createParticipant(0, PParam);
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
     //CREATE READERHISTORY
     HistoryAttributes hatt;
     hatt.payloadMaxSize = 255;
@@ -68,9 +70,11 @@ bool TestReaderRegistered::init()
     ReaderAttributes ratt;
     Locator_t loc(22222);
     ratt.endpoint.unicastLocatorList.push_back(loc);
-    mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
-    if(mp_reader == nullptr)
+    mp_reader = RTPSDomain::createRTPSReader(mp_participant, ratt, mp_history, &m_listener);
+    if (mp_reader == nullptr)
+    {
         return false;
+    }
 
     return true;
 }
@@ -94,9 +98,9 @@ void TestReaderRegistered::run()
 
 void TestReaderRegistered::MyListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t * const change)
+        const CacheChange_t* const change)
 {
-    printf("Received: %s\n",change->serializedPayload.data);
+    printf("Received: %s\n", change->serializedPayload.data);
     reader->getHistory()->remove_change((CacheChange_t*)change);
     n_received++;
 }

@@ -21,16 +21,18 @@ using namespace eprosima::fastrtps::rtps;
 
 my_WriterListener::my_WriterListener()
     : n_matched(0)
-{}
+{
+}
 
 my_WriterListener::~my_WriterListener()
-{}
+{
+}
 
 void my_WriterListener::onWriterMatched(
         RTPSWriter*,
         MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         ++n_matched;
     }
@@ -38,22 +40,22 @@ void my_WriterListener::onWriterMatched(
 
 void UserDefinedTransportExampleWriter::waitformatching()
 {
-    while(my_listener->n_matched == 0)
+    while (my_listener->n_matched == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
-
 UserDefinedTransportExampleWriter::UserDefinedTransportExampleWriter()
     : my_participant(nullptr)
     , my_writer(nullptr)
     , initialized_(false)
-{}
+{
+}
 
 UserDefinedTransportExampleWriter::~UserDefinedTransportExampleWriter()
 {
-    if(my_participant != nullptr)
+    if (my_participant != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(my_participant);
     }
@@ -69,18 +71,18 @@ void UserDefinedTransportExampleWriter::init()
 
     pattr.userTransports.push_back(customTransport);
     pattr.useBuiltinTransports = false;
-    my_participant = RTPSDomain::createParticipant(pattr);
+    my_participant = RTPSDomain::createParticipant(0, pattr);
 
     //Creation of the Reader
     my_listener = new my_WriterListener();
     my_history = new WriterHistory(hattr);
-    my_writer= RTPSDomain::createRTPSWriter(my_participant, wattr, my_history, my_listener);
+    my_writer = RTPSDomain::createRTPSWriter(my_participant, wattr, my_history, my_listener);
 
     // Register type
     tattr.topicKind = NO_KEY;
     tattr.topicDataType = "string";
     tattr.topicName = "ExampleTopic";
-    my_participant->registerWriter(my_writer,tattr, wqos);
+    my_participant->registerWriter(my_writer, tattr, wqos);
     initialized_ = true;
 }
 
@@ -89,25 +91,23 @@ bool UserDefinedTransportExampleWriter::isInitialized()
     return initialized_;
 }
 
-
 void UserDefinedTransportExampleWriter::sendData()
 {
     waitformatching();
-    for(int i=0;i<10;i++)
+    for (int i = 0; i < 10; i++)
     {
-        CacheChange_t * ch = my_writer->new_change([]() -> int32_t { return 255; }, ALIVE);
+        CacheChange_t* ch = my_writer->new_change([]() -> int32_t {
+            return 255;
+        }, ALIVE);
 #if defined(_WIN32)
         ch->serializedPayload.length =
-            sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %d", i)+1;
+                sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;
 #else
         ch->serializedPayload.length =
-            sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
+                sprintf((char*)ch->serializedPayload.data, "My example string %d", i) + 1;
 #endif
-        printf("Sending: %s\n",(char*)ch->serializedPayload.data);
+        printf("Sending: %s\n", (char*)ch->serializedPayload.data);
         my_history->add_change(ch);
 
     }
 }
-
-
-

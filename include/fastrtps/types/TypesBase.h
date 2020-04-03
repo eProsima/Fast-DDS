@@ -25,6 +25,12 @@
 #include <memory>
 
 namespace eprosima {
+namespace fastdds {
+namespace dds {
+using DomainId_t = uint32_t;
+} // dds
+} // namespace fastdds
+
 namespace fastcdr {
 class Cdr;
 } // namespace fastcdr
@@ -39,7 +45,8 @@ OctetSeq& operator ++(
         OctetSeq&);
 
 OctetSeq operator ++(
-        OctetSeq&, int);
+        OctetSeq&,
+        int);
 
 size_t to_size_t(
         const OctetSeq&);
@@ -174,8 +181,8 @@ const uint16_t MemberFlagMinimalMask = 0x003f;
  * @brief This class represents the enumeration ReturnCode_t.
  */
 /*
-enum ReturnCode_t : uint32_t
-{
+   enum ReturnCode_t : uint32_t
+   {
     RETCODE_OK = 0,
     RETCODE_ERROR = 1,
     RETCODE_UNSUPPORTED = 2,
@@ -189,13 +196,14 @@ enum ReturnCode_t : uint32_t
     RETCODE_TIMEOUT = 10,
     RETCODE_NO_DATA = 11,
     RETCODE_ILLEGAL_OPERATION = 12
-};
-*/
+   };
+ */
 class ReturnCode_t;
 
 class RTPS_DllAPI ReturnCode_t
 {
 public:
+
     ReturnCode_t(
             uint32_t value)
     {
@@ -203,7 +211,7 @@ public:
     }
 
     ReturnCode_t(
-        const ReturnCode_t& code)
+            const ReturnCode_t& code)
     {
         value_ = code.value_;
     }
@@ -254,6 +262,7 @@ public:
     static const ReturnCode_t RETCODE_ILLEGAL_OPERATION;
 
 private:
+
     uint32_t value_ = ReturnCode_t::RETCODE_OK.value_;
 };
 
@@ -268,8 +277,6 @@ const int32_t MAX_BITMASK_LENGTH = 64;
 const int32_t MAX_ELEMENTS_COUNT = 100;
 const int32_t MAX_STRING_LENGTH = 255;
 
-#define LENGTH_UNLIMITED        0
-
 // Long Bound of a collection type
 typedef uint32_t LBound;
 typedef std::vector<LBound> LBoundSeq;
@@ -282,7 +289,9 @@ const SBound INVALID_SBOUND = 0;
 
 // Auxiliar function to compare sequences (std::vector)
 template<class T>
-bool compareSequence(const std::vector<T>& a, const std::vector<T>& b)
+bool compareSequence(
+        const std::vector<T>& a,
+        const std::vector<T>& b)
 {
     if (a.size() == b.size())
     {
@@ -313,103 +322,142 @@ bool compareSequence(const std::vector<T>& a, const std::vector<T>& b)
 class MemberFlag
 {
 private:
+
     std::bitset<16> m_MemberFlag;
+
 public:
+
     MemberFlag()
     {
     }
-    MemberFlag(const MemberFlag &x) : m_MemberFlag(x.m_MemberFlag)
+
+    MemberFlag(
+            const MemberFlag& x)
+        : m_MemberFlag(x.m_MemberFlag)
     {
     }
-    MemberFlag(MemberFlag &&x) : m_MemberFlag(std::move(x.m_MemberFlag))
+
+    MemberFlag(
+            MemberFlag&& x)
+        : m_MemberFlag(std::move(x.m_MemberFlag))
     {
     }
-    MemberFlag& operator=(const MemberFlag &x)
+
+    MemberFlag& operator =(
+            const MemberFlag& x)
     {
         m_MemberFlag = x.m_MemberFlag;
         return *this;
     }
 
-    MemberFlag& operator=(MemberFlag &&x)
+    MemberFlag& operator =(
+            MemberFlag&& x)
     {
         m_MemberFlag = std::move(x.m_MemberFlag);
         return *this;
     }
+
     // T1 | 00 = INVALID, 01 = DISCARD
     bool TRY_CONSTRUCT1() const
     {
         return m_MemberFlag.test(0);
     }
-    void TRY_CONSTRUCT1(bool b)
+
+    void TRY_CONSTRUCT1(
+            bool b)
     {
         b ? m_MemberFlag.set(0) : m_MemberFlag.reset(0);
     }
-// T2 | 10 = USE_DEFAULT, 11 = TRIM
+
+    // T2 | 10 = USE_DEFAULT, 11 = TRIM
     bool TRY_CONSTRUCT2() const
     {
         return m_MemberFlag.test(1);
     }
-    void TRY_CONSTRUCT2(bool b)
+
+    void TRY_CONSTRUCT2(
+            bool b)
     {
         b ? m_MemberFlag.set(1) : m_MemberFlag.reset(1);
     }
-// X  StructMember, UnionMember,
-//    CollectionElement
+
+    // X  StructMember, UnionMember,
+    //    CollectionElement
     bool IS_EXTERNAL() const
     {
         return m_MemberFlag.test(2);
     }
-    void IS_EXTERNAL(bool b)
+
+    void IS_EXTERNAL(
+            bool b)
     {
         b ? m_MemberFlag.set(2) : m_MemberFlag.reset(2);
     }
-// O  StructMember
+
+    // O  StructMember
     bool IS_OPTIONAL() const
     {
         return m_MemberFlag.test(3);
     }
-    void IS_OPTIONAL(bool b)
+
+    void IS_OPTIONAL(
+            bool b)
     {
         b ? m_MemberFlag.set(3) : m_MemberFlag.reset(3);
     }
-// M  StructMember
+
+    // M  StructMember
     bool IS_MUST_UNDERSTAND() const
     {
         return m_MemberFlag.test(4);
     }
-    void IS_MUST_UNDERSTAND(bool b)
+
+    void IS_MUST_UNDERSTAND(
+            bool b)
     {
         b ? m_MemberFlag.set(4) : m_MemberFlag.reset(4);
     }
-// K  StructMember, UnionDiscriminator
+
+    // K  StructMember, UnionDiscriminator
     bool IS_KEY() const
     {
         return m_MemberFlag.test(5);
     }
-    void IS_KEY(bool b)
+
+    void IS_KEY(
+            bool b)
     {
         b ? m_MemberFlag.set(5) : m_MemberFlag.reset(5);
     }
-// D  UnionMember, EnumerationLiteral
+
+    // D  UnionMember, EnumerationLiteral
     bool IS_DEFAULT() const
     {
         return m_MemberFlag.test(6);
     }
-    void IS_DEFAULT(bool b)
+
+    void IS_DEFAULT(
+            bool b)
     {
         b ? m_MemberFlag.set(6) : m_MemberFlag.reset(6);
     }
 
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    static size_t getCdrSerializedSize(const MemberFlag&, size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(
+            const MemberFlag&,
+            size_t current_alignment = 0);
 
-    bool operator==(const MemberFlag& other) const
+    bool operator ==(
+            const MemberFlag& other) const
     {
         return m_MemberFlag == other.m_MemberFlag;
     }
+
 };
 
 typedef MemberFlag CollectionElementFlag;   // T1, T2, X
@@ -428,24 +476,36 @@ typedef MemberFlag BitsetMemberFlag;        // Unused. No flags apply
 class TypeFlag
 {
 private:
+
     std::bitset<16> m_TypeFlag;
+
 public:
+
     TypeFlag()
     {
     }
-    TypeFlag(const TypeFlag &x) : m_TypeFlag(x.m_TypeFlag)
+
+    TypeFlag(
+            const TypeFlag& x)
+        : m_TypeFlag(x.m_TypeFlag)
     {
     }
-    TypeFlag(TypeFlag &&x) : m_TypeFlag(std::move(x.m_TypeFlag))
+
+    TypeFlag(
+            TypeFlag&& x)
+        : m_TypeFlag(std::move(x.m_TypeFlag))
     {
     }
-    TypeFlag& operator=(const TypeFlag &x)
+
+    TypeFlag& operator =(
+            const TypeFlag& x)
     {
         m_TypeFlag = x.m_TypeFlag;
         return *this;
     }
 
-    TypeFlag& operator=(TypeFlag &&x)
+    TypeFlag& operator =(
+            TypeFlag&& x)
     {
         m_TypeFlag = std::move(x.m_TypeFlag);
         return *this;
@@ -456,67 +516,87 @@ public:
     {
         return m_TypeFlag.test(0);
     }
-    void IS_FINAL(bool b)
+
+    void IS_FINAL(
+            bool b)
     {
         b ? m_TypeFlag.set(0) : m_TypeFlag.reset(0);
     }
-// A |-  Struct, Union
+
+    // A |-  Struct, Union
     bool IS_APPENDABLE() const
     {
         return m_TypeFlag.test(1);
     }
-    void IS_APPENDABLE(bool b)
+
+    void IS_APPENDABLE(
+            bool b)
     {
         b ? m_TypeFlag.set(1) : m_TypeFlag.reset(1);
     }
-// M |   (exactly one flag)
+
+    // M |   (exactly one flag)
     bool IS_MUTABLE() const
     {
         return m_TypeFlag.test(2);
     }
-    void IS_MUTABLE(bool b)
+
+    void IS_MUTABLE(
+            bool b)
     {
         b ? m_TypeFlag.set(2) : m_TypeFlag.reset(2);
     }
-// N     Struct, Union
+
+    // N     Struct, Union
     bool IS_NESTED() const
     {
         return m_TypeFlag.test(3);
     }
-    void IS_NESTED(bool b)
+
+    void IS_NESTED(
+            bool b)
     {
         b ? m_TypeFlag.set(3) : m_TypeFlag.reset(3);
     }
-// H     Struct
+
+    // H     Struct
     bool IS_AUTOID_HASH() const
     {
         return m_TypeFlag.test(4);
     }
-    void IS_AUTOID_HASH(bool b)
+
+    void IS_AUTOID_HASH(
+            bool b)
     {
         b ? m_TypeFlag.set(4) : m_TypeFlag.reset(4);
     }
 
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    static size_t getCdrSerializedSize(const TypeFlag&, size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(
+            const TypeFlag&,
+            size_t current_alignment = 0);
 
-    bool operator==(const TypeFlag& other) const
+    bool operator ==(
+            const TypeFlag& other) const
     {
         return m_TypeFlag == other.m_TypeFlag;
     }
+
 };
 
-typedef TypeFlag   StructTypeFlag;      // All flags apply
-typedef TypeFlag   UnionTypeFlag;       // All flags apply
-typedef TypeFlag   CollectionTypeFlag;  // Unused. No flags apply
-typedef TypeFlag   AnnotationTypeFlag;  // Unused. No flags apply
-typedef TypeFlag   AliasTypeFlag;       // Unused. No flags apply
-typedef TypeFlag   EnumTypeFlag;        // Unused. No flags apply
-typedef TypeFlag   BitmaskTypeFlag;     // Unused. No flags apply
-typedef TypeFlag   BitsetTypeFlag;      // Unused. No flags apply
+typedef TypeFlag StructTypeFlag;        // All flags apply
+typedef TypeFlag UnionTypeFlag;         // All flags apply
+typedef TypeFlag CollectionTypeFlag;    // Unused. No flags apply
+typedef TypeFlag AnnotationTypeFlag;    // Unused. No flags apply
+typedef TypeFlag AliasTypeFlag;         // Unused. No flags apply
+typedef TypeFlag EnumTypeFlag;          // Unused. No flags apply
+typedef TypeFlag BitmaskTypeFlag;       // Unused. No flags apply
+typedef TypeFlag BitsetTypeFlag;        // Unused. No flags apply
 
 // Mask used to remove the flags that do no affect assignability
 const uint16_t TypeFlagMinimalMask = 0x0007; // Selects  M, A, F

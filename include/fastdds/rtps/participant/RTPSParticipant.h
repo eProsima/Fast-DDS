@@ -228,6 +228,11 @@ public:
     void set_listener(
             RTPSParticipantListener* listener);
 
+    /**
+     * @brief Retrieves the DomainId.
+     */
+    uint32_t get_domain_id() const;
+
 private:
 
     //!Pointer to the implementation.

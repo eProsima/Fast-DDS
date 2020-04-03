@@ -114,7 +114,7 @@ void TCPReqRepHelloWorldRequester::init(
 
     pattr.rtps.userTransports.push_back(descriptor);
 
-    pattr.rtps.builtin.domainId = domainId;
+    pattr.domainId = domainId;
     pattr.rtps.participantID = participantId;
     pattr.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     //pattr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);

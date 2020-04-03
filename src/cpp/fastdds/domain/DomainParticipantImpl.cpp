@@ -72,13 +72,14 @@ using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
+
 DomainParticipantImpl::DomainParticipantImpl(
-        const ParticipantAttributes& patt,
-        DomainParticipant* pspart,
+        DomainParticipant* dp,
+        const DomainParticipantQos& qos,
         DomainParticipantListener* listen)
-    : att_(patt)
+    : qos_(qos)
     , rtps_participant_(nullptr)
-    , participant_(pspart)
+    , participant_(dp)
     , listener_(listen)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
@@ -212,7 +213,7 @@ Publisher* DomainParticipantImpl::create_publisher(
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
 {
-    if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (qos_.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if (att.getUserDefinedID() <= 0)
         {
@@ -322,9 +323,9 @@ Publisher* DomainParticipantImpl::create_publisher(
    }
  */
 
-uint8_t DomainParticipantImpl::get_domain_id() const
+DomainId_t DomainParticipantImpl::get_domain_id() const
 {
-    return static_cast<uint8_t>(att_.rtps.builtin.domainId);
+    return rtps_participant_->get_domain_id();
 }
 
 /* TODO
@@ -500,7 +501,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
 {
-    if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (qos_.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if (att.getUserDefinedID() <= 0)
         {

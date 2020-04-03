@@ -38,7 +38,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 }
 
 bool HelloWorldPublisher::init(
-        const std::string &wan_ip,
+        const std::string& wan_ip,
         unsigned short port,
         bool use_tls,
         const std::vector<std::string>& whitelist)
@@ -48,7 +48,6 @@ bool HelloWorldPublisher::init(
     hello_.message("HelloWorld");
     ParticipantAttributes pparam;
 
-    pparam.rtps.builtin.domainId = 0;
     pparam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     pparam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
     pparam.rtps.setName("Participant_pub");
@@ -154,7 +153,7 @@ void HelloWorldPublisher::runThread(
             {
                 //logError(HW, "SENT " <<  hello_.index());
                 std::cout << "[RTCP] Message: " << hello_.message() << " with index: "
-                    << hello_.index() << " SENT" << std::endl;
+                          << hello_.index() << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
         }
@@ -170,7 +169,7 @@ void HelloWorldPublisher::runThread(
             else
             {
                 std::cout << "[RTCP] Message: " << hello_.message() << " with index: "
-                    << hello_.index() << " SENT" << std::endl;
+                          << hello_.index() << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
         }
@@ -195,7 +194,8 @@ void HelloWorldPublisher::run(
     thread.join();
 }
 
-bool HelloWorldPublisher::publish(bool waitForListener)
+bool HelloWorldPublisher::publish(
+        bool waitForListener)
 {
     if (listener_.firstConnected || !waitForListener || listener_.n_matched > 0)
     {

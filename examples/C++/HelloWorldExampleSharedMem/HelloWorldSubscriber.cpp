@@ -32,7 +32,7 @@ using namespace eprosima::fastdds::rtps;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : mp_participant(nullptr)
-    ,mp_subscriber(nullptr)
+    , mp_subscriber(nullptr)
 {
 }
 
@@ -43,7 +43,6 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 66;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
 
@@ -51,7 +50,7 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.useBuiltinTransports = false;
 
     auto sm_transport = std::make_shared<SharedMemTransportDescriptor>();
-    sm_transport->segment_size(2*1024*1024, 2 * 1024 * 1024);
+    sm_transport->segment_size(2 * 1024 * 1024, 2 * 1024 * 1024);
     PParam.rtps.userTransports.push_back(sm_transport);
 
     // UDP
@@ -60,7 +59,7 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.userTransports.push_back(udp_transport);
 
     mp_participant = Domain::createParticipant(PParam);
-    if (mp_participant==nullptr)
+    if (mp_participant == nullptr)
     {
         return false;
     }
@@ -68,7 +67,7 @@ bool HelloWorldSubscriber::init()
     //REGISTER THE TYPE
 
 
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(mp_participant, &m_type);
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
@@ -81,7 +80,7 @@ bool HelloWorldSubscriber::init()
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
 
     if (mp_subscriber == nullptr)
     {
@@ -92,7 +91,8 @@ bool HelloWorldSubscriber::init()
     return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber() {
+HelloWorldSubscriber::~HelloWorldSubscriber()
+{
     // TODO Auto-generated destructor stub
     Domain::removeParticipant(mp_participant);
 }
@@ -104,12 +104,12 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
     if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
 }
 
@@ -125,7 +125,7 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(
             // Print your structure data here.
             std::cout << "Message " << m_Hello->message() << " " << m_Hello->index()
                       << " RECEIVED With " << data_size << "(bytes) of Data. DataEnd = " <<
-            (char*)&m_Hello->data()[data_size-9]
+            (char*)&m_Hello->data()[data_size - 9]
                       << std::endl;
         }
     }

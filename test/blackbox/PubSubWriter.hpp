@@ -274,7 +274,7 @@ public:
     void init()
     {
         //Create participant
-        participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
+        participant_attr_.domainId = (uint32_t)GET_PID() % 230;
 
         // Use local copies of attributes to catch #6507 issues with valgrind
         eprosima::fastrtps::ParticipantAttributes participant_attr;

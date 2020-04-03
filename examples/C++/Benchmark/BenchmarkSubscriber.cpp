@@ -36,8 +36,8 @@ BenchMarkSubscriber::BenchMarkSubscriber()
     : mp_participant(nullptr)
     , mp_publisher(nullptr)
     , mp_subscriber(nullptr)
-	, m_pubListener(this)
-	, m_subListener(this)
+    , m_pubListener(this)
+    , m_subListener(this)
 {
 }
 
@@ -48,10 +48,10 @@ bool BenchMarkSubscriber::init(
         int domain,
         int size)
 {
-	m_iSize = size;
+    m_iSize = size;
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = domain;
+    PParam.domainId = domain;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
     PParam.rtps.setName("Participant_sub");
@@ -72,8 +72,8 @@ bool BenchMarkSubscriber::init(
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
-		descriptor->sendBufferSize = 8912896; // 8.5Mb
-		descriptor->receiveBufferSize = 8912896; // 8.5Mb
+        descriptor->sendBufferSize = 8912896; // 8.5Mb
+        descriptor->receiveBufferSize = 8912896; // 8.5Mb
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 3)
@@ -93,14 +93,16 @@ bool BenchMarkSubscriber::init(
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
-		descriptor->sendBufferSize = 8912896; // 8.5Mb
-		descriptor->receiveBufferSize = 8912896; // 8.5Mb
+        descriptor->sendBufferSize = 8912896; // 8.5Mb
+        descriptor->receiveBufferSize = 8912896; // 8.5Mb
         PParam.rtps.userTransports.push_back(descriptor);
     }
 
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
@@ -113,44 +115,44 @@ bool BenchMarkSubscriber::init(
     //REGISTER THE TYPE
     switch (m_iSize)
     {
-    default:
-    case 0:
-        Rparam.topic.topicDataType = "BenchMark";
-        Wparam.topic.topicDataType = "BenchMark";
-        Domain::registerType(mp_participant, &m_type);
-        break;
-    case 1:
-        Rparam.topic.topicDataType = "BenchMarkSmall";
-        Wparam.topic.topicDataType = "BenchMarkSmall";
-        Domain::registerType(mp_participant, &m_typeSmall);
-        break;
-    case 2:
-        Rparam.topic.topicDataType = "BenchMarkMedium";
-        Wparam.topic.topicDataType = "BenchMarkMedium";
-        Domain::registerType(mp_participant, &m_typeMedium);
-        break;
-    case 3:
-        Rparam.topic.topicDataType = "BenchMarkBig";
-        Wparam.topic.topicDataType = "BenchMarkBig";
-        Domain::registerType(mp_participant, &m_typeBig);
-        break;
+        default:
+        case 0:
+            Rparam.topic.topicDataType = "BenchMark";
+            Wparam.topic.topicDataType = "BenchMark";
+            Domain::registerType(mp_participant, &m_type);
+            break;
+        case 1:
+            Rparam.topic.topicDataType = "BenchMarkSmall";
+            Wparam.topic.topicDataType = "BenchMarkSmall";
+            Domain::registerType(mp_participant, &m_typeSmall);
+            break;
+        case 2:
+            Rparam.topic.topicDataType = "BenchMarkMedium";
+            Wparam.topic.topicDataType = "BenchMarkMedium";
+            Domain::registerType(mp_participant, &m_typeMedium);
+            break;
+        case 3:
+            Rparam.topic.topicDataType = "BenchMarkBig";
+            Wparam.topic.topicDataType = "BenchMarkBig";
+            Domain::registerType(mp_participant, &m_typeBig);
+            break;
     }
 
-	Rparam.topic.topicName = topicName + "_1";
+    Rparam.topic.topicName = topicName + "_1";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = reliabilityKind;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_subListener);
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_subListener);
 
     if (mp_subscriber == nullptr)
     {
         return false;
     }
 
-	Wparam.topic.topicName = topicName + "_2";
+    Wparam.topic.topicName = topicName + "_2";
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 1;
     Wparam.topic.resourceLimitsQos.max_samples = 1;
@@ -158,7 +160,7 @@ bool BenchMarkSubscriber::init(
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     Wparam.qos.m_reliability.kind = reliabilityKind;
-	Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
+    Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
 
     mp_publisher = Domain::createPublisher(mp_participant, Wparam, (PublisherListener*)&m_pubListener);
     if (mp_publisher == nullptr)
@@ -175,14 +177,17 @@ BenchMarkSubscriber::~BenchMarkSubscriber()
     Domain::removeParticipant(mp_participant);
 }
 
-BenchMarkSubscriber::PubListener::PubListener(BenchMarkSubscriber* parent)
+BenchMarkSubscriber::PubListener::PubListener(
+        BenchMarkSubscriber* parent)
     : mParent(parent)
-	, n_matched(0)
+    , n_matched(0)
     , firstConnected(false)
 {
 }
 
-void BenchMarkSubscriber::PubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void BenchMarkSubscriber::PubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -193,90 +198,94 @@ void BenchMarkSubscriber::PubListener::onPublicationMatched(Publisher* /*pub*/, 
     else
     {
         n_matched--;
-		std::cin.clear();
+        std::cin.clear();
         std::cout << "Publisher unmatched" << std::endl;
     }
 }
 
-BenchMarkSubscriber::SubListener::SubListener(BenchMarkSubscriber* parent)
+BenchMarkSubscriber::SubListener::SubListener(
+        BenchMarkSubscriber* parent)
     : mParent(parent)
     , n_matched(0)
     , n_samples(0)
 {
 }
 
-void BenchMarkSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void BenchMarkSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
 }
 
-void BenchMarkSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void BenchMarkSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
     switch (mParent->m_iSize)
     {
-    default:
-    case 0:
-    {
-        if (sub->takeNextData((void*)&mParent->m_Hello, &m_info))
+        default:
+        case 0:
         {
-            if (m_info.sampleKind == ALIVE)
+            if (sub->takeNextData((void*)&mParent->m_Hello, &m_info))
             {
-                mParent->m_Hello.index(mParent->m_Hello.index() + 1);
-                mParent->mp_publisher->write((void*)&mParent->m_Hello);
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_Hello.index(mParent->m_Hello.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_Hello);
+                }
             }
         }
-    }
-    break;
-    case 1:
-    {
-        if (sub->takeNextData((void*)&mParent->m_HelloSmall, &m_info))
+        break;
+        case 1:
         {
-            if (m_info.sampleKind == ALIVE)
+            if (sub->takeNextData((void*)&mParent->m_HelloSmall, &m_info))
             {
-                mParent->m_HelloSmall.index(mParent->m_HelloSmall.index() + 1);
-                mParent->mp_publisher->write((void*)&mParent->m_HelloSmall);
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_HelloSmall.index(mParent->m_HelloSmall.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_HelloSmall);
+                }
             }
         }
-    }
-    break;
-    case 2:
-    {
-        if (sub->takeNextData((void*)&mParent->m_HelloMedium, &m_info))
+        break;
+        case 2:
         {
-            if (m_info.sampleKind == ALIVE)
+            if (sub->takeNextData((void*)&mParent->m_HelloMedium, &m_info))
             {
-                mParent->m_HelloMedium.index(mParent->m_HelloMedium.index() + 1);
-                mParent->mp_publisher->write((void*)&mParent->m_HelloMedium);
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_HelloMedium.index(mParent->m_HelloMedium.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_HelloMedium);
+                }
             }
         }
-    }
-    break;
-    case 3:
-    {
-        if (sub->takeNextData((void*)&mParent->m_HelloBig, &m_info))
+        break;
+        case 3:
         {
-            if (m_info.sampleKind == ALIVE)
+            if (sub->takeNextData((void*)&mParent->m_HelloBig, &m_info))
             {
-                mParent->m_HelloBig.index(mParent->m_HelloBig.index() + 1);
-                mParent->mp_publisher->write((void*)&mParent->m_HelloBig);
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_HelloBig.index(mParent->m_HelloBig.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_HelloBig);
+                }
             }
         }
-    }
-    break;
+        break;
     }
 }
 
 void BenchMarkSubscriber::run()
 {
     std::cout << "Subscriber running..." << std::endl;
-	std::cin.ignore();
+    std::cin.ignore();
 }

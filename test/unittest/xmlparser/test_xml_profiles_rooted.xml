@@ -3,6 +3,7 @@
     <profiles>
 
         <participant profile_name="test_participant_profile" is_default_profile="true">
+            <domainId>2019102</domainId>
             <rtps>
                 <allocation>
                     <remote_locators>
@@ -68,7 +69,6 @@
                     </discovery_config>
                     <avoid_builtin_multicast>false</avoid_builtin_multicast>
                     <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
-                    <domainId>2019102</domainId>
                     <metatrafficUnicastLocatorList>
                         <locator>
                             <udpv4>

@@ -45,21 +45,21 @@ bool DataWriter::write(
 
 bool DataWriter::write(
         void* data,
-        rtps::WriteParams& params)
+        fastrtps::rtps::WriteParams& params)
 {
     return impl_->write(data, params);
 }
 
 ReturnCode_t DataWriter::write(
         void* data,
-        const rtps::InstanceHandle_t& handle)
+        const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
 
 ReturnCode_t DataWriter::dispose(
         void* data,
-        const rtps::InstanceHandle_t& handle)
+        const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->dispose(data, handle);
 }
@@ -70,23 +70,23 @@ bool DataWriter::dispose(
     return impl_->dispose(data);
 }
 
-const rtps::GUID_t& DataWriter::guid()
+const fastrtps::rtps::GUID_t& DataWriter::guid()
 {
     return impl_->guid();
 }
 
-rtps::InstanceHandle_t DataWriter::get_instance_handle() const
+fastrtps::rtps::InstanceHandle_t DataWriter::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }
 
 bool DataWriter::set_attributes(
-        const rtps::WriterAttributes& att)
+        const fastrtps::rtps::WriterAttributes& att)
 {
     return impl_->set_attributes(att);
 }
 
-const rtps::WriterAttributes& DataWriter::get_attributes() const
+const fastrtps::rtps::WriterAttributes& DataWriter::get_attributes() const
 {
     return impl_->get_attributes();
 }

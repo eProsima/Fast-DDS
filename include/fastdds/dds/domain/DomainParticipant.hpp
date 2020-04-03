@@ -27,10 +27,18 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/Entity.hpp>
 
 #include <utility>
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace domain {
+class DomainParticipant;
+}
+}
 
 namespace eprosima {
 namespace fastrtps {
@@ -53,6 +61,7 @@ namespace dds {
 
 class DomainParticipantImpl;
 class DomainParticipantListener;
+class DomainParticipantQos;
 class Publisher;
 class PublisherQos;
 class PublisherListener;
@@ -64,7 +73,7 @@ class SubscriberListener;
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DomainParticipant
+class DomainParticipant : public Entity
 {
 public:
 
@@ -73,14 +82,14 @@ public:
      * @param listener
      * @return true if the listener was updated.
      */
-    ReturnCode_t set_listener(
+    RTPS_DllAPI ReturnCode_t set_listener(
             DomainParticipantListener* listener);
 
     /**
      * Allows accessing the DomainParticipantListener.
      * @return DomainParticipantListener
      */
-    const DomainParticipantListener* get_listener() const;
+    RTPS_DllAPI const DomainParticipantListener* get_listener() const;
 
     /**
      * Create a Publisher in this Participant.
@@ -89,7 +98,7 @@ public:
      * @param listen Pointer to the listener.
      * @return Pointer to the created Publisher.
      */
-    Publisher* create_publisher(
+    RTPS_DllAPI Publisher* create_publisher(
             const fastdds::dds::PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
             PublisherListener* listen = nullptr);
@@ -99,7 +108,7 @@ public:
      * @param publisher to be deleted.
      * @return if publisher was deleted.
      */
-    ReturnCode_t delete_publisher(
+    RTPS_DllAPI ReturnCode_t delete_publisher(
             Publisher* publisher);
 
     /**
@@ -109,7 +118,7 @@ public:
      * @param listen Pointer to the listener.
      * @return Pointer to the created Subscriber.
      */
-    Subscriber* create_subscriber(
+    RTPS_DllAPI Subscriber* create_subscriber(
             const fastdds::dds::SubscriberQos& qos,
             const fastrtps::SubscriberAttributes& att,
             SubscriberListener* listen = nullptr);
@@ -119,7 +128,7 @@ public:
      * @param subscriber to be deleted.
      * @return if subscriber was deleted.
      */
-    ReturnCode_t delete_subscriber(
+    RTPS_DllAPI ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
 
     /**
@@ -128,7 +137,7 @@ public:
      * @param type_name The name that will be used to identify the Type.
      * @return True if registered.
      */
-    bool register_type(
+    RTPS_DllAPI bool register_type(
             TypeSupport type,
             const std::string& type_name);
 
@@ -137,7 +146,7 @@ public:
      * @param type TypeSupport.
      * @return True if registered.
      */
-    bool register_type(
+    RTPS_DllAPI bool register_type(
             TypeSupport type);
 
     /**
@@ -145,45 +154,45 @@ public:
      * @param typeName Name of the type
      * @return True if unregistered.
      */
-    bool unregister_type(
+    RTPS_DllAPI bool unregister_type(
             const char* typeName);
 
     // TODO create/delete topic
 
     /* TODO
-    Subscriber* get_builtin_subscriber();
-    */
+       Subscriber* get_builtin_subscriber();
+     */
 
     /* TODO
-    bool ignore_participant(
+       bool ignore_participant(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_topic(
+       bool ignore_topic(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_publication(
+       bool ignore_publication(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_subscription(
+       bool ignore_subscription(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /**
      * This operation retrieves the domain_id used to create the DomainParticipant.
      * The domain_id identifies the DDS domain to which the DomainParticipant belongs.
      * @return The Participant's domain_id
      */
-    uint8_t get_domain_id() const;
+    RTPS_DllAPI DomainId_t get_domain_id() const;
 
     /* TODO
-    bool delete_contained_entities();
-    */
+       bool delete_contained_entities();
+     */
 
     /**
      * This operation manually asserts the liveliness of the DomainParticipant.
@@ -199,7 +208,7 @@ public:
      * writing data regularly.
      * @return if liveliness was asserted.
      */
-    ReturnCode_t assert_liveliness();
+    RTPS_DllAPI ReturnCode_t assert_liveliness();
 
     /**
      * This operation sets a default value of the Publisher QoS policies which will be used for newly created
@@ -214,7 +223,7 @@ public:
      * @param qos
      * @return if given qos was applied as default.
      */
-    ReturnCode_t set_default_publisher_qos(
+    RTPS_DllAPI ReturnCode_t set_default_publisher_qos(
             const fastdds::dds::PublisherQos& qos);
 
     /**
@@ -226,7 +235,7 @@ public:
      * call to set_default_publisher_qos, or else, if the call was never made, the default values.
      * @return Current default publisher qos.
      */
-    const fastdds::dds::PublisherQos& get_default_publisher_qos() const;
+    RTPS_DllAPI const fastdds::dds::PublisherQos& get_default_publisher_qos() const;
 
     /**
      * This operation retrieves the default value of the Publisher QoS, that is, the QoS policies which will be used
@@ -238,7 +247,7 @@ public:
      * @param qos
      * @return Always true.
      */
-    ReturnCode_t get_default_publisher_qos(
+    RTPS_DllAPI ReturnCode_t get_default_publisher_qos(
             fastdds::dds::PublisherQos& qos) const;
 
     /**
@@ -254,7 +263,7 @@ public:
      * @param qos
      * @return if given qos was applied as default.
      */
-    ReturnCode_t set_default_subscriber_qos(
+    RTPS_DllAPI ReturnCode_t set_default_subscriber_qos(
             const fastdds::dds::SubscriberQos& qos);
 
     /**
@@ -266,7 +275,7 @@ public:
      * call to set_default_subscriber_qos, or else, if the call was never made, the default values.
      * @return Current default subscriber qos.
      */
-    const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
+    RTPS_DllAPI const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
 
     /**
      * This operation retrieves the default value of the Subscriber QoS, that is, the QoS policies which will be used
@@ -278,32 +287,32 @@ public:
      * @param qos
      * @return Always true.
      */
-    ReturnCode_t get_default_subscriber_qos(
+    RTPS_DllAPI ReturnCode_t get_default_subscriber_qos(
             fastdds::dds::SubscriberQos& qos) const;
 
     // TODO Get/Set default Topic Qos
 
     /* TODO
-    bool get_discovered_participants(
+       bool get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_participant_data(
+       bool get_discovered_participant_data(
             ParticipantBuiltinTopicData& participant_data,
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_topics(
+       bool get_discovered_topics(
             std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_topic_data(
+       bool get_discovered_topic_data(
             TopicBuiltinTopicData& topic_data,
             const fastrtps::rtps::InstanceHandle_t& topic_handle) const;
-    */
+     */
 
     /**
      * This operation checks whether or not the given handle represents an Entity that was created from the
@@ -314,7 +323,7 @@ public:
      * entities created using a contained Publisher, or Subscriber as the factory, and so forth.
      * @return True if entity is contained. False otherwise.
      */
-    bool contains_entity(
+    RTPS_DllAPI bool contains_entity(
             const fastrtps::rtps::InstanceHandle_t& handle,
             bool recursive = true) const;
 
@@ -324,7 +333,7 @@ public:
      * @param current_time
      * @return Always true
      */
-    ReturnCode_t get_current_time(
+    RTPS_DllAPI ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
     /**
@@ -332,26 +341,20 @@ public:
      * @param type_name
      * @return TypeSupport
      */
-    TypeSupport find_type(
+    RTPS_DllAPI TypeSupport find_type(
             const std::string& type_name) const;
 
     /**
      * Returns the DomainParticipant's handle.
      * @return InstanceHandle of this DomainParticipant.
      */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
     // From here legacy RTPS methods.
 
-    const fastrtps::rtps::GUID_t& guid() const;
+    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
 
-    /**
-     * Get the participant attributes
-     * @return Participant attributes
-     */
-    const fastrtps::ParticipantAttributes& get_attributes() const;
-
-    std::vector<std::string> get_participant_names() const;
+    RTPS_DllAPI std::vector<std::string> get_participant_names() const;
 
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
@@ -363,12 +366,12 @@ public:
      * @param kind EndpointKind (WRITER or READER)
      * @return True if correctly found and activated.
      */
-    bool new_remote_endpoint_discovered(
+    RTPS_DllAPI bool new_remote_endpoint_discovered(
             const fastrtps::rtps::GUID_t& partguid,
             uint16_t userId,
             fastrtps::rtps::EndpointKind_t kind);
 
-    fastrtps::rtps::ResourceEvent& get_resource_event() const;
+    RTPS_DllAPI fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     /**
      * When a DomainParticipant receives an incomplete list of TypeIdentifiers in a
@@ -378,7 +381,7 @@ public:
      * @param out
      * @return
      */
-    fastrtps::rtps::SampleIdentity get_type_dependencies(
+    RTPS_DllAPI fastrtps::rtps::SampleIdentity get_type_dependencies(
             const fastrtps::types::TypeIdentifierSeq& in) const;
 
     /**
@@ -388,7 +391,7 @@ public:
      * @param out
      * @return
      */
-    fastrtps::rtps::SampleIdentity get_types(
+    RTPS_DllAPI fastrtps::rtps::SampleIdentity get_types(
             const fastrtps::types::TypeIdentifierSeq& in) const;
 
     /**
@@ -405,22 +408,31 @@ public:
      * @return true if type is already available (callback will not be called). false if type isn't available yet
      * (the callback will be called if negotiation is success, and ignored in other case).
      */
-    bool register_remote_type(
+    RTPS_DllAPI bool register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
+    RTPS_DllAPI virtual ~DomainParticipant();
+
 private:
 
-    DomainParticipant();
+    RTPS_DllAPI DomainParticipant(
+            const StatusMask& mask = StatusMask::all());
 
-    virtual ~DomainParticipant();
+    RTPS_DllAPI DomainParticipant(
+            DomainId_t domain_id,
+            const DomainParticipantQos& qos,
+            DomainParticipantListener* listener,
+            const StatusMask& mask = StatusMask::all());
 
     DomainParticipantImpl* impl_;
 
     friend class DomainParticipantFactory;
 
     friend class DomainParticipantImpl;
+
+    friend class ::dds::domain::DomainParticipant;
 };
 
 } // namespace dds

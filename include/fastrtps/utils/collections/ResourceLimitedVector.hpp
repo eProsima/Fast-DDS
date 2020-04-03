@@ -440,6 +440,16 @@ public:
         collection_.pop_back();
     }
 
+    value_type* data()
+    {
+        return collection_.data();
+    }
+
+    const value_type* data() const
+    {
+        return collection_.data();
+    }
+
     ///@}
 
     /**

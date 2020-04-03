@@ -22,10 +22,12 @@
 #include <fastdds/rtps/Endpoint.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-RTPSParticipant::RTPSParticipant(RTPSParticipantImpl* pimpl):mp_impl(pimpl)
+RTPSParticipant::RTPSParticipant(
+        RTPSParticipantImpl* pimpl)
+    : mp_impl(pimpl)
 {
 }
 
@@ -54,44 +56,64 @@ void RTPSParticipant::resetRTPSParticipantAnnouncement()
     return mp_impl->resetRTPSParticipantAnnouncement();
 }
 
-bool RTPSParticipant::newRemoteWriterDiscovered(const GUID_t& pguid, int16_t userDefinedId)
+bool RTPSParticipant::newRemoteWriterDiscovered(
+        const GUID_t& pguid,
+        int16_t userDefinedId)
 {
-    return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, WRITER);
+    return mp_impl->newRemoteEndpointDiscovered(pguid, userDefinedId, WRITER);
 }
-bool RTPSParticipant::newRemoteReaderDiscovered(const GUID_t& pguid, int16_t userDefinedId)
+
+bool RTPSParticipant::newRemoteReaderDiscovered(
+        const GUID_t& pguid,
+        int16_t userDefinedId)
 {
-    return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, READER);
+    return mp_impl->newRemoteEndpointDiscovered(pguid, userDefinedId, READER);
 }
+
 uint32_t RTPSParticipant::getRTPSParticipantID() const
 {
     return mp_impl->getRTPSParticipantID();
 }
 
-bool RTPSParticipant::registerWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos)
+bool RTPSParticipant::registerWriter(
+        RTPSWriter* Writer,
+        const TopicAttributes& topicAtt,
+        const WriterQos& wqos)
 {
-    return mp_impl->registerWriter(Writer,topicAtt, wqos);
+    return mp_impl->registerWriter(Writer, topicAtt, wqos);
 }
 
-bool RTPSParticipant::registerReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos)
+bool RTPSParticipant::registerReader(
+        RTPSReader* Reader,
+        const TopicAttributes& topicAtt,
+        const ReaderQos& rqos)
 {
-    return mp_impl->registerReader(Reader,topicAtt, rqos);
+    return mp_impl->registerReader(Reader, topicAtt, rqos);
 }
 
-bool RTPSParticipant::updateWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos)
+bool RTPSParticipant::updateWriter(
+        RTPSWriter* Writer,
+        const TopicAttributes& topicAtt,
+        const WriterQos& wqos)
 {
     return mp_impl->updateLocalWriter(Writer, topicAtt, wqos);
 }
 
-bool RTPSParticipant::updateReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos)
+bool RTPSParticipant::updateReader(
+        RTPSReader* Reader,
+        const TopicAttributes& topicAtt,
+        const ReaderQos& rqos)
 {
     return mp_impl->updateLocalReader(Reader, topicAtt, rqos);
 }
 
-std::vector<std::string> RTPSParticipant::getParticipantNames() const {
+std::vector<std::string> RTPSParticipant::getParticipantNames() const
+{
     return mp_impl->getParticipantNames();
 }
 
-const RTPSParticipantAttributes & RTPSParticipant::getRTPSParticipantAttributes() const {
+const RTPSParticipantAttributes& RTPSParticipant::getRTPSParticipantAttributes() const
+{
     return mp_impl->getRTPSParticipantAttributes();
 }
 
@@ -138,8 +160,12 @@ void RTPSParticipant::set_listener(
     mp_impl->set_listener(listener);
 }
 
+uint32_t RTPSParticipant::get_domain_id() const
+{
+    return mp_impl->get_domain_id();
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
 

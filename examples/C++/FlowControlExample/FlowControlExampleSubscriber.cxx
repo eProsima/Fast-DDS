@@ -31,25 +31,33 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-FlowControlExampleSubscriber::FlowControlExampleSubscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
+FlowControlExampleSubscriber::FlowControlExampleSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
+{
+}
 
-FlowControlExampleSubscriber::~FlowControlExampleSubscriber() {	Domain::removeParticipant(mp_participant);}
+FlowControlExampleSubscriber::~FlowControlExampleSubscriber()
+{
+    Domain::removeParticipant(mp_participant);
+}
 
 bool FlowControlExampleSubscriber::init()
 {
     // Create RTPSParticipant
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant == nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //Register the type
 
-    Domain::registerType(mp_participant,(TopicDataType*) &myType);		
+    Domain::registerType(mp_participant, (TopicDataType*) &myType);
 
     // Create Subscriber
 
@@ -57,13 +65,17 @@ bool FlowControlExampleSubscriber::init()
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
     Rparam.topic.topicName = "FlowControlExamplePubSubTopic";
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
-    if(mp_subscriber == nullptr)
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
+    if (mp_subscriber == nullptr)
+    {
         return false;
+    }
     return true;
 }
 
-void FlowControlExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber*, MatchingInfo& info)
+void FlowControlExampleSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber*,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -77,14 +89,15 @@ void FlowControlExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber
     }
 }
 
-void FlowControlExampleSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void FlowControlExampleSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
     // Take data
     FlowControlExample st;
 
-    if(sub->takeNextData(&st, &m_info))
+    if (sub->takeNextData(&st, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             ++n_msg;
             static unsigned int fastMessages = 0;
@@ -106,8 +119,7 @@ void FlowControlExampleSubscriber::SubListener::onNewDataMessage(Subscriber* sub
 
 void FlowControlExampleSubscriber::run()
 {
-    std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
+    std::cout << "Waiting for Data, press Enter to stop the Subscriber. " << std::endl;
     std::cin.ignore();
     std::cout << "Shutting down the Subscriber." << std::endl;
 }
-
