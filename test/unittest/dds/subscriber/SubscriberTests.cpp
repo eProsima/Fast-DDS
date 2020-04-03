@@ -23,6 +23,7 @@
 #include <dds/core/types.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <dds/sub/Subscriber.hpp>
+#include <dds/sub/qos/DataReaderQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -46,6 +47,24 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
 
     ASSERT_EQ(qos, wqos);
     ASSERT_EQ(wqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
+}
+
+TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
+
+    ::dds::sub::qos::DataReaderQos qos = subscriber.default_datareader_qos();
+    ASSERT_EQ(qos, DATAREADER_QOS_DEFAULT);
+
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+
+    ASSERT_NO_THROW(subscriber.default_datareader_qos(qos));
+
+    ::dds::sub::qos::DataReaderQos rqos = subscriber.default_datareader_qos();
+
+    ASSERT_EQ(qos, rqos);
+    ASSERT_EQ(rqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
 }
 
 } // namespace dds
