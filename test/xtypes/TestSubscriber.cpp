@@ -30,6 +30,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
 #include <asio.hpp>
