@@ -53,8 +53,8 @@ public:
   ConcurrentQueue(const ConcurrentQueue&& other) = delete;
 
   /**
-   * @brief push. Move an object to the queue.
-   * @param item. The object to push to the queue.
+   * @brief push Move an object to the queue.
+   * @param item The object to push to the queue.
    */
   template <typename O>
   void push(O&& item)
@@ -72,8 +72,8 @@ public:
   }
 
   /**
-   * @brief try_pop. Return true immediately if successful retrieval.
-   * @param popped_item.
+   * @brief Return true immediately if successful retrieval.
+   * @param popped_item The popped item.
    * @return true if an object was pop, false otherwise.
    *
    * @see wait_pop
@@ -93,7 +93,7 @@ public:
   }
 
   /**
-   * @brief wait_pop. Wait until an object is popped.
+   * @brief wait_pop Wait until an object is popped.
    * @return The object popped out of the queue.
    *
    * @see try_pop
@@ -110,7 +110,7 @@ public:
   }
 
   /**
-   * @brief empty. Whether the queue is empty or not
+   * @brief empty Whether the queue is empty or not
    * @return true if empty, false othewise.
    */
   bool empty() const noexcept
@@ -120,7 +120,7 @@ public:
   }
 
   /**
-   * @brief size. The queue size
+   * @brief size The queue size
    * @return size of the queue.
    */
   std::size_t size() const noexcept
