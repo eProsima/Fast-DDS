@@ -48,7 +48,7 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 66;
+    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
 
     PParam.rtps.setName("Participant_pub");
@@ -57,8 +57,7 @@ bool HelloWorldPublisher::init()
     PParam.rtps.useBuiltinTransports = false;
 
     auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-    const uint32_t segment_size = 2*1024*1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(2*1024*1024);
     PParam.rtps.userTransports.push_back(shm_transport);
 
     // UDP

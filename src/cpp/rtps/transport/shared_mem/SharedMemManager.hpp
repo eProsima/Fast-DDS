@@ -155,7 +155,9 @@ public:
                 uint32_t payload_size)
             : segment_id_()
             , overflows_count_(0)
+#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
             , max_payload_size_(payload_size)
+#endif
         {
             segment_id_.generate();
 
@@ -262,7 +264,10 @@ public:
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
         uint64_t overflows_count_;
+
+#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
         uint32_t max_payload_size_;
+#endif
 
         void release_buffer(
                 BufferNode* buffer_node)
@@ -292,6 +297,7 @@ public:
                 uint32_t size,
                 const std::chrono::steady_clock::time_point& max_blocking_time_point)
         {
+#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
             SharedMemSegment::spin_wait spin_wait;
 
             // Not enough avaible space
@@ -308,7 +314,9 @@ public:
                 // vs interprocess_mutex + interprocess_cv.
                 spin_wait.yield();
             }
-
+#else
+            (void)max_blocking_time_point;
+#endif
             if (segment_node_->free_bytes.load(std::memory_order_relaxed) < size)
             {
                 throw std::runtime_error("allocation timeout");

@@ -522,113 +522,12 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     sender_thread->join();
 }
 
-TEST_F(SHMTransportTests, port_and_segment_overflow_fail)
-{
-    SharedMemTransportDescriptor my_descriptor;
-
-    my_descriptor.port_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::FAIL);
-    my_descriptor.segment_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::FAIL);
-    my_descriptor.segment_size(16, 16);
-    my_descriptor.port_queue_capacity(4);
-
-    SharedMemTransport transportUnderTest(my_descriptor);
-    ASSERT_TRUE(transportUnderTest.init());
-
-    Locator_t unicastLocator;
-    unicastLocator.kind = LOCATOR_KIND_SHM;
-    unicastLocator.port = g_default_port;
-
-    Semaphore sem;
-    MockReceiverResource receiver(transportUnderTest, unicastLocator);
-    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
-
-    uint32_t messages_received = 0;
-    std::function<void()> recCallback = [&]()
-        {
-            // At the second message block
-            if (messages_received > 0)
-            {
-                messages_received++;
-                sem.wait();
-            }
-            else
-            {
-                messages_received++;
-            }
-        };
-    msg_recv->setCallback(recCallback);
-
-    Locator_t outputChannelLocator;
-    outputChannelLocator.kind = LOCATOR_KIND_SHM;
-    outputChannelLocator.port = g_default_port + 1;
-
-    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
-    octet message[4] = { 'H','e','l','l'};
-
-    LocatorList_t locator_list;
-    locator_list.push_back(unicastLocator);
-
-    {
-        Locators locators_begin(locator_list.begin());
-        Locators locators_end(locator_list.end());
-        // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried
-        // to cause segment overflow
-        octet message_big[4096] = { 'H','e','l','l'};
-
-        ASSERT_FALSE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    }
-
-    // At least 4 msgs of 4 bytes are allowed
-    for (int i=0; i<4; i++)
-    {
-        Locators locators_begin(locator_list.begin());
-        Locators locators_end(locator_list.end());
-
-        // At least 4 msgs of 4 bytes are allowed
-        ASSERT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
-    }
-
-    // Wait until the receiver get the first message
-    while (messages_received == 0)
-    {
-        std::this_thread::yield();
-    }
-
-    // The receiver has poped a message so now 3 messages are in the
-    // port's queue
-
-    // Push a 4th should go well
-    {
-        Locators locators_begin(locator_list.begin());
-        Locators locators_end(locator_list.end());
-
-        ASSERT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    }
-
-    // Push a 5th will cause port overflow
-    {
-        Locators locators_begin(locator_list.begin());
-        Locators locators_end(locator_list.end());
-
-        ASSERT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-    }
-
-    sem.disable();
-}
-
 TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
 {
     SharedMemTransportDescriptor my_descriptor;
 
-    my_descriptor.port_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
-    my_descriptor.segment_overflow_policy(SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
-    my_descriptor.segment_size(16, 16);
+    my_descriptor.segment_size(16);
+    my_descriptor.max_message_size(16);
     my_descriptor.port_queue_capacity(4);
 
     SharedMemTransport transportUnderTest(my_descriptor);
