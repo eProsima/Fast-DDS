@@ -2988,29 +2988,31 @@ XMLP_ret XMLParser::fillDataNode(
 
     addAllAttributes(p_profile, participant_node);
 
-    tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(RTPS);
+    uint8_t ident = 1;
+    tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(DOMAIN_ID);
+    if (nullptr != p_element)
+    {
+        // domainId - uint32Type
+        if (XMLP_ret::XML_OK != getXMLUint(p_element, &participant_node.get()->domainId, ident))
+        {
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    p_element = p_profile->FirstChildElement(RTPS);
     if (nullptr == p_element)
     {
         logError(XMLPARSER, "Not found '" << RTPS << "' tag");
         return XMLP_ret::XML_ERROR;
     }
 
-    uint8_t ident = 1;
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = p_element->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
 
-        if (strcmp(name, DOMAIN_ID) == 0)
-        {
-            // domainId - uint32Type
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &participant_node.get()->domainId, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, ALLOCATION) == 0)
+        if (strcmp(name, ALLOCATION) == 0)
         {
             // allocation
             if (XMLP_ret::XML_OK !=
