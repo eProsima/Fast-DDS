@@ -210,49 +210,49 @@ TEST_F(SHMRingBuffer, copy)
     std::vector<const MyData*> enqueued_data;
 
     ring_buffer->copy(&enqueued_data);
-    ASSERT_EQ(0, enqueued_data.size());
+    ASSERT_EQ(0u, enqueued_data.size());
 
     ring_buffer->push({ 0,0 });
     ring_buffer->copy(&enqueued_data);
-    ASSERT_EQ(1, enqueued_data.size());
+    ASSERT_EQ(1u, enqueued_data.size());
     enqueued_data.clear();
 
     ring_buffer->push({ 0,1 });
     ring_buffer->copy(&enqueued_data);
-    ASSERT_EQ(2, enqueued_data.size());
+    ASSERT_EQ(2u, enqueued_data.size());
 
-    ASSERT_EQ(0, enqueued_data[0]->counter);
-    ASSERT_EQ(1, enqueued_data[1]->counter);
+    ASSERT_EQ(0u, enqueued_data[0]->counter);
+    ASSERT_EQ(1u, enqueued_data[1]->counter);
 
     listener->pop();
 
     enqueued_data.clear();
     ring_buffer->push({ 0,2 });
     ring_buffer->copy(&enqueued_data);
-    ASSERT_EQ(2, enqueued_data.size());
+    ASSERT_EQ(2u, enqueued_data.size());
 
-    ASSERT_EQ(1, enqueued_data[0]->counter);
-    ASSERT_EQ(2, enqueued_data[1]->counter);
+    ASSERT_EQ(1u, enqueued_data[0]->counter);
+    ASSERT_EQ(2u, enqueued_data[1]->counter);
 
     listener->pop();
 
     enqueued_data.clear();
     ring_buffer->push({ 0,3 });
     ring_buffer->copy(&enqueued_data);
-    ASSERT_EQ(2, enqueued_data.size());
+    ASSERT_EQ(2u, enqueued_data.size());
 
-    ASSERT_EQ(2, enqueued_data[0]->counter);
-    ASSERT_EQ(3, enqueued_data[1]->counter);
-
-    listener->pop();
-    enqueued_data.clear();
-    ring_buffer->copy(&enqueued_data);
-    ASSERT_EQ(1, enqueued_data.size());
+    ASSERT_EQ(2u, enqueued_data[0]->counter);
+    ASSERT_EQ(3u, enqueued_data[1]->counter);
 
     listener->pop();
     enqueued_data.clear();
     ring_buffer->copy(&enqueued_data);
-    ASSERT_EQ(0, enqueued_data.size());
+    ASSERT_EQ(1u, enqueued_data.size());
+
+    listener->pop();
+    enqueued_data.clear();
+    ring_buffer->copy(&enqueued_data);
+    ASSERT_EQ(0u, enqueued_data.size());
 }
 
 TEST_F(SHMRingBuffer, listeners_register_unregister)
