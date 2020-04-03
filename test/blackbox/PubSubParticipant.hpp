@@ -50,51 +50,58 @@ class PubSubParticipant
     {
         friend class PubSubParticipant;
 
-        public:
+public:
 
-            PubListener(PubSubParticipant* participant)
-                : participant_(participant)
-            {}
+        PubListener(
+                PubSubParticipant* participant)
+            : participant_(participant)
+        {
+        }
 
-            ~PubListener()
-            {}
+        ~PubListener()
+        {
+        }
 
-            void onPublicationMatched(
-                    Publisher* pub,
-                    rtps::MatchingInfo &info) override
-            {
-                (void)pub;
-                (info.status == rtps::MATCHED_MATCHING)? participant_->pub_matched(): participant_->pub_unmatched();
-            }
+        void onPublicationMatched(
+                Publisher* pub,
+                rtps::MatchingInfo& info) override
+        {
+            (void)pub;
+            (info.status == rtps::MATCHED_MATCHING) ? participant_->pub_matched() : participant_->pub_unmatched();
+        }
 
-            void on_liveliness_lost(
-                    Publisher* pub,
-                    const LivelinessLostStatus& status) override
-            {
-                (void)pub;
-                (void)status;
-                participant_->pub_liveliness_lost();
-            }
+        void on_liveliness_lost(
+                Publisher* pub,
+                const LivelinessLostStatus& status) override
+        {
+            (void)pub;
+            (void)status;
+            participant_->pub_liveliness_lost();
+        }
 
-        private:
+private:
 
-            PubListener& operator=(const PubListener&) = delete;
-            //! A pointer to the participant
-            PubSubParticipant* participant_;
+        PubListener& operator =(
+                const PubListener&) = delete;
+        //! A pointer to the participant
+        PubSubParticipant* participant_;
     };
 
     class SubListener : public SubscriberListener
     {
         friend class PubSubParticipant;
 
-    public:
+public:
 
-        SubListener(PubSubParticipant* participant)
+        SubListener(
+                PubSubParticipant* participant)
             : participant_(participant)
-        {}
+        {
+        }
 
         ~SubListener()
-        {}
+        {
+        }
 
         void onSubscriptionMatched(
                 Subscriber* sub,
@@ -109,13 +116,15 @@ class PubSubParticipant
                 const LivelinessChangedStatus& status) override
         {
             (void)sub;
-            (status.alive_count_change == 1) ? participant_->sub_liveliness_recovered() : participant_->sub_liveliness_lost();
+            (status.alive_count_change ==
+            1) ? participant_->sub_liveliness_recovered() : participant_->sub_liveliness_lost();
 
         }
 
-    private:
+private:
 
-        SubListener& operator=(const SubListener&) = delete;
+        SubListener& operator =(
+                const SubListener&) = delete;
         //! A pointer to the participant
         PubSubParticipant* participant_;
     };
@@ -173,7 +182,7 @@ public:
 
     ~PubSubParticipant()
     {
-        if(participant_ != nullptr)
+        if (participant_ != nullptr)
         {
             Domain::removeParticipant(participant_);
             participant_ = nullptr;
@@ -182,7 +191,7 @@ public:
 
     bool init_participant()
     {
-        participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
+        participant_attr_.domainId = (uint32_t)GET_PID() % 230;
         participant_ = Domain::createParticipant(participant_attr_);
         if (participant_ != nullptr)
         {
@@ -192,7 +201,8 @@ public:
         return false;
     }
 
-    bool init_publisher(unsigned int index)
+    bool init_publisher(
+            unsigned int index)
     {
         if (participant_ == nullptr)
         {
@@ -212,7 +222,8 @@ public:
         return false;
     }
 
-    bool init_subscriber(unsigned int index)
+    bool init_subscriber(
+            unsigned int index)
     {
         if (index >= num_subscribers_)
         {
@@ -227,7 +238,9 @@ public:
         return false;
     }
 
-    bool send_sample(type& msg, unsigned int index = 0)
+    bool send_sample(
+            type& msg,
+            unsigned int index = 0)
     {
         return publishers_[index]->write((void*)&msg);
     }
@@ -237,123 +250,153 @@ public:
         participant_->assert_liveliness();
     }
 
-    void assert_liveliness(unsigned int index = 0)
+    void assert_liveliness(
+            unsigned int index = 0)
     {
         publishers_[index]->assert_liveliness();
     }
 
-    void pub_wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
+    void pub_wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(pub_mutex_);
 
         std::cout << "Publisher is waiting discovery..." << std::endl;
 
-        if(timeout == std::chrono::seconds::zero())
+        if (timeout == std::chrono::seconds::zero())
         {
-            pub_cv_.wait(lock, [&](){ return pub_matched_ == num_expected_publishers_; });
+            pub_cv_.wait(lock, [&](){
+                        return pub_matched_ == num_expected_publishers_;
+                    });
         }
         else
         {
-            pub_cv_.wait_for(lock, timeout, [&](){return pub_matched_ == num_expected_publishers_;});
+            pub_cv_.wait_for(lock, timeout, [&](){
+                        return pub_matched_ == num_expected_publishers_;
+                    });
         }
 
         std::cout << "Publisher discovery finished " << std::endl;
     }
 
-    void sub_wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
+    void sub_wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(sub_mutex_);
 
         std::cout << "Subscriber is waiting discovery..." << std::endl;
 
-        if(timeout == std::chrono::seconds::zero())
+        if (timeout == std::chrono::seconds::zero())
         {
-            sub_cv_.wait(lock, [&](){ return sub_matched_ == num_expected_subscribers_; });
+            sub_cv_.wait(lock, [&](){
+                        return sub_matched_ == num_expected_subscribers_;
+                    });
         }
         else
         {
-            sub_cv_.wait_for(lock, timeout, [&](){return sub_matched_ == num_expected_subscribers_;});
+            sub_cv_.wait_for(lock, timeout, [&](){
+                        return sub_matched_ == num_expected_subscribers_;
+                    });
         }
 
         std::cout << "Subscriber discovery finished " << std::endl;
     }
 
-    void pub_wait_liveliness_lost(unsigned int times = 1)
+    void pub_wait_liveliness_lost(
+            unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
-        pub_liveliness_cv_.wait(lock, [&]() { return pub_times_liveliness_lost_ >= times; });
+        pub_liveliness_cv_.wait(lock, [&]() {
+                    return pub_times_liveliness_lost_ >= times;
+                });
     }
 
-    void sub_wait_liveliness_recovered(unsigned int num_recovered)
+    void sub_wait_liveliness_recovered(
+            unsigned int num_recovered)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_recovered_ >= num_recovered; });
+        sub_liveliness_cv_.wait(lock, [&]() {
+                    return sub_times_liveliness_recovered_ >= num_recovered;
+                });
     }
 
-    void sub_wait_liveliness_lost(unsigned int num_lost)
+    void sub_wait_liveliness_lost(
+            unsigned int num_lost)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_lost_ >= num_lost;  });
+        sub_liveliness_cv_.wait(lock, [&]() {
+                    return sub_times_liveliness_lost_ >= num_lost;
+                });
     }
 
-    PubSubParticipant& pub_topic_name(std::string topicName)
+    PubSubParticipant& pub_topic_name(
+            std::string topicName)
     {
         publisher_attr_.topic.topicDataType = type_.getName();
-        publisher_attr_.topic.topicName=topicName;
+        publisher_attr_.topic.topicName = topicName;
         return *this;
     }
 
-    PubSubParticipant& sub_topic_name(std::string topicName)
+    PubSubParticipant& sub_topic_name(
+            std::string topicName)
     {
         subscriber_attr_.topic.topicDataType = type_.getName();
         subscriber_attr_.topic.topicName = topicName;
         return *this;
     }
 
-    PubSubParticipant& reliability(const ReliabilityQosPolicyKind kind)
+    PubSubParticipant& reliability(
+            const ReliabilityQosPolicyKind kind)
     {
         publisher_attr_.qos.m_reliability.kind = kind;
         subscriber_attr_.qos.m_reliability.kind = kind;
         return *this;
     }
 
-    PubSubParticipant& pub_liveliness_kind(const LivelinessQosPolicyKind kind)
+    PubSubParticipant& pub_liveliness_kind(
+            const LivelinessQosPolicyKind kind)
     {
         publisher_attr_.qos.m_liveliness.kind = kind;
         return *this;
     }
 
-    PubSubParticipant& pub_liveliness_lease_duration(const Duration_t lease_duration)
+    PubSubParticipant& pub_liveliness_lease_duration(
+            const Duration_t lease_duration)
     {
         publisher_attr_.qos.m_liveliness.lease_duration = lease_duration;
         return *this;
     }
 
-    PubSubParticipant& pub_liveliness_announcement_period(const Duration_t announcement_period)
+    PubSubParticipant& pub_liveliness_announcement_period(
+            const Duration_t announcement_period)
     {
         publisher_attr_.qos.m_liveliness.announcement_period = announcement_period;
         return *this;
     }
 
-    PubSubParticipant& sub_liveliness_kind(const LivelinessQosPolicyKind& kind)
+    PubSubParticipant& sub_liveliness_kind(
+            const LivelinessQosPolicyKind& kind)
     {
         subscriber_attr_.qos.m_liveliness.kind = kind;
         return *this;
     }
 
-    PubSubParticipant& sub_liveliness_lease_duration(const Duration_t lease_duration)
+    PubSubParticipant& sub_liveliness_lease_duration(
+            const Duration_t lease_duration)
     {
         subscriber_attr_.qos.m_liveliness.lease_duration = lease_duration;
         return *this;
     }
 
-    PubSubParticipant& pub_deadline_period(const Duration_t& deadline_period)
+    PubSubParticipant& pub_deadline_period(
+            const Duration_t& deadline_period)
     {
         publisher_attr_.qos.m_deadline.period = deadline_period;
         return *this;
     }
 
-    PubSubParticipant& sub_deadline_period(const Duration_t& deadline_period)
+    PubSubParticipant& sub_deadline_period(
+            const Duration_t& deadline_period)
     {
         subscriber_attr_.qos.m_deadline.period = deadline_period;
         return *this;
@@ -420,7 +463,8 @@ public:
 
 private:
 
-    PubSubParticipant& operator=(const PubSubParticipant&)= delete;
+    PubSubParticipant& operator =(
+            const PubSubParticipant&) = delete;
 
     void pub_matched()
     {
@@ -504,4 +548,3 @@ private:
 }
 
 #endif // _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
-

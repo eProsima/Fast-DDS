@@ -69,9 +69,9 @@ bool HelloWorldPublisher::init()
     array->set_uint32_value(100, array->get_array_index({4, 1}));
     m_Hello->return_loaned_value(array);
 
-    eprosima::fastrtps::ParticipantAttributes PParam;
-    PParam.rtps.setName("Participant_pub");
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
+    DomainParticipantQos pqos;
+    pqos.name("Participant_pub");
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (mp_participant == nullptr)
     {

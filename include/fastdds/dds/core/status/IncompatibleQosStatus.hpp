@@ -14,7 +14,7 @@
 
 /**
  * @file IncompatibleQosStatus.hpp
-*/
+ */
 
 #ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 #define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
@@ -28,8 +28,15 @@ namespace dds {
 
 using QosPolicyId_t = uint32_t;
 
-struct QosPolicyCount 
+struct QosPolicyCount
 {
+    QosPolicyCount(
+            QosPolicyId_t id,
+            int32_t c)
+        : policy_id(id)
+        , count(c)
+    {
+    }
 
     //! @brief The id of the policy
     QosPolicyId_t policy_id;

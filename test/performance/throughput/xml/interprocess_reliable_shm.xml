@@ -16,10 +16,8 @@
 
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
-                <builtin>
-                    <domainId>222</domainId>
-                </builtin>
                 <userTransports>
                     <transport_id>throughput_publisher_shm_transport</transport_id>
                 </userTransports>
@@ -29,10 +27,8 @@
         </participant>
 
         <participant profile_name="sub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
-                <builtin>
-                    <domainId>222</domainId>
-                </builtin>
                 <userTransports>
                     <transport_id>throughput_subscriber_shm_transport</transport_id>
                 </userTransports>

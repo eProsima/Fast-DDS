@@ -24,6 +24,9 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -68,8 +71,8 @@ public:
     bool operator ==(
             const QosPolicy& b) const
     {
-        return (this->hasChanged == b.hasChanged) &&
-               (this->send_always_ == b.send_always_);
+        // hastChanged field isn't needed to be compared to being equal two QosPolicy objects.
+        return (this->send_always_ == b.send_always_);
     }
 
     QosPolicy& operator =(
@@ -104,6 +107,47 @@ protected:
 
     bool send_always_;
 };
+
+class EntityFactoryQosPolicy : public QosPolicy
+{
+public:
+
+    bool autoenable_created_entities;
+
+    RTPS_DllAPI EntityFactoryQosPolicy()
+        : QosPolicy(false)
+        , autoenable_created_entities(true)
+    {
+    }
+
+    RTPS_DllAPI EntityFactoryQosPolicy(
+            bool autoenable)
+        : QosPolicy(false)
+        , autoenable_created_entities(autoenable)
+    {
+    }
+
+    virtual RTPS_DllAPI ~EntityFactoryQosPolicy()
+    {
+    }
+
+    bool operator ==(
+            const EntityFactoryQosPolicy& b) const
+    {
+        return
+            (this->autoenable_created_entities == b.autoenable_created_entities) &&
+            QosPolicy::operator ==(b);
+    }
+
+    inline void clear() override
+    {
+        EntityFactoryQosPolicy reset = EntityFactoryQosPolicy();
+        std::swap(*this, reset);
+    }
+
+};
+
+
 
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
@@ -803,6 +847,15 @@ public:
     }
 
     /**
+     * Returns raw data vector.
+     * @return raw data as vector of octets.
+     * */
+    RTPS_DllAPI inline collection_type& data_vec()
+    {
+        return collection_;
+    }
+
+    /**
      * Sets raw data vector.
      * @param vec raw data to set.
      * */
@@ -842,61 +895,61 @@ public:
  * Class TClassName, base template for user data qos policies.
  */
 #define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                     \
-class TClassName : public GenericDataQosPolicy                                         \
-{                                                                                      \
+    class TClassName : public GenericDataQosPolicy                                         \
+    {                                                                                      \
 public:                                                                                \
                                                                                        \
-    RTPS_DllAPI TClassName()                                                           \
-        : GenericDataQosPolicy(TPid)                                                   \
-    {                                                                                  \
-    }                                                                                  \
+        RTPS_DllAPI TClassName()                                                           \
+            : GenericDataQosPolicy(TPid)                                                   \
+        {                                                                                  \
+        }                                                                                  \
                                                                                        \
-    RTPS_DllAPI TClassName(                                                            \
+        RTPS_DllAPI TClassName(                                                            \
             uint16_t in_length)                                                        \
-        : GenericDataQosPolicy(TPid, in_length)                                        \
-    {                                                                                  \
-    }                                                                                  \
+            : GenericDataQosPolicy(TPid, in_length)                                        \
+        {                                                                                  \
+        }                                                                                  \
                                                                                        \
-    /**                                                                                \
-     * Construct from another TClassName.                                              \
-     *                                                                                 \
-     * The resulting TClassName will have the same size limits                         \
-     * as the input attribute                                                          \
-     *                                                                                 \
-     * @param data data to copy in the newly created object                            \
-     */                                                                                \
-    RTPS_DllAPI TClassName(                                                            \
+        /** \
+         * Construct from another TClassName. \
+         * \
+         * The resulting TClassName will have the same size limits \
+         * as the input attribute \
+         * \
+         * @param data data to copy in the newly created object \
+         */                                                                            \
+        RTPS_DllAPI TClassName(                                                            \
             const TClassName& data) = default;                                         \
                                                                                        \
-    /**                                                                                \
-     * Construct from underlying collection type.                                      \
-     *                                                                                 \
-     * Useful to easy integration on old APIs where a traditional container was used.  \
-     * The resulting TClassName will always be unlimited in size                       \
-     *                                                                                 \
-     * @param data data to copy in the newly created object                            \
-     */                                                                                \
-    RTPS_DllAPI TClassName(                                                            \
+        /** \
+         * Construct from underlying collection type. \
+         * \
+         * Useful to easy integration on old APIs where a traditional container was used. \
+         * The resulting TClassName will always be unlimited in size \
+         * \
+         * @param data data to copy in the newly created object \
+         */                                                                            \
+        RTPS_DllAPI TClassName(                                                            \
             const collection_type& data)                                               \
-        : GenericDataQosPolicy(TPid, data)                                             \
-    {                                                                                  \
-    }                                                                                  \
+            : GenericDataQosPolicy(TPid, data)                                             \
+        {                                                                                  \
+        }                                                                                  \
                                                                                        \
-    virtual RTPS_DllAPI ~TClassName() = default;                                       \
+        virtual RTPS_DllAPI ~TClassName() = default;                                       \
                                                                                        \
-    /**                                                                                \
-     * Copies another TClassName.                                                      \
-     *                                                                                 \
-     * The resulting TClassName will have the same size limit                          \
-     * as the input parameter, so all data in the input will be copied.                \
-     *                                                                                 \
-     * @param b object to be copied                                                    \
-     * @return reference to the current object.                                        \
-     */                                                                                \
-    TClassName& operator =(                                                            \
+        /** \
+         * Copies another TClassName. \
+         * \
+         * The resulting TClassName will have the same size limit \
+         * as the input parameter, so all data in the input will be copied. \
+         * \
+         * @param b object to be copied \
+         * @return reference to the current object. \
+         */                                                                            \
+        TClassName& operator =(                                                            \
             const TClassName& b) = default;                                            \
                                                                                        \
-};
+    };
 
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
@@ -2276,6 +2329,120 @@ private:
 };
 
 } // namespace xtypes
+
+//!Holds allocation limits affecting collections managed by a participant.
+using ParticipantResourceLimitsQos = fastrtps::rtps::RTPSParticipantAllocationAttributes;
+
+//! Property policies
+using PropertyPolicyQos = fastrtps::rtps::PropertyPolicy;
+
+class WireProtocolConfigQos : public QosPolicy
+{
+
+public:
+
+    RTPS_DllAPI WireProtocolConfigQos()
+        : QosPolicy(false)
+        , participant_id(-1)
+    {
+    }
+
+    virtual RTPS_DllAPI ~WireProtocolConfigQos() = default;
+
+    bool operator ==(
+            const WireProtocolConfigQos& b) const
+    {
+        return (this->prefix == b.prefix) &&
+               (this->participant_id == b.participant_id) &&
+               (this->builtin == b.builtin) &&
+               (this->port == b.port) &&
+               (this->throughput_controller == b.throughput_controller) &&
+               (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
+               (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
+               QosPolicy::operator ==(b);
+    }
+
+    inline void clear() override
+    {
+        WireProtocolConfigQos reset = WireProtocolConfigQos();
+        std::swap(*this, reset);
+    }
+
+    //! Optionally allows user to define the GuidPrefix_t
+    fastrtps::rtps::GuidPrefix_t prefix;
+
+    //!Participant ID
+    int32_t participant_id;
+
+    //! Builtin parameters.
+    fastrtps::rtps::BuiltinAttributes builtin;
+
+    //!Port Parameters
+    fastrtps::rtps::PortParameters port;
+
+    //!Throughput controller parameters. Leave default for uncontrolled flow.
+    fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
+
+    /**
+     * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
+     * that it was defined with NO UnicastLocators. At least ONE locator should be included in this list.
+     */
+    fastrtps::rtps::LocatorList_t default_unicast_locator_list;
+
+    /**
+     * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
+     * case that it was defined with NO UnicastLocators. This is usually left empty.
+     */
+    fastrtps::rtps::LocatorList_t default_multicast_locator_list;
+};
+
+class TransportConfigQos : public QosPolicy
+{
+public:
+
+    RTPS_DllAPI TransportConfigQos()
+        : QosPolicy(false)
+        , use_builtin_transports(true)
+        , send_socket_buffer_size(0)
+        , listen_socket_buffer_size(0)
+    {
+    }
+
+    virtual RTPS_DllAPI ~TransportConfigQos() = default;
+
+    bool operator ==(
+            const TransportConfigQos& b) const
+    {
+        return (this->user_transports == b.user_transports) &&
+               (this->use_builtin_transports == b.use_builtin_transports) &&
+               (this->send_socket_buffer_size == b.send_socket_buffer_size) &&
+               (this->listen_socket_buffer_size == b.listen_socket_buffer_size) &&
+               QosPolicy::operator ==(b);
+    }
+
+    inline void clear() override
+    {
+        TransportConfigQos reset = TransportConfigQos();
+        std::swap(*this, reset);
+    }
+
+    //!User defined transports to use alongside or in place of builtins.
+    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > user_transports;
+
+    //!Set as false to disable the default UDPv4 implementation.
+    bool use_builtin_transports;
+
+    /*!
+     * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
+     * Default value: 0.
+     */
+    uint32_t send_socket_buffer_size;
+
+    /*! Listen socket buffer for all listen resources. Zero value indicates to use default system buffer size.
+     * Default value: 0.
+     */
+    uint32_t listen_socket_buffer_size;
+};
 
 } // namespace dds
 } // namespace fastdds

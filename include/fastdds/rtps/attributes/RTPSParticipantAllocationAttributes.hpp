@@ -30,6 +30,13 @@ namespace rtps {
  */
 struct RemoteLocatorsAllocationAttributes
 {
+    bool operator ==(
+            const RemoteLocatorsAllocationAttributes& b) const
+    {
+        return (this->max_unicast_locators == b.max_unicast_locators) &&
+               (this->max_multicast_locators == b.max_multicast_locators);
+    }
+
     /** Maximum number of unicast locators per remote entity.
      *
      * This attribute controls the maximum number of unicast locators to keep for
@@ -54,6 +61,13 @@ struct RemoteLocatorsAllocationAttributes
  */
 struct SendBuffersAllocationAttributes
 {
+    bool operator ==(
+            const SendBuffersAllocationAttributes& b) const
+    {
+        return (this->preallocated_number == b.preallocated_number) &&
+               (this->dynamic == b.dynamic);
+    }
+
     /** Initial number of send buffers to allocate.
      *
      * This attribute controls the initial number of send buffers to be allocated.
@@ -77,6 +91,14 @@ struct SendBuffersAllocationAttributes
  */
 struct VariableLengthDataLimits
 {
+    bool operator ==(
+            const VariableLengthDataLimits& b) const
+    {
+        return (this->max_properties == b.max_properties) &&
+               (this->max_user_data == b.max_user_data) &&
+               (this->max_partitions == b.max_partitions);
+    }
+
     //! Defines the maximum size (in octets) of properties data in the local or remote participant
     size_t max_properties = 0;
     //! Defines the maximum size (in octets) of user data in the local or remote participant
@@ -113,6 +135,17 @@ struct RTPSParticipantAllocationAttributes
     ResourceLimitedContainerConfig total_writers() const
     {
         return total_endpoints(writers);
+    }
+
+    bool operator ==(
+            const RTPSParticipantAllocationAttributes& b) const
+    {
+        return (this->locators == b.locators) &&
+               (this->participants == b.participants) &&
+               (this->readers == b.readers) &&
+               (this->writers == b.writers) &&
+               (this->send_buffers == b.send_buffers) &&
+               (this->data_limits == b.data_limits);
     }
 
 private:

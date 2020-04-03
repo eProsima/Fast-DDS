@@ -37,11 +37,11 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
 bool HelloWorldSubscriber::init()
 {
-    eprosima::fastrtps::ParticipantAttributes PParam;
-    PParam.rtps.setName("Participant_sub");
+    DomainParticipantQos pqos;
+    pqos.name("Participant_sub");
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener);
 
         if (mp_participant == nullptr)
         {
@@ -78,12 +78,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         n_matched = info.total_count;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         n_matched = info.total_count;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
     else
     {
@@ -162,7 +162,7 @@ void HelloWorldSubscriber::run()
 void HelloWorldSubscriber::run(
         uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
+    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
     while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

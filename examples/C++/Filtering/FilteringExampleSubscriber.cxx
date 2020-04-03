@@ -24,25 +24,34 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-FilteringExampleSubscriber::FilteringExampleSubscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
+FilteringExampleSubscriber::FilteringExampleSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
+{
+}
 
-FilteringExampleSubscriber::~FilteringExampleSubscriber() {	Domain::removeParticipant(mp_participant);}
+FilteringExampleSubscriber::~FilteringExampleSubscriber()
+{
+    Domain::removeParticipant(mp_participant);
+}
 
-bool FilteringExampleSubscriber::init(int type)
+bool FilteringExampleSubscriber::init(
+        int type)
 {
     // Create RTPSParticipant
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant == nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //Register the type
 
-    Domain::registerType(mp_participant,(TopicDataType*) &myType);		
+    Domain::registerType(mp_participant, (TopicDataType*) &myType);
 
     // Create Subscriber
 
@@ -61,11 +70,15 @@ bool FilteringExampleSubscriber::init(int type)
 
     mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
     if (mp_subscriber == nullptr)
+    {
         return false;
+    }
     return true;
 }
 
-void FilteringExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber*, MatchingInfo& info)
+void FilteringExampleSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber*,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -79,14 +92,15 @@ void FilteringExampleSubscriber::SubListener::onSubscriptionMatched(Subscriber*,
     }
 }
 
-void FilteringExampleSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void FilteringExampleSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
     // Take data
     FilteringExample st;
 
-    if(sub->takeNextData(&st, &m_info))
+    if (sub->takeNextData(&st, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             // Print your structure data here.
             ++n_msg;
@@ -98,8 +112,7 @@ void FilteringExampleSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 
 void FilteringExampleSubscriber::run()
 {
-    std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
+    std::cout << "Waiting for Data, press Enter to stop the Subscriber. " << std::endl;
     std::cin.ignore();
     std::cout << "Shutting down the Subscriber." << std::endl;
 }
-

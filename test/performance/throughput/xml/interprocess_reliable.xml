@@ -3,19 +3,15 @@
     <profiles>
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
-                <builtin>
-                    <domainId>222</domainId>
-                </builtin>
                 <name>throughput_test_publisher</name>
             </rtps>
         </participant>
 
         <participant profile_name="sub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
-                <builtin>
-                    <domainId>222</domainId>
-                </builtin>
                 <name>throughput_test_subscriber</name>
             </rtps>
         </participant>

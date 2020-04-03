@@ -218,7 +218,7 @@ bool LatencyTestPublisher::init(
     ParticipantAttributes participant_attributes;
 
     // Default domain
-    participant_attributes.rtps.builtin.domainId = pid % 230;
+    participant_attributes.domainId = pid % 230;
 
     // Default participant name
     participant_attributes.rtps.setName("latency_test_publisher");
@@ -237,7 +237,7 @@ bool LatencyTestPublisher::init(
     // Apply user's force domain
     if (forced_domain_ >= 0)
     {
-        participant_attributes.rtps.builtin.domainId = forced_domain_;
+        participant_attributes.domainId = forced_domain_;
     }
 
     // If the user has specified a participant property policy with command line arguments, it overrides whatever the
@@ -345,7 +345,7 @@ bool LatencyTestPublisher::init(
     else
     {
         data_subscriber_ = Domain::createSubscriber(participant_, subscriber_data_attributes,
-                &this->data_sub_listener_);
+                        &this->data_sub_listener_);
     }
 
     if (data_subscriber_ == nullptr)
@@ -371,7 +371,7 @@ bool LatencyTestPublisher::init(
     publisher_command_attributes.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
     command_publisher_ = Domain::createPublisher(participant_, publisher_command_attributes,
-            &this->command_pub_listener_);
+                    &this->command_pub_listener_);
 
     if (command_publisher_ == nullptr)
     {
@@ -396,7 +396,7 @@ bool LatencyTestPublisher::init(
     publisher_command_attributes.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
     command_subscriber_ = Domain::createSubscriber(participant_, subscriber_command_attributes,
-            &this->command_sub_listener_);
+                    &this->command_sub_listener_);
 
     if (command_subscriber_ == nullptr)
     {
@@ -574,7 +574,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(
             latency_publisher_->end_time_ = std::chrono::steady_clock::now();
             latency_publisher_->times_.push_back(std::chrono::duration<double, std::micro>(
                         latency_publisher_->end_time_ - latency_publisher_->start_time_) / 2. -
-                        latency_publisher_->overhead_time_);
+                    latency_publisher_->overhead_time_);
             latency_publisher_->received_count_++;
 
             // Reset seqnum from out data
@@ -597,7 +597,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(
             latency_publisher_->end_time_ = std::chrono::steady_clock::now();
             latency_publisher_->times_.push_back(std::chrono::duration<double, std::micro>(
                         latency_publisher_->end_time_ - latency_publisher_->start_time_) / 2. -
-                        latency_publisher_->overhead_time_);
+                    latency_publisher_->overhead_time_);
             latency_publisher_->received_count_++;
 
             // Reset seqnum from out data
@@ -725,7 +725,7 @@ bool LatencyTestPublisher::test(
         MemberId id_out;
         DynamicData* data_in = dynamic_data_type_in_->loan_value(dynamic_data_type_in_->get_member_id_at_index(1));
         DynamicData* data_out = dynamic_data_type_out_->loan_value(
-                dynamic_data_type_out_->get_member_id_at_index(1));
+            dynamic_data_type_out_->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             data_in->insert_sequence_data(id_in);

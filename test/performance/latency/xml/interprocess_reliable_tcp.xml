@@ -29,10 +29,8 @@
 
         <!-- PUBLISHER -->
         <participant profile_name="pub_participant_profile">
+            <domainId>231</domainId>
             <rtps>
-                <builtin>
-                    <domainId>231</domainId>
-                </builtin>
                 <userTransports>
                     <transport_id>latency_publisher_tcp_transport</transport_id>
                 </userTransports>
@@ -73,9 +71,9 @@
 
         <!-- SUBSCRIBER -->
         <participant profile_name="sub_participant_profile">
+            <domainId>231</domainId>
             <rtps>
                 <builtin>
-                    <domainId>231</domainId>
                     <initialPeersList>
                         <locator>
                             <tcpv4>

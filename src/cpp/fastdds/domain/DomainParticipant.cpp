@@ -19,12 +19,25 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
-DomainParticipant::DomainParticipant()
-    : impl_(nullptr)
+DomainParticipant::DomainParticipant(
+        const StatusMask& mask)
+    : Entity(mask)
+    , impl_(nullptr)
+{
+}
+
+DomainParticipant::DomainParticipant(
+        DomainId_t domain_id,
+        const DomainParticipantQos& qos,
+        DomainParticipantListener* listener,
+        const StatusMask& mask)
+    : Entity(mask)
+    , impl_(DomainParticipantFactory::get_instance()->create_participant(domain_id, qos, listener, mask)->impl_)
 {
 }
 
@@ -91,55 +104,55 @@ bool DomainParticipant::unregister_type(
 }
 
 /* TODO
-Subscriber* DomainParticipant::get_builtin_subscriber()
-{
+   Subscriber* DomainParticipant::get_builtin_subscriber()
+   {
     return impl_->get_builtin_subscriber();
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_participant(
+   bool DomainParticipant::ignore_participant(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_participant(handle);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_topic(
+   bool DomainParticipant::ignore_topic(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_topic(handle);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_publication(
+   bool DomainParticipant::ignore_publication(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_publication(handle);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_subscription(
+   bool DomainParticipant::ignore_subscription(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_subscription(handle);
-}
-*/
+   }
+ */
 
-uint8_t DomainParticipant::get_domain_id() const
+DomainId_t DomainParticipant::get_domain_id() const
 {
     return impl_->get_domain_id();
 }
 
 /* TODO
-bool DomainParticipant::delete_contained_entities()
-{
+   bool DomainParticipant::delete_contained_entities()
+   {
     return impl_->delete_contained_entities();
-}
-*/
+   }
+ */
 
 ReturnCode_t DomainParticipant::assert_liveliness()
 {
@@ -183,20 +196,20 @@ ReturnCode_t DomainParticipant::get_default_subscriber_qos(
 }
 
 /* TODO
-bool DomainParticipant::get_discovered_participants(
+   bool DomainParticipant::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
-{
+   {
     return impl_->get_discovered_participants(participant_handles);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::get_discovered_topics(
+   bool DomainParticipant::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
-{
+   {
     return impl_->get_discovered_topics(topic_handles);
-}
-*/
+   }
+ */
 
 bool DomainParticipant::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle,
@@ -227,20 +240,15 @@ const fastrtps::rtps::GUID_t& DomainParticipant::guid() const
     return impl_->guid();
 }
 
-const fastrtps::ParticipantAttributes& DomainParticipant::get_attributes() const
-{
-    return impl_->get_attributes();
-}
-
 std::vector<std::string> DomainParticipant::get_participant_names() const
 {
     return impl_->get_participant_names();
 }
 
 bool DomainParticipant::new_remote_endpoint_discovered(
-    const fastrtps::rtps::GUID_t& partguid,
-    uint16_t userId,
-    fastrtps::rtps::EndpointKind_t kind)
+        const fastrtps::rtps::GUID_t& partguid,
+        uint16_t userId,
+        fastrtps::rtps::EndpointKind_t kind)
 {
     return impl_->new_remote_endpoint_discovered(partguid, userId, kind);
 }

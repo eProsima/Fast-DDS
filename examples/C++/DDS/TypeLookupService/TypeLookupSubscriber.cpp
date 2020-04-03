@@ -40,19 +40,18 @@ TypeLookupSubscriber::TypeLookupSubscriber()
 
 bool TypeLookupSubscriber::init()
 {
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.typelookup_config.use_client = true;
-    PParam.rtps.builtin.use_WriterLivelinessProtocol = false;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    PParam.rtps.setName("Participant_sub");
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = SIMPLE;
+    pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
+    pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    pqos.name("Participant_sub");
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
+        mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener);
         if (mp_participant == nullptr)
         {
             return false;
@@ -150,7 +149,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-        [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
+            [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
             {
                 std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
 
@@ -178,15 +177,15 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 if (type == nullptr)
                 {
                     const types::TypeIdentifier* ident =
-                        types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
+                            types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
 
                     if (nullptr != ident)
                     {
                         const types::TypeObject* obj =
-                            types::TypeObjectFactory::get_instance()->get_type_object(ident);
+                                types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
                         types::DynamicType_ptr dyn_type =
-                            types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+                                types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
                         if (nullptr != dyn_type)
                         {
@@ -229,7 +228,7 @@ void TypeLookupSubscriber::run(
         uint32_t number)
 {
     std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
-    while(number > this->m_listener.n_samples)
+    while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

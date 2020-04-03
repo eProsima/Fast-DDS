@@ -44,16 +44,17 @@ bool HelloWorldPublisher::init()
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
     mp_participant = Domain::createParticipant(PParam);
 
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
     //REGISTER THE TYPE
 
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(mp_participant, &m_type);
 
     //CREATE THE PUBLISHER
     PublisherAttributes Wparam;
@@ -65,11 +66,13 @@ bool HelloWorldPublisher::init()
     Wparam.topic.resourceLimitsQos.max_samples = 50;
     Wparam.topic.resourceLimitsQos.allocated_samples = 20;
     Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
+    Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
-    if(mp_publisher == nullptr)
+    mp_publisher = Domain::createPublisher(mp_participant, Wparam, (PublisherListener*)&m_listener);
+    if (mp_publisher == nullptr)
+    {
         return false;
+    }
 
     return true;
 
@@ -81,50 +84,60 @@ HelloWorldPublisher::~HelloWorldPublisher()
     Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void HelloWorldPublisher::PubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         firstConnected = true;
-        std::cout << "Publisher matched"<<std::endl;
+        std::cout << "Publisher matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Publisher unmatched"<<std::endl;
+        std::cout << "Publisher unmatched" << std::endl;
     }
 }
 
-void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
+void HelloWorldPublisher::runThread(
+        uint32_t samples,
+        uint32_t sleep)
 {
     if (samples == 0)
     {
-        while(!stop)
+        while (!stop)
         {
-            if(publish(false))
+            if (publish(false))
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                std::cout << "Message: " << m_Hello.message() << " with index: " << m_Hello.index() << " SENT" <<
+                        std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
     else
     {
-        for(uint32_t i = 0;i<samples;++i)
+        for (uint32_t i = 0; i < samples; ++i)
         {
-            if(!publish())
+            if (!publish())
+            {
                 --i;
+            }
             else
             {
-                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+                std::cout << "Message: " << m_Hello.message() << " with index: " << m_Hello.index() << " SENT" <<
+                        std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
 }
 
-void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
+void HelloWorldPublisher::run(
+        uint32_t samples,
+        uint32_t sleep)
 {
     stop = false;
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
@@ -141,11 +154,12 @@ void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
     thread.join();
 }
 
-bool HelloWorldPublisher::publish(bool waitForListener)
+bool HelloWorldPublisher::publish(
+        bool waitForListener)
 {
-    if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
-        m_Hello.index(m_Hello.index()+1);
+        m_Hello.index(m_Hello.index() + 1);
         mp_publisher->write((void*)&m_Hello);
         return true;
     }

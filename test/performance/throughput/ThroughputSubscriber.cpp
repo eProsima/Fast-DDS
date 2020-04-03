@@ -29,6 +29,8 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 
 #include <fastrtps/Domain.h>
+
+#include <dds/core/LengthUnlimited.hpp>
 #include <vector>
 
 using namespace eprosima::fastrtps;
@@ -58,7 +60,7 @@ void ThroughputSubscriber::DataSubListener::reset()
 {
     last_seq_num_ = 0;
     first_ = true;
-    lost_samples_=0;
+    lost_samples_ = 0;
 }
 
 void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(
@@ -139,7 +141,7 @@ void ThroughputSubscriber::DataSubListener::save_numbers()
 // *******************************************************************************************
 ThroughputSubscriber::CommandSubListener::CommandSubListener(
         ThroughputSubscriber& throughput_subscriber)
-    :throughput_subscriber_(throughput_subscriber)
+    : throughput_subscriber_(throughput_subscriber)
 {
 }
 
@@ -168,7 +170,7 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(
 }
 
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage(
-    Subscriber*)
+        Subscriber*)
 {
 }
 
@@ -177,7 +179,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(
 // *******************************************************************************************
 ThroughputSubscriber::CommandPubListener::CommandPubListener(
         ThroughputSubscriber& throughput_subscriber)
-    :throughput_subscriber_(throughput_subscriber)
+    : throughput_subscriber_(throughput_subscriber)
 {
 }
 
@@ -246,7 +248,7 @@ ThroughputSubscriber::ThroughputSubscriber(
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED));
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED));
         struct_type_builder->set_name("ThroughputType");
         dynamic_type_ = struct_type_builder->build();
         dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
@@ -257,7 +259,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     ParticipantAttributes participant_attributes;
 
     // Default domain
-    participant_attributes.rtps.builtin.domainId = pid % 230;
+    participant_attributes.domainId = pid % 230;
 
     // Default participant name
     participant_attributes.rtps.setName("throughput_test_subscriber");
@@ -266,7 +268,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     if (xml_config_file_.length() > 0)
     {
         if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-            eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                 participant_attributes))
         {
             ready_ = false;
@@ -277,7 +279,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     // Apply user's force domain
     if (forced_domain_ >= 0)
     {
-        participant_attributes.rtps.builtin.domainId = forced_domain_;
+        participant_attributes.domainId = forced_domain_;
     }
 
     // If the user has specified a participant property policy with command line arguments, it overrides whatever the
@@ -363,7 +365,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     command_publisher_attrs.properties = property_policy;
 
     command_publisher_ = Domain::createPublisher(participant_, command_publisher_attrs,
-        (PublisherListener*)&this->command_pub_listener_);
+                    (PublisherListener*)&this->command_pub_listener_);
 
     SubscriberAttributes command_subscriber_attrs;
     command_subscriber_attrs.topic.topicDataType = "ThroughputCommand";
@@ -383,7 +385,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     command_subscriber_attrs.properties = property_policy;
 
     command_subscriber_ = Domain::createSubscriber(participant_, command_subscriber_attrs,
-        (SubscriberListener*)&this->command_sub_listener_);
+                    (SubscriberListener*)&this->command_sub_listener_);
 
     // Calculate overhead
     t_start_ = std::chrono::steady_clock::now();
@@ -402,9 +404,10 @@ ThroughputSubscriber::ThroughputSubscriber(
 
 void ThroughputSubscriber::process_message()
 {
-    if(command_subscriber_->wait_for_unread_samples({100, 0}))
+    if (command_subscriber_->wait_for_unread_samples({100, 0}))
     {
-        if (command_subscriber_->takeNextData((void*)&command_sub_listener_.command_type_, &command_sub_listener_.info_))
+        if (command_subscriber_->takeNextData((void*)&command_sub_listener_.command_type_,
+                &command_sub_listener_.info_))
         {
             switch (command_sub_listener_.command_type_.m_command)
             {
@@ -431,10 +434,10 @@ void ThroughputSubscriber::process_message()
 
                         // Add members to the struct.
                         struct_type_builder->add_member(0, "seqnum",
-                            DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+                                DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
                         struct_type_builder->add_member(1, "data",
-                            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_));
+                                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_));
 
                         struct_type_builder->set_name("ThroughputType");
                         dynamic_type_ = struct_type_builder->build();
@@ -566,7 +569,7 @@ void ThroughputSubscriber::run()
             command_sample.m_lostsamples = data_sub_listener_.saved_lost_samples_;
 
             double total_time_count =
-                (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
+                    (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
 
             if (total_time_count < std::numeric_limits<uint64_t>::min())
             {
@@ -584,9 +587,11 @@ void ThroughputSubscriber::run()
             std::cout << "Last Received Sample: " << command_sample.m_lastrecsample << std::endl;
             std::cout << "Lost Samples: " << command_sample.m_lostsamples << std::endl;
             std::cout << "Samples per second: "
-                << (double)(command_sample.m_lastrecsample - command_sample.m_lostsamples) * 1000000 / command_sample.m_totaltime
-                << std::endl;
-            std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand << " ends." << std::endl;
+                      << (double)(command_sample.m_lastrecsample - command_sample.m_lostsamples) * 1000000 /
+                command_sample.m_totaltime
+                      << std::endl;
+            std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand <<
+                " ends." << std::endl;
             command_publisher_->write(&command_sample);
 
             stop_count_ = 0;

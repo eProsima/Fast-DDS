@@ -37,7 +37,8 @@ using eprosima::fastdds::dds::LogConsumer;
 LogMock* log_mock = nullptr;
 
 // Initialize Log mock
-void TestRegisterConsumerFunc(std::unique_ptr<LogConsumer>&& c)
+void TestRegisterConsumerFunc(
+        std::unique_ptr<LogConsumer>&& c)
 {
     log_mock->RegisterConsumer(std::move(c));
 }
@@ -76,7 +77,7 @@ protected:
 TEST_F(XMLProfileParserTests, XMLParserRootLibrarySettings)
 {
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
-        xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings.xml"));
 
     const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
     EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY);
@@ -103,7 +104,7 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
 TEST_F(XMLProfileParserTests, XMLParserLibrarySettings)
 {
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
-        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
 
     const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
     EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_FULL);
@@ -119,6 +120,7 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
+    EXPECT_EQ(participant_atts.domainId, 2019102u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin = rtps_atts.builtin;
     Locator_t locator;
@@ -156,7 +158,6 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
@@ -211,6 +212,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts);
 
+    EXPECT_EQ(participant_atts.domainId, 2019102u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin = rtps_atts.builtin;
     Locator_t locator;
@@ -234,7 +236,6 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
@@ -565,8 +566,8 @@ TEST_F(XMLProfileParserTests, XMLParserRequesterProfile)
         xmlparser::XMLP_ret::XML_OK,
         xmlparser::XMLProfileManager::fillRequesterAttributes(requester_profile, requester_atts));
 
-    PublisherAttributes &publisher_atts = requester_atts.publisher;
-    SubscriberAttributes &subscriber_atts = requester_atts.subscriber;
+    PublisherAttributes& publisher_atts = requester_atts.publisher;
+    SubscriberAttributes& subscriber_atts = requester_atts.subscriber;
 
     EXPECT_EQ(publisher_atts.topic.topicDataType, "request_type");
     EXPECT_EQ(publisher_atts.topic.topicName, "service_name_Request");
@@ -590,8 +591,8 @@ TEST_F(XMLProfileParserTests, XMLParserReplierProfile)
         xmlparser::XMLP_ret::XML_OK,
         xmlparser::XMLProfileManager::fillReplierAttributes(replier_profile, replier_atts));
 
-    PublisherAttributes &publisher_atts = replier_atts.publisher;
-    SubscriberAttributes &subscriber_atts = replier_atts.subscriber;
+    PublisherAttributes& publisher_atts = replier_atts.publisher;
+    SubscriberAttributes& subscriber_atts = replier_atts.subscriber;
 
     EXPECT_EQ(publisher_atts.topic.topicDataType, "reply_type");
     EXPECT_EQ(publisher_atts.topic.topicName, "reply_topic_name");

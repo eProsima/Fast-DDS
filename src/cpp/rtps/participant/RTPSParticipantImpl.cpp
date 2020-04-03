@@ -94,12 +94,14 @@ Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
 }
 
 RTPSParticipantImpl::RTPSParticipantImpl(
+        uint32_t domain_id,
         const RTPSParticipantAttributes& PParam,
         const GuidPrefix_t& guidP,
         const GuidPrefix_t& persistence_guid,
         RTPSParticipant* par,
         RTPSParticipantListener* plisten)
-    : m_att(PParam)
+    : domain_id_(domain_id)
+    , m_att(PParam)
     , m_guid(guidP, c_EntityId_RTPSParticipant)
     , m_persistence_guid(persistence_guid, c_EntityId_RTPSParticipant)
     , mp_builtinProtocols(nullptr)
@@ -136,46 +138,46 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         case DiscoveryProtocol::BACKUP:
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
-        // Verify if listening ports are provided
-        for (auto& transportDescriptor : PParam.userTransports)
-        {
-            TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
-            if (pT && pT->listening_ports.empty())
+            // Verify if listening ports are provided
+            for (auto& transportDescriptor : PParam.userTransports)
             {
-                logError(RTPS_PARTICIPANT,
-                        "Participant " << m_att.getName() << " with GUID " << m_guid
-                                       << " tries to use discovery server over TCP without providing a proper listening port");
+                TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+                if (pT && pT->listening_ports.empty())
+                {
+                    logError(RTPS_PARTICIPANT,
+                            "Participant " << m_att.getName() << " with GUID " << m_guid
+                                           << " tries to use discovery server over TCP without providing a proper listening port");
+                }
             }
-        }
-    default:
-        break;
+        default:
+            break;
     }
 
 
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
-        if(m_network_Factory.RegisterTransport(transportDescriptor.get()))
+        if (m_network_Factory.RegisterTransport(transportDescriptor.get()))
         {
-            has_shm_transport_ |= 
-                (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
+            has_shm_transport_ |=
+                    (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
         }
         else
         {
             // SHM transport could be disabled
-            if((dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr))
+            if ((dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr))
             {
                 logError(RTPS_PARTICIPANT,
-                    "Unable to Register SHM Transport. SHM Transport is not supported in"
-                    " the current platform.");
+                        "Unable to Register SHM Transport. SHM Transport is not supported in"
+                        " the current platform.");
             }
             else
             {
                 logError(RTPS_PARTICIPANT,
-                    "User transport failed to register.");
+                        "User transport failed to register.");
             }
-            
-        }   
+
+        }
     }
 
     mp_userParticipant->mp_impl = this;
@@ -197,8 +199,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
        Else -> Take them */
 
     // Creation of metatraffic locator and receiver resources
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
+    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
+    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
                     static_cast<uint32_t>(m_att.participantID));
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
@@ -242,7 +244,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         std::for_each(initial_peers.begin(), initial_peers.end(),
                 [&](Locator_t& locator)
                     {
-                        m_network_Factory.configureInitialPeerLocator(locator, m_att);
+                        m_network_Factory.configureInitialPeerLocator(domain_id_, locator, m_att);
                     });
     }
 
@@ -261,7 +263,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         hasLocatorsDefined = false;
 
-        m_network_Factory.getDefaultUnicastLocators(m_att.defaultUnicastLocatorList, m_att);
+        m_network_Factory.getDefaultUnicastLocators(domain_id_, m_att.defaultUnicastLocatorList, m_att);
     }
     else
     {
@@ -269,7 +271,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc)
                     {
-                        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+                        m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
                     });
 
     }
@@ -302,9 +304,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultMulticastLocatorList.clear();
     }
 
-    // keep original metatraffic locatorList_t values to detect mutation 
+    // keep original metatraffic locatorList_t values to detect mutation
     LocatorList_t former_multicast(m_att.builtin.metatrafficMulticastLocatorList),
-        former_unicast(m_att.builtin.metatrafficUnicastLocatorList);
+    former_unicast(m_att.builtin.metatrafficUnicastLocatorList);
 
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
@@ -338,13 +340,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif
 
-    if((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
-        || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
-        && !(former_multicast == m_att.builtin.metatrafficMulticastLocatorList 
+    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
+            || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+            && !(former_multicast == m_att.builtin.metatrafficMulticastLocatorList
             && former_unicast == m_att.builtin.metatrafficUnicastLocatorList))
     {
         logError(RTPS_PARTICIPANT, "Cannot create server participant,"
-            " because the desired locators were not available.");
+                " because the desired locators were not available.");
     }
 
     mp_builtinProtocols = new BuiltinProtocols();
@@ -359,11 +361,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 }
 
 RTPSParticipantImpl::RTPSParticipantImpl(
+        uint32_t domain_id,
         const RTPSParticipantAttributes& PParam,
         const GuidPrefix_t& guidP,
         RTPSParticipant* par,
         RTPSParticipantListener* plisten)
-    : RTPSParticipantImpl(PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
+    : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
 {
 }
 
@@ -1004,8 +1007,8 @@ void RTPSParticipantImpl::createReceiverResources(
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
     // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
-    uint32_t max_receiver_buffer_size = 
-        is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
+    uint32_t max_receiver_buffer_size =
+            is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
 #else
     uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
 #endif
@@ -1165,11 +1168,11 @@ void RTPSParticipantImpl::normalize_endpoint_locators(
     // Locators with port 0, calculate port.
     for (Locator_t& loc : endpoint_att.unicastLocatorList)
     {
-        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+        m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
     }
     for (Locator_t& loc : endpoint_att.multicastLocatorList)
     {
-        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+        m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
     }
 
     // Normalize unicast locators
@@ -1269,8 +1272,8 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
     // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
     // So the sender limits also its size.
-    uint32_t max_receiver_buffer_size = 
-        is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
+    uint32_t max_receiver_buffer_size =
+            is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
 #else
     uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
 #endif
@@ -1408,6 +1411,11 @@ void RTPSParticipantImpl::return_send_buffer(
         std::unique_ptr <RTPSMessageGroup_t>&& buffer)
 {
     send_buffers_->return_buffer(std::move(buffer));
+}
+
+uint32_t RTPSParticipantImpl::get_domain_id() const
+{
+    return domain_id_;
 }
 
 } /* namespace rtps */

@@ -2,9 +2,9 @@
 <profiles>
 
     <participant profile_name="test_participant_profile" is_default_profile="true">
+        <domainId>80</domainId>
         <rtps>
             <builtin>
-                <domainId>80</domainId>
                 <discovery_config>
                     <leaseDuration>
                         <sec>DURATION_INFINITY</sec>

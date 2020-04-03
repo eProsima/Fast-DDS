@@ -40,12 +40,15 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-XMLP_ret XMLParser::loadDefaultXMLFile(up_base_node_t& root)
+XMLP_ret XMLParser::loadDefaultXMLFile(
+        up_base_node_t& root)
 {
     return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
 }
 
-XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root)
+XMLP_ret XMLParser::parseXML(
+        tinyxml2::XMLDocument& xmlDoc,
+        up_base_node_t& root)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* p_root = xmlDoc.FirstChildElement(ROOT);
@@ -147,7 +150,9 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root)
+XMLP_ret XMLParser::parseXMLProfiles(
+        tinyxml2::XMLElement& profiles,
+        up_base_node_t& root)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     root.reset(new BaseNode{NodeType::PROFILES});
@@ -155,14 +160,17 @@ XMLP_ret XMLParser::parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_nod
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLDynamicTypes(tinyxml2::XMLElement& types)
+XMLP_ret XMLParser::parseXMLDynamicTypes(
+        tinyxml2::XMLElement& types)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     ret  = parseDynamicTypes(&types);
     return ret;
 }
 
-XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseRoot(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
 {
     XMLP_ret ret           = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* root_child = nullptr;
@@ -177,7 +185,8 @@ XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLTransportsProf(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:complexType name="TransportDescriptorListType">
@@ -185,11 +194,11 @@ XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
                 <xs:element name="transport_descriptor" type="rtpsTransportDescriptorType"/>
             </xs:sequence>
         </xs:complexType>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TRANSPORT_DESCRIPTOR);
-    while(p_element != nullptr)
+    while (p_element != nullptr)
     {
         ret = parseXMLTransportData(p_element);
         if (ret != XMLP_ret::XML_OK)
@@ -202,7 +211,8 @@ XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLTypes(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLTypes(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:element name="types">
@@ -210,10 +220,10 @@ XMLP_ret XMLParser::parseXMLTypes(tinyxml2::XMLElement* p_root)
                 <xs:group ref="moduleElems"/>
             </xs:complexType>
         </xs:element>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr, * p_aux1 = nullptr;
     p_aux0 = p_root->FirstChildElement(TYPES);
     if (p_aux0 != nullptr)
     {
@@ -224,7 +234,9 @@ XMLP_ret XMLParser::parseXMLTypes(tinyxml2::XMLElement* p_root)
             if (strcmp(name, TYPE) == 0)
             {
                 if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux1))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
             }
             else
             {
@@ -242,14 +254,17 @@ XMLP_ret XMLParser::parseXMLTypes(tinyxml2::XMLElement* p_root)
             if (strcmp(name, TYPE) == 0)
             {
                 if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux0))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
             }
         }
     }
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLTransportData(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:complexType name="rtpsTransportDescriptorType">
@@ -278,13 +293,13 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     std::string sId = "";
     sp_transport_t pDescriptor = nullptr;
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     p_aux0 = p_root->FirstChildElement(TRANSPORT_ID);
     if (nullptr == p_aux0)
     {
@@ -317,13 +332,15 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
             }
 
             std::shared_ptr<rtps::UDPTransportDescriptor> pUDPDesc =
-                std::dynamic_pointer_cast<rtps::UDPTransportDescriptor>(pDescriptor);
+                    std::dynamic_pointer_cast<rtps::UDPTransportDescriptor>(pDescriptor);
             // Output UDP Socket
             if (nullptr != (p_aux0 = p_root->FirstChildElement(UDP_OUTPUT_PORT)))
             {
                 int iSocket = 0;
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSocket, 0) || iSocket < 0 || iSocket > 65535)
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 pUDPDesc->m_output_udp_socket = static_cast<uint16_t>(iSocket);
             }
             // Non-blocking send
@@ -346,14 +363,16 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
             else
             {
                 std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
-                    std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(pDescriptor);
+                        std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(pDescriptor);
 
                 // Wan Address
                 if (nullptr != (p_aux0 = p_root->FirstChildElement(TCP_WAN_ADDR)))
                 {
                     std::string s;
                     if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, 0))
+                    {
                         return XMLP_ret::XML_ERROR;
+                    }
                     pTCPv4Desc->set_WAN_address(s);
                 }
             }
@@ -367,7 +386,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 return ret;
             }
         }
-        else if(sType == SHM)
+        else if (sType == SHM)
         {
             pDescriptor = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
             ret = parseXMLCommonSharedMemTransportData(p_root, pDescriptor);
@@ -392,7 +411,9 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
+XMLP_ret XMLParser::parseXMLCommonTransportData(
+        tinyxml2::XMLElement* p_root,
+        sp_transport_t p_transport)
 {
     /*
         <xs:complexType name="rtpsTransportDescriptorType">
@@ -416,12 +437,12 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
                 <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     std::shared_ptr<rtps::SocketTransportDescriptor> pDesc =
             std::dynamic_pointer_cast<rtps::SocketTransportDescriptor>(p_transport);
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -431,7 +452,9 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             // sendBufferSize - int32Type
             uint32_t iSize = 0;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &iSize, 0))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             pDesc->sendBufferSize = iSize;
         }
         else if (strcmp(name, RECEIVE_BUFFER_SIZE) == 0)
@@ -439,7 +462,9 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             // receiveBufferSize - int32Type
             uint32_t iSize = 0;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &iSize, 0))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             pDesc->receiveBufferSize = iSize;
         }
         else if (strcmp(name, TTL) == 0)
@@ -447,7 +472,9 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             // TTL - int8Type
             int iTTL = 0;
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTTL, 0) || iTTL < 0 || iTTL > 255)
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             pDesc->TTL = static_cast<uint8_t>(iTTL);
         }
         else if (strcmp(name, MAX_MESSAGE_SIZE) == 0)
@@ -455,7 +482,9 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             // maxMessageSize - uint32Type
             uint32_t uSize = 0;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             std::dynamic_pointer_cast<rtps::TransportDescriptorInterface>(p_transport)->maxMessageSize = uSize;
         }
         else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
@@ -463,7 +492,9 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             // maxInitialPeersRange - uint32Type
             uint32_t uRange = 0;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uRange, 0))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             pDesc->maxInitialPeersRange = uRange;
         }
         else if (strcmp(name, WHITE_LIST) == 0)
@@ -471,7 +502,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             // InterfaceWhiteList addressListType
             const char* address = nullptr;
             for (tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement();
-                 p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
+                    p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
                 address = p_aux1->Name();
                 if (strcmp(address, ADDRESS) == 0)
@@ -490,17 +521,17 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             }
         }
         else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, UDP_OUTPUT_PORT) == 0 ||
-            strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 ||
-            strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 || strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
-            strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
-            strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
-            strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
-            strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
-            strcmp(name, NON_BLOCKING_SEND) == 0  || 
-            strcmp(name, SEGMENT_SIZE) == 0 || strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
-            strcmp(name, PORT_OVERFLOW_POLICY) == 0 || strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
-            strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
-            strcmp(name, RTPS_DUMP_FILE) == 0)
+                strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 ||
+                strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 || strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
+                strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
+                strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
+                strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
+                strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
+                strcmp(name, NON_BLOCKING_SEND) == 0  ||
+                strcmp(name, SEGMENT_SIZE) == 0 || strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
+                strcmp(name, PORT_OVERFLOW_POLICY) == 0 || strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
+                strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
+                strcmp(name, RTPS_DUMP_FILE) == 0)
         {
             // Parsed outside of this method
         }
@@ -513,7 +544,9 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
+XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
+        tinyxml2::XMLElement* p_root,
+        sp_transport_t p_transport)
 {
     /*
         <xs:complexType name="rtpsTransportDescriptorType">
@@ -534,14 +567,14 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     std::shared_ptr<rtps::TCPTransportDescriptor> pTCPDesc =
-        std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(p_transport);
+            std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(p_transport);
     if (pTCPDesc != nullptr)
     {
-        tinyxml2::XMLElement *p_aux0 = nullptr;
+        tinyxml2::XMLElement* p_aux0 = nullptr;
         const char* name = nullptr;
         for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
         {
@@ -551,7 +584,9 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 // keep_alive_frequency_ms - uint32Type
                 int iFrequency(0);
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iFrequency, 0))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 pTCPDesc->keep_alive_frequency_ms = static_cast<uint32_t>(iFrequency);
             }
             else if (strcmp(name, KEEP_ALIVE_TIMEOUT) == 0)
@@ -559,7 +594,9 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 // keep_alive_timeout_ms - uint32Type
                 int iTimeout(0);
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 pTCPDesc->keep_alive_timeout_ms = static_cast<uint32_t>(iTimeout);
             }
             else if (strcmp(name, MAX_LOGICAL_PORT) == 0)
@@ -567,7 +604,9 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 // max_logical_port - uint16Type
                 int iPort(0);
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 pTCPDesc->max_logical_port = static_cast<uint16_t>(iPort);
             }
             else if (strcmp(name, LOGICAL_PORT_RANGE) == 0)
@@ -575,7 +614,9 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 // logical_port_range - uint16Type
                 int iPort(0);
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 pTCPDesc->logical_port_range = static_cast<uint16_t>(iPort);
             }
             else if (strcmp(name, LOGICAL_PORT_INCREMENT) == 0)
@@ -583,7 +624,9 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 // logical_port_increment - uint16Type
                 int iPort(0);
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 pTCPDesc->logical_port_increment = static_cast<uint16_t>(iPort);
             }
             // enable_tcp_nodelay - boolType
@@ -602,7 +645,9 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 {
                     int iPort = 0;
                     if (XMLP_ret::XML_OK != getXMLInt(p_aux1, &iPort, 0) || iPort < 0 || iPort > 65535)
+                    {
                         return XMLP_ret::XML_ERROR;
+                    }
 
                     pTCPDesc->add_listener_port(static_cast<uint16_t>(iPort));
                     p_aux1 = p_aux1->NextSiblingElement(PORT);
@@ -630,10 +675,10 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 }
             }
             else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, TRANSPORT_ID) == 0 ||
-                strcmp(name, TYPE) == 0 || strcmp(name, SEND_BUFFER_SIZE) == 0 ||
-                strcmp(name, RECEIVE_BUFFER_SIZE) == 0 || strcmp(name, TTL) == 0 ||
-                strcmp(name, MAX_MESSAGE_SIZE) == 0 || strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
-                strcmp(name, WHITE_LIST) == 0)
+                    strcmp(name, TYPE) == 0 || strcmp(name, SEND_BUFFER_SIZE) == 0 ||
+                    strcmp(name, RECEIVE_BUFFER_SIZE) == 0 || strcmp(name, TTL) == 0 ||
+                    strcmp(name, MAX_MESSAGE_SIZE) == 0 || strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
+                    strcmp(name, WHITE_LIST) == 0)
             {
                 // Parsed Outside of this method
             }
@@ -653,7 +698,9 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
+XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
+        tinyxml2::XMLElement* p_root,
+        sp_transport_t p_transport)
 {
     /*
         <xs:complexType name="rtpsTransportDescriptorType">
@@ -666,14 +713,14 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
                 <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 </xs:all>
         </xs:complexType>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> transport_descriptor =
-        std::dynamic_pointer_cast<fastdds::rtps::SharedMemTransportDescriptor>(p_transport);
+            std::dynamic_pointer_cast<fastdds::rtps::SharedMemTransportDescriptor>(p_transport);
     if (transport_descriptor != nullptr)
     {
-        tinyxml2::XMLElement *p_aux0 = nullptr;
+        tinyxml2::XMLElement* p_aux0 = nullptr;
         const char* name = nullptr;
         for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
         {
@@ -682,58 +729,78 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
             if (strcmp(name, SEGMENT_SIZE) == 0)
             {
                 if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 transport_descriptor->segment_size(static_cast<uint32_t>(aux), static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, PORT_QUEUE_CAPACITY) == 0)
             {
                 if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 transport_descriptor->port_queue_capacity(static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0)
             {
                 if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux, 0))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 transport_descriptor->healthy_check_timeout_ms(static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, PORT_OVERFLOW_POLICY) == 0)
             {
                 std::string str;
                 if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                {
                     return XMLP_ret::XML_ERROR;
-                if(str == DISCARD)
-                {
-                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
                 }
-                else if(str == FAIL)
+                if (str == DISCARD)
                 {
-                    transport_descriptor->port_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+                    transport_descriptor->port_overflow_policy(
+                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+                }
+                else if (str == FAIL)
+                {
+                    transport_descriptor->port_overflow_policy(
+                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
                 }
                 else
+                {
                     return XMLP_ret::XML_ERROR;
+                }
             }
             else if (strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0)
             {
                 std::string str;
                 if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                {
                     return XMLP_ret::XML_ERROR;
-                if(str == DISCARD)
-                {
-                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
                 }
-                else if(str == FAIL)
+                if (str == DISCARD)
                 {
-                    transport_descriptor->segment_overflow_policy(fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
+                    transport_descriptor->segment_overflow_policy(
+                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
+                }
+                else if (str == FAIL)
+                {
+                    transport_descriptor->segment_overflow_policy(
+                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
                 }
                 else
+                {
                     return XMLP_ret::XML_ERROR;
+                }
             }
             else if (strcmp(name, RTPS_DUMP_FILE) == 0)
             {
                 std::string str;
                 if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
+                {
                     return XMLP_ret::XML_ERROR;
+                }
                 transport_descriptor->rtps_dump_file(str);
             }
             else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 || strcmp(name, MAX_MESSAGE_SIZE) == 0)
@@ -757,8 +824,8 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(tinyxml2::XMLElement* p
 }
 
 XMLP_ret XMLParser::parse_tls_config(
-    tinyxml2::XMLElement* p_root,
-    sp_transport_t tcp_transport)
+        tinyxml2::XMLElement* p_root,
+        sp_transport_t tcp_transport)
 {
     /*
         XSD:
@@ -828,7 +895,7 @@ XMLP_ret XMLParser::parse_tls_config(
                 <option>NO_TLSV1_1</option>
             </options>
         </tls>
-   */
+     */
     using namespace rtps;
     using TCPDescriptor = std::shared_ptr<rtps::TCPTransportDescriptor>;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -840,7 +907,7 @@ XMLP_ret XMLParser::parse_tls_config(
     TCPDescriptor pTCPDesc = std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(tcp_transport);
     pTCPDesc->apply_security = true;
 
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
 
     for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -882,7 +949,7 @@ XMLP_ret XMLParser::parse_tls_config(
         }
         else if (config.compare(TLS_VERIFY_PATHS) == 0)
         {
-            tinyxml2::XMLElement *p_path = p_aux0->FirstChildElement();
+            tinyxml2::XMLElement* p_path = p_aux0->FirstChildElement();
 
             while (p_path != nullptr)
             {
@@ -960,14 +1027,14 @@ XMLP_ret XMLParser::parse_tls_config(
                 else
                 {
                     logError(XMLPARSER, "Error parsing TLS configuration handshake_mode unrecognized "
-                        << handshake_mode << ".");
+                            << handshake_mode << ".");
                     ret = XMLP_ret::XML_ERROR;
                 }
             }
         }
         else if (config.compare(TLS_VERIFY_MODE) == 0)
         {
-            tinyxml2::XMLElement *p_verify = p_aux0->FirstChildElement();
+            tinyxml2::XMLElement* p_verify = p_aux0->FirstChildElement();
             while (p_verify != nullptr)
             {
                 std::string type = p_verify->Value();
@@ -1000,7 +1067,7 @@ XMLP_ret XMLParser::parse_tls_config(
                         else
                         {
                             logError(XMLPARSER, "Error parsing TLS configuration verify_mode unrecognized "
-                                << verify_mode << ".");
+                                    << verify_mode << ".");
                             ret = XMLP_ret::XML_ERROR;
                         }
                     }
@@ -1008,7 +1075,7 @@ XMLP_ret XMLParser::parse_tls_config(
                 else
                 {
                     logError(XMLPARSER, "Error parsing TLS configuration found unrecognized node "
-                        << type << ".");
+                            << type << ".");
                     ret = XMLP_ret::XML_ERROR;
                 }
 
@@ -1023,7 +1090,7 @@ XMLP_ret XMLParser::parse_tls_config(
         }
         else if (config.compare(TLS_OPTIONS) == 0)
         {
-            tinyxml2::XMLElement *p_option = p_aux0->FirstChildElement();
+            tinyxml2::XMLElement* p_option = p_aux0->FirstChildElement();
             while (p_option != nullptr)
             {
                 std::string type = p_option->Value();
@@ -1076,7 +1143,7 @@ XMLP_ret XMLParser::parse_tls_config(
                         else
                         {
                             logError(XMLPARSER, "Error parsing TLS configuration option unrecognized "
-                                << option << ".");
+                                    << option << ".");
                             ret = XMLP_ret::XML_ERROR;
                         }
                     }
@@ -1084,7 +1151,7 @@ XMLP_ret XMLParser::parse_tls_config(
                 else
                 {
                     logError(XMLPARSER, "Error parsing TLS options found unrecognized node "
-                        << type << ".");
+                            << type << ".");
                     ret = XMLP_ret::XML_ERROR;
                 }
 
@@ -1115,8 +1182,8 @@ XMLP_ret XMLParser::parse_tls_config(
     return ret;
 }
 
-
-XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLDynamicType(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:group name="moduleElems">
@@ -1131,9 +1198,9 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
                 </xs:choice>
             </xs:sequence>
         </xs:group>
-    */
+     */
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         const std::string type = p_aux0->Value();
@@ -1176,25 +1243,29 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &disc, uint32_t bound = 0);
+static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(
+        const std::string& disc,
+        uint32_t bound = 0);
 
-static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &disc, uint32_t bound)
+static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(
+        const std::string& disc,
+        uint32_t bound)
 {
     /*
-    mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 ||
+       mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 ||
         mKind == TK_INT64 || mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TK_UINT64 ||
         mKind == TK_FLOAT32 || mKind == TK_FLOAT64 || mKind == TK_FLOAT128 || mKind == TK_CHAR8 ||
         mKind == TK_CHAR16 || mKind == TK_STRING8 || mKind == TK_STRING16 || mKind == TK_ENUM || mKind == TK_BITMASK
-    */
+     */
     types::DynamicTypeBuilderFactory* factory = types::DynamicTypeBuilderFactory::get_instance();
     if (disc.compare(BOOLEAN) == 0)
     {
         return factory->create_bool_builder();
     }
     else if (disc.compare(TBYTE) == 0
-             || disc.compare(OCTET) == 0
-             || disc.compare(INT8) == 0
-             || disc.compare(UINT8) == 0)
+            || disc.compare(OCTET) == 0
+            || disc.compare(INT8) == 0
+            || disc.compare(UINT8) == 0)
     {
         return factory->create_byte_builder();
     }
@@ -1254,7 +1325,8 @@ static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &dis
     return XMLProfileManager::getDynamicTypeByName(disc);
 }
 
-XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLAliasDynamicType(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <typedef name="MyAliasEnum" type="nonBasic" nonBasicTypeName="MyEnum"/>
@@ -1270,7 +1342,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
             <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
             <xs:attribute name="mapMaxLength" type="string" use="optional"/>
         </xs:complexType>
-    */
+     */
     XMLP_ret ret = XMLP_ret::XML_OK;
 
     const char* type = p_root->Attribute(TYPE);
@@ -1292,10 +1364,10 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
 
         p_dynamictypebuilder_t valueBuilder;
         if ((p_root->Attribute(ARRAY_DIMENSIONS) != nullptr) ||
-            (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) ||
-            (p_root->Attribute(MAP_MAXLENGTH) != nullptr))
+                (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) ||
+                (p_root->Attribute(MAP_MAXLENGTH) != nullptr))
         {
-            valueBuilder = parseXMLMemberDynamicType(p_root , nullptr, MEMBER_ID_INVALID);
+            valueBuilder = parseXMLMemberDynamicType(p_root, nullptr, MEMBER_ID_INVALID);
         }
         else
         {
@@ -1312,7 +1384,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
         {
             const char* name = p_root->Attribute(NAME);
             p_dynamictypebuilder_t typeBuilder =
-                types::DynamicTypeBuilderFactory::get_instance()->create_alias_builder(valueBuilder, name);
+                    types::DynamicTypeBuilderFactory::get_instance()->create_alias_builder(valueBuilder, name);
             XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
         }
         else
@@ -1329,7 +1401,8 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLBitsetDynamicType(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLBitsetDynamicType(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <bitset name="MyBitSet">
@@ -1349,7 +1422,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(tinyxml2::XMLElement* p_root)
             <xs:attribute name="name" type="stringType" use="required"/>
             <xs:attribute name="baseType" type="stringType" use="optional"/>
         </xs:complexType>
-    */
+     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     p_dynamictypebuilder_t typeBuilder;
     uint32_t mId = 0;
@@ -1378,7 +1451,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(tinyxml2::XMLElement* p_root)
 
     const char* element_name = nullptr;
     uint16_t position = 0;
-    for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
+    for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
             p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
         element_name = p_element->Name();
@@ -1413,7 +1486,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
             <xs:attribute name="type" type="stringType" use="optional"/>
             <xs:attribute name="bit_bound" type="int16Type" use="required"/>
         </xs:complexType>
-    */
+     */
     if (p_root == nullptr)
     {
         logError(XMLPARSER, "Error parsing bitfield: Node not found.");
@@ -1469,10 +1542,10 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
                 return nullptr;
             }
         }
-        catch(...)
+        catch (...)
         {
             logError(XMLPARSER, "Failed creating bitfield, invalid bit_bound (must be an unsigned short): "
-                << bit_bound);
+                    << bit_bound);
             return nullptr;
         }
     }
@@ -1490,9 +1563,9 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
         memberBuilder = factory->create_char16_builder();
     }
     else if (strncmp(memberType, TBYTE, 6) == 0
-             || strncmp(memberType, OCTET, 6) == 0
-             || strncmp(memberType, UINT8, 6) == 0
-             || strncmp(memberType, INT8, 5) == 0)
+            || strncmp(memberType, OCTET, 6) == 0
+            || strncmp(memberType, UINT8, 6) == 0
+            || strncmp(memberType, INT8, 5) == 0)
     {
         memberBuilder = factory->create_byte_builder();
     }
@@ -1539,7 +1612,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
             p_dynamictype->apply_annotation_to_member(mId, types::ANNOTATION_BIT_BOUND_ID, "value", bit_bound);
             //position += static_cast<uint16_t>(mId);
             p_dynamictype->apply_annotation_to_member(mId, types::ANNOTATION_POSITION_ID, "value",
-                std::to_string(position));
+                    std::to_string(position));
         }
         position += static_cast<uint16_t>(atoi(bit_bound));
     }
@@ -1547,7 +1620,8 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
     return memberBuilder;
 }
 
-XMLP_ret XMLParser::parseXMLBitmaskDynamicType(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <bitmask name="MyBitMask" bit_bound="8">
@@ -1564,7 +1638,7 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(tinyxml2::XMLElement* p_root)
             <xs:attribute name="name" use="required"/>
             <xs:attribute name="bit_bound" use="optional"/>
         </xs:complexType>
-    */
+     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     uint16_t bit_bound = 32;
     const char* anno_bit_bound = p_root->Attribute(BIT_BOUND);
@@ -1575,12 +1649,12 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(tinyxml2::XMLElement* p_root)
 
     const char* name = p_root->Attribute(NAME);
     p_dynamictypebuilder_t typeBuilder =
-        types::DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(bit_bound);
+            types::DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(bit_bound);
     typeBuilder->set_name(name);
     uint16_t position = 0;
 
     const char* element_name = nullptr;
-    for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
+    for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
             p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
         element_name = p_element->Name();
@@ -1612,7 +1686,7 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
             <xs:attribute name="name" type="stringType" use="required"/>
             <xs:attribute name="position" type="int16Type" use="optional"/>
         </xs:complexType>
-    */
+     */
     if (p_root == nullptr)
     {
         logError(XMLPARSER, "Error parsing bitmask: Node not found.");
@@ -1628,7 +1702,7 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         {
             field_position = static_cast<uint16_t>(std::stoul(position));
         }
-        catch(const std::exception&)
+        catch (const std::exception&)
         {
             logError(XMLPARSER, "Error parsing bit_value position: Invalid (must be an unsigned short).");
             return XMLP_ret::XML_ERROR;
@@ -1649,7 +1723,8 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLEnumDynamicType(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:complexType name="enumeratorType">
@@ -1665,7 +1740,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
         </xs:complexType>
 
         //TODO: Enum bitbound to set the internal field
-    */
+     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* enumName = p_root->Attribute(NAME);
     p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_enum_builder();
@@ -1692,7 +1767,8 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLStructDynamicType(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:complexType name="structDcl">
@@ -1704,7 +1780,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
             <xs:attribute name="name" type="string" use="required"/>
             <xs:attribute name="baseType" type="stringType" use="optional"/>
         </xs:complexType>
-    */
+     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* name = p_root->Attribute(NAME);
     p_dynamictypebuilder_t typeBuilder; // = types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
@@ -1732,7 +1808,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
     typeBuilder->set_name(name);
 
     const char* element_name = nullptr;
-    for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
+    for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
             p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
         element_name = p_element->Name();
@@ -1756,7 +1832,8 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLUnionDynamicType(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:complexType name="caseDcl">
@@ -1777,11 +1854,11 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
             </xs:sequence>
             <xs:attribute name="name" type="identifierName" use="required"/>
         </xs:complexType>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* name = p_root->Attribute(NAME);
-    tinyxml2::XMLElement *p_element = p_root->FirstChildElement(DISCRIMINATOR);
+    tinyxml2::XMLElement* p_element = p_root->FirstChildElement(DISCRIMINATOR);
     if (p_element != nullptr)
     {
         const char* disc = p_element->Attribute(TYPE);
@@ -1789,12 +1866,13 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
         if (discriminator == nullptr)
         {
             logError(XMLPARSER,
-                "Error parsing union discriminator: Only primitive types allowed (found type " << disc << ").");
+                    "Error parsing union discriminator: Only primitive types allowed (found type " << disc << ").");
             ret = XMLP_ret::XML_ERROR;
         }
         else
         {
-            p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator);
+            p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_union_builder(
+                discriminator);
             typeBuilder->set_name(name);
 
             uint32_t mId = 0;
@@ -1802,8 +1880,8 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
                     p_element != nullptr; p_element = p_element->NextSiblingElement(CASE))
             {
                 std::string valuesStr = "";
-                for (tinyxml2::XMLElement *caseValue = p_element->FirstChildElement(CASE_DISCRIMINATOR);
-                    caseValue != nullptr; caseValue = caseValue->NextSiblingElement(CASE_DISCRIMINATOR))
+                for (tinyxml2::XMLElement* caseValue = p_element->FirstChildElement(CASE_DISCRIMINATOR);
+                        caseValue != nullptr; caseValue = caseValue->NextSiblingElement(CASE_DISCRIMINATOR))
                 {
                     const char* values = caseValue->Attribute(VALUE);
                     if (values == nullptr)
@@ -1822,7 +1900,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
                     }
                 }
 
-                tinyxml2::XMLElement *caseElement = p_element->FirstChildElement();
+                tinyxml2::XMLElement* caseElement = p_element->FirstChildElement();
                 while (caseElement != nullptr && strncmp(caseElement->Value(), CASE_DISCRIMINATOR, 10) == 0)
                 {
                     caseElement = caseElement->NextSiblingElement();
@@ -1830,7 +1908,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
                 if (caseElement != nullptr)
                 {
                     p_dynamictypebuilder_t mType = parseXMLMemberDynamicType
-                                                    (caseElement, typeBuilder, mId++, valuesStr);
+                                (caseElement, typeBuilder, mId++, valuesStr);
                     if (mType == nullptr)
                     {
                         return XMLP_ret::XML_ERROR;
@@ -1855,7 +1933,9 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-static void dimensionsToArrayBounds(const std::string& dimensions, std::vector<uint32_t>& bounds)
+static void dimensionsToArrayBounds(
+        const std::string& dimensions,
+        std::vector<uint32_t>& bounds)
 {
     std::stringstream ss(dimensions);
     std::string item;
@@ -1868,7 +1948,9 @@ static void dimensionsToArrayBounds(const std::string& dimensions, std::vector<u
     }
 }
 
-static bool dimensionsToLabels(const std::string& labelStr, std::vector<uint64_t>& labels)
+static bool dimensionsToLabels(
+        const std::string& labelStr,
+        std::vector<uint64_t>& labels)
 {
     std::stringstream ss(labelStr);
     std::string item;
@@ -1878,22 +1960,31 @@ static bool dimensionsToLabels(const std::string& labelStr, std::vector<uint64_t
     while (std::getline(ss, item, ','))
     {
         if (item == DEFAULT)
+        {
             def = true;
+        }
         else
+        {
             labels.push_back(static_cast<uint64_t>(std::atoi(item.c_str())));
+        }
     }
 
     return def;
 }
 
-p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype, types::MemberId mId)
+p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
+        tinyxml2::XMLElement* p_root,
+        p_dynamictypebuilder_t p_dynamictype,
+        types::MemberId mId)
 {
     return parseXMLMemberDynamicType(p_root, p_dynamictype, mId, "");
 }
 
-p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype, types::MemberId mId, const std::string& values)
+p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
+        tinyxml2::XMLElement* p_root,
+        p_dynamictypebuilder_t p_dynamictype,
+        types::MemberId mId,
+        const std::string& values)
 {
     /*
         <xs:complexType name="memberDcl">
@@ -1907,7 +1998,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
                 <xs:element name="member" type="memberDcl" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
-    */
+     */
     if (p_root == nullptr)
     {
         logError(XMLPARSER, "Error parsing member: Node not found.");
@@ -2114,9 +2205,9 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         }
     }
     else if (strncmp(memberType, TBYTE, 6) == 0
-             || strncmp(memberType, OCTET, 6) == 0
-             || strncmp(memberType, UINT8, 6) == 0
-             || strncmp(memberType, INT8, 5) == 0)
+            || strncmp(memberType, OCTET, 6) == 0
+            || strncmp(memberType, UINT8, 6) == 0
+            || strncmp(memberType, INT8, 5) == 0)
     {
         if (!isArray)
         {
@@ -2358,7 +2449,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
             std::vector<uint64_t> labels;
             bool defaultLabel = dimensionsToLabels(values, labels);
             p_dynamictype->add_member(mId, memberName, memberBuilder,
-                "", labels, defaultLabel);
+                    "", labels, defaultLabel);
         }
         else
         {
@@ -2370,7 +2461,8 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     return memberBuilder;
 }
 
-XMLP_ret XMLParser::parseXMLLibrarySettings(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseXMLLibrarySettings(
+        tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:complexType name="LibrarySettingsType">
@@ -2378,13 +2470,13 @@ XMLP_ret XMLParser::parseXMLLibrarySettings(tinyxml2::XMLElement* p_root)
                 <xs:element name="intraprocess_delivery" type="IntraprocessDeliveryType"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     std::string sId = "";
 
     uint8_t ident = 1;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     p_aux0 = p_root->FirstChildElement(INTRAPROCESS_DELIVERY);
     if (nullptr == p_aux0)
     {
@@ -2405,7 +2497,9 @@ XMLP_ret XMLParser::parseXMLLibrarySettings(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLParticipantProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_participant_t participant_atts{new ParticipantAttributes};
@@ -2423,7 +2517,9 @@ XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNo
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLPublisherProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLPublisherProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_publisher_t publisher_atts{new PublisherAttributes};
@@ -2440,7 +2536,9 @@ XMLP_ret XMLParser::parseXMLPublisherProf(tinyxml2::XMLElement* p_root, BaseNode
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLSubscriberProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLSubscriberProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_subscriber_t subscriber_atts{new SubscriberAttributes};
@@ -2457,7 +2555,9 @@ XMLP_ret XMLParser::parseXMLSubscriberProf(tinyxml2::XMLElement* p_root, BaseNod
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLTopicData(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLTopicData(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_topic_t topic_atts{new TopicAttributes};
@@ -2474,7 +2574,9 @@ XMLP_ret XMLParser::parseXMLTopicData(tinyxml2::XMLElement* p_root, BaseNode& ro
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLRequesterProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLRequesterProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_requester_t requester_atts{new RequesterAttributes};
@@ -2491,7 +2593,9 @@ XMLP_ret XMLParser::parseXMLRequesterProf(tinyxml2::XMLElement* p_root, BaseNode
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLReplierProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+XMLP_ret XMLParser::parseXMLReplierProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_replier_t replier_atts{new ReplierAttributes};
@@ -2508,7 +2612,9 @@ XMLP_ret XMLParser::parseXMLReplierProf(tinyxml2::XMLElement* p_root, BaseNode& 
     return ret;
 }
 
-XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode)
+XMLP_ret XMLParser::parseProfiles(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& profilesNode)
 {
     /*
         <xs:element name="profiles">
@@ -2523,7 +2629,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
                 </xs:sequence>
             </xs:complexType>
         </xs:element>
-    */
+     */
 
     tinyxml2::XMLElement* p_profile = p_root->FirstChildElement();
     const char* tag = nullptr;
@@ -2598,16 +2704,18 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::parseDynamicTypes(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseDynamicTypes(
+        tinyxml2::XMLElement* p_root)
 {
     return parseXMLTypes(p_root);
 }
 
-XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
+XMLP_ret XMLParser::parseLogConfig(
+        tinyxml2::XMLElement* p_root)
 {
     /*
-    <xs:element name="log">
-      <xs:complexType>
+       <xs:element name="log">
+       <xs:complexType>
         <xs:boolean name="use_default"/>
         <xs:sequence>
           <xs:element maxOccurs="consumer">
@@ -2618,12 +2726,12 @@ XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
               </xs:sequence>
             </xs:complexType>
         </xs:sequence>
-      </xs:complexType>
-    </xs:element>
-    */
+       </xs:complexType>
+       </xs:element>
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement *p_aux0 = p_root->FirstChildElement(LOG);
+    tinyxml2::XMLElement* p_aux0 = p_root->FirstChildElement(LOG);
     if (p_aux0 == nullptr)
     {
         p_aux0 = p_root;
@@ -2667,7 +2775,8 @@ XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
+XMLP_ret XMLParser::parseXMLConsumer(
+        tinyxml2::XMLElement& consumer)
 {
     using namespace eprosima::fastdds::dds;
 
@@ -2712,7 +2821,7 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
                             else
                             {
                                 logError(XMLParser, "Filename value cannot be found for " << classStr
-                                    << " log consumer.");
+                                                                                          << " log consumer.");
                             }
                         }
                         else if (std::strcmp(s.c_str(), "append") == 0)
@@ -2728,13 +2837,13 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
                             else
                             {
                                 logError(XMLParser, "Append value cannot be found for " << classStr
-                                    << " log consumer.");
+                                                                                        << " log consumer.");
                             }
                         }
                         else
                         {
                             logError(XMLParser, "Unknown property " << s << " in " << classStr
-                                << " log consumer.");
+                                                                    << " log consumer.");
                         }
                     }
                     property = property->NextSiblingElement(PROPERTY);
@@ -2753,7 +2862,9 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
     return ret;
 }
 
-XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
+XMLP_ret XMLParser::loadXML(
+        const std::string& filename,
+        up_base_node_t& root)
 {
     if (filename.empty())
     {
@@ -2775,22 +2886,30 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     return parseXML(xmlDoc, root);
 }
 
-XMLP_ret XMLParser::loadXMLProfiles(tinyxml2::XMLElement &xmlDoc, up_base_node_t& root)
+XMLP_ret XMLParser::loadXMLProfiles(
+        tinyxml2::XMLElement& xmlDoc,
+        up_base_node_t& root)
 {
     return parseXMLProfiles(xmlDoc, root);
 }
 
-XMLP_ret XMLParser::loadXMLDynamicTypes(tinyxml2::XMLElement &xmlDoc)
+XMLP_ret XMLParser::loadXMLDynamicTypes(
+        tinyxml2::XMLElement& xmlDoc)
 {
     return parseXMLDynamicTypes(xmlDoc);
 }
 
-XMLP_ret XMLParser::loadXML(tinyxml2::XMLDocument &xmlDoc, up_base_node_t& root)
+XMLP_ret XMLParser::loadXML(
+        tinyxml2::XMLDocument& xmlDoc,
+        up_base_node_t& root)
 {
     return parseXML(xmlDoc, root);
 }
 
-XMLP_ret XMLParser::loadXML(const char* data, size_t length, up_base_node_t& root)
+XMLP_ret XMLParser::loadXML(
+        const char* data,
+        size_t length,
+        up_base_node_t& root)
 {
     tinyxml2::XMLDocument xmlDoc;
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.Parse(data, length))
@@ -2802,7 +2921,9 @@ XMLP_ret XMLParser::loadXML(const char* data, size_t length, up_base_node_t& roo
 }
 
 template <typename T>
-void XMLParser::addAllAttributes(tinyxml2::XMLElement* p_profile, DataNode<T>& node)
+void XMLParser::addAllAttributes(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<T>& node)
 {
     const tinyxml2::XMLAttribute* attrib;
     for (attrib = p_profile->FirstAttribute(); attrib != nullptr; attrib = attrib->Next())
@@ -2811,7 +2932,9 @@ void XMLParser::addAllAttributes(tinyxml2::XMLElement* p_profile, DataNode<T>& n
     }
 }
 
-XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* node, DataNode<TopicAttributes>& topic_node)
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* node,
+        DataNode<TopicAttributes>& topic_node)
 {
     if (nullptr == node)
     {
@@ -2830,11 +2953,14 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* node, DataNode<TopicAttri
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<ParticipantAttributes>& participant_node)
 {
     /*
         <xs:complexType name="rtpsParticipantAttributesType">
             <xs:all minOccurs="0">
+                <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
                 <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
                 <xs:element name="prefix" type="guid" minOccurs="0"/>
                 <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -2852,7 +2978,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
                 <xs:element name="name" type="stringType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
-    */
+     */
 
     if (nullptr == p_profile)
     {
@@ -2862,15 +2988,25 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
 
     addAllAttributes(p_profile, participant_node);
 
-    tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(RTPS);
+    uint8_t ident = 1;
+    tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(DOMAIN_ID);
+    if (nullptr != p_element)
+    {
+        // domainId - uint32Type
+        if (XMLP_ret::XML_OK != getXMLUint(p_element, &participant_node.get()->domainId, ident))
+        {
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    p_element = p_profile->FirstChildElement(RTPS);
     if (nullptr == p_element)
     {
         logError(XMLPARSER, "Not found '" << RTPS << "' tag");
         return XMLP_ret::XML_ERROR;
     }
 
-    uint8_t ident = 1;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = p_element->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
@@ -2889,7 +3025,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         {
             // prefix
             if (XMLP_ret::XML_OK !=
-                getXMLguidPrefix(p_aux0, participant_node.get()->rtps.prefix, ident))
+                    getXMLguidPrefix(p_aux0, participant_node.get()->rtps.prefix, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -2898,7 +3034,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         {
             // defaultUnicastLocatorList
             if (XMLP_ret::XML_OK !=
-                getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultUnicastLocatorList, ident))
+                    getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultUnicastLocatorList, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -2907,7 +3043,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         {
             // defaultMulticastLocatorList
             if (XMLP_ret::XML_OK !=
-                getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
+                    getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -2964,7 +3100,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         {
             // throughputController
             if (XMLP_ret::XML_OK !=
-                getXMLThroughputController(p_aux0, participant_node.get()->rtps.throughputController, ident))
+                    getXMLThroughputController(p_aux0, participant_node.get()->rtps.throughputController, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -3012,7 +3148,9 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<PublisherAttributes>& publisher_node)
 {
     if (nullptr == p_profile)
     {
@@ -3031,7 +3169,9 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<SubscriberAttributes>& subscriber_node)
 {
     if (nullptr == p_profile)
     {
@@ -3050,7 +3190,9 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<RequesterAttributes>& requester_node)
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<RequesterAttributes>& requester_node)
 {
     /*
         <xs:complexType name="requesterProfileType">
@@ -3065,7 +3207,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Reque
             <xs:attribute name="request_type" type="stringType" use="required"/>
             <xs:attribute name="reply_type" type="stringType" use="required"/>
         </xs:complexType>
-    */
+     */
 
     if (nullptr == p_profile)
     {
@@ -3163,7 +3305,9 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Reque
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ReplierAttributes>& replier_node)
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<ReplierAttributes>& replier_node)
 {
     /*
         <xs:complexType name="replierProfileType">
@@ -3178,7 +3322,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Repli
             <xs:attribute name="request_type" type="stringType" use="required"/>
             <xs:attribute name="reply_type" type="stringType" use="required"/>
         </xs:complexType>
-    */
+     */
 
     if (nullptr == p_profile)
     {

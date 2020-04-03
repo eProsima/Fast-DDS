@@ -9,6 +9,7 @@
 
         <!-- Participant profile. Just sets name, domain and allocation QoS -->
         <participant profile_name="test_participant_profile" is_default_profile="true">
+            <domainId>231</domainId>
             <rtps>
                 <allocation>
                     <!-- As tests are performed in localhost, only one locator should be necessary -->
@@ -37,7 +38,6 @@
                 </allocation>
                 <name>test_alloc_participant</name>
                 <builtin>
-                    <domainId>231</domainId>
                     <discovery_config>
                         <ignoreParticipantFlags>FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
                         <leaseAnnouncement>

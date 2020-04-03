@@ -22,6 +22,9 @@
 
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 
 #include <mutex>
 #include <map>
@@ -52,24 +55,18 @@ public:
     RTPS_DllAPI static DomainParticipantFactory* get_instance();
 
     /**
-     * Create a Participant from a profile name.
-     * @param participant_profile Participant profile name.
-     * @param listen ParticipantListener Pointer.
-     * @return Participant pointer. (nullptr if not created.)
-     */
-    RTPS_DllAPI DomainParticipant* create_participant(
-            const std::string& participant_profile,
-            DomainParticipantListener* listen = nullptr);
-
-    /**
      * Create a Participant.
-     * @param att Participant Attributes.
-     * @param listen ParticipantListener Pointer.
-     * @return Participant pointer. (nullptr if not created.)
+     * @param domain_id Domain Id.
+     * @param qos DomainParticipantQos Reference.
+     * @param listener DomainParticipantListener Pointer.
+     * @param mask StatusMask Reference.
+     * @return DomainParticipant pointer. (nullptr if not created.)
      */
     RTPS_DllAPI DomainParticipant* create_participant(
-            const fastrtps::ParticipantAttributes& att,
-            DomainParticipantListener* listen = nullptr);
+            DomainId_t domain_id,
+            const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
+            DomainParticipantListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * This operation retrieves a previously created DomainParticipant belonging to specified domain_id.
@@ -80,7 +77,7 @@ public:
      * @return previously created DomainParticipant
      */
     RTPS_DllAPI DomainParticipant* lookup_participant(
-            uint8_t domain_id) const;
+            DomainId_t domain_id) const;
 
     /**
      * Returns all participants that belongs to the specified domain_id.
@@ -88,16 +85,16 @@ public:
      * @return
      */
     RTPS_DllAPI std::vector<DomainParticipant*> lookup_participants(
-        uint8_t domain_id) const;
+            DomainId_t domain_id) const;
 
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
             fastrtps::ParticipantAttributes& participant_qos) const;
 
     /* TODO
-    RTPS_DllAPI ReturnCode_t set_default_participant_qos(
+       RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const fastrtps::ParticipantAttributes& participant_qos);
-    */
+     */
 
     /**
      * Remove a Participant and all associated publishers and subscribers.
@@ -117,11 +114,14 @@ public:
 
     // TODO set/get DomainParticipantFactoryQos
 
+    fastrtps::rtps::RTPSParticipantAttributes get_attributes(
+            const DomainParticipantQos& qos);
+
 private:
 
     friend class DomainParticipantFactoryReleaser;
 
-    std::map<uint8_t, std::vector<DomainParticipantImpl*>> participants_;
+    std::map<DomainId_t, std::vector<DomainParticipantImpl*> > participants_;
 
     DomainParticipantFactory();
 
@@ -133,6 +133,7 @@ private:
 
     mutable bool default_xml_profiles_loaded;
 
+    DomainParticipantFactoryQos factory_qos_;
 
 };
 

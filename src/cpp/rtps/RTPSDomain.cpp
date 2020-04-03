@@ -73,6 +73,7 @@ void RTPSDomain::stopAll()
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(
+        uint32_t domain_id,
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
@@ -163,11 +164,11 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // would ensure builtin endpoints are able to differentiate between a communication loss and a participant recovery
     if (PParam.prefix != c_GuidPrefix_Unknown)
     {
-        pimpl = new RTPSParticipantImpl(PParam, PParam.prefix, guidP, p, listen);
+        pimpl = new RTPSParticipantImpl(domain_id, PParam, PParam.prefix, guidP, p, listen);
     }
     else
     {
-        pimpl = new RTPSParticipantImpl(PParam, guidP, p, listen);
+        pimpl = new RTPSParticipantImpl(domain_id, PParam, guidP, p, listen);
     }
 
     // Check there is at least one transport registered.

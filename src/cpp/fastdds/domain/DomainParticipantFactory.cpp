@@ -47,10 +47,12 @@ namespace dds {
 class DomainParticipantFactoryReleaser
 {
 public:
+
     ~DomainParticipantFactoryReleaser()
     {
         DomainParticipantFactory::delete_instance();
     }
+
 };
 
 static bool g_instance_initialized = false;
@@ -125,7 +127,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         DomainParticipant* part)
 {
     using PartVectorIt = std::vector<DomainParticipantImpl*>::iterator;
-    using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*>>::iterator;
+    using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*> >::iterator;
 
     if (part->contains_entity(part->get_instance_handle()))
     {
@@ -142,7 +144,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
             for (PartVectorIt pit = vit->second.begin(); pit != vit->second.end();)
             {
                 if ((*pit)->get_participant() == part
-                    || (*pit) ->get_participant()->guid() == part->guid())
+                        || (*pit)->get_participant()->guid() == part->guid())
                 {
                     delete (*pit);
                     PartVectorIt next_it = vit->second.erase(pit);
@@ -164,33 +166,16 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
-        const std::string& participant_profile,
-        DomainParticipantListener* listen)
+        DomainId_t did,
+        const DomainParticipantQos& qos,
+        DomainParticipantListener* listen,
+        const StatusMask& mask)
 {
-    if (false == default_xml_profiles_loaded)
-    {
-        XMLProfileManager::loadDefaultXMLFile();
-        default_xml_profiles_loaded = true;
-    }
+    DomainParticipant* dom_part = new DomainParticipant(mask);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, qos, listen);
 
-    ParticipantAttributes participant_att;
-    if (XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
-    {
-        logError(DOMAIN_PARTICIPANT_FACTORY, "Problem loading profile '" << participant_profile << "'");
-        return nullptr;
-    }
-
-    return create_participant(participant_att, listen);
-}
-
-DomainParticipant* DomainParticipantFactory::create_participant(
-        const ParticipantAttributes& att,
-        DomainParticipantListener* listen)
-{
-    uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
-    DomainParticipant* dom_part = new DomainParticipant();
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, listen);
-    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
+    fastrtps::rtps::RTPSParticipantAttributes rtps_attr = get_attributes(qos);
+    RTPSParticipant* part = RTPSDomain::createParticipant(did, rtps_attr, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
     {
@@ -203,31 +188,36 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
-        using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*>>::iterator;
-        VectorIt vector_it = participants_.find(domain_id);
+        using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*> >::iterator;
+        VectorIt vector_it = participants_.find(did);
 
         if (vector_it == participants_.end())
         {
             // Insert the vector
             std::vector<DomainParticipantImpl*> new_vector;
-            auto pair_it = participants_.insert(std::make_pair(domain_id, std::move(new_vector)));
+            auto pair_it = participants_.insert(std::make_pair(did, std::move(new_vector)));
             vector_it = pair_it.first;
         }
 
         vector_it->second.push_back(dom_part_impl);
     }
 
+    if (factory_qos_.entity_factory.autoenable_created_entities)
+    {
+        dom_part->enable();
+    }
+
     part->set_check_type_function(
         [dom_part](const std::string& type_name) -> bool
-        {
-            return dom_part->find_type(type_name).get() != nullptr;
-        });
+                {
+                    return dom_part->find_type(type_name).get() != nullptr;
+                });
 
     return dom_part;
 }
 
 DomainParticipant* DomainParticipantFactory::lookup_participant(
-        uint8_t domain_id) const
+        DomainId_t domain_id) const
 {
     std::lock_guard<std::mutex> guard(mtx_participants_);
 
@@ -241,7 +231,7 @@ DomainParticipant* DomainParticipantFactory::lookup_participant(
 }
 
 std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
-    uint8_t domain_id) const
+        DomainId_t domain_id) const
 {
     std::lock_guard<std::mutex> guard(mtx_participants_);
 
@@ -273,15 +263,15 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
 }
 
 /* TODO
-bool DomainParticipantFactory::set_default_participant_qos(
+   bool DomainParticipantFactory::set_default_participant_qos(
         const fastrtps::ParticipantAttributes &participant_qos)
-{
+   {
     // TODO XMLProfileManager::setDefault...
     (void)participant_qos;
     logError(DOMAIN_PARTICIPANT_FACTORY, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 bool DomainParticipantFactory::load_XML_profiles_file(
         const std::string& xml_profile_file)
@@ -298,6 +288,27 @@ bool DomainParticipantFactory::load_XML_profiles_file(
         return false;
     }
     return true;
+}
+
+fastrtps::rtps::RTPSParticipantAttributes DomainParticipantFactory::get_attributes(
+        const DomainParticipantQos& qos)
+{
+    fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
+    rtps_attr.allocation = qos.allocation();
+    rtps_attr.properties = qos.properties();
+    rtps_attr.setName(qos.name());
+    rtps_attr.prefix = qos.wire_protocol().prefix;
+    rtps_attr.participantID = qos.wire_protocol().participant_id;
+    rtps_attr.builtin = qos.wire_protocol().builtin;
+    rtps_attr.port = qos.wire_protocol().port;
+    rtps_attr.throughputController = qos.wire_protocol().throughput_controller;
+    rtps_attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
+    rtps_attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
+    rtps_attr.userTransports = qos.transport().user_transports;
+    rtps_attr.useBuiltinTransports = qos.transport().use_builtin_transports;
+    rtps_attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
+    rtps_attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
+    return rtps_attr;
 }
 
 } /* namespace dds */

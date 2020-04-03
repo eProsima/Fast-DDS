@@ -68,11 +68,13 @@ public:
     /**
      * @brief Create a RTPSParticipant.
      * @snippet fastrtps_example.cpp ex_RTPSParticipantCreation
+     * @param domain_id DomainId to be used by the RTPSParticipant (80 by default).
      * @param attrs RTPSParticipant Attributes.
      * @param plisten Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
      */
     RTPS_DllAPI static RTPSParticipant* createParticipant(
+            uint32_t domain_id,
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* plisten = nullptr);
 
