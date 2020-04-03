@@ -20,7 +20,7 @@
 #include <dds/sub/detail/Subscriber.hpp>
 
 #include <dds/core/Entity.hpp>
-//#include <dds/sub/qos/DataReaderQos.hpp>
+#include <dds/sub/qos/DataReaderQos.hpp>
 #include <dds/sub/qos/SubscriberQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
@@ -174,8 +174,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    Subscriber& default_datareader_qos(
-    //            const qos::DataReaderQos& qos);
+    Subscriber& default_datareader_qos(
+            const qos::DataReaderQos& qos);
 
     /**
      * Gets the default DataReaderQos of the Subscriber.
@@ -200,7 +200,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    qos::DataReaderQos default_datareader_qos() const;
+    qos::DataReaderQos default_datareader_qos() const;
 
     //==========================================================================
 

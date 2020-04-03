@@ -81,22 +81,20 @@ Subscriber::~Subscriber()
 //    return *this;
 //}
 
-//Subscriber& Subscriber::default_datareader_qos(
-//        const qos::DataReaderQos& drqos)
-//{
-//    // TODO Use DataReaderQos instead of ReaderQos
-//    //delegate()->set_default_datareader_qos(drqos);
-//    (void)drqos;
-//    return *this;
-//}
+Subscriber& Subscriber::default_datareader_qos(
+        const qos::DataReaderQos& drqos)
+{
+    if (delegate()->set_default_datareader_qos(drqos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    return *this;
+}
 
-//qos::DataReaderQos Subscriber::default_datareader_qos() const
-//{
-//    //    return this->delegate()->default_datareader_qos();
-//    // TODO Use DataReaderQos instead of ReaderQos
-//    //return delegate()->get_default_datareader_qos();
-//    return qos::DataReaderQos();
-//}
+qos::DataReaderQos Subscriber::default_datareader_qos() const
+{
+    return delegate()->get_default_datareader_qos();
+}
 
 //void Subscriber::listener(
 //        Listener* plistener,
