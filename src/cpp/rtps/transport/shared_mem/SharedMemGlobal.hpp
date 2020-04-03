@@ -578,7 +578,7 @@ public:
                 status.is_waiting = 0;
 
             }
-            catch (const std::exception& e)
+            catch (const std::exception&)
             {
                 node_->is_port_ok = false;
                 throw;
@@ -884,7 +884,12 @@ private:
             port_node->port_wait_timeout_ms = healthy_check_timeout_ms / 3;
             port_node->max_buffer_descriptors = max_buffer_descriptors;
             memset(port_node->listeners_status, 0, sizeof(port_node->listeners_status));
+#ifdef _MSC_VER
+            strncpy_s(port_node->domain_name, sizeof(port_node->domain_name), 
+                domain_name_.c_str(), sizeof(port_node->domain_name)-1); 
+#else
             strncpy(port_node->domain_name, domain_name_.c_str(), sizeof(port_node->domain_name)-1); 
+#endif
             port_node->domain_name[sizeof(port_node->domain_name)-1] = 0;
 
             // Buffer cells allocation
