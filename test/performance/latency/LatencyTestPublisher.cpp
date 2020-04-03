@@ -520,7 +520,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(
             {
                 latency_publisher_->data_msg_cv_.notify_one();
             }
-            latency_publisher_->mutex_.unlock();    
+            latency_publisher_->mutex_.unlock();
         }
     }
     else

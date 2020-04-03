@@ -691,11 +691,10 @@ TEST_F(UDPv4Tests, simple_throughput)
         , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
 }
 
-TEST_F(UDPv4Tests, simple_latency)
+// This test is not meant to be excuted by the CI, but is useful to
+// test the latency of the UDP transport. So it muest remains here commented
+/*TEST_F(UDPv4Tests, simple_latency)
 {
-    /*int num_samples = 10000;
-    std::vector<uint32_t> data_sizes = {16, 1024, 1024*64, 1024*512, 1024*1024};*/
-
     int num_samples = 10000;
     std::vector<uint32_t> data_sizes = {8*1024, 16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 512*1024, 1024*1024};
 
@@ -890,7 +889,7 @@ TEST_F(UDPv4Tests, simple_latency)
     {
         printf("LatencyTest for %d samples of %08d(bytes). Avg = %.3f(us) Min = %.3f(us) Max = %.3f(us)\n", num_samples, results.sample_size, results.total_times / (num_samples * 1000.0), results.min_time / 1000.0, results.max_time / 1000.0);
     }
-}
+}*/
 
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {

@@ -72,7 +72,7 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
 
     lock.unlock();
 
-    if(throughput_publisher_.data_discovery_count_ >= static_cast<int>(throughput_publisher_.subscribers_))
+    if(throughput_publisher_.data_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_))
     {
         throughput_publisher_.data_discovery_cv_.notify_one();
     }
@@ -677,7 +677,8 @@ bool ThroughputPublisher::test(
                 result.subscriber.recv_samples = command_sample.m_lastrecsample - command_sample.m_lostsamples;
                 result.subscriber.lost_samples = command_sample.m_lostsamples;
                 result.subscriber.totaltime_us =
-                        std::chrono::microseconds(command_sample.m_totaltime) - test_start_ack_duration - clock_overhead;
+                        std::chrono::microseconds(command_sample.m_totaltime) 
+                            - test_start_ack_duration - clock_overhead;
 
                 result.compute();
 
