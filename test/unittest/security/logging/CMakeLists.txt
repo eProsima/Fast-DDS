@@ -44,6 +44,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_link_libraries(BuiltinLogging fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
         add_gtest(BuiltinLogging SOURCES ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
-            ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLoggingTests.cpp)
+            ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)
     endif()
 endif()
