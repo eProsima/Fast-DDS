@@ -22,7 +22,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>

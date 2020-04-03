@@ -21,7 +21,6 @@
 #define _FASTDDS_PARTICIPANTQOS_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 namespace eprosima {
