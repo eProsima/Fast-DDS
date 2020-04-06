@@ -1253,3 +1253,16 @@ std::string DomainParticipantImpl::get_inner_type_name(
     std::replace(str.begin(), str.end(), '|', '_');
     return str;
 }
+
+bool DomainParticipantImpl::has_active_entities()
+{
+    if (!publishers_.empty())
+    {
+        return true;
+    }
+    if (!subscribers_.empty())
+    {
+        return true;
+    }
+    return false;
+}

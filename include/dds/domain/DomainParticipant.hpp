@@ -126,8 +126,6 @@ public:
     virtual OMG_DDS_API ~DomainParticipant();
     /** @endcond */
 
-    void OMG_DDS_API delete_participant();
-
     /**
      * Register a listener with the DomainParticipant.
      *
