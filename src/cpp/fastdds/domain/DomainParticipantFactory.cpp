@@ -173,7 +173,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen,
         const StatusMask& mask)
 {
-    DomainParticipantQos pqos = &qos == &PARTICIPANT_QOS_DEFAULT ? default_participant_qos_ : qos;
+    const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
     DomainParticipant* dom_part = new DomainParticipant(mask);
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, pqos, listen);
