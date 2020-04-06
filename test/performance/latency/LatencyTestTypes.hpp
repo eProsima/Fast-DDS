@@ -33,7 +33,7 @@ public:
 
     LatencyDataSizes()
     {
-        sample_sizes_ = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
+        sample_sizes_ = {16-4, 1024-4, 64512-4, 1048576-4};
     }
 
     inline std::vector<uint32_t>& sample_sizes()
