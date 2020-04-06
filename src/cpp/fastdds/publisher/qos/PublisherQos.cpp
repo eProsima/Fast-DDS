@@ -51,16 +51,11 @@ void PublisherQos::set_qos(
     {
         entity_factory_ = qos.entity_factory();
     }
-    //    if (group_data.getValue() != qos.group_data.getValue())
-    //    {
-    //        group_data = qos.group_data;
-    //        group_data.hasChanged = true;
-    //    }
-    //    if (first_time)
-    //    {
-    //        disable_positive_acks = qos.disable_positive_acks;
-    //        disable_positive_acks.hasChanged = true;
-    //    }
+    if (group_data.getValue() != qos.group_data.getValue())
+    {
+        group_data = qos.group_data;
+        group_data.hasChanged = true;
+    }
 }
 
 bool PublisherQos::check_qos() const
