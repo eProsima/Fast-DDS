@@ -149,6 +149,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
                     delete (*pit);
                     PartVectorIt next_it = vit->second.erase(pit);
                     pit = next_it;
+                    break;
                 }
                 else
                 {
