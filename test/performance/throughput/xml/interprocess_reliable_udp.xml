@@ -5,20 +5,15 @@
             <transport_descriptor>
                 <transport_id>udp_transport</transport_id>
                 <type>UDPv4</type>
-                <sendBufferSize>2097152</sendBufferSize>
-                <receiveBufferSize>2097152</receiveBufferSize>
                 <interfaceWhiteList>
                     <address>127.0.0.1</address>
                 </interfaceWhiteList>
             </transport_descriptor>
         </transport_descriptors>
-
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
-                <builtin>
-                    <domainId>222</domainId>
-                </builtin>
                 <name>throughput_test_publisher</name>
                 <useBuiltinTransports>false</useBuiltinTransports>
                 <userTransports>
@@ -28,10 +23,8 @@
         </participant>
 
         <participant profile_name="sub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
-                <builtin>
-                    <domainId>222</domainId>
-                </builtin>
                 <name>throughput_test_subscriber</name>
                 <useBuiltinTransports>false</useBuiltinTransports>
                 <userTransports>
@@ -52,7 +45,7 @@
             </topic>
             <qos>
                 <reliability>
-                    <kind>BEST_EFFORT</kind>
+                    <kind>RELIABLE</kind>
                 </reliability>
                 <durability>
                     <kind>VOLATILE</kind>
@@ -72,7 +65,7 @@
             </topic>
             <qos>
                 <reliability>
-                    <kind>BEST_EFFORT</kind>
+                    <kind>RELIABLE</kind>
                 </reliability>
             </qos>
         </subscriber>
