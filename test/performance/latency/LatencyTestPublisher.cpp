@@ -118,7 +118,6 @@ bool LatencyTestPublisher::init(
         dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
     }
 
-    
     // Init output files
     output_files_.push_back(std::make_shared<std::stringstream>());
     output_files_.push_back(std::make_shared<std::stringstream>());
