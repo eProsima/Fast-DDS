@@ -21,6 +21,7 @@
 #include <limits>
 #include <iomanip>
 
+#include "fastdds/dds/log/Log.hpp"
 #include "fastdds/rtps/security/logging/LogOptions.h"
 #include "fastdds/rtps/security/logging/BuiltinLoggingType.h"
 #include "fastdds/rtps/security/exceptions/SecurityException.h"
@@ -28,9 +29,6 @@
 
 namespace eprosima {
 namespace fastrtps {
-
-class Publisher;
-
 namespace rtps {
 namespace security {
 
