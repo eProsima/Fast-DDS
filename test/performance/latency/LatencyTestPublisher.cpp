@@ -684,7 +684,7 @@ bool LatencyTestPublisher::test(
         }
 
         lock.lock();
-        data_msg_cv_.wait_for(lock, std::chrono::seconds(1), [&]() {
+        data_msg_cv_.wait_for(lock, std::chrono::milliseconds(4), [&]() {
             return data_msg_count_ >= subscribers_;
         });
         data_msg_count_ = 0;
