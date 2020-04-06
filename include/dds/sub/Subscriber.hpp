@@ -68,8 +68,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    OMG_DDS_API Subscriber(
-            const dds::domain::DomainParticipant& dp);
+//    OMG_DDS_API Subscriber(
+//            const dds::domain::DomainParticipant& dp);
 
     /**
      * Create a new Subscriber.

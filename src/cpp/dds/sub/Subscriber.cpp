@@ -28,17 +28,17 @@
 namespace dds {
 namespace sub {
 
-Subscriber::Subscriber(
-        const dds::domain::DomainParticipant& dp)
-    : ::dds::core::Reference<detail::Subscriber>(
-        new detail::Subscriber(
-            dp.delegate().get(),
-            dp.default_subscriber_qos(),
-            nullptr,
-            dds::core::status::StatusMask::all()))
-    , participant_(nullptr)
-{
-}
+//Subscriber::Subscriber(
+//        const dds::domain::DomainParticipant& dp)
+//    : ::dds::core::Reference<detail::Subscriber>(
+//        new detail::Subscriber(
+//            dp.delegate().get(),
+//            dp.default_subscriber_qos(),
+//            nullptr,
+//            dds::core::status::StatusMask::all()))
+//    , participant_(nullptr)
+//{
+//}
 
 Subscriber::Subscriber(
         const dds::domain::DomainParticipant& dp,

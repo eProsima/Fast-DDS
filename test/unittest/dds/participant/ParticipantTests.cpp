@@ -122,7 +122,7 @@ TEST(ParticipantTests, CreatePSMSubscriber)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::sub::Subscriber subscriber = ::dds::core::null;
-    subscriber = ::dds::sub::Subscriber(participant);
+    subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_NE(subscriber, ::dds::core::null);
 }
