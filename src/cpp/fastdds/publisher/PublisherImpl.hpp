@@ -149,11 +149,6 @@ public:
 
     const Publisher* get_publisher() const;
 
-    const fastrtps::PublisherAttributes& get_attributes() const;
-
-    bool set_attributes(
-            const fastrtps::PublisherAttributes& att);
-
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction

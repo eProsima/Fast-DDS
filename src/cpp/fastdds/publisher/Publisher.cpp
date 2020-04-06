@@ -181,17 +181,6 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
    }
  */
 
-const fastrtps::PublisherAttributes& Publisher::get_attributes() const
-{
-    return impl_->get_attributes();
-}
-
-bool Publisher::set_attributes(
-        const fastrtps::PublisherAttributes& att)
-{
-    return impl_->set_attributes(att);
-}
-
 const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
 {
     return impl_->get_instance_handle();

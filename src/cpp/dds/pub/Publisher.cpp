@@ -15,9 +15,6 @@
  *
  */
 
-#ifndef EPROSIMA_DDS_PUB_TPUBLISHER_IMPL_HPP_
-#define EPROSIMA_DDS_PUB_TPUBLISHER_IMPL_HPP_
-
 /**
  * @file
  */
@@ -129,5 +126,3 @@ Publisher::~Publisher()
 
 } //namespace pub
 } //namespace dds
-
-#endif //EPROSIMA_DDS_PUB_TPUBLISHER_IMPL_HPP_

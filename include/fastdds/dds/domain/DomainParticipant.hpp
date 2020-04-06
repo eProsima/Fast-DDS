@@ -94,15 +94,10 @@ public:
     /**
      * Create a Publisher in this Participant.
      * @param qos QoS of the Publisher.
-     * @param att Attributes of the Publisher. TopicAttributes and WriterQos will be ignored using DDS interface.
      * @param listen Pointer to the listener.
+     * @param mask StatusMask
      * @return Pointer to the created Publisher.
      */
-    RTPS_DllAPI Publisher* create_publisher(
-            const PublisherQos& qos,
-            const fastrtps::PublisherAttributes& att,
-            PublisherListener* listen = nullptr);
-
     RTPS_DllAPI Publisher* create_publisher(
             const PublisherQos& qos,
             PublisherListener* listener = nullptr,

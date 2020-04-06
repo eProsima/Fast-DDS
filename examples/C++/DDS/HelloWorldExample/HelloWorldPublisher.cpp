@@ -57,7 +57,7 @@ bool HelloWorldPublisher::init()
     pub_att.topic.topicDataType = "HelloWorld";
     pub_att.topic.topicName = "HelloWorldTopic";
     pub_att.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
+    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (publisher_ == nullptr)
     {

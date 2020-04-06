@@ -88,7 +88,7 @@ bool TypeLookupPublisher::init()
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     Wparam.qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
+    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (mp_publisher == nullptr)
     {

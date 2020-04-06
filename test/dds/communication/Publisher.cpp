@@ -270,7 +270,7 @@ int main(
     publisher_attributes.qos.m_liveliness.announcement_period = 1;
     publisher_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, publisher_attributes, &listener);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener);
     if (publisher == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);

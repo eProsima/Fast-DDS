@@ -250,20 +250,6 @@ public:
      */
 
     /**
-     * Get the Attributes of the Publisher.
-     * @return Attributes of the publisher
-     */
-    RTPS_DllAPI const fastrtps::PublisherAttributes& get_attributes() const;
-
-    /**
-     * Update the Attributes of the publisher.
-     * @param att Reference to a PublisherAttributes object to update the parameters.
-     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
-     */
-    RTPS_DllAPI bool set_attributes(
-            const fastrtps::PublisherAttributes& att);
-
-    /**
      * Returns the Publisher's handle.
      * @return InstanceHandle of this Publisher.
      */

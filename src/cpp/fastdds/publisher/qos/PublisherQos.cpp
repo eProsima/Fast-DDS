@@ -37,31 +37,30 @@ void PublisherQos::set_qos(
         const PublisherQos& qos,
         bool first_time)
 {
-    if (first_time)
+    if (first_time && !(presentation_ == qos.presentation()))
     {
-        presentation = qos.presentation;
-        presentation.hasChanged = true;
+        presentation_ = qos.presentation();
+        presentation_.hasChanged = true;
     }
-    if (qos.partition.names().size() > 0)
+    if (qos.partition().names().size() > 0)
     {
-        partition = qos.partition;
-        partition.hasChanged = true;
+        partition_ = qos.partition();
+        partition_.hasChanged = true;
     }
-    if (entity_factory.autoenable_created_entities != qos.entity_factory.autoenable_created_entities)
+    if (entity_factory_.autoenable_created_entities != qos.entity_factory().autoenable_created_entities)
     {
-        entity_factory = qos.entity_factory;
-        entity_factory.hasChanged = true;
+        entity_factory_ = qos.entity_factory();
     }
-    if (group_data.getValue() != qos.group_data.getValue())
-    {
-        group_data = qos.group_data;
-        group_data.hasChanged = true;
-    }
-    if (first_time)
-    {
-        disable_positive_acks = qos.disable_positive_acks;
-        disable_positive_acks.hasChanged = true;
-    }
+    //    if (group_data.getValue() != qos.group_data.getValue())
+    //    {
+    //        group_data = qos.group_data;
+    //        group_data.hasChanged = true;
+    //    }
+    //    if (first_time)
+    //    {
+    //        disable_positive_acks = qos.disable_positive_acks;
+    //        disable_positive_acks.hasChanged = true;
+    //    }
 }
 
 bool PublisherQos::check_qos() const

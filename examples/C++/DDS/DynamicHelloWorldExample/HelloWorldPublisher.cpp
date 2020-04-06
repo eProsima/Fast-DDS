@@ -90,7 +90,7 @@ bool HelloWorldPublisher::init()
     Wparam.topic.auto_fill_type_object = true; // Share the type with readers.
     Wparam.topic.auto_fill_type_information = false;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
+    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (mp_publisher == nullptr)
     {

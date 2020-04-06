@@ -213,38 +213,6 @@ Publisher* DomainParticipantImpl::create_publisher(
         PublisherListener* listener,
         const StatusMask& mask)
 {
-    if (qos_.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
-    {
-        if (qos.publisher_attr.getUserDefinedID() <= 0)
-        {
-            logError(PARTICIPANT, "Static EDP requires user defined Id");
-            return nullptr;
-        }
-    }
-
-    if (!qos.publisher_attr.unicastLocatorList.isValid())
-    {
-        logError(PARTICIPANT, "Unicast Locator List for Publisher contains invalid Locator");
-        return nullptr;
-    }
-
-    if (!qos.publisher_attr.multicastLocatorList.isValid())
-    {
-        logError(PARTICIPANT, " Multicast Locator List for Publisher contains invalid Locator");
-        return nullptr;
-    }
-
-    if (!qos.publisher_attr.remoteLocatorList.isValid())
-    {
-        logError(PARTICIPANT, "Remote Locator List for Publisher contains invalid Locator");
-        return nullptr;
-    }
-
-    if (!qos.check_qos() || !qos.publisher_attr.qos.checkQos() || !qos.publisher_attr.topic.checkQos())
-    {
-        return nullptr;
-    }
-
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     PublisherImpl* pubimpl = new PublisherImpl(this, qos, listener);
     Publisher* pub = new Publisher(pubimpl, mask);
@@ -267,10 +235,11 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
 
-    if (qos.publisher_attr.topic.auto_fill_type_object || qos.publisher_attr.topic.auto_fill_type_information)
-    {
-        register_dynamic_type_to_factories(qos.publisher_attr.topic.getTopicDataType().to_string());
-    }
+    //TODO: Register the dynamic type when the datawriter is created
+    //    if (qos.publisher_attr.topic.auto_fill_type_object || qos.publisher_attr.topic.auto_fill_type_information)
+    //    {
+    //        register_dynamic_type_to_factories(qos.publisher_attr.topic.getTopicDataType().to_string());
+    //    }
 
     return pub;
 }
