@@ -96,7 +96,7 @@ public:
             int forced_domain,
             LatencyDataSizes& latency_data_sizes);
 
-    void run();    
+    void run();
 
     bool test(
             uint32_t datasize);

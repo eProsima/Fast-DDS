@@ -34,7 +34,6 @@ public:
     LatencyDataSizes()
     {
         sample_sizes_ = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
-
     }
 
     inline std::vector<uint32_t>& sample_sizes()
