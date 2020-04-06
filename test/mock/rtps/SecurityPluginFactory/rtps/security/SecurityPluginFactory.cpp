@@ -27,6 +27,8 @@ AccessControl* SecurityPluginFactory::access_plugin_ = nullptr;
 
 Cryptography* SecurityPluginFactory::crypto_plugin_ = nullptr;
 
+Logging* SecurityPluginFactory::logging_plugin_ = nullptr;
+
 Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& /*property_policy*/)
 {
     Authentication* ret =  auth_plugin_;
@@ -87,5 +89,26 @@ void SecurityPluginFactory::release_crypto_plugin()
     {
         delete crypto_plugin_;
         crypto_plugin_ = nullptr;
+    }
+}
+
+Logging* SecurityPluginFactory::create_logging_plugin(const PropertyPolicy& /*property_policy*/)
+{
+    Logging* ret =  logging_plugin_;
+    logging_plugin_ = nullptr;
+    return ret;
+}
+
+void SecurityPluginFactory::set_logging_plugin(Logging* plugin)
+{
+    logging_plugin_ = plugin;
+}
+
+void SecurityPluginFactory::release_logging_plugin()
+{
+    if(logging_plugin_ != nullptr)
+    {
+        delete logging_plugin_;
+        logging_plugin_ = nullptr;
     }
 }
