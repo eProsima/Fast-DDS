@@ -35,17 +35,20 @@ class DomainParticipant;
 class TopicDescription
 {
 protected:
+
     TopicDescription(
             const std::string& name,
             const std::string& type_name)
         : name_(name)
         , type_name_(type_name)
-    {}
+    {
+    }
 
     ~TopicDescription()
-    {}
+    {
+    }
 
-   virtual DomainParticipant* get_participant() const = 0;
+    virtual DomainParticipant* get_participant() const = 0;
 
     const std::string& get_name() const
     {
