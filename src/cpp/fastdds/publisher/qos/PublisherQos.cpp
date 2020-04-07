@@ -51,10 +51,10 @@ void PublisherQos::set_qos(
     {
         entity_factory_ = qos.entity_factory();
     }
-    if (group_data.getValue() != qos.group_data.getValue())
+    if (group_data_.getValue() != qos.group_data().getValue())
     {
-        group_data = qos.group_data;
-        group_data.hasChanged = true;
+        group_data_ = qos.group_data();
+        group_data_.hasChanged = true;
     }
 }
 
