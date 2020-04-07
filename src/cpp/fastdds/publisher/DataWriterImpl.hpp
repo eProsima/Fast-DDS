@@ -23,7 +23,6 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/WriteParams.h>
 
-#include <fastrtps/qos/WriterQos.h>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>

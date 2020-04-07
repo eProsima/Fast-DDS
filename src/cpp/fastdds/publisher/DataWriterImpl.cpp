@@ -61,7 +61,6 @@ DataWriterImpl::DataWriterImpl(
     , topic_att_(topic_att)
     , w_att_(att)
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
-
     , history_(topic_att_, type_->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
