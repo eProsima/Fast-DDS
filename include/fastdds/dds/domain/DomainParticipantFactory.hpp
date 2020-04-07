@@ -89,12 +89,11 @@ public:
 
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
-            fastrtps::ParticipantAttributes& participant_qos) const;
+            DomainParticipantQos& participant_qos) const;
 
-    /* TODO
-       RTPS_DllAPI ReturnCode_t set_default_participant_qos(
-            const fastrtps::ParticipantAttributes& participant_qos);
-     */
+
+    RTPS_DllAPI ReturnCode_t set_default_participant_qos(
+            const DomainParticipantQos& participant_qos);
 
     /**
      * Remove a Participant and all associated publishers and subscribers.
@@ -135,6 +134,7 @@ private:
 
     DomainParticipantFactoryQos factory_qos_;
 
+    DomainParticipantQos default_participant_qos_;
 };
 
 } /* namespace dds */

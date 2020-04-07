@@ -62,6 +62,7 @@ static DomainParticipantFactory* g_instance = nullptr;
 
 DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
+    , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
 {
 }
 
@@ -172,10 +173,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen,
         const StatusMask& mask)
 {
-    DomainParticipant* dom_part = new DomainParticipant(mask);
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, qos, listen);
+    const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
-    fastrtps::rtps::RTPSParticipantAttributes rtps_attr = get_attributes(qos);
+    DomainParticipant* dom_part = new DomainParticipant(mask);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, pqos, listen);
+
+    fastrtps::rtps::RTPSParticipantAttributes rtps_attr = get_attributes(pqos);
     RTPSParticipant* part = RTPSDomain::createParticipant(did, rtps_attr, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
@@ -251,28 +254,46 @@ std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
 }
 
 ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
-        ParticipantAttributes& participant_attributes) const
+        DomainParticipantQos& participant_qos) const
 {
-    if (false == default_xml_profiles_loaded)
-    {
-        XMLProfileManager::loadDefaultXMLFile();
-        default_xml_profiles_loaded = true;
-    }
-
-    XMLProfileManager::getDefaultParticipantAttributes(participant_attributes);
+    participant_qos = default_participant_qos_;
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool DomainParticipantFactory::set_default_participant_qos(
-        const fastrtps::ParticipantAttributes &participant_qos)
-   {
-    // TODO XMLProfileManager::setDefault...
-    (void)participant_qos;
-    logError(DOMAIN_PARTICIPANT_FACTORY, "Not implemented.");
-    return false;
-   }
- */
+ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
+        const DomainParticipantQos& participant_qos)
+{
+    if (!(default_participant_qos_.user_data() == participant_qos.user_data()))
+    {
+        default_participant_qos_.user_data(participant_qos.user_data());
+        default_participant_qos_.user_data().hasChanged = true;
+    }
+    if (!(default_participant_qos_.entity_factory() == participant_qos.entity_factory()))
+    {
+        default_participant_qos_.entity_factory(participant_qos.entity_factory());
+    }
+    if (!(default_participant_qos_.allocation() == participant_qos.allocation()))
+    {
+        default_participant_qos_.allocation(participant_qos.allocation());
+    }
+    if (!(default_participant_qos_.properties() == participant_qos.properties()))
+    {
+        default_participant_qos_.properties(participant_qos.properties());
+    }
+    if (!(default_participant_qos_.wire_protocol() == participant_qos.wire_protocol()))
+    {
+        default_participant_qos_.wire_protocol(participant_qos.wire_protocol());
+    }
+    if (!(default_participant_qos_.transport() == participant_qos.transport()))
+    {
+        default_participant_qos_.transport(participant_qos.transport());
+    }
+    if (!(default_participant_qos_.name() == participant_qos.name()))
+    {
+        default_participant_qos_.name(participant_qos.name());
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
 
 bool DomainParticipantFactory::load_XML_profiles_file(
         const std::string& xml_profile_file)

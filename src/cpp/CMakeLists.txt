@@ -198,6 +198,7 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
 
     dds/core/types.cpp
+    dds/core/Exception.cpp
     dds/domain/DomainParticipant.cpp
     )
 

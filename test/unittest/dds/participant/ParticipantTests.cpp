@@ -16,7 +16,9 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
 
 namespace eprosima {
@@ -46,6 +48,44 @@ TEST(ParticipantTests, DeleteDomainParticipant)
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
+}
+
+TEST(ParticipantTests, ChangeDefaultParticipantQos)
+{
+    DomainParticipantQos qos;
+    DomainParticipantFactory::get_instance()->get_default_participant_qos(qos);
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    EntityFactoryQosPolicy entity_factory = qos.entity_factory();
+    entity_factory.autoenable_created_entities = false;
+    qos.entity_factory(entity_factory);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(qos) == ReturnCode_t::RETCODE_OK);
+    DomainParticipantQos pqos;
+    DomainParticipantFactory::get_instance()->get_default_participant_qos(pqos);
+
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+}
+
+TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ::dds::domain::qos::DomainParticipantQos qos = participant.default_participant_qos();
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    EntityFactoryQosPolicy entity_factory = qos.entity_factory();
+    entity_factory.autoenable_created_entities = false;
+    qos.entity_factory(entity_factory);
+
+    ASSERT_NO_THROW(participant.default_participant_qos(qos));
+    ::dds::domain::qos::DomainParticipantQos pqos = participant.default_participant_qos();
+
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 } // namespace dds
