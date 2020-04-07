@@ -218,9 +218,7 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
 
     ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
 
-    ReliabilityQosPolicy reliability = qos.reliability();
-    reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-    qos.reliability(reliability);
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
 
     ASSERT_TRUE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
 
@@ -238,9 +236,7 @@ TEST(ParticipantTests, ChangePSMDefaultTopicQos)
 
     ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
 
-    OwnershipQosPolicy ownership = qos.ownership();
-    ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
-    qos.ownership(ownership);
+    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
 
     ASSERT_NO_THROW(participant.default_topic_qos(qos));
 
