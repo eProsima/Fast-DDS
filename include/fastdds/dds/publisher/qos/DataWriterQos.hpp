@@ -39,7 +39,7 @@ public:
     virtual RTPS_DllAPI ~RTPSReliableWriterQos() = default;
 
     bool operator ==(
-            const RTPSReliableWriterQos& b)
+            const RTPSReliableWriterQos& b) const
     {
         return (this->times == b.times) &&
                (this->disable_positive_acks == b.disable_positive_acks);
@@ -84,7 +84,14 @@ public:
                (this->user_data_ == b.user_data()) &&
                (this->ownership_ == b.ownership()) &&
                (this->ownership_strength_ == b.ownership_strength()) &&
-               (this->writer_data_lifecycle_ == b.writer_data_lifecycle());
+               (this->writer_data_lifecycle_ == b.writer_data_lifecycle()) &&
+               (this->publish_mode_ == b.publish_mode()) &&
+               (this->representation_ == b.representation()) &&
+               (this->properties_ == b.properties()) &&
+               (this->reliable_writer_data_ == b.reliable_writer_data()) &&
+               (this->endpoint_data_ == b.endpoint_data()) &&
+               (this->writer_resources_ == b.writer_resources()) &&
+               (this->throughput_controller_ == b.throughput_controller());
     }
 
     RTPS_DllAPI bool check_qos() const;

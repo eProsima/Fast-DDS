@@ -2450,7 +2450,7 @@ public:
     virtual RTPS_DllAPI ~RTPSEndpointQos() = default;
 
     bool operator ==(
-            const RTPSEndpointQos& b)
+            const RTPSEndpointQos& b) const
     {
         return (this->unicast_locator_list == b.unicast_locator_list) &&
                (this->multicast_locator_list == b.multicast_locator_list) &&
@@ -2490,7 +2490,7 @@ public:
     virtual RTPS_DllAPI ~WriterResourceLimitsQos() = default;
 
     bool operator ==(
-            const WriterResourceLimitsQos& b)
+            const WriterResourceLimitsQos& b) const
     {
         return (this->matched_subscriber_allocation == b.matched_subscriber_allocation);
     }
