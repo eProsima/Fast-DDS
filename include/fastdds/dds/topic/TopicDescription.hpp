@@ -44,7 +44,7 @@ protected:
     {
     }
 
-    ~TopicDescription()
+    virtual ~TopicDescription()
     {
     }
 
