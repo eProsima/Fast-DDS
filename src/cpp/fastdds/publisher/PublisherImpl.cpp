@@ -371,12 +371,12 @@ bool PublisherImpl::contains_entity(
 ReturnCode_t PublisherImpl::set_default_datawriter_qos(
         const fastrtps::WriterQos& qos)
 {
-    if (&qos == &DATAWRITER_QOS_DEFAULT)
-    {
-        default_datawriter_qos_.setQos(DATAWRITER_QOS_DEFAULT, true);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else if (qos.checkQos())
+    //    if (&qos == &DATAWRITER_QOS_DEFAULT)
+    //    {
+    //        default_datawriter_qos_.setQos(DATAWRITER_QOS_DEFAULT, true);
+    //        return ReturnCode_t::RETCODE_OK;
+    //    }
+    /*else*/ if (qos.checkQos())
     {
         default_datawriter_qos_.setQos(qos, true);
         return ReturnCode_t::RETCODE_OK;

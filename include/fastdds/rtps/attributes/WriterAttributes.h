@@ -28,9 +28,9 @@
 
 #include <functional>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class ReaderProxyData;
 
@@ -59,21 +59,25 @@ struct WriterTimes
     WriterTimes()
     {
         //initialHeartbeatDelay.fraction = 50*1000*1000;
-        initialHeartbeatDelay.nanosec = 12*1000*1000;
+        initialHeartbeatDelay.nanosec = 12 * 1000 * 1000;
         heartbeatPeriod.seconds = 3;
         //nackResponseDelay.fraction = 20*1000*1000;
-        nackResponseDelay.nanosec = 5*1000*1000;
+        nackResponseDelay.nanosec = 5 * 1000 * 1000;
     }
 
-    virtual ~WriterTimes() {}
+    virtual ~WriterTimes()
+    {
+    }
 
-    bool operator==(const WriterTimes& b) const
+    bool operator ==(
+            const WriterTimes& b) const
     {
         return (this->initialHeartbeatDelay == b.initialHeartbeatDelay) &&
                (this->heartbeatPeriod == b.heartbeatPeriod) &&
                (this->nackResponseDelay == b.nackResponseDelay) &&
                (this->nackSupressionDuration == b.nackSupressionDuration);
     }
+
 };
 
 /**
@@ -82,56 +86,58 @@ struct WriterTimes
  */
 class WriterAttributes
 {
-    public:
+public:
 
-        WriterAttributes()
-            : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
-            , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
-            , liveliness_announcement_period(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
-            , mode(SYNCHRONOUS_WRITER)
-            , disable_heartbeat_piggyback(false)
-            , disable_positive_acks(false)
-            , keep_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
-        {
-            endpoint.endpointKind = WRITER;
-            endpoint.durabilityKind = TRANSIENT_LOCAL;
-            endpoint.reliabilityKind = RELIABLE;
-        }
+    WriterAttributes()
+        : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+        , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        , liveliness_announcement_period(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        , mode(SYNCHRONOUS_WRITER)
+        , disable_heartbeat_piggyback(false)
+        , disable_positive_acks(false)
+        , keep_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+    {
+        endpoint.endpointKind = WRITER;
+        endpoint.durabilityKind = TRANSIENT_LOCAL;
+        endpoint.reliabilityKind = RELIABLE;
+    }
 
-        virtual ~WriterAttributes(){}
+    virtual ~WriterAttributes()
+    {
+    }
 
-        //!Attributes of the associated endpoint.
-        EndpointAttributes endpoint;
+    //!Attributes of the associated endpoint.
+    EndpointAttributes endpoint;
 
-        //!Writer Times (only used for RELIABLE).
-        WriterTimes times;
+    //!Writer Times (only used for RELIABLE).
+    WriterTimes times;
 
-        //! Liveliness kind
-        LivelinessQosPolicyKind liveliness_kind;
+    //! Liveliness kind
+    fastrtps::LivelinessQosPolicyKind liveliness_kind;
 
-        //! Liveliness lease duration
-        Duration_t liveliness_lease_duration;
+    //! Liveliness lease duration
+    Duration_t liveliness_lease_duration;
 
-        //! Liveliness announcement period
-        Duration_t liveliness_announcement_period;
+    //! Liveliness announcement period
+    Duration_t liveliness_announcement_period;
 
-        //!Indicates if the Writer is synchronous or asynchronous
-        RTPSWriterPublishMode mode;
+    //!Indicates if the Writer is synchronous or asynchronous
+    RTPSWriterPublishMode mode;
 
-        // Throughput controller, always the last one to apply
-        ThroughputControllerDescriptor throughputController;
+    // Throughput controller, always the last one to apply
+    ThroughputControllerDescriptor throughputController;
 
-        //! Disable the sending of heartbeat piggybacks.
-        bool disable_heartbeat_piggyback;
+    //! Disable the sending of heartbeat piggybacks.
+    bool disable_heartbeat_piggyback;
 
-        //! Define the allocation behaviour for matched-reader-dependent collections.
-        ResourceLimitedContainerConfig matched_readers_allocation;
+    //! Define the allocation behaviour for matched-reader-dependent collections.
+    ResourceLimitedContainerConfig matched_readers_allocation;
 
-        //! Disable the sending of positive ACKs
-        bool disable_positive_acks;
+    //! Disable the sending of positive ACKs
+    bool disable_positive_acks;
 
-        //! Keep duration to keep a sample before considering it has been acked
-        Duration_t keep_duration;
+    //! Keep duration to keep a sample before considering it has been acked
+    Duration_t keep_duration;
 };
 
 } /* namespace rtps */

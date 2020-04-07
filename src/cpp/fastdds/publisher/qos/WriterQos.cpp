@@ -27,7 +27,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-RTPS_DllAPI const WriterQos DATAWRITER_QOS_DEFAULT;
+//RTPS_DllAPI const WriterQos DATAWRITER_QOS_DEFAULT;
 
 WriterQos::WriterQos()
 {

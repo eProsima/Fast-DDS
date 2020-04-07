@@ -21,8 +21,7 @@
 
 using namespace eprosima::fastdds::dds;
 
-// TODO: Commented while there is collision with the definition in WriterQos.cpp.
-// const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
 /* TODO: Implement this method
    void DataWriterQos::setQos(
