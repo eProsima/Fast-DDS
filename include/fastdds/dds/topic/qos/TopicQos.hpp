@@ -45,62 +45,6 @@ public:
     bool operator ==(
             const TopicQos& b) const
     {
-        //        if (!(this->topic_data == b.topic_data))
-        //        {
-        //            std::cout << "Topic data false" << std::endl;
-        //        }
-        //        if (!(this->durability == b.durability))
-        //        {
-        //            std::cout << "Durability false" << std::endl;
-        //        }
-        //        if (!(this->durability_service == b.durability_service))
-        //        {
-        //            std::cout << "Durability Service false" << std::endl;
-        //        }
-        //        if (!(this->deadline == b.deadline))
-        //        {
-        //            std::cout << "Deadline false" << std::endl;
-        //        }
-        //        if (!(this->latency_budget == b.latency_budget))
-        //        {
-        //            std::cout << "Latency Budget false" << std::endl;
-        //        }
-        //        if (!(this->liveliness == b.liveliness))
-        //        {
-        //            std::cout << "Liveliness false" << std::endl;
-        //        }
-        //        if (!(this->reliability == b.reliability))
-        //        {
-        //            std::cout << "Reliability false" << std::endl;
-        //        }
-        //        if (!(this->destination_order == b.destination_order))
-        //        {
-        //            std::cout << "Destination order false" << std::endl;
-        //        }
-        //        if (!(this->history == b.history))
-        //        {
-        //            std::cout << "History false" << std::endl;
-        //        }
-        //        if (!(this->resource_limits == b.resource_limits))
-        //        {
-        //            std::cout << "Resource Limits false" << std::endl;
-        //        }
-        //        if (!(this->transport_priority == b.transport_priority))
-        //        {
-        //            std::cout << "Transport Priority false" << std::endl;
-        //        }
-        //        if (!(this->lifespan == b.lifespan))
-        //        {
-        //            std::cout << "Lifespan false" << std::endl;
-        //        }
-        //        if (!(this->ownership == b.ownership))
-        //        {
-        //            std::cout << "Ownership false" << std::endl;
-        //        }
-        //        if (!(this->topic_attr == b.topic_attr))
-        //        {
-        //            std::cout << "Topic Attributes false" << std::endl;
-        //        }
         return (this->topic_data_ == b.topic_data()) &&
                (this->durability_ == b.durability()) &&
                (this->durability_service_ == b.durability_service()) &&
@@ -116,7 +60,7 @@ public:
                (this->ownership_ == b.ownership());
     }
 
-    /* TODO: Implement this method
+    /**
      * Set Qos from another class
      * @param qos Reference from a TopicQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
@@ -125,13 +69,13 @@ public:
             const TopicQos& qos,
             bool first_time);
 
-    /* TODO: Implement this method
+    /**
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
      */
     RTPS_DllAPI bool check_qos() const;
 
-    /* TODO: Implement this method
+    /**
      * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
