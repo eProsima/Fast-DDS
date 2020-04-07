@@ -40,7 +40,7 @@ class TopicQos
 {
 public:
 
-    TopicQos();
+    RTPS_DllAPI TopicQos();
 
     bool operator ==(
             const TopicQos& b) const

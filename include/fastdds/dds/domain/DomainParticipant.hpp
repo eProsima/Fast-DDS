@@ -325,7 +325,7 @@ public:
      * @param qos
      * @return if given qos was applied as default.
      */
-    ReturnCode_t set_default_topic_qos(
+    RTPS_DllAPI ReturnCode_t set_default_topic_qos(
             const TopicQos& qos);
 
     /**
@@ -337,7 +337,7 @@ public:
      * call to set_default_topic_qos, or else, if the call was never made.
      * @return Current default topic qos.
      */
-    const TopicQos& get_default_topic_qos() const;
+    RTPS_DllAPI const TopicQos& get_default_topic_qos() const;
 
     /**
      * This operation retrieves the default value of the Topic QoS, that is, the QoS policies that will be used
@@ -349,7 +349,7 @@ public:
      * @param qos
      * @return Always true.
      */
-    ReturnCode_t get_default_topic_qos(
+    RTPS_DllAPI ReturnCode_t get_default_topic_qos(
             TopicQos& qos) const;
 
     /* TODO
