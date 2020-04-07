@@ -385,7 +385,7 @@ private:
     OwnershipQosPolicy ownership_;
 };
 
-extern const TopicQos TOPIC_QOS_DEFAULT;
+RTPS_DllAPI extern const TopicQos TOPIC_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds
