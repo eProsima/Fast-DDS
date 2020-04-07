@@ -20,9 +20,11 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
-RTPS_DllAPI const PublisherQos eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT;
+RTPS_DllAPI const PublisherQos PUBLISHER_QOS_DEFAULT;
 
 PublisherQos::PublisherQos()
 {
@@ -70,3 +72,7 @@ bool PublisherQos::can_qos_be_updated(
     return true;
 
 }
+
+} /* namespace dds */
+} /* namespace fastdds */
+} /* namespace eprosima */

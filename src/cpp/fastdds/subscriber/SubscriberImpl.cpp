@@ -39,11 +39,9 @@ namespace dds {
 SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
         const SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
     : participant_(p)
     , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? participant_->get_default_subscriber_qos() : qos)
-    , att_(att)
     , listener_(listen)
     , subscriber_listener_(this)
     , user_subscriber_(nullptr)
@@ -143,28 +141,29 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
+    //TODO: Fix once the SubscriberAttributes are included in DataReaderQos
     ReaderAttributes ratt;
     ratt.endpoint.durabilityKind = reader_qos.m_durability.durabilityKind();
     ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = att_.multicastLocatorList;
+    //ratt.endpoint.multicastLocatorList = qos_.subscriber_attr.multicastLocatorList;
     ratt.endpoint.reliabilityKind = reader_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = topic_att.topicKind;
-    ratt.endpoint.unicastLocatorList = att_.unicastLocatorList;
-    ratt.endpoint.remoteLocatorList = att_.remoteLocatorList;
-    ratt.expectsInlineQos = att_.expectsInlineQos;
-    ratt.endpoint.properties = att_.properties;
+    //ratt.endpoint.unicastLocatorList = qos_.subscriber_attr.unicastLocatorList;
+    //ratt.endpoint.remoteLocatorList = qos_.subscriber_attr.remoteLocatorList;
+    //ratt.expectsInlineQos = qos_.subscriber_attr.expectsInlineQos;
+    //ratt.endpoint.properties = qos_.subscriber_attr.properties;
 
-    if (att_.getEntityID() > 0)
-    {
-        ratt.endpoint.setEntityID(static_cast<uint8_t>(att_.getEntityID()));
-    }
+    //if (qos_.subscriber_attr.getEntityID() > 0)
+    //{
+    //    ratt.endpoint.setEntityID(static_cast<uint8_t>(qos_.subscriber_attr.getEntityID()));
+    //}
 
-    if (att_.getUserDefinedID() > 0)
-    {
-        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(att_.getUserDefinedID()));
-    }
+    //if (qos_.subscriber_attr.getUserDefinedID() > 0)
+    //{
+    //    ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.subscriber_attr.getUserDefinedID()));
+    //}
 
-    ratt.times = att_.times;
+    //ratt.times = qos_.subscriber_attr.times;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -194,7 +193,8 @@ DataReader* SubscriberImpl::create_datareader(
         topic_att,
         ratt,
         reader_qos,
-        att_.historyMemoryPolicy,
+        //qos_.subscriber_attr.historyMemoryPolicy,
+        fastrtps::rtps::MemoryManagementPolicy_t(),
         listener);
 
     if (impl->reader_ == nullptr)
@@ -358,67 +358,6 @@ bool SubscriberImpl::contains_entity(
     return false;
    }
  */
-
-bool SubscriberImpl::set_attributes(
-        const fastrtps::SubscriberAttributes& att)
-{
-    bool updated = true;
-    bool missing = false;
-    if (att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
-            att.multicastLocatorList.size() != att_.multicastLocatorList.size())
-    {
-        logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
-        updated &= false;
-    }
-    else
-    {
-        for (LocatorListConstIterator lit1 = att_.unicastLocatorList.begin();
-                lit1 != att_.unicastLocatorList.end(); ++lit1)
-        {
-            missing = true;
-            for (LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
-                    lit2 != att.unicastLocatorList.end(); ++lit2)
-            {
-                if (*lit1 == *lit2)
-                {
-                    missing = false;
-                    break;
-                }
-            }
-            if (missing)
-            {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
-            }
-        }
-        for (LocatorListConstIterator lit1 = att_.multicastLocatorList.begin();
-                lit1 != att_.multicastLocatorList.end(); ++lit1)
-        {
-            missing = true;
-            for (LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
-                    lit2 != att.multicastLocatorList.end(); ++lit2)
-            {
-                if (*lit1 == *lit2)
-                {
-                    missing = false;
-                    break;
-                }
-            }
-            if (missing)
-            {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
-            }
-        }
-    }
-
-    if (updated)
-    {
-        att_ = att;
-    }
-
-    return updated;
-}
 
 const DomainParticipant* SubscriberImpl::get_participant() const
 {

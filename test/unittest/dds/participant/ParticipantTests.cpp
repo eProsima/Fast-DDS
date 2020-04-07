@@ -19,9 +19,13 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
+#include <dds/sub/Subscriber.hpp>
+#include <dds/pub/Publisher.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -105,6 +109,23 @@ TEST(ParticipantTests, CreatePSMPublisher)
     publisher = ::dds::pub::Publisher(participant);
 
     ASSERT_NE(publisher, ::dds::core::null);
+}
+
+TEST(ParticipantTests, CreateSubscriber)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+    ASSERT_NE(subscriber, nullptr);
+}
+
+TEST(ParticipantTests, CreatePSMSubscriber)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::sub::Subscriber subscriber = ::dds::core::null;
+    subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
+
+    ASSERT_NE(subscriber, ::dds::core::null);
 }
 
 } // namespace dds

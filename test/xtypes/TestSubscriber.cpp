@@ -128,7 +128,7 @@ bool TestSubscriber::init(
     // Create sub and reader if topic was provided
     if (m_Type != nullptr)
     {
-        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
         if (mp_subscriber == nullptr)
         {
@@ -303,7 +303,7 @@ DataReader* TestSubscriber::create_datareader()
         SubscriberAttributes Rparam;
         Rparam.topic = topic_att;
         Rparam.qos = reader_qos;
-        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
         if (mp_subscriber == nullptr)
         {

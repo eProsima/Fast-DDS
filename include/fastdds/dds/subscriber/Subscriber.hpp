@@ -25,8 +25,18 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace sub {
+
+class Subscriber;
+
+} // namespace sub
+} // namespace dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -41,7 +51,6 @@ namespace dds {
 class DomainParticipant;
 class SubscriberListener;
 class SubscriberImpl;
-class SubscriberQos;
 class DataReader;
 class DataReaderListener;
 class ReaderQos;
@@ -52,7 +61,7 @@ class ReaderQos;
  * DomainRTPSParticipant class should be used to correctly create this element.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI Subscriber
+class Subscriber : public DomainEntity
 {
     friend class SubscriberImpl;
     friend class DomainParticipantImpl;
@@ -61,28 +70,32 @@ class RTPS_DllAPI Subscriber
      * Constructor from a SubscriberImpl pointer
      * @param pimpl Actual implementation of the subscriber
      */
-    Subscriber(
-            SubscriberImpl* pimpl)
-        : impl_(pimpl)
-    {
-    }
+    RTPS_DllAPI Subscriber(
+            SubscriberImpl* pimpl,
+            const StatusMask& mask = StatusMask::all());
 
-    virtual ~Subscriber()
-    {
-    }
+    RTPS_DllAPI Subscriber(
+            DomainParticipant* dp,
+            const SubscriberQos& qos = SUBSCRIBER_QOS_DEFAULT,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
 public:
+
+    RTPS_DllAPI virtual ~Subscriber()
+    {
+    }
 
     /**
      * Allows accessing the Subscriber Qos.
      */
-    const SubscriberQos& get_qos() const;
+    RTPS_DllAPI const SubscriberQos& get_qos() const;
 
     /**
      * Retrieves the Subscriber Qos.
      * @return true
      */
-    ReturnCode_t get_qos(
+    RTPS_DllAPI ReturnCode_t get_qos(
             SubscriberQos& qos) const;
 
     /**
@@ -91,20 +104,20 @@ public:
      * @param qos
      * @return False if IMMUTABLE_POLICY or INCONSISTENT_POLICY occurs. True if updated.
      */
-    ReturnCode_t set_qos(
+    RTPS_DllAPI ReturnCode_t set_qos(
             const SubscriberQos& qos);
 
     /**
      * Retrieves the attached SubscriberListener.
      */
-    const SubscriberListener* get_listener() const;
+    RTPS_DllAPI const SubscriberListener* get_listener() const;
 
     /**
      * Modifies the SubscriberListener.
      * @param listener
      * @return if successfully set.
      */
-    ReturnCode_t set_listener(
+    RTPS_DllAPI ReturnCode_t set_listener(
             SubscriberListener* listener);
 
     /**
@@ -114,7 +127,7 @@ public:
      * @param listener
      * @return Pointer to the created DataReader. nullptr if failed.
      */
-    DataReader* create_datareader(
+    RTPS_DllAPI DataReader* create_datareader(
             const fastrtps::TopicAttributes& topic_attr,
             const ReaderQos& reader_qos,
             DataReaderListener* listener);
@@ -127,7 +140,7 @@ public:
      * return false.
      * @param reader
      */
-    ReturnCode_t delete_datareader(
+    RTPS_DllAPI ReturnCode_t delete_datareader(
             DataReader* reader);
 
     /**
@@ -138,7 +151,7 @@ public:
      * one of them. It is not specified which one.
      * @param topic_name
      */
-    DataReader* lookup_datareader(
+    RTPS_DllAPI DataReader* lookup_datareader(
             const std::string& topic_name) const;
 
     /**
@@ -146,14 +159,14 @@ public:
      * @param readers
      * @return true
      */
-    ReturnCode_t get_datareaders(
+    RTPS_DllAPI ReturnCode_t get_datareaders(
             std::vector<DataReader*>& readers) const;
 
     /**
      * This operation checks if the subscriber has DataReaders
      * @return true if the subscriber has one or several DataReaders, false in other case
      */
-    bool has_datareaders() const;
+    RTPS_DllAPI bool has_datareaders() const;
 
     /* TODO
        bool begin_access();
@@ -171,7 +184,7 @@ public:
      * That way the SubscriberListener can delegate to the DataReaderListener objects the handling of the data.
      * @return
      */
-    ReturnCode_t notify_datareaders() const;
+    RTPS_DllAPI ReturnCode_t notify_datareaders() const;
 
     /* TODO
        bool delete_contained_entities();
@@ -189,7 +202,7 @@ public:
      * if the set_default_datareader_qos operation had never been called.
      * @param qos
      */
-    ReturnCode_t set_default_datareader_qos(
+    RTPS_DllAPI ReturnCode_t set_default_datareader_qos(
             const ReaderQos& qos);
 
     /**
@@ -201,7 +214,7 @@ public:
      * call to get_default_datareader_qos, or else, if the call was never made, the default values.
      * @return Current default ReaderQos.
      */
-    const ReaderQos& get_default_datareader_qos() const;
+    RTPS_DllAPI const ReaderQos& get_default_datareader_qos() const;
 
     /**
      * This operation retrieves the default value of the DataReader QoS, that is, the QoS policies which will be
@@ -213,7 +226,7 @@ public:
      * @param qos Current default ReaderQos.
      * @return Always true.
      */
-    ReturnCode_t get_default_datareader_qos(
+    RTPS_DllAPI ReturnCode_t get_default_datareader_qos(
             ReaderQos& qos) const;
 
     /* TODO
@@ -223,33 +236,21 @@ public:
      */
 
     /**
-     * Update the Attributes of the subscriber;
-     * @param att Reference to a SubscriberAttributes object to update the parameters;
-     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
-     */
-    bool set_attributes(
-            const fastrtps::SubscriberAttributes& att);
-
-    /**
-     * Get the Attributes of the Subscriber.
-     * @return Attributes of the Subscriber.
-     */
-    const fastrtps::SubscriberAttributes& get_attributes() const;
-
-    /**
      * This operation returns the DomainParticipant to which the Subscriber belongs.
      */
-    const DomainParticipant* get_participant() const;
+    RTPS_DllAPI const DomainParticipant* get_participant() const;
 
     /**
      * Returns the Subscriber's handle.
      * @return InstanceHandle of this Subscriber.
      */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
 private:
 
     SubscriberImpl* impl_;
+
+    friend class ::dds::sub::Subscriber;
 };
 
 } /* namespace dds */

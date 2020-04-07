@@ -27,8 +27,6 @@
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
-#include <dds/pub/Publisher.hpp>
-
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace dds {

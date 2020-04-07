@@ -71,11 +71,11 @@ ReturnCode_t DomainParticipant::delete_publisher(
 }
 
 Subscriber* DomainParticipant::create_subscriber(
-        const fastdds::dds::SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen)
+        const SubscriberQos& qos,
+        SubscriberListener* listener,
+        const StatusMask& mask)
 {
-    return impl_->create_subscriber(qos, att, listen);
+    return impl_->create_subscriber(qos, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_subscriber(
@@ -178,18 +178,18 @@ ReturnCode_t DomainParticipant::get_default_publisher_qos(
 }
 
 ReturnCode_t DomainParticipant::set_default_subscriber_qos(
-        const fastdds::dds::SubscriberQos& qos)
+        const SubscriberQos& qos)
 {
     return impl_->set_default_subscriber_qos(qos);
 }
 
-const fastdds::dds::SubscriberQos& DomainParticipant::get_default_subscriber_qos() const
+const SubscriberQos& DomainParticipant::get_default_subscriber_qos() const
 {
     return impl_->get_default_subscriber_qos();
 }
 
 ReturnCode_t DomainParticipant::get_default_subscriber_qos(
-        fastdds::dds::SubscriberQos& qos) const
+        SubscriberQos& qos) const
 {
     qos = impl_->get_default_subscriber_qos();
     return ReturnCode_t::RETCODE_OK;

@@ -48,8 +48,7 @@ bool HelloWorldSubscriber::init()
     type_.register_type(participant_, type_->getName());
 
     //CREATE THE SUBSCRIBER
-    eprosima::fastrtps::SubscriberAttributes sub_att;
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
     if (subscriber_ == nullptr)
     {

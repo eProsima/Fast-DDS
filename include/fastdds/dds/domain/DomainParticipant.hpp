@@ -114,14 +114,14 @@ public:
     /**
      * Create a Subscriber in this Participant.
      * @param qos QoS of the Subscriber.
-     * @param att Attributes of the Subscriber. TopicAttributes and ReaderQos will be ignored using DDS interface.
-     * @param listen Pointer to the listener.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask that holds statuses the listener responds to
      * @return Pointer to the created Subscriber.
      */
     RTPS_DllAPI Subscriber* create_subscriber(
-            const fastdds::dds::SubscriberQos& qos,
-            const fastrtps::SubscriberAttributes& att,
-            SubscriberListener* listen = nullptr);
+            const SubscriberQos& qos,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * Deletes an existing Subscriber.
@@ -264,7 +264,7 @@ public:
      * @return if given qos was applied as default.
      */
     RTPS_DllAPI ReturnCode_t set_default_subscriber_qos(
-            const fastdds::dds::SubscriberQos& qos);
+            const SubscriberQos& qos);
 
     /**
      * This operation retrieves the default value of the Subscriber QoS, that is, the QoS policies which will be used
@@ -275,7 +275,7 @@ public:
      * call to set_default_subscriber_qos, or else, if the call was never made, the default values.
      * @return Current default subscriber qos.
      */
-    RTPS_DllAPI const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
+    RTPS_DllAPI const SubscriberQos& get_default_subscriber_qos() const;
 
     /**
      * This operation retrieves the default value of the Subscriber QoS, that is, the QoS policies which will be used
@@ -288,7 +288,7 @@ public:
      * @return Always true.
      */
     RTPS_DllAPI ReturnCode_t get_default_subscriber_qos(
-            fastdds::dds::SubscriberQos& qos) const;
+            SubscriberQos& qos) const;
 
     // TODO Get/Set default Topic Qos
 
