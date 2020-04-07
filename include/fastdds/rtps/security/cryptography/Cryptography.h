@@ -46,11 +46,20 @@ public:
 
     CryptoTransform* cryptotransform() { return m_cryptotransform; }
 
-    bool set_logger(Logging* logger, SecurityException& /*exception*/) { m_logger = logger; return true; }
+    bool set_logger(
+            Logging* logger,
+            SecurityException& /*exception*/)
+    {
+        m_logger = logger;
+        return true;
+    }
 
 protected:
 
-    const Logging* get_logger() { return m_logger; }
+    const Logging* get_logger()
+    {
+        return m_logger;
+    }
 
     CryptoKeyExchange *m_cryptokeyexchange;
     CryptoKeyFactory *m_cryptokeyfactory;

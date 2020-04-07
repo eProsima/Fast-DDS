@@ -33,15 +33,15 @@ namespace security {
  */
 struct LogOptions
 {
-  //! Whether the log events should be distributed over DDS
-  bool distribute;
+    //! Whether the log events should be distributed over DDS
+    bool distribute;
 
-  //! Level at which log messages will be logged.
-  //! Messages at or below the log_level are logged.
-  LoggingLevel log_level;
+    //! Level at which log messages will be logged.
+    //! Messages at or below the log_level are logged.
+    LoggingLevel log_level;
 
-  //! Full path to a local file
-  std::string log_file;
+    //! Full path to a local file
+    std::string log_file;
 };
 
 } //namespace security

@@ -35,18 +35,19 @@ namespace security {
  *
  * @note Definition in DDS-Sec v1.1 9.6
  */
-struct BuiltinLoggingType final {
- octet facility;              // Set to 0x0A (10). Indicates sec/auth msgs
- LoggingLevel severity;
- rtps::Time_t timestamp;      // Since epoch 1970-01-01 00:00:00 +0000 (UTC)
- std::string hostname;        // IP host name of originator
- std::string hostip;          // IP address of originator
- std::string appname;         // Identify the device or application
- std::string procid;          // Process name/ID for syslog system
- std::string msgid;           // Identify the type of message
- std::string message;         // Free-form message
- // Note that certain string keys (SD-IDs) are reserved by IANA
- std::map<std::string, NameValuePairSeq> structured_data;
+struct BuiltinLoggingType final
+{
+    octet facility;           // Set to 0x0A (10). Indicates sec/auth msgs
+    LoggingLevel severity;
+    rtps::Time_t timestamp;   // Since epoch 1970-01-01 00:00:00 +0000 (UTC)
+    std::string hostname;     // IP host name of originator
+    std::string hostip;       // IP address of originator
+    std::string appname;      // Identify the device or application
+    std::string procid;       // Process name/ID for syslog system
+    std::string msgid;        // Identify the type of message
+    std::string message;      // Free-form message
+    // Note that certain string keys (SD-IDs) are reserved by IANA
+    std::map<std::string, NameValuePairSeq> structured_data;
 };
 
 } //namespace security

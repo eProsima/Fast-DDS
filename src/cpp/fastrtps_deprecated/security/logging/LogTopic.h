@@ -36,37 +36,43 @@ namespace security {
  */
 class LogTopic final : public Logging
 {
-  using BuiltinLoggingTypePtr = std::unique_ptr<BuiltinLoggingType>;
+    using BuiltinLoggingTypePtr = std::unique_ptr<BuiltinLoggingType>;
 
 public:
 
-  LogTopic();
-  ~LogTopic();
+    LogTopic();
+    ~LogTopic();
 
 private:
 
-  /**
-   * @brief log_impl
-   * @param message
-   * @param category
-   * @param exception
-   */
-  void log_impl(const BuiltinLoggingType& message,
-                SecurityException& exception) const override;
+    /**
+     * @brief log_impl
+     * @param message
+     * @param category
+     * @param exception
+     */
+    void log_impl(
+            const BuiltinLoggingType& message,
+            SecurityException& exception) const override;
 
-  bool enable_logging_impl(SecurityException& exception) override;
+    bool enable_logging_impl(
+            SecurityException& exception) override;
 
-  void publish(BuiltinLoggingType& builtin_msg);
+    void publish(
+            BuiltinLoggingType& builtin_msg);
 
-  void stop() { stop_ = true; }
+    void stop()
+    {
+        stop_ = true;
+    }
 
-  std::atomic_bool stop_;
+    std::atomic_bool stop_;
 
-  std::thread thread_;
+    std::thread thread_;
 
-  std::ofstream file_stream_;
+    std::ofstream file_stream_;
 
-  mutable ConcurrentQueue<BuiltinLoggingTypePtr> queue_;
+    mutable ConcurrentQueue<BuiltinLoggingTypePtr> queue_;
 };
 
 } //namespace security

@@ -31,9 +31,10 @@ namespace security {
  *
  * @note Definition in DDS-Sec v1.1 9.6
  */
-struct NameValuePair final {
- std::string name;
- std::string value;
+struct NameValuePair final
+{
+    std::string name;
+    std::string value;
 };
 
 using NameValuePairSeq = std::vector<NameValuePair>;

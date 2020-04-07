@@ -32,61 +32,62 @@ namespace security {
  */
 enum struct LoggingLevel : long
 {
-  EMERGENCY_LEVEL,      // System is unusable. Should not continue use.
-  ALERT_LEVEL,          // Should be corrected immediately
-  CRITICAL_LEVEL,       // A failure in primary application.
-  ERROR_LEVEL,          // General error conditions
-  WARNING_LEVEL,        // May indicate future error if action not taken.
-  NOTICE_LEVEL,         // Unusual, but nor erroneous event or condition.
-  INFORMATIONAL_LEVEL,  // Normal operational. Requires no action.
-  DEBUG_LEVEL
+    EMERGENCY_LEVEL,    // System is unusable. Should not continue use.
+    ALERT_LEVEL,        // Should be corrected immediately
+    CRITICAL_LEVEL,     // A failure in primary application.
+    ERROR_LEVEL,        // General error conditions
+    WARNING_LEVEL,      // May indicate future error if action not taken.
+    NOTICE_LEVEL,       // Unusual, but nor erroneous event or condition.
+    INFORMATIONAL_LEVEL, // Normal operational. Requires no action.
+    DEBUG_LEVEL
 };
 
-inline bool string_to_LogLevel(const std::string& s,
-                               LoggingLevel& l,
-                               SecurityException& e)
+inline bool string_to_LogLevel(
+        const std::string& s,
+        LoggingLevel& l,
+        SecurityException& e)
 {
-  //TODO(artivis): use an array of const char to avoid strings?
-  bool convert = true;
-  if (!bool(s.compare("0")) || !bool(s.compare("EMERGENCY_LEVEL")))
-  {
-    l = LoggingLevel::EMERGENCY_LEVEL;
-  }
-  else if (!s.compare("1") || !s.compare("ALERT_LEVEL"))
-  {
-    l = LoggingLevel::ALERT_LEVEL;
-  }
-  else if (!s.compare("2") || !s.compare("CRITICAL_LEVEL"))
-  {
-    l = LoggingLevel::CRITICAL_LEVEL;
-  }
-  else if (!s.compare("3") || !s.compare("ERROR_LEVEL"))
-  {
-    l = LoggingLevel::ERROR_LEVEL;
-  }
-  else if (!s.compare("4") || !s.compare("WARNING_LEVEL"))
-  {
-    l = LoggingLevel::WARNING_LEVEL;
-  }
-  else if (!s.compare("5") || !s.compare("NOTICE_LEVEL"))
-  {
-    l = LoggingLevel::NOTICE_LEVEL;
-  }
-  else if (!s.compare("6") || !s.compare("INFORMATIONAL_LEVEL"))
-  {
-    l = LoggingLevel::INFORMATIONAL_LEVEL;
-  }
-  else if (!s.compare("7") || !s.compare("DEBUG_LEVEL"))
-  {
-    l = LoggingLevel::DEBUG_LEVEL;
-  }
-  else
-  {
-    e = SecurityException("Unknown EventLogLevel");
-    convert = false;
-  }
+    //TODO(artivis): use an array of const char to avoid strings?
+    bool convert = true;
+    if (!bool(s.compare("0")) || !bool(s.compare("EMERGENCY_LEVEL")))
+    {
+        l = LoggingLevel::EMERGENCY_LEVEL;
+    }
+    else if (!s.compare("1") || !s.compare("ALERT_LEVEL"))
+    {
+        l = LoggingLevel::ALERT_LEVEL;
+    }
+    else if (!s.compare("2") || !s.compare("CRITICAL_LEVEL"))
+    {
+        l = LoggingLevel::CRITICAL_LEVEL;
+    }
+    else if (!s.compare("3") || !s.compare("ERROR_LEVEL"))
+    {
+        l = LoggingLevel::ERROR_LEVEL;
+    }
+    else if (!s.compare("4") || !s.compare("WARNING_LEVEL"))
+    {
+        l = LoggingLevel::WARNING_LEVEL;
+    }
+    else if (!s.compare("5") || !s.compare("NOTICE_LEVEL"))
+    {
+        l = LoggingLevel::NOTICE_LEVEL;
+    }
+    else if (!s.compare("6") || !s.compare("INFORMATIONAL_LEVEL"))
+    {
+        l = LoggingLevel::INFORMATIONAL_LEVEL;
+    }
+    else if (!s.compare("7") || !s.compare("DEBUG_LEVEL"))
+    {
+        l = LoggingLevel::DEBUG_LEVEL;
+    }
+    else
+    {
+        e = SecurityException("Unknown EventLogLevel");
+        convert = false;
+    }
 
-  return convert;
+    return convert;
 }
 
 } //namespace security

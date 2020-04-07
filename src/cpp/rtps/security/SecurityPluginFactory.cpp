@@ -81,7 +81,7 @@ Logging* SecurityPluginFactory::create_logging_plugin(const PropertyPolicy& prop
 {
     Logging* plugin = nullptr;
     const std::string* logging_plugin_property = PropertyPolicyHelper::find_property(property_policy,
-            "dds.sec.log.plugin");
+                    "dds.sec.log.plugin");
 
     if(logging_plugin_property != nullptr)
     {

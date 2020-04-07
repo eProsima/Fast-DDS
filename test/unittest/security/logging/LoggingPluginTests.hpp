@@ -24,59 +24,60 @@ class LoggingPluginTest : public ::testing::Test
 {
 protected:
 
-  virtual void SetUp()
-  {
-    plugin = new eprosima::fastrtps::rtps::security::LogTopic();
+    virtual void SetUp()
+    {
+        plugin = new eprosima::fastrtps::rtps::security::LogTopic();
 
-    ASSERT_NE(nullptr, plugin);
-  }
+        ASSERT_NE(nullptr, plugin);
+    }
 
-  virtual void TearDown()
-  {
-    delete plugin;
-  }
+    virtual void TearDown()
+    {
+        delete plugin;
+    }
 
 public:
-  LoggingPluginTest() = default;
-  ~LoggingPluginTest() = default;
 
-  eprosima::fastrtps::rtps::security::Logging* plugin = nullptr;
+    LoggingPluginTest() = default;
+    ~LoggingPluginTest() = default;
+
+    eprosima::fastrtps::rtps::security::Logging* plugin = nullptr;
 };
 
 TEST_F(LoggingPluginTest, DefaultBehavior)
 {
-  eprosima::fastrtps::rtps::security::SecurityException exception;
+    eprosima::fastrtps::rtps::security::SecurityException exception;
 
-  // Options not set
+    // Options not set
 
-  EXPECT_FALSE(plugin->options_set());
+    EXPECT_FALSE(plugin->options_set());
 
-  eprosima::fastrtps::rtps::security::LogOptions log_options;
-  EXPECT_FALSE(plugin->get_log_options(log_options, exception));
+    eprosima::fastrtps::rtps::security::LogOptions log_options;
+    EXPECT_FALSE(plugin->get_log_options(log_options, exception));
 
-  EXPECT_FALSE(plugin->enable_logging(exception));
+    EXPECT_FALSE(plugin->enable_logging(exception));
 
-  EXPECT_FALSE(plugin->enabled());
+    EXPECT_FALSE(plugin->enabled());
 
-  EXPECT_EQ(nullptr, plugin->get_listener());
+    EXPECT_EQ(nullptr, plugin->get_listener());
 
-  // Options set
+    // Options set
 
-  EXPECT_TRUE(plugin->set_log_options(log_options, exception));
+    EXPECT_TRUE(plugin->set_log_options(log_options, exception));
 
-  EXPECT_TRUE(plugin->options_set());
+    EXPECT_TRUE(plugin->options_set());
 
-  EXPECT_TRUE(plugin->get_log_options(log_options, exception));
+    EXPECT_TRUE(plugin->get_log_options(log_options, exception));
 
-  EXPECT_FALSE(plugin->enabled());
+    EXPECT_FALSE(plugin->enabled());
 
-  // Logging enabled
+    // Logging enabled
 
-  EXPECT_TRUE(plugin->enable_logging(exception));
+    EXPECT_TRUE(plugin->enable_logging(exception));
 
-  EXPECT_TRUE(plugin->enabled());
+    EXPECT_TRUE(plugin->enabled());
 
-  EXPECT_FALSE(plugin->set_log_options(log_options, exception));
+    EXPECT_FALSE(plugin->set_log_options(log_options, exception));
 }
 
 #endif // _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_

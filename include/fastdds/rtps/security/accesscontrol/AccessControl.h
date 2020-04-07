@@ -154,11 +154,20 @@ public:
             EndpointSecurityAttributes& attributes,
             SecurityException& exception) = 0;
 
-    bool set_logger(Logging* logger, SecurityException& /*exception*/) { logger_ = logger; return true; }
+    bool set_logger(
+            Logging* logger,
+            SecurityException& /*exception*/)
+    {
+        logger_ = logger;
+        return true;
+    }
 
 protected:
 
-    const Logging* get_logger() { return logger_; }
+    const Logging* get_logger()
+    {
+        return logger_;
+    }
 
 private:
 

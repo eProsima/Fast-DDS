@@ -227,11 +227,19 @@ class Authentication
         virtual bool return_authenticated_peer_credential_token(PermissionsCredentialToken* token,
                 SecurityException& ex) = 0;
 
-        bool set_logger(Logging* logger, SecurityException& /*exception*/) { logger_ = logger; return true; }
+        bool set_logger(Logging* logger,
+             SecurityException& /*exception*/)
+        {
+            logger_ = logger;
+            return true;
+        }
 
     protected:
 
-        const Logging* get_logger() const { return logger_; }
+        const Logging* get_logger() const
+        {
+            return logger_;
+        }
 
     private:
 
