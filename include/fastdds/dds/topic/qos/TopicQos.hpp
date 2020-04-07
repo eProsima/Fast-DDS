@@ -113,8 +113,7 @@ public:
                (this->resource_limits_ == b.resource_limits()) &&
                (this->transport_priority_ == b.transport_priority()) &&
                (this->lifespan_ == b.lifespan()) &&
-               (this->ownership_ == b.ownership()) &&
-               (this->topic_attr == b.topic_attr);
+               (this->ownership_ == b.ownership());
     }
 
     /* TODO: Implement this method
@@ -399,9 +398,6 @@ public:
         ownership_ = ownership;
         ownership_.hasChanged = true;
     }
-
-    //!Topic Attributes
-    fastrtps::TopicAttributes topic_attr;
 
 private:
 
