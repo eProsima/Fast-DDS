@@ -34,19 +34,7 @@ class DomainParticipant;
  */
 class TopicDescription
 {
-protected:
-
-    TopicDescription(
-            const std::string& name,
-            const std::string& type_name)
-        : name_(name)
-        , type_name_(type_name)
-    {
-    }
-
-    virtual ~TopicDescription()
-    {
-    }
+public:
 
     virtual DomainParticipant* get_participant() const = 0;
 
@@ -62,6 +50,20 @@ protected:
 
 protected:
 
+    TopicDescription(
+            const std::string& name,
+            const std::string& type_name)
+        : name_(name)
+        , type_name_(type_name)
+    {
+    }
+
+    virtual ~TopicDescription()
+    {
+    }
+
+protected:
+
     //! Name that allows the TopicDescription to be retrieved locally
     std::string name_;
 
@@ -73,4 +75,4 @@ protected:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_TYPE_SUPPORT_HPP_ */
+#endif /* _FASTDDS_TOPIC_DESCRIPTION_HPP_ */
