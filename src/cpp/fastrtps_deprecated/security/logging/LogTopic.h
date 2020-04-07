@@ -18,9 +18,9 @@
 #ifndef _FASTDDS_RTPS_SECURITY_LOGGING_LOGTOPIC_H_
 #define _FASTDDS_RTPS_SECURITY_LOGGING_LOGTOPIC_H_
 
-#include "fastdds/rtps/security/logging/Logging.h"
-#include "fastdds/rtps/security/logging/BuiltinLoggingType.h"
-#include "fastrtps/utils/concurrent_queue.h"
+#include <fastdds/rtps/security/logging/Logging.h>
+#include <fastdds/rtps/security/logging/BuiltinLoggingType.h>
+#include <fastrtps/utils/concurrent_queue.h>
 
 #include <atomic>
 #include <fstream>

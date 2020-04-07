@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_LOGGING_LOGGINGLEVEL_H_
 #define _FASTDDS_RTPS_SECURITY_LOGGING_LOGGINGLEVEL_H_
 
-#include "fastdds/rtps/security/exceptions/SecurityException.h"
+#include <fastdds/rtps/security/exceptions/SecurityException.h>
 
 namespace eprosima {
 namespace fastrtps {
