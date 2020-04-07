@@ -52,9 +52,7 @@ void LogTopic::log_impl(
         const BuiltinLoggingType& message,
         SecurityException& /*exception*/) const
 {
-    queue_.push(std::move(
-                BuiltinLoggingTypePtr(new BuiltinLoggingType(message)
-                )));
+    queue_.push(BuiltinLoggingTypePtr(new BuiltinLoggingType(message)));
 }
 
 bool LogTopic::enable_logging_impl(

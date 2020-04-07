@@ -49,7 +49,7 @@ inline bool string_to_LogLevel(
 {
     //TODO(artivis): use an array of const char to avoid strings?
     bool convert = true;
-    if (!bool(s.compare("0")) || !bool(s.compare("EMERGENCY_LEVEL")))
+    if (!s.compare("0") || !s.compare("EMERGENCY_LEVEL"))
     {
         l = LoggingLevel::EMERGENCY_LEVEL;
     }
