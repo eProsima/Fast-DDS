@@ -42,6 +42,11 @@ public:
     ~LoggingPluginTest() = default;
 
     eprosima::fastrtps::rtps::security::Logging* plugin = nullptr;
+
+    const std::string security_log_filename = "security_logs.log";
+
+    // number of LoggingLevel
+    static constexpr long NUM_LOG_LEVELS = 8;
 };
 
 TEST_F(LoggingPluginTest, DefaultBehavior)
@@ -53,9 +58,9 @@ TEST_F(LoggingPluginTest, DefaultBehavior)
     EXPECT_FALSE(plugin->options_set());
 
     eprosima::fastrtps::rtps::security::LogOptions log_options;
-    EXPECT_FALSE(plugin->get_log_options(log_options, exception));
+    EXPECT_FALSE(plugin->get_log_options(log_options, exception)) << exception.what();
 
-    EXPECT_FALSE(plugin->enable_logging(exception));
+    EXPECT_FALSE(plugin->enable_logging(exception)) << exception.what();
 
     EXPECT_FALSE(plugin->enabled());
 
@@ -63,21 +68,89 @@ TEST_F(LoggingPluginTest, DefaultBehavior)
 
     // Options set
 
-    EXPECT_TRUE(plugin->set_log_options(log_options, exception));
+    EXPECT_TRUE(plugin->set_log_options(log_options, exception)) << exception.what();
 
     EXPECT_TRUE(plugin->options_set());
 
-    EXPECT_TRUE(plugin->get_log_options(log_options, exception));
+    EXPECT_TRUE(plugin->get_log_options(log_options, exception)) << exception.what();
 
     EXPECT_FALSE(plugin->enabled());
 
     // Logging enabled
 
-    EXPECT_TRUE(plugin->enable_logging(exception));
+    EXPECT_TRUE(plugin->enable_logging(exception)) << exception.what();
 
     EXPECT_TRUE(plugin->enabled());
 
-    EXPECT_FALSE(plugin->set_log_options(log_options, exception));
+    EXPECT_FALSE(plugin->set_log_options(log_options, exception)) << exception.what();
+}
+
+TEST_F(LoggingPluginTest, AsyncFileLogging)
+{
+  // First remove previous executions file
+  std::remove(security_log_filename.c_str());
+
+  eprosima::fastrtps::rtps::security::LogOptions log_options;
+
+  log_options.distribute = false;
+  log_options.log_file = security_log_filename;
+  log_options.log_level = eprosima::fastrtps::rtps::security::LoggingLevel::DEBUG_LEVEL;
+
+  eprosima::fastrtps::rtps::security::SecurityException exception;
+
+//  plugin->set_domain_id();
+//  plugin->set_guid();
+
+  EXPECT_TRUE(plugin->set_log_options(log_options, exception));
+  EXPECT_TRUE(plugin->options_set());
+  EXPECT_TRUE(plugin->enable_logging(exception)) << exception.what();
+  EXPECT_TRUE(plugin->enabled());
+
+  std::vector<std::unique_ptr<std::thread>> threads;
+  for (long i = 0; i < NUM_LOG_LEVELS; ++i) {
+      threads.emplace_back(new std::thread([this, i, &exception]{
+          plugin->log(
+                static_cast<eprosima::fastrtps::rtps::security::LoggingLevel>(i),
+                std::string("Report from thread ") + std::to_string(i),
+                "Logging,fileloggingtest",
+                exception);
+      }));
+  }
+
+  for (auto& thread: threads) {
+      thread->join();
+  }
+
+  // give a chance to the logger to log all messages
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  std::ifstream ifs(security_log_filename);
+
+  if (!ifs.is_open())
+  {
+      GTEST_FAIL();
+  }
+
+  std::string line;
+  long count = 0;
+  while (std::getline(ifs, line))
+  {
+      //@TODO(artivis) check for stamp
+
+//      std::regex pattern1("Logging::fileloggingtest : Report from thread [0-"  + std::to_string(NUM_LOG_LEVELS-1) + "]");
+
+//      EXPECT_TRUE(std::regex_match(line, pattern1));
+
+      std::string pattern = std::string("Logging::fileloggingtest : ");
+      EXPECT_NE(std::string::npos, line.find(pattern)) << pattern << " vs " << line;
+
+      pattern = std::string("Report from thread ");
+      EXPECT_NE(std::string::npos, line.find(pattern)) << pattern << " vs " << line;
+
+      ++count;
+  }
+
+  EXPECT_EQ(NUM_LOG_LEVELS, count);
 }
 
 #endif // _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_
