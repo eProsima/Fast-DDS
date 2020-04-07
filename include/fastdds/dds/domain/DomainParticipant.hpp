@@ -94,14 +94,14 @@ public:
     /**
      * Create a Publisher in this Participant.
      * @param qos QoS of the Publisher.
-     * @param att Attributes of the Publisher. TopicAttributes and WriterQos will be ignored using DDS interface.
      * @param listen Pointer to the listener.
+     * @param mask StatusMask
      * @return Pointer to the created Publisher.
      */
     RTPS_DllAPI Publisher* create_publisher(
-            const fastdds::dds::PublisherQos& qos,
-            const fastrtps::PublisherAttributes& att,
-            PublisherListener* listen = nullptr);
+            const PublisherQos& qos,
+            PublisherListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * Deletes an existing Publisher.
@@ -224,7 +224,7 @@ public:
      * @return if given qos was applied as default.
      */
     RTPS_DllAPI ReturnCode_t set_default_publisher_qos(
-            const fastdds::dds::PublisherQos& qos);
+            const PublisherQos& qos);
 
     /**
      * This operation retrieves the default value of the Publisher QoS, that is, the QoS policies which will be used
@@ -235,7 +235,7 @@ public:
      * call to set_default_publisher_qos, or else, if the call was never made, the default values.
      * @return Current default publisher qos.
      */
-    RTPS_DllAPI const fastdds::dds::PublisherQos& get_default_publisher_qos() const;
+    RTPS_DllAPI const PublisherQos& get_default_publisher_qos() const;
 
     /**
      * This operation retrieves the default value of the Publisher QoS, that is, the QoS policies which will be used
@@ -248,7 +248,7 @@ public:
      * @return Always true.
      */
     RTPS_DllAPI ReturnCode_t get_default_publisher_qos(
-            fastdds::dds::PublisherQos& qos) const;
+            PublisherQos& qos) const;
 
     /**
      * This operation sets a default value of the Subscriber QoS policies that will be used for newly created

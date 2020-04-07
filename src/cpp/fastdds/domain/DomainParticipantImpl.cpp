@@ -210,44 +210,12 @@ const GUID_t& DomainParticipantImpl::guid() const
 
 Publisher* DomainParticipantImpl::create_publisher(
         const PublisherQos& qos,
-        const fastrtps::PublisherAttributes& att,
-        PublisherListener* listen)
+        PublisherListener* listener,
+        const StatusMask& mask)
 {
-    if (qos_.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
-    {
-        if (att.getUserDefinedID() <= 0)
-        {
-            logError(PARTICIPANT, "Static EDP requires user defined Id");
-            return nullptr;
-        }
-    }
-
-    if (!att.unicastLocatorList.isValid())
-    {
-        logError(PARTICIPANT, "Unicast Locator List for Publisher contains invalid Locator");
-        return nullptr;
-    }
-
-    if (!att.multicastLocatorList.isValid())
-    {
-        logError(PARTICIPANT, " Multicast Locator List for Publisher contains invalid Locator");
-        return nullptr;
-    }
-
-    if (!att.remoteLocatorList.isValid())
-    {
-        logError(PARTICIPANT, "Remote Locator List for Publisher contains invalid Locator");
-        return nullptr;
-    }
-
-    if (!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
-    {
-        return nullptr;
-    }
-
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen);
-    Publisher* pub = new Publisher(pubimpl);
+    PublisherImpl* pubimpl = new PublisherImpl(this, qos, listener);
+    Publisher* pub = new Publisher(pubimpl, mask);
     pubimpl->user_publisher_ = pub;
     pubimpl->rtps_participant_ = rtps_participant_;
 
@@ -267,10 +235,11 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
 
-    if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
-    {
-        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
-    }
+    //TODO: Register the dynamic type when the datawriter is created
+    //    if (qos.publisher_attr.topic.auto_fill_type_object || qos.publisher_attr.topic.auto_fill_type_information)
+    //    {
+    //        register_dynamic_type_to_factories(qos.publisher_attr.topic.getTopicDataType().to_string());
+    //    }
 
     return pub;
 }

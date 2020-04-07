@@ -127,7 +127,7 @@ bool TestPublisher::init(
 
     if (m_Type != nullptr)
     {
-        mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
+        mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
         if (mp_publisher == nullptr)
         {
             return false;

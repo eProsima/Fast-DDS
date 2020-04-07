@@ -57,11 +57,11 @@ const DomainParticipantListener* DomainParticipant::get_listener() const
 }
 
 Publisher* DomainParticipant::create_publisher(
-        const fastdds::dds::PublisherQos& qos,
-        const fastrtps::PublisherAttributes& att,
-        PublisherListener* listen)
+        const PublisherQos& qos,
+        PublisherListener* listener,
+        const StatusMask& mask)
 {
-    return impl_->create_publisher(qos, att, listen);
+    return impl_->create_publisher(qos, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_publisher(
@@ -160,18 +160,18 @@ ReturnCode_t DomainParticipant::assert_liveliness()
 }
 
 ReturnCode_t DomainParticipant::set_default_publisher_qos(
-        const fastdds::dds::PublisherQos& qos)
+        const PublisherQos& qos)
 {
     return impl_->set_default_publisher_qos(qos);
 }
 
-const fastdds::dds::PublisherQos& DomainParticipant::get_default_publisher_qos() const
+const PublisherQos& DomainParticipant::get_default_publisher_qos() const
 {
     return impl_->get_default_publisher_qos();
 }
 
 ReturnCode_t DomainParticipant::get_default_publisher_qos(
-        fastdds::dds::PublisherQos& qos) const
+        PublisherQos& qos) const
 {
     qos = impl_->get_default_publisher_qos();
     return ReturnCode_t::RETCODE_OK;

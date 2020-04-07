@@ -41,11 +41,9 @@ namespace dds {
 PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
         const PublisherQos& qos,
-        const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
     : participant_(p)
     , qos_(&qos == &PUBLISHER_QOS_DEFAULT ? participant_->get_default_publisher_qos() : qos)
-    , att_(att)
     , listener_(listen)
     , publisher_listener_(this)
     , user_publisher_(nullptr)
@@ -177,32 +175,33 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
+    //TODO: Fix when PublisherAttributes are correct decomposed in qos
     WriterAttributes w_att;
-    w_att.throughputController = att_.throughputController;
+    //w_att.throughputController = qos_.publisher_attr.throughputController;
     w_att.endpoint.durabilityKind = writer_qos.m_durability.durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
-    w_att.endpoint.multicastLocatorList = att_.multicastLocatorList;
+    //w_att.endpoint.multicastLocatorList = qos_.publisher_attr.multicastLocatorList;
     w_att.endpoint.reliabilityKind = writer_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     w_att.endpoint.topicKind = topic_att.topicKind;
-    w_att.endpoint.unicastLocatorList = att_.unicastLocatorList;
-    w_att.endpoint.remoteLocatorList = att_.remoteLocatorList;
+    //w_att.endpoint.unicastLocatorList = qos_.publisher_attr.unicastLocatorList;
+    //w_att.endpoint.remoteLocatorList = qos_.publisher_attr.remoteLocatorList;
     w_att.mode = writer_qos.m_publishMode.kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
-    w_att.endpoint.properties = att_.properties;
+    //w_att.endpoint.properties = qos_.publisher_attr.properties;
 
-    if (att_.getEntityID() > 0)
-    {
-        w_att.endpoint.setEntityID(static_cast<uint8_t>(att_.getEntityID()));
-    }
+    //    if (qos_.publisher_attr.getEntityID() > 0)
+    //    {
+    //        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos_.publisher_attr.getEntityID()));
+    //    }
 
-    if (att_.getUserDefinedID() > 0)
-    {
-        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(att_.getUserDefinedID()));
-    }
+    //    if (qos_.publisher_attr.getUserDefinedID() > 0)
+    //    {
+    //        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.publisher_attr.getUserDefinedID()));
+    //    }
 
-    w_att.times = att_.times;
+    //w_att.times = qos_.publisher_attr.times;
     w_att.liveliness_kind = writer_qos.m_liveliness.kind;
     w_att.liveliness_lease_duration = writer_qos.m_liveliness.lease_duration;
-    w_att.matched_readers_allocation = att_.matched_subscriber_allocation;
+    //w_att.matched_readers_allocation = qos_.publisher_attr.matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -236,7 +235,8 @@ DataWriter* PublisherImpl::create_datawriter(
         topic_att,
         w_att,
         writer_qos,
-        att_.historyMemoryPolicy,
+        //qos_.publisher_attr.historyMemoryPolicy,
+        fastrtps::rtps::MemoryManagementPolicy_t(),
         listener);
 
     if (impl->writer_ == nullptr)
@@ -443,75 +443,6 @@ const Publisher* PublisherImpl::get_publisher() const
     return false;
    }
  */
-
-const fastrtps::PublisherAttributes& PublisherImpl::get_attributes() const
-{
-    return att_;
-}
-
-bool PublisherImpl::set_attributes(
-        const fastrtps::PublisherAttributes& att)
-{
-    bool updated = true;
-    bool missing = false;
-    if (att_.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
-    {
-        if (att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
-                att.multicastLocatorList.size() != att_.multicastLocatorList.size())
-        {
-            logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
-            updated &= false;
-        }
-        else
-        {
-            for (LocatorListConstIterator lit1 = att_.unicastLocatorList.begin();
-                    lit1 != att_.unicastLocatorList.end(); ++lit1)
-            {
-                missing = true;
-                for (LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
-                        lit2 != att.unicastLocatorList.end(); ++lit2)
-                {
-                    if (*lit1 == *lit2)
-                    {
-                        missing = false;
-                        break;
-                    }
-                }
-                if (missing)
-                {
-                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
-                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
-                }
-            }
-            for (LocatorListConstIterator lit1 = att_.multicastLocatorList.begin();
-                    lit1 != att_.multicastLocatorList.end(); ++lit1)
-            {
-                missing = true;
-                for (LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
-                        lit2 != att.multicastLocatorList.end(); ++lit2)
-                {
-                    if (*lit1 == *lit2)
-                    {
-                        missing = false;
-                        break;
-                    }
-                }
-                if (missing)
-                {
-                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
-                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
-                }
-            }
-        }
-    }
-
-    if (updated)
-    {
-        att_ = att;
-    }
-
-    return updated;
-}
 
 const InstanceHandle_t& PublisherImpl::get_instance_handle() const
 {
