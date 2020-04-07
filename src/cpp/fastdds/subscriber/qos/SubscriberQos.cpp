@@ -26,11 +26,20 @@ namespace dds {
 
 RTPS_DllAPI const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
+SubscriberQos::SubscriberQos()
+{
+}
+
+SubscriberQos::~SubscriberQos()
+{
+
+}
+
 void SubscriberQos::set_qos(
         const SubscriberQos& qos,
         bool first_time)
 {
-    if (first_time || !(presentation_== qos.presentation()))
+    if (first_time || !(presentation_ == qos.presentation()))
     {
         presentation_ = qos.presentation();
         presentation_.hasChanged = true;

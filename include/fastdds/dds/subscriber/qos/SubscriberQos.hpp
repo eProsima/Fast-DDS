@@ -37,11 +37,12 @@ namespace dds {
 class SubscriberQos
 {
 public:
-    RTPS_DllAPI SubscriberQos() = default;
 
-    RTPS_DllAPI virtual ~SubscriberQos() = default;
+    RTPS_DllAPI SubscriberQos();
 
-    bool operator==(
+    RTPS_DllAPI virtual ~SubscriberQos();
+
+    bool operator ==(
             const SubscriberQos& b) const
     {
         return (presentation_ == b.presentation_) &&
