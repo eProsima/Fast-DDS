@@ -83,7 +83,7 @@ inline bool string_to_LogLevel(
     }
     else
     {
-        e = SecurityException("Unknown EventLogLevel");
+        e = SecurityException("Unknown LoggingLevel");
         convert = false;
     }
 
