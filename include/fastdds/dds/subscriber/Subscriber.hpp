@@ -79,6 +79,7 @@ class Subscriber : public DomainEntity
             const SubscriberQos& qos = SUBSCRIBER_QOS_DEFAULT,
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
+
 public:
 
     RTPS_DllAPI virtual ~Subscriber()

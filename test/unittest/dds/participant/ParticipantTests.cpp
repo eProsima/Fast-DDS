@@ -25,6 +25,7 @@
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
 #include <dds/sub/Subscriber.hpp>
+#include <dds/pub/Publisher.hpp>
 
 namespace eprosima {
 namespace fastdds {
