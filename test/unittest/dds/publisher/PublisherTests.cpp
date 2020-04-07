@@ -19,6 +19,9 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/DataWriterQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -41,6 +44,25 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     ASSERT_EQ(qos, wqos);
     ASSERT_EQ(wqos.deadline().period, 260);
 }
+
+
+TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
+
+    ::dds::pub::qos::DataWriterQos qos = publisher.default_datawriter_qos();
+    ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
+
+    qos.deadline().period = 540;
+
+    ASSERT_NO_THROW(publisher.default_datawriter_qos(qos));
+    ::dds::pub::qos::DataWriterQos wqos = publisher.default_datawriter_qos();
+
+    ASSERT_EQ(qos, wqos);
+    ASSERT_EQ(wqos.deadline().period, 540);
+}
+
 
 } // namespace dds
 } // namespace fastdds
