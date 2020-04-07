@@ -48,6 +48,7 @@ PublisherImpl::PublisherImpl(
     , publisher_listener_(this)
     , user_publisher_(nullptr)
     , rtps_participant_(p->rtps_participant())
+    , default_datawriter_qos_(DATAWRITER_QOS_DEFAULT)
 {
 }
 
@@ -369,22 +370,119 @@ bool PublisherImpl::contains_entity(
 
 
 ReturnCode_t PublisherImpl::set_default_datawriter_qos(
-        const fastrtps::WriterQos& qos)
+        const DataWriterQos& qos)
 {
-    //    if (&qos == &DATAWRITER_QOS_DEFAULT)
-    //    {
-    //        default_datawriter_qos_.setQos(DATAWRITER_QOS_DEFAULT, true);
-    //        return ReturnCode_t::RETCODE_OK;
-    //    }
-    /*else*/ if (qos.checkQos())
+    if (!qos.check_qos())
     {
-        default_datawriter_qos_.setQos(qos, true);
-        return ReturnCode_t::RETCODE_OK;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    if (!(default_datawriter_qos_.durability() == qos.durability()))
+    {
+        default_datawriter_qos_.durability() = qos.durability();
+        default_datawriter_qos_.durability().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.durability_service() == qos.durability_service()))
+    {
+        default_datawriter_qos_.durability_service() = qos.durability_service();
+        default_datawriter_qos_.durability_service().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.deadline() == qos.deadline()))
+    {
+        default_datawriter_qos_.deadline() = qos.deadline();
+        default_datawriter_qos_.deadline().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.latency_budget() == qos.latency_budget()))
+    {
+        default_datawriter_qos_.latency_budget() = qos.latency_budget();
+        default_datawriter_qos_.latency_budget().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.liveliness() == qos.liveliness()))
+    {
+        default_datawriter_qos_.liveliness() = qos.liveliness();
+        default_datawriter_qos_.liveliness().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.reliability() == qos.reliability()))
+    {
+        default_datawriter_qos_.reliability() = qos.reliability();
+        default_datawriter_qos_.reliability().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.destination_order() == qos.destination_order()))
+    {
+        default_datawriter_qos_.destination_order() = qos.destination_order();
+        default_datawriter_qos_.destination_order().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.history() == qos.history()))
+    {
+        default_datawriter_qos_.history() = qos.history();
+        default_datawriter_qos_.history().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.resource_limits() == qos.resource_limits()))
+    {
+        default_datawriter_qos_.resource_limits() = qos.resource_limits();
+        default_datawriter_qos_.resource_limits().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.transport_priority() == qos.transport_priority()))
+    {
+        default_datawriter_qos_.transport_priority() = qos.transport_priority();
+        default_datawriter_qos_.transport_priority().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.lifespan() == qos.lifespan()))
+    {
+        default_datawriter_qos_.lifespan() = qos.lifespan();
+        default_datawriter_qos_.lifespan().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.user_data() == qos.user_data()))
+    {
+        default_datawriter_qos_.user_data() = qos.user_data();
+        default_datawriter_qos_.user_data().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.ownership() == qos.ownership()))
+    {
+        default_datawriter_qos_.ownership() = qos.ownership();
+        default_datawriter_qos_.ownership().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.ownership_strength() == qos.ownership_strength()))
+    {
+        default_datawriter_qos_.ownership_strength() = qos.ownership_strength();
+        default_datawriter_qos_.ownership_strength().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.writer_data_lifecycle() == qos.writer_data_lifecycle()))
+    {
+        default_datawriter_qos_.writer_data_lifecycle() = qos.writer_data_lifecycle();
+    }
+    if (!(default_datawriter_qos_.publish_mode() == qos.publish_mode()))
+    {
+        default_datawriter_qos_.publish_mode() = qos.publish_mode();
+    }
+    if (!(default_datawriter_qos_.representation() == qos.representation()))
+    {
+        default_datawriter_qos_.representation() = qos.representation();
+        default_datawriter_qos_.representation().hasChanged = true;
+    }
+    if (!(default_datawriter_qos_.properties() == qos.properties()))
+    {
+        default_datawriter_qos_.properties() = qos.properties();
+    }
+    if (!(default_datawriter_qos_.reliable_writer_data() == qos.reliable_writer_data()))
+    {
+        default_datawriter_qos_.reliable_writer_data() = qos.reliable_writer_data();
+    }
+    if (!(default_datawriter_qos_.endpoint_data() == qos.endpoint_data()))
+    {
+        default_datawriter_qos_.endpoint_data() = qos.endpoint_data();
+    }
+    if (!(default_datawriter_qos_.writer_resources() == qos.writer_resources()))
+    {
+        default_datawriter_qos_.writer_resources() = qos.writer_resources();
+    }
+    if (!(default_datawriter_qos_.throughput_controller() == qos.throughput_controller()))
+    {
+        default_datawriter_qos_.throughput_controller() = qos.throughput_controller();
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
-const fastrtps::WriterQos& PublisherImpl::get_default_datawriter_qos() const
+const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const
 {
     return default_datawriter_qos_;
 }

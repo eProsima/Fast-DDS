@@ -52,7 +52,7 @@ DataWriterImpl::DataWriterImpl(
         TypeSupport type,
         const TopicAttributes& topic_att,
         const WriterAttributes& att,
-        const WriterQos& qos,
+        const WriterQos& /*qos*/,
         const MemoryManagementPolicy_t memory_policy,
         DataWriterListener* listen )
     : publisher_(p)
@@ -60,7 +60,8 @@ DataWriterImpl::DataWriterImpl(
     , type_(type)
     , topic_att_(topic_att)
     , w_att_(att)
-    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
+    //TODO: Uncomment when WriterQos is replaced by DataWriterQos
+    //, qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
     , history_(topic_att_, type_->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
@@ -287,7 +288,7 @@ bool DataWriterImpl::perform_create_new_change(
                 // Fragment the data.
                 // Set the fragment size to the cachechange.
                 ch->setFragmentSize(static_cast<uint16_t>(
-                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
+                            (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
             }
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))

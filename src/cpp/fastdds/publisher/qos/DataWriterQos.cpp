@@ -23,31 +23,31 @@ using namespace eprosima::fastdds::dds;
 
 const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
-/* TODO: Implement this method
-   void DataWriterQos::setQos(
-        const DataWriterQos& qos,
-        bool first_time)
-   {
-    //TODO: Implement this function
-    (void)qos;
-    (void)first_time;
-   }
- */
-
-/* TODO: Implement this method
-   bool DataWriterQos::checkQos() const
-   {
-    //TODO: Implement this function
+bool DataWriterQos::check_qos() const
+{
+    if (durability_.kind == PERSISTENT_DURABILITY_QOS)
+    {
+        logError(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
+        return false;
+    }
+    if (destination_order_.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+    {
+        logError(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return false;
+    }
+    if (reliability_.kind == BEST_EFFORT_RELIABILITY_QOS && ownership_.kind == EXCLUSIVE_OWNERSHIP_QOS)
+    {
+        logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
+        return false;
+    }
+    if (liveliness_.kind == AUTOMATIC_LIVELINESS_QOS || liveliness_.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        if (liveliness_.lease_duration < fastrtps::c_TimeInfinite &&
+                liveliness_.lease_duration <= liveliness_.announcement_period)
+        {
+            logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
+            return false;
+        }
+    }
     return true;
-   }
- */
-
-/* TODO: Implement this method
-   bool DataWriterQos::canQosBeUpdated(
-        const DataWriterQos& qos) const
-   {
-    //TODO: Implement this function
-    (void)qos;
-    return true;
-   }
- */
+}

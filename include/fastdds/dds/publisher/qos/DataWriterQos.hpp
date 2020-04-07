@@ -87,6 +87,8 @@ public:
                (this->writer_data_lifecycle_ == b.writer_data_lifecycle());
     }
 
+    RTPS_DllAPI bool check_qos() const;
+
     /**
      * Getter for DurabilityQosPolicy
      * @return DurabilityQosPolicy reference
@@ -505,6 +507,202 @@ public:
             const WriterDataLifecycleQosPolicy& writer_data_lifecycle)
     {
         writer_data_lifecycle_ = writer_data_lifecycle;
+    }
+
+    /**
+     * Getter for PublishModeQosPolicy
+     * @return PublishModeQosPolicy reference
+     */
+    PublishModeQosPolicy& publish_mode()
+    {
+        return publish_mode_;
+    }
+
+    /**
+     * Getter for PublishModeQosPolicy
+     * @return PublishModeQosPolicy reference
+     */
+    const PublishModeQosPolicy& publish_mode() const
+    {
+        return publish_mode_;
+    }
+
+    /**
+     * Setter for PublishModeQosPolicy
+     * @param publish_mode
+     */
+    void publish_mode(
+            const PublishModeQosPolicy& publish_mode)
+    {
+        publish_mode_ = publish_mode;
+    }
+
+    /**
+     * Getter for DataRepresentationQosPolicy
+     * @return DataRepresentationQosPolicy reference
+     */
+    DataRepresentationQosPolicy& representation()
+    {
+        return representation_;
+    }
+
+    /**
+     * Getter for DataRepresentationQosPolicy
+     * @return DataRepresentationQosPolicy reference
+     */
+    const DataRepresentationQosPolicy& representation() const
+    {
+        return representation_;
+    }
+
+    /**
+     * Setter for DataRepresentationQosPolicy
+     * @param representation
+     */
+    void representation(
+            const DataRepresentationQosPolicy& representation)
+    {
+        representation_ = representation;
+    }
+
+    /**
+     * Getter for PropertyPolicyQos
+     * @return PropertyPolicyQos reference
+     */
+    PropertyPolicyQos& properties()
+    {
+        return properties_;
+    }
+
+    /**
+     * Getter for PropertyPolicyQos
+     * @return PropertyPolicyQos reference
+     */
+    const PropertyPolicyQos& properties() const
+    {
+        return properties_;
+    }
+
+    /**
+     * Setter for PropertyPolicyQos
+     * @param properties
+     */
+    void properties(
+            const PropertyPolicyQos& properties)
+    {
+        properties_ = properties;
+    }
+
+    /**
+     * Getter for RTPSReliableWriterQos
+     * @return RTPSReliableWriterQos reference
+     */
+    RTPSReliableWriterQos& reliable_writer_data()
+    {
+        return reliable_writer_data_;
+    }
+
+    /**
+     * Getter for RTPSReliableWriterQos
+     * @return RTPSReliableWriterQos reference
+     */
+    const RTPSReliableWriterQos& reliable_writer_data() const
+    {
+        return reliable_writer_data_;
+    }
+
+    /**
+     * Setter for RTPSReliableWriterQos
+     * @param reliable_writer_data
+     */
+    void reliable_writer_data(
+            const RTPSReliableWriterQos& reliable_writer_data)
+    {
+        reliable_writer_data_ = reliable_writer_data;
+    }
+
+    /**
+     * Getter for RTPSEndpointQos
+     * @return RTPSEndpointQos reference
+     */
+    RTPSEndpointQos& endpoint_data()
+    {
+        return endpoint_data_;
+    }
+
+    /**
+     * Getter for RTPSEndpointQos
+     * @return RTPSEndpointQos reference
+     */
+    const RTPSEndpointQos& endpoint_data() const
+    {
+        return endpoint_data_;
+    }
+
+    /**
+     * Setter for RTPSEndpointQos
+     * @param endpoint_data
+     */
+    void endpoint_data(
+            const RTPSEndpointQos& endpoint_data)
+    {
+        endpoint_data_ = endpoint_data;
+    }
+
+    /**
+     * Getter for WriterResourceLimitsQos
+     * @return WriterResourceLimitsQos reference
+     */
+    WriterResourceLimitsQos& writer_resources()
+    {
+        return writer_resources_;
+    }
+
+    /**
+     * Getter for WriterResourceLimitsQos
+     * @return WriterResourceLimitsQos reference
+     */
+    const WriterResourceLimitsQos& writer_resources() const
+    {
+        return writer_resources_;
+    }
+
+    /**
+     * Setter for WriterResourceLimitsQos
+     * @param writer_resources
+     */
+    void writer_resources(
+            const WriterResourceLimitsQos& writer_resources)
+    {
+        writer_resources_ = writer_resources;
+    }
+
+    /**
+     * Getter for ThroughputControllerDescriptor
+     * @return ThroughputControllerDescriptor reference
+     */
+    fastrtps::rtps::ThroughputControllerDescriptor& throughput_controller()
+    {
+        return throughput_controller_;
+    }
+
+    /**
+     * Getter for ThroughputControllerDescriptor
+     * @return ThroughputControllerDescriptor reference
+     */
+    const fastrtps::rtps::ThroughputControllerDescriptor& throughput_controller() const
+    {
+        return throughput_controller_;
+    }
+
+    /**
+     * Setter for ThroughputControllerDescriptor
+     * @param throughput_controller
+     */
+    void throughput_controller(
+            const fastrtps::rtps::ThroughputControllerDescriptor& throughput_controller)
+    {
+        throughput_controller_ = throughput_controller;
     }
 
 private:
