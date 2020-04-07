@@ -93,6 +93,15 @@ public:
     }
 
     /**
+     * Getter for TopicDataQosPolicy
+     * @return TopicDataQos reference
+     */
+    TopicDataQosPolicy& topic_data()
+    {
+        return topic_data_;
+    }
+
+    /**
      * Setter for TopicDataQosPolicy
      * @param value
      */
@@ -108,6 +117,15 @@ public:
      * @return DurabilityQos reference
      */
     const DurabilityQosPolicy& durability() const
+    {
+        return durability_;
+    }
+
+    /**
+     * Getter for DurabilityQosPolicy
+     * @return DurabilityQos reference
+     */
+    DurabilityQosPolicy& durability()
     {
         return durability_;
     }
@@ -133,6 +151,15 @@ public:
     }
 
     /**
+     * Getter for DurabilityServiceQosPolicy
+     * @return DurabilityServiceQos reference
+     */
+    DurabilityServiceQosPolicy& durability_service()
+    {
+        return durability_service_;
+    }
+
+    /**
      * Setter for DurabilityServiceQosPolicy
      * @param durability_service
      */
@@ -148,6 +175,15 @@ public:
      * @return DeadlineQos reference
      */
     const DeadlineQosPolicy& deadline() const
+    {
+        return deadline_;
+    }
+
+    /**
+     * Getter for DeadlineQosPolicy
+     * @return DeadlineQos reference
+     */
+    DeadlineQosPolicy& deadline()
     {
         return deadline_;
     }
@@ -173,6 +209,15 @@ public:
     }
 
     /**
+     * Getter for LatencyBudgetQosPolicy
+     * @return LatencyBudgetQos reference
+     */
+    LatencyBudgetQosPolicy& latency_budget()
+    {
+        return latency_budget_;
+    }
+
+    /**
      * Setter for LatencyBudgetQosPolicy
      * @param latency_budget
      */
@@ -188,6 +233,15 @@ public:
      * @return LivelinessQos reference
      */
     const LivelinessQosPolicy& liveliness() const
+    {
+        return liveliness_;
+    }
+
+    /**
+     * Getter for LivelinessQosPolicy
+     * @return LivelinessQos reference
+     */
+    LivelinessQosPolicy& liveliness()
     {
         return liveliness_;
     }
@@ -213,6 +267,15 @@ public:
     }
 
     /**
+     * Getter for ReliabilityQosPolicy
+     * @return ReliabilityQos reference
+     */
+    ReliabilityQosPolicy& reliability()
+    {
+        return reliability_;
+    }
+
+    /**
      * Setter for ReliabilityQosPolicy
      * @param reliability
      */
@@ -228,6 +291,15 @@ public:
      * @return DestinationOrderQos reference
      */
     const DestinationOrderQosPolicy& destination_order() const
+    {
+        return destination_order_;
+    }
+
+    /**
+     * Getter for DestinationOrderQosPolicy
+     * @return DestinationOrderQos reference
+     */
+    DestinationOrderQosPolicy& destination_order()
     {
         return destination_order_;
     }
@@ -253,6 +325,15 @@ public:
     }
 
     /**
+     * Getter for HistoryQosPolicy
+     * @return HistoryQos reference
+     */
+    HistoryQosPolicy& history()
+    {
+        return history_;
+    }
+
+    /**
      * Setter for HistoryQosPolicy
      * @param history
      */
@@ -268,6 +349,15 @@ public:
      * @return ResourceLimitsQos reference
      */
     const ResourceLimitsQosPolicy& resource_limits() const
+    {
+        return resource_limits_;
+    }
+
+    /**
+     * Getter for ResourceLimitsQosPolicy
+     * @return ResourceLimitsQos reference
+     */
+    ResourceLimitsQosPolicy& resource_limits()
     {
         return resource_limits_;
     }
@@ -293,6 +383,15 @@ public:
     }
 
     /**
+     * Getter for TransportPriorityQosPolicy
+     * @return TransportPriorityQos reference
+     */
+    TransportPriorityQosPolicy& transport_priority()
+    {
+        return transport_priority_;
+    }
+
+    /**
      * Setter for TransportPriorityQosPolicy
      * @param transport_priority
      */
@@ -313,6 +412,15 @@ public:
     }
 
     /**
+     * Getter for LifespanQosPolicy
+     * @return LifespanQos reference
+     */
+    LifespanQosPolicy& lifespan()
+    {
+        return lifespan_;
+    }
+
+    /**
      * Setter for LifespanQosPolicy
      * @param lifespan
      */
@@ -328,6 +436,15 @@ public:
      * @return OwnershipQos reference
      */
     const OwnershipQosPolicy& ownership() const
+    {
+        return ownership_;
+    }
+
+    /**
+     * Getter for OwnershipQosPolicy
+     * @return OwnershipQos reference
+     */
+    OwnershipQosPolicy& ownership()
     {
         return ownership_;
     }
