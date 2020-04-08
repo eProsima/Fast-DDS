@@ -33,6 +33,8 @@ namespace dds {
 
 class DomainParticipant;
 class TopicListener;
+class DomainParticipantImpl;
+class TopicImpl;
 
 /**
  * Class TopicDescription, represents the fact that both publications
