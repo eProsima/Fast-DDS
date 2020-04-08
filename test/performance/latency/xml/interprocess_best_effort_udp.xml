@@ -12,10 +12,8 @@
         </transport_descriptors>	
         <!-- PUBLISHER -->
         <participant profile_name="pub_participant_profile">
+            <domainId>231</domainId>
             <rtps>
-                <builtin>
-                    <domainId>231</domainId>
-                </builtin>
                 <name>latency_test_publisher</name>
                 <useBuiltinTransports>false</useBuiltinTransports>
                 <userTransports>
@@ -56,10 +54,8 @@
 
         <!-- SUBSCRIBER -->
         <participant profile_name="sub_participant_profile">
+            <domainId>231</domainId>
             <rtps>
-                <builtin>
-                    <domainId>231</domainId>
-                </builtin>
                 <name>latency_test_subscriber</name>
                 <useBuiltinTransports>false</useBuiltinTransports>
                 <userTransports>
