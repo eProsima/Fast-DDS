@@ -92,6 +92,15 @@ void TopicImpl::set_qos(
     // Topic Qos is only used to create other Qos, so it can always be updated
 }
 
+bool TopicImpl::can_qos_be_updated(
+        const TopicQos& to,
+        const TopicQos& from)
+{
+    (void)to;
+    (void)from;
+
+    return true;
+}
 
 const TopicQos& TopicImpl::get_qos() const
 {
@@ -107,7 +116,10 @@ ReturnCode_t TopicImpl::set_qos(
         return ret_val;
     }
 
-    // Topic qos can always be updated
+    if (!can_qos_be_updated(qos_, qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
 
     set_qos(qos_, qos, false);
     return ReturnCode_t::RETCODE_OK;

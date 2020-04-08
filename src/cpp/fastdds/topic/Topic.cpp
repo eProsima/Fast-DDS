@@ -65,9 +65,17 @@ const TopicListener* Topic::get_listener() const
 }
 
 ReturnCode_t Topic::set_listener(
-        TopicListener* listener)
+        TopicListener* listener,
+        const StatusMask& mask)
 {
-    return impl_->set_listener(listener);
+    TopicListener* value = mask.is_active(mask.inconsistent_topic()) ? listener : nullptr;
+    ReturnCode_t ret_val = impl_->set_listener(value);
+    if (ret_val == ReturnCode_t::RETCODE_OK)
+    {
+        status_mask_ = mask;
+    }
+
+    return ret_val;
 }
 
 DomainParticipant* Topic::get_participant() const

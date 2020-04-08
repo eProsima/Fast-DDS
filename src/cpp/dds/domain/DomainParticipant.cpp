@@ -170,9 +170,14 @@ dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
 DomainParticipant& DomainParticipant::default_topic_qos(
         const dds::topic::qos::TopicQos& qos)
 {
-    if (this->delegate()->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    ReturnCode_t ret_code = this->delegate()->set_default_topic_qos(qos);
+    if (ret_code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (ret_code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on TopicQos");
     }
     return *this;
 }

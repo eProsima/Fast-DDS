@@ -103,7 +103,8 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
-            TopicListener* listener);
+            TopicListener* listener,
+            const StatusMask& mask = StatusMask::all());
 
 private:
 

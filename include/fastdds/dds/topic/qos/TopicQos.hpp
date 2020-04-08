@@ -86,7 +86,6 @@ public:
             const TopicDataQosPolicy& value)
     {
         topic_data_ = value;
-        topic_data_.hasChanged = true;
     }
 
     /**
@@ -115,7 +114,6 @@ public:
             const DurabilityQosPolicy& durability)
     {
         durability_ = durability;
-        durability_.hasChanged = true;
     }
 
     /**
@@ -144,7 +142,6 @@ public:
             const DurabilityServiceQosPolicy& durability_service)
     {
         durability_service_ = durability_service;
-        durability_service_.hasChanged = true;
     }
 
     /**
@@ -173,7 +170,6 @@ public:
             const DeadlineQosPolicy& deadline)
     {
         deadline_ = deadline;
-        deadline_.hasChanged = true;
     }
 
     /**
@@ -202,7 +198,6 @@ public:
             const LatencyBudgetQosPolicy& latency_budget)
     {
         latency_budget_ = latency_budget;
-        latency_budget_.hasChanged = true;
     }
 
     /**
@@ -231,7 +226,6 @@ public:
             const LivelinessQosPolicy& liveliness)
     {
         liveliness_ = liveliness;
-        liveliness_.hasChanged = true;
     }
 
     /**
@@ -260,7 +254,6 @@ public:
             const ReliabilityQosPolicy& reliability)
     {
         reliability_ = reliability;
-        reliability_.hasChanged = true;
     }
 
     /**
@@ -289,7 +282,6 @@ public:
             const DestinationOrderQosPolicy& destination_order)
     {
         destination_order_ = destination_order;
-        destination_order_.hasChanged = true;
     }
 
     /**
@@ -318,7 +310,6 @@ public:
             const HistoryQosPolicy& history)
     {
         history_ = history;
-        history_.hasChanged = true;
     }
 
     /**
@@ -347,7 +338,6 @@ public:
             const ResourceLimitsQosPolicy& resource_limits)
     {
         resource_limits_ = resource_limits;
-        resource_limits_.hasChanged = true;
     }
 
     /**
@@ -376,7 +366,6 @@ public:
             const TransportPriorityQosPolicy& transport_priority)
     {
         transport_priority_ = transport_priority;
-        transport_priority_.hasChanged = true;
     }
 
     /**
@@ -405,7 +394,6 @@ public:
             const LifespanQosPolicy& lifespan)
     {
         lifespan_ = lifespan;
-        lifespan_.hasChanged = true;
     }
 
     /**
@@ -434,7 +422,6 @@ public:
             const OwnershipQosPolicy& ownership)
     {
         ownership_ = ownership;
-        ownership_.hasChanged = true;
     }
 
 private:

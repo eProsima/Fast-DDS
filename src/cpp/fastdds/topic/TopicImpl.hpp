@@ -52,6 +52,10 @@ public:
     static ReturnCode_t check_qos(
             const TopicQos& qos);
 
+    static bool can_qos_be_updated(
+            const TopicQos& to,
+            const TopicQos& from);
+
     static void set_qos(
             TopicQos& to,
             const TopicQos& from,
