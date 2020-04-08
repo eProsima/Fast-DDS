@@ -89,6 +89,8 @@ set(${PROJECT_NAME}_source_files
     fastdds/publisher/DataWriter.cpp
     fastdds/subscriber/DataReaderImpl.cpp
     fastdds/publisher/DataWriterImpl.cpp
+    fastdds/topic/Topic.cpp
+    fastdds/topic/TopicImpl.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/topic/qos/TopicQos.cpp
     fastdds/publisher/qos/DataWriterQos.cpp
