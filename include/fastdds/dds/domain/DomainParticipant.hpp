@@ -314,7 +314,7 @@ public:
      * operation.
      *
      * The values retrieved get_default_topic_qos will match the set of values specified on the last successful
-     * call to set_default_topic_qos, or else, if the call was never made.
+     * call to set_default_topic_qos, or else, TOPIC_QOS_DEFAULT if the call was never made.
      * @return Current default topic qos.
      */
     RTPS_DllAPI const TopicQos& get_default_topic_qos() const;
@@ -325,7 +325,7 @@ public:
      * operation.
      *
      * The values retrieved get_default_topic_qos will match the set of values specified on the last successful
-     * call to set_default_topic_qos, or else, if the call was never made.
+     * call to set_default_topic_qos, or else, TOPIC_QOS_DEFAULT if the call was never made.
      * @param qos
      * @return Always true.
      */
