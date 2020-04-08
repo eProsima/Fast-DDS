@@ -36,7 +36,7 @@ LogTopic::LogTopic()
 LogTopic::~LogTopic()
 {
     stop();
-    queue_.push(std::move(BuiltinLoggingTypePtr(nullptr)));
+    queue_.push(BuiltinLoggingTypePtr(nullptr));
     if (thread_.joinable())
     {
         thread_.join();
