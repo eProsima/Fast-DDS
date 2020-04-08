@@ -49,6 +49,9 @@ class TopicImpl
 
 public:
 
+    static ReturnCode_t check_qos(
+            const TopicQos& qos);
+
     virtual ~TopicImpl();
 
     const TopicQos& get_qos() const;

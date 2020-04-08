@@ -100,35 +100,6 @@ void TopicQos::set_qos(
     }
 }
 
-bool TopicQos::check_qos() const
-{
-    if (durability_.kind == PERSISTENT_DURABILITY_QOS)
-    {
-        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return false;
-    }
-    if (destination_order_.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
-    {
-        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
-        return false;
-    }
-    if (reliability_.kind == BEST_EFFORT_RELIABILITY_QOS && ownership_.kind == EXCLUSIVE_OWNERSHIP_QOS)
-    {
-        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
-        return false;
-    }
-    if (liveliness_.kind == AUTOMATIC_LIVELINESS_QOS || liveliness_.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-    {
-        if (liveliness_.lease_duration < eprosima::fastrtps::c_TimeInfinite &&
-                liveliness_.lease_duration <= liveliness_.announcement_period)
-        {
-            logError(DDS_QOS_CHECK, "DATAWRITERQOS: LeaseDuration <= announcement period.");
-            return false;
-        }
-    }
-    return true;
-}
-
 bool TopicQos::can_qos_be_updated(
         const TopicQos& qos) const
 {

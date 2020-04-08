@@ -28,6 +28,8 @@
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
+#include <fastdds/topic/TopicImpl.hpp>
+
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -410,13 +412,17 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
     if (&qos == &TOPIC_QOS_DEFAULT)
     {
         default_topic_qos_.set_qos(TOPIC_QOS_DEFAULT, true);
-    }
-    else if (qos.check_qos())
-    {
-        default_topic_qos_.set_qos(qos, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+
+    ReturnCode_t ret_val = TopicImpl::check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
+    }
+
+    default_topic_qos_.set_qos(qos, true);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const TopicQos& DomainParticipantImpl::get_default_topic_qos() const

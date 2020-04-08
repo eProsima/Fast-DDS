@@ -70,12 +70,6 @@ public:
             bool first_time);
 
     /**
-     * Check if the Qos values are compatible between each other.
-     * @return True if correct.
-     */
-    RTPS_DllAPI bool check_qos() const;
-
-    /**
      * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.

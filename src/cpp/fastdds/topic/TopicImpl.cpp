@@ -49,6 +49,38 @@ TopicImpl::~TopicImpl()
     delete user_topic_;
 }
 
+ReturnCode_t TopicImpl::check_qos(
+        const TopicQos& qos)
+{
+    if (PERSISTENT_DURABILITY_QOS == qos.durability().kind)
+    {
+        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
+    if (BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS == qos.destination_order().kind)
+    {
+        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
+    if (BEST_EFFORT_RELIABILITY_QOS == qos.reliability().kind &&
+            EXCLUSIVE_OWNERSHIP_QOS == qos.ownership().kind)
+    {
+        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if (AUTOMATIC_LIVELINESS_QOS == qos.liveliness().kind ||
+            MANUAL_BY_PARTICIPANT_LIVELINESS_QOS == qos.liveliness().kind)
+    {
+        if (qos.liveliness().lease_duration < eprosima::fastrtps::c_TimeInfinite &&
+                qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
+        {
+            logError(DDS_QOS_CHECK, "lease_duration <= announcement period.");
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
 const TopicQos& TopicImpl::get_qos() const
 {
     return qos_;
@@ -57,16 +89,18 @@ const TopicQos& TopicImpl::get_qos() const
 ReturnCode_t TopicImpl::set_qos(
         const TopicQos& qos)
 {
-    if (qos.check_qos())
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
     {
-        if (!qos.can_qos_be_updated(qos))
-        {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-        }
-        qos_.set_qos(qos, false);
-        return ReturnCode_t::RETCODE_OK;
+        return ret_val;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+
+    if (!qos.can_qos_be_updated(qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    qos_.set_qos(qos, false);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const TopicListener* TopicImpl::get_listener() const
