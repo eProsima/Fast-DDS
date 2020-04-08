@@ -141,10 +141,14 @@ dds::sub::qos::SubscriberQos DomainParticipant::default_subscriber_qos() const
 DomainParticipant& DomainParticipant::default_subscriber_qos(
         const ::dds::sub::qos::SubscriberQos& qos)
 {
-    if (this->delegate()->set_default_subscriber_qos(qos) ==
-            ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    ReturnCode_t result = delegate()->set_default_subscriber_qos(qos);
+    if (result == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    if (result == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported Qos");
     }
     return *this;
 }

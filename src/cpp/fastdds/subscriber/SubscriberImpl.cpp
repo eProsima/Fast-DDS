@@ -90,16 +90,17 @@ const SubscriberQos& SubscriberImpl::get_qos() const
 ReturnCode_t SubscriberImpl::set_qos(
         const SubscriberQos& qos)
 {
-    if (!check_qos(qos))
+    ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
+    if (!check_result)
     {
-        if (!can_qos_be_updated(qos_, qos))
-        {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-        }
-        set_qos(qos_, qos, false);
-        return ReturnCode_t::RETCODE_OK;
+        return check_result;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    if (!can_qos_be_updated(qos_, qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    set_qos(qos_, qos, false);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const SubscriberListener* SubscriberImpl::get_listener() const
@@ -484,15 +485,14 @@ void SubscriberImpl::set_qos(
     if (to.entity_factory().autoenable_created_entities != from.entity_factory().autoenable_created_entities)
     {
         to.entity_factory() = from.entity_factory();
-        to.entity_factory().hasChanged = true;
     }
 }
 
-bool SubscriberImpl::check_qos(
+ReturnCode_t SubscriberImpl::check_qos(
         const SubscriberQos& qos)
 {
     (void) qos;
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool SubscriberImpl::can_qos_be_updated(

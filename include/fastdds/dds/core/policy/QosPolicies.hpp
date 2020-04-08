@@ -108,7 +108,7 @@ protected:
     bool send_always_;
 };
 
-class EntityFactoryQosPolicy : public QosPolicy
+class EntityFactoryQosPolicy
 {
 public:
 
@@ -138,7 +138,7 @@ public:
             (this->autoenable_created_entities == b.autoenable_created_entities);
     }
 
-    inline void clear() override
+    inline void clear()
     {
         EntityFactoryQosPolicy reset = EntityFactoryQosPolicy();
         std::swap(*this, reset);
