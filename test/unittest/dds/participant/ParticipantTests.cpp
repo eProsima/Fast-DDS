@@ -31,6 +31,14 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    ASSERT_NE(factory, nullptr);
+    ASSERT_EQ(factory, DomainParticipantFactory::get_instance());
+}
+
 TEST(ParticipantTests, CreateDomainParticipant)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
@@ -126,14 +134,6 @@ TEST(ParticipantTests, CreatePSMSubscriber)
     subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_NE(subscriber, ::dds::core::null);
-}
-
-TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
-{
-    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-
-    ASSERT_NE(factory, nullptr);
-    ASSERT_EQ(factory, DomainParticipantFactory::get_instance());
 }
 
 } // namespace dds
