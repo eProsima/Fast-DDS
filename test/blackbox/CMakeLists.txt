@@ -136,6 +136,10 @@ macro(add_blackbox_gtest)
     endif()
 endmacro()
 
+option(RTPS_API_TESTS "Enable tests using RTPS API" ON)
+option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" ON)
+option(FASTDDS_PIM_API_TESTS "Enable tests using FastRTPS API" OFF)
+
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
@@ -198,18 +202,40 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader.xml.in
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
 
-        add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
-        target_compile_definitions(BlackboxTests PRIVATE
-            $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
-            )
-        target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
-            ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
-            "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
-            "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
-            "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
-            )
+        if(FASTRTPS_API_TESTS)
+            add_executable(BlackboxTests_FastRTPS ${BLACKBOXTESTS_SOURCE})
+            target_compile_definitions(BlackboxTests_FastRTPS PRIVATE
+                $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+                )
+            target_include_directories(BlackboxTests_FastRTPS PRIVATE
+                api/fastrtps_deprecated
+                ${GTEST_INCLUDE_DIRS})
+            target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+            add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
+                ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+                "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+                "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+                "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+                )
+        endif(FASTRTPS_API_TESTS)
+
+        if(FASTDDS_PIM_API_TESTS)
+            add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_SOURCE})
+            target_compile_definitions(BlackboxTests_DDS_PIM PRIVATE
+                $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+                )
+            target_include_directories(BlackboxTests_DDS_PIM PRIVATE
+                api/dds-pim
+                ${GTEST_INCLUDE_DIRS})
+            target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+            add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
+                ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+                "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+                "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+                "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+                )
+        endif(FASTDDS_PIM_API_TESTS)
     endif()
 endif()
