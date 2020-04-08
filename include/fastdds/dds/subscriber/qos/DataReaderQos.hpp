@@ -35,12 +35,11 @@ namespace dds {
 
 using TopicAttributesQos = fastrtps::TopicAttributes;
 
-class RTPSReliableReaderQos : public QosPolicy
+class RTPSReliableReaderQos
 {
 public:
 
     RTPS_DllAPI RTPSReliableReaderQos()
-        : QosPolicy(false)
     {
     }
 
@@ -50,11 +49,10 @@ public:
             const RTPSReliableReaderQos& b) const
     {
         return (this->reader_times == b.reader_times) &&
-               (this->disablePositiveACKs == b.disablePositiveACKs) &&
-               QosPolicy::operator ==(b);
+               (this->disable_positive_ACKs == b.disable_positive_ACKs);
     }
 
-    inline void clear() override
+    inline void clear()
     {
         RTPSReliableReaderQos reset = RTPSReliableReaderQos();
         std::swap(*this, reset);
@@ -68,66 +66,14 @@ public:
     /*!
      * @brief Control the sending of positive ACKs
      */
-    DisablePositiveACKsQosPolicy disablePositiveACKs;
+    DisablePositiveACKsQosPolicy disable_positive_ACKs;
 };
 
-class RTPSEndpointQos : public QosPolicy
-{
-public:
-
-    RTPS_DllAPI RTPSEndpointQos()
-        : QosPolicy(false)
-        , historyMemoryPolicy(fastrtps::rtps::PREALLOCATED_MEMORY_MODE)
-        , m_userDefinedID(-1)
-        , m_entityID(-1)
-    {
-    }
-
-    virtual RTPS_DllAPI ~RTPSEndpointQos() = default;
-
-    bool operator ==(
-            const RTPSEndpointQos& b) const
-    {
-        return (this->unicastLocatorList == b.unicastLocatorList) &&
-                (this->multicastLocatorList == b.multicastLocatorList) &&
-                (this->remoteLocatorList == b.remoteLocatorList) &&
-                (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
-                (this->m_userDefinedID == b.m_userDefinedID) &&
-                (this->m_entityID == b.m_entityID) &&
-               QosPolicy::operator ==(b);
-    }
-
-    inline void clear() override
-    {
-        RTPSEndpointQos reset = RTPSEndpointQos();
-        std::swap(*this, reset);
-    }
-
-    //!Unicast locator list.
-    fastrtps::rtps::LocatorList_t unicastLocatorList;
-
-    //!Multicast locator list.
-    fastrtps::rtps::LocatorList_t multicastLocatorList;
-
-    //!Remote locator list.
-    fastrtps::rtps::LocatorList_t remoteLocatorList;
-
-    //!Underlying History memory policy (Extension).
-    fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy;
-
-    //!User Defined ID, used for StaticEndpointDiscovery (Extension).
-    int16_t m_userDefinedID;
-
-    //!Entity ID, to specify the EntityID of the enpoint (Extension).
-    int16_t m_entityID;
-};
-
-class ReaderResourceLimitsQos : public QosPolicy
+class ReaderResourceLimitsQos
 {
 public:
 
     RTPS_DllAPI ReaderResourceLimitsQos()
-        : QosPolicy(false)
     {
     }
 
@@ -136,11 +82,10 @@ public:
     bool operator ==(
             const ReaderResourceLimitsQos& b) const
     {
-        return (this->matched_publisher_allocation == b.matched_publisher_allocation) &&
-               QosPolicy::operator ==(b);
+        return (this->matched_publisher_allocation == b.matched_publisher_allocation);
     }
 
-    inline void clear() override
+    inline void clear()
     {
         ReaderResourceLimitsQos reset = ReaderResourceLimitsQos();
         std::swap(*this, reset);
@@ -194,7 +139,7 @@ class DataReaderQos
 public:
 
     DataReaderQos()
-        : expectsInlineQos_(false)
+        : expects_inline_qos_(false)
     {
     }
 
@@ -214,11 +159,11 @@ public:
                (time_based_filter_ == b.time_based_filter()) &&
                (reader_data_lifecycle_ == b.reader_data_lifecycle()) &&
                (lifespan_ == b.lifespan()) &&
-               (topicData_ == b.topicData()) &&
-               (durabilityService_ == b.durabilityService()) &&
+               (topic_data_ == b.topicData()) &&
+               (durability_service_ == b.durabilityService()) &&
                (reliable_reader_qos_ == b.reliable_reader_qos()) &&
                (type_consistency_ == b.type_consistency()) &&
-               (expectsInlineQos_ == b.expectsInlineQos()) &&
+               (expects_inline_qos_ == b.expectsInlineQos()) &&
                (properties_ == b.properties()) &&
                (enpoint_ == b.enpoint()) &&
                (reader_resource_limits_ == b.reader_resource_limits());
@@ -595,7 +540,7 @@ public:
      */
     TopicDataQosPolicy& topicData()
     {
-        return topicData_;
+        return topic_data_;
     }
 
     /**
@@ -604,7 +549,7 @@ public:
      */
     const TopicDataQosPolicy& topicData() const
     {
-        return topicData_;
+        return topic_data_;
     }
 
     /**
@@ -614,7 +559,7 @@ public:
     void topicData(
             const TopicDataQosPolicy& new_value)
     {
-        topicData_ = new_value;
+        topic_data_ = new_value;
     }
 
     /**
@@ -623,7 +568,7 @@ public:
      */
     DurabilityServiceQosPolicy& durabilityService()
     {
-        return durabilityService_;
+        return durability_service_;
     }
 
     /**
@@ -632,7 +577,7 @@ public:
      */
     const DurabilityServiceQosPolicy& durabilityService() const
     {
-        return durabilityService_;
+        return durability_service_;
     }
 
     /**
@@ -642,7 +587,7 @@ public:
     void durabilityService(
             const DurabilityServiceQosPolicy& new_value)
     {
-        durabilityService_ = new_value;
+        durability_service_ = new_value;
     }
 
     /**
@@ -707,7 +652,7 @@ public:
      */
     bool expectsInlineQos() const
     {
-        return expectsInlineQos_;
+        return expects_inline_qos_;
     }
 
     /**
@@ -717,7 +662,7 @@ public:
     void expectsInlineQos(
             bool new_value)
     {
-        expectsInlineQos_ = new_value;
+        expects_inline_qos_ = new_value;
     }
 
     /**
@@ -846,10 +791,10 @@ private:
     LifespanQosPolicy lifespan_;
 
     //!Topic Data Qos (Extension).
-    TopicDataQosPolicy topicData_;
+    TopicDataQosPolicy topic_data_;
 
     //!Durability Service Qos (Extension).
-    DurabilityServiceQosPolicy durabilityService_;
+    DurabilityServiceQosPolicy durability_service_;
 
     //!Reliable reader configuration (Extension)
     RTPSReliableReaderQos reliable_reader_qos_;
@@ -863,7 +808,7 @@ private:
     //TopicAttributesQos topic;
 
     //!Expects Inline QOS (Extension).
-    bool expectsInlineQos_;
+    bool expects_inline_qos_;
 
     //!Properties (Extension).
     PropertyPolicyQos properties_;

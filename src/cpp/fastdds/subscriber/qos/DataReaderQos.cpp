@@ -43,7 +43,7 @@ ReaderQos DataReaderQos::get_readerqos(
     qos.m_lifespan = lifespan();
     qos.m_topicData = topicData();
     qos.m_durabilityService = durabilityService();
-    qos.m_disablePositiveACKs = reliable_reader_qos().disablePositiveACKs;
+    qos.m_disablePositiveACKs = reliable_reader_qos().disable_positive_ACKs;
     qos.type_consistency = type_consistency().type_consistency;
     qos.representation = type_consistency().representation;
     return qos;

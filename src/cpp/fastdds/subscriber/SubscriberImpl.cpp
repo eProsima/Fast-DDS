@@ -145,22 +145,22 @@ DataReader* SubscriberImpl::create_datareader(
     ReaderAttributes ratt;
     ratt.endpoint.durabilityKind = qos.durability().durabilityKind();
     ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = qos.enpoint().multicastLocatorList;
+    ratt.endpoint.multicastLocatorList = qos.enpoint().multicast_locator_list;
     ratt.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = topic_att.topicKind;
-    ratt.endpoint.unicastLocatorList = qos.enpoint().unicastLocatorList;
-    ratt.endpoint.remoteLocatorList = qos.enpoint().remoteLocatorList;
+    ratt.endpoint.unicastLocatorList = qos.enpoint().unicast_locator_list;
+    ratt.endpoint.remoteLocatorList = qos.enpoint().remote_locator_list;
     ratt.expectsInlineQos = qos.expectsInlineQos();
     ratt.endpoint.properties = qos.properties();
 
-    if (qos.enpoint().m_entityID > 0)
+    if (qos.enpoint().entity_id > 0)
     {
-        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos.enpoint().m_entityID));
+        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos.enpoint().entity_id));
     }
 
-    if (qos.enpoint().m_userDefinedID > 0)
+    if (qos.enpoint().user_defined_id > 0)
     {
-        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.enpoint().m_userDefinedID));
+        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.enpoint().user_defined_id));
     }
 
     ratt.times = qos.reliable_reader_qos().reader_times;
@@ -182,7 +182,7 @@ DataReader* SubscriberImpl::create_datareader(
         property.value(std::move(partitions));
         ratt.endpoint.properties.properties().push_back(std::move(property));
     }
-    if (qos.reliable_reader_qos().disablePositiveACKs.enabled)
+    if (qos.reliable_reader_qos().disable_positive_ACKs.enabled)
     {
         ratt.disable_positive_acks = true;
     }
@@ -193,7 +193,7 @@ DataReader* SubscriberImpl::create_datareader(
         topic_att,
         ratt,
         qos,
-        qos.enpoint().historyMemoryPolicy,
+        qos.enpoint().history_memory_policy,
         listener);
 
     if (impl->reader_ == nullptr)
@@ -313,17 +313,14 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const DataReaderQos& qos)
 {
-    if (&qos == &DATAREADER_QOS_DEFAULT)
+    ReturnCode_t check_result = DataReaderImpl::check_qos(qos);
+    if (!check_result)
     {
-        DataReaderImpl::set_qos(default_datareader_qos_, DATAREADER_QOS_DEFAULT, true);
-        return ReturnCode_t::RETCODE_OK;
+        return check_result;
     }
-    else if (DataReaderImpl::check_qos(qos))
-    {
-        DataReaderImpl::set_qos(default_datareader_qos_, qos, true);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+
+    DataReaderImpl::set_qos(default_datareader_qos_, qos, true);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const DataReaderQos& SubscriberImpl::get_default_datareader_qos() const

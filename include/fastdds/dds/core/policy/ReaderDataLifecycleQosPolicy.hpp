@@ -30,12 +30,11 @@ namespace fastdds {
 namespace dds {
 
 //! @brief A struct storing the base status
-class ReaderDataLifecycleQosPolicy : public QosPolicy
+class ReaderDataLifecycleQosPolicy
 {
 public:
     ReaderDataLifecycleQosPolicy()
-        : QosPolicy(false)
-        , autopurge_no_writer_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        : autopurge_no_writer_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , autopurge_disposed_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {
     }
@@ -51,7 +50,7 @@ public:
                (this->autopurge_disposed_samples_delay == b.autopurge_disposed_samples_delay);
     }
 
-    inline void clear() override
+    inline void clear()
     {
         ReaderDataLifecycleQosPolicy reset = ReaderDataLifecycleQosPolicy();
         std::swap(*this, reset);

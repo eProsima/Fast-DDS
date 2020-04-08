@@ -131,7 +131,7 @@ ReturnCode_t DataReaderImpl::read_next_sample(
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
 #endif
@@ -148,7 +148,7 @@ ReturnCode_t DataReaderImpl::take_next_sample(
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
 #endif
@@ -180,9 +180,10 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
 ReturnCode_t DataReaderImpl::set_qos(
         const DataReaderQos& qos)
 {
-    if (!check_qos(qos))
+    ReturnCode_t check_result = check_qos(qos);
+    if (!check_result)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return check_result;
     }
     else if (!can_qos_be_updated(qos_, qos))
     {
@@ -627,24 +628,24 @@ TypeSupport DataReaderImpl::type()
     return type_;
 }
 
-bool DataReaderImpl::check_qos (const DataReaderQos& qos)
+ReturnCode_t DataReaderImpl::check_qos (const DataReaderQos& qos)
 {
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
     {
         logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return false;
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
         logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
-        return false;
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
     {
         logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
-        return false;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DataReaderImpl::can_qos_be_updated(
@@ -655,41 +656,41 @@ bool DataReaderImpl::can_qos_be_updated(
     if (!(to.resource_limits() == from.resource_limits()))
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "resource_limits cannot be changed after the creation of a subscriber.");
+        logWarning(DDS_QOS_CHECK, "resource_limits cannot be changed after the creation of a DataReader.");
     }
     if (to.history().kind != from.history().kind ||
             to.history().depth != from.history().depth)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "History cannot be changed after the creation of a subscriber.");
+        logWarning(DDS_QOS_CHECK, "History cannot be changed after the creation of a DataReader.");
     }
 
     if (to.durability().kind != from.durability().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a subscriber.");
+        logWarning(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a DataReader.");
     }
     if (to.liveliness().kind != from.liveliness().kind ||
             to.liveliness().lease_duration != from.liveliness().lease_duration ||
             to.liveliness().announcement_period != from.liveliness().announcement_period)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Liveliness cannot be changed after the creation of a subscriber.");
+        logWarning(DDS_QOS_CHECK, "Liveliness cannot be changed after the creation of a DataReader.");
     }
     if (to.reliability().kind != from.reliability().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a subscriber.");
+        logWarning(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a DataReader.");
     }
     if (to.ownership().kind != from.ownership().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a subscriber.");
+        logWarning(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a DataReader.");
     }
     if (to.destination_order().kind != from.destination_order().kind)
     {
         updatable = false;
-        logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a subscriber.");
+        logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataReader.");
     }
     return updatable;
 }
@@ -704,7 +705,7 @@ void DataReaderImpl::set_qos(
         to.durability() = from.durability();
         to.durability().hasChanged = true;
     }
-    if (first_time || to.deadline().period != from.deadline().period)
+    if (to.deadline().period != from.deadline().period)
     {
         to.deadline() = from.deadline();
         to.deadline().hasChanged = true;
@@ -729,7 +730,7 @@ void DataReaderImpl::set_qos(
         to.ownership() = from.ownership();
         to.ownership().hasChanged = true;
     }
-    if (to.destination_order().kind != from.destination_order().kind)
+    if (first_time && to.destination_order().kind != from.destination_order().kind)
     {
         to.destination_order() = from.destination_order();
         to.destination_order().hasChanged = true;
@@ -762,7 +763,6 @@ void DataReaderImpl::set_qos(
     if (first_time && !(to.reliable_reader_qos() == from.reliable_reader_qos()))
     {
         to.reliable_reader_qos() = from.reliable_reader_qos();
-        to.reliable_reader_qos().hasChanged = true;
     }
     if (first_time || !(to.type_consistency() == from.type_consistency()))
     {
@@ -783,7 +783,6 @@ void DataReaderImpl::set_qos(
     if (!(to.reader_data_lifecycle() == from.reader_data_lifecycle()))
     {
         to.reader_data_lifecycle() = from.reader_data_lifecycle();
-        to.reader_data_lifecycle().hasChanged = true;
     }
 
     if (to.expectsInlineQos() != from.expectsInlineQos())
@@ -791,21 +790,19 @@ void DataReaderImpl::set_qos(
         to.expectsInlineQos(from.expectsInlineQos());
     }
 
-    if (!(to.properties() == from.properties()))
+    if (first_time && !(to.properties() == from.properties()))
     {
         to.properties() = from.properties();
     }
 
-    if (!(to.enpoint() == from.enpoint()))
+    if (first_time && !(to.enpoint() == from.enpoint()))
     {
         to.enpoint() = from.enpoint();
-        to.enpoint().hasChanged = true;
     }
 
-    if (!(to.reader_resource_limits() == from.reader_resource_limits()))
+    if (first_time && !(to.reader_resource_limits() == from.reader_resource_limits()))
     {
         to.reader_resource_limits() = from.reader_resource_limits();
-        to.reader_resource_limits().hasChanged = true;
     }
 }
 

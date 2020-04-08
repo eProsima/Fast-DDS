@@ -915,7 +915,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName &data) = default;                                         \
+            const TClassName& data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -926,7 +926,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type &data)                                               \
+            const collection_type& data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
@@ -943,7 +943,7 @@ public:                                                                         
          * @return reference to the current object. \
          */                                                                            \
         TClassName& operator =(                                                            \
-            const TClassName &b) = default;                                            \
+            const TClassName& b) = default;                                            \
                                                                                        \
     };
 
@@ -2476,7 +2476,7 @@ public:
     //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
     int16_t user_defined_id;
 
-    //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    //!Entity ID, if the user wants to specify the EntityID of the enpoint, default value -1.
     int16_t entity_id;
 
     //!Underlying History memory policy
