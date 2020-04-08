@@ -49,6 +49,8 @@ public:
     static constexpr long NUM_LOG_LEVELS = 8;
 };
 
+constexpr long LoggingPluginTest::NUM_LOG_LEVELS;
+
 TEST_F(LoggingPluginTest, DefaultBehavior)
 {
     eprosima::fastrtps::rtps::security::SecurityException exception;
