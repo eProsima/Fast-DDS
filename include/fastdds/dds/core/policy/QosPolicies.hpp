@@ -914,7 +914,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName &data) = default;                                         \
+            const TClassName& data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -925,7 +925,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type &data)                                               \
+            const collection_type& data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
@@ -942,7 +942,7 @@ public:                                                                         
          * @return reference to the current object. \
          */                                                                            \
         TClassName& operator =(                                                            \
-            const TClassName &b) = default;                                            \
+            const TClassName& b) = default;                                            \
                                                                                        \
     };
 

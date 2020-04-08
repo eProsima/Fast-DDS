@@ -94,8 +94,6 @@ public:
                (this->throughput_controller_ == b.throughput_controller());
     }
 
-    RTPS_DllAPI bool check_qos() const;
-
     /**
      * Getter for DurabilityQosPolicy
      * @return DurabilityQosPolicy reference
@@ -780,6 +778,9 @@ private:
     //!Throughput controller
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller_;
 };
+
+bool check_qos(
+        const DataWriterQos& qos);
 
 extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
 

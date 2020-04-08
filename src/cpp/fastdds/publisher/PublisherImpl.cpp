@@ -24,6 +24,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -372,7 +373,7 @@ bool PublisherImpl::contains_entity(
 ReturnCode_t PublisherImpl::set_default_datawriter_qos(
         const DataWriterQos& qos)
 {
-    if (!qos.check_qos())
+    if (!check_qos(qos))
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
