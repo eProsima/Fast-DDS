@@ -84,9 +84,14 @@ Subscriber::~Subscriber()
 Subscriber& Subscriber::default_datareader_qos(
         const qos::DataReaderQos& drqos)
 {
-    if (delegate()->set_default_datareader_qos(drqos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    ReturnCode_t result = delegate()->set_default_datareader_qos(drqos);
+    if ( result == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    if ( result == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    {
+        throw dds::core::ImmutablePolicyError("Inmutable Qos");
     }
     return *this;
 }

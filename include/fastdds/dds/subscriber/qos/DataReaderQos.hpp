@@ -224,29 +224,6 @@ public:
                (reader_resource_limits_ == b.reader_resource_limits());
     }
 
-
-    /* Set Qos from another class
-     * @param qos Reference from a DataReaderQos object.
-     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-     */
-    RTPS_DllAPI void set_qos(
-            const DataReaderQos& qos,
-            bool first_time);
-
-
-    /* Check if the Qos values are compatible between each other.
-     * @return True if correct.
-     */
-    RTPS_DllAPI bool check_qos() const;
-
-
-    /* Check if the Qos can be update with the values provided. This method DOES NOT update anything.
-     * @param qos Reference to the new qos.
-     * @return True if they can be updated.
-     */
-    RTPS_DllAPI bool can_qos_be_updated(
-            const DataReaderQos& qos) const;
-
     RTPS_DllAPI ReaderQos get_readerqos(
             const SubscriberQos& pqos) const;
 

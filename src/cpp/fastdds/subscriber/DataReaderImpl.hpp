@@ -200,6 +200,31 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
+    /* Check whether values in the DataReaderQos are compatible among them or not
+     * @return True if correct.
+     */
+    static bool check_qos (const DataReaderQos& qos);
+
+    /* Check whether the DataReaderQos can be updated with the values provided. This method DOES NOT update anything.
+     * @param to Reference to the qos instance to be changed.
+     * @param from Reference to the qos instance with the new values.
+     * @return True if they can be updated.
+     */
+    static bool can_qos_be_updated(
+            const DataReaderQos& to,
+            const DataReaderQos& from);
+
+    /* Update a DataReaderQos with new values
+     * @param to Reference to the qos instance to be changed.
+     * @param from Reference to the qos instance with the new values.
+     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
+     */
+    static void set_qos(
+            DataReaderQos& to,
+            const DataReaderQos& from,
+            bool first_time);
+
+
 private:
 
     //!Subscriber

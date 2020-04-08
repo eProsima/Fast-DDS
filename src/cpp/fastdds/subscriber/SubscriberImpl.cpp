@@ -137,7 +137,7 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    if (!qos.check_qos() || !topic_att.checkQos())
+    if (!DataReaderImpl::check_qos(qos) || !topic_att.checkQos())
     {
         return nullptr;
     }
@@ -315,12 +315,12 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
 {
     if (&qos == &DATAREADER_QOS_DEFAULT)
     {
-        default_datareader_qos_.set_qos(DATAREADER_QOS_DEFAULT, true);
+        DataReaderImpl::set_qos(default_datareader_qos_, DATAREADER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (qos.check_qos())
+    else if (DataReaderImpl::check_qos(qos))
     {
-        default_datareader_qos_.set_qos(qos, true);
+        DataReaderImpl::set_qos(default_datareader_qos_, qos, true);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;

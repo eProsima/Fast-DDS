@@ -180,16 +180,17 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
 ReturnCode_t DataReaderImpl::set_qos(
         const DataReaderQos& qos)
 {
-    if (!qos.check_qos())
+    if (!check_qos(qos))
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    else if (!qos_.can_qos_be_updated(qos))
+    else if (!can_qos_be_updated(qos_, qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.set_qos(qos, false);
+    set_qos(qos_, qos, false);
+
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
     ReaderQos rqos = qos.get_readerqos(get_subscriber()->get_qos());
     subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
@@ -625,6 +626,189 @@ TypeSupport DataReaderImpl::type()
 {
     return type_;
 }
+
+bool DataReaderImpl::check_qos (const DataReaderQos& qos)
+{
+    if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
+    {
+        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
+        return false;
+    }
+    if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return false;
+    }
+    if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
+        return false;
+    }
+    return true;
+}
+
+bool DataReaderImpl::can_qos_be_updated(
+        const DataReaderQos& to,
+        const DataReaderQos& from)
+{
+    bool updatable = true;
+    if (!(to.resource_limits() == from.resource_limits()))
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "resource_limits cannot be changed after the creation of a subscriber.");
+    }
+    if (to.history().kind != from.history().kind ||
+            to.history().depth != from.history().depth)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "History cannot be changed after the creation of a subscriber.");
+    }
+
+    if (to.durability().kind != from.durability().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a subscriber.");
+    }
+    if (to.liveliness().kind != from.liveliness().kind ||
+            to.liveliness().lease_duration != from.liveliness().lease_duration ||
+            to.liveliness().announcement_period != from.liveliness().announcement_period)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness cannot be changed after the creation of a subscriber.");
+    }
+    if (to.reliability().kind != from.reliability().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a subscriber.");
+    }
+    if (to.ownership().kind != from.ownership().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a subscriber.");
+    }
+    if (to.destination_order().kind != from.destination_order().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a subscriber.");
+    }
+    return updatable;
+}
+
+void DataReaderImpl::set_qos(
+        DataReaderQos& to,
+        const DataReaderQos& from,
+        bool first_time)
+{
+    if (first_time && to.durability().kind != from.durability().kind)
+    {
+        to.durability() = from.durability();
+        to.durability().hasChanged = true;
+    }
+    if (first_time || to.deadline().period != from.deadline().period)
+    {
+        to.deadline() = from.deadline();
+        to.deadline().hasChanged = true;
+    }
+    if (to.latency_budget().duration != from.latency_budget().duration)
+    {
+        to.latency_budget() = from.latency_budget();
+        to.latency_budget().hasChanged = true;
+    }
+    if (first_time && !(to.liveliness() == from.liveliness()))
+    {
+        to.liveliness() = from.liveliness();
+        to.liveliness().hasChanged = true;
+    }
+    if (first_time && !(to.reliability() == from.reliability()))
+    {
+        to.reliability() = from.reliability();
+        to.reliability().hasChanged = true;
+    }
+    if (first_time && to.ownership().kind != from.ownership().kind)
+    {
+        to.ownership() = from.ownership();
+        to.ownership().hasChanged = true;
+    }
+    if (to.destination_order().kind != from.destination_order().kind)
+    {
+        to.destination_order() = from.destination_order();
+        to.destination_order().hasChanged = true;
+    }
+    if (to.user_data().data_vec() != from.user_data().data_vec())
+    {
+        to.user_data() = from.user_data();
+        to.user_data().hasChanged = true;
+    }
+    if (to.time_based_filter().minimum_separation != from.time_based_filter().minimum_separation )
+    {
+        to.time_based_filter() = from.time_based_filter();
+        to.time_based_filter().hasChanged = true;
+    }
+    if (to.topicData().getValue() != from.topicData().getValue())
+    {
+        to.topicData() = from.topicData();
+        to.topicData().hasChanged = true;
+    }
+    if (first_time || !(to.durabilityService() == from.durabilityService()))
+    {
+        to.durabilityService() = from.durabilityService();
+        to.durabilityService().hasChanged = true;
+    }
+    if (to.lifespan().duration != from.lifespan().duration )
+    {
+        to.lifespan() = from.lifespan();
+        to.lifespan().hasChanged = true;
+    }
+    if (first_time && !(to.reliable_reader_qos() == from.reliable_reader_qos()))
+    {
+        to.reliable_reader_qos() = from.reliable_reader_qos();
+        to.reliable_reader_qos().hasChanged = true;
+    }
+    if (first_time || !(to.type_consistency() == from.type_consistency()))
+    {
+        to.type_consistency() = from.type_consistency();
+        to.type_consistency().hasChanged = true;
+    }
+    if (first_time && (to.history().kind != from.history().kind ||
+            to.history().depth != from.history().depth))
+    {
+        to.history() = from.history();
+        to.history().hasChanged = true;
+    }
+    if (first_time && !(to.resource_limits() == from.resource_limits()))
+    {
+        to.resource_limits() = from.resource_limits();
+        to.resource_limits().hasChanged = true;
+    }
+    if (!(to.reader_data_lifecycle() == from.reader_data_lifecycle()))
+    {
+        to.reader_data_lifecycle() = from.reader_data_lifecycle();
+        to.reader_data_lifecycle().hasChanged = true;
+    }
+
+    if (to.expectsInlineQos() != from.expectsInlineQos())
+    {
+        to.expectsInlineQos(from.expectsInlineQos());
+    }
+
+    if (!(to.properties() == from.properties()))
+    {
+        to.properties() = from.properties();
+    }
+
+    if (!(to.enpoint() == from.enpoint()))
+    {
+        to.enpoint() = from.enpoint();
+        to.enpoint().hasChanged = true;
+    }
+
+    if (!(to.reader_resource_limits() == from.reader_resource_limits()))
+    {
+        to.reader_resource_limits() = from.reader_resource_limits();
+        to.reader_resource_limits().hasChanged = true;
+    }
+}
+
 
 } /* namespace dds */
 } /* namespace fastdds */
