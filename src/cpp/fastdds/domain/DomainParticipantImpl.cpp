@@ -348,12 +348,12 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
 {
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
-        default_sub_qos_.set_qos(SUBSCRIBER_QOS_DEFAULT, true);
+        SubscriberImpl::set_qos(default_sub_qos_, SUBSCRIBER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (qos.check_qos())
+    else if (SubscriberImpl::check_qos(qos))
     {
-        default_sub_qos_.set_qos(qos, false);
+        SubscriberImpl::set_qos(default_sub_qos_, qos, false);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
@@ -471,7 +471,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         SubscriberListener* listener,
         const StatusMask& mask)
 {
-    if (!qos.check_qos())
+    if (!SubscriberImpl::check_qos(qos))
     {
         return nullptr;
     }

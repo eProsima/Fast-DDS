@@ -38,9 +38,13 @@ class SubscriberQos
 {
 public:
 
-    RTPS_DllAPI SubscriberQos();
+    RTPS_DllAPI SubscriberQos()
+    {
+    }
 
-    RTPS_DllAPI virtual ~SubscriberQos();
+    RTPS_DllAPI virtual ~SubscriberQos()
+    {
+    }
 
     bool operator ==(
             const SubscriberQos& b) const
@@ -50,30 +54,6 @@ public:
                (group_data_ == b.group_data_) &&
                (entity_factory_ == b.entity_factory_);
     }
-
-    /**
-     * Set Qos from another class
-     * @param subscriberqos Reference from a SubscriberQos object.
-     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-     */
-    RTPS_DllAPI void set_qos(
-            const SubscriberQos& subscriberqos,
-            bool first_time);
-
-    /**
-     * Check if the Qos values are compatible between each other.
-     * @return True if correct.
-     */
-    RTPS_DllAPI bool check_qos() const;
-
-    /**
-     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
-     * @param qos Reference to the new qos.
-     * @return True if they can be updated.
-     */
-    RTPS_DllAPI bool can_qos_be_updated(
-            const SubscriberQos& qos) const;
-
 
     /**
      * Getter for PresentationQosPolicy

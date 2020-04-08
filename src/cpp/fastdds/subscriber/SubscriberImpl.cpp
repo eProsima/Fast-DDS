@@ -90,13 +90,13 @@ const SubscriberQos& SubscriberImpl::get_qos() const
 ReturnCode_t SubscriberImpl::set_qos(
         const SubscriberQos& qos)
 {
-    if (!qos.check_qos())
+    if (!check_qos(qos))
     {
-        if (!qos_.can_qos_be_updated(qos))
+        if (!can_qos_be_updated(qos_, qos))
         {
             return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
         }
-        qos_.set_qos(qos, false);
+        set_qos(qos_, qos, false);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
@@ -458,6 +458,50 @@ bool SubscriberImpl::type_in_use(
         }
     }
     return false;
+}
+
+
+void SubscriberImpl::set_qos(
+        SubscriberQos& to,
+        const SubscriberQos& from,
+        bool first_time)
+{
+    if (first_time || !(to.presentation() == from.presentation()))
+    {
+        to.presentation() = from.presentation();
+        to.presentation().hasChanged = true;
+    }
+    if (from.partition().names().size() > 0)
+    {
+        to.partition() = from.partition();
+        to.partition().hasChanged = true;
+    }
+    if (to.group_data().getValue() != from.group_data().getValue() )
+    {
+        to.group_data() = from.group_data();
+        to.group_data().hasChanged = true;
+    }
+    if (to.entity_factory().autoenable_created_entities != from.entity_factory().autoenable_created_entities)
+    {
+        to.entity_factory() = from.entity_factory();
+        to.entity_factory().hasChanged = true;
+    }
+}
+
+bool SubscriberImpl::check_qos(
+        const SubscriberQos& qos)
+{
+    (void) qos;
+    return true;
+}
+
+bool SubscriberImpl::can_qos_be_updated(
+        const SubscriberQos& to,
+        const SubscriberQos& from)
+{
+    (void) to;
+    (void) from;
+    return true;
 }
 
 } /* namespace dds */
