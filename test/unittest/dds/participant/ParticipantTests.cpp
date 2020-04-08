@@ -145,6 +145,9 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
 
     ASSERT_EQ(qos, pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(PARTICIPANT_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+
 }
 
 TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
@@ -164,6 +167,8 @@ TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
 
     ASSERT_EQ(qos, pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+
+    ASSERT_NO_THROW(participant.default_participant_qos(PARTICIPANT_QOS_DEFAULT));
 }
 
 TEST(ParticipantTests, ChangeDomainParticipantQos)
