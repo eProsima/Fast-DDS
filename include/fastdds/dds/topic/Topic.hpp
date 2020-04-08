@@ -1,0 +1,115 @@
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file Topic.hpp
+ */
+
+#ifndef _FASTDDS_TOPIC_HPP_
+#define _FASTDDS_TOPIC_HPP_
+
+#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+
+using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+class DomainParticipant;
+class TopicListener;
+
+/**
+ * Class TopicDescription, represents the fact that both publications
+ * and subscriptions are tied to a single data-type
+ * @ingroup FASTDDS_MODULE
+ */
+class Topic : public DomainEntity, public TopicDescription
+{
+    friend class TopicImpl;
+    friend class DomainParticipantImpl;
+
+    /**
+     * Create a topic, assigning its pointer to the associated implementation.
+     * Don't use directly, create Topic using create_topic from Participant.
+     */
+    RTPS_DllAPI Topic(
+            const std::string& topic_name,
+            TopicImpl* p,
+            const StatusMask& mask = StatusMask::all());
+
+public:
+
+    RTPS_DllAPI virtual ~Topic();
+
+    virtual DomainParticipant* get_participant() const override;
+
+    /**
+     * Allows the application to retrieve the INCONSISTENT_TOPIC_STATUS status of a Topic.
+     * @param status [out] Status to be retrieved.
+     * @return RETCODE_OK
+     */
+    ReturnCode_t get_inconsistent_topic_status(
+            InconsistentTopicStatus& status);
+
+    /**
+     * Allows accessing the Topic Qos.
+     */
+    RTPS_DllAPI const TopicQos& get_qos() const;
+
+    /**
+     * Retrieves the Topic Qos.
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_qos(
+            TopicQos& qos) const;
+
+    /**
+     * Allows modifying the Topic Qos.
+     * The given Qos must be supported by the Topic.
+     * @param qos
+     * @retval RETCODE_IMMUTABLE_POLICY if a change was not allowed.
+     * @retval RETCODE_INCONSISTENT_POLICY if new qos has inconsistent values.
+     * @retval RETCODE_OK if qos was updated.
+     */
+    RTPS_DllAPI ReturnCode_t set_qos(
+            const TopicQos& qos);
+
+    /**
+     * Retrieves the attached TopicListener.
+     */
+    RTPS_DllAPI const TopicListener* get_listener() const;
+
+    /**
+     * Modifies the TopicListener.
+     * @param listener
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t set_listener(
+            TopicListener* listener);
+
+private:
+
+    TopicImpl* impl_;
+};
+
+} /* namespace dds */
+} /* namespace fastdds */
+} /* namespace eprosima */
+
+#endif /* _FASTDDS_TOPIC_HPP_ */
