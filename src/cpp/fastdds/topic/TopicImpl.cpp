@@ -95,10 +95,8 @@ ReturnCode_t TopicImpl::set_qos(
         return ret_val;
     }
 
-    if (!qos.can_qos_be_updated(qos))
-    {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-    }
+    // Topic qos can always be updated
+
     qos_.set_qos(qos, false);
     return ReturnCode_t::RETCODE_OK;
 }
