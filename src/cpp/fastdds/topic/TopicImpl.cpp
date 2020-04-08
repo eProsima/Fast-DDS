@@ -110,6 +110,18 @@ const TopicQos& TopicImpl::get_qos() const
 ReturnCode_t TopicImpl::set_qos(
         const TopicQos& qos)
 {
+    if (&qos == &TOPIC_QOS_DEFAULT)
+    {
+        const TopicQos& default_qos = participant_->get_default_topic_qos();
+        if (!can_qos_be_updated(qos_, default_qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+
+        set_qos(qos_, default_qos, false);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     ReturnCode_t ret_val = check_qos(qos);
     if (!ret_val)
     {
