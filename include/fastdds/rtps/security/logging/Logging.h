@@ -200,10 +200,20 @@ bool Logging::compose_header(
         return false;
     }
 
-    header << "[" << std::setprecision (std::numeric_limits<double>::digits10 + 1)
-           << builtin_msg.timestamp << "] " << it->second.at(0).value
-           << " " << it->second.at(1).value << " " << it->second.at(2).value
-           << "::" << it->second.at(3).value;
+    std::string severity;
+    if (!LogLevel_to_string(builtin_msg.severity, severity, exception))
+    {
+      return false;
+    }
+
+    // header format is:
+    // [stamp] [severity] <guid> <domain_id> <plugin_class::plugin_method>
+    header << std::setprecision (std::numeric_limits<double>::digits10 + 1)
+           << "[" << builtin_msg.timestamp << "] "
+           << "[" << severity << "] "
+           << it->second.at(0).value << " "
+           << it->second.at(1).value << " "
+           << it->second.at(2).value << "::" << it->second.at(3).value;
 
     return true;
 }

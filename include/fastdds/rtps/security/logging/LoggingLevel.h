@@ -90,6 +90,48 @@ inline bool string_to_LogLevel(
     return convert;
 }
 
+inline bool LogLevel_to_string(
+        const LoggingLevel l,
+        std::string& s,
+        SecurityException& e)
+{
+    bool convert = true;
+    switch (l)
+    {
+        case LoggingLevel::EMERGENCY_LEVEL:
+            s = "EMERGENCY";
+            break;
+        case LoggingLevel::ALERT_LEVEL:
+            s = "ALERT";
+            break;
+        case LoggingLevel::CRITICAL_LEVEL:
+            s = "CRITICAL";
+            break;
+        case LoggingLevel::ERROR_LEVEL:
+            s = "ERROR";
+            break;
+        case LoggingLevel::WARNING_LEVEL:
+            s = "WARNING";
+            break;
+        case LoggingLevel::NOTICE_LEVEL:
+            s = "NOTICE";
+            break;
+        case LoggingLevel::INFORMATIONAL_LEVEL:
+            s = "INFORMATIONAL";
+            break;
+        case LoggingLevel::DEBUG_LEVEL:
+            s = "DEBUG";
+            break;
+        default:
+            s = "UNKNOWN";
+            convert = false;
+            e = SecurityException("Unknown LoggingLevel");
+            break;
+    }
+
+    return convert;
+}
+
 } //namespace security
 } //namespace rtps
 } //namespace fastrtps
