@@ -210,6 +210,18 @@ public:
 
     fastrtps::rtps::InstanceHandle_t handle_;
 
+    static void set_qos(
+            PublisherQos& to,
+            const PublisherQos& from,
+            bool is_default);
+
+    static bool check_qos(
+            const PublisherQos& qos);
+
+    static bool can_qos_be_updated(
+            const PublisherQos& to,
+            const PublisherQos& from);
+
 };
 
 } /* namespace dds */

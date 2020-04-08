@@ -405,17 +405,16 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
 ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
         const PublisherQos& qos)
 {
-    if (&qos == &PUBLISHER_QOS_DEFAULT)
+    if (!PublisherImpl::check_qos(qos))
     {
-        default_pub_qos_.set_qos(PUBLISHER_QOS_DEFAULT, true);
-        return ReturnCode_t::RETCODE_OK;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    else if (qos.check_qos())
+    if (!PublisherImpl::can_qos_be_updated(default_pub_qos_, qos))
     {
-        default_pub_qos_.set_qos(qos, true);
-        return ReturnCode_t::RETCODE_OK;
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    PublisherImpl::set_qos(default_pub_qos_, qos, true);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const

@@ -39,19 +39,20 @@ class PublisherQos
 {
 public:
 
-    RTPS_DllAPI PublisherQos(){}
+    RTPS_DllAPI PublisherQos()
+    {
+    }
 
     RTPS_DllAPI virtual ~PublisherQos() = default;
 
     bool operator ==(
             const PublisherQos& b) const
     {
-        return (this->partition_ == b.partition()) &&
-               (this->presentation_ == b.presentation()) &&
+        return (this->presentation_ == b.presentation()) &&
+               (this->partition_ == b.partition()) &&
                (this->group_data_ == b.group_data()) &&
                (this->entity_factory_ == b.entity_factory());
     }
-
 
     /**
      * Getter for PresentationQosPolicy

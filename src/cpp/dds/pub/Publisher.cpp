@@ -54,30 +54,38 @@ Publisher::~Publisher()
 {
 }
 
-//const qos::PublisherQos& Publisher::qos() const
-//{
-//    return delegate()->get_qos();
-//}
+const qos::PublisherQos& Publisher::qos() const
+{
+    return this->delegate()->get_qos();
+}
 
-//void Publisher::qos(
-//        const qos::PublisherQos& pqos)
-//{
-//    delegate()->set_qos(pqos);
-//}
+void Publisher::qos(
+        const qos::PublisherQos& pqos)
+{
+    ReturnCode_t code = this->delegate()->set_qos(pqos);
+    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    {
+        throw dds::core::ImmutablePolicyError("Immutable Qos");
+    }
+}
 
-//Publisher& Publisher::operator <<(
-//        const qos::PublisherQos& qos)
-//{
-//    this->qos(qos);
-//    return *this;
-//}
+Publisher& Publisher::operator <<(
+        const qos::PublisherQos& qos)
+{
+    this->qos(qos);
+    return *this;
+}
 
-//Publisher& Publisher::operator >>(
-//        qos::PublisherQos& qos)
-//{
-//    qos = this->qos();
-//    return *this;
-//}
+Publisher& Publisher::operator >>(
+        qos::PublisherQos& qos)
+{
+    qos = this->qos();
+    return *this;
+}
 
 Publisher& Publisher::default_datawriter_qos(
         const qos::DataWriterQos& dwqos)

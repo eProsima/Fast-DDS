@@ -236,7 +236,7 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
 
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
 
     ASSERT_TRUE(participant->set_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
 
@@ -244,7 +244,7 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
     ASSERT_TRUE(participant->get_default_publisher_qos(pqos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
@@ -253,14 +253,14 @@ TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
     ::dds::pub::qos::PublisherQos qos = participant.default_publisher_qos();
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
 
     ASSERT_NO_THROW(participant.default_publisher_qos(qos));
 
     ::dds::pub::qos::PublisherQos pqos = participant.default_publisher_qos();
 
     ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(ParticipantTests, CreateSubscriber)
