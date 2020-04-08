@@ -1240,7 +1240,7 @@ bool DomainParticipantImpl::has_active_entities()
 void DomainParticipantImpl::set_qos(
         DomainParticipantQos& to,
         const DomainParticipantQos& from,
-        bool is_default)
+        bool first_time)
 {
     if (!(to.entity_factory() == from.entity_factory()))
     {
@@ -1251,23 +1251,23 @@ void DomainParticipantImpl::set_qos(
         to.user_data() = from.user_data();
         to.user_data().hasChanged = true;
     }
-    if (is_default && !(to.allocation() == from.allocation()))
+    if (first_time && !(to.allocation() == from.allocation()))
     {
         to.allocation() = from.allocation();
     }
-    if (is_default && !(to.properties() == from.properties()))
+    if (first_time && !(to.properties() == from.properties()))
     {
         to.properties() = from.properties();
     }
-    if (is_default && !(to.wire_protocol() == from.wire_protocol()))
+    if (first_time && !(to.wire_protocol() == from.wire_protocol()))
     {
         to.wire_protocol() = from.wire_protocol();
     }
-    if (is_default && !(to.transport() == from.transport()))
+    if (first_time && !(to.transport() == from.transport()))
     {
         to.transport() = from.transport();
     }
-    if (is_default && to.name() != from.name())
+    if (first_time && to.name() != from.name())
     {
         to.name() = from.name();
     }

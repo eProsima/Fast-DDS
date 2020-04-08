@@ -433,7 +433,7 @@ public:
     static void set_qos(
             DomainParticipantQos& to,
             const DomainParticipantQos& from,
-            bool is_default);
+            bool first_time);
 
     static bool check_qos(
             const DomainParticipantQos& qos);
