@@ -213,7 +213,7 @@ public:
     static void set_qos(
             PublisherQos& to,
             const PublisherQos& from,
-            bool is_default);
+            bool first_time);
 
     static bool check_qos(
             const PublisherQos& qos);

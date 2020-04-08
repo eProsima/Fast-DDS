@@ -469,9 +469,9 @@ bool PublisherImpl::type_in_use(
 void PublisherImpl::set_qos(
         PublisherQos& to,
         const PublisherQos& from,
-        bool is_default)
+        bool first_time)
 {
-    if (is_default && !(to.presentation() == from.presentation()))
+    if (first_time && !(to.presentation() == from.presentation()))
     {
         to.presentation() = from.presentation();
         to.presentation().hasChanged = true;
