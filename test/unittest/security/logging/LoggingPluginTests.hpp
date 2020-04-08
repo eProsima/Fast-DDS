@@ -133,21 +133,33 @@ TEST_F(LoggingPluginTest, AsyncFileLogging)
       GTEST_FAIL();
   }
 
+
   std::string line;
   long count = 0;
+
+  // log format is:
+  // [<stamp>] [<severity>] <guid> <domain_id> <plugin_class::plugin_method> message
   while (std::getline(ifs, line))
   {
-      //@TODO(artivis) check for stamp
+      // check stamp
+      std::regex regex("[[0-9]+.[0-9]+]");
+      EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
-//      std::regex pattern1("Logging::fileloggingtest : Report from thread [0-"  + std::to_string(NUM_LOG_LEVELS-1) + "]");
+      // check verbosity
+      regex = std::regex("[EMERGENCY|ALERT|CRITICAL|ERROR|WARNING|NOTICE|INFORMATIONAL|DEBUG]");
+      EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
-//      EXPECT_TRUE(std::regex_match(line, pattern1));
+      //@TODO(artivis) check guid
 
-      std::string pattern = std::string("Logging::fileloggingtest : ");
-      EXPECT_NE(std::string::npos, line.find(pattern)) << pattern << " vs " << line;
+      //@TODO(artivis) check domain_id
 
-      pattern = std::string("Report from thread ");
-      EXPECT_NE(std::string::npos, line.find(pattern)) << pattern << " vs " << line;
+      // check call site
+      regex = std::regex("Logging::fileloggingtest : ");
+      EXPECT_TRUE(std::regex_search(line, regex)) << line;
+
+      // check message
+      regex = std::regex("Report from thread [0-9]{1}");
+      EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
       ++count;
   }
