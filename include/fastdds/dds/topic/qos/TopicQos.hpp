@@ -61,15 +61,6 @@ public:
     }
 
     /**
-     * Set Qos from another class
-     * @param qos Reference from a TopicQos object.
-     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-     */
-    RTPS_DllAPI void set_qos(
-            const TopicQos& qos,
-            bool first_time);
-
-    /**
      * Getter for TopicDataQosPolicy
      * @return TopicDataQos reference
      */

@@ -411,7 +411,7 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
 {
     if (&qos == &TOPIC_QOS_DEFAULT)
     {
-        default_topic_qos_.set_qos(TOPIC_QOS_DEFAULT, true);
+        TopicImpl::set_qos(default_topic_qos_, TOPIC_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -421,7 +421,7 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
         return ret_val;
     }
 
-    default_topic_qos_.set_qos(qos, true);
+    TopicImpl::set_qos(default_topic_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
 }
 

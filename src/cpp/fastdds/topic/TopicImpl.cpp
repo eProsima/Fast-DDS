@@ -81,6 +81,18 @@ ReturnCode_t TopicImpl::check_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+void TopicImpl::set_qos(
+        TopicQos& to,
+        const TopicQos& from,
+        bool first_time)
+{
+    (void)first_time;
+    to = from;
+
+    // Topic Qos is only used to create other Qos, so it can always be updated
+}
+
+
 const TopicQos& TopicImpl::get_qos() const
 {
     return qos_;
@@ -97,7 +109,7 @@ ReturnCode_t TopicImpl::set_qos(
 
     // Topic qos can always be updated
 
-    qos_.set_qos(qos, false);
+    set_qos(qos_, qos, false);
     return ReturnCode_t::RETCODE_OK;
 }
 

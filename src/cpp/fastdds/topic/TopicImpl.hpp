@@ -52,6 +52,11 @@ public:
     static ReturnCode_t check_qos(
             const TopicQos& qos);
 
+    static void set_qos(
+            TopicQos& to,
+            const TopicQos& from,
+            bool first_time);
+
     virtual ~TopicImpl();
 
     const TopicQos& get_qos() const;
