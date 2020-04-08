@@ -434,12 +434,13 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         SubscriberImpl::set_qos(default_sub_qos_, SUBSCRIBER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (SubscriberImpl::check_qos(qos))
+    ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
+    if (!check_result)
     {
-        SubscriberImpl::set_qos(default_sub_qos_, qos, false);
-        return ReturnCode_t::RETCODE_OK;
+        return check_result;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    SubscriberImpl::set_qos(default_sub_qos_, qos, true);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const

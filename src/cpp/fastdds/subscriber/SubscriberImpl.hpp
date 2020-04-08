@@ -180,7 +180,7 @@ public:
      * @param qos Reference to the qos instance to check.
      * @return True if correct.
      */
-    static bool check_qos(
+    static ReturnCode_t check_qos(
             const SubscriberQos& qos);
 
     /**
