@@ -306,7 +306,7 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
 
     ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
 
     ASSERT_EQ(participant->set_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
 
@@ -314,7 +314,7 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
     ASSERT_EQ(participant->get_default_subscriber_qos(pqos), ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(pqos == qos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(ParticipantTests, ChangePSMDefaultSubscriberQos)
@@ -323,14 +323,14 @@ TEST(ParticipantTests, ChangePSMDefaultSubscriberQos)
     ::dds::sub::qos::SubscriberQos qos = participant.default_subscriber_qos();
     ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
 
     ASSERT_NO_THROW(participant.default_subscriber_qos(qos));
 
     ::dds::sub::qos::SubscriberQos pqos = participant.default_subscriber_qos();
 
     ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(ParticipantTests, ChangeDefaultTopicQos)
