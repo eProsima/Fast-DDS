@@ -122,10 +122,15 @@ dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qo
 void DomainParticipant::default_participant_qos(
         const ::dds::domain::qos::DomainParticipantQos& qos)
 {
-    if (eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(qos) ==
-            eprosima::fastrtps::types::ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    ReturnCode_t code = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(
+        qos);
+    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    {
+        throw dds::core::ImmutablePolicyError("Immutable Qos");
     }
 }
 

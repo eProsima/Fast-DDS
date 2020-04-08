@@ -57,7 +57,6 @@ void SubscriberQos::set_qos(
     if (entity_factory_.autoenable_created_entities != qos.entity_factory().autoenable_created_entities)
     {
         entity_factory_ = qos.entity_factory();
-        entity_factory_.hasChanged = true;
     }
 }
 

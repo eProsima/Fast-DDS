@@ -89,11 +89,11 @@ public:
 
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
-            DomainParticipantQos& participant_qos) const;
+            DomainParticipantQos& qos) const;
 
 
     RTPS_DllAPI ReturnCode_t set_default_participant_qos(
-            const DomainParticipantQos& participant_qos);
+            const DomainParticipantQos& qos);
 
     /**
      * Remove a Participant and all associated publishers and subscribers.

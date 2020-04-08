@@ -430,7 +430,15 @@ public:
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
 
-    bool can_qos_be_updated_from(
+    static void set_qos(
+            DomainParticipantQos& to,
+            const DomainParticipantQos& from,
+            bool is_default);
+
+    static bool check_qos(
+            const DomainParticipantQos& qos);
+
+    static bool can_qos_be_updated(
             const DomainParticipantQos& to,
             const DomainParticipantQos& from);
 };

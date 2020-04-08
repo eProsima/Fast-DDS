@@ -149,20 +149,15 @@ DomainParticipantImpl::~DomainParticipantImpl()
 ReturnCode_t DomainParticipantImpl::set_qos(
         const DomainParticipantQos& qos)
 {
-    if (!can_qos_be_updated_from(qos_, qos))
+    if (!check_qos(qos))
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if (!can_qos_be_updated(qos_, qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    if (qos_.entity_factory().autoenable_created_entities !=
-            qos.entity_factory().autoenable_created_entities)
-    {
-        qos_.entity_factory(qos.entity_factory());
-    }
-    if (qos_.user_data().data_vec() != qos.user_data().data_vec())
-    {
-        qos_.user_data(qos.user_data());
-        qos_.user_data().hasChanged = true;
-    }
+    set_qos(qos_, qos, false);
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1242,7 +1237,54 @@ bool DomainParticipantImpl::has_active_entities()
     return false;
 }
 
-bool DomainParticipantImpl::can_qos_be_updated_from(
+void DomainParticipantImpl::set_qos(
+        DomainParticipantQos& to,
+        const DomainParticipantQos& from,
+        bool is_default)
+{
+    if (!(to.entity_factory() == from.entity_factory()))
+    {
+        to.entity_factory() = from.entity_factory();
+    }
+    if (!(to.user_data() == from.user_data()))
+    {
+        to.user_data() = from.user_data();
+        to.user_data().hasChanged = true;
+    }
+    if (is_default && !(to.allocation() == from.allocation()))
+    {
+        to.allocation() = from.allocation();
+    }
+    if (is_default && !(to.properties() == from.properties()))
+    {
+        to.properties() = from.properties();
+    }
+    if (is_default && !(to.wire_protocol() == from.wire_protocol()))
+    {
+        to.wire_protocol() = from.wire_protocol();
+    }
+    if (is_default && !(to.transport() == from.transport()))
+    {
+        to.transport() = from.transport();
+    }
+    if (is_default && to.name() != from.name())
+    {
+        to.name() = from.name();
+    }
+}
+
+bool DomainParticipantImpl::check_qos(
+        const DomainParticipantQos& qos)
+{
+    if (qos.allocation().data_limits.max_user_data == 0 ||
+            qos.allocation().data_limits.max_user_data > qos.user_data().getValue().size())
+    {
+        return true;
+    }
+    return false;
+}
+
+bool DomainParticipantImpl::can_qos_be_updated(
         const DomainParticipantQos& to,
         const DomainParticipantQos& from)
 {
