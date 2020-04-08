@@ -35,14 +35,25 @@ class DomainParticipant;
 class TopicDescription
 {
 public:
-
+    /**
+     * Get the DomainParticipant to which the TopicDescription belongs.
+     * @return The DomainParticipant to which the TopicDescription belongs.
+    */
     virtual DomainParticipant* get_participant() const = 0;
 
+    /**
+     * Get the name used to create this TopicDescription.
+     * @return the name used to create this TopicDescription.
+     */
     const std::string& get_name() const
     {
         return name_;
     }
 
+    /**
+     * Get the associated type name.
+     * @return the type name.
+     */
     const std::string& get_type_name() const
     {
         return type_name_;
