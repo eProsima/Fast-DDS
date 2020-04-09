@@ -48,7 +48,7 @@ Subscriber::Subscriber(
     : ::dds::core::Reference<detail::Subscriber>(
         new detail::Subscriber(
             dp.delegate().get(), qos, listener, mask))
-    , participant_(nullptr)
+    , participant_(&dp)
 {
 }
 
@@ -125,14 +125,10 @@ qos::DataReaderQos Subscriber::default_datareader_qos() const
 //    return dynamic_cast<Listener*>(delegate()->get_listener());
 //}
 
-//const dds::domain::DomainParticipant& Subscriber::participant() const
-//{
-//    eprosima::fastdds::dds::DomainParticipant p = delegate()->get_participant();
-//    std::shared_ptr<eprosima::fastdds::dds::DomainParticipant> ptr(&p);
-//    participant_->delegate().swap(ptr);
-
-//    return *participant_;
-//}
+const dds::domain::DomainParticipant& Subscriber::participant() const
+{
+    return *participant_;
+}
 
 } //namespace sub
 } //namespace dds
