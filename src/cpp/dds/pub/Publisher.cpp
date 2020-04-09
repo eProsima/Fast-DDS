@@ -67,6 +67,14 @@ void Publisher::qos(
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
     }
+    else if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
+    }
 }
 
 Publisher& Publisher::operator <<(
