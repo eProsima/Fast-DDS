@@ -148,6 +148,18 @@ private:
 
     static bool delete_instance();
 
+    static void set_qos(
+            DomainParticipantFactoryQos& to,
+            const DomainParticipantFactoryQos& from,
+            bool first_time);
+
+    static ReturnCode_t check_qos(
+            const DomainParticipantFactoryQos& qos);
+
+    static bool can_qos_be_updated(
+            const DomainParticipantFactoryQos& to,
+            const DomainParticipantFactoryQos& from);
+
     mutable std::mutex mtx_participants_;
 
     mutable bool default_xml_profiles_loaded;

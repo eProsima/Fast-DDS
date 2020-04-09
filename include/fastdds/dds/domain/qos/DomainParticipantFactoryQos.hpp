@@ -51,32 +51,19 @@ public:
     }
 
     /**
-     * Set Qos from another class
-     * @param qos Reference from a DomainParticipantQos object.
+     * Getter for EntityFactoryQosPolicy
+     * @return EntityFactoryQosPolicy reference
      */
-    RTPS_DllAPI void set_qos(
-            const DomainParticipantFactoryQos& qos);
-
-
-    /**
-     * Check if the Qos values are compatible between each other.
-     * @return True if correct.
-     */
-    RTPS_DllAPI bool check_qos() const;
-
-    /**
-     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
-     * @param qos Reference to the new qos.
-     * @return True if they can be updated.
-     */
-    RTPS_DllAPI bool can_qos_be_updated(
-            const DomainParticipantFactoryQos& qos) const;
+    const EntityFactoryQosPolicy& entity_factory() const
+    {
+        return entity_factory_;
+    }
 
     /**
      * Getter for EntityFactoryQosPolicy
      * @return EntityFactoryQosPolicy reference
      */
-    const EntityFactoryQosPolicy& entity_factory() const
+    EntityFactoryQosPolicy& entity_factory()
     {
         return entity_factory_;
     }
@@ -89,7 +76,6 @@ public:
             const EntityFactoryQosPolicy& entity_factory)
     {
         entity_factory_ = entity_factory;
-        entity_factory_.hasChanged = true;
     }
 
 private:

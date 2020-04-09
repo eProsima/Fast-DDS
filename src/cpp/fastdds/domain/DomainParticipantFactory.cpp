@@ -343,16 +343,45 @@ ReturnCode_t DomainParticipantFactory::get_qos(
 ReturnCode_t DomainParticipantFactory::set_qos(
         const DomainParticipantFactoryQos& qos)
 {
-    if (!qos.check_qos())
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return ret_val;
     }
-    if (!factory_qos_.can_qos_be_updated(qos))
+    if (!can_qos_be_updated(factory_qos_, qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    factory_qos_.set_qos(qos);
+    set_qos(factory_qos_, qos, false);
     return ReturnCode_t::RETCODE_OK;
+}
+
+void DomainParticipantFactory::set_qos(
+        DomainParticipantFactoryQos& to,
+        const DomainParticipantFactoryQos& from,
+        bool first_time)
+{
+    (void) first_time;
+    //As all the Qos can always be updated and none of them need to be sent
+    to = from;
+}
+
+ReturnCode_t DomainParticipantFactory::check_qos(
+        const DomainParticipantFactoryQos& qos)
+{
+    (void) qos;
+    //There is no restriction by the moment with the contained Qos
+    return ReturnCode_t::RETCODE_OK;
+}
+
+bool DomainParticipantFactory::can_qos_be_updated(
+        const DomainParticipantFactoryQos& to,
+        const DomainParticipantFactoryQos& from)
+{
+    (void) to;
+    (void) from;
+    //All the DomainParticipantFactoryQos can be updated
+    return true;
 }
 
 } /* namespace dds */
