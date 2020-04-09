@@ -282,6 +282,11 @@ if(COMPILE_EXAMPLES)
 endif()
 
 ###############################################################################
+# SHM as Default transport
+###############################################################################
+option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" OFF)
+
+###############################################################################
 # Documentation
 ###############################################################################
 # Add an option to toggle the generation of the API documentation.
