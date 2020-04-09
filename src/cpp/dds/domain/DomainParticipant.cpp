@@ -87,6 +87,10 @@ void DomainParticipant::qos(
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
+    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
+    }
 }
 
 //uint32_t DomainParticipant::domain_id() const
@@ -127,6 +131,10 @@ void DomainParticipant::default_participant_qos(
     if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
     }
 }
 
