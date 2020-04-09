@@ -39,6 +39,25 @@ TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
     ASSERT_EQ(factory, DomainParticipantFactory::get_instance());
 }
 
+TEST(ParticipantTests, ChangeDomainParticipantFactoryQos)
+{
+    DomainParticipantFactoryQos qos;
+    DomainParticipantFactory::get_instance()->get_qos(qos);
+
+    ASSERT_EQ(qos.entity_factory().autoenable_created_entities, true);
+
+    EntityFactoryQosPolicy entity_factory = qos.entity_factory();
+    entity_factory.autoenable_created_entities = false;
+    qos.entity_factory(entity_factory);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    DomainParticipantFactoryQos fqos;
+    DomainParticipantFactory::get_instance()->get_qos(fqos);
+
+    ASSERT_EQ(qos, fqos);
+    ASSERT_EQ(fqos.entity_factory().autoenable_created_entities, false);
+}
+
 TEST(ParticipantTests, CreateDomainParticipant)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);

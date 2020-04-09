@@ -144,8 +144,6 @@ public:
 
 };
 
-
-
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
  */

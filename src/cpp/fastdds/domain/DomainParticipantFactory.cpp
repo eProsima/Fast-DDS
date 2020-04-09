@@ -206,7 +206,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         vector_it->second.push_back(dom_part_impl);
     }
 
-    if (factory_qos_.entity_factory.autoenable_created_entities)
+    if (factory_qos_.entity_factory().autoenable_created_entities)
     {
         dom_part->enable();
     }
@@ -319,6 +319,57 @@ fastrtps::rtps::RTPSParticipantAttributes DomainParticipantFactory::get_attribut
     rtps_attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
     rtps_attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
     return rtps_attr;
+}
+
+ReturnCode_t DomainParticipantFactory::get_qos(
+        DomainParticipantFactoryQos& qos) const
+{
+    qos = factory_qos_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::set_qos(
+        const DomainParticipantFactoryQos& qos)
+{
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
+    }
+    if (!can_qos_be_updated(factory_qos_, qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    set_qos(factory_qos_, qos, false);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+void DomainParticipantFactory::set_qos(
+        DomainParticipantFactoryQos& to,
+        const DomainParticipantFactoryQos& from,
+        bool first_time)
+{
+    (void) first_time;
+    //As all the Qos can always be updated and none of them need to be sent
+    to = from;
+}
+
+ReturnCode_t DomainParticipantFactory::check_qos(
+        const DomainParticipantFactoryQos& qos)
+{
+    (void) qos;
+    //There is no restriction by the moment with the contained Qos
+    return ReturnCode_t::RETCODE_OK;
+}
+
+bool DomainParticipantFactory::can_qos_be_updated(
+        const DomainParticipantFactoryQos& to,
+        const DomainParticipantFactoryQos& from)
+{
+    (void) to;
+    (void) from;
+    //All the DomainParticipantFactoryQos can be updated
+    return true;
 }
 
 } /* namespace dds */

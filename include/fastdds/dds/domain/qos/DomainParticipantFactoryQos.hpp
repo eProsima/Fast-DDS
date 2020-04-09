@@ -47,19 +47,41 @@ public:
     bool operator ==(
             const DomainParticipantFactoryQos& b) const
     {
-        return (this->entity_factory == b.entity_factory);
+        return (this->entity_factory_ == b.entity_factory());
     }
 
-    //!Auto enable on creation
-    EntityFactoryQosPolicy entity_factory;
+    /**
+     * Getter for EntityFactoryQosPolicy
+     * @return EntityFactoryQosPolicy reference
+     */
+    const EntityFactoryQosPolicy& entity_factory() const
+    {
+        return entity_factory_;
+    }
 
     /**
-     * Set Qos from another class
-     * @param qos Reference from a DomainParticipantQos object.
+     * Getter for EntityFactoryQosPolicy
+     * @return EntityFactoryQosPolicy reference
      */
-    RTPS_DllAPI void set_qos(
-            const DomainParticipantFactoryQos& qos);
+    EntityFactoryQosPolicy& entity_factory()
+    {
+        return entity_factory_;
+    }
 
+    /**
+     * Setter for EntityFactoryQosPolicy
+     * @param entity_factory
+     */
+    void entity_factory(
+            const EntityFactoryQosPolicy& entity_factory)
+    {
+        entity_factory_ = entity_factory;
+    }
+
+private:
+
+    //!Auto enable on creation
+    EntityFactoryQosPolicy entity_factory_;
 };
 
 } /* namespace dds */

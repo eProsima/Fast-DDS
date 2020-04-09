@@ -113,7 +113,27 @@ public:
     RTPS_DllAPI bool load_XML_profiles_file(
             const std::string& xml_profile_file);
 
-    // TODO set/get DomainParticipantFactoryQos
+    /**
+     * This operation returns the value of the DomainParticipantFactory QoS policies.
+     * @param qos
+     * @return ReturnCode
+     */
+    RTPS_DllAPI ReturnCode_t get_qos(
+            DomainParticipantFactoryQos& qos) const;
+
+    /**
+     * This operation sets the value of the DomainParticipantFactory QoS policies. These policies
+     * control the behavior of the object a factory for entities.
+     *
+     * Note that despite having QoS, the DomainParticipantFactory is not an Entity.
+     *
+     * This operation will check that the resulting policies are self consistent; if they are not,
+     * the operation will have no effect and return INCONSISTENT_POLICY.
+     * @param qos
+     * @return ReturnCode
+     */
+    RTPS_DllAPI ReturnCode_t set_qos(
+            const DomainParticipantFactoryQos& qos);
 
     fastrtps::rtps::RTPSParticipantAttributes get_attributes(
             const DomainParticipantQos& qos);
@@ -129,6 +149,18 @@ private:
     virtual ~DomainParticipantFactory();
 
     static bool delete_instance();
+
+    static void set_qos(
+            DomainParticipantFactoryQos& to,
+            const DomainParticipantFactoryQos& from,
+            bool first_time);
+
+    static ReturnCode_t check_qos(
+            const DomainParticipantFactoryQos& qos);
+
+    static bool can_qos_be_updated(
+            const DomainParticipantFactoryQos& to,
+            const DomainParticipantFactoryQos& from);
 
     mutable std::mutex mtx_participants_;
 
