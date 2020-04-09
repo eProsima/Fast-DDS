@@ -126,6 +126,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor);
 
+#ifdef SHM_TRANSPORT_BUILTIN
         SharedMemTransportDescriptor shm_transport;
         // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
         // the equivalent segment size in SHM would be socket buffer size x 2
@@ -135,6 +136,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         // Use same default max_message_size on both UDP and SHM
         shm_transport.max_message_size(descriptor.max_message_size());
         has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
+#endif
     }
 
     // BACKUP servers guid is its persistence one
