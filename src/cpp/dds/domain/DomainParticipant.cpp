@@ -70,16 +70,28 @@ DomainParticipant::~DomainParticipant()
 //    return dynamic_cast<Listener*>(this->delegate()->get_listener());
 //}
 
-//const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
-//{
-//        return this->delegate()->get_qos();
-//}
+const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
+{
+    return this->delegate()->get_qos();
+}
 
-//void DomainParticipant::qos(
-//        const dds::domain::qos::DomainParticipantQos& /*qos*/)
-//{
-//        this->delegate()->set_qos(qos);
-//}
+void DomainParticipant::qos(
+        const dds::domain::qos::DomainParticipantQos& qos)
+{
+    ReturnCode_t code = this->delegate()->set_qos(qos);
+    if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    {
+        throw dds::core::ImmutablePolicyError("Immutable Qos");
+    }
+    else if ( code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
+    }
+}
 
 //uint32_t DomainParticipant::domain_id() const
 //{
@@ -114,10 +126,15 @@ dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qo
 void DomainParticipant::default_participant_qos(
         const ::dds::domain::qos::DomainParticipantQos& qos)
 {
-    if (eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(qos) ==
-            eprosima::fastrtps::types::ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    ReturnCode_t code = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(
+        qos);
+    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
     }
 }
 
@@ -157,19 +174,19 @@ DomainParticipant& DomainParticipant::default_publisher_qos(
 //    return *this;
 //}
 
-//DomainParticipant& DomainParticipant::operator <<(
-//        const dds::domain::qos::DomainParticipantQos& qos)
-//{
-//    this->qos(qos);
-//    return *this;
-//}
+DomainParticipant& DomainParticipant::operator <<(
+        const dds::domain::qos::DomainParticipantQos& qos)
+{
+    this->qos(qos);
+    return *this;
+}
 
-//const DomainParticipant& DomainParticipant::operator >>(
-//        dds::domain::qos::DomainParticipantQos& qos) const
-//{
-//    qos = this->qos();
-//    return *this;
-//}
+const DomainParticipant& DomainParticipant::operator >>(
+        dds::domain::qos::DomainParticipantQos& qos) const
+{
+    qos = this->qos();
+    return *this;
+}
 
 } //namespace domain
 } //namespace dds

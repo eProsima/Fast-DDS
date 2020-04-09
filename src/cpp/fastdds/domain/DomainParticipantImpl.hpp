@@ -81,6 +81,14 @@ private:
 
 public:
 
+    ReturnCode_t get_qos(
+            DomainParticipantQos& qos) const;
+
+    const DomainParticipantQos& get_qos() const;
+
+    ReturnCode_t set_qos(
+            const DomainParticipantQos& qos);
+
     ReturnCode_t set_listener(
             DomainParticipantListener* listener)
     {
@@ -422,6 +430,17 @@ public:
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
 
+    static void set_qos(
+            DomainParticipantQos& to,
+            const DomainParticipantQos& from,
+            bool first_time);
+
+    static ReturnCode_t check_qos(
+            const DomainParticipantQos& qos);
+
+    static bool can_qos_be_updated(
+            const DomainParticipantQos& to,
+            const DomainParticipantQos& from);
 };
 
 } /* namespace dds */

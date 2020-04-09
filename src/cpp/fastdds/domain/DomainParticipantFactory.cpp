@@ -254,44 +254,32 @@ std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
 }
 
 ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
-        DomainParticipantQos& participant_qos) const
+        DomainParticipantQos& qos) const
 {
-    participant_qos = default_participant_qos_;
+    qos = default_participant_qos_;
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
-        const DomainParticipantQos& participant_qos)
+const DomainParticipantQos& DomainParticipantFactory::get_default_participant_qos()
 {
-    if (!(default_participant_qos_.user_data() == participant_qos.user_data()))
+    return default_participant_qos_;
+}
+
+ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
+        const DomainParticipantQos& qos)
+{
+    if (&qos == &PARTICIPANT_QOS_DEFAULT)
     {
-        default_participant_qos_.user_data(participant_qos.user_data());
-        default_participant_qos_.user_data().hasChanged = true;
+        DomainParticipantImpl::set_qos(default_participant_qos_, PARTICIPANT_QOS_DEFAULT, true);
+        return ReturnCode_t::RETCODE_OK;
     }
-    if (!(default_participant_qos_.entity_factory() == participant_qos.entity_factory()))
+
+    ReturnCode_t ret_val = DomainParticipantImpl::check_qos(qos);
+    if (!ret_val)
     {
-        default_participant_qos_.entity_factory(participant_qos.entity_factory());
+        return ret_val;
     }
-    if (!(default_participant_qos_.allocation() == participant_qos.allocation()))
-    {
-        default_participant_qos_.allocation(participant_qos.allocation());
-    }
-    if (!(default_participant_qos_.properties() == participant_qos.properties()))
-    {
-        default_participant_qos_.properties(participant_qos.properties());
-    }
-    if (!(default_participant_qos_.wire_protocol() == participant_qos.wire_protocol()))
-    {
-        default_participant_qos_.wire_protocol(participant_qos.wire_protocol());
-    }
-    if (!(default_participant_qos_.transport() == participant_qos.transport()))
-    {
-        default_participant_qos_.transport(participant_qos.transport());
-    }
-    if (!(default_participant_qos_.name() == participant_qos.name()))
-    {
-        default_participant_qos_.name(participant_qos.name());
-    }
+    DomainParticipantImpl::set_qos(default_participant_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
 }
 

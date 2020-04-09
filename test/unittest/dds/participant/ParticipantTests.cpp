@@ -102,6 +102,44 @@ TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
+TEST(ParticipantTests, ChangeDomainParticipantQos)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    DomainParticipantQos pqos;
+    participant->get_qos(pqos);
+
+    ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(qos.entity_factory().autoenable_created_entities, false);
+
+}
+
+TEST(ParticipantTests, ChangePSMDomainParticipantQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::core::null;
+    participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::domain::qos::DomainParticipantQos qos = participant.qos();
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_NO_THROW(participant.qos(qos));
+    ::dds::domain::qos::DomainParticipantQos pqos;
+    pqos = participant.qos();
+
+    ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(qos.entity_factory().autoenable_created_entities, false);
+
+}
+
 TEST(ParticipantTests, CreatePublisher)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);

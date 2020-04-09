@@ -20,6 +20,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
@@ -144,6 +145,46 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
     delete participant_;
     participant_ = nullptr;
+}
+
+ReturnCode_t DomainParticipantImpl::set_qos(
+        const DomainParticipantQos& qos)
+{
+    if (&qos == &PARTICIPANT_QOS_DEFAULT)
+    {
+        const DomainParticipantQos& default_qos =
+                DomainParticipantFactory::get_instance()->get_default_participant_qos();
+        if (!can_qos_be_updated(qos_, qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+        set_qos(qos_, default_qos, false);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
+    }
+    if (!can_qos_be_updated(qos_, qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    set_qos(qos_, qos, false);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantImpl::get_qos(
+        DomainParticipantQos& qos) const
+{
+    qos = qos_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+const DomainParticipantQos& DomainParticipantImpl::get_qos() const
+{
+    return qos_;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_publisher(
@@ -1208,4 +1249,84 @@ bool DomainParticipantImpl::has_active_entities()
         return true;
     }
     return false;
+}
+
+void DomainParticipantImpl::set_qos(
+        DomainParticipantQos& to,
+        const DomainParticipantQos& from,
+        bool first_time)
+{
+    if (!(to.entity_factory() == from.entity_factory()))
+    {
+        to.entity_factory() = from.entity_factory();
+    }
+    if (!(to.user_data() == from.user_data()))
+    {
+        to.user_data() = from.user_data();
+        to.user_data().hasChanged = true;
+    }
+    if (first_time && !(to.allocation() == from.allocation()))
+    {
+        to.allocation() = from.allocation();
+    }
+    if (first_time && !(to.properties() == from.properties()))
+    {
+        to.properties() = from.properties();
+    }
+    if (first_time && !(to.wire_protocol() == from.wire_protocol()))
+    {
+        to.wire_protocol() = from.wire_protocol();
+    }
+    if (first_time && !(to.transport() == from.transport()))
+    {
+        to.transport() = from.transport();
+    }
+    if (first_time && to.name() != from.name())
+    {
+        to.name() = from.name();
+    }
+}
+
+fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(
+        const DomainParticipantQos& qos)
+{
+    if (qos.allocation().data_limits.max_user_data == 0 ||
+            qos.allocation().data_limits.max_user_data > qos.user_data().getValue().size())
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+}
+
+bool DomainParticipantImpl::can_qos_be_updated(
+        const DomainParticipantQos& to,
+        const DomainParticipantQos& from)
+{
+    bool updatable = true;
+    if (!(to.allocation() == from.allocation()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "ParticipantResourceLimitsQos cannot be changed after the participant creation");
+    }
+    if (!(to.properties() == from.properties()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant creation");
+    }
+    if (!(to.wire_protocol() == from.wire_protocol()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant creation");
+    }
+    if (!(to.transport() == from.transport()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "TransportConfigQos cannot be changed after the participant creation");
+    }
+    if (!(to.name() == from.name()))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant creation");
+    }
+    return updatable;
 }
