@@ -91,6 +91,8 @@ public:
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
             DomainParticipantQos& qos) const;
 
+    RTPS_DllAPI const DomainParticipantQos& get_default_participant_qos();
+
 
     RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const DomainParticipantQos& qos);

@@ -152,8 +152,8 @@ ReturnCode_t DomainParticipantImpl::set_qos(
 {
     if (&qos == &PARTICIPANT_QOS_DEFAULT)
     {
-        const DomainParticipantQos& default_qos;
-        DomainParticipantFactory::get_instance()->get_default_participant_qos(default_qos);
+        const DomainParticipantQos& default_qos =
+                DomainParticipantFactory::get_instance()->get_default_participant_qos();
         if (!can_qos_be_updated(qos_, qos))
         {
             return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;

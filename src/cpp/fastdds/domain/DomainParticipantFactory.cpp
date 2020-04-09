@@ -260,6 +260,11 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+const DomainParticipantQos& DomainParticipantFactory::get_default_participant_qos()
+{
+    return default_participant_qos_;
+}
+
 ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
         const DomainParticipantQos& qos)
 {
