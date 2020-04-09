@@ -91,7 +91,19 @@ const SubscriberQos& SubscriberImpl::get_qos() const
 ReturnCode_t SubscriberImpl::set_qos(
         const SubscriberQos& qos)
 {
-    ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
+    if (&qos == &SUBSCRIBER_QOS_DEFAULT)
+    {
+        const SubscriberQos& default_qos = participant_->get_default_subscriber_qos();
+        if (!can_qos_be_updated(qos_, default_qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+
+        set_qos(qos_, default_qos, false);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    ReturnCode_t check_result = check_qos(qos);
     if (!check_result)
     {
         return check_result;
