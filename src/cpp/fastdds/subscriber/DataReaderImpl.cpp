@@ -180,6 +180,17 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
 ReturnCode_t DataReaderImpl::set_qos(
         const DataReaderQos& qos)
 {
+    if (&qos == &DATAREADER_QOS_DEFAULT)
+    {
+        const DataReaderQos& default_qos = subscriber_->get_default_datareader_qos();
+        if (!can_qos_be_updated(qos_, default_qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+
+        set_qos(qos_, default_qos, false);
+        return ReturnCode_t::RETCODE_OK;
+    }
     ReturnCode_t check_result = check_qos(qos);
     if (!check_result)
     {

@@ -89,9 +89,9 @@ Subscriber& Subscriber::default_datareader_qos(
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    if ( result == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    if ( result == ReturnCode_t::RETCODE_UNSUPPORTED)
     {
-        throw dds::core::ImmutablePolicyError("Inmutable Qos");
+        throw dds::core::UnsupportedError("Unsupported Qos");
     }
     return *this;
 }

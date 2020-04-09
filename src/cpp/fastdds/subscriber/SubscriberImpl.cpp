@@ -313,6 +313,12 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const DataReaderQos& qos)
 {
+    if (&qos == &DATAREADER_QOS_DEFAULT)
+    {
+        DataReaderImpl::set_qos(default_datareader_qos_, DATAREADER_QOS_DEFAULT, true);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     ReturnCode_t check_result = DataReaderImpl::check_qos(qos);
     if (!check_result)
     {
