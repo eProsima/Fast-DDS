@@ -69,6 +69,10 @@ void Subscriber::qos(
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
     }
+    else if (result == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported Qos");
+    }
     else if (result == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
