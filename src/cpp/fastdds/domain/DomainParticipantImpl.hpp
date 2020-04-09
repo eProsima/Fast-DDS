@@ -435,7 +435,7 @@ public:
             const DomainParticipantQos& from,
             bool first_time);
 
-    static bool check_qos(
+    static ReturnCode_t check_qos(
             const DomainParticipantQos& qos);
 
     static bool can_qos_be_updated(

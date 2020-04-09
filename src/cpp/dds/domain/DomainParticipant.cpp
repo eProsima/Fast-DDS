@@ -128,10 +128,6 @@ void DomainParticipant::default_participant_qos(
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    else if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
-    {
-        throw dds::core::ImmutablePolicyError("Immutable Qos");
-    }
 }
 
 dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const

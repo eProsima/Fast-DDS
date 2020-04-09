@@ -263,13 +263,16 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
 ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
         const DomainParticipantQos& qos)
 {
-    if (!DomainParticipantImpl::check_qos(qos))
+    if (&qos == &PARTICIPANT_QOS_DEFAULT)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        DomainParticipantImpl::set_qos(default_participant_qos_, PARTICIPANT_QOS_DEFAULT, true);
+        return ReturnCode_t::RETCODE_OK;
     }
-    if (!DomainParticipantImpl::can_qos_be_updated(default_participant_qos_, qos))
+
+    ReturnCode_t ret_val = DomainParticipantImpl::check_qos(qos);
+    if (!ret_val)
     {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        return ret_val;
     }
     DomainParticipantImpl::set_qos(default_participant_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;

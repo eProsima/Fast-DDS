@@ -20,6 +20,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
@@ -149,9 +150,22 @@ DomainParticipantImpl::~DomainParticipantImpl()
 ReturnCode_t DomainParticipantImpl::set_qos(
         const DomainParticipantQos& qos)
 {
-    if (!check_qos(qos))
+    if (&qos == &PARTICIPANT_QOS_DEFAULT)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        const DomainParticipantQos& default_qos;
+        DomainParticipantFactory::get_instance()->get_default_participant_qos(default_qos);
+        if (!can_qos_be_updated(qos_, qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+        set_qos(qos_, default_qos, false);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
     }
     if (!can_qos_be_updated(qos_, qos))
     {
@@ -1273,15 +1287,15 @@ void DomainParticipantImpl::set_qos(
     }
 }
 
-bool DomainParticipantImpl::check_qos(
+fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(
         const DomainParticipantQos& qos)
 {
     if (qos.allocation().data_limits.max_user_data == 0 ||
             qos.allocation().data_limits.max_user_data > qos.user_data().getValue().size())
     {
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
 bool DomainParticipantImpl::can_qos_be_updated(
