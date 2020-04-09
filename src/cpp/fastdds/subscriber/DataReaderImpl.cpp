@@ -756,15 +756,15 @@ void DataReaderImpl::set_qos(
         to.time_based_filter() = from.time_based_filter();
         to.time_based_filter().hasChanged = true;
     }
-    if (to.topicData().getValue() != from.topicData().getValue())
+    if (to.topic_data().getValue() != from.topic_data().getValue())
     {
-        to.topicData() = from.topicData();
-        to.topicData().hasChanged = true;
+        to.topic_data() = from.topic_data();
+        to.topic_data().hasChanged = true;
     }
-    if (first_time || !(to.durabilityService() == from.durabilityService()))
+    if (first_time || !(to.durability_service() == from.durability_service()))
     {
-        to.durabilityService() = from.durabilityService();
-        to.durabilityService().hasChanged = true;
+        to.durability_service() = from.durability_service();
+        to.durability_service().hasChanged = true;
     }
     if (to.lifespan().duration != from.lifespan().duration )
     {
@@ -796,9 +796,9 @@ void DataReaderImpl::set_qos(
         to.reader_data_lifecycle() = from.reader_data_lifecycle();
     }
 
-    if (to.expectsInlineQos() != from.expectsInlineQos())
+    if (to.expects_inline_qos() != from.expects_inline_qos())
     {
-        to.expectsInlineQos(from.expectsInlineQos());
+        to.expects_inline_qos(from.expects_inline_qos());
     }
 
     if (first_time && !(to.properties() == from.properties()))
@@ -806,9 +806,9 @@ void DataReaderImpl::set_qos(
         to.properties() = from.properties();
     }
 
-    if (first_time && !(to.enpoint() == from.enpoint()))
+    if (first_time && !(to.endpoint() == from.endpoint()))
     {
-        to.enpoint() = from.enpoint();
+        to.endpoint() = from.endpoint();
     }
 
     if (first_time && !(to.reader_resource_limits() == from.reader_resource_limits()))

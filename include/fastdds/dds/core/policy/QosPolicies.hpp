@@ -74,6 +74,7 @@ public:
     bool operator ==(
             const QosPolicy& b) const
     {
+        // hasChanged field isn't needed to be compared to being equal two QosPolicy objects.
         return (this->send_always_ == b.send_always_);
     }
 
@@ -463,7 +464,8 @@ public:
     {
         return (this->kind == b.kind) &&
                (this->max_blocking_time == b.max_blocking_time) &&
-               Parameter_t::operator ==(b);
+               Parameter_t::operator ==(b) &&
+               QosPolicy::operator ==(b);
     }
 
     inline void clear() override

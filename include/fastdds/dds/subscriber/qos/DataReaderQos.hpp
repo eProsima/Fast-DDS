@@ -159,13 +159,13 @@ public:
                (time_based_filter_ == b.time_based_filter()) &&
                (reader_data_lifecycle_ == b.reader_data_lifecycle()) &&
                (lifespan_ == b.lifespan()) &&
-               (topic_data_ == b.topicData()) &&
-               (durability_service_ == b.durabilityService()) &&
+               (topic_data_ == b.topic_data()) &&
+               (durability_service_ == b.durability_service()) &&
                (reliable_reader_qos_ == b.reliable_reader_qos()) &&
                (type_consistency_ == b.type_consistency()) &&
-               (expects_inline_qos_ == b.expectsInlineQos()) &&
+               (expects_inline_qos_ == b.expects_inline_qos()) &&
                (properties_ == b.properties()) &&
-               (enpoint_ == b.enpoint()) &&
+               (endpoint_ == b.endpoint()) &&
                (reader_resource_limits_ == b.reader_resource_limits());
     }
 
@@ -538,7 +538,7 @@ public:
      * Getter for TopicDataQosPolicy
      * @return TopicDataQosPolicy reference
      */
-    TopicDataQosPolicy& topicData()
+    TopicDataQosPolicy& topic_data()
     {
         return topic_data_;
     }
@@ -547,7 +547,7 @@ public:
      * Getter for TopicDataQosPolicy
      * @return TopicDataQosPolicy const reference
      */
-    const TopicDataQosPolicy& topicData() const
+    const TopicDataQosPolicy& topic_data() const
     {
         return topic_data_;
     }
@@ -556,7 +556,7 @@ public:
      * Setter for TopicDataQosPolicy
      * @param new_value new value for the TopicDataQosPolicy
      */
-    void topicData(
+    void topic_data(
             const TopicDataQosPolicy& new_value)
     {
         topic_data_ = new_value;
@@ -566,7 +566,7 @@ public:
      * Getter for DurabilityServiceQosPolicy
      * @return DurabilityServiceQosPolicy reference
      */
-    DurabilityServiceQosPolicy& durabilityService()
+    DurabilityServiceQosPolicy& durability_service()
     {
         return durability_service_;
     }
@@ -575,7 +575,7 @@ public:
      * Getter for DurabilityServiceQosPolicy
      * @return DurabilityServiceQosPolicy const reference
      */
-    const DurabilityServiceQosPolicy& durabilityService() const
+    const DurabilityServiceQosPolicy& durability_service() const
     {
         return durability_service_;
     }
@@ -584,7 +584,7 @@ public:
      * Setter for DurabilityServiceQosPolicy
      * @param new_value new value for the DurabilityServiceQosPolicy
      */
-    void durabilityService(
+    void durability_service(
             const DurabilityServiceQosPolicy& new_value)
     {
         durability_service_ = new_value;
@@ -650,7 +650,7 @@ public:
      * Getter for expectsInlineQos_
      * @return expectsInlineQos_
      */
-    bool expectsInlineQos() const
+    bool expects_inline_qos() const
     {
         return expects_inline_qos_;
     }
@@ -659,7 +659,7 @@ public:
      * Setter for expectsInlineQos_
      * @param new_value new value for the expectsInlineQos_
      */
-    void expectsInlineQos(
+    void expects_inline_qos(
             bool new_value)
     {
         expects_inline_qos_ = new_value;
@@ -697,28 +697,28 @@ public:
      * Getter for RTPSEndpointQos
      * @return RTPSEndpointQos reference
      */
-    RTPSEndpointQos& enpoint()
+    RTPSEndpointQos& endpoint()
     {
-        return enpoint_;
+        return endpoint_;
     }
 
     /**
      * Getter for RTPSEndpointQos
      * @return RTPSEndpointQos const reference
      */
-    const RTPSEndpointQos& enpoint() const
+    const RTPSEndpointQos& endpoint() const
     {
-        return enpoint_;
+        return endpoint_;
     }
 
     /**
      * Setter for RTPSEndpointQos
      * @param new_value new value for the RTPSEndpointQos
      */
-    void enpoint(
+    void endpoint(
             const RTPSEndpointQos& new_value)
     {
-        enpoint_ = new_value;
+        endpoint_ = new_value;
     }
 
     /**
@@ -814,7 +814,7 @@ private:
     PropertyPolicyQos properties_;
 
     //!Endpoint configuration (Extension)
-    RTPSEndpointQos enpoint_;
+    RTPSEndpointQos endpoint_;
 
     //!ReaderResourceLimitsQos
     ReaderResourceLimitsQos reader_resource_limits_;

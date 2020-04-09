@@ -203,7 +203,8 @@ public:
     /* Check whether values in the DataReaderQos are compatible among them or not
      * @return True if correct.
      */
-    static ReturnCode_t check_qos (const DataReaderQos& qos);
+    static ReturnCode_t check_qos (
+            const DataReaderQos& qos);
 
     /* Check whether the DataReaderQos can be updated with the values provided. This method DOES NOT update anything.
      * @param to Reference to the qos instance to be changed.
