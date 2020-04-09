@@ -485,7 +485,7 @@ void PublisherImpl::set_qos(
 {
     if (first_time && !(to.presentation() == from.presentation()))
     {
-        to.presentation() = from.presentation();
+        to.presentation(from.presentation());
         to.presentation().hasChanged = true;
     }
     if (!(to.partition() == from.partition()))
