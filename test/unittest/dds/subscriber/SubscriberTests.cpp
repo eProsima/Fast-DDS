@@ -39,14 +39,15 @@ TEST(SubscriberTests, ChangeSubscriberQos)
 
     ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
 
     ASSERT_EQ(subscriber->set_qos(qos), ReturnCode_t::RETCODE_OK);
     SubscriberQos pqos;
     ASSERT_EQ(subscriber->get_qos(pqos), ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+
 }
 
 TEST(SubscriberTests, ChangePSMSubscriberQos)
@@ -57,12 +58,12 @@ TEST(SubscriberTests, ChangePSMSubscriberQos)
     ::dds::sub::qos::SubscriberQos qos = subscriber.qos();
     ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
     ASSERT_NO_THROW(subscriber.qos(qos));
     ::dds::sub::qos::SubscriberQos pqos = subscriber.qos();
 
     ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(SubscriberTests, ChangeDefaultDataReaderQos)
