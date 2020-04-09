@@ -22,6 +22,9 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/qos/DataWriterQos.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -73,14 +76,14 @@ TEST(PublisherTests, ChangePublisherQos)
 
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
 
     publisher->set_qos(qos);
     PublisherQos pqos;
     publisher->get_qos(pqos);
 
     ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
 }
 
@@ -92,12 +95,12 @@ TEST(PublisherTests, ChangePSMPublisherQos)
     ::dds::pub::qos::PublisherQos qos = publisher.qos();
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
-    qos.entity_factory.autoenable_created_entities = false;
+    qos.entity_factory().autoenable_created_entities = false;
     publisher.qos(qos);
     ::dds::pub::qos::PublisherQos pqos = publisher.qos();
 
     ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory.autoenable_created_entities, false);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 

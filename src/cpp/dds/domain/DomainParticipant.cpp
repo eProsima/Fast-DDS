@@ -146,15 +146,7 @@ dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const
 DomainParticipant& DomainParticipant::default_publisher_qos(
         const ::dds::pub::qos::PublisherQos& qos)
 {
-    ReturnCode_t code = this->delegate()->set_default_publisher_qos(qos);
-    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
-    {
-        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
-    }
-    else if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
-    {
-        throw dds::core::ImmutablePolicyError("Immutable Qos");
-    }
+    this->delegate()->set_default_publisher_qos(qos);
     return *this;
 }
 

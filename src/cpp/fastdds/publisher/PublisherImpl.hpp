@@ -215,7 +215,7 @@ public:
             const PublisherQos& from,
             bool first_time);
 
-    static bool check_qos(
+    static ReturnCode_t check_qos(
             const PublisherQos& qos);
 
     static bool can_qos_be_updated(

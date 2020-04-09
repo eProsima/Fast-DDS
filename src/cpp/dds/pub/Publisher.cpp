@@ -63,11 +63,7 @@ void Publisher::qos(
         const qos::PublisherQos& pqos)
 {
     ReturnCode_t code = this->delegate()->set_qos(pqos);
-    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
-    {
-        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
-    }
-    else if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
     }

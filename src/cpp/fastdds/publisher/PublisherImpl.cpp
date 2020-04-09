@@ -94,11 +94,23 @@ const PublisherQos& PublisherImpl::get_qos() const
 ReturnCode_t PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
-    if (check_qos(qos))
+    if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        const PublisherQos& default_qos = participant_->get_default_publisher_qos();
+        if (!can_qos_be_updated(qos_, default_qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+        set_qos(qos_, default_qos, false);
+        return ReturnCode_t::RETCODE_OK;
     }
-    if (can_qos_be_updated(qos_, qos))
+
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
+    }
+    if (!can_qos_be_updated(qos_, qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
@@ -492,11 +504,11 @@ void PublisherImpl::set_qos(
     }
 }
 
-bool PublisherImpl::check_qos(
+ReturnCode_t PublisherImpl::check_qos(
         const PublisherQos& qos)
 {
     (void) qos;
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool PublisherImpl::can_qos_be_updated(
