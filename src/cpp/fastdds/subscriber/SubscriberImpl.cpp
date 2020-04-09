@@ -145,22 +145,22 @@ DataReader* SubscriberImpl::create_datareader(
     ReaderAttributes ratt;
     ratt.endpoint.durabilityKind = qos.durability().durabilityKind();
     ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = qos.enpoint().multicast_locator_list;
+    ratt.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
     ratt.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = topic_att.topicKind;
-    ratt.endpoint.unicastLocatorList = qos.enpoint().unicast_locator_list;
-    ratt.endpoint.remoteLocatorList = qos.enpoint().remote_locator_list;
-    ratt.expectsInlineQos = qos.expectsInlineQos();
+    ratt.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
+    ratt.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
+    ratt.expectsInlineQos = qos.expects_inline_qos();
     ratt.endpoint.properties = qos.properties();
 
-    if (qos.enpoint().entity_id > 0)
+    if (qos.endpoint().entity_id > 0)
     {
-        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos.enpoint().entity_id));
+        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
     }
 
-    if (qos.enpoint().user_defined_id > 0)
+    if (qos.endpoint().user_defined_id > 0)
     {
-        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.enpoint().user_defined_id));
+        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
     }
 
     ratt.times = qos.reliable_reader_qos().reader_times;
@@ -193,7 +193,7 @@ DataReader* SubscriberImpl::create_datareader(
         topic_att,
         ratt,
         qos,
-        qos.enpoint().history_memory_policy,
+        qos.endpoint().history_memory_policy,
         listener);
 
     if (impl->reader_ == nullptr)

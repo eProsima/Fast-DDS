@@ -20,9 +20,11 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
-const DataReaderQos eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+const DataReaderQos DATAREADER_QOS_DEFAULT;
 
 ReaderQos DataReaderQos::get_readerqos(
         const SubscriberQos& pqos) const
@@ -41,12 +43,15 @@ ReaderQos DataReaderQos::get_readerqos(
     qos.m_ownership = ownership();
     qos.m_timeBasedFilter = time_based_filter();
     qos.m_lifespan = lifespan();
-    qos.m_topicData = topicData();
-    qos.m_durabilityService = durabilityService();
+    qos.m_topicData = topic_data();
+    qos.m_durabilityService = durability_service();
     qos.m_disablePositiveACKs = reliable_reader_qos().disable_positive_ACKs;
     qos.type_consistency = type_consistency().type_consistency;
     qos.representation = type_consistency().representation;
     return qos;
 }
 
+} /* namespace dds */
+} /* namespace fastdds */
+} /* namespace eprosima */
 
