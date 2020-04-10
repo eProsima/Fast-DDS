@@ -89,7 +89,7 @@ public:
 
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const WriterQos& writer_qos,
+            const DataWriterQos& writer_qos,
             DataWriterListener* listener);
 
     ReturnCode_t delete_datawriter(

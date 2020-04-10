@@ -21,6 +21,8 @@
 #define _FASTDDS_DATAWRITERQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 
@@ -93,6 +95,9 @@ public:
                (this->writer_resources_ == b.writer_resources()) &&
                (this->throughput_controller_ == b.throughput_controller());
     }
+
+    RTPS_DllAPI WriterQos get_writerqos(
+            const PublisherQos& pqos) const;
 
     /**
      * Getter for DurabilityQosPolicy
@@ -779,10 +784,7 @@ private:
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller_;
 };
 
-bool check_qos(
-        const DataWriterQos& qos);
-
-extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
+RTPS_DllAPI extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

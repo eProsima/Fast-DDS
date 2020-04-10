@@ -23,33 +23,27 @@ using namespace eprosima::fastdds::dds;
 
 const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
-bool eprosima::fastdds::dds::check_qos(
-        const DataWriterQos& qos)
+WriterQos DataWriterQos::get_writerqos(
+        const PublisherQos& pqos) const
 {
-    if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
-    {
-        logError(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return false;
-    }
-    if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
-    {
-        logError(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
-        return false;
-    }
-    if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
-    {
-        logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
-        return false;
-    }
-    if (qos.liveliness().kind == AUTOMATIC_LIVELINESS_QOS ||
-            qos.liveliness().kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-    {
-        if (qos.liveliness().lease_duration < eprosima::fastrtps::c_TimeInfinite &&
-                qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
-        {
-            logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
-            return false;
-        }
-    }
-    return true;
+    WriterQos qos;
+    qos.m_deadline = deadline();
+    qos.m_destinationOrder = destination_order();
+    qos.m_disablePositiveACKs = reliable_writer_data().disable_positive_acks;
+    qos.m_durability = durability();
+    qos.m_durabilityService = durability_service();
+    qos.m_groupData = pqos.group_data();
+    qos.m_latencyBudget = latency_budget();
+    qos.m_lifespan = lifespan();
+    qos.m_liveliness = liveliness();
+    qos.m_ownership = ownership();
+    qos.m_ownershipStrength = ownership_strength();
+    qos.m_partition = pqos.partition();
+    qos.m_presentation = pqos.presentation();
+    qos.m_publishMode = publish_mode();
+    qos.m_reliability = reliability();
+    //qos.m_topicData --> TODO: Fill with TopicQos info
+    qos.m_userData = user_data();
+    qos.representation = representation();
+    return qos;
 }

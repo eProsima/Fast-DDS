@@ -25,6 +25,7 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -261,14 +262,14 @@ int main(
     topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
-    PublisherAttributes publisher_attributes;
-    //Domain::getDefaultPublisherAttributes(publisher_attributes);
-    publisher_attributes.topic.topicKind = NO_KEY;
-    publisher_attributes.topic.topicDataType = type->getName();
-    publisher_attributes.topic.topicName = topic.str();
-    publisher_attributes.qos.m_liveliness.lease_duration = 3;
-    publisher_attributes.qos.m_liveliness.announcement_period = 1;
-    publisher_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
+    TopicAttributes topic_attr;
+    topic_attr.topicKind = NO_KEY;
+    topic_attr.topicDataType = type->getName();
+    topic_attr.topicName = topic.str();
+    DataWriterQos qos;
+    qos.liveliness().lease_duration = 3;
+    qos.liveliness().announcement_period = 1;
+    qos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener);
     if (publisher == nullptr)
@@ -277,7 +278,7 @@ int main(
         return 1;
     }
 
-    DataWriter* writer = publisher->create_datawriter(publisher_attributes.topic, publisher_attributes.qos, nullptr);
+    DataWriter* writer = publisher->create_datawriter(topic_attr, qos, nullptr);
     if (writer == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);

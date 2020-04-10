@@ -150,7 +150,7 @@ void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
 
 DataWriter* PublisherImpl::create_datawriter(
         const fastrtps::TopicAttributes& topic_att,
-        const fastrtps::WriterQos& writer_qos,
+        const DataWriterQos& qos,
         DataWriterListener* listener)
 {
     logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic_att.getTopicName());
@@ -172,38 +172,37 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
-    if (!topic_att.checkQos() || !writer_qos.checkQos())
+    if (!topic_att.checkQos() || !DataWriterImpl::check_qos(qos))
     {
         return nullptr;
     }
 
-    //TODO: Fix when PublisherAttributes are correct decomposed in qos
     WriterAttributes w_att;
-    //w_att.throughputController = qos_.publisher_attr.throughputController;
-    w_att.endpoint.durabilityKind = writer_qos.m_durability.durabilityKind();
+    w_att.throughputController = qos.throughput_controller();
+    w_att.endpoint.durabilityKind = qos.durability().durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
-    //w_att.endpoint.multicastLocatorList = qos_.publisher_attr.multicastLocatorList;
-    w_att.endpoint.reliabilityKind = writer_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    w_att.endpoint.multicastLocatorList = qos.endpoint_data().multicast_locator_list;
+    w_att.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     w_att.endpoint.topicKind = topic_att.topicKind;
-    //w_att.endpoint.unicastLocatorList = qos_.publisher_attr.unicastLocatorList;
-    //w_att.endpoint.remoteLocatorList = qos_.publisher_attr.remoteLocatorList;
-    w_att.mode = writer_qos.m_publishMode.kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
-    //w_att.endpoint.properties = qos_.publisher_attr.properties;
+    w_att.endpoint.unicastLocatorList = qos.endpoint_data().unicast_locator_list;
+    w_att.endpoint.remoteLocatorList = qos.endpoint_data().remote_locator_list;
+    w_att.mode = qos.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
+    w_att.endpoint.properties = qos.properties();
 
-    //    if (qos_.publisher_attr.getEntityID() > 0)
-    //    {
-    //        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos_.publisher_attr.getEntityID()));
-    //    }
+    if (qos.endpoint_data().entity_id > 0)
+    {
+        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint_data().entity_id));
+    }
 
-    //    if (qos_.publisher_attr.getUserDefinedID() > 0)
-    //    {
-    //        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.publisher_attr.getUserDefinedID()));
-    //    }
+    if (qos.endpoint_data().user_defined_id > 0)
+    {
+        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint_data().user_defined_id));
+    }
 
-    //w_att.times = qos_.publisher_attr.times;
-    w_att.liveliness_kind = writer_qos.m_liveliness.kind;
-    w_att.liveliness_lease_duration = writer_qos.m_liveliness.lease_duration;
-    //w_att.matched_readers_allocation = qos_.publisher_attr.matched_subscriber_allocation;
+    w_att.times = qos.reliable_writer_data().times;
+    w_att.liveliness_kind = qos.liveliness().kind;
+    w_att.liveliness_lease_duration = qos.liveliness().lease_duration;
+    w_att.matched_readers_allocation = qos.writer_resources().matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -212,11 +211,11 @@ DataWriter* PublisherImpl::create_datawriter(
     property.value(topic_att.getTopicName().c_str());
     w_att.endpoint.properties.properties().push_back(std::move(property));
 
-    if (writer_qos.m_partition.names().size() > 0)
+    if (qos_.partition().names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for (auto partition : writer_qos.m_partition.names())
+        for (auto partition : qos_.partition().names())
         {
             partitions += partition + ";";
         }
@@ -224,11 +223,11 @@ DataWriter* PublisherImpl::create_datawriter(
         w_att.endpoint.properties.properties().push_back(std::move(property));
     }
 
-    if (writer_qos.m_disablePositiveACKs.enabled &&
-            writer_qos.m_disablePositiveACKs.duration != c_TimeInfinite)
+    if (qos.reliable_writer_data().disable_positive_acks.enabled &&
+            qos.reliable_writer_data().disable_positive_acks.duration != c_TimeInfinite)
     {
         w_att.disable_positive_acks = true;
-        w_att.keep_duration = writer_qos.m_disablePositiveACKs.duration;
+        w_att.keep_duration = qos.reliable_writer_data().disable_positive_acks.duration;
     }
 
     DataWriterImpl* impl = new DataWriterImpl(
@@ -236,9 +235,7 @@ DataWriter* PublisherImpl::create_datawriter(
         type_support,
         topic_att,
         w_att,
-        writer_qos,
-        //qos_.publisher_attr.historyMemoryPolicy,
-        fastrtps::rtps::MemoryManagementPolicy_t(),
+        qos,
         listener);
 
     if (impl->writer_ == nullptr)
@@ -252,7 +249,8 @@ DataWriter* PublisherImpl::create_datawriter(
     impl->user_datawriter_ = writer;
 
     //REGISTER THE WRITER
-    rtps_participant_->registerWriter(impl->writer_, topic_att, writer_qos);
+    WriterQos wqos = qos.get_writerqos(qos_);
+    rtps_participant_->registerWriter(impl->writer_, topic_att, wqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
@@ -373,113 +371,17 @@ bool PublisherImpl::contains_entity(
 ReturnCode_t PublisherImpl::set_default_datawriter_qos(
         const DataWriterQos& qos)
 {
-    if (!check_qos(qos))
+    if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
     }
-    if (!(default_datawriter_qos_.durability() == qos.durability()))
+
+    ReturnCode_t ret_val = DataWriterImpl::check_qos(qos);
+    if (!ret_val)
     {
-        default_datawriter_qos_.durability() = qos.durability();
-        default_datawriter_qos_.durability().hasChanged = true;
+        return ret_val;
     }
-    if (!(default_datawriter_qos_.durability_service() == qos.durability_service()))
-    {
-        default_datawriter_qos_.durability_service() = qos.durability_service();
-        default_datawriter_qos_.durability_service().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.deadline() == qos.deadline()))
-    {
-        default_datawriter_qos_.deadline() = qos.deadline();
-        default_datawriter_qos_.deadline().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.latency_budget() == qos.latency_budget()))
-    {
-        default_datawriter_qos_.latency_budget() = qos.latency_budget();
-        default_datawriter_qos_.latency_budget().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.liveliness() == qos.liveliness()))
-    {
-        default_datawriter_qos_.liveliness() = qos.liveliness();
-        default_datawriter_qos_.liveliness().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.reliability() == qos.reliability()))
-    {
-        default_datawriter_qos_.reliability() = qos.reliability();
-        default_datawriter_qos_.reliability().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.destination_order() == qos.destination_order()))
-    {
-        default_datawriter_qos_.destination_order() = qos.destination_order();
-        default_datawriter_qos_.destination_order().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.history() == qos.history()))
-    {
-        default_datawriter_qos_.history() = qos.history();
-        default_datawriter_qos_.history().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.resource_limits() == qos.resource_limits()))
-    {
-        default_datawriter_qos_.resource_limits() = qos.resource_limits();
-        default_datawriter_qos_.resource_limits().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.transport_priority() == qos.transport_priority()))
-    {
-        default_datawriter_qos_.transport_priority() = qos.transport_priority();
-        default_datawriter_qos_.transport_priority().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.lifespan() == qos.lifespan()))
-    {
-        default_datawriter_qos_.lifespan() = qos.lifespan();
-        default_datawriter_qos_.lifespan().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.user_data() == qos.user_data()))
-    {
-        default_datawriter_qos_.user_data() = qos.user_data();
-        default_datawriter_qos_.user_data().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.ownership() == qos.ownership()))
-    {
-        default_datawriter_qos_.ownership() = qos.ownership();
-        default_datawriter_qos_.ownership().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.ownership_strength() == qos.ownership_strength()))
-    {
-        default_datawriter_qos_.ownership_strength() = qos.ownership_strength();
-        default_datawriter_qos_.ownership_strength().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.writer_data_lifecycle() == qos.writer_data_lifecycle()))
-    {
-        default_datawriter_qos_.writer_data_lifecycle() = qos.writer_data_lifecycle();
-    }
-    if (!(default_datawriter_qos_.publish_mode() == qos.publish_mode()))
-    {
-        default_datawriter_qos_.publish_mode() = qos.publish_mode();
-    }
-    if (!(default_datawriter_qos_.representation() == qos.representation()))
-    {
-        default_datawriter_qos_.representation() = qos.representation();
-        default_datawriter_qos_.representation().hasChanged = true;
-    }
-    if (!(default_datawriter_qos_.properties() == qos.properties()))
-    {
-        default_datawriter_qos_.properties() = qos.properties();
-    }
-    if (!(default_datawriter_qos_.reliable_writer_data() == qos.reliable_writer_data()))
-    {
-        default_datawriter_qos_.reliable_writer_data() = qos.reliable_writer_data();
-    }
-    if (!(default_datawriter_qos_.endpoint_data() == qos.endpoint_data()))
-    {
-        default_datawriter_qos_.endpoint_data() = qos.endpoint_data();
-    }
-    if (!(default_datawriter_qos_.writer_resources() == qos.writer_resources()))
-    {
-        default_datawriter_qos_.writer_resources() = qos.writer_resources();
-    }
-    if (!(default_datawriter_qos_.throughput_controller() == qos.throughput_controller()))
-    {
-        default_datawriter_qos_.throughput_controller() = qos.throughput_controller();
-    }
+    DataWriterImpl::set_qos(default_datawriter_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
 }
 

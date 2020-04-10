@@ -22,6 +22,7 @@
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -52,32 +53,31 @@ DataWriterImpl::DataWriterImpl(
         TypeSupport type,
         const TopicAttributes& topic_att,
         const WriterAttributes& att,
-        const WriterQos& /*qos*/,
-        const MemoryManagementPolicy_t memory_policy,
+        const DataWriterQos& qos,
         DataWriterListener* listen )
     : publisher_(p)
     , writer_(nullptr)
     , type_(type)
     , topic_att_(topic_att)
     , w_att_(att)
-    //TODO: Uncomment when WriterQos is replaced by DataWriterQos
-    //, qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
+    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
+
     , history_(topic_att_, type_->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
             + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
 #endif
-            , memory_policy)
+            , qos.endpoint_data().history_memory_policy)
     //, history_(std::move(history))
     , listener_(listen)
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
     , high_mark_for_frag_(0)
-    , deadline_duration_us_(qos_.m_deadline.period.to_ns() * 1e-3)
+    , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , timer_owner_()
     , deadline_missed_status_()
-    , lifespan_duration_us_(qos_.m_lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
     , user_datawriter_(nullptr)
 {
     deadline_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
@@ -85,14 +85,14 @@ DataWriterImpl::DataWriterImpl(
                 {
                     return deadline_missed();
                 },
-                    qos_.m_deadline.period.to_ns() * 1e-6);
+                    qos_.deadline().period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
                     [&]() -> bool
                 {
                     return lifespan_expired();
                 },
-                    qos_.m_lifespan.duration.to_ns() * 1e-6);
+                    qos_.lifespan().duration.to_ns() * 1e-6);
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
@@ -231,7 +231,7 @@ bool DataWriterImpl::perform_create_new_change(
 {
     // Block lowlevel writer
     auto max_blocking_time = steady_clock::now() +
-            microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
+            microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 
 #if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
@@ -297,7 +297,7 @@ bool DataWriterImpl::perform_create_new_change(
                 return false;
             }
 
-            if (qos_.m_deadline.period != c_TimeInfinite)
+            if (qos_.deadline().period != c_TimeInfinite)
             {
                 if (!history_.set_next_deadline(
                             ch->instanceHandle,
@@ -318,11 +318,11 @@ bool DataWriterImpl::perform_create_new_change(
                 }
             }
 
-            if (qos_.m_lifespan.duration != c_TimeInfinite)
+            if (qos_.lifespan().duration != c_TimeInfinite)
             {
                 lifespan_duration_us_ = duration<double, std::ratio<1, 1000000> >(
-                    qos_.m_lifespan.duration.to_ns() * 1e-3);
-                lifespan_timer_->update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
+                    qos_.lifespan().duration.to_ns() * 1e-3);
+                lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
                 lifespan_timer_->restart_timer();
             }
 
@@ -399,7 +399,7 @@ bool DataWriterImpl::set_attributes(
     bool updated = true;
     bool missing = false;
 
-    if (qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+    if (qos_.reliability().kind == RELIABLE_RELIABILITY_QOS)
     {
         if (att.endpoint.unicastLocatorList.size() != w_att_.endpoint.unicastLocatorList.size() ||
                 att.endpoint.multicastLocatorList.size() != w_att_.endpoint.multicastLocatorList.size())
@@ -452,7 +452,7 @@ bool DataWriterImpl::set_attributes(
 
     if (updated)
     {
-        if (qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+        if (qos_.reliability().kind == RELIABLE_RELIABILITY_QOS)
         {
             //UPDATE TIMES:
             StatefulWriter* sfw = static_cast<StatefulWriter*>(writer_);
@@ -471,30 +471,48 @@ const WriterAttributes& DataWriterImpl::get_attributes() const
 }
 
 ReturnCode_t DataWriterImpl::set_qos(
-        const WriterQos& qos)
+        const DataWriterQos& qos)
 {
-    //QOS:
-    //CHECK IF THE QOS CAN BE SET
-    if (!qos.checkQos())
+    if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        const DataWriterQos& default_qos = publisher_->get_default_datawriter_qos();
+        if (!can_qos_be_updated(qos_, default_qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+        set_qos(qos_, default_qos, false);
     }
-    else if (!qos_.canQosBeUpdated(qos))
+
+    bool update_user_data = false;
+    if (publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data == 0 ||
+            publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data >
+            qos.user_data().getValue().size())
+    {
+        update_user_data = true;
+    }
+
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
+    }
+    if (!can_qos_be_updated(qos_, qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
+    set_qos(qos_, qos, false, update_user_data);
 
-    qos_.setQos(qos, false);
     //Notify the participant that a Writer has changed its QOS
-    publisher_->rtps_participant()->updateWriter(writer_, topic_att_, qos_);
+    WriterQos wqos = qos.get_writerqos(get_publisher()->get_qos());
+    publisher_->rtps_participant()->updateWriter(writer_, topic_att_, wqos);
     //publisher_->update_writer(this, topic_att_, qos_);
 
     // Deadline
-    if (qos_.m_deadline.period != c_TimeInfinite)
+    if (qos_.deadline().period != c_TimeInfinite)
     {
         deadline_duration_us_ =
-                duration<double, std::ratio<1, 1000000> >(qos_.m_deadline.period.to_ns() * 1e-3);
-        deadline_timer_->update_interval_millisec(qos_.m_deadline.period.to_ns() * 1e-6);
+                duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
+        deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
     }
     else
     {
@@ -502,11 +520,11 @@ ReturnCode_t DataWriterImpl::set_qos(
     }
 
     // Lifespan
-    if (qos_.m_lifespan.duration != c_TimeInfinite)
+    if (qos_.lifespan().duration != c_TimeInfinite)
     {
         lifespan_duration_us_ =
-                duration<double, std::ratio<1, 1000000> >(qos_.m_lifespan.duration.to_ns() * 1e-3);
-        lifespan_timer_->update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
+                duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
+        lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
     }
     else
     {
@@ -516,7 +534,7 @@ ReturnCode_t DataWriterImpl::set_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const WriterQos& DataWriterImpl::get_qos() const
+const DataWriterQos& DataWriterImpl::get_qos() const
 {
     return qos_;
 }
@@ -574,7 +592,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
-    if (data_writer_->qos_.m_durability.kind == VOLATILE_DURABILITY_QOS)
+    if (data_writer_->qos_.durability().kind == VOLATILE_DURABILITY_QOS)
     {
         data_writer_->history_.remove_change_g(ch);
     }
@@ -719,7 +737,7 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    if (qos_.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    if (qos_.liveliness().kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         // As described in the RTPS specification, if liveliness kind is manual a heartbeat must be sent
         // This only applies to stateful writers, as stateless writers do not send heartbeats
@@ -732,6 +750,195 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
         }
     }
     return ReturnCode_t::RETCODE_OK;
+}
+
+void DataWriterImpl::set_qos(
+        DataWriterQos& to,
+        const DataWriterQos& from,
+        bool is_default,
+        bool update_user_data)
+{
+    if (is_default && !(to.durability() == from.durability()))
+    {
+        to.durability() = from.durability();
+        to.durability().hasChanged = true;
+    }
+    if (is_default && !(to.durability_service() == from.durability_service()))
+    {
+        to.durability_service() = from.durability_service();
+        to.durability_service().hasChanged = true;
+    }
+    if (!(to.deadline() == from.deadline()))
+    {
+        to.deadline() = from.deadline();
+        to.deadline().hasChanged = true;
+    }
+    if (!(to.latency_budget() == from.latency_budget()))
+    {
+        to.latency_budget() = from.latency_budget();
+        to.latency_budget().hasChanged = true;
+    }
+    if (is_default && !(to.liveliness() == from.liveliness()))
+    {
+        to.liveliness() = from.liveliness();
+        to.liveliness().hasChanged = true;
+    }
+    if (is_default && !(to.reliability() == from.reliability()))
+    {
+        to.reliability() = from.reliability();
+        to.reliability().hasChanged = true;
+    }
+    if (is_default && !(to.destination_order() == from.destination_order()))
+    {
+        to.destination_order() = from.destination_order();
+        to.destination_order().hasChanged = true;
+    }
+    if (is_default && !(to.history() == from.history()))
+    {
+        to.history() = from.history();
+        to.history().hasChanged = true;
+    }
+    if (is_default && !(to.resource_limits() == from.resource_limits()))
+    {
+        to.resource_limits() = from.resource_limits();
+        to.resource_limits().hasChanged = true;
+    }
+    if (!(to.transport_priority() == from.transport_priority()))
+    {
+        to.transport_priority() = from.transport_priority();
+        to.transport_priority().hasChanged = true;
+    }
+    if (!(to.lifespan() == from.lifespan()))
+    {
+        to.lifespan() = from.lifespan();
+        to.lifespan().hasChanged = true;
+    }
+    if (update_user_data && !(to.user_data() == from.user_data()))
+    {
+        to.user_data() = from.user_data();
+        to.user_data().hasChanged = true;
+    }
+    if (is_default && !(to.ownership() == from.ownership()))
+    {
+        to.ownership() = from.ownership();
+        to.ownership().hasChanged = true;
+    }
+    if (!(to.ownership_strength() == from.ownership_strength()))
+    {
+        to.ownership_strength() = from.ownership_strength();
+        to.ownership_strength().hasChanged = true;
+    }
+    if (!(to.writer_data_lifecycle() == from.writer_data_lifecycle()))
+    {
+        to.writer_data_lifecycle() = from.writer_data_lifecycle();
+    }
+    if (is_default && !(to.publish_mode() == from.publish_mode()))
+    {
+        to.publish_mode() = from.publish_mode();
+    }
+    if (!(to.representation() == from.representation()))
+    {
+        to.representation() = from.representation();
+        to.representation().hasChanged = true;
+    }
+    if (is_default && !(to.properties() == from.properties()))
+    {
+        to.properties() = from.properties();
+    }
+    if (is_default && !(to.reliable_writer_data() == from.reliable_writer_data()))
+    {
+        to.reliable_writer_data() = from.reliable_writer_data();
+    }
+    if (is_default && !(to.endpoint_data() == from.endpoint_data()))
+    {
+        to.endpoint_data() = from.endpoint_data();
+    }
+    if (is_default && !(to.writer_resources() == from.writer_resources()))
+    {
+        to.writer_resources() = from.writer_resources();
+    }
+    if (is_default && !(to.throughput_controller() == from.throughput_controller()))
+    {
+        to.throughput_controller() = from.throughput_controller();
+    }
+}
+
+bool DataWriterImpl::check_qos(
+        const DataWriterQos& qos)
+{
+    if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
+    {
+        logError(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
+        return false;
+    }
+    if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+    {
+        logError(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return false;
+    }
+    if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
+    {
+        logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
+        return false;
+    }
+    if (qos.liveliness().kind == AUTOMATIC_LIVELINESS_QOS ||
+            qos.liveliness().kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        if (qos.liveliness().lease_duration < eprosima::fastrtps::c_TimeInfinite &&
+                qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
+        {
+            logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
+            return false;
+        }
+    }
+    return true;
+}
+
+bool DataWriterImpl::can_qos_be_updated(
+        const DataWriterQos& to,
+        const DataWriterQos& from)
+{
+    bool updatable = true;
+    if (to.durability().kind != from.durability().kind)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Durability kind cannot be changed after the creation of a DataWriter.");
+    }
+
+    if (to.liveliness().kind !=  from.liveliness().kind)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a DataWriter.");
+    }
+
+    if (to.liveliness().lease_duration != from.liveliness().lease_duration)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a DataWriter.");
+    }
+
+    if (to.liveliness().announcement_period != from.liveliness().announcement_period)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a DataWriter.");
+    }
+
+    if (to.reliability().kind != from.reliability().kind)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.ownership().kind != from.ownership().kind)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.destination_order().kind != from.destination_order().kind)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataWriter.");
+    }
+    return updatable;
 }
 
 } // namespace dds

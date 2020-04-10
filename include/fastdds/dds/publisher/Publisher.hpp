@@ -122,7 +122,7 @@ public:
      */
     RTPS_DllAPI DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const WriterQos& writer_qos,
+            const DataWriterQos& qos,
             DataWriterListener* listener);
 
     /**
