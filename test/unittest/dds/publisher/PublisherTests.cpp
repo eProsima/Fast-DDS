@@ -37,11 +37,11 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
 
     qos.deadline().period = 260;
 
-    ASSERT_TRUE(publisher->set_default_datawriter_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->set_default_datawriter_qos(qos), ReturnCode_t::RETCODE_OK);
     DataWriterQos wqos;
     publisher->get_default_datawriter_qos(wqos);
 
-    ASSERT_EQ(qos, wqos);
+    ASSERT_TRUE(qos == wqos);
     ASSERT_EQ(wqos.deadline().period, 260);
 }
 
@@ -59,7 +59,7 @@ TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
     ASSERT_NO_THROW(publisher.default_datawriter_qos(qos));
     ::dds::pub::qos::DataWriterQos wqos = publisher.default_datawriter_qos();
 
-    ASSERT_EQ(qos, wqos);
+    ASSERT_TRUE(qos == wqos);
     ASSERT_EQ(wqos.deadline().period, 540);
 }
 
