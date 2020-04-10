@@ -27,6 +27,7 @@
 #include <dds/core/types.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/pub/Publisher.hpp>
+#include <dds/topic/Topic.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -300,6 +301,19 @@ TEST(ParticipantTests, CreateTopic)
     ASSERT_NE(topic, nullptr);
 }
 
+TEST(ParticipantTests, PSMCreateTopic)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+
+    TopicDataTypeMock data_type;
+    TypeSupport type_(&data_type);
+    participant->register_type(type_, "footype");
+
+    ::dds::topic::Topic topic = ::dds::core::null;
+    topic = ::dds::topic::Topic(participant, "footopic", "footype", TOPIC_QOS_DEFAULT);
+
+    ASSERT_NE(topic, ::dds::core::null);
+}
 
 } // namespace dds
 } // namespace fastdds
