@@ -49,6 +49,26 @@ public:
     /**
      * Create a new Topic.
      *
+     * The Topic will be created with the QoS values specified on the last
+     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const ::dds::pub::qos::TopicQos& qos)
+     * dp.default_topic_qos(qos) @endlink or, if the call was never made, the
+     * @ref anchor_dds_pub_topic_qos_defaults "default" values.
+     *
+     * @param dp the domain participant
+     * @throws dds::core::Error
+     *                  An internal error has occurred.
+     * @throws dds::core::OutOfResourcesError
+     *                  The Data Distribution Service ran out of resources to
+     *                  complete this operation.
+     */
+    OMG_DDS_API Topic(
+            const dds::domain::DomainParticipant& dp,
+            const std::string& topic_name,
+            const std::string& type_name);
+
+    /**
+     * Create a new Topic.
+     *
      * The Topic will be created with the given QosPolicy settings and if
      * applicable, attaches the optionally specified TopicListener to it.
      *

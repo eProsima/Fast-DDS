@@ -134,13 +134,11 @@ public:
             Publisher* publisher);
 
     /**
-     * Create a Topic in this Participant.
-     * @param topic_name Name of the Topic.
-     * @param type_name Data type of the Topic.
-     * @param qos QoS of the Topic.
-     * @param listen Pointer to the listener.
+     * Create a Subscriber in this Participant.
+     * @param qos QoS of the Subscriber.
+     * @param listener Pointer to the listener.
      * @param mask StatusMask that holds statuses the listener responds to
-     * @return Pointer to the created Topic.
+     * @return Pointer to the created Subscriber.
      */
     RTPS_DllAPI Subscriber* create_subscriber(
             const SubscriberQos& qos,
@@ -181,13 +179,15 @@ public:
     RTPS_DllAPI bool unregister_type(
             const char* typeName);
 
-    // TODO create/delete topic
+    // TODO delete topic
     /**
-     * Create a Subscriber in this Participant.
-     * @param qos QoS of the Subscriber.
-     * @param listener Pointer to the listener.
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Data type of the Topic.
+     * @param qos QoS of the Topic.
+     * @param listen Pointer to the listener.
      * @param mask StatusMask that holds statuses the listener responds to
-     * @return Pointer to the created Subscriber.
+     * @return Pointer to the created Topic.
      */
     RTPS_DllAPI Topic* create_topic(
             const std::string& topic_name,

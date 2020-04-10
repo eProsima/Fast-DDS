@@ -598,6 +598,15 @@ Topic* DomainParticipantImpl::create_topic(
     TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
     Topic* topic = new Topic(topic_name, topic_impl, mask);
 
+    GUID_t topic_guid = guid();
+     do
+     {
+         topic_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
+         rtps_participant_->get_new_entity_id(topic_guid.entityId);
+     } while (exists_entity_id(topic_guid.entityId));
+     InstanceHandle_t topic_handle(topic_guid);
+     topic_impl->handle_ = topic_handle;
+
     //SAVE THE TOPIC INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_topics_);
     topics_[topic_name] = topic;

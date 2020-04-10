@@ -89,6 +89,8 @@ private:
     TopicQos qos_;
     TopicListener* listener_;
     Topic* user_topic_;
+    fastrtps::rtps::InstanceHandle_t handle_;
+
 };
 
 } // dds

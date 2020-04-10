@@ -145,7 +145,7 @@ public:
     Topic* create_topic(
             const std::string& topic_name,
             const std::string& type_name,
-            const TopicQos& qos,
+            const TopicQos& qos = TOPIC_QOS_DEFAULT,
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 

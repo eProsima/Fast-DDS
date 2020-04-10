@@ -29,17 +29,21 @@
 namespace dds {
 namespace topic {
 
-//Topic::Topic(
-//        const dds::domain::DomainParticipant& dp)
-//    : ::dds::core::Reference<detail::Topic>(
-//        new detail::Topic(
-//            dp.delegate().get(),
-//            dp.default_Topic_qos(),
-//            nullptr,
-//            dds::core::status::StatusMask::all()))
-//    , participant_(nullptr)
-//{
-//}
+Topic::Topic(
+        const dds::domain::DomainParticipant& dp,
+        const std::string& topic_name,
+        const std::string& type_name)
+    : ::dds::core::Reference<detail::Topic>(
+        new detail::Topic(
+            dp.delegate().get(),
+            topic_name,
+            type_name,
+            dp.default_topic_qos(),
+            nullptr,
+            dds::core::status::StatusMask::all()))
+    , participant_(nullptr)
+{
+}
 
 Topic::Topic(
         const dds::domain::DomainParticipant& dp,
