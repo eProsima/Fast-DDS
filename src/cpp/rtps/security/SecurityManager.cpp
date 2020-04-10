@@ -269,16 +269,12 @@ bool SecurityManager::init(
                                     if (!access_plugin_->get_participant_sec_attributes(*local_permissions_handle_,
                                             attributes, exception))
                                     {
-                                        logError(SECURITY, "Error getting participant security attributes. (" <<
-                                                exception.what() << ")");
                                         access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
                                         local_permissions_handle_ = nullptr;
                                     }
                                 }
                                 else
                                 {
-                                    logError(SECURITY, "Error setting permissions credential token. ("
-                                            << exception.what() << ")");
                                     access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
                                     local_permissions_handle_ = nullptr;
                                 }
@@ -287,32 +283,21 @@ bool SecurityManager::init(
                             }
                             else
                             {
-                                logError(SECURITY, "Error getting permissions credential token. ("
-                                        << exception.what() << ")");
                                 access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
                                 local_permissions_handle_ = nullptr;
                             }
                         }
                         else
                         {
-                            logError(SECURITY, "Error checking creation of local participant. ("
-                                    << exception.what() << ")");
                             access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
                             local_permissions_handle_ = nullptr;
                         }
                     }
                     else
                     {
-                        logError(SECURITY, "Error validating the local participant permissions. ("
-                                << exception.what() << ")");
                         access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
                         local_permissions_handle_ = nullptr;
                     }
-                }
-                else
-                {
-                    logError(SECURITY, "Error validating the local participant permissions. ("
-                            << exception.what() << ")");
                 }
             }
 
@@ -349,15 +334,21 @@ bool SecurityManager::init(
                     {
                         assert(!local_participant_crypto_handle_->nil());
                     }
-                    else
-                    {
-                        logError(SECURITY, "Cannot register local participant in crypto plugin. ("
-                                << exception.what() << ")");
-                    }
                 }
                 else
                 {
-                    logInfo(SECURITY, "Cryptography plugin not configured.");
+                    if (logging_plugin_)
+                    {
+                        SecurityException logging_exception;
+                        logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
+                                             "Cryptography plugin not configured",
+                                             "SecurityManager,init",
+                                             logging_exception);
+                    }
+                    else
+                    {
+                        logInfo(SECURITY, "Cryptography plugin not configured.");
+                    }
                 }
             }
 
@@ -372,10 +363,6 @@ bool SecurityManager::init(
             cancel_init();
             return false;
         }
-        else
-        {
-            logError(SECURITY, "Error validating the local participant identity. (" << exception.what() << ")");
-        }
 
         delete authentication_plugin_;
         authentication_plugin_ = nullptr;
@@ -384,7 +371,18 @@ bool SecurityManager::init(
     }
     else
     {
-        logInfo(SECURITY, "Authentication plugin not configured. Security will be disable");
+        if (logging_plugin_)
+        {
+            SecurityException logging_exception;
+            logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
+                                 "Authentication plugin not configured. Security will be disable",
+                                 "SecurityManager,init",
+                                 logging_exception);
+        }
+        else
+        {
+            logInfo(SECURITY, "Authentication plugin not configured. Security will be disable");
+        }
     }
 
     return true;
