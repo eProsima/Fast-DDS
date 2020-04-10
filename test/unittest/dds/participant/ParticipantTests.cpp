@@ -32,6 +32,49 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+// Mocked TopicDataType for Topic creation tests
+class TopicDataTypeMock : public TopicDataType
+{
+    bool serialize(
+            void* /*data*/,
+            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return std::function<uint32_t()>();
+    }
+
+    void * createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+};
+
+
 TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
 {
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
@@ -244,6 +287,19 @@ TEST(ParticipantTests, ChangePSMDefaultTopicQos)
     ASSERT_EQ(qos, tqos);
     ASSERT_EQ(tqos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
 }
+
+TEST(ParticipantTests, CreateTopic)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    TopicDataTypeMock data_type;
+    TypeSupport type_(&data_type);
+    participant->register_type(type_, "footype");
+
+    Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+}
+
 
 } // namespace dds
 } // namespace fastdds
