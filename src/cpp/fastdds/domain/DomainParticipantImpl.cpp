@@ -573,6 +573,38 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     return sub;
 }
 
+Topic* DomainParticipantImpl::create_topic(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    //Look for the correct type registration
+    TypeSupport type_support = find_type(type_name);
+    if (type_support.empty())
+    {
+        logError(PARTICIPANT, "Type : " << type_name << " Not Registered");
+        return nullptr;
+    }
+
+    if (! TopicImpl::check_qos(qos))
+    {
+        logError(PARTICIPANT, "TopicQos inconsistent or not supported");
+        return nullptr;
+    }
+
+    //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
+    TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
+    Topic* topic = new Topic(topic_name, topic_impl, mask);
+
+    //SAVE THE TOPIC INTO MAPS
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    topics_[topic_name] = topic;
+
+    return topic;
+}
+
 const TypeSupport DomainParticipantImpl::find_type(
         const std::string& type_name) const
 {

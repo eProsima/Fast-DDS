@@ -21,6 +21,7 @@
 #define _FASTDDS_DOMAIN_PARTICIPANT_HPP_
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastrtps/types/TypeIdentifier.h>
 
 #include <fastdds/rtps/common/Guid.h>
@@ -133,11 +134,13 @@ public:
             Publisher* publisher);
 
     /**
-     * Create a Subscriber in this Participant.
-     * @param qos QoS of the Subscriber.
-     * @param listener Pointer to the listener.
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Data type of the Topic.
+     * @param qos QoS of the Topic.
+     * @param listen Pointer to the listener.
      * @param mask StatusMask that holds statuses the listener responds to
-     * @return Pointer to the created Subscriber.
+     * @return Pointer to the created Topic.
      */
     RTPS_DllAPI Subscriber* create_subscriber(
             const SubscriberQos& qos,
@@ -179,6 +182,19 @@ public:
             const char* typeName);
 
     // TODO create/delete topic
+    /**
+     * Create a Subscriber in this Participant.
+     * @param qos QoS of the Subscriber.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask that holds statuses the listener responds to
+     * @return Pointer to the created Subscriber.
+     */
+    RTPS_DllAPI Topic* create_topic(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const TopicQos& qos,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /* TODO
        Subscriber* get_builtin_subscriber();

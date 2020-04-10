@@ -28,6 +28,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
@@ -131,6 +132,22 @@ public:
 
     ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
+
+    /**
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Data type of the Topic.
+     * @param qos QoS of the Topic.
+     * @param listen Pointer to the listener.
+     * @param mask StatusMask that holds statuses the listener responds to
+     * @return Pointer to the created Topic.
+     */
+    Topic* create_topic(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const TopicQos& qos,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * Register a type in this participant.
@@ -327,6 +344,10 @@ private:
     //!TopicDataType map
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
+
+    //!Topic map
+    std::map<std::string, Topic*> topics_;
+    mutable std::mutex mtx_topics_;
 
     TopicQos default_topic_qos_;
 
