@@ -622,7 +622,7 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 
 bool DataWriterImpl::deadline_timer_reschedule()
 {
-    assert(qos_.m_deadline.period != c_TimeInfinite);
+    assert(qos_.deadline().period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
@@ -640,7 +640,7 @@ bool DataWriterImpl::deadline_timer_reschedule()
 
 bool DataWriterImpl::deadline_missed()
 {
-    assert(qos_.m_deadline.period != c_TimeInfinite);
+    assert(qos_.deadline().period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 

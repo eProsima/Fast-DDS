@@ -23,6 +23,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -83,13 +84,14 @@ bool HelloWorldPublisher::init()
 
     //CREATE THE PUBLISHER
     //PublisherQos qos;
-    eprosima::fastrtps::PublisherAttributes Wparam;
-    Wparam.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
-    Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "DDSDynHelloWorldTopic";
-    Wparam.topic.auto_fill_type_object = true; // Share the type with readers.
-    Wparam.topic.auto_fill_type_information = false;
-    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    eprosima::fastrtps::TopicAttributes topic_attr;
+    topic_attr.topicKind = eprosima::fastrtps::rtps::NO_KEY;
+    topic_attr.topicDataType = "HelloWorld";
+    topic_attr.topicName = "DDSDynHelloWorldTopic";
+    topic_attr.auto_fill_type_object = true; // Share the type with readers.
+    topic_attr.auto_fill_type_information = false;
+    DataWriterQos qos;
+    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (mp_publisher == nullptr)
@@ -98,7 +100,7 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_listener);
+    writer_ = mp_publisher->create_datawriter(topic_attr, qos, &m_listener);
 
     if (writer_ == nullptr)
     {
