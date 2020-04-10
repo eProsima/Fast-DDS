@@ -20,8 +20,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND AND GMOCK_FOUND)
         find_package(Threads REQUIRED)
 
-        set(PUBLISHERTESTS_SOURCE PublisherTests.cpp
-            )
+        set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
+        set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp)
 
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
@@ -38,5 +38,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(PublisherTests SOURCES ${PUBLISHERTESTS_SOURCE})
+
+        add_executable(DataWriterTests ${DATAWRITERTESTS_SOURCE})
+        target_compile_definitions(DataWriterTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(DataWriterTests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
+        target_link_libraries(DataWriterTests fastrtps foonathan_memory
+            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        add_gtest(DataWriterTests SOURCES ${DATAWRITERTESTS_SOURCE})
     endif()
 endif()

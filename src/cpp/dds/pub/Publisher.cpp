@@ -82,9 +82,14 @@ Publisher::~Publisher()
 Publisher& Publisher::default_datawriter_qos(
         const qos::DataWriterQos& dwqos)
 {
-    if (this->delegate()->set_default_datawriter_qos(dwqos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    ReturnCode_t code = this->delegate()->set_default_datawriter_qos(dwqos);
+    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on DataWriterQos");
     }
     return *this;
 }

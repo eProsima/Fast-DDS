@@ -204,6 +204,8 @@ set(${PROJECT_NAME}_source_files
     dds/core/Exception.cpp
     dds/domain/DomainParticipant.cpp
     dds/pub/Publisher.cpp
+    dds/pub/AnyDataWriter.cpp
+    dds/pub/DataWriter.cpp
     dds/sub/Subscriber.cpp
     dds/topic/Topic.cpp
     )
