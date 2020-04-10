@@ -205,6 +205,7 @@ set(${PROJECT_NAME}_source_files
     dds/domain/DomainParticipant.cpp
     dds/pub/Publisher.cpp
     dds/sub/Subscriber.cpp
+    dds/topic/Topic.cpp
     )
 
 # SHM Transport

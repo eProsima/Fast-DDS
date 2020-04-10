@@ -27,6 +27,14 @@
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
+namespace dds {
+namespace topic {
+
+class Topic;
+
+} // namespace topic
+} // namespace dds
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -55,6 +63,13 @@ class Topic : public DomainEntity, public TopicDescription
             TopicImpl* p,
             const StatusMask& mask = StatusMask::all());
 
+    RTPS_DllAPI Topic(
+            DomainParticipant* dp,
+            const std::string& topic_name,
+            const std::string& type_name,
+            const TopicQos& qos = TOPIC_QOS_DEFAULT,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 public:
 
     RTPS_DllAPI virtual ~Topic();
@@ -109,6 +124,9 @@ public:
 private:
 
     TopicImpl* impl_;
+
+    friend class ::dds::topic::Topic;
+
 };
 
 } /* namespace dds */

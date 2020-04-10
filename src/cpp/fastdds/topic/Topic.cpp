@@ -37,6 +37,19 @@ Topic::Topic(
 {
 }
 
+Topic::Topic(
+        DomainParticipant* dp,
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        TopicListener* listener,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , TopicDescription(topic_name, type_name)
+    , impl_(dp->create_topic(topic_name, type_name, qos, listener, mask)->impl_)
+{
+}
+
 Topic::~Topic()
 {
 }
