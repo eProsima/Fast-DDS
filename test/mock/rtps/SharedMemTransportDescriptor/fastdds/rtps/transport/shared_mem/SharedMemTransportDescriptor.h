@@ -31,13 +31,12 @@ class TransportInterface;
 typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 {
     virtual ~SharedMemTransportDescriptor() 
-	{
-		
-	}
-
+    {
+        
+    }
 
     RTPS_DllAPI SharedMemTransportDescriptor()
-        : TransportDescriptorInterface(0, 0)
+    : TransportDescriptorInterface(0, 0)
     {
 
     }
@@ -55,41 +54,27 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
     }
 
     uint32_t min_send_buffer_size() const override { return 0; }
-
-    enum class OverflowPolicy
-    {
-        DISCARD,
-        FAIL
-    };
-
+    
     RTPS_DllAPI uint32_t segment_size() const
     {
         return segment_size_;
     }
-
-    /**
-     * Sets the segment_size and the max_message_size.
-     * max_message must be <= segment_size
-     * @param [in] segment_size in bytes.
-     * @param [in] max_message_size in bytes.
-     */
+    
     RTPS_DllAPI void segment_size(
-            uint32_t segment_size,
-            uint32_t max_message_size)
+            uint32_t segment_size)
     {
         segment_size_ = segment_size;
-        maxMessageSize = std::min(segment_size, max_message_size);
     }
 
-    RTPS_DllAPI OverflowPolicy port_overflow_policy() const
-    {
-        return port_overflow_policy_;
+    virtual uint32_t max_message_size() const override
+    { 
+        return maxMessageSize; 
     }
 
-    RTPS_DllAPI void port_overflow_policy(
-            OverflowPolicy port_overflow_policy)
+    RTPS_DllAPI void max_message_size(
+            uint32_t max_message_size)
     {
-        port_overflow_policy_ = port_overflow_policy;
+        maxMessageSize = max_message_size;
     }
 
     RTPS_DllAPI uint32_t port_queue_capacity() const
@@ -101,17 +86,6 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
             uint32_t port_queue_capacity)
     {
         port_queue_capacity_ = port_queue_capacity;
-    }
-
-    RTPS_DllAPI OverflowPolicy segment_overflow_policy() const
-    {
-        return segment_overflow_policy_;
-    }
-
-    RTPS_DllAPI void segment_overflow_policy(
-            OverflowPolicy segment_overflow_policy)
-    {
-        segment_overflow_policy_ = segment_overflow_policy;
     }
 
     RTPS_DllAPI uint32_t healthy_check_timeout_ms() const
@@ -140,8 +114,6 @@ private:
 
     uint32_t segment_size_;
     uint32_t port_queue_capacity_;
-    OverflowPolicy port_overflow_policy_;
-    OverflowPolicy segment_overflow_policy_;
     uint32_t healthy_check_timeout_ms_;
     std::string rtps_dump_file_;
 

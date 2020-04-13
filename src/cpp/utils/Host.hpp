@@ -50,8 +50,8 @@ public:
             }
             else
             {
-                reinterpret_cast<uint8_t*>(id_)[0] = 127;
-                reinterpret_cast<uint8_t*>(id_)[1] = 1;
+                reinterpret_cast<uint8_t*>(&id_)[0] = 127;
+                reinterpret_cast<uint8_t*>(&id_)[1] = 1;
             }
         }
     }

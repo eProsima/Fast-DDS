@@ -208,29 +208,22 @@ bool SharedMemTransport::DoInputLocatorsMatch(
 
 bool SharedMemTransport::init()
 {
-    try
+    // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
+    static constexpr uint32_t shm_default_segment_size = 512 * 1024;
+
+    if(configuration_.segment_size() == 0)
     {
-        switch (configuration_.port_overflow_policy())
-        {
-        case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
-            push_lambda_ = &SharedMemTransport::push_discard;
-            break;
-        case SharedMemTransportDescriptor::OverflowPolicy::FAIL:
-            push_lambda_ = &SharedMemTransport::push_fail;
-            break;
-        default:
-            throw std::runtime_error("unknown port_overflow_policy");
-        }
+        configuration_.segment_size(shm_default_segment_size);
+    }
 
-        switch (configuration_.segment_overflow_policy())
-        {
-        case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
-        case SharedMemTransportDescriptor::OverflowPolicy::FAIL:
-            break;
-        default:
-            throw std::runtime_error("unknown port_overflow_policy");
-        }
+    if(configuration_.segment_size() < configuration_.max_message_size())
+    {
+        logError(RTPS_MSG_OUT, "max_message_size cannot be greater than segment_size");
+        return false;
+    }
 
+    try
+    {        
         shared_mem_manager_ = std::make_shared<SharedMemManager>(SHM_MANAGER_DOMAIN);
         shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
                         configuration_.port_queue_capacity());
@@ -420,8 +413,7 @@ bool SharedMemTransport::send(
         logWarning(RTPS_MSG_OUT, e.what());
 
         // Segment overflow with discard policy doesn't return error.
-        if (!shared_buffer &&
-                configuration_.segment_overflow_policy() == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
+        if (!shared_buffer)
         {
             ret = true;
         }
@@ -474,26 +466,11 @@ bool SharedMemTransport::push_discard(
     return true;
 }
 
-bool SharedMemTransport::push_fail(
-        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-        const Locator_t& remote_locator)
-{
-    try
-    {
-        return find_port(remote_locator.port)->try_push(buffer);
-    }
-    catch (const std::exception& error)
-    {
-        logWarning(RTPS_MSG_OUT, error.what());
-        return false;
-    }
-}
-
 bool SharedMemTransport::send(
         const std::shared_ptr<SharedMemManager::Buffer>& buffer,
         const Locator_t& remote_locator)
 {
-    if (!push_lambda_(*this, buffer, remote_locator))
+    if (!push_discard(buffer, remote_locator))
     {
         return false;
     }

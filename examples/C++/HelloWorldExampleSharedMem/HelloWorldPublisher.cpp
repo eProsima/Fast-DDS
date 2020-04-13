@@ -56,8 +56,7 @@ bool HelloWorldPublisher::init()
     PParam.rtps.useBuiltinTransports = false;
 
     auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-    const uint32_t segment_size = 2 * 1024 * 1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(2*1024*1024);
     PParam.rtps.userTransports.push_back(shm_transport);
 
     // UDP

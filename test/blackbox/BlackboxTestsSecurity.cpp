@@ -331,7 +331,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_transport_ok)
     auto shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(segment_size);
+    shm_transport->max_message_size(segment_size);
     reader.disable_builtin_transport();
     reader.add_user_transport_to_pparams(shm_transport);
     writer.disable_builtin_transport();
@@ -402,7 +403,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_udp_transport_ok)
     auto shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size, segment_size);
+    shm_transport->segment_size(segment_size);
+    shm_transport->max_message_size(segment_size);
     reader.disable_builtin_transport();
     reader.add_user_transport_to_pparams(shm_transport);
     reader.add_user_transport_to_pparams(udp_transport);

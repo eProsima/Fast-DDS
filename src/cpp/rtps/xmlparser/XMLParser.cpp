@@ -398,12 +398,16 @@ XMLP_ret XMLParser::parseXMLTransportData(
         else
         {
             logError(XMLPARSER, "Invalid transport type: '" << sType << "'");
+            return XMLP_ret::XML_ERROR;
         }
 
-        ret = parseXMLCommonTransportData(p_root, pDescriptor);
-        if (ret != XMLP_ret::XML_OK)
+        if (sType != SHM)
         {
-            return ret;
+            ret = parseXMLCommonTransportData(p_root, pDescriptor);
+            if (ret != XMLP_ret::XML_OK)
+            {
+                return ret;
+            }
         }
 
         XMLProfileManager::insertTransportById(sId, pDescriptor);
@@ -705,10 +709,10 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
     /*
         <xs:complexType name="rtpsTransportDescriptorType">
             <xs:all minOccurs="0">
+                <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="segment_size" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="port_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="segment_overflow_policy" type="OverflowPolicy" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>                
                 <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 </xs:all>
@@ -732,7 +736,7 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
                 {
                     return XMLP_ret::XML_ERROR;
                 }
-                transport_descriptor->segment_size(static_cast<uint32_t>(aux), static_cast<uint32_t>(aux));
+                transport_descriptor->segment_size(static_cast<uint32_t>(aux));
             }
             else if (strcmp(name, PORT_QUEUE_CAPACITY) == 0)
             {
@@ -750,50 +754,6 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
                 }
                 transport_descriptor->healthy_check_timeout_ms(static_cast<uint32_t>(aux));
             }
-            else if (strcmp(name, PORT_OVERFLOW_POLICY) == 0)
-            {
-                std::string str;
-                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-                if (str == DISCARD)
-                {
-                    transport_descriptor->port_overflow_policy(
-                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
-                }
-                else if (str == FAIL)
-                {
-                    transport_descriptor->port_overflow_policy(
-                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
-                }
-                else
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-            }
-            else if (strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0)
-            {
-                std::string str;
-                if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str, 0))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-                if (str == DISCARD)
-                {
-                    transport_descriptor->segment_overflow_policy(
-                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::DISCARD);
-                }
-                else if (str == FAIL)
-                {
-                    transport_descriptor->segment_overflow_policy(
-                        fastdds::rtps::SharedMemTransportDescriptor::OverflowPolicy::FAIL);
-                }
-                else
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-            }
             else if (strcmp(name, RTPS_DUMP_FILE) == 0)
             {
                 std::string str;
@@ -803,7 +763,27 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
                 }
                 transport_descriptor->rtps_dump_file(str);
             }
-            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 || strcmp(name, MAX_MESSAGE_SIZE) == 0)
+            else if (strcmp(name, MAX_MESSAGE_SIZE) == 0)
+            {
+                // maxMessageSize - uint32Type
+                uint32_t uSize = 0;
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+                transport_descriptor->max_message_size(uSize);
+            }
+            else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
+            {
+                // maxInitialPeersRange - uint32Type
+                uint32_t uRange = 0;
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uRange, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+                transport_descriptor->maxInitialPeersRange = uRange;
+            }
+            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0)
             {
                 // Parsed Outside of this method
             }
