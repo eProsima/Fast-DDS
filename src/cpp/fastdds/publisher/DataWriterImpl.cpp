@@ -868,19 +868,16 @@ ReturnCode_t DataWriterImpl::check_qos(
 {
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
     {
-        std::cout << "Durability" << std::endl;
         logError(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
-        std::cout << "Destination Order" << std::endl;
         logError(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
     {
-        std::cout << "reliability & Ownership" << std::endl;
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
@@ -890,7 +887,6 @@ ReturnCode_t DataWriterImpl::check_qos(
         if (qos.liveliness().lease_duration < eprosima::fastrtps::c_TimeInfinite &&
                 qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
         {
-            std::cout << "Liveliness" << std::endl;
             logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
