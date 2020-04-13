@@ -159,7 +159,6 @@ public:
                (time_based_filter_ == b.time_based_filter()) &&
                (reader_data_lifecycle_ == b.reader_data_lifecycle()) &&
                (lifespan_ == b.lifespan()) &&
-               (topic_data_ == b.topic_data()) &&
                (durability_service_ == b.durability_service()) &&
                (reliable_reader_qos_ == b.reliable_reader_qos()) &&
                (type_consistency_ == b.type_consistency()) &&
@@ -535,34 +534,6 @@ public:
     }
 
     /**
-     * Getter for TopicDataQosPolicy
-     * @return TopicDataQosPolicy reference
-     */
-    TopicDataQosPolicy& topic_data()
-    {
-        return topic_data_;
-    }
-
-    /**
-     * Getter for TopicDataQosPolicy
-     * @return TopicDataQosPolicy const reference
-     */
-    const TopicDataQosPolicy& topic_data() const
-    {
-        return topic_data_;
-    }
-
-    /**
-     * Setter for TopicDataQosPolicy
-     * @param new_value new value for the TopicDataQosPolicy
-     */
-    void topic_data(
-            const TopicDataQosPolicy& new_value)
-    {
-        topic_data_ = new_value;
-    }
-
-    /**
      * Getter for DurabilityServiceQosPolicy
      * @return DurabilityServiceQosPolicy reference
      */
@@ -790,9 +761,6 @@ private:
     //!Lifespan Qos (Extension).
     LifespanQosPolicy lifespan_;
 
-    //!Topic Data Qos (Extension).
-    TopicDataQosPolicy topic_data_;
-
     //!Durability Service Qos (Extension).
     DurabilityServiceQosPolicy durability_service_;
 
@@ -801,11 +769,6 @@ private:
 
     //! Tipe consistency (Extension)
     TypeConsistencyQos type_consistency_;
-
-    //from SubscriberAttributes
-
-    //!Topic Attributes (Extension).
-    //TopicAttributesQos topic;
 
     //!Expects Inline QOS (Extension).
     bool expects_inline_qos_;

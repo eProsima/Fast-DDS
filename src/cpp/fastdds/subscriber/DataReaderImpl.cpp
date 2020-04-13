@@ -756,11 +756,6 @@ void DataReaderImpl::set_qos(
         to.time_based_filter() = from.time_based_filter();
         to.time_based_filter().hasChanged = true;
     }
-    if (to.topic_data().getValue() != from.topic_data().getValue())
-    {
-        to.topic_data() = from.topic_data();
-        to.topic_data().hasChanged = true;
-    }
     if (first_time || !(to.durability_service() == from.durability_service()))
     {
         to.durability_service() = from.durability_service();
