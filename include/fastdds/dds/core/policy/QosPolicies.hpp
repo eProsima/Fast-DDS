@@ -95,17 +95,6 @@ public:
     static uint32_t get_cdr_serialized_size(
             const std::vector<fastrtps::rtps::octet>& data);
 
-    static bool serialize_generic_data(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t pid,
-            const std::vector<fastrtps::rtps::octet>& data);
-
-    static bool deserialize_generic_data(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size,
-            size_t max_size,
-            std::vector<fastrtps::rtps::octet>& data);
-
 protected:
 
     bool send_always_;
@@ -224,24 +213,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     DurabilityQosPolicyKind_t kind;
@@ -279,24 +250,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     fastrtps::Duration_t period;
@@ -333,24 +286,6 @@ public:
         LatencyBudgetQosPolicy reset = LatencyBudgetQosPolicy();
         std::swap(*this, reset);
     }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 public:
 
@@ -408,24 +343,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     LivelinessQosPolicyKind kind;
@@ -473,24 +390,6 @@ public:
         ReliabilityQosPolicy reset = ReliabilityQosPolicy();
         std::swap(*this, reset);
     }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 public:
 
@@ -554,24 +453,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     OwnershipQosPolicyKind kind;
@@ -619,24 +500,6 @@ public:
         DestinationOrderQosPolicy reset = DestinationOrderQosPolicy();
         std::swap(*this, reset);
     }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 public:
 
@@ -806,36 +669,6 @@ public:
     }
 
     /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool inline addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override
-    {
-        return QosPolicy::serialize_generic_data(msg, Pid, collection_);
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool inline readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override
-    {
-        if (QosPolicy::deserialize_generic_data(msg, size, max_size(), collection_))
-        {
-            length = size;
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Returns raw data vector.
      * @return raw data as vector of octets.
      * */
@@ -985,24 +818,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     fastrtps::Duration_t minimum_separation;
@@ -1057,24 +872,6 @@ public:
         PresentationQosPolicy reset = PresentationQosPolicy();
         std::swap(*this, reset);
     }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 public:
 
@@ -1308,24 +1105,6 @@ public:
     virtual uint32_t cdr_serialized_size() const override;
 
     /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
-    /**
      * Appends a name to the list of partition names.
      * @param name Name to append.
      */
@@ -1469,24 +1248,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     HistoryQosPolicyKind kind;
@@ -1538,24 +1299,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 
@@ -1605,24 +1348,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     fastrtps::Duration_t service_cleanup_delay;
@@ -1665,24 +1390,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 public:
 
     fastrtps::Duration_t duration;
@@ -1718,24 +1425,6 @@ public:
         OwnershipStrengthQosPolicy reset = OwnershipStrengthQosPolicy();
         std::swap(*this, reset);
     }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 public:
 
@@ -1776,24 +1465,6 @@ public:
         TransportPriorityQosPolicy reset = TransportPriorityQosPolicy();
         std::swap(*this, reset);
     }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -1876,25 +1547,6 @@ public:
     }
 
     virtual uint32_t cdr_serialized_size() const override;
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 enum TypeConsistencyKind : uint16_t
@@ -1950,19 +1602,6 @@ public:
         std::swap(*this, reset);
     }
 
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 /**
@@ -1996,24 +1635,6 @@ public:
         DisablePositiveACKsQosPolicy reset = DisablePositiveACKsQosPolicy();
         std::swap(*this, reset);
     }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 public:
 
@@ -2088,24 +1709,6 @@ public:
     }
 
     virtual uint32_t cdr_serialized_size() const override;
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
     RTPS_DllAPI TypeIdV1& operator =(
             const fastrtps::types::TypeIdentifier& type_id)
@@ -2185,24 +1788,6 @@ public:
     }
 
     virtual uint32_t cdr_serialized_size() const override;
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
     RTPS_DllAPI TypeObjectV1& operator =(
             const fastrtps::types::TypeObject& type_object)
@@ -2290,27 +1875,15 @@ public:
 
     virtual uint32_t cdr_serialized_size() const override;
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
     RTPS_DllAPI bool assigned() const
     {
         return assigned_;
+    }
+
+    RTPS_DllAPI void assigned(
+            bool value)
+    {
+        assigned_ = value;
     }
 
     RTPS_DllAPI TypeInformation& operator =(

@@ -26,7 +26,6 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/qos/ParameterTypes.h>
-#include <fastrtps/types/TypeObject.h>
 
 namespace eprosima {
 namespace fastrtps {

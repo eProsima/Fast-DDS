@@ -18,7 +18,6 @@
  */
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-#include <fastdds/rtps/messages/CDRMessage.h>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -52,7 +51,7 @@ bool ParameterLocator_t::readFromCDRMessage(
 bool ParameterKey_t::addToCDRMessage(
         CDRMessage_t* msg) const
 {
-    return CDRMessage::addParameterKey(msg, &this->key);
+    return Parameter_t::addParameterKey(msg, &this->key);
 
 }
 

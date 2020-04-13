@@ -21,9 +21,14 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastrtps/qos/ParameterTypes.h>
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/common/BinaryProperty.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastrtps/utils/fixed_size_string.hpp>
 
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
 
@@ -240,21 +245,6 @@ inline bool addLocator(
         CDRMessage_t* msg,
         const Locator_t& loc);
 
-inline bool addParameterStatus(
-        CDRMessage_t* msg,
-        octet status);
-
-inline bool addParameterKey(
-        CDRMessage_t* msg,
-        const InstanceHandle_t* iHandle);
-
-inline bool addParameterSentinel(
-        CDRMessage_t* msg);
-
-inline bool addParameterId(
-        CDRMessage_t* msg,
-        ParameterId_t pid);
-
 inline bool add_string(
         CDRMessage_t* msg,
         const char* in_str);
@@ -271,10 +261,6 @@ inline bool addOctetVector(
         CDRMessage_t* msg,
         const std::vector<octet>* ocvec,
         bool add_final_padding = true);
-
-inline bool addParameterSampleIdentity(
-        CDRMessage_t* msg,
-        const SampleIdentity& sample_id);
 
 inline bool addProperty(
         CDRMessage_t* msg,

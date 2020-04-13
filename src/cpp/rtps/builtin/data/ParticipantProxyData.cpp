@@ -29,6 +29,7 @@
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 
@@ -151,13 +152,13 @@ uint32_t ParticipantProxyData::get_serialized_size(
 
     // PID_METATRAFFIC_MULTICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * metatraffic_locators.multicast.size());
-    
+
     // PID_METATRAFFIC_UNICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * metatraffic_locators.unicast.size());
-    
+
     // PID_DEFAULT_UNICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.unicast.size());
-    
+
     // PID_DEFAULT_MULTICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.multicast.size());
 
@@ -313,7 +314,8 @@ bool ParticipantProxyData::writeToCDRMessage(
 
     if (m_userData.size() > 0)
     {
-        if (!m_userData.addToCDRMessage(msg))
+        if (!fastdds::dds::QosPoliciesSerializer<UserDataQosPolicy>::add_to_cdr_message(m_userData,
+                msg))
         {
             return false;
         }
@@ -360,7 +362,7 @@ bool ParticipantProxyData::writeToCDRMessage(
     }
 #endif
 
-    return CDRMessage::addParameterSentinel(msg);
+    return Parameter_t::addParameterSentinel(msg);
 }
 
 bool ParticipantProxyData::readFromCDRMessage(
@@ -373,10 +375,10 @@ bool ParticipantProxyData::readFromCDRMessage(
     bool are_shm_default_locators_present = false;
     bool is_shm_transport_possible = false;
 
-    auto param_process = [this, &network, &is_shm_transport_possible, 
-        &are_shm_metatraffic_locators_present,
-        &are_shm_default_locators_present,
-        &is_shm_transport_available](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+    auto param_process = [this, &network, &is_shm_transport_possible,
+                    &are_shm_metatraffic_locators_present,
+                    &are_shm_default_locators_present,
+                    &is_shm_transport_available](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)
                 {
@@ -575,7 +577,8 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_USER_DATA:
                     {
-                        if (!m_userData.readFromCDRMessage(msg, plength))
+                        if (!fastdds::dds::QosPoliciesSerializer<UserDataQosPolicy>::read_from_cdr_message(m_userData,
+                                msg, plength))
                         {
                             return false;
                         }
