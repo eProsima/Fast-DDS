@@ -160,6 +160,14 @@ bool ParameterList::readParameterListfromCDRMsg(
         bool valid = true;
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+
+        if (pid == PID_SENTINEL)
+        {
+            // PID_SENTINEL is always considered of length 0
+            plength = 0;
+            is_sentinel = true;
+        }
+
         qos_size += (4 + plength);
 
         // Align to 4 byte boundary and prepare for next iteration
@@ -169,13 +177,12 @@ bool ParameterList::readParameterListfromCDRMsg(
         {
             return false;
         }
-        if (pid == PID_SENTINEL)
+        else if(!is_sentinel)
         {
-            is_sentinel = true;
-        }
-        else if (!processor(&msg, pid, plength))
-        {
-            return false;
+            if (!processor(&msg, pid, plength))
+            {
+                return false;
+            }
         }
     }
     return true;
