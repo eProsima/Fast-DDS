@@ -135,6 +135,18 @@ DomainParticipantImpl::~DomainParticipantImpl()
         subscribers_by_handle_.clear();
     }
 
+    {
+        std::lock_guard<std::mutex> lock(mtx_topics_);
+
+        for (auto topic_it = topics_.begin(); topic_it != topics_.end(); ++topic_it)
+        {
+            delete topic_it->second;
+        }
+        topics_.clear();
+        topics_by_name_.clear();
+        topics_by_handle_.clear();
+    }
+
     if (rtps_participant_ != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(rtps_participant_);
@@ -466,6 +478,15 @@ bool DomainParticipantImpl::contains_entity(
         }
     }
 
+    // Look for topics
+    {
+        std::lock_guard<std::mutex> lock(mtx_topics_);
+        if (topics_by_handle_.find(handle) != topics_by_handle_.end())
+        {
+            return true;
+        }
+    }
+
     if (recursive)
     {
         // Look into publishers
@@ -582,22 +603,33 @@ Topic* DomainParticipantImpl::create_topic(
         return nullptr;
     }
 
+    GUID_t topic_guid = guid();
+    do
+    {
+        topic_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
+        rtps_participant_->get_new_entity_id(topic_guid.entityId);
+    } while (exists_entity_id(topic_guid.entityId));
+    InstanceHandle_t topic_handle(topic_guid);
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+
+    //Check there is no Topic with the same name
+    if (topics_by_name_.find(topic_name) != topics_by_name_.end())
+    {
+        logError(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
+        return nullptr;
+    }
+
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
     Topic* topic = new Topic(topic_name, topic_impl, mask);
-
-    GUID_t topic_guid = guid();
-     do
-     {
-         topic_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
-         rtps_participant_->get_new_entity_id(topic_guid.entityId);
-     } while (exists_entity_id(topic_guid.entityId));
-     InstanceHandle_t topic_handle(topic_guid);
-     topic_impl->handle_ = topic_handle;
+    topic_impl->user_topic_ = topic;
+    topic_impl->handle_ = topic_handle;
 
     //SAVE THE TOPIC INTO MAPS
-    std::lock_guard<std::mutex> lock(mtx_topics_);
-    topics_[topic_name] = topic;
+    topics_by_handle_[topic_handle] = topic;
+    topics_by_name_[topic_name] = topic;
+    topics_[topic] = topic_impl;
 
     return topic;
 }
@@ -631,6 +663,7 @@ bool DomainParticipantImpl::register_type(
         }
 
         logError(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
+        return false;
     }
 
     if (type_name.size() <= 0)
@@ -645,7 +678,7 @@ bool DomainParticipantImpl::register_type(
 
     if (type->auto_fill_type_object() || type->auto_fill_type_information())
     {
-        register_dynamic_type_to_factories(type);
+        //register_dynamic_type_to_factories(type);
     }
 
     return true;
@@ -1304,6 +1337,10 @@ bool DomainParticipantImpl::has_active_entities()
         return true;
     }
     if (!subscribers_.empty())
+    {
+        return true;
+    }
+    if (!topics_.empty())
     {
         return true;
     }
