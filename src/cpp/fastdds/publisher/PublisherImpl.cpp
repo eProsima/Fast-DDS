@@ -373,12 +373,14 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
 {
     if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
+        std::cout << "Default qos" << std::endl;
         DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
     }
 
     ReturnCode_t ret_val = DataWriterImpl::check_qos(qos);
     if (!ret_val)
     {
+        std::cout << "Wrong check_qos" << std::endl;
         return ret_val;
     }
     DataWriterImpl::set_qos(default_datawriter_qos_, qos, true);

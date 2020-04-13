@@ -353,7 +353,7 @@ public:
             bool is_default,
             bool update_user_data = true);
 
-    static bool check_qos(
+    static ReturnCode_t check_qos(
             const DataWriterQos& qos);
 
     static bool can_qos_be_updated(

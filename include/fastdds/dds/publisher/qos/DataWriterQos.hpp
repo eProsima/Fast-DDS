@@ -65,9 +65,7 @@ class DataWriterQos
 {
 public:
 
-    DataWriterQos()
-    {
-    }
+    DataWriterQos();
 
     bool operator ==(
             const DataWriterQos& b) const

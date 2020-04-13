@@ -37,7 +37,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
 
     qos.deadline().period = 260;
 
-    ASSERT_EQ(publisher->set_default_datawriter_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(publisher->set_default_datawriter_qos(qos) == ReturnCode_t::RETCODE_OK);
     DataWriterQos wqos;
     publisher->get_default_datawriter_qos(wqos);
 

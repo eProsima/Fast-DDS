@@ -23,6 +23,12 @@ using namespace eprosima::fastdds::dds;
 
 const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
+DataWriterQos::DataWriterQos()
+{
+    reliability_.kind = RELIABLE_RELIABILITY_QOS;
+    durability_.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+}
+
 WriterQos DataWriterQos::get_writerqos(
         const PublisherQos& pqos) const
 {
