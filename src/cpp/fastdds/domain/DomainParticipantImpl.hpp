@@ -160,15 +160,6 @@ public:
             const std::string& type_name);
 
     /**
-     * @brief Registers into types Factories an already registered dynamic type
-     * to ease its use through factories.
-     * @param type
-     * @return True if registered.
-     */
-    bool register_dynamic_type_to_factories(
-            const TypeSupport& type) const;
-
-    /**
      * Unregister a type in this participant.
      * @param typeName Name of the type
      * @return True if unregistered.
@@ -421,11 +412,15 @@ public:
 
     } rtps_listener_;
 
+
     bool exists_entity_id(
             const fastrtps::rtps::EntityId_t& entity_id) const;
 
     bool register_dynamic_type(
             fastrtps::types::DynamicType_ptr dyn_type);
+
+    bool register_dynamic_type_to_factories(
+            const TypeSupport& type) const;
 
     bool check_get_type_request(
             const fastrtps::rtps::SampleIdentity& requestId,

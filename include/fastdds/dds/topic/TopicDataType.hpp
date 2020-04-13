@@ -157,7 +157,8 @@ class  TopicDataType
         /**
          * Set the type object auto-fill configuration
          */
-        RTPS_DllAPI inline void auto_fill_type_object(bool auto_fill_type_object)
+        RTPS_DllAPI inline void auto_fill_type_object(
+                 bool auto_fill_type_object)
         {
             auto_fill_type_object_ = auto_fill_type_object;
         }
@@ -174,7 +175,8 @@ class  TopicDataType
         /**
          * Set type information auto-fill configuration
          */
-        RTPS_DllAPI inline void auto_fill_type_information(bool auto_fill_type_information)
+        RTPS_DllAPI inline void auto_fill_type_information(
+                bool auto_fill_type_information)
         {
             auto_fill_type_information_ = auto_fill_type_information;
         }
