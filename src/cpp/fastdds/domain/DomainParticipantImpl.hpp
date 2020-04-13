@@ -162,11 +162,11 @@ public:
     /**
      * @brief Registers into types Factories an already registered dynamic type
      * to ease its use through factories.
-     * @param type_name
+     * @param type
      * @return True if registered.
      */
     bool register_dynamic_type_to_factories(
-            const std::string& type_name) const;
+            const TypeSupport& type) const;
 
     /**
      * Unregister a type in this participant.

@@ -278,12 +278,6 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
 
-    //TODO: Register the dynamic type when the datawriter is created
-    //    if (qos.publisher_attr.topic.auto_fill_type_object || qos.publisher_attr.topic.auto_fill_type_information)
-    //    {
-    //        register_dynamic_type_to_factories(qos.publisher_attr.topic.getTopicDataType().to_string());
-    //    }
-
     return pub;
 }
 
@@ -564,12 +558,6 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_by_handle_[sub_handle] = sub;
     subscribers_[sub] = subimpl;
 
-    //TODO: Register the dynamic type when the datareader is created
-    //if (qos.subscriber_attr.topic.auto_fill_type_object || qos.subscriber_attr.topic.auto_fill_type_information)
-    //{
-    //    register_dynamic_type_to_factories(qos.subscriber_attr.topic.getTopicDataType().to_string());
-    //}
-
     return sub;
 }
 
@@ -655,20 +643,24 @@ bool DomainParticipantImpl::register_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
 
+    if (type->auto_fill_type_object() || type->auto_fill_type_information())
+    {
+        register_dynamic_type_to_factories(type);
+    }
+
     return true;
 }
 
 bool DomainParticipantImpl::register_dynamic_type_to_factories(
-        const std::string& type_name) const
+        const TypeSupport& type) const
 {
     using namespace  eprosima::fastrtps::types;
-    TypeSupport t = find_type(type_name);
-    DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(t.get());
+    DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
     if (dpst != nullptr) // Registering a dynamic type.
     {
         TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
         DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
-        const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(type_name);
+        const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
         if (id == nullptr)
         {
             std::map<MemberId, DynamicTypeMember*> membersMap;
