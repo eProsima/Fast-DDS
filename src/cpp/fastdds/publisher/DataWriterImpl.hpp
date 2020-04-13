@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/WriteParams.h>
 
 #include <fastrtps/qos/WriterQos.h>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -76,8 +77,7 @@ class DataWriterImpl
             TypeSupport type,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::WriterAttributes& att,
-            const fastrtps::WriterQos& qos,
-            const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
+            const DataWriterQos& qos,
             DataWriterListener* listener = nullptr);
 
 public:
@@ -151,9 +151,9 @@ public:
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastrtps::WriterQos& qos);
+            const DataWriterQos& qos);
 
-    const fastrtps::WriterQos& get_qos() const;
+    const DataWriterQos& get_qos() const;
 
     bool set_topic(
             const fastrtps::TopicAttributes& att);
@@ -212,7 +212,7 @@ private:
 
     fastrtps::rtps::WriterAttributes w_att_;
 
-    fastrtps::WriterQos qos_;
+    DataWriterQos qos_;
 
     //!Publisher History
     fastrtps::PublisherHistory history_;
@@ -346,6 +346,20 @@ public:
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const fastrtps::rtps::InstanceHandle_t& handle);
+
+    static void set_qos(
+            DataWriterQos& to,
+            const DataWriterQos& from,
+            bool is_default,
+            bool update_user_data = true);
+
+    static ReturnCode_t check_qos(
+            const DataWriterQos& qos);
+
+    static bool can_qos_be_updated(
+            const DataWriterQos& to,
+            const DataWriterQos& from);
+
 };
 
 } /* namespace dds */

@@ -53,7 +53,7 @@ class TypeSupport;
 
 class DataWriterImpl;
 class DataWriterListener;
-class WriterQos;
+class DataWriterQos;
 
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
@@ -144,22 +144,22 @@ public:
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
     /**
-     * Establishes the WriterQos for this DataWriter.
+     * Establishes the DataWriterQos for this DataWriter.
      */
     ReturnCode_t set_qos(
-            const WriterQos& qos);
+            const DataWriterQos& qos);
 
     /**
-     * Retrieves the WriterQos for this DataWriter.
+     * Retrieves the DataWriterQos for this DataWriter.
      */
-    const WriterQos& get_qos() const;
+    const DataWriterQos& get_qos() const;
 
     /**
-     * Fills the WriterQos with the values of this DataWriter.
+     * Fills the DataWriterQos with the values of this DataWriter.
      * @return true
      */
     ReturnCode_t get_qos(
-            WriterQos& qos) const;
+            DataWriterQos& qos) const;
 
     /**
      * Establishes the topic for this DataWriter.

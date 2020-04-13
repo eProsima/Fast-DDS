@@ -914,7 +914,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName& data) = default;                                         \
+            const TClassName &data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -925,7 +925,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type& data)                                               \
+            const collection_type &data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
@@ -942,7 +942,7 @@ public:                                                                         
          * @return reference to the current object. \
          */                                                                            \
         TClassName& operator =(                                                            \
-            const TClassName& b) = default;                                            \
+            const TClassName &b) = default;                                            \
                                                                                        \
     };
 
@@ -2437,6 +2437,68 @@ public:
      * Default value: 0.
      */
     uint32_t listen_socket_buffer_size;
+};
+
+class RTPSEndpointQos
+{
+public:
+
+    RTPS_DllAPI RTPSEndpointQos()
+        : user_defined_id(-1)
+        , entity_id(-1)
+        , history_memory_policy(fastrtps::rtps::PREALLOCATED_MEMORY_MODE)
+    {
+    }
+
+    virtual RTPS_DllAPI ~RTPSEndpointQos() = default;
+
+    bool operator ==(
+            const RTPSEndpointQos& b) const
+    {
+        return (this->unicast_locator_list == b.unicast_locator_list) &&
+               (this->multicast_locator_list == b.multicast_locator_list) &&
+               (this->remote_locator_list == b.remote_locator_list) &&
+               (this->user_defined_id == b.user_defined_id) &&
+               (this->entity_id == b.entity_id) &&
+               (this->history_memory_policy == b.history_memory_policy);
+    }
+
+    //!Unicast locator list
+    fastrtps::rtps::LocatorList_t unicast_locator_list;
+
+    //!Multicast locator list
+    fastrtps::rtps::LocatorList_t multicast_locator_list;
+
+    //!Remote locator list
+    fastrtps::rtps::LocatorList_t remote_locator_list;
+
+    //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
+    int16_t user_defined_id;
+
+    //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    int16_t entity_id;
+
+    //!Underlying History memory policy
+    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy;
+};
+
+class WriterResourceLimitsQos
+{
+public:
+
+    RTPS_DllAPI WriterResourceLimitsQos()
+    {
+    }
+
+    virtual RTPS_DllAPI ~WriterResourceLimitsQos() = default;
+
+    bool operator ==(
+            const WriterResourceLimitsQos& b) const
+    {
+        return (this->matched_subscriber_allocation == b.matched_subscriber_allocation);
+    }
+
+    fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
 };
 
 } // namespace dds

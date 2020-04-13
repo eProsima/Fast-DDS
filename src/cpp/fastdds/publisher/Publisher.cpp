@@ -79,10 +79,10 @@ ReturnCode_t Publisher::set_listener(
 
 DataWriter* Publisher::create_datawriter(
         const fastrtps::TopicAttributes& topic_attr,
-        const fastrtps::WriterQos& writer_qos,
+        const DataWriterQos& qos,
         DataWriterListener* listener)
 {
-    return impl_->create_datawriter(topic_attr, writer_qos, listener);
+    return impl_->create_datawriter(topic_attr, qos, listener);
 }
 
 ReturnCode_t Publisher::delete_datawriter(
@@ -155,18 +155,18 @@ const DomainParticipant* Publisher::get_participant() const
  */
 
 ReturnCode_t Publisher::set_default_datawriter_qos(
-        const fastrtps::WriterQos& qos)
+        const DataWriterQos& qos)
 {
     return impl_->set_default_datawriter_qos(qos);
 }
 
-const fastrtps::WriterQos& Publisher::get_default_datawriter_qos() const
+const DataWriterQos& Publisher::get_default_datawriter_qos() const
 {
     return impl_->get_default_datawriter_qos();
 }
 
 ReturnCode_t Publisher::get_default_datawriter_qos(
-        fastrtps::WriterQos& qos) const
+        DataWriterQos& qos) const
 {
     qos = impl_->get_default_datawriter_qos();
     return ReturnCode_t::RETCODE_OK;

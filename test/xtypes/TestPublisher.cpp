@@ -23,6 +23,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -89,11 +90,12 @@ bool TestPublisher::init(
     }
 
     // CREATE THE PUBLISHER
-    PublisherAttributes Wparam;
-    Wparam.topic.auto_fill_type_object = false;
-    Wparam.topic.auto_fill_type_information = false;
-    Wparam.topic.topicKind = topic_kind;
-    Wparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
+    TopicAttributes topic;
+    topic.auto_fill_type_object = false;
+    topic.auto_fill_type_information = false;
+    topic.topicKind = topic_kind;
+    topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
+    DataWriterQos qos;
 
     //REGISTER THE TYPE
     if (m_Type != nullptr)
@@ -103,27 +105,27 @@ bool TestPublisher::init(
 
     std::ostringstream t;
     t << topicName << "_" << asio::ip::host_name() << "_" << domain;
-    Wparam.topic.topicName = t.str();
+    topic.topicName = t.str();
     if (type_object != nullptr)
     {
-        Wparam.topic.type = *type_object;
+        topic.type = *type_object;
     }
     if (type_identifier != nullptr)
     {
-        Wparam.topic.type_id = *type_identifier;
+        topic.type_id = *type_identifier;
     }
     if (type_info != nullptr)
     {
-        Wparam.topic.type_information = *type_info;
+        topic.type_information = *type_info;
     }
 
     if (dataRepresentationQos != nullptr)
     {
-        Wparam.qos.representation = *dataRepresentationQos;
+        qos.representation(*dataRepresentationQos);
     }
-    // Wparam.topic.dataRepresentationQos = XCDR_DATA_REPRESENTATION
-    // Wparam.topic.dataRepresentationQos = XML_DATA_REPRESENTATION
-    // Wparam.topic.dataRepresentationQos = XCDR2_DATA_REPRESENTATION
+    // topic.dataRepresentationQos = XCDR_DATA_REPRESENTATION
+    // topic.dataRepresentationQos = XML_DATA_REPRESENTATION
+    // topic.dataRepresentationQos = XCDR2_DATA_REPRESENTATION
 
     if (m_Type != nullptr)
     {
@@ -133,7 +135,7 @@ bool TestPublisher::init(
             return false;
         }
 
-        writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_pubListener);
+        writer_ = mp_publisher->create_datawriter(topic, qos, &m_pubListener);
 
         m_Data = m_Type->createData();
     }

@@ -23,6 +23,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -75,19 +76,20 @@ bool TypeLookupPublisher::init()
     mp_participant->register_type(m_type);
 
     //CREATE THE PUBLISHER
-    PublisherAttributes Wparam;
-    Wparam.topic.topicKind = NO_KEY;
-    Wparam.topic.topicDataType = "TypeLookup";
-    Wparam.topic.topicName = "TypeLookupTopic";
-    Wparam.topic.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 30;
-    Wparam.topic.resourceLimitsQos.max_samples = 50;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Wparam.topic.auto_fill_type_object = false;
-    Wparam.topic.auto_fill_type_information = true; // Share the type with readers.
-    Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
-    Wparam.qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    TopicAttributes topic_attr;
+    topic_attr.topicKind = NO_KEY;
+    topic_attr.topicDataType = "TypeLookup";
+    topic_attr.topicName = "TypeLookupTopic";
+    topic_attr.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    topic_attr.historyQos.depth = 30;
+    topic_attr.resourceLimitsQos.max_samples = 50;
+    topic_attr.resourceLimitsQos.allocated_samples = 20;
+    topic_attr.auto_fill_type_object = false;
+    topic_attr.auto_fill_type_information = true; // Share the type with readers.
+    DataWriterQos qos;
+    qos.reliable_writer_data().times.heartbeatPeriod.seconds = 2;
+    qos.reliable_writer_data().times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
+    qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (mp_publisher == nullptr)
@@ -96,7 +98,7 @@ bool TypeLookupPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_listener);
+    writer_ = mp_publisher->create_datawriter(topic_attr, qos, &m_listener);
 
     if (writer_ == nullptr)
     {

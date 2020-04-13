@@ -79,22 +79,25 @@ Publisher::~Publisher()
 //    return *this;
 //}
 
-//Publisher& Publisher::default_datawriter_qos(
-//        const qos::DataWriterQos& dwqos)
-//{
-//    // TODO Use DataWriterQos instead of WriterQos
-//    //delegate()->set_default_datawriter_qos(dwqos);
-//    (void)dwqos;
-//    return *this;
-//}
+Publisher& Publisher::default_datawriter_qos(
+        const qos::DataWriterQos& dwqos)
+{
+    ReturnCode_t code = this->delegate()->set_default_datawriter_qos(dwqos);
+    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on DataWriterQos");
+    }
+    return *this;
+}
 
-//qos::DataWriterQos Publisher::default_datawriter_qos() const
-//{
-//    //    return this->delegate()->default_datawriter_qos();
-//    // TODO Use DataWriterQos instead of WriterQos
-//    //return delegate()->get_default_datawriter_qos();
-//    return qos::DataWriterQos();
-//}
+qos::DataWriterQos Publisher::default_datawriter_qos() const
+{
+    return this->delegate()->get_default_datawriter_qos();
+}
 
 //void Publisher::listener(
 //        Listener* plistener,

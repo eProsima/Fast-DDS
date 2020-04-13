@@ -21,34 +21,35 @@
 
 using namespace eprosima::fastdds::dds;
 
-// TODO: Commented while there is collision with the definition in WriterQos.cpp.
-// const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 
-/* TODO: Implement this method
-   void DataWriterQos::setQos(
-        const DataWriterQos& qos,
-        bool first_time)
-   {
-    //TODO: Implement this function
-    (void)qos;
-    (void)first_time;
-   }
- */
+DataWriterQos::DataWriterQos()
+{
+    reliability_.kind = RELIABLE_RELIABILITY_QOS;
+    durability_.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+}
 
-/* TODO: Implement this method
-   bool DataWriterQos::checkQos() const
-   {
-    //TODO: Implement this function
-    return true;
-   }
- */
-
-/* TODO: Implement this method
-   bool DataWriterQos::canQosBeUpdated(
-        const DataWriterQos& qos) const
-   {
-    //TODO: Implement this function
-    (void)qos;
-    return true;
-   }
- */
+WriterQos DataWriterQos::get_writerqos(
+        const PublisherQos& pqos) const
+{
+    WriterQos qos;
+    qos.m_deadline = deadline();
+    qos.m_destinationOrder = destination_order();
+    qos.m_disablePositiveACKs = reliable_writer_data().disable_positive_acks;
+    qos.m_durability = durability();
+    qos.m_durabilityService = durability_service();
+    qos.m_groupData = pqos.group_data();
+    qos.m_latencyBudget = latency_budget();
+    qos.m_lifespan = lifespan();
+    qos.m_liveliness = liveliness();
+    qos.m_ownership = ownership();
+    qos.m_ownershipStrength = ownership_strength();
+    qos.m_partition = pqos.partition();
+    qos.m_presentation = pqos.presentation();
+    qos.m_publishMode = publish_mode();
+    qos.m_reliability = reliability();
+    //qos.m_topicData --> TODO: Fill with TopicQos info
+    qos.m_userData = user_data();
+    qos.representation = representation();
+    return qos;
+}

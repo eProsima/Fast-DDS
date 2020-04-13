@@ -142,7 +142,7 @@ public:
     void clear();
 };
 
-RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;
+//RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;
 
 } //namespace dds
 } //namespace fastdds
