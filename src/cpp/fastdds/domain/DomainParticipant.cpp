@@ -101,6 +101,16 @@ ReturnCode_t DomainParticipant::delete_subscriber(
     return impl_->delete_subscriber(subscriber);
 }
 
+Topic* DomainParticipant::create_topic(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_topic(topic_name, type_name, qos, listener, mask);
+}
+
 bool DomainParticipant::register_type(
         TypeSupport type,
         const std::string& type_name)
@@ -209,6 +219,24 @@ ReturnCode_t DomainParticipant::get_default_subscriber_qos(
         SubscriberQos& qos) const
 {
     qos = impl_->get_default_subscriber_qos();
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipant::set_default_topic_qos(
+        const TopicQos& qos)
+{
+    return impl_->set_default_topic_qos(qos);
+}
+
+const TopicQos& DomainParticipant::get_default_topic_qos() const
+{
+    return impl_->get_default_topic_qos();
+}
+
+ReturnCode_t DomainParticipant::get_default_topic_qos(
+        TopicQos& qos) const
+{
+    qos = impl_->get_default_topic_qos();
     return ReturnCode_t::RETCODE_OK;
 }
 

@@ -28,6 +28,8 @@
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
+#include <fastdds/topic/TopicImpl.hpp>
+
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -404,6 +406,30 @@ const fastdds::dds::SubscriberQos& DomainParticipantImpl::get_default_subscriber
     return default_sub_qos_;
 }
 
+ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
+        const TopicQos& qos)
+{
+    if (&qos == &TOPIC_QOS_DEFAULT)
+    {
+        TopicImpl::set_qos(default_topic_qos_, TOPIC_QOS_DEFAULT, true);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    ReturnCode_t ret_val = TopicImpl::check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
+    }
+
+    TopicImpl::set_qos(default_topic_qos_, qos, true);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+const TopicQos& DomainParticipantImpl::get_default_topic_qos() const
+{
+    return default_topic_qos_;
+}
+
 /* TODO
    bool DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
@@ -545,6 +571,47 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     //}
 
     return sub;
+}
+
+Topic* DomainParticipantImpl::create_topic(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    //Look for the correct type registration
+    TypeSupport type_support = find_type(type_name);
+    if (type_support.empty())
+    {
+        logError(PARTICIPANT, "Type : " << type_name << " Not Registered");
+        return nullptr;
+    }
+
+    if (! TopicImpl::check_qos(qos))
+    {
+        logError(PARTICIPANT, "TopicQos inconsistent or not supported");
+        return nullptr;
+    }
+
+    //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
+    TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
+    Topic* topic = new Topic(topic_name, topic_impl, mask);
+
+    GUID_t topic_guid = guid();
+     do
+     {
+         topic_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
+         rtps_participant_->get_new_entity_id(topic_guid.entityId);
+     } while (exists_entity_id(topic_guid.entityId));
+     InstanceHandle_t topic_handle(topic_guid);
+     topic_impl->handle_ = topic_handle;
+
+    //SAVE THE TOPIC INTO MAPS
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    topics_[topic_name] = topic;
+
+    return topic;
 }
 
 const TypeSupport DomainParticipantImpl::find_type(

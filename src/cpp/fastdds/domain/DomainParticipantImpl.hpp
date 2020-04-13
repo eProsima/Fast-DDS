@@ -27,6 +27,8 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
@@ -132,6 +134,22 @@ public:
             Subscriber* subscriber);
 
     /**
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Data type of the Topic.
+     * @param qos QoS of the Topic.
+     * @param listen Pointer to the listener.
+     * @param mask StatusMask that holds statuses the listener responds to
+     * @return Pointer to the created Topic.
+     */
+    Topic* create_topic(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const TopicQos& qos = TOPIC_QOS_DEFAULT,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
      * Register a type in this participant.
      * @param type The TypeSupport to register. A copy will be kept by the participant until removed.
      * @param type_name The name that will be used to identify the Type.
@@ -198,7 +216,10 @@ public:
 
     const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
 
-    // TODO Get/Set default Topic Qos
+    ReturnCode_t set_default_topic_qos(
+            const TopicQos& qos);
+
+    const TopicQos& get_default_topic_qos() const;
 
     /* TODO
        bool get_discovered_participants(
@@ -323,6 +344,12 @@ private:
     //!TopicDataType map
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
+
+    //!Topic map
+    std::map<std::string, Topic*> topics_;
+    mutable std::mutex mtx_topics_;
+
+    TopicQos default_topic_qos_;
 
     // Mutex for requests and callbacks maps.
     std::mutex mtx_request_cb_;

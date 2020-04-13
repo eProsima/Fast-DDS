@@ -21,15 +21,60 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/core/types.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/pub/Publisher.hpp>
+#include <dds/topic/Topic.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+// Mocked TopicDataType for Topic creation tests
+class TopicDataTypeMock : public TopicDataType
+{
+    bool serialize(
+            void* /*data*/,
+            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return std::function<uint32_t()>();
+    }
+
+    void * createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+};
+
 
 TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
 {
@@ -207,6 +252,67 @@ TEST(ParticipantTests, DeleteSubscriber)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, ChangeDefaultTopicQos)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    TopicQos qos;
+    participant->get_default_topic_qos(qos);
+
+    ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
+
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+
+    ASSERT_TRUE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    TopicQos tqos;
+    participant->get_default_topic_qos(tqos);
+
+    ASSERT_EQ(qos, tqos);
+    ASSERT_EQ(tqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
+}
+
+TEST(ParticipantTests, ChangePSMDefaultTopicQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::topic::qos::TopicQos qos = participant.default_topic_qos();
+
+    ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
+
+    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+
+    ASSERT_NO_THROW(participant.default_topic_qos(qos));
+
+    ::dds::topic::qos::TopicQos tqos = participant.default_topic_qos();
+    ASSERT_EQ(qos, tqos);
+    ASSERT_EQ(tqos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
+}
+
+TEST(ParticipantTests, CreateTopic)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    TopicDataTypeMock data_type;
+    TypeSupport type_(&data_type);
+    participant->register_type(type_, "footype");
+
+    Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+}
+
+TEST(ParticipantTests, PSMCreateTopic)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+
+    TopicDataTypeMock data_type;
+    TypeSupport type_(&data_type);
+    participant->register_type(type_, "footype");
+
+    ::dds::topic::Topic topic = ::dds::core::null;
+    topic = ::dds::topic::Topic(participant, "footopic", "footype", TOPIC_QOS_DEFAULT);
+
+    ASSERT_NE(topic, ::dds::core::null);
 }
 
 } // namespace dds

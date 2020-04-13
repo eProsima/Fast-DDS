@@ -89,6 +89,8 @@ set(${PROJECT_NAME}_source_files
     fastdds/publisher/DataWriter.cpp
     fastdds/subscriber/DataReaderImpl.cpp
     fastdds/publisher/DataWriterImpl.cpp
+    fastdds/topic/Topic.cpp
+    fastdds/topic/TopicImpl.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/topic/qos/TopicQos.cpp
     fastdds/publisher/qos/DataWriterQos.cpp
@@ -203,6 +205,7 @@ set(${PROJECT_NAME}_source_files
     dds/domain/DomainParticipant.cpp
     dds/pub/Publisher.cpp
     dds/sub/Subscriber.cpp
+    dds/topic/Topic.cpp
     )
 
 # SHM Transport

@@ -23,28 +23,8 @@ using namespace eprosima::fastdds::dds;
 
 const TopicQos eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
 
-/* TODO: Implement this method
-void TopicQos::setQos(const TopicQos& qos, bool first_time)
+TopicQos::TopicQos()
 {
-    //TODO: Implement this function
-    (void)qos;
-    (void)first_time;
+    reliability_.kind = RELIABLE_RELIABILITY_QOS;
+    durability_.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
-*/
-
-/* TODO: Implement this method
-bool TopicQos::checkQos() const
-{
-    //TODO: Implement this function
-    return true;
-}
-*/
-
-/* TODO: Implement this method
-bool TopicQos::canQosBeUpdated(const TopicQos& qos) const
-{
-    //TODO: Implement this function
-    (void)qos;
-    return true;
-}
-*/

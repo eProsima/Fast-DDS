@@ -162,17 +162,25 @@ DomainParticipant& DomainParticipant::default_publisher_qos(
 //    return *this;
 //}
 
-//dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
-//{
-//    return this->delegate()->get_default_topic_qos();
-//}
+dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
+{
+    return this->delegate()->get_default_topic_qos();
+}
 
-//DomainParticipant& DomainParticipant::default_topic_qos(
-//        const dds::topic::qos::TopicQos& qos)
-//{
-//    this->delegate()->set_default_topic_qos(qos);
-//    return *this;
-//}
+DomainParticipant& DomainParticipant::default_topic_qos(
+        const dds::topic::qos::TopicQos& qos)
+{
+    ReturnCode_t ret_code = this->delegate()->set_default_topic_qos(qos);
+    if (ret_code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    {
+        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+    }
+    else if (ret_code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    {
+        throw dds::core::UnsupportedError("Unsupported values on TopicQos");
+    }
+    return *this;
+}
 
 DomainParticipant& DomainParticipant::operator <<(
         const dds::domain::qos::DomainParticipantQos& qos)

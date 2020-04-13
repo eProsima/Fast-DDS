@@ -254,7 +254,7 @@ public:
     }
 
     bool is_active(
-            StatusMask status)
+            StatusMask status) const
     {
         MaskType r = *this & status;
         return r == status;
