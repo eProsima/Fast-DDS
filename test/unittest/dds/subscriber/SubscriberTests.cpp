@@ -29,6 +29,54 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+class TopicDataTypeMock : public TopicDataType
+{
+public:
+    TopicDataTypeMock()
+        : TopicDataType()
+    {
+        setName("footype");
+    }
+
+    bool serialize(
+            void* /*data*/,
+            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return std::function<uint32_t()>();
+    }
+
+    void * createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+};
+
 TEST(SubscriberTests, ChangeSubscriberQos)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
@@ -103,6 +151,56 @@ TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
     ASSERT_EQ(qos, rqos);
     ASSERT_EQ(rqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
 }
+
+TEST(SubscriberTests, CreateDataReader)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_);
+
+    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(SubscriberTests, DeleteSubscriberWithReaders)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_);
+
+    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
 
 } // namespace dds
 } // namespace fastdds
