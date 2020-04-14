@@ -742,7 +742,7 @@ static EVP_PKEY* generate_dh_key(
             return nullptr;
         }
     }
-    else
+    else if (type == EVP_PKEY_DH)
     {
         params = EVP_PKEY_new();
         if (params != nullptr)
@@ -759,6 +759,11 @@ static EVP_PKEY* generate_dh_key(
             exception = _SecurityException_("Cannot allocate EVP parameters");
             return nullptr;
         }
+    }
+    else
+    {
+        exception = _SecurityException_("Wrong DH kind");
+        return nullptr;
     }
 
     EVP_PKEY* keys = nullptr;
@@ -796,47 +801,56 @@ static EVP_PKEY* generate_dh_key(
 
 static bool store_dh_public_key(
         EVP_PKEY* dhkey,
+        int type,
         std::vector<uint8_t>& buffer,
         SecurityException& exception)
 {
     bool returnedValue = false;
-    DH* dh =
+
+    if (type == EVP_PKEY_DH)
+    {
+        DH* dh =
 #if IS_OPENSSL_1_1
             EVP_PKEY_get0_DH(dhkey);
 #else
             dhkey->pkey.dh;
 #endif
 
-    if (dh != nullptr)
-    {
+        if (dh != nullptr)
+        {
 #if IS_OPENSSL_1_1
-        const BIGNUM* pub_key = nullptr;
-        const BIGNUM* priv_key = nullptr;
-        DH_get0_key(dh, &pub_key, &priv_key);
+            const BIGNUM* pub_key = nullptr;
+            const BIGNUM* priv_key = nullptr;
+            DH_get0_key(dh, &pub_key, &priv_key);
 
 #else
-        const BIGNUM* pub_key = dh->pub_key;
+            const BIGNUM* pub_key = dh->pub_key;
 #endif
 
-        int len = BN_num_bytes(pub_key);
-        buffer.resize(len);
-        unsigned char* pointer = buffer.data();
-        if (BN_bn2bin(pub_key, pointer) == len)
-        {
-            returnedValue =  true;
+            int len = BN_num_bytes(pub_key);
+            buffer.resize(len);
+            unsigned char* pointer = buffer.data();
+            if (BN_bn2bin(pub_key, pointer) == len)
+            {
+                returnedValue = true;
+            }
+            else
+            {
+                exception = _SecurityException_("Cannot serialize public key");
+            }
         }
         else
         {
-            exception = _SecurityException_("Cannot serialize public key");
+            exception = _SecurityException_("OpenSSL library doesn't retrieve DH");
         }
     }
-    else
+    else if(type == EVP_PKEY_EC)
     {
         EC_KEY* ec =
 #if IS_OPENSSL_1_1
-                EVP_PKEY_get0_EC_KEY(dhkey);
+            EVP_PKEY_get0_EC_KEY(dhkey);
 #else
-                dhkey->pkey.ec;
+            dhkey->pkey.ec;
 #endif
         if (ec != nullptr)
         {
@@ -858,6 +872,10 @@ static bool store_dh_public_key(
             exception = _SecurityException_("OpenSSL library doesn't retrieve DH");
         }
     }
+    else
+    {
+        exception = _SecurityException_("Wrong DH kind");
+    }
 
     return returnedValue;
 }
@@ -865,7 +883,7 @@ static bool store_dh_public_key(
 static EVP_PKEY* generate_dh_peer_key(
         const std::vector<uint8_t>& buffer,
         SecurityException& exception,
-        int alg_kind = EVP_PKEY_DH)
+        int alg_kind)
 {
     if (alg_kind == EVP_PKEY_DH)
     {
@@ -922,7 +940,7 @@ static EVP_PKEY* generate_dh_peer_key(
             exception = _SecurityException_("OpenSSL library cannot create dh");
         }
     }
-    else
+    else if (alg_kind == EVP_PKEY_EC)
     {
         EC_KEY* ec = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
 
@@ -967,6 +985,10 @@ static EVP_PKEY* generate_dh_peer_key(
         {
             exception = _SecurityException_("OpenSSL library cannot create ec");
         }
+    }
+    else
+    {
+        exception = _SecurityException_("Wrong DH kind");
     }
 
     return nullptr;
@@ -1387,14 +1409,15 @@ ValidationResult_t PKIDH::begin_handshake_request(
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
+    int kagree_kind = get_dh_type((*handshake_handle_aux)->kagree_alg_);
+
     // dh1
-    if (((*handshake_handle_aux)->dhkeys_ =
-            generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_), exception)) != nullptr)
+    if (((*handshake_handle_aux)->dhkeys_ = generate_dh_key(kagree_kind, exception)) != nullptr)
     {
         bproperty.name("dh1");
         bproperty.propagate(true);
 
-        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
+        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, kagree_kind, bproperty.value(), exception))
         {
             (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
@@ -1754,7 +1777,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
         bproperty.name("dh2");
         bproperty.propagate(true);
 
-        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
+        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, kagree_kind, bproperty.value(), exception))
         {
             (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
@@ -2079,14 +2102,15 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     // dh2
     BinaryProperty* dh2 = DataHolderHelper::find_binary_property(handshake_message_in, "dh2");
-
     if (dh2 == nullptr)
     {
         WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    if ((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value(), exception)) == nullptr)
+    int kagree_kind = get_dh_type(s_kagree_algo);
+
+    if ((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value(), exception, kagree_kind)) == nullptr)
     {
         exception = _SecurityException_("Cannot store peer key from dh2");
         EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
