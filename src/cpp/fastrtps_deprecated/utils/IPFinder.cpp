@@ -39,7 +39,7 @@
 #include <net/if.h>
 #endif
 
-#if __FreeBSD__
+#if defined(__FreeBSD__)
 #include <netinet/in.h>
 #endif
 
