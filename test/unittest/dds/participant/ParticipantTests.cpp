@@ -293,8 +293,7 @@ TEST(ParticipantTests, CreateTopic)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
-    TopicDataTypeMock data_type;
-    TypeSupport type_(&data_type);
+    TypeSupport type_(new TopicDataTypeMock());
     participant->register_type(type_, "footype");
 
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
@@ -305,8 +304,7 @@ TEST(ParticipantTests, PSMCreateTopic)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
 
-    TopicDataTypeMock data_type;
-    TypeSupport type_(&data_type);
+    TypeSupport type_(new TopicDataTypeMock());
     participant->register_type(type_, "footype");
 
     ::dds::topic::Topic topic = ::dds::core::null;

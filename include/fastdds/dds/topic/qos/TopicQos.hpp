@@ -424,6 +424,34 @@ public:
         ownership_ = ownership;
     }
 
+    /**
+     * Getter for DataRepresentationQosPolicy
+     * @return DataRepresentationQosPolicy reference
+     */
+    const DataRepresentationQosPolicy& representation() const
+    {
+        return representation_;
+    }
+
+    /**
+     * Getter for DataRepresentationQosPolicy
+     * @return DataRepresentationQosPolicy reference
+     */
+    DataRepresentationQosPolicy& representation()
+    {
+        return representation_;
+    }
+
+    /**
+     * Setter for DataRepresentationQosPolicy
+     * @param representation
+     */
+    void representation(
+            const DataRepresentationQosPolicy& representation)
+    {
+        representation_ = representation;
+    }
+
 private:
 
     //!Topic Data Qos, NOT implemented in the library.
@@ -464,6 +492,9 @@ private:
 
     //!Ownership Qos, NOT implemented in the library.
     OwnershipQosPolicy ownership_;
+
+    //!Data Representation Qos, (XTypes extension).
+    DataRepresentationQosPolicy representation_;
 };
 
 RTPS_DllAPI extern const TopicQos TOPIC_QOS_DEFAULT;
