@@ -138,12 +138,12 @@ class DataReaderQos
 {
 public:
 
-    DataReaderQos()
+    RTPS_DllAPI DataReaderQos()
         : expects_inline_qos_(false)
     {
     }
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const DataReaderQos& b) const
     {
         return (durability_ == b.durability()) &&
@@ -175,7 +175,7 @@ public:
      * Getter for DurabilityQosPolicy
      * @return DurabilityQosPolicy reference
      */
-    DurabilityQosPolicy& durability()
+    RTPS_DllAPI DurabilityQosPolicy& durability()
     {
         return durability_;
     }
@@ -184,7 +184,7 @@ public:
      * Getter for DurabilityQosPolicy
      * @return DurabilityQosPolicy const reference
      */
-    const DurabilityQosPolicy& durability() const
+    RTPS_DllAPI const DurabilityQosPolicy& durability() const
     {
         return durability_;
     }
@@ -193,7 +193,7 @@ public:
      * Setter for DurabilityQosPolicy
      * @param new_value new value for the DurabilityQosPolicy
      */
-    void durability(
+    RTPS_DllAPI void durability(
             const DurabilityQosPolicy& new_value)
     {
         durability_ = new_value;
@@ -203,7 +203,7 @@ public:
      * Getter for DeadlineQosPolicy
      * @return DeadlineQosPolicy reference
      */
-    DeadlineQosPolicy& deadline()
+    RTPS_DllAPI DeadlineQosPolicy& deadline()
     {
         return deadline_;
     }
@@ -212,7 +212,7 @@ public:
      * Getter for DeadlineQosPolicy
      * @return DeadlineQosPolicy const reference
      */
-    const DeadlineQosPolicy& deadline() const
+    RTPS_DllAPI const DeadlineQosPolicy& deadline() const
     {
         return deadline_;
     }
@@ -221,7 +221,7 @@ public:
      * Setter for DeadlineQosPolicy
      * @param new_value new value for the DeadlineQosPolicy
      */
-    void deadline(
+    RTPS_DllAPI void deadline(
             const DeadlineQosPolicy& new_value)
     {
         deadline_ = new_value;
@@ -231,7 +231,7 @@ public:
      * Getter for LatencyBudgetQosPolicy
      * @return LatencyBudgetQosPolicy reference
      */
-    LatencyBudgetQosPolicy& latency_budget()
+    RTPS_DllAPI LatencyBudgetQosPolicy& latency_budget()
     {
         return latency_budget_;
     }
@@ -240,7 +240,7 @@ public:
      * Getter for LatencyBudgetQosPolicy
      * @return LatencyBudgetQosPolicy const reference
      */
-    const LatencyBudgetQosPolicy& latency_budget() const
+    RTPS_DllAPI const LatencyBudgetQosPolicy& latency_budget() const
     {
         return latency_budget_;
     }
@@ -249,7 +249,7 @@ public:
      * Setter for LatencyBudgetQosPolicy
      * @param new_value new value for the LatencyBudgetQosPolicy
      */
-    void latency_budget(
+    RTPS_DllAPI void latency_budget(
             const LatencyBudgetQosPolicy& new_value)
     {
         latency_budget_ = new_value;
@@ -259,7 +259,7 @@ public:
      * Getter for LivelinessQosPolicy
      * @return LivelinessQosPolicy reference
      */
-    LivelinessQosPolicy& liveliness()
+    RTPS_DllAPI LivelinessQosPolicy& liveliness()
     {
         return liveliness_;
     }
@@ -268,7 +268,7 @@ public:
      * Getter for LivelinessQosPolicy
      * @return LivelinessQosPolicy const reference
      */
-    const LivelinessQosPolicy& liveliness() const
+    RTPS_DllAPI const LivelinessQosPolicy& liveliness() const
     {
         return liveliness_;
     }
@@ -277,7 +277,7 @@ public:
      * Setter for LivelinessQosPolicy
      * @param new_value new value for the LivelinessQosPolicy
      */
-    void liveliness(
+    RTPS_DllAPI void liveliness(
             const LivelinessQosPolicy& new_value)
     {
         liveliness_ = new_value;
@@ -287,7 +287,7 @@ public:
      * Getter for ReliabilityQosPolicy
      * @return ReliabilityQosPolicy reference
      */
-    ReliabilityQosPolicy& reliability()
+    RTPS_DllAPI ReliabilityQosPolicy& reliability()
     {
         return reliability_;
     }
@@ -296,7 +296,7 @@ public:
      * Getter for ReliabilityQosPolicy
      * @return ReliabilityQosPolicy const reference
      */
-    const ReliabilityQosPolicy& reliability() const
+    RTPS_DllAPI const ReliabilityQosPolicy& reliability() const
     {
         return reliability_;
     }
@@ -305,7 +305,7 @@ public:
      * Setter for ReliabilityQosPolicy
      * @param new_value new value for the ReliabilityQosPolicy
      */
-    void reliability(
+    RTPS_DllAPI void reliability(
             const ReliabilityQosPolicy& new_value)
     {
         reliability_ = new_value;
@@ -315,7 +315,7 @@ public:
      * Getter for DestinationOrderQosPolicy
      * @return DestinationOrderQosPolicy reference
      */
-    DestinationOrderQosPolicy& destination_order()
+    RTPS_DllAPI DestinationOrderQosPolicy& destination_order()
     {
         return destination_order_;
     }
@@ -324,7 +324,7 @@ public:
      * Getter for DestinationOrderQosPolicy
      * @return DestinationOrderQosPolicy const reference
      */
-    const DestinationOrderQosPolicy& destination_order() const
+    RTPS_DllAPI const DestinationOrderQosPolicy& destination_order() const
     {
         return destination_order_;
     }
@@ -333,7 +333,7 @@ public:
      * Setter for DestinationOrderQosPolicy
      * @param new_value new value for the DestinationOrderQosPolicy
      */
-    void destination_order(
+    RTPS_DllAPI void destination_order(
             const DestinationOrderQosPolicy& new_value)
     {
         destination_order_ = new_value;
@@ -343,7 +343,7 @@ public:
      * Getter for HistoryQosPolicy
      * @return HistoryQosPolicy reference
      */
-    HistoryQosPolicy& history()
+    RTPS_DllAPI HistoryQosPolicy& history()
     {
         return history_;
     }
@@ -352,7 +352,7 @@ public:
      * Getter for HistoryQosPolicy
      * @return HistoryQosPolicy const reference
      */
-    const HistoryQosPolicy& history() const
+    RTPS_DllAPI const HistoryQosPolicy& history() const
     {
         return history_;
     }
@@ -361,7 +361,7 @@ public:
      * Setter for HistoryQosPolicy
      * @param new_value new value for the HistoryQosPolicy
      */
-    void history(
+    RTPS_DllAPI void history(
             const HistoryQosPolicy& new_value)
     {
         history_ = new_value;
@@ -371,7 +371,7 @@ public:
      * Getter for ResourceLimitsQosPolicy
      * @return ResourceLimitsQosPolicy reference
      */
-    ResourceLimitsQosPolicy& resource_limits()
+    RTPS_DllAPI ResourceLimitsQosPolicy& resource_limits()
     {
         return resource_limits_;
     }
@@ -380,7 +380,7 @@ public:
      * Getter for ResourceLimitsQosPolicy
      * @return ResourceLimitsQosPolicy const reference
      */
-    const ResourceLimitsQosPolicy& resource_limits() const
+    RTPS_DllAPI const ResourceLimitsQosPolicy& resource_limits() const
     {
         return resource_limits_;
     }
@@ -389,7 +389,7 @@ public:
      * Setter for ResourceLimitsQosPolicy
      * @param new_value new value for the ResourceLimitsQosPolicy
      */
-    void resource_limits(
+    RTPS_DllAPI void resource_limits(
             const ResourceLimitsQosPolicy& new_value)
     {
         resource_limits_ = new_value;
@@ -398,7 +398,7 @@ public:
      * Getter for UserDataQosPolicy
      * @return UserDataQosPolicy reference
      */
-    UserDataQosPolicy& user_data()
+    RTPS_DllAPI UserDataQosPolicy& user_data()
     {
         return user_data_;
     }
@@ -407,7 +407,7 @@ public:
      * Getter for UserDataQosPolicy
      * @return UserDataQosPolicy const reference
      */
-    const UserDataQosPolicy& user_data() const
+    RTPS_DllAPI const UserDataQosPolicy& user_data() const
     {
         return user_data_;
     }
@@ -416,7 +416,7 @@ public:
      * Setter for UserDataQosPolicy
      * @param new_value new value for the UserDataQosPolicy
      */
-    void user_data(
+    RTPS_DllAPI void user_data(
             const UserDataQosPolicy& new_value)
     {
         user_data_ = new_value;
@@ -425,7 +425,7 @@ public:
      * Getter for OwnershipQosPolicy
      * @return OwnershipQosPolicy reference
      */
-    OwnershipQosPolicy& ownership()
+    RTPS_DllAPI OwnershipQosPolicy& ownership()
     {
         return ownership_;
     }
@@ -434,7 +434,7 @@ public:
      * Getter for OwnershipQosPolicy
      * @return OwnershipQosPolicy const reference
      */
-    const OwnershipQosPolicy& ownership() const
+    RTPS_DllAPI const OwnershipQosPolicy& ownership() const
     {
         return ownership_;
     }
@@ -443,7 +443,7 @@ public:
      * Setter for OwnershipQosPolicy
      * @param new_value new value for the OwnershipQosPolicy
      */
-    void ownership(
+    RTPS_DllAPI void ownership(
             const OwnershipQosPolicy& new_value)
     {
         ownership_ = new_value;
@@ -453,7 +453,7 @@ public:
      * Getter for TimeBasedFilterQosPolicy
      * @return TimeBasedFilterQosPolicy reference
      */
-    TimeBasedFilterQosPolicy& time_based_filter()
+    RTPS_DllAPI TimeBasedFilterQosPolicy& time_based_filter()
     {
         return time_based_filter_;
     }
@@ -462,7 +462,7 @@ public:
      * Getter for TimeBasedFilterQosPolicy
      * @return TimeBasedFilterQosPolicy const reference
      */
-    const TimeBasedFilterQosPolicy& time_based_filter() const
+    RTPS_DllAPI const TimeBasedFilterQosPolicy& time_based_filter() const
     {
         return time_based_filter_;
     }
@@ -471,7 +471,7 @@ public:
      * Setter for TimeBasedFilterQosPolicy
      * @param new_value new value for the TimeBasedFilterQosPolicy
      */
-    void time_based_filter(
+    RTPS_DllAPI void time_based_filter(
             const TimeBasedFilterQosPolicy& new_value)
     {
         time_based_filter_ = new_value;
@@ -481,7 +481,7 @@ public:
      * Getter for ReaderDataLifecycleQosPolicy
      * @return ReaderDataLifecycleQosPolicy reference
      */
-    ReaderDataLifecycleQosPolicy& reader_data_lifecycle()
+    RTPS_DllAPI ReaderDataLifecycleQosPolicy& reader_data_lifecycle()
     {
         return reader_data_lifecycle_;
     }
@@ -490,7 +490,7 @@ public:
      * Getter for ReaderDataLifecycleQosPolicy
      * @return ReaderDataLifecycleQosPolicy const reference
      */
-    const ReaderDataLifecycleQosPolicy& reader_data_lifecycle() const
+    RTPS_DllAPI const ReaderDataLifecycleQosPolicy& reader_data_lifecycle() const
     {
         return reader_data_lifecycle_;
     }
@@ -499,7 +499,7 @@ public:
      * Setter for ReaderDataLifecycleQosPolicy
      * @param new_value new value for the ReaderDataLifecycleQosPolicy
      */
-    void reader_data_lifecycle(
+    RTPS_DllAPI void reader_data_lifecycle(
             const ReaderDataLifecycleQosPolicy& new_value)
     {
         reader_data_lifecycle_ = new_value;
@@ -509,7 +509,7 @@ public:
      * Getter for LifespanQosPolicy
      * @return LifespanQosPolicy reference
      */
-    LifespanQosPolicy& lifespan()
+    RTPS_DllAPI LifespanQosPolicy& lifespan()
     {
         return lifespan_;
     }
@@ -518,7 +518,7 @@ public:
      * Getter for LifespanQosPolicy
      * @return LifespanQosPolicy const reference
      */
-    const LifespanQosPolicy& lifespan() const
+    RTPS_DllAPI const LifespanQosPolicy& lifespan() const
     {
         return lifespan_;
     }
@@ -527,7 +527,7 @@ public:
      * Setter for LifespanQosPolicy
      * @param new_value new value for the LifespanQosPolicy
      */
-    void lifespan(
+    RTPS_DllAPI void lifespan(
             const LifespanQosPolicy& new_value)
     {
         lifespan_ = new_value;
@@ -537,7 +537,7 @@ public:
      * Getter for DurabilityServiceQosPolicy
      * @return DurabilityServiceQosPolicy reference
      */
-    DurabilityServiceQosPolicy& durability_service()
+    RTPS_DllAPI DurabilityServiceQosPolicy& durability_service()
     {
         return durability_service_;
     }
@@ -546,7 +546,7 @@ public:
      * Getter for DurabilityServiceQosPolicy
      * @return DurabilityServiceQosPolicy const reference
      */
-    const DurabilityServiceQosPolicy& durability_service() const
+    RTPS_DllAPI const DurabilityServiceQosPolicy& durability_service() const
     {
         return durability_service_;
     }
@@ -555,7 +555,7 @@ public:
      * Setter for DurabilityServiceQosPolicy
      * @param new_value new value for the DurabilityServiceQosPolicy
      */
-    void durability_service(
+    RTPS_DllAPI void durability_service(
             const DurabilityServiceQosPolicy& new_value)
     {
         durability_service_ = new_value;
@@ -565,7 +565,7 @@ public:
      * Getter for RTPSReliableReaderQos
      * @return RTPSReliableReaderQos reference
      */
-    RTPSReliableReaderQos& reliable_reader_qos()
+    RTPS_DllAPI RTPSReliableReaderQos& reliable_reader_qos()
     {
         return reliable_reader_qos_;
     }
@@ -574,7 +574,7 @@ public:
      * Getter for RTPSReliableReaderQos
      * @return RTPSReliableReaderQos const reference
      */
-    const RTPSReliableReaderQos& reliable_reader_qos() const
+    RTPS_DllAPI const RTPSReliableReaderQos& reliable_reader_qos() const
     {
         return reliable_reader_qos_;
     }
@@ -583,7 +583,7 @@ public:
      * Setter for RTPSReliableReaderQos
      * @param new_value new value for the RTPSReliableReaderQos
      */
-    void reliable_reader_qos(
+    RTPS_DllAPI void reliable_reader_qos(
             const RTPSReliableReaderQos& new_value)
     {
         reliable_reader_qos_ = new_value;
@@ -593,7 +593,7 @@ public:
      * Getter for TypeConsistencyQos
      * @return TypeConsistencyQos reference
      */
-    TypeConsistencyQos& type_consistency()
+    RTPS_DllAPI TypeConsistencyQos& type_consistency()
     {
         return type_consistency_;
     }
@@ -602,7 +602,7 @@ public:
      * Getter for TypeConsistencyQos
      * @return TypeConsistencyQos const reference
      */
-    const TypeConsistencyQos& type_consistency() const
+    RTPS_DllAPI const TypeConsistencyQos& type_consistency() const
     {
         return type_consistency_;
     }
@@ -611,7 +611,7 @@ public:
      * Setter for TypeConsistencyQos
      * @param new_value new value for the TypeConsistencyQos
      */
-    void type_consistency(
+    RTPS_DllAPI void type_consistency(
             const TypeConsistencyQos& new_value)
     {
         type_consistency_ = new_value;
@@ -621,7 +621,7 @@ public:
      * Getter for expectsInlineQos_
      * @return expectsInlineQos_
      */
-    bool expects_inline_qos() const
+    RTPS_DllAPI bool expects_inline_qos() const
     {
         return expects_inline_qos_;
     }
@@ -630,7 +630,7 @@ public:
      * Setter for expectsInlineQos_
      * @param new_value new value for the expectsInlineQos_
      */
-    void expects_inline_qos(
+    RTPS_DllAPI void expects_inline_qos(
             bool new_value)
     {
         expects_inline_qos_ = new_value;
@@ -640,7 +640,7 @@ public:
      * Getter for PropertyPolicyQos
      * @return PropertyPolicyQos reference
      */
-    PropertyPolicyQos& properties()
+    RTPS_DllAPI PropertyPolicyQos& properties()
     {
         return properties_;
     }
@@ -649,7 +649,7 @@ public:
      * Getter for PropertyPolicyQos
      * @return PropertyPolicyQos const reference
      */
-    const PropertyPolicyQos& properties() const
+    RTPS_DllAPI const PropertyPolicyQos& properties() const
     {
         return properties_;
     }
@@ -658,7 +658,7 @@ public:
      * Setter for PropertyPolicyQos
      * @param new_value new value for the PropertyPolicyQos
      */
-    void properties(
+    RTPS_DllAPI void properties(
             const PropertyPolicyQos& new_value)
     {
         properties_ = new_value;
@@ -668,7 +668,7 @@ public:
      * Getter for RTPSEndpointQos
      * @return RTPSEndpointQos reference
      */
-    RTPSEndpointQos& endpoint()
+    RTPS_DllAPI RTPSEndpointQos& endpoint()
     {
         return endpoint_;
     }
@@ -677,7 +677,7 @@ public:
      * Getter for RTPSEndpointQos
      * @return RTPSEndpointQos const reference
      */
-    const RTPSEndpointQos& endpoint() const
+    RTPS_DllAPI const RTPSEndpointQos& endpoint() const
     {
         return endpoint_;
     }
@@ -686,7 +686,7 @@ public:
      * Setter for RTPSEndpointQos
      * @param new_value new value for the RTPSEndpointQos
      */
-    void endpoint(
+    RTPS_DllAPI void endpoint(
             const RTPSEndpointQos& new_value)
     {
         endpoint_ = new_value;
@@ -696,7 +696,7 @@ public:
      * Getter for ReaderResourceLimitsQos
      * @return ReaderResourceLimitsQos reference
      */
-    ReaderResourceLimitsQos& reader_resource_limits()
+    RTPS_DllAPI ReaderResourceLimitsQos& reader_resource_limits()
     {
         return reader_resource_limits_;
     }
@@ -705,7 +705,7 @@ public:
      * Getter for ReaderResourceLimitsQos
      * @return ReaderResourceLimitsQos const reference
      */
-    const ReaderResourceLimitsQos& reader_resource_limits() const
+    RTPS_DllAPI const ReaderResourceLimitsQos& reader_resource_limits() const
     {
         return reader_resource_limits_;
     }
@@ -714,7 +714,7 @@ public:
      * Setter for ReaderResourceLimitsQos
      * @param new_value new value for the ReaderResourceLimitsQos
      */
-    void reader_resource_limits(
+    RTPS_DllAPI void reader_resource_limits(
             const ReaderResourceLimitsQos& new_value)
     {
         reader_resource_limits_ = new_value;
@@ -783,7 +783,7 @@ private:
     ReaderResourceLimitsQos reader_resource_limits_;
 };
 
-extern const DataReaderQos DATAREADER_QOS_DEFAULT;
+RTPS_DllAPI extern const DataReaderQos DATAREADER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds
