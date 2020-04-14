@@ -26,6 +26,8 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <atomic>
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -79,8 +81,11 @@ public:
 
     const TypeSupport& get_type() const;
 
-    // TODO (Miguel C)
-    // const InstanceHandle_t& get_instance_handle() const;
+    bool is_referenced() const;
+
+    void reference();
+
+    void dereference();
 
 private:
 
@@ -89,7 +94,7 @@ private:
     TopicQos qos_;
     TopicListener* listener_;
     Topic* user_topic_;
-    fastrtps::rtps::InstanceHandle_t handle_;
+    std::atomic_size_t num_refs_;
 
 };
 

@@ -196,6 +196,9 @@ public:
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
+    RTPS_DllAPI ReturnCode_t delete_topic(
+            Topic* topic);
+
     /* TODO
        Subscriber* get_builtin_subscriber();
      */

@@ -111,6 +111,12 @@ Topic* DomainParticipant::create_topic(
     return impl_->create_topic(topic_name, type_name, qos, listener, mask);
 }
 
+ReturnCode_t DomainParticipant::delete_topic(
+        Topic* topic)
+{
+    return impl_->delete_topic(topic);
+}
+
 bool DomainParticipant::register_type(
         TypeSupport type,
         const std::string& type_name)
