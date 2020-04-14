@@ -18,6 +18,7 @@
 
 #include <fastrtps_deprecated/security/authentication/PKIDH.h>
 #include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
+#include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -1101,6 +1102,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (PropertyPolicyHelper::length(auth_properties) == 0)
     {
         exception = _SecurityException_("Not found any dds.sec.auth.builtin.PKI-DH property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1109,6 +1111,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (identity_ca == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.identity_ca property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1117,6 +1120,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (identity_cert == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.identity_certificate property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1127,6 +1131,7 @@ ValidationResult_t PKIDH::validate_local_identity(
     if (private_key == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.auth.builtin.PKI-DH.private_key property");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1160,6 +1165,7 @@ ValidationResult_t PKIDH::validate_local_identity(
             else
             {
                 delete ih;
+                EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
                 return ValidationResult_t::VALIDATION_FAILED;
             }
         }
@@ -1214,6 +1220,8 @@ ValidationResult_t PKIDH::validate_local_identity(
             }
         }
     }
+
+    EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
 
     delete ih;
 
@@ -1287,12 +1295,14 @@ ValidationResult_t PKIDH::begin_handshake_request(
     if (lih.nil() || rih.nil())
     {
         exception = _SecurityException_("Bad precondition");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (cdr_participant_data.length == 0)
     {
         exception = _SecurityException_("Bad precondition");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1328,6 +1338,7 @@ ValidationResult_t PKIDH::begin_handshake_request(
         else
         {
             exception = _SecurityException_("Cannot find permissions file in permissions credential token");
+            EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
             return ValidationResult_t::VALIDATION_FAILED;
         }
     }
@@ -1362,6 +1373,7 @@ ValidationResult_t PKIDH::begin_handshake_request(
     if (!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
     {
         exception = _SecurityException_("OpenSSL library cannot hash sha256");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         delete handshake_handle_aux;
         return ValidationResult_t::VALIDATION_FAILED;
     }
@@ -1424,19 +1436,22 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (lih.nil() || rih.nil())
     {
         exception = _SecurityException_("Bad precondition");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (cdr_participant_data.length == 0)
     {
         exception = _SecurityException_("Bad precondition");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     // Check TokenMessage
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Req") != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
+            handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1445,7 +1460,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.id");
     if (cid == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.id");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.id");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1453,7 +1468,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (rih->cert_ == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot load certificate");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot load certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1464,7 +1479,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (!rih->cert_sn_.empty() && rih->cert_sn_.compare(cert_sn_str) != 0)
     {
         OPENSSL_free(cert_sn_str);
-        logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
+        WARNING_SECURITY_LOGGING("PKIDH", "Certificated subject name invalid");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     rih->cert_sn_.assign(cert_sn_str);
@@ -1479,7 +1494,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
-        logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
+        WARNING_SECURITY_LOGGING("PKIDH", "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1491,7 +1506,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
         if (perm == nullptr)
         {
-            logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.perm");
+            WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.perm");
             return ValidationResult_t::VALIDATION_FAILED;
         }
 
@@ -1506,7 +1521,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (pdata == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1520,13 +1535,13 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (!ParameterList::read_guid_from_cdr_msg(cdr_pdata, fastdds::dds::PID_PARTICIPANT_GUID, participant_guid))
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if ((participant_guid.guidPrefix.value[0] & 0x80) != 0x80)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's first bit in c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Bad participant_key's first bit in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1536,7 +1551,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (!X509_NAME_digest(cert_sn, EVP_sha256(), md, &length) || length != SHA256_DIGEST_LENGTH)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot generate SHA256 of subject name");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1557,7 +1572,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (memcmp(md, bytes, 6) != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Bad participant_key's 47bits in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1567,7 +1582,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (dsign_algo == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.dsign_algo");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.dsign_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1576,7 +1591,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (strcmp(RSA_SHA256, s_dsign_algo.c_str()) != 0 &&
             strcmp(ECDSA_SHA256, s_dsign_algo.c_str()) != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Not supported signature algorithm (" << s_dsign_algo << ")");
+        WARNING_SECURITY_LOGGING("PKIDH", "Not supported signature algorithm (" + s_dsign_algo + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     rih->sign_alg_ = std::move(s_dsign_algo);
@@ -1587,7 +1602,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (kagree_algo == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.kagree_algo");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.kagree_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1596,7 +1611,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (strcmp(DH_2048_256, s_kagree_algo.c_str()) != 0 &&
             strcmp(ECDH_prime256v1, s_kagree_algo.c_str()) != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Not supported key agreement algorithm (" << s_kagree_algo << ")");
+        WARNING_SECURITY_LOGGING("PKIDH", std::string("Not supported key agreement algorithm (") + s_kagree_algo + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     rih->kagree_alg_ = std::move(s_kagree_algo);
@@ -1608,7 +1623,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (!EVP_Digest(cdrmessage.buffer, cdrmessage.length, hash_c1, NULL, EVP_sha256(), NULL))
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of request");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot generate SHA256 of request");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     else
@@ -1622,7 +1637,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
             if ( (hash_c1_vec->size() == SHA256_DIGEST_LENGTH) &&
                     (memcmp(hash_c1, hash_c1_vec->data(), SHA256_DIGEST_LENGTH) != 0) )
             {
-                logWarning(SECURITY_AUTHENTICATION, "Wrong hash_c1");
+                WARNING_SECURITY_LOGGING("PKIDH", "Wrong hash_c1");
             }
         }
     }
@@ -1632,7 +1647,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (dh1 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1641,7 +1656,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
     if (challenge1 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1655,7 +1670,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     // Store dh1
     if (((*handshake_handle_aux)->peerkeys_ = generate_dh_peer_key(*dh1, exception, kagree_kind)) == nullptr)
     {
-        exception = _SecurityException_("Cannot store peer key from dh1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot store peer key from dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1684,6 +1699,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
         else
         {
             exception = _SecurityException_("Cannot find permissions file in permissions credential token");
+            EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
             return ValidationResult_t::VALIDATION_FAILED;
         }
     }
@@ -1718,6 +1734,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
     {
         exception = _SecurityException_("OpenSSL library cannot hash sha256");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         delete handshake_handle_aux;
         return ValidationResult_t::VALIDATION_FAILED;
     }
@@ -1838,8 +1855,8 @@ ValidationResult_t PKIDH::process_handshake(
         }
         else
         {
-            logWarning(SECURITY_AUTHENTICATION,
-                    "Handshake message not supported (" << handshake->handshake_message_.class_id() << ")");
+            WARNING_SECURITY_LOGGING("PKIDH",
+                std::string("Handshake message not supported (") + handshake->handshake_message_.class_id() + ")");
         }
     }
 
@@ -1858,7 +1875,8 @@ ValidationResult_t PKIDH::process_handshake_request(
     // Check TokenMessage
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Reply") != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
+            handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1867,7 +1885,7 @@ ValidationResult_t PKIDH::process_handshake_request(
     const std::vector<uint8_t>* cid = DataHolderHelper::find_binary_property_value(handshake_message_in, "c.id");
     if (cid == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.id");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.id");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1875,7 +1893,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (rih->cert_ == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot load certificate");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot load certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1886,7 +1904,7 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (!rih->cert_sn_.empty() && rih->cert_sn_.compare(cert_sn_str) != 0)
     {
         OPENSSL_free(cert_sn_str);
-        logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
+        WARNING_SECURITY_LOGGING("PKIDH", "Certificated subject name invalid");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     OPENSSL_free(cert_sn_str);
@@ -1900,7 +1918,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (!verify_certificate(lih->store_, rih->cert_, lih->there_are_crls_))
     {
-        logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
+        WARNING_SECURITY_LOGGING("PKIDH", "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1912,7 +1930,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
         if (perm == nullptr)
         {
-            logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.perm");
+            WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.perm");
             return ValidationResult_t::VALIDATION_FAILED;
         }
 
@@ -1927,7 +1945,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (pdata == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1941,13 +1959,13 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (!ParameterList::read_guid_from_cdr_msg(cdr_pdata, fastdds::dds::PID_PARTICIPANT_GUID, participant_guid))
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot deserialize ParticipantProxyData in property c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot deserialize ParticipantProxyData in property c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if ((participant_guid.guidPrefix.value[0] & 0x80) != 0x80)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's first bit in c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Bad participant_key's first bit in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1956,7 +1974,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (!X509_NAME_digest(cert_sn, EVP_sha256(), md, &length) || length != SHA256_DIGEST_LENGTH)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot generate SHA256 of subject name");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1977,7 +1995,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (memcmp(md, bytes, 6) != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Bad participant_key's 47bits in c.pdata");
+        WARNING_SECURITY_LOGGING("PKIDH", "Bad participant_key's 47bits in c.pdata");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1987,7 +2005,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (dsign_algo == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.dsign_algo");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.dsign_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1996,7 +2014,7 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (s_dsign_algo.compare(RSA_SHA256) != 0 &&
             s_dsign_algo.compare(ECDSA_SHA256) != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Not supported signature algorithm (" << s_dsign_algo << ")");
+        WARNING_SECURITY_LOGGING("PKIDH", std::string("Not supported signature algorithm (") + s_dsign_algo + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
     rih->sign_alg_ = std::move(s_dsign_algo);
@@ -2007,7 +2025,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (kagree_algo == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property c.kagree_algo");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property c.kagree_algo");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2015,9 +2033,8 @@ ValidationResult_t PKIDH::process_handshake_request(
     std::string s_kagree_algo(kagree_algo->begin(), kagree_algo->end());
     if (s_kagree_algo.compare(handshake_handle->kagree_alg_) != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION,
-                "Invalid key agreement algorithm. Received " << s_kagree_algo << ", expected " <<
-                handshake_handle->kagree_alg_);
+        WARNING_SECURITY_LOGGING("PKIDH", std::string("Invalid key agreement algorithm. Received ") +
+            s_kagree_algo + ", expected " + handshake_handle->kagree_alg_);
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2026,13 +2043,13 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (hash_c2 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property hash_c2");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (hash_c2->value().size() != SHA256_DIGEST_LENGTH)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Wrong size of hash_c2");
+        WARNING_SECURITY_LOGGING("PKIDH", "Wrong size of hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2045,12 +2062,13 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (!EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL))
     {
         exception = _SecurityException_("Cannot generate SHA256 of request");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (memcmp(md, hash_c2->value().data(), SHA256_DIGEST_LENGTH) != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Wrong hash_c2");
+        WARNING_SECURITY_LOGGING("PKIDH", "Wrong hash_c2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2059,13 +2077,14 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (dh2 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh2");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if ((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value(), exception)) == nullptr)
     {
         exception = _SecurityException_("Cannot store peer key from dh2");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2073,7 +2092,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (challenge2 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge2");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property challenge2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2082,7 +2101,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (hash_c1 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property hash_c1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2092,12 +2111,13 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (hash_c1_request == nullptr)
     {
         exception = _SecurityException_("Cannot find property hash_c1 in request message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (hash_c1->value() != *hash_c1_request)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Invalid property hash_c1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Invalid property hash_c1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2106,7 +2126,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (dh1 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property dh1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2116,12 +2136,13 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (dh1_request == nullptr)
     {
         exception = _SecurityException_("Cannot find property dh1 in request message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (dh1->value() != *dh1_request)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Invalid property dh1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Invalid property dh1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2129,7 +2150,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (challenge1 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2139,12 +2160,13 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (challenge1_request == nullptr)
     {
         exception = _SecurityException_("Cannot find property challenge1 in request message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (challenge1->value() != *challenge1_request)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Invalid property challenge1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Invalid property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2153,7 +2175,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (signature == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property signature");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2178,7 +2200,7 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     if (!check_sign_sha256(rih->cert_, cdrmessage2.buffer, cdrmessage2.length, *signature, exception))
     {
-        logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
+        WARNING_SECURITY_LOGGING("PKIDH", "Error verifying signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2284,7 +2306,8 @@ ValidationResult_t PKIDH::process_handshake_reply(
     // Check TokenMessage
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Final") != 0)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Bad HandshakeMessageToken (" << handshake_message_in.class_id() << ")");
+        WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
+            handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2294,7 +2317,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     BinaryProperty* challenge1 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge1");
     if (challenge1 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2303,12 +2326,13 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (challenge1_reply == nullptr)
     {
         exception = _SecurityException_("Cannot find property challenge1 in reply message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (challenge1->value() != *challenge1_reply)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Invalid challenge1");
+        WARNING_SECURITY_LOGGING("PKIDH", "Invalid challenge1");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2316,7 +2340,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     BinaryProperty* challenge2 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge2");
     if (challenge2 == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge2");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property challenge2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2325,12 +2349,13 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (challenge2_reply == nullptr)
     {
         exception = _SecurityException_("Cannot find property challenge2 in reply message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     if (challenge2->value() != *challenge2_reply)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Invalid challenge2");
+        WARNING_SECURITY_LOGGING("PKIDH", "Invalid challenge2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2339,7 +2364,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
                     "signature");
     if (signature == nullptr)
     {
-        logWarning(SECURITY_AUTHENTICATION, "Cannot find property signature");
+        WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2349,6 +2374,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (hash_c1_reply == nullptr)
     {
         exception = _SecurityException_("Cannot find property hash_c1 in reply message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2357,7 +2383,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     {
         if (hash_c1->value() != hash_c1_reply->value())
         {
-            logWarning(SECURITY_AUTHENTICATION, "Invalid hash_c1");
+            WARNING_SECURITY_LOGGING("PKIDH", "Invalid hash_c1");
         }
     }
 
@@ -2367,6 +2393,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (hash_c2_reply == nullptr)
     {
         exception = _SecurityException_("Cannot find property hash_c2 in reply message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2375,7 +2402,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     {
         if (hash_c2->value() != hash_c2_reply->value())
         {
-            logWarning(SECURITY_AUTHENTICATION, "Invalid hash_c2");
+            WARNING_SECURITY_LOGGING("PKIDH", "Invalid hash_c2");
         }
     }
 
@@ -2384,6 +2411,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (dh1_reply == nullptr)
     {
         exception = _SecurityException_("Cannot find property dh1 in reply message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2392,7 +2420,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     {
         if (dh1->value() != dh1_reply->value())
         {
-            logWarning(SECURITY_AUTHENTICATION, "Invalid dh1");
+            WARNING_SECURITY_LOGGING("PKIDH", "Invalid dh1");
         }
     }
 
@@ -2401,6 +2429,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (dh2_reply == nullptr)
     {
         exception = _SecurityException_("Cannot find property dh2 in reply message");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2409,7 +2438,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     {
         if (dh2->value() != dh2_reply->value())
         {
-            logWarning(SECURITY_AUTHENTICATION, "Invalid dh2");
+            WARNING_SECURITY_LOGGING("PKIDH", "Invalid dh2");
         }
     }
 
@@ -2434,7 +2463,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
 
     if (!check_sign_sha256(rih->cert_, cdrmessage.buffer, cdrmessage.length, *signature, exception))
     {
-        logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
+        WARNING_SECURITY_LOGGING("PKIDH", "Error verifying signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2557,6 +2586,7 @@ bool PKIDH::set_permissions_credential_and_token(
     else
     {
         exception = _SecurityException_("Invalid identity handle");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
     }
 
     return false;
@@ -2577,6 +2607,7 @@ bool PKIDH::get_authenticated_peer_credential_token(
     else
     {
         exception = _SecurityException_("Invalid handshake handle");
+        EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
     }
 
     return false;

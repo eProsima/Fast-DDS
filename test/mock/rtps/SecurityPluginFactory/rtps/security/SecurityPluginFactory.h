@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/security/authentication/Authentication.h>
 #include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
 #include <fastrtps/rtps/security/cryptography/Cryptography.h>
+#include <fastdds/rtps/security/logging/Logging.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
@@ -50,6 +51,8 @@ class SecurityPluginFactory
          */
         Cryptography* create_cryptography_plugin(const PropertyPolicy& property_policy);
 
+        Logging* create_logging_plugin(const PropertyPolicy& property_policy);
+
         static void set_auth_plugin(Authentication* plugin);
 
         static void release_auth_plugin();
@@ -62,6 +65,10 @@ class SecurityPluginFactory
 
         static void release_crypto_plugin();
 
+        static void set_logging_plugin(Logging* plugin);
+
+        static void release_logging_plugin();
+
     private:
 
         static Authentication* auth_plugin_;
@@ -69,6 +76,8 @@ class SecurityPluginFactory
         static AccessControl* access_plugin_;
 
         static Cryptography* crypto_plugin_;
+
+        static Logging* logging_plugin_;
 };
 
 } //namespace security

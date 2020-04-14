@@ -524,6 +524,8 @@ private:
     ReaderHistory* participant_volatile_message_secure_reader_history_;
     SecurityPluginFactory factory_;
 
+    Logging* logging_plugin_;
+
     Authentication* authentication_plugin_;
 
     AccessControl* access_plugin_;

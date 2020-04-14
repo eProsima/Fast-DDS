@@ -28,12 +28,14 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+class Logging;
+
 class Cryptography
 {
 public:
 
     Cryptography(): m_cryptokeyexchange(nullptr), m_cryptokeyfactory(nullptr),
-    m_cryptotransform(nullptr) {}
+    m_cryptotransform(nullptr), m_logger(nullptr) {}
 
     virtual ~Cryptography() {}
 
@@ -44,11 +46,28 @@ public:
 
     CryptoTransform* cryptotransform() { return m_cryptotransform; }
 
+    bool set_logger(
+            Logging* logger,
+            SecurityException& /*exception*/)
+    {
+        m_logger = logger;
+        return true;
+    }
+
 protected:
+
+    const Logging* get_logger()
+    {
+        return m_logger;
+    }
 
     CryptoKeyExchange *m_cryptokeyexchange;
     CryptoKeyFactory *m_cryptokeyfactory;
     CryptoTransform *m_cryptotransform;
+
+private:
+
+    Logging *m_logger;
 };
 
 } //namespace security
