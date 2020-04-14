@@ -46,7 +46,7 @@ public:
             fastrtps::rtps::CDRMessage_t* cdr_message,
             const uint16_t parameter_length)
     {
-        bool valid = false;
+        bool valid = true;
         valid &= read_content_from_cdr_message(qos_policy, cdr_message, parameter_length);
         return valid;
     }
@@ -747,16 +747,11 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::add_content_to_
         const DisablePositiveACKsQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    if (qos_policy.enabled)
-    {
-        bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x01);
-        valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
-        valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
-        valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
-        return valid;
-    }
-
-    return true;
+    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x01);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
+    return valid;
 }
 
 template<>

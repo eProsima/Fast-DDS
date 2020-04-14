@@ -480,7 +480,8 @@ bool ReaderProxyData::writeToCDRMessage(
             return false;
         }
     }
-    if (m_qos.m_disablePositiveACKs.send_always() || m_qos.m_disablePositiveACKs.hasChanged)
+    if ((m_qos.m_disablePositiveACKs.send_always() || m_qos.m_topicData.hasChanged) &&
+            m_qos.m_disablePositiveACKs.enabled)
     {
         if (!fastdds::dds::QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::add_to_cdr_message(m_qos.
                 m_disablePositiveACKs, msg))
