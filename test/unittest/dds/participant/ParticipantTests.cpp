@@ -313,6 +313,21 @@ TEST(ParticipantTests, PSMCreateTopic)
     ASSERT_NE(topic, ::dds::core::null);
 }
 
+TEST(ParticipantTests, DeleteTopic)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant2 = DomainParticipantFactory::get_instance()->create_participant(1);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_, "footype");
+
+    Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+
+    ASSERT_TRUE(participant->delete_topic(nullptr) == ReturnCode_t::RETCODE_BAD_PARAMETER);
+    ASSERT_TRUE(participant2->delete_topic(topic) == ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
