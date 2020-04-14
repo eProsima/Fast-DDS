@@ -252,6 +252,38 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DomainParticipantImpl::delete_topic(
+        Topic* topic)
+{
+    if (topic == nullptr)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (participant_ != topic->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    auto it = topics_.find(topic->get_name());
+
+    if (it != topics_.end() && topic->get_instance_handle() == it->second->get_topic()->get_instance_handle())
+    {
+        if (it->second->is_referenced())
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        it->second->set_listener(nullptr);
+        topics_by_handle_.erase(topic->get_instance_handle());
+        delete it->second;
+        topics_.erase(it);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
 {
     return static_cast<const InstanceHandle_t&>(rtps_participant_->getGuid());
@@ -596,7 +628,7 @@ Topic* DomainParticipantImpl::create_topic(
         return nullptr;
     }
 
-    if (! TopicImpl::check_qos(qos))
+    if (!TopicImpl::check_qos(qos))
     {
         logError(PARTICIPANT, "TopicQos inconsistent or not supported");
         return nullptr;

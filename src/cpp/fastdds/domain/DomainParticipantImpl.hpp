@@ -149,6 +149,9 @@ public:
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
+    ReturnCode_t delete_topic(
+            Topic* topic);
+
     /**
      * Register a type in this participant.
      * @param type The TypeSupport to register. A copy will be kept by the participant until removed.
