@@ -22,6 +22,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
@@ -43,24 +44,22 @@ namespace dds {
 
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
-        TypeSupport type,
-        const TopicAttributes& topic_att,
-        const fastrtps::rtps::ReaderAttributes& att,
+        TypeSupport& type,
+        const TopicDescription* topic,
         const DataReaderQos& qos,
-        const MemoryManagementPolicy_t memory_policy,
         DataReaderListener* listener)
     : subscriber_(s)
     , reader_(nullptr)
     , type_(type)
-    , topic_att_(topic_att)
-    , att_(att)
+    , topic_att_()
+    , att_()
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
     , history_(topic_att_,
             type_.get(),
             qos_.get_readerqos(subscriber_->get_qos()),
             type_->m_typeSize + 3,    /* Possible alignment */
-            memory_policy)
+            qos.endpoint().history_memory_policy)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -81,6 +80,70 @@ DataReaderImpl::DataReaderImpl(
                     return lifespan_expired();
                 },
                     qos_.lifespan().duration.to_ns() * 1e-6);
+
+    topic_att_.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    topic_att_.topicName = topic->get_name();
+    topic_att_.topicDataType = topic->get_type_name();
+    topic_att_.historyQos = qos.history();
+    topic_att_.resourceLimitsQos = qos.resource_limits();
+    if (type->type_object())
+    {
+        topic_att_.type = *type->type_object();
+    }
+    if (type->type_identifier())
+    {
+        topic_att_.type_id = *type->type_identifier();
+    }
+    if (type->type_information())
+    {
+        topic_att_.type_information = *type->type_information();
+    }
+    topic_att_.auto_fill_type_object = type->auto_fill_type_object();
+    topic_att_.auto_fill_type_information = type->auto_fill_type_information();
+
+    att_.endpoint.durabilityKind = qos.durability().durabilityKind();
+    att_.endpoint.endpointKind = READER;
+    att_.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
+    att_.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    att_.endpoint.topicKind = topic_att_.topicKind;
+    att_.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
+    att_.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
+    att_.expectsInlineQos = qos.expects_inline_qos();
+    att_.endpoint.properties = qos.properties();
+
+    if (qos.endpoint().entity_id > 0)
+    {
+        att_.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
+    }
+
+    if (qos.endpoint().user_defined_id > 0)
+    {
+        att_.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
+    }
+
+    att_.times = qos.reliable_reader_qos().reader_times;
+
+    // TODO(Ricardo) Remove in future
+    // Insert topic_name and partitions
+    Property property;
+    property.name("topic_name");
+    property.value(topic->get_name().c_str());
+    att_.endpoint.properties.properties().push_back(std::move(property));
+    if (s->get_qos().partition().names().size() > 0)
+    {
+        property.name("partitions");
+        std::string partitions;
+        for (auto partition : s->get_qos().partition().names())
+        {
+            partitions += partition + ";";
+        }
+        property.value(std::move(partitions));
+        att_.endpoint.properties.properties().push_back(std::move(property));
+    }
+    if (qos.reliable_reader_qos().disable_positive_ACKs.enabled)
+    {
+        att_.disable_positive_acks = true;
+    }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),

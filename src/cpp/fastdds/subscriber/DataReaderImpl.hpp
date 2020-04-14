@@ -55,6 +55,7 @@ namespace dds {
 
 class Subscriber;
 class SubscriberImpl;
+class TopicDescription;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -69,11 +70,9 @@ class DataReaderImpl
      */
     DataReaderImpl(
             SubscriberImpl* s,
-            TypeSupport type,
-            const fastrtps::TopicAttributes& topic_att,
-            const fastrtps::rtps::ReaderAttributes& att,
+            TypeSupport& type,
+            const TopicDescription* topic,
             const DataReaderQos& qos,
-            const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataReaderListener* listener = nullptr);
 
 public:

@@ -72,11 +72,12 @@ ReturnCode_t Subscriber::set_listener(
 }
 
 DataReader* Subscriber::create_datareader(
-        const fastrtps::TopicAttributes& topic_attr,
+        const TopicDescription* topic,
         const DataReaderQos& reader_qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        const StatusMask& mask)
 {
-    return impl_->create_datareader(topic_attr, reader_qos, listener);
+    return impl_->create_datareader(topic, reader_qos, listener, mask);
 }
 
 ReturnCode_t Subscriber::delete_datareader(

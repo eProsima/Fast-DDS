@@ -30,8 +30,10 @@ namespace fastdds {
 namespace dds {
 
 DataReader::DataReader(
-        DataReaderImpl* impl)
-    : impl_(impl)
+        DataReaderImpl* impl,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(impl)
 {
 }
 

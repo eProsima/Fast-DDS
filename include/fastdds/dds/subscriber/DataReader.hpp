@@ -23,6 +23,8 @@
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <vector>
@@ -60,7 +62,7 @@ struct LivelinessChangedStatus;
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DataReader
+class RTPS_DllAPI DataReader : public DomainEntity
 {
     friend class SubscriberImpl;
 
@@ -68,7 +70,8 @@ class RTPS_DllAPI DataReader
      * Creates a DataReader. Don't use it directly, but through Subscriber.
      */
     DataReader(
-            DataReaderImpl* impl);
+            DataReaderImpl* impl,
+            const StatusMask& mask = StatusMask::all());
 
 public:
 

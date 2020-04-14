@@ -26,6 +26,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <mutex>
@@ -53,6 +54,7 @@ class DomainParticipant;
 class DomainParticipantImpl;
 class Subscriber;
 class DataReaderImpl;
+class TopicDescription;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
@@ -87,9 +89,10 @@ public:
             SubscriberListener* listener);
 
     DataReader* create_datareader(
-            const fastrtps::TopicAttributes& topic_attr,
+            const TopicDescription* topic,
             const DataReaderQos& reader_qos,
-            DataReaderListener* listener);
+            DataReaderListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_datareader(
             DataReader* reader);

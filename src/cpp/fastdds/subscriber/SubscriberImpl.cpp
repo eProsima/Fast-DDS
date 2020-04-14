@@ -129,84 +129,33 @@ ReturnCode_t SubscriberImpl::set_listener(
 }
 
 DataReader* SubscriberImpl::create_datareader(
-        const fastrtps::TopicAttributes& topic_att,
+        const TopicDescription* topic,
         const DataReaderQos& qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        const StatusMask& mask)
 {
-    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
+    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name())
     //Look for the correct type registration
-    TypeSupport type_support = participant_->find_type(topic_att.getTopicDataType().to_string());
+    TypeSupport type_support = participant_->find_type(topic->get_type_name());
 
     /// Preconditions
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(SUBSCRIBER, "Type : " << topic_att.getTopicDataType() << " Not Registered");
-        return nullptr;
-    }
-    if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
-    {
-        logError(SUBSCRIBER, "Keyed Topic needs getKey function");
+        logError(SUBSCRIBER, "Type : " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
 
-    if (!DataReaderImpl::check_qos(qos) || !topic_att.checkQos())
+    if (!DataReaderImpl::check_qos(qos))
     {
         return nullptr;
-    }
-
-    ReaderAttributes ratt;
-    ratt.endpoint.durabilityKind = qos.durability().durabilityKind();
-    ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
-    ratt.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    ratt.endpoint.topicKind = topic_att.topicKind;
-    ratt.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
-    ratt.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
-    ratt.expectsInlineQos = qos.expects_inline_qos();
-    ratt.endpoint.properties = qos.properties();
-
-    if (qos.endpoint().entity_id > 0)
-    {
-        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
-    }
-
-    if (qos.endpoint().user_defined_id > 0)
-    {
-        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
-    }
-
-    ratt.times = qos.reliable_reader_qos().reader_times;
-
-    // TODO(Ricardo) Remove in future
-    // Insert topic_name and partitions
-    Property property;
-    property.name("topic_name");
-    property.value(topic_att.getTopicName().c_str());
-    ratt.endpoint.properties.properties().push_back(std::move(property));
-    if (qos_.partition().names().size() > 0)
-    {
-        property.name("partitions");
-        std::string partitions;
-        for (auto partition : qos_.partition().names())
-        {
-            partitions += partition + ";";
-        }
-        property.value(std::move(partitions));
-        ratt.endpoint.properties.properties().push_back(std::move(property));
-    }
-    if (qos.reliable_reader_qos().disable_positive_ACKs.enabled)
-    {
-        ratt.disable_positive_acks = true;
     }
 
     DataReaderImpl* impl = new DataReaderImpl(
         this,
         type_support,
-        topic_att,
-        ratt,
+        topic,
         qos,
-        qos.endpoint().history_memory_policy,
         listener);
 
     if (impl->reader_ == nullptr)
@@ -216,15 +165,15 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    DataReader* reader = new DataReader(impl);
+    DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
 
     ReaderQos rqos = qos.get_readerqos(qos_);
-    rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
+    rtps_participant_->registerReader(impl->reader_, impl->get_topic(), rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic_att.getTopicName().to_string()].push_back(impl);
+        readers_[topic->get_name()].push_back(impl);
     }
 
     return reader;
