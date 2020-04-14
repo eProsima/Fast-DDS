@@ -60,6 +60,7 @@ class Topic : public DomainEntity, public TopicDescription
      */
     RTPS_DllAPI Topic(
             const std::string& topic_name,
+            const std::string& type_name,
             TopicImpl* p,
             const StatusMask& mask = StatusMask::all());
 

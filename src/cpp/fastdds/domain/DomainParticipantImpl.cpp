@@ -621,7 +621,7 @@ Topic* DomainParticipantImpl::create_topic(
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
-    Topic* topic = new Topic(topic_name, topic_impl, mask);
+    Topic* topic = new Topic(topic_name, type_name, topic_impl, mask);
     topic_impl->user_topic_ = topic;
     topic_impl->handle_ = topic_handle;
 
