@@ -655,7 +655,7 @@ Topic* DomainParticipantImpl::create_topic(
     TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
     Topic* topic = new Topic(topic_name, topic_impl, mask);
     topic_impl->user_topic_ = topic;
-    topic_impl->handle_ = topic_handle;
+    topic->set_instance_handle(topic_handle);
 
     //SAVE THE TOPIC INTO MAPS
     topics_by_handle_[topic_handle] = topic;

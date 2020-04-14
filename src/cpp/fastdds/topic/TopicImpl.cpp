@@ -41,7 +41,6 @@ TopicImpl::TopicImpl(
     , qos_(&qos == &TOPIC_QOS_DEFAULT ? participant_->get_default_topic_qos() : qos)
     , listener_(listen)
     , user_topic_(nullptr)
-    , handle_()
     , num_refs_(0u)
 {
 }

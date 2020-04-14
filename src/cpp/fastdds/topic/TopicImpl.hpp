@@ -87,9 +87,6 @@ public:
 
     void dereference();
 
-    // TODO (Miguel C)
-    // const InstanceHandle_t& get_instance_handle() const;
-
 private:
 
     DomainParticipantImpl* participant_;
@@ -97,7 +94,6 @@ private:
     TopicQos qos_;
     TopicListener* listener_;
     Topic* user_topic_;
-    fastrtps::rtps::InstanceHandle_t handle_;
     std::atomic_size_t num_refs_;
 
 };
