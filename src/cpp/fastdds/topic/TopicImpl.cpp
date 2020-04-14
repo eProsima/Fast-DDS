@@ -41,6 +41,8 @@ TopicImpl::TopicImpl(
     , qos_(&qos == &TOPIC_QOS_DEFAULT ? participant_->get_default_topic_qos() : qos)
     , listener_(listen)
     , user_topic_(nullptr)
+    , handle_()
+    , num_refs_(0u)
 {
 }
 
@@ -162,6 +164,21 @@ const Topic* TopicImpl::get_topic() const
 const TypeSupport& TopicImpl::get_type() const
 {
     return type_support_;
+}
+
+bool TopicImpl::is_referenced() const
+{
+    return num_refs_ != 0u;
+}
+
+void TopicImpl::reference()
+{
+    ++num_refs_;
+}
+
+void TopicImpl::dereference()
+{
+    --num_refs_;
 }
 
 } // dds
