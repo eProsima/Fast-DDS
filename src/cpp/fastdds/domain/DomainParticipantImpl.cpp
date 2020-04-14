@@ -143,7 +143,6 @@ DomainParticipantImpl::~DomainParticipantImpl()
             delete topic_it->second;
         }
         topics_.clear();
-        topics_by_name_.clear();
         topics_by_handle_.clear();
     }
 
@@ -614,7 +613,7 @@ Topic* DomainParticipantImpl::create_topic(
     std::lock_guard<std::mutex> lock(mtx_topics_);
 
     //Check there is no Topic with the same name
-    if (topics_by_name_.find(topic_name) != topics_by_name_.end())
+    if (topics_.find(topic_name) != topics_.end())
     {
         logError(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
         return nullptr;
@@ -628,8 +627,7 @@ Topic* DomainParticipantImpl::create_topic(
 
     //SAVE THE TOPIC INTO MAPS
     topics_by_handle_[topic_handle] = topic;
-    topics_by_name_[topic_name] = topic;
-    topics_[topic] = topic_impl;
+    topics_[topic_name] = topic_impl;
 
     return topic;
 }
@@ -678,7 +676,7 @@ bool DomainParticipantImpl::register_type(
 
     if (type->auto_fill_type_object() || type->auto_fill_type_information())
     {
-        //register_dynamic_type_to_factories(type);
+        register_dynamic_type_to_factories(type);
     }
 
     return true;

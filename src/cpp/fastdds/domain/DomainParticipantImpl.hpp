@@ -337,8 +337,7 @@ private:
     mutable std::mutex mtx_types_;
 
     //!Topic map
-    std::map<Topic*, TopicImpl*> topics_;
-    std::map<std::string, Topic*> topics_by_name_;
+    std::map<std::string, TopicImpl*> topics_;
     std::map<fastrtps::rtps::InstanceHandle_t, Topic*> topics_by_handle_;
     mutable std::mutex mtx_topics_;
 
