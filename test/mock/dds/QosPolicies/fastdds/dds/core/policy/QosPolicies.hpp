@@ -562,11 +562,6 @@ public:
         hasChanged = false;
     }
 
-    virtual uint32_t cdr_serialized_size() const override
-    {
-        return QosPolicy::get_cdr_serialized_size(collection_);
-    }
-
     /**
      * Returns raw data vector.
      * @return raw data as vector of octets.

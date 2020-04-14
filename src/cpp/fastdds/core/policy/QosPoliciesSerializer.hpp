@@ -21,6 +21,7 @@
 #define FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include "ParameterSerializer.hpp"
 #include <fastcdr/Cdr.h>
 
 namespace eprosima {
@@ -36,7 +37,7 @@ public:
             const QosPolicy& qos_policy,
             fastrtps::rtps::CDRMessage_t* cdr_message)
     {
-        bool valid = Parameter_t::add_to_cdr_message(qos_policy, cdr_message);
+        bool valid = ParameterSerializer<QosPolicy>::add_common_to_cdr_message(qos_policy, cdr_message);
         valid &= add_content_to_cdr_message(qos_policy, cdr_message);
         return valid;
     }
@@ -50,6 +51,14 @@ public:
         valid &= read_content_from_cdr_message(qos_policy, cdr_message, parameter_length);
         return valid;
     }
+
+    static uint32_t cdr_serialized_size(
+            const QosPolicy& qos_policy)
+    {
+        return ParameterSerializer<QosPolicy>::cdr_serialized_size(qos_policy);
+    }
+
+private:
 
     static bool add_content_to_cdr_message(
             const QosPolicy&,
@@ -405,6 +414,25 @@ inline bool QosPoliciesSerializer<PresentationQosPolicy>::read_content_from_cdr_
 }
 
 template<>
+inline uint32_t QosPoliciesSerializer<PartitionQosPolicy>::cdr_serialized_size(
+        const PartitionQosPolicy& qos_policy)
+{
+    // p_id + p_length + partition_number
+    uint32_t ret_val = 2 + 2 + 4;
+    for (PartitionQosPolicy::const_iterator it = qos_policy.begin(); it != qos_policy.end(); ++it)
+    {
+        // str_size
+        ret_val += 4;
+        // str_data (including null char)
+        ret_val += static_cast<uint32_t>(it->size());
+        // align
+        ret_val = (ret_val + 3) & ~3;
+    }
+
+    return ret_val;
+}
+
+template<>
 inline bool QosPoliciesSerializer<PartitionQosPolicy>::add_to_cdr_message(
         const PartitionQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
@@ -444,7 +472,7 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_mes
     qos_policy.length = parameter_length;
 
     uint32_t pos_ref = cdr_message->pos;
-    uint32_t num_partitions;
+    uint32_t num_partitions = 0;
     bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_partitions);
     //partitions_.reserve(parameter_length - 4);
 
@@ -619,6 +647,18 @@ inline bool QosPoliciesSerializer<TransportPriorityQosPolicy>::read_content_from
 }
 
 template<>
+inline uint32_t QosPoliciesSerializer<DataRepresentationQosPolicy>::cdr_serialized_size(
+        const DataRepresentationQosPolicy& qos_policy)
+{
+    // Size of data
+    uint32_t data_size = static_cast<uint32_t>(qos_policy.m_value.size() * sizeof(uint16_t));
+    // Align to next 4 byte
+    data_size = (data_size + 3) & ~3;
+    // p_id + p_length + data_size + data
+    return 2 + 2 + 4 + data_size;
+}
+
+template<>
 inline bool QosPoliciesSerializer<DataRepresentationQosPolicy>::add_to_cdr_message(
         const DataRepresentationQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
@@ -744,7 +784,7 @@ inline bool QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::read_con
 
 template<>
 inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::add_content_to_cdr_message(
-        const DisablePositiveACKsQosPolicy& qos_policy,
+        const DisablePositiveACKsQosPolicy&,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
     bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x01);
@@ -770,6 +810,14 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_content_fr
     qos_policy.enabled = (value == 0) ? false : true;
     cdr_message->pos += 3; //padding
     return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(
+        const TypeIdV1& qos_policy)
+{
+    size_t size = fastrtps::types::TypeIdentifier::getCdrSerializedSize(qos_policy.m_type_identifier) + 4;
+    return 2 + 2 + static_cast<uint32_t>(size);
 }
 
 template<>
@@ -834,6 +882,14 @@ inline bool QosPoliciesSerializer<TypeIdV1>::read_content_from_cdr_message(
 }
 
 template<>
+inline uint32_t QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(
+        const TypeObjectV1& qos_policy)
+{
+    size_t size = fastrtps::types::TypeObject::getCdrSerializedSize(qos_policy.m_type_object) + 4;
+    return 2 + 2 + static_cast<uint32_t>(size);
+}
+
+template<>
 inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
         const TypeObjectV1& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
@@ -885,6 +941,14 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
     }
 
     return true;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(
+        const xtypes::TypeInformation& qos_policy)
+{
+    size_t size = fastrtps::types::TypeInformation::getCdrSerializedSize(qos_policy.type_information) + 4;
+    return 2 + 2 + static_cast<uint32_t>(size);
 }
 
 template<>
@@ -945,6 +1009,18 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::read_content_from_cd
 }
 
 template<>
+inline uint32_t QosPoliciesSerializer<GenericDataQosPolicy>::cdr_serialized_size(
+        const GenericDataQosPolicy& qos_policy)
+{
+    // Size of data
+    uint32_t data_size = static_cast<uint32_t>(qos_policy.size());
+    // Align to next 4 byte
+    data_size = (data_size + 3) & ~3;
+    // p_id + p_length + str_length + str_data
+    return 2 + 2 + 4 + data_size;
+}
+
+template<>
 inline bool QosPoliciesSerializer<GenericDataQosPolicy>::add_to_cdr_message(
         const GenericDataQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
@@ -1002,6 +1078,13 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
 }
 
 template<>
+inline uint32_t QosPoliciesSerializer<UserDataQosPolicy>::cdr_serialized_size(
+        const UserDataQosPolicy& qos_policy)
+{
+    return QosPoliciesSerializer<GenericDataQosPolicy>::cdr_serialized_size(qos_policy);
+}
+
+template<>
 inline bool QosPoliciesSerializer<UserDataQosPolicy>::add_to_cdr_message(
         const UserDataQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
@@ -1010,13 +1093,20 @@ inline bool QosPoliciesSerializer<UserDataQosPolicy>::add_to_cdr_message(
 }
 
 template<>
-inline bool QosPoliciesSerializer<UserDataQosPolicy>::read_content_from_cdr_message(
+inline bool QosPoliciesSerializer<UserDataQosPolicy>::read_from_cdr_message(
         UserDataQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    return QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_message(qos_policy, cdr_message,
+    return QosPoliciesSerializer<GenericDataQosPolicy>::read_from_cdr_message(qos_policy, cdr_message,
                    parameter_length);
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<GroupDataQosPolicy>::cdr_serialized_size(
+        const GroupDataQosPolicy& qos_policy)
+{
+    return QosPoliciesSerializer<GenericDataQosPolicy>::cdr_serialized_size(qos_policy);
 }
 
 template<>
@@ -1028,13 +1118,20 @@ inline bool QosPoliciesSerializer<GroupDataQosPolicy>::add_to_cdr_message(
 }
 
 template<>
-inline bool QosPoliciesSerializer<GroupDataQosPolicy>::read_content_from_cdr_message(
+inline bool QosPoliciesSerializer<GroupDataQosPolicy>::read_from_cdr_message(
         GroupDataQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    return QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_message(qos_policy, cdr_message,
+    return QosPoliciesSerializer<GenericDataQosPolicy>::read_from_cdr_message(qos_policy, cdr_message,
                    parameter_length);
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<TopicDataQosPolicy>::cdr_serialized_size(
+        const TopicDataQosPolicy& qos_policy)
+{
+    return QosPoliciesSerializer<GenericDataQosPolicy>::cdr_serialized_size(qos_policy);
 }
 
 template<>
@@ -1046,12 +1143,12 @@ inline bool QosPoliciesSerializer<TopicDataQosPolicy>::add_to_cdr_message(
 }
 
 template<>
-inline bool QosPoliciesSerializer<TopicDataQosPolicy>::read_content_from_cdr_message(
+inline bool QosPoliciesSerializer<TopicDataQosPolicy>::read_from_cdr_message(
         TopicDataQosPolicy& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    return QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_message(qos_policy, cdr_message,
+    return QosPoliciesSerializer<GenericDataQosPolicy>::read_from_cdr_message(qos_policy, cdr_message,
                    parameter_length);
 }
 

@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include "ParameterSerializer.hpp"
 
 #include <functional>
 
@@ -55,7 +56,7 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                     case PID_KEY_HASH:
                     {
                         ParameterKey_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
                         {
                             return false;
                         }
@@ -69,7 +70,8 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                         if (plength >= 24)
                         {
                             ParameterSampleIdentity_t p(pid, plength);
-                            if (!p.readFromCDRMessage(msg, plength))
+                            if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
+                                    msg, plength))
                             {
                                 return false;
                             }
@@ -82,7 +84,8 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                     case PID_STATUS_INFO:
                     {
                         ParameterStatusInfo_t p(pid, plength);
-                        if (!p.readFromCDRMessage(msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterStatusInfo_t>::read_from_cdr_message(p, msg,
+                                plength))
                         {
                             return false;
                         }

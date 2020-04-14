@@ -17,6 +17,8 @@
  *
  */
 
+#include "../../../fastdds/core/policy/ParameterSerializer.hpp"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -150,18 +152,19 @@ bool RTPSMessageCreator::addSubmessageData(
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
-            Parameter_t::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
+                    change->write_params.related_sample_identity());
         }
 
         if (topicKind == WITH_KEY)
         {
             //cout << "ADDDING PARAMETER KEY " << endl;
-            Parameter_t::addParameterKey(msg, &change->instanceHandle);
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
         }
 
         if (change->kind != ALIVE)
         {
-            Parameter_t::addParameterStatus(msg, status);
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
         }
 
         if (inlineQos != nullptr)
@@ -169,7 +172,7 @@ bool RTPSMessageCreator::addSubmessageData(
             inlineQos->writeQosToCDRMessage(msg);
         }
 
-        Parameter_t::addParameterSentinel(msg);
+        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
     }
 
     //Add Serialized Payload
@@ -191,9 +194,11 @@ bool RTPSMessageCreator::addSubmessageData(
         }
 
         added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
-        added_no_error &= Parameter_t::addParameterKey(msg, &change->instanceHandle);
-        added_no_error &= Parameter_t::addParameterStatus(msg, status);
-        added_no_error &= Parameter_t::addParameterSentinel(msg);
+        added_no_error &=
+                fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg,
+                        change->instanceHandle);
+        added_no_error &= fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
+        added_no_error &= fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
     }
 
     // Align submessage to rtps alignment (4).
@@ -389,17 +394,18 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
-            Parameter_t::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
+                    change->write_params.related_sample_identity());
         }
 
         if (topicKind == WITH_KEY)
         {
-            Parameter_t::addParameterKey(msg, &change->instanceHandle);
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
         }
 
         if (change->kind != ALIVE)
         {
-            Parameter_t::addParameterStatus(msg, status);
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
         }
 
         if (inlineQos != nullptr)
@@ -407,7 +413,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
             inlineQos->writeQosToCDRMessage(msg);
         }
 
-        Parameter_t::addParameterSentinel(msg);
+        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
     }
 
     //Add Serialized Payload XXX TODO

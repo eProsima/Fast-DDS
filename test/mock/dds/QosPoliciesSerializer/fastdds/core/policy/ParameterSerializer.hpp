@@ -17,30 +17,29 @@
  *
  */
 
-#ifndef FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
-#define FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
+#ifndef FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
+#define FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include "ParameterSerializer.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-template <typename QosPolicy>
-class QosPoliciesSerializer
+template <typename Parameter>
+class ParameterSerializer
 {
 public:
 
     static bool add_to_cdr_message(
-            const QosPolicy&,
+            const Parameter&,
             fastrtps::rtps::CDRMessage_t*)
     {
         return true;
     }
 
     static bool read_from_cdr_message(
-            QosPolicy&,
+            Parameter&,
             fastrtps::rtps::CDRMessage_t*,
             const uint16_t)
     {
@@ -48,9 +47,27 @@ public:
     }
 
     static uint32_t cdr_serialized_size(
-            const QosPolicy&)
+            const Parameter&)
     {
         return 0;
+    }
+
+    static inline uint32_t cdr_serialized_size(
+            const fastrtps::string_255&)
+    {
+        return 0;
+    }
+
+    static inline uint32_t cdr_serialized_size(
+            const fastrtps::rtps::Token&)
+    {
+        return 0;
+    }
+
+    static bool add_parameter_sentinel(
+            fastrtps::rtps::CDRMessage_t*)
+    {
+        return true;
     }
 
 };
@@ -59,4 +76,4 @@ public:
 }
 }
 
-#endif // FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
+#endif // FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
