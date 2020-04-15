@@ -891,8 +891,12 @@ static EVP_PKEY* generate_dh_peer_key(
 
                 if (key != nullptr)
                 {
+#if IS_OPENSSL_1_1
                     int type = DH_get0_q(dh) == NULL ? EVP_PKEY_DH : EVP_PKEY_DHX;
                     if (EVP_PKEY_assign(key, type, dh) > 0)
+#else
+                    if (EVP_PKEY_assign_DH(key, dh) > 0)
+#endif
                     {
                         return key;
                     }
