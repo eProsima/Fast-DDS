@@ -58,8 +58,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(BuiltinPKIDH PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory/
-            ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies/
-            ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPoliciesSerializer/
             ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
