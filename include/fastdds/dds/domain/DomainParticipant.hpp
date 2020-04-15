@@ -209,7 +209,7 @@ public:
      *
      * @remark UNSAFE. It is unsafe to lookup a topic description while another thread is creating a topic.
      */
-    TopicDescription* lookup_topicdescription(
+    RTPS_DllAPI TopicDescription* lookup_topicdescription(
             const std::string& topic_name) const;
 
     /* TODO
