@@ -1226,8 +1226,8 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
 {
 public:
 
-    fastrtps::rtps::security::ParticipantSecurityAttributesMask security_attributes;
-    fastrtps::rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
+    fastrtps::rtps::security::ParticipantSecurityAttributesMask security_attributes = 0;
+    fastrtps::rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes = 0;
 
     ParameterParticipantSecurityInfo_t()
         : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)

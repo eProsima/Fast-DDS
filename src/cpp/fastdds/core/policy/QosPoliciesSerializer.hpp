@@ -1056,7 +1056,7 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
 
     // Either the data is size limited and already has max_size() allocated
     // or it is not limited and we resize if needed
-    qos_policy.set_max_size(len);
+    qos_policy.resize(len);
     if (!fastrtps::rtps::CDRMessage::readData(cdr_message, qos_policy.data(), len))
     {
         return false;

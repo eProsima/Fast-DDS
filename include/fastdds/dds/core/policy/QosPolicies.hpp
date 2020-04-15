@@ -646,6 +646,12 @@ public:
         }
     }
 
+    void resize(
+            size_t new_size)
+    {
+        collection_.resize(new_size);
+    }
+
     /**
      * @return const reference to the internal raw data.
      */
