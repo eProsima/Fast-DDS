@@ -891,7 +891,8 @@ static EVP_PKEY* generate_dh_peer_key(
 
                 if (key != nullptr)
                 {
-                    if (EVP_PKEY_assign_DH(key, dh) > 0)
+                    int type = DH_get0_q(dh) == NULL ? EVP_PKEY_DH : EVP_PKEY_DHX;
+                    if (EVP_PKEY_assign(key, type, dh) > 0)
                     {
                         return key;
                     }
@@ -1451,7 +1452,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Req") != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
-            handshake_message_in.class_id() + ")");
+                handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1856,7 +1857,7 @@ ValidationResult_t PKIDH::process_handshake(
         else
         {
             WARNING_SECURITY_LOGGING("PKIDH",
-                std::string("Handshake message not supported (") + handshake->handshake_message_.class_id() + ")");
+                    std::string("Handshake message not supported (") + handshake->handshake_message_.class_id() + ")");
         }
     }
 
@@ -1876,7 +1877,7 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Reply") != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
-            handshake_message_in.class_id() + ")");
+                handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2034,7 +2035,7 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (s_kagree_algo.compare(handshake_handle->kagree_alg_) != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Invalid key agreement algorithm. Received ") +
-            s_kagree_algo + ", expected " + handshake_handle->kagree_alg_);
+                s_kagree_algo + ", expected " + handshake_handle->kagree_alg_);
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2307,7 +2308,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Final") != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
-            handshake_message_in.class_id() + ")");
+                handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
