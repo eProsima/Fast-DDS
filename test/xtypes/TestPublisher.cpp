@@ -141,6 +141,8 @@ bool TestPublisher::init(
     }
 
     m_bInitialized = true;
+    topic_att = topic;
+    writer_qos = qos;
 
     return true;
 }
@@ -151,7 +153,10 @@ TestPublisher::~TestPublisher()
     {
         m_Type->deleteData(m_Data);
     }
-    mp_publisher->delete_datawriter(writer_);
+    if (writer_)
+    {
+        mp_publisher->delete_datawriter(writer_);
+    }
     mp_participant->delete_publisher(mp_publisher);
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
@@ -306,4 +311,34 @@ bool TestPublisher::publish()
         //}
     }
     return false;
+}
+
+DataWriter* TestPublisher::create_datawriter()
+{
+    if (mp_publisher == nullptr)
+    {
+        mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+
+        if (mp_publisher == nullptr)
+        {
+            return nullptr;
+        }
+    }
+    topic_att.topicDataType = disc_type_->get_name();
+    return mp_publisher->create_datawriter(topic_att, writer_qos, &m_pubListener);
+
+}
+
+void TestPublisher::delete_datawriter(
+        eprosima::fastdds::dds::DataWriter* writer)
+{
+    mp_publisher->delete_datawriter(writer);
+}
+
+bool TestPublisher::register_discovered_type()
+{
+    TypeSupport type(disc_type_);
+    topic_att.auto_fill_type_object = true;
+    topic_att.auto_fill_type_information = true;
+    return mp_participant->register_type(type, disc_type_->get_name());
 }

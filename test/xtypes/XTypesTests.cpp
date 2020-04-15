@@ -221,24 +221,24 @@ TEST_F(xtypestests, TypeDiscoverySubs)
     pub.init("TypeDiscoverySubs", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeDiscoverySubs", DOMAIN_ID_, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoverySubs", DOMAIN_ID_, NO_KEY, TypeSupport(
+                nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
     sub.waitTypeDiscovery(true, 3);
-    //pub.waitDiscovery(true, 3);
 
     eprosima::fastrtps::types::DynamicType_ptr disc_type = sub.discovered_type();
     ASSERT_TRUE(disc_type != nullptr);
 
     sub.register_discovered_type();
-    sub.create_datareader();
+    DataReader* reader = sub.create_datareader();
 
     pub.waitDiscovery(true, 3);
     sub.waitDiscovery(true, 3);
 
-    //reader->set_listener(nullptr);
-    //sub.delete_datareader(reader);
+    reader->set_listener(nullptr);
+    sub.delete_datareader(reader);
 }
 
 /*
@@ -276,7 +276,18 @@ TEST_F(xtypestests, TypeDiscoveryPubs)
 
     // Wait for discovery.
     pub.waitTypeDiscovery(true, 3);
-    //pub.waitDiscovery(true, 3);
+
+    eprosima::fastrtps::types::DynamicType_ptr disc_type = pub.discovered_type();
+    ASSERT_TRUE(disc_type != nullptr);
+
+    pub.register_discovered_type();
+    DataWriter* writer = pub.create_datawriter();
+
+    pub.waitDiscovery(true, 3);
+    sub.waitDiscovery(true, 3);
+
+    writer->set_listener(nullptr);
+    pub.delete_datawriter(writer);
 }
 
 /*

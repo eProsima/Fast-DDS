@@ -120,7 +120,7 @@ bool TestSubscriber::init(
 
     if (typeConsistencyQos != nullptr)
     {
-        qos.type_consistency().type_consistency =*typeConsistencyQos;
+        qos.type_consistency().type_consistency = *typeConsistencyQos;
     }
     if (dataRepresentationQos != nullptr)
     {
@@ -154,7 +154,10 @@ TestSubscriber::~TestSubscriber()
     {
         m_Type->deleteData(m_Data);
     }
-    mp_subscriber->delete_datareader(reader_);
+    if (reader_)
+    {
+        mp_subscriber->delete_datareader(reader_);
+    }
     mp_participant->delete_subscriber(mp_subscriber);
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
