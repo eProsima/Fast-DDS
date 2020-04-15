@@ -232,7 +232,12 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         if (dr_it != it->second.end())
         {
             (*dr_it)->set_listener(nullptr);
+            delete (*dr_it);
             it->second.erase(dr_it);
+            if (it->second.empty())
+            {
+                readers_.erase(it);
+            }
             return ReturnCode_t::RETCODE_OK;
         }
     }
@@ -333,7 +338,6 @@ const DataReaderQos& SubscriberImpl::get_default_datareader_qos() const
 {
     return default_datareader_qos_;
 }
-
 
 DataReaderQos& SubscriberImpl::get_default_datareader_qos()
 {

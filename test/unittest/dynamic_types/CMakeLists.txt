@@ -87,8 +87,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             idl/TestPubSubTypes.cxx
             idl/TestTypeObject.cxx
             ${DYNAMIC_TYPES_SOURCE}
-
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicies.cpp
         )
 
         set(DYNAMIC_TYPES_4_2_TEST_SOURCE
@@ -97,8 +95,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             idl/new_features_4_2PubSubTypes.cxx
             idl/new_features_4_2TypeObject.cxx
             ${DYNAMIC_TYPES_SOURCE}
-
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicies.cpp
         )
 
         include_directories(mock/)

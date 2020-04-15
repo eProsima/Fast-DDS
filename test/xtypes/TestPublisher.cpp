@@ -151,6 +151,8 @@ TestPublisher::~TestPublisher()
     {
         m_Type->deleteData(m_Data);
     }
+    mp_publisher->delete_datawriter(writer_);
+    mp_participant->delete_publisher(mp_publisher);
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 

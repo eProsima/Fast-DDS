@@ -287,7 +287,12 @@ ReturnCode_t PublisherImpl::delete_datawriter(
         if (dw_it != vit->second.end())
         {
             (*dw_it)->set_listener(nullptr);
+            delete (*dw_it);
             vit->second.erase(dw_it);
+            if (vit->second.empty())
+            {
+                writers_.erase(vit);
+            }
             return ReturnCode_t::RETCODE_OK;
         }
     }
