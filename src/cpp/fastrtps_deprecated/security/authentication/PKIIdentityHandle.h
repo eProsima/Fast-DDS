@@ -43,7 +43,7 @@ class PKIIdentity
         PKIIdentity() : store_(nullptr),
         cert_(nullptr), pkey_(nullptr),
         cert_content_(nullptr),
-        kagree_alg_(ECDH_prime256v1),
+        kagree_alg_(DH_2048_256),
         there_are_crls_(false)
         {}
 
