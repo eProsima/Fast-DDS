@@ -169,7 +169,7 @@ public:
      * Get the type identifier
      * @return TypeIdV1
      */
-    RTPS_DllAPI inline const std::shared_ptr<TypeIdV1>& type_identifier() const
+    RTPS_DllAPI inline const std::shared_ptr<TypeIdV1> type_identifier() const
     {
         return type_identifier_;
     }
@@ -184,10 +184,19 @@ public:
     }
 
     /**
+     * Set type identifier
+     */
+    RTPS_DllAPI inline void type_identifier(
+            const std::shared_ptr<TypeIdV1> id)
+    {
+        type_identifier_ = std::move(id);
+    }
+
+    /**
      * Get the type object
      * @return TypeObjectV1
      */
-    RTPS_DllAPI inline const std::shared_ptr<TypeObjectV1>& type_object() const
+    RTPS_DllAPI inline const std::shared_ptr<TypeObjectV1> type_object() const
     {
         return type_object_;
     }
@@ -202,10 +211,19 @@ public:
     }
 
     /**
+     * Set type object
+     */
+    RTPS_DllAPI inline void type_object(
+            std::shared_ptr<TypeObjectV1> object)
+    {
+        type_object_ = std::move(object);
+    }
+
+    /**
      * Get the type information
      * @return TypeInformation
      */
-    RTPS_DllAPI inline const std::shared_ptr<xtypes::TypeInformation>& type_information() const
+    RTPS_DllAPI inline const std::shared_ptr<xtypes::TypeInformation> type_information() const
     {
         return type_information_;
     }
@@ -217,6 +235,15 @@ public:
             const xtypes::TypeInformation& info)
     {
         type_information_ = std::make_shared<xtypes::TypeInformation>(info);
+    }
+
+    /**
+     * Set type information
+     */
+    RTPS_DllAPI inline void type_information(
+            std::shared_ptr<xtypes::TypeInformation> info)
+    {
+        type_information_ = std::move(info);
     }
 
     //! Maximum serialized size of the type in bytes.
