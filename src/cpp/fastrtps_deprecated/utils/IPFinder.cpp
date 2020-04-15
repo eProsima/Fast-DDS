@@ -39,6 +39,10 @@
 #include <net/if.h>
 #endif
 
+#if defined(__FreeBSD__)
+#include <netinet/in.h>
+#endif
+
 #include <cstddef>
 #include <cstring>
 
