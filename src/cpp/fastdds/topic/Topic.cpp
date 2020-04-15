@@ -29,10 +29,11 @@ namespace dds {
 
 Topic::Topic(
         const std::string& topic_name,
+        const std::string& type_name,
         TopicImpl* p,
         const StatusMask& mask)
     : DomainEntity(mask)
-    , TopicDescription(topic_name, p->get_type()->getName())
+    , TopicDescription(topic_name, type_name)
     , impl_(p)
 {
 }
