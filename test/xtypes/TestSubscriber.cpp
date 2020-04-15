@@ -46,10 +46,13 @@ TestSubscriber::TestSubscriber()
     : mp_participant(nullptr)
     , mp_subscriber(nullptr)
     , reader_(nullptr)
+    , topic_(nullptr)
     , m_Data(nullptr)
     , m_bInitialized(false)
     , using_typelookup_(false)
     , tls_callback_called_(false)
+    , dataRepresentationQos_(nullptr)
+    , typeConsistencyQos_(nullptr)
     , part_listener_(this)
     , m_subListener(this)
 {
@@ -58,7 +61,6 @@ TestSubscriber::TestSubscriber()
 bool TestSubscriber::init(
         const std::string& topicName,
         int domain,
-        eprosima::fastrtps::rtps::TopicKind_t topic_kind,
         eprosima::fastdds::dds::TypeSupport type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
@@ -68,6 +70,9 @@ bool TestSubscriber::init(
         const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
         bool use_typelookup)
 {
+    dataRepresentationQos_ = dataRepresentationQos;
+    typeConsistencyQos_ = typeConsistencyQos;
+
     m_Name = name;
     m_Type.swap(type);
     using_typelookup_ = use_typelookup;
@@ -88,48 +93,42 @@ bool TestSubscriber::init(
         }
     }
 
-    //CREATE THE SUBSCRIBER
-    TopicAttributes topic;
-    eprosima::fastdds::dds::DataReaderQos qos;
-    topic.topicKind = topic_kind;
-    topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
-    topic.auto_fill_type_object = false;
-    topic.auto_fill_type_information = false;
+    std::ostringstream t;
+    t << topicName << "_" << asio::ip::host_name() << "_" << domain;
+    topic_name_ = t.str();
 
     //REGISTER THE TYPE
     if (m_Type != nullptr)
     {
+        if (type_object != nullptr)
+        {
+            m_Type->type_object(*type_object);
+        }
+        if (type_identifier != nullptr)
+        {
+            m_Type->type_identifier(*type_identifier);
+        }
+        if (type_info != nullptr)
+        {
+            m_Type->type_information(*type_info);
+        }
+
+        m_Type->auto_fill_type_information(false);
+        m_Type->auto_fill_type_object(false);
         mp_participant->register_type(m_Type);
-    }
 
-    std::ostringstream t;
-    t << topicName << "_" << asio::ip::host_name() << "_" << domain;
-    topic.topicName = t.str();
-    if (type_object != nullptr)
-    {
-        topic.type = *type_object;
-    }
-    if (type_identifier != nullptr)
-    {
-        topic.type_id = *type_identifier;
-    }
-    if (type_info != nullptr)
-    {
-        topic.type_information = *type_info;
-    }
+        //CREATE THE TOPIC
+        topic_ = mp_participant->create_topic(
+                topic_name_,
+                m_Type->getName(),
+                TOPIC_QOS_DEFAULT);
 
-    if (typeConsistencyQos != nullptr)
-    {
-        qos.type_consistency().type_consistency = *typeConsistencyQos;
-    }
-    if (dataRepresentationQos != nullptr)
-    {
-        qos.type_consistency().representation = *dataRepresentationQos;
-    }
+        if (topic_ == nullptr)
+        {
+            return false;
+        }
 
-    // Create sub and reader if topic was provided
-    if (m_Type != nullptr)
-    {
+        //CREATE THE SUBSCRIBER
         mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
         if (mp_subscriber == nullptr)
@@ -137,13 +136,26 @@ bool TestSubscriber::init(
             return false;
         }
 
-        reader_ = mp_subscriber->create_datareader(topic, qos, &m_subListener);
+        //CREATE THE DATAREADER
+        reader_qos = mp_subscriber->get_default_datareader_qos();
+        if (typeConsistencyQos_ != nullptr)
+        {
+            reader_qos.type_consistency().type_consistency =*typeConsistencyQos_;
+        }
+        if (dataRepresentationQos_ != nullptr)
+        {
+            reader_qos.type_consistency().representation = *dataRepresentationQos_;
+        }
+        reader_ = mp_subscriber->create_datareader(topic_, reader_qos, &m_subListener);
+
+        if (reader_ == nullptr)
+        {
+            return false;
+        }
+
         m_Data = m_Type->createData();
     }
-
     m_bInitialized = true;
-    topic_att = topic;
-    reader_qos = qos;
 
     return true;
 }
@@ -154,11 +166,19 @@ TestSubscriber::~TestSubscriber()
     {
         m_Type->deleteData(m_Data);
     }
-    if (reader_)
+
+    if (reader_ != nullptr)
     {
         mp_subscriber->delete_datareader(reader_);
     }
-    mp_participant->delete_subscriber(mp_subscriber);
+    if (mp_subscriber != nullptr)
+    {
+        mp_participant->delete_subscriber(mp_subscriber);
+    }
+    if (topic_ != nullptr)
+    {
+        mp_participant->delete_topic(topic_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 
@@ -305,18 +325,38 @@ void TestSubscriber::PartListener::on_type_information_received(
 
 DataReader* TestSubscriber::create_datareader()
 {
+    assert (topic_ == nullptr);
+    assert (mp_subscriber == nullptr);
+
+    //CREATE THE TOPIC
+    topic_ = mp_participant->create_topic(
+            topic_name_,
+            disc_type_->get_name(),
+            TOPIC_QOS_DEFAULT);
+
+    if (topic_ == nullptr)
+    {
+        return nullptr;
+    }
+
+    mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+
     if (mp_subscriber == nullptr)
     {
-        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-
-        if (mp_subscriber == nullptr)
-        {
-            return nullptr;
-        }
+        return nullptr;
     }
-    topic_att.topicDataType = disc_type_->get_name();
-    return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
 
+    reader_qos = mp_subscriber->get_default_datareader_qos();
+    if (typeConsistencyQos_ != nullptr)
+    {
+        reader_qos.type_consistency().type_consistency =*typeConsistencyQos_;
+    }
+    if (dataRepresentationQos_ != nullptr)
+    {
+        reader_qos.type_consistency().representation = *dataRepresentationQos_;
+    }
+    reader_ = mp_subscriber->create_datareader(topic_, reader_qos, &m_subListener);
+    return reader_;
 }
 
 void TestSubscriber::delete_datareader(
@@ -328,8 +368,8 @@ void TestSubscriber::delete_datareader(
 bool TestSubscriber::register_discovered_type()
 {
     TypeSupport type(disc_type_);
-    topic_att.auto_fill_type_object = true;
-    topic_att.auto_fill_type_information = true;
+    type->auto_fill_type_object(true);
+    type->auto_fill_type_information(true);
     return mp_participant->register_type(type, disc_type_->get_name());
 }
 

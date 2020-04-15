@@ -30,6 +30,8 @@ using namespace eprosima::fastdds::dds;
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
     , subscriber_(nullptr)
+    , topic_(nullptr)
+    , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -56,13 +58,21 @@ bool HelloWorldSubscriber::init()
         return false;
     }
 
+    //CREATE THE TOPIC
+    topic_ = participant_->create_topic(
+            "HelloWorldTopic",
+            "HelloWorld",
+            TOPIC_QOS_DEFAULT);
+
+    if (topic_ == nullptr)
+    {
+        return false;
+    }
+
     // CREATE THE READER
-    DataReaderQos rqos;
+    DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    eprosima::fastrtps::TopicAttributes topic_att;
-    topic_att.topicDataType = "HelloWorld";
-    topic_att.topicName = "HelloWorldTopic";
-    reader_ = subscriber_->create_datareader(topic_att, rqos, &listener_);
+    reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
 
     if (reader_ == nullptr)
     {
@@ -74,6 +84,18 @@ bool HelloWorldSubscriber::init()
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
+    if (reader_ != nullptr)
+    {
+        subscriber_->delete_datareader(reader_);
+    }
+    if (topic_ != nullptr)
+    {
+        participant_->delete_topic(topic_);
+    }
+    if (subscriber_ != nullptr)
+    {
+        participant_->delete_subscriber(subscriber_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 

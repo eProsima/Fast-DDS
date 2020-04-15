@@ -88,7 +88,7 @@ TEST_F(xtypestests, NoTypeObjectSameType)
     pub.init("NoTypeObjectSameType", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectSameType", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
+    sub.init("NoTypeObjectSameType", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -118,7 +118,7 @@ TEST_F(xtypestests, NoTypeObjectSameTypeForce)
     pub.init("NoTypeObjectSameTypeForce", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectSameTypeForce", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", nullptr,
+    sub.init("NoTypeObjectSameTypeForce", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -141,7 +141,7 @@ TEST_F(xtypestests, NoTypeObjectDifferentType)
     pub.init("NoTypeObjectDifferentType", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, nullptr, "Sub1", nullptr,
+    sub.init("NoTypeObjectDifferentType", DOMAIN_ID_, type2, nullptr, nullptr, nullptr, "Sub1", nullptr,
             nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -182,7 +182,7 @@ TEST_F(xtypestests, TypeObjectV1SameType)
     pub.init("TypeObjectV1SameType", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SameType", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeObjectV1SameType", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos,
             nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -221,8 +221,7 @@ TEST_F(xtypestests, TypeDiscoverySubs)
     pub.init("TypeDiscoverySubs", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeDiscoverySubs", DOMAIN_ID_, NO_KEY, TypeSupport(
-                nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoverySubs", DOMAIN_ID_, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -232,13 +231,10 @@ TEST_F(xtypestests, TypeDiscoverySubs)
     ASSERT_TRUE(disc_type != nullptr);
 
     sub.register_discovered_type();
-    DataReader* reader = sub.create_datareader();
+    sub.create_datareader();
 
     pub.waitDiscovery(true, 3);
     sub.waitDiscovery(true, 3);
-
-    reader->set_listener(nullptr);
-    sub.delete_datareader(reader);
 }
 
 /*
@@ -271,7 +267,7 @@ TEST_F(xtypestests, TypeDiscoveryPubs)
     pub.init("TypeDiscoveryPubs", DOMAIN_ID_, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeDiscoveryPubs", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoveryPubs", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -322,7 +318,7 @@ TEST_F(xtypestests, TypeObjectV1DifferentType)
     pub.init("TypeObjectV1DifferentType", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1DifferentType", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeObjectV1DifferentType", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -364,7 +360,7 @@ TEST_F(xtypestests, TypeObjectV1NamesManaged)
     pub.init("TypeObjectV1NamesManaged", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeObjectV1NamesManaged", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -406,7 +402,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1NamesIgnored)
     pub.init("TypeObjectV1NamesIgnored", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeObjectV1NamesIgnored", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -449,7 +445,7 @@ TEST_F(xtypestests, TypeObjectV1NamesIgnoredDisallow)
     pub.init("TypeObjectV1NamesIgnoredDisallow", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesIgnoredDisallow", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1NamesIgnoredDisallow", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -491,7 +487,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWidening)
     pub.init("TypeObjectV1TypeWidening", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWidening", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeObjectV1TypeWidening", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -533,7 +529,7 @@ TEST_F(xtypestests, TypeObjectV1BadTypeWidening)
     pub.init("TypeObjectV1BadTypeWidening", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1BadTypeWidening", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1BadTypeWidening", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -576,7 +572,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWideningPreventedNarrowToWide)
             &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr,
+    sub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr,
             "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -619,7 +615,7 @@ TEST_F(xtypestests, TypeObjectV1TypeWideningPreventedWideToNarrow)
             &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", DOMAIN_ID_, NO_KEY, type1, type_obj1, type_id1, nullptr,
+    sub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr,
             "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -661,7 +657,7 @@ TEST_F(xtypestests, TypeObjectV1TypeWideningDisallow)
     pub.init("TypeObjectV1TypeWideningDisallow", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningDisallow", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1TypeWideningDisallow", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -703,7 +699,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1SequenceBoundsIgnored)
     pub.init("TypeObjectV1SequenceBoundsIgnored", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SequenceBoundsIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1SequenceBoundsIgnored", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -745,7 +741,7 @@ TEST_F(xtypestests, TypeObjectV1SequenceBoundsManaged)
     pub.init("TypeObjectV1SequenceBoundsManaged", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SequenceBoundsManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1SequenceBoundsManaged", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -788,7 +784,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1LargeStringIgnored)
     pub.init("TypeObjectV1LargeStringIgnored", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1LargeStringIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1LargeStringIgnored", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -831,7 +827,7 @@ TEST_F(xtypestests, TypeObjectV1LargeStringManaged)
     pub.init("TypeObjectV1LargeStringManaged", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1LargeStringManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1LargeStringManaged", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -869,7 +865,7 @@ TEST_F(xtypestests, TypeObjectV1SameTypeComplete)
     pub.init("TypeObjectV1SameTypeComplete", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SameTypeComplete", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeObjectV1SameTypeComplete", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos,
             nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -911,7 +907,7 @@ TEST_F(xtypestests, TypeObjectV1InvalidComplete)
     pub.init("TypeObjectV1InvalidComplete", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1InvalidComplete", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+    sub.init("TypeObjectV1InvalidComplete", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Sub1",
             &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -952,7 +948,7 @@ TEST_F(xtypestests, MixingMinimalAndComplete)
     pub.init("MixingMinimalAndComplete", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("MixingMinimalAndComplete", DOMAIN_ID_, NO_KEY, type1, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("MixingMinimalAndComplete", DOMAIN_ID_, type1, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
             nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -992,7 +988,7 @@ TEST_F(xtypestests, TypeIdentifierSameType)
     pub.init("TypeIdentifierSameType", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierSameType", DOMAIN_ID_, NO_KEY, type, nullptr, type_id, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeIdentifierSameType", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Sub1", &dataRepQos,
             nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1031,7 +1027,7 @@ TEST_F(xtypestests, TypeIdentifierDifferentType)
     pub.init("TypeIdentifierDifferentType", DOMAIN_ID_, type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeIdentifierDifferentType", DOMAIN_ID_, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1071,7 +1067,7 @@ TEST_F(xtypestests, TypeIdentifierNamesManaged)
     pub.init("TypeIdentifierNamesManaged", DOMAIN_ID_, type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierNamesManaged", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeIdentifierNamesManaged", DOMAIN_ID_, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1111,7 +1107,7 @@ TEST_F(xtypestests, DISABLED_TypeIdentifierNamesIgnored)
     pub.init("TypeIdentifierNamesIgnored", DOMAIN_ID_, type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierNamesIgnored", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
+    sub.init("TypeIdentifierNamesIgnored", DOMAIN_ID_, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1150,7 +1146,7 @@ TEST_F(xtypestests, TypeInformationSameType)
     pub.init("TypeInformationSameType", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationSameType", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos,
+    sub.init("TypeInformationSameType", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos,
             nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1189,7 +1185,7 @@ TEST_F(xtypestests, TypeInformationDifferentType)
     pub.init("TypeInformationDifferentType", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1",
+    sub.init("TypeInformationDifferentType", DOMAIN_ID_, type2, nullptr, nullptr, type_info2, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1229,7 +1225,7 @@ TEST_F(xtypestests, TypeInformationNamesManaged)
     pub.init("TypeInformationNamesManaged", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesManaged", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1",
+    sub.init("TypeInformationNamesManaged", DOMAIN_ID_, type2, nullptr, nullptr, type_info2, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1269,7 +1265,7 @@ TEST_F(xtypestests, DISABLED_TypeInformationNamesIgnored)
     pub.init("TypeInformationNamesIgnored", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesIgnored", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1",
+    sub.init("TypeInformationNamesIgnored", DOMAIN_ID_, type2, nullptr, nullptr, type_info2, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1295,7 +1291,7 @@ TEST_F(xtypestests, TypeIdentifier_TypeObject)
     pub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, NO_KEY, type, type_obj, nullptr, nullptr, "Sub1", nullptr,
+    sub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, type, type_obj, nullptr, nullptr, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1319,7 +1315,7 @@ TEST_F(xtypestests, TypeIdentifier_TypeInformation)
     pub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", nullptr,
+    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1343,7 +1339,7 @@ TEST_F(xtypestests, TypeObject_TypeInformation)
     pub.init("TypeObject_TypeInformation", DOMAIN_ID_, type, type_obj, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", nullptr,
+    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1371,7 +1367,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSEE)
     pub.init("DataRepQoSEE", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSEE", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("DataRepQoSEE", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1401,7 +1397,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSE1)
     pub.init("DataRepQoSE1", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSE1", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSE1", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1431,7 +1427,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSE2)
     pub.init("DataRepQoSE2", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSE2", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSE2", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1461,7 +1457,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSEX)
     pub.init("DataRepQoSEX", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSEX", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSEX", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1491,7 +1487,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSE12)
     pub.init("DataRepQoSE12", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSE12", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSE12", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1521,7 +1517,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS12)
     pub.init("DataRepQoS12", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS12", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoS12", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1551,7 +1547,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS2E)
     pub.init("DataRepQoS21", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS21", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoS21", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1581,7 +1577,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS21)
     pub.init("DataRepQoS21", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS21", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoS21", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1606,7 +1602,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS22)
     pub.init("DataRepQoS22", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS22", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoS22", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1636,7 +1632,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSXE)
     pub.init("DataRepQoSXE", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSXE", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoSXE", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1666,7 +1662,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSXX)
     pub.init("DataRepQoSXE", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSXE", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoSXE", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.

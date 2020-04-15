@@ -61,6 +61,8 @@ private:
 
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
 
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::Topic*> topics_;
+
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicType_ptr> readers_;
 
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicData_ptr> datas_;
@@ -68,8 +70,6 @@ private:
     eprosima::fastrtps::SubscriberAttributes att_;
 
     eprosima::fastdds::dds::DataReaderQos qos_;
-
-    eprosima::fastrtps::TopicAttributes topic_;
 
     std::mutex mutex_;
 

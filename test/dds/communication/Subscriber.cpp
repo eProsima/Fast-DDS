@@ -43,9 +43,12 @@ using namespace eprosima::fastrtps::rtps;
 
 static bool g_run = true;
 static types::DynamicType_ptr g_type;
-static TopicAttributes g_topic;
+static Topic* g_topic = nullptr;
 static DataReaderQos g_qos;
 static Subscriber* g_subscriber = nullptr;
+static DataReader* g_reader = nullptr;
+static DomainParticipant* g_participant = nullptr;
+
 
 class ParListener : public DomainParticipantListener
 {
@@ -102,8 +105,12 @@ public:
                     if (nullptr != g_subscriber)
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
-                        g_topic.topicDataType = type_name;
-                        g_subscriber->create_datareader(
+                        g_topic = g_participant->create_topic(
+                                topic_name.to_string(),
+                                type_name.to_string(),
+                                TOPIC_QOS_DEFAULT);
+
+                        g_reader = g_subscriber->create_datareader(
                             g_topic,
                             g_qos,
                             nullptr);
@@ -209,7 +216,7 @@ public:
             types::DynamicPubSubType pst(g_type);
             types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
             SampleInfo_t info;
-            DataReader* reader = subscriber->lookup_datareader(g_topic.topicName.to_string());
+            DataReader* reader = subscriber->lookup_datareader(g_topic->get_name());
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {
@@ -326,11 +333,11 @@ int main(
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().builtin.typelookup_config.use_client = true;
     ParListener participant_listener;
-    DomainParticipant* participant =
+    g_participant =
             DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,
                     &participant_listener);
 
-    if (participant == nullptr)
+    if (g_participant == nullptr)
     {
         return 1;
     }
@@ -348,11 +355,11 @@ int main(
     //g_subscriber_attributes.topic.topicName = topic.str();
     //g_subscriber_attributes.qos.m_liveliness.lease_duration = 3;
     //g_subscriber_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
-    g_subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
+    g_subscriber = g_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
 
     if (g_subscriber == nullptr)
     {
-        DomainParticipantFactory::get_instance()->delete_participant(participant);
+        DomainParticipantFactory::get_instance()->delete_participant(g_participant);
         return 1;
     }
 
@@ -369,7 +376,19 @@ int main(
         });
     }
 
-    DomainParticipantFactory::get_instance()->delete_participant(participant);
+    if (g_reader != nullptr)
+    {
+        g_subscriber->delete_datareader(g_reader);
+    }
+    if (g_subscriber != nullptr)
+    {
+        g_participant->delete_subscriber(g_subscriber);
+    }
+    if (g_topic != nullptr)
+    {
+        g_participant->delete_topic(g_topic);
+    }
+    DomainParticipantFactory::get_instance()->delete_participant(g_participant);
 
     return 0;
 }

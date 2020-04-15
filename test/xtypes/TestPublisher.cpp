@@ -136,7 +136,6 @@ bool TestPublisher::init(
         }
 
         writer_ = mp_publisher->create_datawriter(topic, qos, &m_pubListener);
-
         m_Data = m_Type->createData();
     }
 
