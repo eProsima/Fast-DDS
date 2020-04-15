@@ -53,7 +53,7 @@ class SubscriberImpl;
 class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
-class ReaderQos;
+class DataReaderQos;
 struct LivelinessChangedStatus;
 
 /**
@@ -146,12 +146,12 @@ public:
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const ReaderQos& qos);
+            const DataReaderQos& qos);
 
-    const ReaderQos& get_qos() const;
+    const DataReaderQos& get_qos() const;
 
     ReturnCode_t get_qos(
-            ReaderQos& qos) const;
+            DataReaderQos& qos) const;
 
     bool set_topic(
             const fastrtps::TopicAttributes& att);

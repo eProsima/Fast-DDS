@@ -14,12 +14,14 @@
 
 /**
  * @file ReaderDataLifecycleQosPolicy.hpp
-*/
+ */
 
 #ifndef _FASTDDS_READERDATALIFECYCLEQOSPOLICY_HPP_
 #define _FASTDDS_READERDATALIFECYCLEQOSPOLICY_HPP_
 
 #include <fastdds/rtps/common/Time_t.h>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 using eprosima::fastrtps::Duration_t;
 
@@ -32,11 +34,14 @@ class ReaderDataLifecycleQosPolicy
 {
 public:
     ReaderDataLifecycleQosPolicy()
-        : autopurge_no_writer_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS),
-          autopurge_disposed_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
-    {}
+        : autopurge_no_writer_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        , autopurge_disposed_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+    {
+    }
 
-    virtual RTPS_DllAPI ~ReaderDataLifecycleQosPolicy() {}
+    virtual RTPS_DllAPI ~ReaderDataLifecycleQosPolicy()
+    {
+    }
 
     bool operator ==(
             const ReaderDataLifecycleQosPolicy& b) const
@@ -44,7 +49,15 @@ public:
         return (this->autopurge_no_writer_samples_delay == b.autopurge_no_writer_samples_delay) &&
                (this->autopurge_disposed_samples_delay == b.autopurge_disposed_samples_delay);
     }
+
+    inline void clear()
+    {
+        ReaderDataLifecycleQosPolicy reset = ReaderDataLifecycleQosPolicy();
+        std::swap(*this, reset);
+    }
+
 public:
+
     Duration_t autopurge_no_writer_samples_delay;
 
     Duration_t autopurge_disposed_samples_delay;

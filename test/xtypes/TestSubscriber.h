@@ -26,6 +26,7 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -114,7 +115,7 @@ private:
     std::condition_variable cv_;
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
     eprosima::fastrtps::TopicAttributes topic_att;
-    eprosima::fastrtps::ReaderQos reader_qos;
+    eprosima::fastdds::dds::DataReaderQos reader_qos;
     bool using_typelookup_;
     bool tls_callback_called_;
 

@@ -20,7 +20,7 @@
 #include <dds/sub/detail/Subscriber.hpp>
 
 #include <dds/core/Entity.hpp>
-//#include <dds/sub/qos/DataReaderQos.hpp>
+#include <dds/sub/qos/DataReaderQos.hpp>
 #include <dds/sub/qos/SubscriberQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
@@ -68,8 +68,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-//    OMG_DDS_API Subscriber(
-//            const dds::domain::DomainParticipant& dp);
+    OMG_DDS_API Subscriber(
+            const dds::domain::DomainParticipant& dp);
 
     /**
      * Create a new Subscriber.
@@ -119,7 +119,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    const qos::SubscriberQos& qos() const;
+    OMG_DDS_API const qos::SubscriberQos& qos() const;
 
 
     /**
@@ -136,15 +136,15 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void qos(
+    OMG_DDS_API void qos(
             const qos::SubscriberQos& qos);
 
     /** @copydoc dds::pub::Subscriber::qos(const dds::pub::qos::SubscriberQos& qos) */
-    Subscriber& operator <<(
+    OMG_DDS_API Subscriber& operator <<(
             const qos::SubscriberQos& qos);
 
     /** @copydoc dds::pub::Subscriber::qos() */
-    Subscriber& operator >>(
+    OMG_DDS_API Subscriber& operator >>(
             qos::SubscriberQos& qos);
 
     /**
@@ -174,8 +174,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    Subscriber& default_datareader_qos(
-    //            const qos::DataReaderQos& qos);
+    OMG_DDS_API Subscriber& default_datareader_qos(
+            const qos::DataReaderQos& qos);
 
     /**
      * Gets the default DataReaderQos of the Subscriber.
@@ -200,7 +200,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    //    qos::DataReaderQos default_datareader_qos() const;
+    OMG_DDS_API qos::DataReaderQos default_datareader_qos() const;
 
     //==========================================================================
 
@@ -230,7 +230,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void listener(
+    OMG_DDS_API void listener(
             Listener* plistener,
             const dds::core::status::StatusMask& mask);
 
@@ -243,7 +243,7 @@ public:
      * @throws dds::core::NullReferenceError
      *                  The entity was not properly created and references to dds::core::null.
      */
-    Listener* listener() const;
+    OMG_DDS_API Listener* listener() const;
 
     /**
      * Return the DomainParticipant that owns this Subscriber.
@@ -256,7 +256,7 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    const dds::domain::DomainParticipant& participant() const;
+    OMG_DDS_API const dds::domain::DomainParticipant& participant() const;
 
     dds::domain::DomainParticipant* participant_;
 

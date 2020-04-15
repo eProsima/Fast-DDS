@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
 
-#include <fastrtps/qos/ReaderQos.h>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
@@ -72,7 +72,7 @@ class DataReaderImpl
             TypeSupport type,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
-            const fastrtps::ReaderQos& qos,
+            const DataReaderQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataReaderListener* listener = nullptr);
 
@@ -152,9 +152,9 @@ public:
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastrtps::ReaderQos& qos);
+            const DataReaderQos& qos);
 
-    const fastrtps::ReaderQos& get_qos() const;
+    const DataReaderQos& get_qos() const;
 
     bool set_topic(
             const fastrtps::TopicAttributes& att);
@@ -200,6 +200,32 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
+    /* Check whether values in the DataReaderQos are compatible among them or not
+     * @return True if correct.
+     */
+    static ReturnCode_t check_qos (
+            const DataReaderQos& qos);
+
+    /* Check whether the DataReaderQos can be updated with the values provided. This method DOES NOT update anything.
+     * @param to Reference to the qos instance to be changed.
+     * @param from Reference to the qos instance with the new values.
+     * @return True if they can be updated.
+     */
+    static bool can_qos_be_updated(
+            const DataReaderQos& to,
+            const DataReaderQos& from);
+
+    /* Update a DataReaderQos with new values
+     * @param to Reference to the qos instance to be changed.
+     * @param from Reference to the qos instance with the new values.
+     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
+     */
+    static void set_qos(
+            DataReaderQos& to,
+            const DataReaderQos& from,
+            bool first_time);
+
+
 private:
 
     //!Subscriber
@@ -216,7 +242,7 @@ private:
     //!Attributes of the Subscriber
     fastrtps::rtps::ReaderAttributes att_;
 
-    fastrtps::ReaderQos qos_;
+    DataReaderQos qos_;
 
     //!History
     fastrtps::SubscriberHistory history_;

@@ -27,8 +27,11 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+
 
 namespace eprosima {
 
@@ -71,7 +74,7 @@ public:
     bool operator ==(
             const QosPolicy& b) const
     {
-        // hastChanged field isn't needed to be compared to being equal two QosPolicy objects.
+        // hasChanged field isn't needed to be compared to being equal two QosPolicy objects.
         return (this->send_always_ == b.send_always_);
     }
 
@@ -914,7 +917,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName &data) = default;                                         \
+            const TClassName& data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -925,7 +928,7 @@ public:                                                                         
          * @param data data to copy in the newly created object \
          */                                                                            \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type &data)                                               \
+            const collection_type& data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
@@ -942,7 +945,7 @@ public:                                                                         
          * @return reference to the current object. \
          */                                                                            \
         TClassName& operator =(                                                            \
-            const TClassName &b) = default;                                            \
+            const TClassName& b) = default;                                            \
                                                                                        \
     };
 
@@ -2475,7 +2478,7 @@ public:
     //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
     int16_t user_defined_id;
 
-    //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    //!Entity ID, if the user wants to specify the EntityID of the enpoint, default value -1.
     int16_t entity_id;
 
     //!Underlying History memory policy

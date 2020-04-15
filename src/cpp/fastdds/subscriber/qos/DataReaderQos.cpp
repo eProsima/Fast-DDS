@@ -14,40 +14,44 @@
 
 /**
  * @file DataReaderQos.cpp
- *
+*
  */
 
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
-//const DataReaderQos eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+const DataReaderQos DATAREADER_QOS_DEFAULT;
 
-/* TODO: Implement this method
-   void DataReaderQos::setQos(
-        const DataReaderQos& qos,
-        bool first_time)
-   {
-    //TODO: Implement this function
-    (void)qos;
-    (void)first_time;
-   }
- */
+ReaderQos DataReaderQos::get_readerqos(
+        const SubscriberQos& pqos) const
+{
+    ReaderQos qos;
+    qos.m_durability = durability();
+    qos.m_deadline = deadline();
+    qos.m_latencyBudget = latency_budget();
+    qos.m_liveliness = liveliness();
+    qos.m_reliability = reliability();
+    qos.m_destinationOrder = destination_order();
+    qos.m_presentation = pqos.presentation();
+    qos.m_partition = pqos.partition();
+    qos.m_groupData = pqos.group_data();
+    qos.m_userData = user_data();
+    qos.m_ownership = ownership();
+    qos.m_timeBasedFilter = time_based_filter();
+    qos.m_lifespan = lifespan();
+    //qos.m_topicData --> TODO: Fill with TopicQos info
+    qos.m_durabilityService = durability_service();
+    qos.m_disablePositiveACKs = reliable_reader_qos().disable_positive_ACKs;
+    qos.type_consistency = type_consistency().type_consistency;
+    qos.representation = type_consistency().representation;
+    return qos;
+}
 
-/* TODO: Implement this method
-   bool DataReaderQos::checkQos() const
-   {
-    //TODO: Implement this function
-    return true;
-   }
- */
+} /* namespace dds */
+} /* namespace fastdds */
+} /* namespace eprosima */
 
-/* TODO: Implement this method
-   bool DataReaderQos::canQosBeUpdated(
-        const DataReaderQos& qos) const
-   {
-    //TODO: Implement this function
-    (void)qos;
-    return true;
-   }
- */

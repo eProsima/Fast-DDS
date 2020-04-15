@@ -48,24 +48,24 @@ public:
     bool operator ==(
             const ReaderQos& b) const
     {
-        return (this->m_durability == b.m_durability) &&
-               (this->m_deadline == b.m_deadline) &&
-               (this->m_latencyBudget == b.m_latencyBudget) &&
-               (this->m_liveliness == b.m_liveliness) &&
-               (this->m_reliability == b.m_reliability) &&
-               (this->m_ownership == b.m_ownership) &&
-               (this->m_destinationOrder == b.m_destinationOrder) &&
-               (this->m_userData == b.m_userData) &&
-               (this->m_timeBasedFilter == b.m_timeBasedFilter) &&
-               (this->m_presentation == b.m_presentation) &&
-               (this->m_partition == b.m_partition) &&
-               (this->m_topicData == b.m_topicData) &&
-               (this->m_groupData == b.m_groupData) &&
-               (this->m_durabilityService == b.m_durabilityService) &&
-               (this->m_lifespan == b.m_lifespan) &&
-               (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
-               (this->type_consistency == b.type_consistency) &&
-               (this->representation == b.representation);
+        return (m_durability == b.m_durability) &&
+               (m_deadline == b.m_deadline) &&
+               (m_latencyBudget == b.m_latencyBudget) &&
+               (m_liveliness == b.m_liveliness) &&
+               (m_reliability == b.m_reliability) &&
+               (m_ownership == b.m_ownership) &&
+               (m_destinationOrder == b.m_destinationOrder) &&
+               (m_userData == b.m_userData) &&
+               (m_timeBasedFilter == b.m_timeBasedFilter) &&
+               (m_presentation == b.m_presentation) &&
+               (m_partition == b.m_partition) &&
+               (m_topicData == b.m_topicData) &&
+               (m_groupData == b.m_groupData) &&
+               (m_durabilityService == b.m_durabilityService) &&
+               (m_lifespan == b.m_lifespan) &&
+               (m_disablePositiveACKs == b.m_disablePositiveACKs) &&
+               (type_consistency == b.type_consistency) &&
+               (representation == b.representation);
     }
 
     //!Durability Qos, implemented in the library.
@@ -147,8 +147,6 @@ public:
 
     void clear();
 };
-
-RTPS_DllAPI extern const ReaderQos DATAREADER_QOS_DEFAULT;
 
 } //namespace dds
 } //namespace fastdds

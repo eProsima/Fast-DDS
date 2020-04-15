@@ -19,6 +19,7 @@
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -45,7 +46,7 @@ DataReaderImpl::DataReaderImpl(
         TypeSupport type,
         const TopicAttributes& topic_att,
         const fastrtps::rtps::ReaderAttributes& att,
-        const ReaderQos& qos,
+        const DataReaderQos& qos,
         const MemoryManagementPolicy_t memory_policy,
         DataReaderListener* listener)
     : subscriber_(s)
@@ -57,14 +58,14 @@ DataReaderImpl::DataReaderImpl(
 #pragma warning (disable : 4355 )
     , history_(topic_att_,
             type_.get(),
-            qos_,
+            qos_.get_readerqos(subscriber_->get_qos()),
             type_->m_typeSize + 3,    /* Possible alignment */
             memory_policy)
     , listener_(listener)
     , reader_listener_(this)
-    , deadline_duration_us_(qos_.m_deadline.period.to_ns() * 1e-3)
+    , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , deadline_missed_status_()
-    , lifespan_duration_us_(qos_.m_lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
     , user_datareader_(nullptr)
 {
     deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
@@ -72,14 +73,14 @@ DataReaderImpl::DataReaderImpl(
                 {
                     return deadline_missed();
                 },
-                    qos_.m_deadline.period.to_ns() * 1e-6);
+                    qos_.deadline().period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
                     [&]() -> bool
                 {
                     return lifespan_expired();
                 },
-                    qos_.m_lifespan.duration.to_ns() * 1e-6);
+                    qos_.lifespan().duration.to_ns() * 1e-6);
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -130,7 +131,7 @@ ReturnCode_t DataReaderImpl::read_next_sample(
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
 #endif
@@ -147,7 +148,7 @@ ReturnCode_t DataReaderImpl::take_next_sample(
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
 #endif
@@ -177,30 +178,41 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
 }
 
 ReturnCode_t DataReaderImpl::set_qos(
-        const ReaderQos& qos)
+        const DataReaderQos& qos)
 {
-    //QOS:
-    //CHECK IF THE QOS CAN BE SET
-    if (!qos.checkQos())
+    if (&qos == &DATAREADER_QOS_DEFAULT)
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        const DataReaderQos& default_qos = subscriber_->get_default_datareader_qos();
+        if (!can_qos_be_updated(qos_, default_qos))
+        {
+            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        }
+
+        set_qos(qos_, default_qos, false);
+        return ReturnCode_t::RETCODE_OK;
     }
-    else if (!qos_.canQosBeUpdated(qos))
+    ReturnCode_t check_result = check_qos(qos);
+    if (!check_result)
+    {
+        return check_result;
+    }
+    else if (!can_qos_be_updated(qos_, qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    qos_.setQos(qos, false);
+    set_qos(qos_, qos, false);
+
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    //subscriber_->update_reader(this, topic_att_, qos_);
-    subscriber_->rtps_participant()->updateReader(reader_, topic_att_, qos_);
+    ReaderQos rqos = qos.get_readerqos(get_subscriber()->get_qos());
+    subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
 
     // Deadline
-    if (qos_.m_deadline.period != c_TimeInfinite)
+    if (qos_.deadline().period != c_TimeInfinite)
     {
         deadline_duration_us_ =
-                duration<double, std::ratio<1, 1000000> >(qos_.m_deadline.period.to_ns() * 1e-3);
-        deadline_timer_->update_interval_millisec(qos_.m_deadline.period.to_ns() * 1e-6);
+                duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
+        deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
     }
     else
     {
@@ -208,11 +220,11 @@ ReturnCode_t DataReaderImpl::set_qos(
     }
 
     // Lifespan
-    if (qos_.m_lifespan.duration != c_TimeInfinite)
+    if (qos_.lifespan().duration != c_TimeInfinite)
     {
         lifespan_duration_us_ =
-                std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.m_lifespan.duration.to_ns() * 1e-3);
-        lifespan_timer_->update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
+                std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
+        lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
     }
     else
     {
@@ -222,7 +234,7 @@ ReturnCode_t DataReaderImpl::set_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const ReaderQos& DataReaderImpl::get_qos() const
+const DataReaderQos& DataReaderImpl::get_qos() const
 {
     return qos_;
 }
@@ -355,7 +367,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
-    if (qos_.m_deadline.period != c_TimeInfinite)
+    if (qos_.deadline().period != c_TimeInfinite)
     {
         std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -377,7 +389,7 @@ bool DataReaderImpl::on_new_cache_change_added(
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
 
-    if (qos_.m_lifespan.duration == c_TimeInfinite)
+    if (qos_.lifespan().duration == c_TimeInfinite)
     {
         return true;
     }
@@ -420,7 +432,7 @@ bool DataReaderImpl::on_new_cache_change_added(
 
 bool DataReaderImpl::deadline_timer_reschedule()
 {
-    assert(qos_.m_deadline.period != c_TimeInfinite);
+    assert(qos_.deadline().period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -438,7 +450,7 @@ bool DataReaderImpl::deadline_timer_reschedule()
 
 bool DataReaderImpl::deadline_missed()
 {
-    assert(qos_.m_deadline.period != c_TimeInfinite);
+    assert(qos_.deadline().period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -626,6 +638,180 @@ TypeSupport DataReaderImpl::type()
 {
     return type_;
 }
+
+ReturnCode_t DataReaderImpl::check_qos (const DataReaderQos& qos)
+{
+    if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
+    {
+        logError(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
+    if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
+    if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
+    {
+        logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
+bool DataReaderImpl::can_qos_be_updated(
+        const DataReaderQos& to,
+        const DataReaderQos& from)
+{
+    bool updatable = true;
+    if (!(to.resource_limits() == from.resource_limits()))
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "resource_limits cannot be changed after the creation of a DataReader.");
+    }
+    if (to.history().kind != from.history().kind ||
+            to.history().depth != from.history().depth)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "History cannot be changed after the creation of a DataReader.");
+    }
+
+    if (to.durability().kind != from.durability().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Durability kind cannot be changed after the creation of a DataReader.");
+    }
+    if (to.liveliness().kind != from.liveliness().kind ||
+            to.liveliness().lease_duration != from.liveliness().lease_duration ||
+            to.liveliness().announcement_period != from.liveliness().announcement_period)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Liveliness cannot be changed after the creation of a DataReader.");
+    }
+    if (to.reliability().kind != from.reliability().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a DataReader.");
+    }
+    if (to.ownership().kind != from.ownership().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a DataReader.");
+    }
+    if (to.destination_order().kind != from.destination_order().kind)
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataReader.");
+    }
+    return updatable;
+}
+
+void DataReaderImpl::set_qos(
+        DataReaderQos& to,
+        const DataReaderQos& from,
+        bool first_time)
+{
+    if (first_time && to.durability().kind != from.durability().kind)
+    {
+        to.durability() = from.durability();
+        to.durability().hasChanged = true;
+    }
+    if (to.deadline().period != from.deadline().period)
+    {
+        to.deadline() = from.deadline();
+        to.deadline().hasChanged = true;
+    }
+    if (to.latency_budget().duration != from.latency_budget().duration)
+    {
+        to.latency_budget() = from.latency_budget();
+        to.latency_budget().hasChanged = true;
+    }
+    if (first_time && !(to.liveliness() == from.liveliness()))
+    {
+        to.liveliness() = from.liveliness();
+        to.liveliness().hasChanged = true;
+    }
+    if (first_time && !(to.reliability() == from.reliability()))
+    {
+        to.reliability() = from.reliability();
+        to.reliability().hasChanged = true;
+    }
+    if (first_time && to.ownership().kind != from.ownership().kind)
+    {
+        to.ownership() = from.ownership();
+        to.ownership().hasChanged = true;
+    }
+    if (first_time && to.destination_order().kind != from.destination_order().kind)
+    {
+        to.destination_order() = from.destination_order();
+        to.destination_order().hasChanged = true;
+    }
+    if (to.user_data().data_vec() != from.user_data().data_vec())
+    {
+        to.user_data() = from.user_data();
+        to.user_data().hasChanged = true;
+    }
+    if (to.time_based_filter().minimum_separation != from.time_based_filter().minimum_separation )
+    {
+        to.time_based_filter() = from.time_based_filter();
+        to.time_based_filter().hasChanged = true;
+    }
+    if (first_time || !(to.durability_service() == from.durability_service()))
+    {
+        to.durability_service() = from.durability_service();
+        to.durability_service().hasChanged = true;
+    }
+    if (to.lifespan().duration != from.lifespan().duration )
+    {
+        to.lifespan() = from.lifespan();
+        to.lifespan().hasChanged = true;
+    }
+    if (first_time && !(to.reliable_reader_qos() == from.reliable_reader_qos()))
+    {
+        to.reliable_reader_qos() = from.reliable_reader_qos();
+    }
+    if (first_time || !(to.type_consistency() == from.type_consistency()))
+    {
+        to.type_consistency() = from.type_consistency();
+        to.type_consistency().hasChanged = true;
+    }
+    if (first_time && (to.history().kind != from.history().kind ||
+            to.history().depth != from.history().depth))
+    {
+        to.history() = from.history();
+        to.history().hasChanged = true;
+    }
+    if (first_time && !(to.resource_limits() == from.resource_limits()))
+    {
+        to.resource_limits() = from.resource_limits();
+        to.resource_limits().hasChanged = true;
+    }
+    if (!(to.reader_data_lifecycle() == from.reader_data_lifecycle()))
+    {
+        to.reader_data_lifecycle() = from.reader_data_lifecycle();
+    }
+
+    if (to.expects_inline_qos() != from.expects_inline_qos())
+    {
+        to.expects_inline_qos(from.expects_inline_qos());
+    }
+
+    if (first_time && !(to.properties() == from.properties()))
+    {
+        to.properties() = from.properties();
+    }
+
+    if (first_time && !(to.endpoint() == from.endpoint()))
+    {
+        to.endpoint() = from.endpoint();
+    }
+
+    if (first_time && !(to.reader_resource_limits() == from.reader_resource_limits()))
+    {
+        to.reader_resource_limits() = from.reader_resource_limits();
+    }
+}
+
 
 } /* namespace dds */
 } /* namespace fastdds */

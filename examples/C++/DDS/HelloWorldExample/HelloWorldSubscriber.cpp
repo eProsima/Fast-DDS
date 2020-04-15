@@ -23,6 +23,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -56,8 +57,8 @@ bool HelloWorldSubscriber::init()
     }
 
     // CREATE THE READER
-    ReaderQos rqos;
-    rqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    DataReaderQos rqos;
+    rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     eprosima::fastrtps::TopicAttributes topic_att;
     topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = "HelloWorldTopic";

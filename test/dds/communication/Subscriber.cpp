@@ -25,6 +25,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
@@ -42,7 +43,8 @@ using namespace eprosima::fastrtps::rtps;
 
 static bool g_run = true;
 static types::DynamicType_ptr g_type;
-static SubscriberAttributes g_subscriber_attributes;
+static TopicAttributes g_topic;
+static DataReaderQos g_qos;
 static Subscriber* g_subscriber = nullptr;
 
 class ParListener : public DomainParticipantListener
@@ -100,10 +102,10 @@ public:
                     if (nullptr != g_subscriber)
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
-                        g_subscriber_attributes.topic.topicDataType = type_name;
+                        g_topic.topicDataType = type_name;
                         g_subscriber->create_datareader(
-                            g_subscriber_attributes.topic,
-                            g_subscriber_attributes.qos,
+                            g_topic,
+                            g_qos,
                             nullptr);
 
                         if (type == nullptr)
@@ -207,7 +209,7 @@ public:
             types::DynamicPubSubType pst(g_type);
             types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
             SampleInfo_t info;
-            DataReader* reader = subscriber->lookup_datareader(g_subscriber_attributes.topic.topicName.to_string());
+            DataReader* reader = subscriber->lookup_datareader(g_topic.topicName.to_string());
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {

@@ -76,7 +76,7 @@ InstanceHandle_t DataReader::get_instance_handle() const
 }
 
 ReturnCode_t DataReader::set_qos(
-        const ReaderQos& qos)
+        const DataReaderQos& qos)
 {
     return impl_->set_qos(qos);
 }
@@ -87,13 +87,13 @@ bool DataReader::set_topic(
     return impl_->set_topic(topic_att);
 }
 
-const ReaderQos& DataReader::get_qos() const
+const DataReaderQos& DataReader::get_qos() const
 {
     return impl_->get_qos();
 }
 
 ReturnCode_t DataReader::get_qos(
-        ReaderQos& qos) const
+        DataReaderQos& qos) const
 {
     qos = impl_->get_qos();
     return ReturnCode_t::RETCODE_OK;
