@@ -37,7 +37,7 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
-
+#include "RobustInterprocessCondition.hpp"
 #include "SharedMemUUID.hpp"
 
 namespace eprosima {
@@ -55,7 +55,7 @@ class SharedMemSegment
 public:
 
     typedef std::ptrdiff_t offset;
-    typedef boost::interprocess::interprocess_condition condition_variable;
+    typedef RobustInterprocessCondition condition_variable;
     typedef boost::interprocess::interprocess_mutex mutex;
     typedef boost::interprocess::named_mutex named_mutex;
     typedef boost::interprocess::spin_wait spin_wait;

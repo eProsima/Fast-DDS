@@ -392,29 +392,31 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
     }
 }
 
-TEST_F(SHMTransportTests, locators_with_kind_16_supported)
+TEST_F(SHMTransportTests, robust_condition_wait_notify)
 {
-    // Given
-    SharedMemTransport transportUnderTest(descriptor);
-    ASSERT_TRUE(transportUnderTest.init());
+    SharedMemSegment::condition_variable cv;
+    SharedMemSegment::mutex mutex;  
+    bool condition = false;  
 
-    Locator_t supportedLocator;
-    supportedLocator.kind = LOCATOR_KIND_SHM;
-    Locator_t unsupportedLocatorTcpv4;
-    unsupportedLocatorTcpv4.kind = LOCATOR_KIND_TCPv4;
-    Locator_t unsupportedLocatorTcpv6;
-    unsupportedLocatorTcpv6.kind = LOCATOR_KIND_TCPv6;
-    Locator_t unsupportedLocatorUdpv4;
-    unsupportedLocatorUdpv4.kind = LOCATOR_KIND_UDPv4;
-    Locator_t unsupportedLocatorUdpv6;
-    unsupportedLocatorUdpv6.kind = LOCATOR_KIND_UDPv6;
+    std::thread thread_wait([&]
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+            cv.wait(lock, [&] 
+                { 
+                    return condition; 
+                });
+        });
 
-    // Then
-    ASSERT_TRUE(transportUnderTest.IsLocatorSupported(supportedLocator));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorTcpv4));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorTcpv6));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorUdpv4));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorUdpv6));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    {
+        std::lock_guard<SharedMemSegment::mutex> lock(mutex);
+        condition = true;  
+    }
+
+    cv.notify_one();
+
+    thread_wait.join();
 }
 
 TEST_F(SHMTransportTests, opening_and_closing_input_channel)
