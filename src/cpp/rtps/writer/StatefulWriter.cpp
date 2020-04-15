@@ -792,21 +792,8 @@ void StatefulWriter::send_all_unsent_changes(
         bool heartbeat_has_been_sent = false;
 
         RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
-        RTPSGapBuilder gap_builder(group);
 
-        SequenceNumber_t max_removed = biggest_removed_sequence_number_;
-        SequenceNumber_t last_sequence = mp_history->next_sequence_number();
-        SequenceNumber_t min_history_seq = get_seq_num_min();
-        uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
-
-        if ((next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
-            (min_history_seq + history_size != last_sequence))    // There is a hole in the history
-        {
-            send_heartbeat_nts_(all_remote_readers_.size(), group, !acknack_required);
-            heartbeat_has_been_sent = true;
-        }
-            
-        SequenceNumber_t seq = get_seq_num_min();
+        heartbeat_has_been_sent = send_hole_gaps_to_group(group);
 
         uint32_t lastBytesProcessed = 0;
         auto sent_fun = [this, &lastBytesProcessed, &group](
@@ -816,27 +803,27 @@ void StatefulWriter::send_all_unsent_changes(
             send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
         };
 
-        // Add holes in history and send them to all readers
+        RTPSGapBuilder gap_builder(group);
+
         for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
         {
-            // Add all sequence numbers until the change's sequence number
-            while (seq < (*cit)->sequenceNumber)
-            {
-                gap_builder.add(seq);
-                seq++;
-            }
+            SequenceNumber_t seq = (*cit)->sequenceNumber;
 
-            // Check if change is relevant for at least one reader
-            bool is_irrelevant = true;
+            // Deselect all entries on the locator selector (we will only activate the
+            // readers for which this sequence number is pending)
+            locator_selector_.reset(false);
+            
+            bool is_irrelevant = true;   // Will turn to false if change is relevant for at least one reader
             bool should_be_sent = false;
             bool inline_qos = false;
             for (ReaderProxy* remoteReader : matched_readers_)
             {
                 if (!remoteReader->is_local_reader())
                 {
-                    should_be_sent |= remoteReader->change_is_unsent(seq, is_irrelevant);
-                    if (should_be_sent)
+                    if(remoteReader->change_is_unsent(seq, is_irrelevant))
                     {
+                        should_be_sent = true;
+                        locator_selector_.enable(remoteReader->guid());
                         inline_qos |= remoteReader->expects_inline_qos();
                         if (is_irrelevant)
                         {
@@ -844,6 +831,13 @@ void StatefulWriter::send_all_unsent_changes(
                         }
                     }
                 }
+            }
+
+            if (locator_selector_.state_has_changed())
+            {
+                group.flush_and_reset();
+                network.select_locators(locator_selector_);
+                compute_selected_guids();
             }
 
             if (should_be_sent)
@@ -877,13 +871,6 @@ void StatefulWriter::send_all_unsent_changes(
             }
 
             // Skip change's sequence number
-            seq++;
-        }
-
-        // Add all sequence numbers above last change
-        while (seq < last_sequence)
-        {
-            gap_builder.add(seq);
             seq++;
         }
 
@@ -930,51 +917,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
 
     RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
-    // Add holes in history and send them to all readers
-    SequenceNumber_t max_removed = biggest_removed_sequence_number_;
-    SequenceNumber_t last_sequence = mp_history->next_sequence_number();
-    SequenceNumber_t min_history_seq = get_seq_num_min();
-    uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
-    if ((next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
-        (min_history_seq + history_size != last_sequence))    // There is a hole in the history
-    {
-        try
-        {
-            send_heartbeat_nts_(all_remote_readers_.size(), group, true);
-            heartbeat_has_been_sent = true;
-
-            // Find holes in history from next_all_acked_notify_sequence_ to last_sequence - 1
-            RTPSGapBuilder gap_builder(group);
-
-            // Algorithm starts in next_all_acked_notify_sequence_
-            SequenceNumber_t seq = min_history_seq;
-
-            // Loop all history
-            for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
-            {
-                // Add all sequence numbers until the change's sequence number
-                while (seq < (*cit)->sequenceNumber)
-                {
-                    gap_builder.add(seq);
-                    seq++;
-                }
-
-                // Skip change's sequence number
-                seq++;
-            }
-
-            // Add all sequence numbers above last change
-            while (seq < last_sequence)
-            {
-                gap_builder.add(seq);
-                seq++;
-            }
-        }
-        catch (const RTPSMessageGroup::timeout&)
-        {
-            logError(RTPS_WRITER, "Max blocking time reached");
-        }
-    }
+    heartbeat_has_been_sent = send_hole_gaps_to_group(group);
 
     for (ReaderProxy* remoteReader : matched_readers_)
     {
@@ -1133,6 +1076,60 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
     locator_selector_.reset(true);
     network.select_locators(locator_selector_);
     compute_selected_guids();
+}
+
+bool StatefulWriter::send_hole_gaps_to_group(
+        RTPSMessageGroup& group)
+{
+    bool ret_val = false;
+
+    // Add holes in history and send them to all readers in group
+    SequenceNumber_t max_removed = biggest_removed_sequence_number_;
+    SequenceNumber_t last_sequence = mp_history->next_sequence_number();
+    SequenceNumber_t min_history_seq = get_seq_num_min();
+    uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
+    if ((next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
+        (min_history_seq + history_size != last_sequence))    // There is a hole in the history
+    {
+        try
+        {
+            send_heartbeat_nts_(all_remote_readers_.size(), group, true);
+            ret_val = true;
+
+            // Find holes in history from min_history_seq to last_sequence - 1
+            RTPSGapBuilder gap_builder(group);
+
+            // Algorithm starts in min_history_seq
+            SequenceNumber_t seq = min_history_seq;
+
+            // Loop all history
+            for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
+            {
+                // Add all sequence numbers until the change's sequence number
+                while (seq < (*cit)->sequenceNumber)
+                {
+                    gap_builder.add(seq);
+                    seq++;
+                }
+
+                // Skip change's sequence number
+                seq++;
+            }
+
+            // Add all sequence numbers above last change
+            while (seq < last_sequence)
+            {
+                gap_builder.add(seq);
+                seq++;
+            }
+        }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+    }
+
+    return ret_val;
 }
 
 /*

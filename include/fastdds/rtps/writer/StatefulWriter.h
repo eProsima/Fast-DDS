@@ -343,6 +343,9 @@ private:
             SequenceNumber_t max_sequence,
             bool& activateHeartbeatPeriod);
 
+    bool send_hole_gaps_to_group(
+            RTPSMessageGroup& group);
+
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
