@@ -25,11 +25,62 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
+#include <dds/pub/DataWriter.hpp>
+#include <dds/topic/Topic.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+class TopicDataTypeMock : public TopicDataType
+{
+public:
+
+    TopicDataTypeMock()
+        : TopicDataType()
+    {
+        setName("footype");
+    }
+
+    bool serialize(
+            void* /*data*/,
+            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return std::function<uint32_t()>();
+    }
+
+    void* createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+};
 
 TEST(PublisherTests, GetPublisherParticipant)
 {
@@ -119,6 +170,55 @@ TEST(PublisherTests, ChangePSMPublisherQos)
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+}
+
+TEST(PublisherTests, CreateDataWriter)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    participant->register_type(type);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic);
+    ASSERT_NE(datawriter, nullptr);
+
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(PublisherTests, DeletePublisherWithWriters)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    participant->register_type(type);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic);
+    ASSERT_NE(datawriter, nullptr);
+
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 
