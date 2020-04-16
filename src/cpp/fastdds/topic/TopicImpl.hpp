@@ -24,6 +24,7 @@
 // #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <atomic>
@@ -39,7 +40,7 @@ class DomainParticipant;
 class TopicListener;
 class Topic;
 
-class TopicImpl
+class TopicImpl : public TopicDescriptionImpl
 {
     friend class DomainParticipantImpl;
 
@@ -81,12 +82,6 @@ public:
 
     const TypeSupport& get_type() const;
 
-    bool is_referenced() const;
-
-    void reference();
-
-    void dereference();
-
 private:
 
     DomainParticipantImpl* participant_;
@@ -94,8 +89,6 @@ private:
     TopicQos qos_;
     TopicListener* listener_;
     Topic* user_topic_;
-    std::atomic_size_t num_refs_;
-
 };
 
 } // dds

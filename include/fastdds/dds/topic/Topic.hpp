@@ -122,6 +122,8 @@ public:
             TopicListener* listener,
             const StatusMask& mask = StatusMask::all());
 
+    TopicDescriptionImpl* get_impl() const override;
+
 private:
 
     TopicImpl* impl_;

@@ -26,6 +26,7 @@ namespace fastdds {
 namespace dds {
 
 class DomainParticipant;
+class TopicDescriptionImpl;
 
 /**
  * Class TopicDescription, represents the fact that both publications
@@ -58,6 +59,8 @@ public:
     {
         return type_name_;
     }
+
+    virtual TopicDescriptionImpl* get_impl() const = 0;
 
 protected:
 
