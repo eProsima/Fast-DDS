@@ -667,6 +667,19 @@ Topic* DomainParticipantImpl::create_topic(
     return topic;
 }
 
+TopicDescription* DomainParticipantImpl::lookup_topicdescription(
+        const std::string& topic_name) const
+{
+    auto it = topics_.find(topic_name);
+    
+    if (it != topics_.end())
+    {
+        return it->second->user_topic_;
+    }
+
+    return nullptr;
+}
+
 const TypeSupport DomainParticipantImpl::find_type(
         const std::string& type_name) const
 {

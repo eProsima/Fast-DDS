@@ -370,6 +370,29 @@ TEST(ParticipantTests, DeleteTopic)
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
 }
 
+TEST(ParticipantTests, LookupTopicDescription)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    const std::string topic_name("footopic");
+
+    // Topic not created yet. Should return nil
+    ASSERT_EQ(participant->lookup_topicdescription(topic_name), nullptr);
+
+    // After topic creation ...
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_, "footype");
+    Topic* topic = participant->create_topic(topic_name, "footype", TOPIC_QOS_DEFAULT);
+    EXPECT_NE(topic, nullptr);
+
+    // ... the topic should be returned.
+    ASSERT_EQ(participant->lookup_topicdescription(topic_name), topic);
+
+    // After topic deletion, should return nil
+    EXPECT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->lookup_topicdescription(topic_name), nullptr);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

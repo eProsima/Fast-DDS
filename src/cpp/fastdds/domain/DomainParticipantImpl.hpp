@@ -153,6 +153,19 @@ public:
             Topic* topic);
 
     /**
+     * Looks up an existing, locally created @ref TopicDescription, based on its name.
+     * May be called on a disabled participant.
+     *
+     * @param topic_name Name of the @ref TopicDescription to search for.
+     *
+     * @return Pointer to the topic description, if it has been created locally. Otherwhise, nullptr is returned.
+     *
+     * @remark UNSAFE. It is unsafe to lookup a topic description while another thread is creating a topic.
+     */
+    TopicDescription* lookup_topicdescription(
+            const std::string& topic_name) const;
+
+    /**
      * Register a type in this participant.
      * @param type The TypeSupport to register. A copy will be kept by the participant until removed.
      * @param type_name The name that will be used to identify the Type.

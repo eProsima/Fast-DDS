@@ -117,6 +117,12 @@ ReturnCode_t DomainParticipant::delete_topic(
     return impl_->delete_topic(topic);
 }
 
+TopicDescription* DomainParticipant::lookup_topicdescription(
+        const std::string& topic_name) const
+{
+    return impl_->lookup_topicdescription(topic_name);
+}
+
 bool DomainParticipant::register_type(
         TypeSupport type,
         const std::string& type_name)
