@@ -45,17 +45,16 @@ namespace dds {
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
         TypeSupport& type,
-        const TopicDescription* topic,
+        TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener)
     : subscriber_(s)
     , reader_(nullptr)
     , type_(type)
-    , topic_att_()
-    , att_()
+    , topic_(topic)
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
-    , history_(topic_att_,
+    , history_(topic_attributes(),
             type_.get(),
             qos_.get_readerqos(subscriber_->get_qos()),
             type_->m_typeSize + 3,    /* Possible alignment */
@@ -81,54 +80,36 @@ DataReaderImpl::DataReaderImpl(
                 },
                     qos_.lifespan().duration.to_ns() * 1e-6);
 
-    topic_att_.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    topic_att_.topicName = topic->get_name();
-    topic_att_.topicDataType = topic->get_type_name();
-    topic_att_.historyQos = qos.history();
-    topic_att_.resourceLimitsQos = qos.resource_limits();
-    if (type->type_object())
-    {
-        topic_att_.type = *type->type_object();
-    }
-    if (type->type_identifier())
-    {
-        topic_att_.type_id = *type->type_identifier();
-    }
-    if (type->type_information())
-    {
-        topic_att_.type_information = *type->type_information();
-    }
-    topic_att_.auto_fill_type_object = type->auto_fill_type_object();
-    topic_att_.auto_fill_type_information = type->auto_fill_type_information();
+    fastrtps::rtps::ReaderAttributes att;
 
-    att_.endpoint.durabilityKind = qos.durability().durabilityKind();
-    att_.endpoint.endpointKind = READER;
-    att_.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
-    att_.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    att_.endpoint.topicKind = topic_att_.topicKind;
-    att_.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
-    att_.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
-    att_.expectsInlineQos = qos.expects_inline_qos();
-    att_.endpoint.properties = qos.properties();
+    att.endpoint.durabilityKind = qos.durability().durabilityKind();
+    att.endpoint.endpointKind = READER;
+    att.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
+    att.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    att.endpoint.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    att.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
+    att.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
+    att.expectsInlineQos = qos.expects_inline_qos();
+    att.endpoint.properties = qos.properties();
 
     if (qos.endpoint().entity_id > 0)
     {
-        att_.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
+        att.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
     }
 
     if (qos.endpoint().user_defined_id > 0)
     {
-        att_.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
+        att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
     }
 
-    att_.times = qos.reliable_reader_qos().reader_times;
+    att.times = qos.reliable_reader_qos().reader_times;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
     property.value(topic->get_name().c_str());
-    att_.endpoint.properties.properties().push_back(std::move(property));
+    att.endpoint.properties.properties().push_back(std::move(property));
     if (s->get_qos().partition().names().size() > 0)
     {
         property.name("partitions");
@@ -138,16 +119,16 @@ DataReaderImpl::DataReaderImpl(
             partitions += partition + ";";
         }
         property.value(std::move(partitions));
-        att_.endpoint.properties.properties().push_back(std::move(property));
+        att.endpoint.properties.properties().push_back(std::move(property));
     }
     if (qos.reliable_reader_qos().disable_positive_ACKs.enabled)
     {
-        att_.disable_positive_acks = true;
+        att.disable_positive_acks = true;
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
-        att_,
+        att,
         static_cast<ReaderHistory*>(&history_),
         static_cast<ReaderListener*>(&reader_listener_));
 
@@ -175,7 +156,7 @@ DataReaderImpl::~DataReaderImpl()
 
     if (reader_ != nullptr)
     {
-        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_att_.topicName);
+        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_->get_name());
     }
 
     RTPSDomain::removeRTPSReader(reader_);
@@ -268,7 +249,7 @@ ReturnCode_t DataReaderImpl::set_qos(
 
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
     ReaderQos rqos = qos.get_readerqos(get_subscriber()->get_qos());
-    subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
+    subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
 
     // Deadline
     if (qos_.deadline().period != c_TimeInfinite)
@@ -300,92 +281,6 @@ ReturnCode_t DataReaderImpl::set_qos(
 const DataReaderQos& DataReaderImpl::get_qos() const
 {
     return qos_;
-}
-
-bool DataReaderImpl::set_topic(
-        const TopicAttributes& topic_att)
-{
-    //TOPIC ATTRIBUTES
-    if (topic_att_ != topic_att)
-    {
-        logWarning(RTPS_READER, "Topic Attributes cannot be updated");
-        return false;
-    }
-    //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    //subscriber_->update_reader(this, topic_att_, qos_);
-    //subscriber_->rtps_participant()->updateReader(reader_, topic_att_, qos_);
-    return true;
-}
-
-const TopicAttributes& DataReaderImpl::get_topic() const
-{
-    return topic_att_;
-}
-
-bool DataReaderImpl::set_attributes(
-        const fastrtps::rtps::ReaderAttributes& att)
-{
-    bool updated = true;
-    bool missing = false;
-    if (att.endpoint.unicastLocatorList.size() != att_.endpoint.unicastLocatorList.size() ||
-            att.endpoint.multicastLocatorList.size() != att_.endpoint.multicastLocatorList.size())
-    {
-        logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
-        updated &= false;
-    }
-    else
-    {
-        for (LocatorListConstIterator lit1 = att_.endpoint.unicastLocatorList.begin();
-                lit1 != att_.endpoint.unicastLocatorList.end(); ++lit1)
-        {
-            missing = true;
-            for (LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
-                    lit2 != att.endpoint.unicastLocatorList.end(); ++lit2)
-            {
-                if (*lit1 == *lit2)
-                {
-                    missing = false;
-                    break;
-                }
-            }
-            if (missing)
-            {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
-            }
-        }
-        for (LocatorListConstIterator lit1 = att_.endpoint.multicastLocatorList.begin();
-                lit1 != att_.endpoint.multicastLocatorList.end(); ++lit1)
-        {
-            missing = true;
-            for (LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
-                    lit2 != att.endpoint.multicastLocatorList.end(); ++lit2)
-            {
-                if (*lit1 == *lit2)
-                {
-                    missing = false;
-                    break;
-                }
-            }
-            if (missing)
-            {
-                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
-                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
-            }
-        }
-    }
-
-    if (updated)
-    {
-        att_.expectsInlineQos = att.expectsInlineQos;
-    }
-
-    return updated;
-}
-
-const ReaderAttributes& DataReaderImpl::get_attributes() const
-{
-    return att_;
 }
 
 void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
@@ -697,6 +592,11 @@ const Subscriber* DataReaderImpl::get_subscriber() const
    }
  */
 
+const TopicDescription* DataReaderImpl::topic() const
+{
+    return topic_;
+}
+
 TypeSupport DataReaderImpl::type()
 {
     return type_;
@@ -874,6 +774,33 @@ void DataReaderImpl::set_qos(
         to.reader_resource_limits() = from.reader_resource_limits();
     }
 }
+
+fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
+{
+    fastrtps::TopicAttributes topic_att;
+    topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    topic_att.topicName = topic_->get_name();
+    topic_att.topicDataType = topic_->get_type_name();
+    topic_att.historyQos = qos_.history();
+    topic_att.resourceLimitsQos = qos_.resource_limits();
+    if (type_->type_object())
+    {
+        topic_att.type = *type_->type_object();
+    }
+    if (type_->type_identifier())
+    {
+        topic_att.type_id = *type_->type_identifier();
+    }
+    if (type_->type_information())
+    {
+        topic_att.type_information = *type_->type_information();
+    }
+    topic_att.auto_fill_type_object = type_->auto_fill_type_object();
+    topic_att.auto_fill_type_information = type_->auto_fill_type_information();
+
+    return topic_att;
+}
+
 
 
 } /* namespace dds */

@@ -89,7 +89,7 @@ public:
             SubscriberListener* listener);
 
     DataReader* create_datareader(
-            const TopicDescription* topic,
+            TopicDescription* topic,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());

@@ -72,7 +72,7 @@ ReturnCode_t Subscriber::set_listener(
 }
 
 DataReader* Subscriber::create_datareader(
-        const TopicDescription* topic,
+        TopicDescription* topic,
         const DataReaderQos& reader_qos,
         DataReaderListener* listener,
         const StatusMask& mask)

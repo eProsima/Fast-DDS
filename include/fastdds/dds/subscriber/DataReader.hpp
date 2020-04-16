@@ -85,7 +85,7 @@ class RTPS_DllAPI DataReader : public DomainEntity
 
     DataReader(
             Subscriber* s,
-            const TopicDescription* topic,
+            TopicDescription* topic,
             const DataReaderQos& qos,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
@@ -154,16 +154,17 @@ public:
     TypeSupport type();
 
     /**
+     * Get TopicDescription
+     * @return TopicDescription
+     */
+    const TopicDescription* topic() const;
+
+    /**
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
     ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
-
-    bool set_attributes(
-            const fastrtps::rtps::ReaderAttributes& att);
-
-    const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
             const DataReaderQos& qos);
@@ -172,11 +173,6 @@ public:
 
     ReturnCode_t get_qos(
             DataReaderQos& qos) const;
-
-    bool set_topic(
-            const fastrtps::TopicAttributes& att);
-
-    const fastrtps::TopicAttributes& get_topic() const;
 
     ReturnCode_t set_listener(
             DataReaderListener* listener);

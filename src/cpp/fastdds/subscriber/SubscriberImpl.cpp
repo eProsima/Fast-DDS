@@ -129,7 +129,7 @@ ReturnCode_t SubscriberImpl::set_listener(
 }
 
 DataReader* SubscriberImpl::create_datareader(
-        const TopicDescription* topic,
+        TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const StatusMask& mask)
@@ -169,7 +169,7 @@ DataReader* SubscriberImpl::create_datareader(
     impl->user_datareader_ = reader;
 
     ReaderQos rqos = qos.get_readerqos(qos_);
-    rtps_participant_->registerReader(impl->reader_, impl->get_topic(), rqos);
+    rtps_participant_->registerReader(impl->reader_, impl->topic_attributes(), rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
@@ -187,7 +187,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    auto it = readers_.find(reader->get_topic().getTopicName().to_string());
+    auto it = readers_.find(reader->impl_->topic()->get_name());
     if (it != readers_.end())
     {
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
@@ -426,7 +426,7 @@ bool SubscriberImpl::type_in_use(
     {
         for (DataReaderImpl* reader : it.second)
         {
-            if (reader->get_topic().getTopicDataType() == type_name)
+            if (reader->topic_attributes().getTopicDataType() == type_name)
             {
                 return true; // Is in use
             }

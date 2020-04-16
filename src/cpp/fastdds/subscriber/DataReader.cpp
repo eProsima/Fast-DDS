@@ -40,7 +40,7 @@ DataReader::DataReader(
 
 DataReader::DataReader(
         Subscriber* s,
-        const TopicDescription* topic,
+        TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const StatusMask& mask)
@@ -95,12 +95,6 @@ ReturnCode_t DataReader::set_qos(
     return impl_->set_qos(qos);
 }
 
-bool DataReader::set_topic(
-        const TopicAttributes& topic_att)
-{
-    return impl_->set_topic(topic_att);
-}
-
 const DataReaderQos& DataReader::get_qos() const
 {
     return impl_->get_qos();
@@ -111,22 +105,6 @@ ReturnCode_t DataReader::get_qos(
 {
     qos = impl_->get_qos();
     return ReturnCode_t::RETCODE_OK;
-}
-
-const TopicAttributes& DataReader::get_topic() const
-{
-    return impl_->get_topic();
-}
-
-bool DataReader::set_attributes(
-        const fastrtps::rtps::ReaderAttributes& att)
-{
-    return impl_->set_attributes(att);
-}
-
-const ReaderAttributes& DataReader::get_attributes() const
-{
-    return impl_->get_attributes();
 }
 
 ReturnCode_t DataReader::get_requested_deadline_missed_status(
@@ -219,6 +197,12 @@ const Subscriber* DataReader::get_subscriber() const
 TypeSupport DataReader::type()
 {
     return impl_->type();
+}
+
+
+const TopicDescription* DataReader::topic() const
+{
+    return impl_->topic();
 }
 
 } /* namespace dds */

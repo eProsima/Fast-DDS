@@ -127,7 +127,7 @@ public:
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     RTPS_DllAPI DataReader* create_datareader(
-            const TopicDescription* topic,
+            TopicDescription* topic,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
