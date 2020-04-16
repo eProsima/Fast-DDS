@@ -54,11 +54,6 @@ bool HelloWorldPublisher::init()
     type_.register_type(participant_, type_->getName());
 
     //CREATE THE PUBLISHER
-    eprosima::fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicDataType = "HelloWorld";
-    topic_attr.topicName = "HelloWorldTopic";
-    DataWriterQos qos;
-    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (publisher_ == nullptr)
@@ -66,14 +61,20 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
+    topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+
+    if (topic_ == nullptr)
+    {
+        return false;
+    }
+
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_attr, qos, &listener_);
+    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
 
     if (writer_ == nullptr)
     {
         return false;
     }
-
     return true;
 }
 

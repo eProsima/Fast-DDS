@@ -1279,6 +1279,7 @@ TEST_F(xtypestests, DISABLED_TypeInformationNamesIgnored)
 TEST_F(xtypestests, TypeIdentifier_TypeObject)
 {
     TypeSupport type(new BasicStructPubSubType());
+    TypeSupport type1(new BasicStructPubSubType());
     const TypeObject* type_obj = GetMinimalBasicStructObject();
     const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
     TestPublisher pub;
@@ -1291,7 +1292,7 @@ TEST_F(xtypestests, TypeIdentifier_TypeObject)
     pub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, type, type_obj, nullptr, nullptr, "Sub1", nullptr,
+    sub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, type1, type_obj, nullptr, nullptr, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1303,6 +1304,7 @@ TEST_F(xtypestests, TypeIdentifier_TypeObject)
 TEST_F(xtypestests, TypeIdentifier_TypeInformation)
 {
     TypeSupport type(new BasicStructPubSubType());
+    TypeSupport type1(new BasicStructPubSubType());
     const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
     TestPublisher pub;
     TestSubscriber sub;
@@ -1315,7 +1317,7 @@ TEST_F(xtypestests, TypeIdentifier_TypeInformation)
     pub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Sub1", nullptr,
+    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type1, nullptr, nullptr, type_info, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1327,6 +1329,7 @@ TEST_F(xtypestests, TypeIdentifier_TypeInformation)
 TEST_F(xtypestests, TypeObject_TypeInformation)
 {
     TypeSupport type(new BasicStructPubSubType());
+    TypeSupport type1(new BasicStructPubSubType());
     const TypeObject* type_obj = GetMinimalBasicStructObject();
     TestPublisher pub;
     TestSubscriber sub;
@@ -1339,7 +1342,7 @@ TEST_F(xtypestests, TypeObject_TypeInformation)
     pub.init("TypeObject_TypeInformation", DOMAIN_ID_, type, type_obj, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Sub1", nullptr,
+    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, type1, nullptr, nullptr, type_info, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
