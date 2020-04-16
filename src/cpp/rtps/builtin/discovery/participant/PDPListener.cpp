@@ -99,7 +99,7 @@ void PDPListener::onNewCacheChangeAdded(
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
-        if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory(), 
+        if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory(),
             parent_pdp_->getRTPSParticipant()->has_shm_transport()))
         {
             // After correctly reading it
@@ -129,9 +129,19 @@ void PDPListener::onNewCacheChangeAdded(
                     reader->getMutex().unlock();
                     lock.unlock();
 
-                    logInfo(RTPS_PDP_DISCOVERY, "New participant " << pdata->m_guid << " at " << "MTTLoc: " << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
+                    logInfo(RTPS_PDP_DISCOVERY, "New participant " << pdata->m_guid << " at " << "MTTLoc: "
+                            << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
 
-                    parent_pdp_->announceParticipantState(false);
+                    // Assigning remote endpoints implies sending a DATA(p) to all matched and fixed readers, since
+                    // StatelessWriter::matched_reader_add marks the entire history as unsent if the added reader's
+                    // durability is bigger or equal to TRANSIENT_LOCAL_DURABILITY_QOS (TRANSIENT_LOCAL or TRANSIENT),
+                    // which is the case of ENTITYID_BUILTIN_SDP_PARTICIPANT_READER (TRANSIENT_LOCAL). If a remote
+                    // participant is discovered before creating the first DATA(p) change (which happens at the end of
+                    // BuiltinProtocols::initBuiltinProtocols), then StatelessWriter::matched_reader_add ends up marking
+                    // no changes as unsent (since the history is empty), which is OK because this can only happen if a
+                    // participant is discovered in the middle of BuiltinProtocols::initBuiltinProtocols, which will
+                    // create the first DATA(p) upon finishing, thus triggering the sent to all fixed and matched
+                    // readers anyways.
                     parent_pdp_->assignRemoteEndpoints(pdata);
                 }
             }
@@ -142,7 +152,8 @@ void PDPListener::onNewCacheChangeAdded(
                 reader->getMutex().unlock();
                 lock.unlock();
 
-                logInfo(RTPS_PDP_DISCOVERY, "Update participant " << pdata->m_guid << " at " << "MTTLoc: " << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
+                logInfo(RTPS_PDP_DISCOVERY, "Update participant " << pdata->m_guid << " at " << "MTTLoc: "
+                        << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
 
                 if (parent_pdp_->updateInfoMatchesEDP())
                 {
@@ -175,7 +186,8 @@ void PDPListener::onNewCacheChangeAdded(
         if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
             reader->getMutex().lock();
-            return; // all changes related with this participant have been removed from history by remove_remote_participant
+            // All changes related with this participant have been removed from history by remove_remote_participant
+            return;
         }
         reader->getMutex().lock();
     }
