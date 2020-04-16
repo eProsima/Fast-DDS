@@ -36,6 +36,7 @@ Publisher::Publisher(
             dp.default_publisher_qos(),
             nullptr,
             dds::core::status::StatusMask::all()))
+    , participant_(&dp)
 {
 }
 
@@ -47,6 +48,7 @@ Publisher::Publisher(
     : ::dds::core::Reference<detail::Publisher>(
         new detail::Publisher(
             dp.delegate().get(), qos, listener, mask))
+    , participant_(&dp)
 {
 }
 
@@ -130,14 +132,10 @@ qos::DataWriterQos Publisher::default_datawriter_qos() const
 //    delegate()->wait_for_acknowledgments(max_wait);
 //}
 
-//const dds::domain::DomainParticipant& Publisher::participant() const
-//{
-//    eprosima::fastdds::dds::DomainParticipant p = delegate()->get_participant();
-//    std::shared_ptr<eprosima::fastdds::dds::DomainParticipant> ptr(&p);
-//    participant_->delegate().swap(ptr);
-
-//    return *participant_;
-//}
+const dds::domain::DomainParticipant& Publisher::participant() const
+{
+    return *participant_;
+}
 
 } //namespace pub
 } //namespace dds

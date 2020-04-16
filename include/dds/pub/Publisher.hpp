@@ -321,7 +321,7 @@ public:
      */
     OMG_DDS_API const dds::domain::DomainParticipant& participant() const;
 
-    dds::domain::DomainParticipant* participant_;
+    const dds::domain::DomainParticipant* participant_;
 
 };
 

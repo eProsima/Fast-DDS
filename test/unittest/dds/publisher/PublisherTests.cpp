@@ -30,6 +30,24 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+
+TEST(PublisherTests, GetPublisherParticipant)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+
+    ASSERT_EQ(publisher->get_participant(), participant);
+}
+
+TEST(PublisherTests, GetPSMPublisherParticipant)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant, PUBLISHER_QOS_DEFAULT);
+
+    ASSERT_EQ(publisher.participant().delegate().get(), participant.delegate().get());
+
+}
+
 TEST(PublisherTests, ChangeDefaultDataWriterQos)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
