@@ -110,7 +110,6 @@ TopicDescriptionImpl* Topic::get_impl() const
     return impl_;
 }
 
-
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

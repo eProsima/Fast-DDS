@@ -28,7 +28,6 @@ namespace dds {
 class DomainParticipant;
 class TopicDescriptionImpl;
 
-
 /**
  * Class TopicDescription, represents the fact that both publications
  * and subscriptions are tied to a single data-type

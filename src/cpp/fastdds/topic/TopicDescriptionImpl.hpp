@@ -33,7 +33,7 @@ class TopicDescriptionImpl
 public:
 
     TopicDescriptionImpl()
-    : num_refs_(0u)
+        : num_refs_(0u)
     {
     }
 
