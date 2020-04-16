@@ -470,6 +470,30 @@ TEST(ParticipantTests, LookupTopicDescription)
     ASSERT_EQ(participant->lookup_topicdescription(topic_name), nullptr);
 }
 
+TEST(ParticipantTests, DeleteTopicInUse)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_, "footype");
+
+    Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

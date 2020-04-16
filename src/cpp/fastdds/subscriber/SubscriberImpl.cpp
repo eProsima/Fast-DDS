@@ -19,6 +19,7 @@
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -151,6 +152,8 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
+    topic->get_impl()->reference();
+
     DataReaderImpl* impl = new DataReaderImpl(
         this,
         type_support,
@@ -162,6 +165,7 @@ DataReader* SubscriberImpl::create_datareader(
     {
         logError(SUBSCRIBER, "Problem creating associated Reader");
         delete impl;
+        topic->get_impl()->dereference();
         return nullptr;
     }
 
@@ -194,6 +198,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         if (dr_it != it->second.end())
         {
             (*dr_it)->set_listener(nullptr);
+            (*dr_it)->topic()->get_impl()->dereference();
             delete (*dr_it);
             it->second.erase(dr_it);
             if (it->second.empty())
