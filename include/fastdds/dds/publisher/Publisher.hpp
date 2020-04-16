@@ -26,6 +26,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -50,7 +51,7 @@ class PublisherListener;
 class PublisherImpl;
 class DataWriter;
 class DataWriterListener;
-class DataWriterQos;
+class Topic;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -121,9 +122,10 @@ public:
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
-            const DataWriterQos& qos,
-            DataWriterListener* listener);
+            Topic* topic,
+            const DataWriterQos& qos = DATAWRITER_QOS_DEFAULT,
+            DataWriterListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * This operation deletes a DataWriter that belongs to the Publisher.

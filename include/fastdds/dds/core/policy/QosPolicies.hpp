@@ -1657,6 +1657,14 @@ public:
     }
 
     RTPS_DllAPI TypeIdV1(
+            const fastrtps::types::TypeIdentifier& type)
+        : Parameter_t(PID_TYPE_IDV1, 0)
+        , QosPolicy(false)
+        , m_type_identifier(type)
+    {
+    }
+
+    RTPS_DllAPI TypeIdV1(
             const TypeIdV1& type)
         : Parameter_t(type.Pid, type.length)
         , QosPolicy(type.send_always_)
@@ -1738,6 +1746,14 @@ public:
         : Parameter_t(PID_TYPE_OBJECTV1, 0)
         , QosPolicy(false)
         , m_type_object()
+    {
+    }
+
+    RTPS_DllAPI TypeObjectV1(
+            const fastrtps::types::TypeObject& type)
+        : Parameter_t(PID_TYPE_OBJECTV1, 0)
+        , QosPolicy(false)
+        , m_type_object(type)
     {
     }
 
@@ -1826,6 +1842,15 @@ public:
         , QosPolicy(false)
         , type_information()
         , assigned_(false)
+    {
+    }
+
+    RTPS_DllAPI TypeInformation(
+            const fastrtps::types::TypeInformation& type)
+        : Parameter_t(PID_TYPE_INFORMATION, 0)
+        , QosPolicy(false)
+        , type_information(type)
+        , assigned_(true)
     {
     }
 

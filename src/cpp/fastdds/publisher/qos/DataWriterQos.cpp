@@ -30,7 +30,8 @@ DataWriterQos::DataWriterQos()
 }
 
 WriterQos DataWriterQos::get_writerqos(
-        const PublisherQos& pqos) const
+        const PublisherQos& pqos,
+        const TopicQos& tqos) const
 {
     WriterQos qos;
     qos.m_deadline = deadline();
@@ -48,7 +49,7 @@ WriterQos DataWriterQos::get_writerqos(
     qos.m_presentation = pqos.presentation();
     qos.m_publishMode = publish_mode();
     qos.m_reliability = reliability();
-    //qos.m_topicData --> TODO: Fill with TopicQos info
+    qos.m_topicData = tqos.topic_data();
     qos.m_userData = user_data();
     qos.representation = representation();
     return qos;

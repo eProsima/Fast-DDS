@@ -28,8 +28,8 @@
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/publisher/PublisherHistory.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/dds/publisher/DataWriterHistory.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
@@ -74,8 +74,7 @@ class DataWriterImpl
     DataWriterImpl(
             PublisherImpl* p,
             TypeSupport type,
-            const fastrtps::TopicAttributes& topic_att,
-            const fastrtps::rtps::WriterAttributes& att,
+            Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr);
 
@@ -144,20 +143,12 @@ public:
     ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
 
-    bool set_attributes(
-            const fastrtps::rtps::WriterAttributes& att);
-
-    const fastrtps::rtps::WriterAttributes& get_attributes() const;
-
     ReturnCode_t set_qos(
             const DataWriterQos& qos);
 
     const DataWriterQos& get_qos() const;
 
-    bool set_topic(
-            const fastrtps::TopicAttributes& att);
-
-    const fastrtps::TopicAttributes& get_topic() const;
+    Topic* get_topic() const;
 
     const DataWriterListener* get_listener() const;
 
@@ -207,14 +198,12 @@ private:
     //! Pointer to the TopicDataType object.
     TypeSupport type_;
 
-    fastrtps::TopicAttributes topic_att_;
-
-    fastrtps::rtps::WriterAttributes w_att_;
+    Topic* topic_;
 
     DataWriterQos qos_;
 
     //!Publisher History
-    fastrtps::PublisherHistory history_;
+    DataWriterHistory history_;
 
     //! DataWriterListener
     DataWriterListener* listener_;
@@ -345,6 +334,11 @@ public:
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const fastrtps::rtps::InstanceHandle_t& handle);
+
+    static fastrtps::TopicAttributes get_topic_attributes(
+            const DataWriterQos& qos,
+            const Topic& topic,
+            const TypeSupport& type);
 
     static void set_qos(
             DataWriterQos& to,

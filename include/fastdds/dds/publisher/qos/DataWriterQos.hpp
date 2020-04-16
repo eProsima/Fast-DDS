@@ -26,6 +26,7 @@
 #include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 
 namespace eprosima {
@@ -99,7 +100,8 @@ public:
     }
 
     RTPS_DllAPI WriterQos get_writerqos(
-            const PublisherQos& pqos) const;
+            const PublisherQos& pqos,
+            const TopicQos& tqos) const;
 
     /**
      * Getter for DurabilityQosPolicy

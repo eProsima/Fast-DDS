@@ -22,6 +22,7 @@
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -33,11 +34,17 @@ class Publisher;
  * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI PublisherListener
+class RTPS_DllAPI PublisherListener : public DataWriterListener
 {
 public:
-    PublisherListener(){}
-    virtual ~PublisherListener(){}
+
+    PublisherListener()
+    {
+    }
+
+    virtual ~PublisherListener()
+    {
+    }
 
     /**
      * This method is called when the Publisher is matched (or unmatched) against an endpoint.
@@ -77,6 +84,7 @@ public:
         (void)pub;
         (void)status;
     }
+
 };
 
 } /* namespace dds */
