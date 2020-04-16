@@ -105,6 +105,12 @@ ReturnCode_t Topic::get_inconsistent_topic_status(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+TopicDescriptionImpl* Topic::get_impl() const
+{
+    return impl_;
+}
+
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
