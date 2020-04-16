@@ -73,26 +73,39 @@ public:
     struct BufferDescriptor
     {
         SharedMemSegment::Id source_segment_id;
-        SharedMemSegment::offset buffer_node_offset;
+        SharedMemSegment::Offset buffer_node_offset;
     };
 
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell PortCell;
 
+    static const uint32_t CURRENT_ABI_VERSION = 2;
+
     struct PortNode
     {
-        UUID<8> uuid;
+        alignas(8) std::atomic<std::chrono::high_resolution_clock::rep> last_listeners_status_check_time_ms;
+        alignas(8) std::atomic<uint32_t> ref_counter;
+        
+        SharedMemSegment::Offset buffer;
+        SharedMemSegment::Offset buffer_node;
+
         uint32_t port_id;
+        uint32_t num_listeners;        
+        uint32_t healthy_check_timeout_ms;
+        uint32_t port_wait_timeout_ms;
+        uint32_t max_buffer_descriptors;
+        uint32_t waiting_count;
+
+        uint32_t is_port_ok : 1;
+        uint32_t is_opened_read_exclusive : 1;
+        uint32_t is_opened_for_reading : 1;
+        uint32_t pad : 29;
+
+        UUID<8> uuid;
 
         SharedMemSegment::condition_variable empty_cv;
         SharedMemSegment::mutex empty_cv_mutex;
-
-        SharedMemSegment::offset buffer;
-        SharedMemSegment::offset buffer_node;
-        std::atomic<uint32_t> ref_counter;
-
-        uint32_t waiting_count;
-
+                
         static constexpr size_t LISTENERS_STATUS_SIZE = 1024;
         struct ListenerStatus
         {
@@ -102,17 +115,8 @@ public:
             uint8_t pad                     : 1;
         };
         ListenerStatus listeners_status[LISTENERS_STATUS_SIZE];
-        uint32_t num_listeners;
-        std::atomic<std::chrono::high_resolution_clock::rep> last_listeners_status_check_time_ms;
-        uint32_t healthy_check_timeout_ms;
-        uint32_t port_wait_timeout_ms;
-        uint32_t max_buffer_descriptors;
-
-        bool is_port_ok;
-        bool is_opened_read_exclusive;
-        bool is_opened_for_reading;
-
-        char domain_name[MAX_DOMAIN_NAME_LENGTH+1];
+                        
+        char domain_name[MAX_DOMAIN_NAME_LENGTH+1];        
     };
 
     /**
@@ -734,7 +738,7 @@ public:
             uint32_t max_buffer_descriptors,
             uint32_t healthy_check_timeout_ms,
             Port::OpenMode open_mode = Port::OpenMode::ReadShared)
-    {
+    {        
         std::string err_reason;
         std::shared_ptr<Port> port;
 
@@ -758,8 +762,18 @@ public:
 
             try
             {
-                port_node = port_segment->get().find<PortNode>("port_node").first;
-                port = std::make_shared<Port>(std::move(port_segment), port_node);
+                port_node = port_segment->get().find<PortNode>(
+                    ("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str()).first;
+
+                if(port_node)
+                {
+                    port = std::make_shared<Port>(std::move(port_segment), port_node);
+                }
+                else
+                {
+                    throw std::runtime_error("port_abi not compatible");
+                }
+                
             }
             catch (std::exception&)
             {
@@ -869,7 +883,7 @@ private:
         try
         {
             // Port node allocation
-            port_node = segment->get().construct<PortNode>("port_node")();
+            port_node = segment->get().construct<PortNode>(("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str())();
             port_node->port_id = port_id;
             port_node->is_port_ok = true;
             UUID<8>::generate(port_node->uuid);
@@ -885,10 +899,10 @@ private:
             port_node->max_buffer_descriptors = max_buffer_descriptors;
             memset(port_node->listeners_status, 0, sizeof(port_node->listeners_status));
 #ifdef _MSC_VER
-            strncpy_s(port_node->domain_name, sizeof(port_node->domain_name), 
-                domain_name_.c_str(), sizeof(port_node->domain_name)-1); 
+            strncpy_s(port_node->domain_name, sizeof(port_node->domain_name),
+                domain_name_.c_str(), sizeof(port_node->domain_name)-1);
 #else
-            strncpy(port_node->domain_name, domain_name_.c_str(), sizeof(port_node->domain_name)-1); 
+            strncpy(port_node->domain_name, domain_name_.c_str(), sizeof(port_node->domain_name)-1);
 #endif
             port_node->domain_name[sizeof(port_node->domain_name)-1] = 0;
 

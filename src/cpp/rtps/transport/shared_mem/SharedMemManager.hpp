@@ -130,7 +130,7 @@ public:
             return buffer_node_->header.data_size;
         }
 
-        SharedMemSegment::offset node_offset()
+        SharedMemSegment::Offset node_offset()
         {
             return segment_->get_offset_from_address(buffer_node_);
         }
