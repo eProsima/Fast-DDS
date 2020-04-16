@@ -75,6 +75,63 @@ public:
     SharedMemTransportDescriptor descriptor;
 };
 
+class SHMCondition : public ::testing::Test
+{
+public:
+
+    SHMCondition()
+    {
+        eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
+    }
+
+    ~SHMCondition()
+    {
+        eprosima::fastdds::dds::Log::Flush();
+        eprosima::fastdds::dds::Log::KillThread();
+    }
+
+    static constexpr uint32_t TEST_MAX_NOTIFICATIONS = 3;
+
+    void wait_test(int id, 
+        SharedMemSegment::mutex& mutex,
+        SharedMemSegment::condition_variable& cv,
+        bool* condition,
+        std::atomic<uint32_t>& notifications_counter,
+        boost::posix_time::milliseconds time_out)
+    {
+        std::thread thread_wait([&] 
+            {
+                std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+
+                while(notifications_counter.load() < TEST_MAX_NOTIFICATIONS)
+                {                                   
+                    boost::system_time const timeout =
+                        boost::get_system_time()+ time_out;
+
+                    std::cout << "P" << id << " waiting..." << std::endl;
+
+                    if(cv.timed_wait(lock, timeout, [&] { return *condition; }))
+                    {
+                        notifications_counter.fetch_add(1);
+                        *condition = false;
+
+                        std::cout << "P" << id << " " << notifications_counter.load()
+                            << " notifications received." << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "P" << id << " wait timeout!" << std::endl;
+                    }
+                } 
+            });
+        
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        thread_wait.join();
+    }
+};
+
+
 class SHMRingBuffer : public ::testing::Test
 {
 protected:
@@ -392,7 +449,7 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
     }
 }
 
-TEST_F(SHMTransportTests, robust_condition_wait_notify)
+TEST_F(SHMCondition, wait_notify)
 {
     SharedMemSegment::condition_variable cv;
     SharedMemSegment::mutex mutex;  
@@ -418,6 +475,95 @@ TEST_F(SHMTransportTests, robust_condition_wait_notify)
 
     thread_wait.join();
 }
+
+// POSIX glibc 2.25 conditions are not robust when used with interprocess shared memory:
+// https://sourceware.org/bugzilla/show_bug.cgi?id=21422
+// FastRTPS > v1.10.0 SHM has implemented robust conditions to solve issue #1144
+// This is the correspoding regresion test
+#ifndef _MSC_VER
+TEST_F(SHMCondition, robust_condition_fix_glibc_deadlock)
+{
+    struct SharedSegment
+    {
+        std::atomic<uint32_t> notify_count[2];
+        SharedMemSegment::mutex mutex;
+        SharedMemSegment::condition_variable cv;
+        bool condition;                
+    };
+
+    auto p1 = fork();
+    if(p1 == 0)
+    {
+        auto p2 = fork();
+        if(p2 == 0)
+        {
+            printf("p2 go!\n");
+            //P2
+            boost::interprocess::shared_memory_object::remove("robust_condition_fix_test");
+            boost::interprocess::managed_shared_memory shm(boost::interprocess::create_only, 
+                "robust_condition_fix_test", 1024 + sizeof(SharedSegment));
+
+            auto shared_segment = shm.construct<SharedSegment>("shared_segment")();
+            shared_segment->notify_count[0].exchange(0);
+            shared_segment->notify_count[1].exchange(0);
+    
+            wait_test(2, shared_segment->mutex, 
+                shared_segment->cv, 
+                &shared_segment->condition, 
+                shared_segment->notify_count[1],
+                boost::posix_time::milliseconds(60*1000));
+        }
+        else //P1
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            printf("p1 go!\n");            
+
+            // Kill p2
+            ASSERT_EQ(0, system((std::string("kill -9 ") + std::to_string(p2)).c_str()));
+            printf("p2 killed!\n");            
+
+            boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only, 
+                "robust_condition_fix_test");
+
+            auto shared_segment = shm.find<SharedSegment>("shared_segment").first;
+
+            // P2 died without notifications
+            ASSERT_EQ(shared_segment->notify_count[1].load(), 0u);
+    
+            wait_test(1, shared_segment->mutex, 
+                shared_segment->cv, 
+                &shared_segment->condition, 
+                shared_segment->notify_count[0],
+                boost::posix_time::milliseconds(500));
+        }            
+    }
+    else // P0
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        printf("p0 go!\n");
+
+        boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only, 
+                "robust_condition_fix_test");
+
+        auto shared_segment = shm.find<SharedSegment>("shared_segment").first;
+
+        for(uint32_t i=0;i<TEST_MAX_NOTIFICATIONS;i++)
+        {
+            {
+                std::unique_lock<boost::interprocess::interprocess_mutex> lock(shared_segment->mutex);
+                shared_segment->condition = true;            
+            }        
+            shared_segment->cv.notify_all();        
+
+            // Wait until P1 receives the last notification
+            while(shared_segment->notify_count[0].load() < i+1)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }                
+    }    
+}
+#endif
 
 TEST_F(SHMTransportTests, opening_and_closing_input_channel)
 {
