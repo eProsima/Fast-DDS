@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 
 
 namespace eprosima {
@@ -34,6 +35,17 @@ DataReader::DataReader(
         const StatusMask& mask)
     : DomainEntity(mask)
     , impl_(impl)
+{
+}
+
+DataReader::DataReader(
+        Subscriber* s,
+        const TopicDescription* topic,
+        const DataReaderQos& qos,
+        DataReaderListener* listener,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(s->create_datareader(topic, qos, listener, mask)->impl_)
 {
 }
 

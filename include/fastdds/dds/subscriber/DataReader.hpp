@@ -32,6 +32,14 @@
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
+namespace dds {
+namespace sub {
+
+class DataReader;
+
+} // namespace sub
+} // namespace dds
+
 namespace eprosima {
 namespace fastrtps {
 
@@ -56,6 +64,7 @@ class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
 class DataReaderQos;
+class TopicDescription;
 struct LivelinessChangedStatus;
 
 /**
@@ -64,6 +73,7 @@ struct LivelinessChangedStatus;
  */
 class RTPS_DllAPI DataReader : public DomainEntity
 {
+    friend class DataReaderImpl;
     friend class SubscriberImpl;
 
     /**
@@ -71,6 +81,13 @@ class RTPS_DllAPI DataReader : public DomainEntity
      */
     DataReader(
             DataReaderImpl* impl,
+            const StatusMask& mask = StatusMask::all());
+
+    DataReader(
+            Subscriber* s,
+            const TopicDescription* topic,
+            const DataReaderQos& qos,
+            DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
 public:
@@ -200,6 +217,9 @@ public:
 private:
 
     DataReaderImpl* impl_;
+
+    friend class ::dds::sub::DataReader;
+
 };
 
 } /* namespace dds */
