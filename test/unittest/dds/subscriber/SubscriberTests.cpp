@@ -23,7 +23,9 @@
 #include <dds/core/types.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <dds/sub/Subscriber.hpp>
+#include <dds/sub/DataReader.hpp>
 #include <dds/sub/qos/DataReaderQos.hpp>
+#include <dds/topic/Topic.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -200,6 +202,31 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
+
+
+TEST(SubscriberTests, CreatePSMDataReader)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ::dds::sub::Subscriber subscriber = ::dds::core::null;
+    subscriber = ::dds::sub::Subscriber(participant);
+
+    ASSERT_NE(subscriber, ::dds::core::null);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_, type_->getName());
+
+    ::dds::topic::Topic topic = ::dds::core::null;
+    topic = ::dds::topic::Topic(participant, "footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+
+    ASSERT_NE(topic, ::dds::core::null);
+
+    ::dds::sub::DataReader data_reader = ::dds::core::null;
+    data_reader = ::dds::sub::DataReader(subscriber, topic);
+
+    ASSERT_NE(data_reader, ::dds::core::null);
+}
+
 
 
 } // namespace dds
