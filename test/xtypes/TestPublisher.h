@@ -26,6 +26,7 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <condition_variable>
@@ -93,6 +94,13 @@ public:
 
     eprosima::fastdds::dds::DomainParticipant* participant();
 
+    eprosima::fastdds::dds::DataWriter* create_datawriter();
+
+    void delete_datawriter(
+            eprosima::fastdds::dds::DataWriter* writer);
+
+    bool register_discovered_type();
+
 private:
 
     std::string m_Name;
@@ -130,6 +138,10 @@ private:
     eprosima::fastdds::dds::DataWriter* writer_;
 
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
+
+    eprosima::fastrtps::TopicAttributes topic_att;
+
+    eprosima::fastdds::dds::DataWriterQos writer_qos;
 
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {

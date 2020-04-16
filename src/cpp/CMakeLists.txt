@@ -155,8 +155,6 @@ set(${PROJECT_NAME}_source_files
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
     fastdds/core/policy/ParameterList.cpp
-    fastdds/core/policy/ParameterTypes.cpp
-    fastdds/core/policy/QosPolicies.cpp
     fastdds/publisher/qos/WriterQos.cpp
     fastdds/subscriber/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp

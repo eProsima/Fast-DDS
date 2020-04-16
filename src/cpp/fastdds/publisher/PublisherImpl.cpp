@@ -94,16 +94,28 @@ const PublisherQos& PublisherImpl::get_qos() const
 ReturnCode_t PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
-    if (!qos.check_qos())
+    if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
-        if (!qos_.can_qos_be_updated(qos))
+        const PublisherQos& default_qos = participant_->get_default_publisher_qos();
+        if (!can_qos_be_updated(qos_, default_qos))
         {
             return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
         }
-        qos_.set_qos(qos, false);
+        set_qos(qos_, default_qos, false);
         return ReturnCode_t::RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+
+    ReturnCode_t ret_val = check_qos(qos);
+    if (!ret_val)
+    {
+        return ret_val;
+    }
+    if (!can_qos_be_updated(qos_, qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    set_qos(qos_, qos, false);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const PublisherListener* PublisherImpl::get_listener() const
@@ -275,7 +287,12 @@ ReturnCode_t PublisherImpl::delete_datawriter(
         if (dw_it != vit->second.end())
         {
             (*dw_it)->set_listener(nullptr);
+            delete (*dw_it);
             vit->second.erase(dw_it);
+            if (vit->second.empty())
+            {
+                writers_.erase(vit);
+            }
             return ReturnCode_t::RETCODE_OK;
         }
     }
@@ -464,6 +481,48 @@ bool PublisherImpl::type_in_use(
         }
     }
     return false;
+}
+
+void PublisherImpl::set_qos(
+        PublisherQos& to,
+        const PublisherQos& from,
+        bool first_time)
+{
+    if (first_time && !(to.presentation() == from.presentation()))
+    {
+        to.presentation(from.presentation());
+        to.presentation().hasChanged = true;
+    }
+    if (!(to.partition() == from.partition()))
+    {
+        to.partition() = from.partition();
+        to.partition().hasChanged = true;
+    }
+    if (!(to.group_data() == from.group_data()))
+    {
+        to.group_data() = from.group_data();
+        to.group_data().hasChanged = true;
+    }
+    if (!(to.entity_factory() == from.entity_factory()))
+    {
+        to.entity_factory() = from.entity_factory();
+    }
+}
+
+ReturnCode_t PublisherImpl::check_qos(
+        const PublisherQos& qos)
+{
+    (void) qos;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+bool PublisherImpl::can_qos_be_updated(
+        const PublisherQos& to,
+        const PublisherQos& from)
+{
+    (void) to;
+    (void) from;
+    return true;
 }
 
 } // dds

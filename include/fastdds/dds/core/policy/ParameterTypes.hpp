@@ -23,6 +23,7 @@
 
 #include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 
@@ -159,29 +160,6 @@ public:
                (this->length == b.length);
     }
 
-    virtual uint32_t cdr_serialized_size() const
-    {
-        return 4 + length;
-    }
-
-    /**
-     * Virtual method used to add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    RTPS_DllAPI virtual bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const = 0;
-
-    /**
-     * Virtual method used to get the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    RTPS_DllAPI virtual bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) = 0;
-
 public:
 
     //!Parameter ID
@@ -224,24 +202,6 @@ public:
     {
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 #define PARAMETER_KEY_HASH_LENGTH 16
@@ -280,24 +240,6 @@ public:
     {
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
@@ -334,13 +276,6 @@ public:
     {
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
     inline const char* getName() const
     {
         return string_.c_str();
@@ -352,25 +287,10 @@ public:
         string_ = name;
     }
 
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
-
-    virtual uint32_t cdr_serialized_size() const override
+    inline size_t size() const
     {
-        return cdr_serialized_size(string_);
+        return string_.size();
     }
-
-    static uint32_t cdr_serialized_size(
-            const fastrtps::string_255& str);
-
 
 private:
 
@@ -411,24 +331,6 @@ public:
         , port(po)
     {
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -486,24 +388,6 @@ public:
         }
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 #define PARAMETER_GUID_LENGTH 16
@@ -533,24 +417,6 @@ public:
     {
         protocolVersion = fastrtps::rtps::c_ProtocolVersion;
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -582,24 +448,6 @@ public:
     {
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
@@ -630,29 +478,18 @@ public:
         this->setIP4Address(0, 0, 0, 0);
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
     void setIP4Address(
             fastrtps::rtps::octet o1,
             fastrtps::rtps::octet o2,
             fastrtps::rtps::octet o3,
-            fastrtps::rtps::octet o4);
+            fastrtps::rtps::octet o4)
+    {
+        address[0] = o1;
+        address[1] = o2;
+        address[2] = o3;
+        address[3] = o4;
+    }
+
 };
 
 #define PARAMETER_IP4_LENGTH 4
@@ -691,24 +528,6 @@ public:
         , value(inbool)
     {
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -749,24 +568,6 @@ public:
     {
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 #define PARAMETER_STATUS_INFO_LENGTH 4
@@ -796,24 +597,6 @@ public:
         , count(0)
     {
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -845,24 +628,6 @@ public:
     {
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
 };
 
 #define PARAMETER_ENTITYID_LENGTH 4
@@ -890,24 +655,6 @@ public:
         : Parameter_t(pid, in_length)
     {
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -938,24 +685,6 @@ public:
         , endpointSet(0)
     {
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -1309,7 +1038,6 @@ public:
     bool push_back(
             std::pair<std::string, std::string> p)
     {
-
         //Realloc if needed;
         uint32_t size1 = (uint32_t) p.first.length() + 1;
         uint32_t alignment1 = ((size1 + 3) & ~3) - size1;
@@ -1329,6 +1057,32 @@ public:
 
         push_back_helper((fastrtps::rtps::octet*)p.first.c_str(), size1, alignment1);
         push_back_helper((fastrtps::rtps::octet*)p.second.c_str(), size2, alignment2);
+        ++Nproperties_;
+        return true;
+    }
+
+    bool push_back(
+            const unsigned char* str1,
+            uint32_t str1_size,
+            const unsigned char* str2,
+            uint32_t str2_size)
+    {
+        //Realloc if needed;
+        uint32_t alignment1 = ((str1_size + 3) & ~3) - str1_size;
+        uint32_t alignment2 = ((str2_size + 3) & ~3) - str2_size;
+
+        if (limit_size_ && (properties_.max_size < properties_.length +
+                str1_size + alignment1 + 4 +
+                str2_size + alignment2 + 4))
+        {
+            return false;
+        }
+        properties_.reserve(properties_.length +
+                str1_size + alignment1 + 4 +
+                str2_size + alignment2 + 4);
+
+        push_back_helper((fastrtps::rtps::octet*)str1, str1_size, alignment1);
+        push_back_helper((fastrtps::rtps::octet*)str2, str2_size, alignment2);
         ++Nproperties_;
         return true;
     }
@@ -1362,32 +1116,6 @@ public:
     {
         return (limit_size_ ? properties_.max_size : 0);
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
-     virtual uint32_t cdr_serialized_size() const override
-     {
-         return cdr_serialized_size(*this);
-     }
-
-     static uint32_t cdr_serialized_size(
-             const ParameterPropertyList_t& data);
 
 protected:
 
@@ -1446,7 +1174,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
+            fastrtps::rtps::CDRMessage_t* msg) const;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -1456,7 +1184,7 @@ public:
      */
     bool readFromCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
+            uint16_t size);
 
 };
 
@@ -1490,33 +1218,6 @@ public:
     {
     }
 
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
-
-
-    virtual uint32_t cdr_serialized_size() const override
-    {
-        return cdr_serialized_size(token);
-    }
-
-    static uint32_t cdr_serialized_size(
-            const fastrtps::rtps::Token& data);
-
 };
 
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
@@ -1525,8 +1226,8 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
 {
 public:
 
-    fastrtps::rtps::security::ParticipantSecurityAttributesMask security_attributes;
-    fastrtps::rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
+    fastrtps::rtps::security::ParticipantSecurityAttributesMask security_attributes = 0;
+    fastrtps::rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes = 0;
 
     ParameterParticipantSecurityInfo_t()
         : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
@@ -1544,24 +1245,6 @@ public:
         : Parameter_t(pid, in_length)
     {
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 
@@ -1590,24 +1273,6 @@ public:
         : Parameter_t(pid, in_length)
     {
     }
-
-    /**
-     * Add the parameter to a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
-     * @return True if the parameter was correctly added.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override;
-
-    /**
-     * Read the parameter from a CDRMessage_t message.
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
-     * @param size Size of the parameter field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg,
-            uint16_t size) override;
 
 };
 

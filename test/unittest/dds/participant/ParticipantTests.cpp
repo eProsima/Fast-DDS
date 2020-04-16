@@ -24,6 +24,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
 #include <dds/core/types.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/pub/Publisher.hpp>
@@ -224,6 +225,42 @@ TEST(ParticipantTests, CreatePSMPublisher)
     publisher = ::dds::pub::Publisher(participant);
 
     ASSERT_NE(publisher, ::dds::core::null);
+}
+
+TEST(ParticipantTests, ChangeDefaultPublisherQos)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    PublisherQos qos;
+    ASSERT_TRUE(participant->get_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
+
+    qos.entity_factory().autoenable_created_entities = false;
+
+    ASSERT_TRUE(participant->set_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    PublisherQos pqos;
+    ASSERT_TRUE(participant->get_default_publisher_qos(pqos) == ReturnCode_t::RETCODE_OK);
+
+    ASSERT_TRUE(qos == pqos);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+}
+
+TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
+    ::dds::pub::qos::PublisherQos qos = participant.default_publisher_qos();
+    ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
+
+    qos.entity_factory().autoenable_created_entities = false;
+
+    ASSERT_NO_THROW(participant.default_publisher_qos(qos));
+
+    ::dds::pub::qos::PublisherQos pqos = participant.default_publisher_qos();
+
+    ASSERT_TRUE(qos == pqos);
+    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(ParticipantTests, CreateSubscriber)

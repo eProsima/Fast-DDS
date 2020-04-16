@@ -86,7 +86,7 @@ public:
 
     /**
      * Retrieves the Publisher Qos.
-     * @return true
+     * @return ReturnCode OK
      */
     RTPS_DllAPI ReturnCode_t get_qos(
             PublisherQos& qos) const;
@@ -95,7 +95,7 @@ public:
      * Allows modifying the Publisher Qos.
      * The given Qos must be supported by the PublisherQos.
      * @param qos
-     * @return False if IMMUTABLE_POLICY or INCONSISTENT_POLICY occurs. True if updated.
+     * @return IMMUTABLE_POLICY cannot be updated. OK if updated.
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const PublisherQos& qos);

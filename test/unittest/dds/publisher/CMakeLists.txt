@@ -22,6 +22,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
         set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp)
+        set(PUBLISHERTESTS_SOURCE PublisherTests.cpp
+            )
 
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)

@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <vector>
 
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -498,13 +500,6 @@ inline bool CDRMessage::addUInt16(
     return true;
 }
 
-inline bool CDRMessage::addParameterId(
-        CDRMessage_t* msg,
-        ParameterId_t pid)
-{
-    return CDRMessage::addUInt16(msg, (uint16_t)pid);
-}
-
 inline bool CDRMessage::addInt32(
         CDRMessage_t* msg,
         int32_t lo)
@@ -722,50 +717,6 @@ inline bool CDRMessage::addLocator(
     return true;
 }
 
-inline bool CDRMessage::addParameterStatus(
-        CDRMessage_t* msg,
-        octet status)
-{
-    if (msg->pos + 8 >= msg->max_size)
-    {
-        return false;
-    }
-    CDRMessage::addUInt16(msg, fastdds::dds::PID_STATUS_INFO);
-    CDRMessage::addUInt16(msg, 4);
-    CDRMessage::addOctet(msg, 0);
-    CDRMessage::addOctet(msg, 0);
-    CDRMessage::addOctet(msg, 0);
-    CDRMessage::addOctet(msg, status);
-    return true;
-}
-
-inline bool CDRMessage::addParameterKey(
-        CDRMessage_t* msg,
-        const InstanceHandle_t* iHandle)
-{
-    if (msg->pos + 20 >= msg->max_size)
-    {
-        return false;
-    }
-    CDRMessage::addUInt16(msg, fastdds::dds::PID_KEY_HASH);
-    CDRMessage::addUInt16(msg, 16);
-    CDRMessage::addData(msg, iHandle->value, 16);
-    return true;
-}
-
-inline bool CDRMessage::addParameterSentinel(
-        CDRMessage_t* msg)
-{
-    if (msg->pos + 4 > msg->max_size)
-    {
-        return false;
-    }
-    CDRMessage::addUInt16(msg, static_cast<uint16_t>(fastdds::dds::PID_SENTINEL));
-    CDRMessage::addUInt16(msg, 0);
-
-    return true;
-}
-
 inline bool CDRMessage::add_string(
         CDRMessage_t* msg,
         const char* in_str)
@@ -774,7 +725,7 @@ inline bool CDRMessage::add_string(
     bool valid = CDRMessage::addUInt32(msg, str_siz);
     valid &= CDRMessage::addData(msg, (unsigned char*) in_str, str_siz);
     octet oc = '\0';
-    for (; str_siz & 3; ++str_siz)
+    for (; str_siz& 3; ++str_siz)
     {
         valid &= CDRMessage::addOctet(msg, oc);
     }
@@ -793,24 +744,6 @@ inline bool CDRMessage::add_string(
         const string_255& in_str)
 {
     return add_string(msg, in_str.c_str());
-}
-
-inline bool CDRMessage::addParameterSampleIdentity(
-        CDRMessage_t* msg,
-        const SampleIdentity& sample_id)
-{
-    if (msg->pos + 28 > msg->max_size)
-    {
-        return false;
-    }
-
-    CDRMessage::addUInt16(msg, fastdds::dds::PID_RELATED_SAMPLE_IDENTITY);
-    CDRMessage::addUInt16(msg, 24);
-    CDRMessage::addData(msg, sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
-    CDRMessage::addData(msg, sample_id.writer_guid().entityId.value, EntityId_t::size);
-    CDRMessage::addInt32(msg, sample_id.sequence_number().high);
-    CDRMessage::addUInt32(msg, sample_id.sequence_number().low);
-    return true;
 }
 
 inline bool CDRMessage::addProperty(

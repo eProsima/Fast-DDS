@@ -163,29 +163,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -217,29 +194,6 @@ public:
     }
 
     fastrtps::Duration_t period;
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -271,29 +225,6 @@ public:
     }
 
     fastrtps::Duration_t duration;
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -344,29 +275,6 @@ public:
     LivelinessQosPolicyKind kind;
     fastrtps::Duration_t lease_duration;
     fastrtps::Duration_t announcement_period;
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -411,29 +319,6 @@ public:
 
     ReliabilityQosPolicyKind kind;
     fastrtps::Duration_t max_blocking_time;
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 
@@ -475,29 +360,6 @@ public:
     }
 
     OwnershipQosPolicyKind kind;
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -540,29 +402,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -576,7 +415,7 @@ class GenericDataQosPolicy : public Parameter_t, public QosPolicy,
 public:
 
     RTPS_DllAPI GenericDataQosPolicy(
-        ParameterId_t pid)
+            ParameterId_t pid)
         : Parameter_t(pid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
@@ -584,8 +423,8 @@ public:
     }
 
     RTPS_DllAPI GenericDataQosPolicy(
-        ParameterId_t pid,
-        uint16_t in_length)
+            ParameterId_t pid,
+            uint16_t in_length)
         : Parameter_t(pid, in_length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
@@ -601,7 +440,7 @@ public:
      * @param data data to copy in the newly created object
      */
     RTPS_DllAPI GenericDataQosPolicy(
-        const GenericDataQosPolicy& data)
+            const GenericDataQosPolicy& data)
         : Parameter_t(data.Pid, data.length)
         , QosPolicy(false)
         , ResourceLimitedOctetVector(data)
@@ -618,8 +457,8 @@ public:
      * @param data data to copy in the newly created object
      */
     RTPS_DllAPI GenericDataQosPolicy(
-        ParameterId_t pid,
-        const collection_type& data)
+            ParameterId_t pid,
+            const collection_type& data)
         : Parameter_t(pid, 0)
         , QosPolicy(false)
         , ResourceLimitedOctetVector()
@@ -644,7 +483,7 @@ public:
      * @return reference to the current object.
      */
     GenericDataQosPolicy& operator =(
-        const collection_type& b)
+            const collection_type& b)
     {
         if (collection_ != b)
         {
@@ -666,10 +505,10 @@ public:
      * @return reference to the current object.
      */
     GenericDataQosPolicy& operator =(
-        const GenericDataQosPolicy& b)
+            const GenericDataQosPolicy& b)
     {
-        QosPolicy::operator=(b);
-        Parameter_t::operator=(b);
+        QosPolicy::operator =(b);
+        Parameter_t::operator =(b);
         configuration_ = b.configuration_;
         collection_.reserve(b.collection_.capacity());
         collection_.assign(b.collection_.begin(), b.collection_.end());
@@ -677,16 +516,16 @@ public:
     }
 
     bool operator ==(
-        const GenericDataQosPolicy& b) const
+            const GenericDataQosPolicy& b) const
     {
         return collection_ == b.collection_ &&
-            Parameter_t::operator ==(b) &&
-            m_sendAlways == b.m_sendAlways &&
-            hasChanged == b.hasChanged;
+               Parameter_t::operator ==(b) &&
+               m_sendAlways == b.m_sendAlways &&
+               hasChanged == b.hasChanged;
     }
 
     bool operator ==(
-        const collection_type& b) const
+            const collection_type& b) const
     {
         return collection_ == b;
     }
@@ -696,7 +535,7 @@ public:
      * @param size new maximum size of the user data. Zero for unlimited size
      */
     void set_max_size(
-        size_t size)
+            size_t size)
     {
         if (size > 0)
         {
@@ -723,35 +562,6 @@ public:
         hasChanged = false;
     }
 
-    virtual uint32_t cdr_serialized_size() const override
-    {
-        return QosPolicy::get_cdr_serialized_size(collection_);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool inline addToCDRMessage(
-        fastrtps::rtps::CDRMessage_t* /* msg */) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool inline readFromCDRMessage(
-        fastrtps::rtps::CDRMessage_t* /* msg */,
-        uint16_t /* size */) override
-    {
-        return true;
-    }
-
     /**
      * Returns raw data vector.
      * @return raw data as vector of octets.
@@ -766,7 +576,7 @@ public:
      * @param vec raw data to set.
      * */
     RTPS_DllAPI inline void data_vec(
-        const collection_type& vec)
+            const collection_type& vec)
     {
         assign(vec.begin(), vec.end());
     }
@@ -785,71 +595,72 @@ public:
      * @param vec raw data to set.
      * */
     RTPS_DllAPI inline void setValue(
-        const collection_type& vec)
+            const collection_type& vec)
     {
         assign(vec.begin(), vec.end());
     }
+
 };
 
 /**
  * Class TClassName, base template for user data qos policies.
  */
 #define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                     \
-class TClassName : public GenericDataQosPolicy                                         \
-{                                                                                      \
+    class TClassName : public GenericDataQosPolicy                                         \
+    {                                                                                      \
 public:                                                                                \
                                                                                        \
-    RTPS_DllAPI TClassName()                                                           \
-        : GenericDataQosPolicy(TPid)                                                   \
-    {                                                                                  \
-    }                                                                                  \
+        RTPS_DllAPI TClassName()                                                           \
+            : GenericDataQosPolicy(TPid)                                                   \
+        {                                                                                  \
+        }                                                                                  \
                                                                                        \
-    RTPS_DllAPI TClassName(                                                            \
+        RTPS_DllAPI TClassName(                                                            \
             uint16_t in_length)                                                        \
-        : GenericDataQosPolicy(TPid, in_length)                                        \
-    {                                                                                  \
-    }                                                                                  \
+            : GenericDataQosPolicy(TPid, in_length)                                        \
+        {                                                                                  \
+        }                                                                                  \
                                                                                        \
-    /**                                                                                \
-     * Construct from another TClassName.                                              \
-     *                                                                                 \
-     * The resulting TClassName will have the same size limits                         \
-     * as the input attribute                                                          \
-     *                                                                                 \
-     * @param data data to copy in the newly created object                            \
-     */                                                                                \
-    RTPS_DllAPI TClassName(                                                            \
+        /** \
+         * Construct from another TClassName. \
+         * \
+         * The resulting TClassName will have the same size limits \
+         * as the input attribute \
+         * \
+         * @param data data to copy in the newly created object \
+         */                                                                            \
+        RTPS_DllAPI TClassName(                                                            \
             const TClassName& data) = default;                                         \
                                                                                        \
-    /**                                                                                \
-     * Construct from underlying collection type.                                      \
-     *                                                                                 \
-     * Useful to easy integration on old APIs where a traditional container was used.  \
-     * The resulting TClassName will always be unlimited in size                       \
-     *                                                                                 \
-     * @param data data to copy in the newly created object                            \
-     */                                                                                \
-    RTPS_DllAPI TClassName(                                                            \
+        /** \
+         * Construct from underlying collection type. \
+         * \
+         * Useful to easy integration on old APIs where a traditional container was used. \
+         * The resulting TClassName will always be unlimited in size \
+         * \
+         * @param data data to copy in the newly created object \
+         */                                                                            \
+        RTPS_DllAPI TClassName(                                                            \
             const collection_type& data)                                               \
-        : GenericDataQosPolicy(TPid, data)                                             \
-    {                                                                                  \
-    }                                                                                  \
+            : GenericDataQosPolicy(TPid, data)                                             \
+        {                                                                                  \
+        }                                                                                  \
                                                                                        \
-    virtual RTPS_DllAPI ~TClassName() = default;                                       \
+        virtual RTPS_DllAPI ~TClassName() = default;                                       \
                                                                                        \
-    /**                                                                                \
-     * Copies another TClassName.                                                      \
-     *                                                                                 \
-     * The resulting TClassName will have the same size limit                          \
-     * as the input parameter, so all data in the input will be copied.                \
-     *                                                                                 \
-     * @param b object to be copied                                                    \
-     * @return reference to the current object.                                        \
-     */                                                                                \
-    TClassName& operator =(                                                            \
+        /** \
+         * Copies another TClassName. \
+         * \
+         * The resulting TClassName will have the same size limit \
+         * as the input parameter, so all data in the input will be copied. \
+         * \
+         * @param b object to be copied \
+         * @return reference to the current object. \
+         */                                                                            \
+        TClassName& operator =(                                                            \
             const TClassName& b) = default;                                            \
                                                                                        \
-};
+    };
 
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
@@ -884,29 +695,6 @@ public:
     }
 
     fastrtps::Duration_t minimum_separation;
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -956,29 +744,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 
@@ -998,7 +763,8 @@ public:
     {
     }
 
-    RTPS_DllAPI PartitionQosPolicy(uint16_t in_length)
+    RTPS_DllAPI PartitionQosPolicy(
+            uint16_t in_length)
         : Parameter_t(PID_PARTITION, in_length)
         , QosPolicy(false)
         , names_{}
@@ -1009,7 +775,8 @@ public:
     {
     }
 
-    void set_max_size (uint32_t size)
+    void set_max_size (
+            uint32_t size)
     {
         max_size_ = size;
     }
@@ -1017,29 +784,6 @@ public:
     uint32_t max_size () const
     {
         return max_size_;
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
     }
 
     /**
@@ -1125,29 +869,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -1185,29 +906,6 @@ public:
     {
         ResourceLimitsQosPolicy reset = ResourceLimitsQosPolicy();
         std::swap(*this, reset);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
     }
 
 };
@@ -1257,29 +955,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -1311,29 +986,6 @@ public:
     }
 
     fastrtps::Duration_t duration;
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -1362,29 +1014,6 @@ public:
     {
         OwnershipStrengthQosPolicy reset = OwnershipStrengthQosPolicy();
         std::swap(*this, reset);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
     }
 
 };
@@ -1418,29 +1047,6 @@ public:
     {
         TransportPriorityQosPolicy reset = TransportPriorityQosPolicy();
         std::swap(*this, reset);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
     }
 
 };
@@ -1483,6 +1089,7 @@ public:
         PublishModeQosPolicy reset = PublishModeQosPolicy();
         std::swap(*this, reset);
     }
+
 };
 
 /**
@@ -1517,29 +1124,6 @@ public:
     {
         DataRepresentationQosPolicy reset = DataRepresentationQosPolicy();
         std::swap(*this, reset);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
     }
 
 };
@@ -1586,29 +1170,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -1639,30 +1200,6 @@ public:
     {
         DisablePositiveACKsQosPolicy reset = DisablePositiveACKsQosPolicy();
         std::swap(*this, reset);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) const override
-    {
-        (void)msg;
-        return true;
-    }
-
-    /**
-     * Reads QoS from the specified CDR message
-     * @param msg Message from where the QoS Policy has to be taken.
-     * @param size Size of the QoS Policy field to read
-     * @return True if the parameter was correctly taken.
-     */
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/, uint16_t /*size*/) override
-    {
-        return true;
     }
 
 public:
@@ -1731,24 +1268,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/,
-            uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 /**
@@ -1810,24 +1329,6 @@ public:
         std::swap(*this, reset);
     }
 
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/) const override
-    {
-        return true;
-    }
-
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t* /*msg*/,
-            uint16_t /*size*/) override
-    {
-        return true;
-    }
-
 };
 
 namespace types {
@@ -1880,24 +1381,6 @@ public:
     {
         TypeInformation reset = TypeInformation();
         std::swap(*this, reset);
-    }
-
-    /**
-     * Appends QoS to the specified CDR message.
-     * @param msg Message to append the QoS Policy to.
-     * @return True if the modified CDRMessage is valid.
-     */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t*) const override
-    {
-        return true;
-    }
-
-    bool readFromCDRMessage(
-            fastrtps::rtps::CDRMessage_t*,
-            uint16_t /*size*/) override
-    {
-        return true;
     }
 
     RTPS_DllAPI bool isAssigned() const

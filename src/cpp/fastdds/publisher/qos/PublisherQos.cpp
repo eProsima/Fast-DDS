@@ -26,52 +26,6 @@ namespace dds {
 
 RTPS_DllAPI const PublisherQos PUBLISHER_QOS_DEFAULT;
 
-PublisherQos::PublisherQos()
-{
-}
-
-PublisherQos::~PublisherQos()
-{
-
-}
-
-void PublisherQos::set_qos(
-        const PublisherQos& qos,
-        bool first_time)
-{
-    if (first_time && !(presentation_ == qos.presentation()))
-    {
-        presentation_ = qos.presentation();
-        presentation_.hasChanged = true;
-    }
-    if (qos.partition().names().size() > 0)
-    {
-        partition_ = qos.partition();
-        partition_.hasChanged = true;
-    }
-    if (entity_factory_.autoenable_created_entities != qos.entity_factory().autoenable_created_entities)
-    {
-        entity_factory_ = qos.entity_factory();
-    }
-    if (group_data_.getValue() != qos.group_data().getValue())
-    {
-        group_data_ = qos.group_data();
-        group_data_.hasChanged = true;
-    }
-}
-
-bool PublisherQos::check_qos() const
-{
-    return true;
-}
-
-bool PublisherQos::can_qos_be_updated(
-        const PublisherQos& qos) const
-{
-    (void) qos;
-    return true;
-
-}
 
 } /* namespace dds */
 } /* namespace fastdds */
