@@ -2021,7 +2021,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
 
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, AES_BLOCK_SIZE, tag.common_mac.data());
 
-    if (!EVP_DecryptFinal(d_ctx, &output_buffer[actual_size], &final_size))
+    if (!EVP_DecryptFinal(d_ctx, output_buffer ? &output_buffer[actual_size] : NULL, &final_size))
     {
         logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
