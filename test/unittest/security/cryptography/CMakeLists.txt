@@ -60,6 +60,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/cryptography/AESGCMGMAC_Types.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/OpenSSLInit.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/CryptographyPluginTests.hpp
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
     endif()
 endif()
