@@ -76,6 +76,7 @@ public:
 
     class SubListener
         :  public eprosima::fastdds::dds::DomainParticipantListener
+        ,  public eprosima::fastdds::dds::DataReaderListener
     {
 public:
 

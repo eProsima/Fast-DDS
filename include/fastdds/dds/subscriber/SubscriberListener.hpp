@@ -35,15 +35,16 @@ class Subscriber;
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI SubscriberListener : public DataReaderListener
+//TODO: Uncomment when the SubscriberListener methods are substituted by the DataReader ones
+class SubscriberListener //: public DataReaderListener
 {
 public:
 
-    SubscriberListener()
+    RTPS_DllAPI SubscriberListener()
     {
     }
 
-    virtual ~SubscriberListener()
+    RTPS_DllAPI virtual ~SubscriberListener()
     {
     }
 
@@ -52,7 +53,7 @@ public:
      * Data Message is received.
      * @param sub Subscriber
      */
-    virtual void on_new_data_message(
+    RTPS_DllAPI virtual void on_new_data_message(
             Subscriber* sub)
     {
         (void)sub;
@@ -64,7 +65,7 @@ public:
      * @param sub Subscriber
      * @param info Matching information
      */
-    virtual void on_subscription_matched(
+    RTPS_DllAPI virtual void on_subscription_matched(
             Subscriber* sub,
             const fastdds::dds::SubscriptionMatchedStatus& info)
     {
@@ -77,7 +78,7 @@ public:
      * @param sub Subscriber
      * @param status The requested deadline missed status
      */
-    virtual void on_requested_deadline_missed(
+    RTPS_DllAPI virtual void on_requested_deadline_missed(
             Subscriber* sub,
             const fastrtps::RequestedDeadlineMissedStatus& status)
     {
@@ -90,7 +91,7 @@ public:
      * @param sub The subscriber
      * @param status The liveliness changed status
      */
-    virtual void on_liveliness_changed(
+    RTPS_DllAPI virtual void on_liveliness_changed(
             Subscriber* sub,
             const fastrtps::LivelinessChangedStatus& status)
     {

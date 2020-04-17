@@ -28,7 +28,7 @@
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/publisher/DataWriterHistory.hpp>
+#include <fastrtps/publisher/PublisherHistory.h>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/rtps/writer/WriterListener.h>
@@ -203,7 +203,7 @@ private:
     DataWriterQos qos_;
 
     //!Publisher History
-    DataWriterHistory history_;
+    fastrtps::PublisherHistory history_;
 
     //! DataWriterListener
     DataWriterListener* listener_;

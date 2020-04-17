@@ -184,6 +184,8 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
+    topic->get_impl()->reference();
+
     DataWriterImpl* impl = new DataWriterImpl(
         this,
         type_support,
@@ -195,6 +197,7 @@ DataWriter* PublisherImpl::create_datawriter(
     {
         logError(PUBLISHER, "Problem creating associated Writer");
         delete impl;
+        topic->get_impl()->dereference();
         return nullptr;
     }
 
@@ -210,8 +213,6 @@ DataWriter* PublisherImpl::create_datawriter(
         std::lock_guard<std::mutex> lock(mtx_writers_);
         writers_[topic->get_name()].push_back(impl);
     }
-
-    topic->get_impl()->reference();
 
     return writer;
 }

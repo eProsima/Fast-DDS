@@ -59,7 +59,7 @@ DataWriterImpl::DataWriterImpl(
     , type_(type)
     , topic_(topic)
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
-    , history_(*topic_, type_, type_->m_typeSize
+    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
             + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
