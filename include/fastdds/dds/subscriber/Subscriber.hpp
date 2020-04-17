@@ -53,7 +53,7 @@ class SubscriberImpl;
 class DataReader;
 class DataReaderListener;
 class DataReaderQos;
-
+class TopicDescription;
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
  * This class should not be instantiated directly.
@@ -127,9 +127,10 @@ public:
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     RTPS_DllAPI DataReader* create_datareader(
-            const fastrtps::TopicAttributes& topic_attr,
+            TopicDescription* topic,
             const DataReaderQos& reader_qos,
-            DataReaderListener* listener);
+            DataReaderListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
     /**
      * This operation deletes a DataReader that belongs to the Subscriber.

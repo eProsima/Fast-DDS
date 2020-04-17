@@ -53,7 +53,7 @@ class NoOpSubscriberListener;
  * @code{.cpp}
  * // Application example listener
  * class ExampleListener :
- *                public virtual dds::pub::SubscriberListener
+ *                public virtual dds::sub::SubscriberListener
  * {
  * public:
  *     virtual void on_new_data_message (
@@ -120,7 +120,7 @@ public:
  * that the application doesn't have to implement all operations.
  *
  * @code{.cpp}
- * class ExampleListener : public virtual dds::pub::NoOpSubscriberListener
+ * class ExampleListener : public virtual dds::sub::NoOpSubscriberListener
  * {
  *    // Not necessary to implement any Listener operations.
  * };
@@ -133,7 +133,7 @@ public:
 /*
    class OMG_DDS_API NoOpSubscriberListener :
         public virtual SubscriberListener,
-        public virtual NoOpAnyDataReaderListener
+        public virtual NoOpAnySubscriberListener
  */
 // TODO Remove the PSM listeners are implemented.
 class NoOpSubscriberListener : public virtual SubscriberListener

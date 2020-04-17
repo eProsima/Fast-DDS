@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 
 
 namespace eprosima {
@@ -30,8 +31,21 @@ namespace fastdds {
 namespace dds {
 
 DataReader::DataReader(
-        DataReaderImpl* impl)
-    : impl_(impl)
+        DataReaderImpl* impl,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(impl)
+{
+}
+
+DataReader::DataReader(
+        Subscriber* s,
+        TopicDescription* topic,
+        const DataReaderQos& qos,
+        DataReaderListener* listener,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(s->create_datareader(topic, qos, listener, mask)->impl_)
 {
 }
 
@@ -81,12 +95,6 @@ ReturnCode_t DataReader::set_qos(
     return impl_->set_qos(qos);
 }
 
-bool DataReader::set_topic(
-        const TopicAttributes& topic_att)
-{
-    return impl_->set_topic(topic_att);
-}
-
 const DataReaderQos& DataReader::get_qos() const
 {
     return impl_->get_qos();
@@ -97,22 +105,6 @@ ReturnCode_t DataReader::get_qos(
 {
     qos = impl_->get_qos();
     return ReturnCode_t::RETCODE_OK;
-}
-
-const TopicAttributes& DataReader::get_topic() const
-{
-    return impl_->get_topic();
-}
-
-bool DataReader::set_attributes(
-        const fastrtps::rtps::ReaderAttributes& att)
-{
-    return impl_->set_attributes(att);
-}
-
-const ReaderAttributes& DataReader::get_attributes() const
-{
-    return impl_->get_attributes();
 }
 
 ReturnCode_t DataReader::get_requested_deadline_missed_status(
@@ -205,6 +197,12 @@ const Subscriber* DataReader::get_subscriber() const
 TypeSupport DataReader::type()
 {
     return impl_->type();
+}
+
+
+const TopicDescription* DataReader::get_topicdescription() const
+{
+    return impl_->get_topicdescription();
 }
 
 } /* namespace dds */

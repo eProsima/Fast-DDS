@@ -19,6 +19,7 @@
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -129,102 +130,54 @@ ReturnCode_t SubscriberImpl::set_listener(
 }
 
 DataReader* SubscriberImpl::create_datareader(
-        const fastrtps::TopicAttributes& topic_att,
+        TopicDescription* topic,
         const DataReaderQos& qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        const StatusMask& mask)
 {
-    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
+    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name())
     //Look for the correct type registration
-    TypeSupport type_support = participant_->find_type(topic_att.getTopicDataType().to_string());
+    TypeSupport type_support = participant_->find_type(topic->get_type_name());
 
     /// Preconditions
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(SUBSCRIBER, "Type : " << topic_att.getTopicDataType() << " Not Registered");
-        return nullptr;
-    }
-    if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
-    {
-        logError(SUBSCRIBER, "Keyed Topic needs getKey function");
+        logError(SUBSCRIBER, "Type : " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
 
-    if (!DataReaderImpl::check_qos(qos) || !topic_att.checkQos())
+    if (!DataReaderImpl::check_qos(qos))
     {
         return nullptr;
     }
 
-    ReaderAttributes ratt;
-    ratt.endpoint.durabilityKind = qos.durability().durabilityKind();
-    ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
-    ratt.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    ratt.endpoint.topicKind = topic_att.topicKind;
-    ratt.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
-    ratt.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
-    ratt.expectsInlineQos = qos.expects_inline_qos();
-    ratt.endpoint.properties = qos.properties();
-
-    if (qos.endpoint().entity_id > 0)
-    {
-        ratt.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
-    }
-
-    if (qos.endpoint().user_defined_id > 0)
-    {
-        ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
-    }
-
-    ratt.times = qos.reliable_reader_qos().reader_times;
-
-    // TODO(Ricardo) Remove in future
-    // Insert topic_name and partitions
-    Property property;
-    property.name("topic_name");
-    property.value(topic_att.getTopicName().c_str());
-    ratt.endpoint.properties.properties().push_back(std::move(property));
-    if (qos_.partition().names().size() > 0)
-    {
-        property.name("partitions");
-        std::string partitions;
-        for (auto partition : qos_.partition().names())
-        {
-            partitions += partition + ";";
-        }
-        property.value(std::move(partitions));
-        ratt.endpoint.properties.properties().push_back(std::move(property));
-    }
-    if (qos.reliable_reader_qos().disable_positive_ACKs.enabled)
-    {
-        ratt.disable_positive_acks = true;
-    }
+    topic->get_impl()->reference();
 
     DataReaderImpl* impl = new DataReaderImpl(
         this,
         type_support,
-        topic_att,
-        ratt,
+        topic,
         qos,
-        qos.endpoint().history_memory_policy,
         listener);
 
     if (impl->reader_ == nullptr)
     {
         logError(SUBSCRIBER, "Problem creating associated Reader");
         delete impl;
+        topic->get_impl()->dereference();
         return nullptr;
     }
 
-    DataReader* reader = new DataReader(impl);
+    DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
 
     ReaderQos rqos = qos.get_readerqos(qos_);
-    rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
+    rtps_participant_->registerReader(impl->reader_, impl->topic_attributes(), rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic_att.getTopicName().to_string()].push_back(impl);
+        readers_[topic->get_name()].push_back(impl);
     }
 
     return reader;
@@ -238,13 +191,14 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    auto it = readers_.find(reader->get_topic().getTopicName().to_string());
+    auto it = readers_.find(reader->impl_->get_topicdescription()->get_name());
     if (it != readers_.end())
     {
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
         if (dr_it != it->second.end())
         {
             (*dr_it)->set_listener(nullptr);
+            (*dr_it)->get_topicdescription()->get_impl()->dereference();
             delete (*dr_it);
             it->second.erase(dr_it);
             if (it->second.empty())
@@ -477,7 +431,7 @@ bool SubscriberImpl::type_in_use(
     {
         for (DataReaderImpl* reader : it.second)
         {
-            if (reader->get_topic().getTopicDataType() == type_name)
+            if (reader->topic_attributes().getTopicDataType() == type_name)
             {
                 return true; // Is in use
             }

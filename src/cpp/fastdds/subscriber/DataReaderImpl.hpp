@@ -55,6 +55,7 @@ namespace dds {
 
 class Subscriber;
 class SubscriberImpl;
+class TopicDescription;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -69,11 +70,9 @@ class DataReaderImpl
      */
     DataReaderImpl(
             SubscriberImpl* s,
-            TypeSupport type,
-            const fastrtps::TopicAttributes& topic_att,
-            const fastrtps::rtps::ReaderAttributes& att,
+            TypeSupport& type,
+            TopicDescription* topic,
             const DataReaderQos& qos,
-            const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataReaderListener* listener = nullptr);
 
 public:
@@ -140,26 +139,22 @@ public:
     TypeSupport type();
 
     /**
+     * Get TopicDescription
+     * @return TopicDescription
+     */
+    const TopicDescription* get_topicdescription() const;
+
+    /**
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
     ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
-    bool set_attributes(
-            const fastrtps::rtps::ReaderAttributes& att);
-
-    const fastrtps::rtps::ReaderAttributes& get_attributes() const;
-
     ReturnCode_t set_qos(
             const DataReaderQos& qos);
 
     const DataReaderQos& get_qos() const;
-
-    bool set_topic(
-            const fastrtps::TopicAttributes& att);
-
-    const fastrtps::TopicAttributes& get_topic() const;
 
     ReturnCode_t set_listener(
             DataReaderListener* listener);
@@ -237,10 +232,7 @@ private:
     //! Pointer to the TopicDataType object.
     TypeSupport type_;
 
-    fastrtps::TopicAttributes topic_att_;
-
-    //!Attributes of the Subscriber
-    fastrtps::rtps::ReaderAttributes att_;
+    TopicDescription* topic_;
 
     DataReaderQos qos_;
 
@@ -321,6 +313,8 @@ public:
      * @brief A method called when the lifespan timer expires
      */
     bool lifespan_expired();
+
+    fastrtps::TopicAttributes topic_attributes() const;
 
 };
 

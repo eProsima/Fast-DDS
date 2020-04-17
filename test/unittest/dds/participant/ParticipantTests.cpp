@@ -38,6 +38,13 @@ namespace dds {
 // Mocked TopicDataType for Topic creation tests
 class TopicDataTypeMock : public TopicDataType
 {
+public:
+    TopicDataTypeMock()
+        : TopicDataType()
+    {
+        setName("footype");
+    }
+
     bool serialize(
             void* /*data*/,
             fastrtps::rtps::SerializedPayload_t* /*payload*/) override
@@ -128,6 +135,39 @@ TEST(ParticipantTests, DeleteDomainParticipant)
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
+}
+
+TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+
+    participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+
+    participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_);
+
+    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 TEST(ParticipantTests, ChangeDefaultParticipantQos)
@@ -428,6 +468,30 @@ TEST(ParticipantTests, LookupTopicDescription)
     // After topic deletion, should return nil
     EXPECT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->lookup_topicdescription(topic_name), nullptr);
+}
+
+TEST(ParticipantTests, DeleteTopicInUse)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_, "footype");
+
+    Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds

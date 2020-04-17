@@ -60,22 +60,31 @@ bool TypeLookupSubscriber::init()
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
+    qos_ = DATAREADER_QOS_DEFAULT;
     qos_.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     qos_.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-    topic_.topicKind = NO_KEY;
-    topic_.topicDataType = "TypeLookup";
-    topic_.topicName = "TypeLookupTopic";
-    topic_.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    topic_.historyQos.depth = 30;
-    topic_.resourceLimitsQos.max_samples = 50;
-    topic_.resourceLimitsQos.allocated_samples = 20;
+    qos_.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    qos_.history().depth = 30;
+    qos_.resource_limits().max_samples = 50;
+    qos_.resource_limits().allocated_samples = 20;
 
     return true;
 }
 
 TypeLookupSubscriber::~TypeLookupSubscriber()
 {
+    for (const auto& it : topics_)
+    {
+        mp_subscriber->delete_datareader(it.first);
+        mp_participant->delete_topic(it.second);
+    }
+    if (mp_subscriber != nullptr)
+    {
+        mp_participant->delete_subscriber(mp_subscriber);
+    }
+
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
+    topics_.clear();
     readers_.clear();
     datas_.clear();
 }
@@ -169,9 +178,20 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                         return;
                     }
                 }
-                subscriber_->topic_.topicDataType = name;
+
+                //CREATE THE TOPIC
+                eprosima::fastdds::dds::Topic* topic = subscriber_->mp_participant->create_topic(
+                        "TypeLookupTopic",
+                        name,
+                        TOPIC_QOS_DEFAULT);
+
+                if (topic == nullptr)
+                {
+                    return;
+                }
+
                 DataReader* reader = subscriber_->mp_subscriber->create_datareader(
-                    subscriber_->topic_,
+                    topic,
                     subscriber_->qos_,
                     &subscriber_->m_listener);
 
@@ -207,6 +227,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 }
                 else
                 {
+                    subscriber_->topics_[reader] = topic;
                     subscriber_->readers_[reader] = type;
                     types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(type));
                     subscriber_->datas_[reader] = data;

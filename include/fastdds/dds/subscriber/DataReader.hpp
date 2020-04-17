@@ -23,12 +23,22 @@
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <vector>
 #include <cstdint>
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace sub {
+
+class DataReader;
+
+} // namespace sub
+} // namespace dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -54,30 +64,40 @@ class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
 class DataReaderQos;
+class TopicDescription;
 struct LivelinessChangedStatus;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DataReader
+class DataReader : public DomainEntity
 {
+    friend class DataReaderImpl;
     friend class SubscriberImpl;
 
     /**
      * Creates a DataReader. Don't use it directly, but through Subscriber.
      */
-    DataReader(
-            DataReaderImpl* impl);
+    RTPS_DllAPI DataReader(
+            DataReaderImpl* impl,
+            const StatusMask& mask = StatusMask::all());
+
+    RTPS_DllAPI DataReader(
+            Subscriber* s,
+            TopicDescription* topic,
+            const DataReaderQos& qos,
+            DataReaderListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
 
 public:
 
-    virtual ~DataReader();
+    RTPS_DllAPI virtual ~DataReader();
 
     /**
      * Method to block the current thread until an unread message is available
      */
-    bool wait_for_unread_message(
+    RTPS_DllAPI bool wait_for_unread_message(
             const fastrtps::Duration_t& timeout);
 
 
@@ -88,24 +108,24 @@ public:
     ///@{
 
     /* TODO
-       bool read(
+       RTPS_DllAPI bool read(
             std::vector<void*>& data_values,
             std::vector<fastrtps::SampleInfo_t>& sample_infos,
             uint32_t max_samples);
      */
 
-    ReturnCode_t read_next_sample(
+    RTPS_DllAPI ReturnCode_t read_next_sample(
             void* data,
             fastrtps::SampleInfo_t* info);
 
     /* TODO
-       bool take(
+       RTPS_DllAPI bool take(
             std::vector<void*>& data_values,
             std::vector<fastrtps::SampleInfo_t>& sample_infos,
             uint32_t max_samples);
      */
 
-    ReturnCode_t take_next_sample(
+    RTPS_DllAPI ReturnCode_t take_next_sample(
             void* data,
             fastrtps::SampleInfo_t* info);
 
@@ -116,16 +136,16 @@ public:
      * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
      * @return RETCODE_OK if sample info was returned. RETCODE_NO_DATA if there is no sample to take.
      */
-    ReturnCode_t get_first_untaken_info(
+    RTPS_DllAPI ReturnCode_t get_first_untaken_info(
             fastrtps::SampleInfo_t* info);
 
     /**
      * Get associated GUID
      * @return Associated GUID
      */
-    const fastrtps::rtps::GUID_t& guid();
+    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
 
-    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get topic data type
@@ -134,69 +154,68 @@ public:
     TypeSupport type();
 
     /**
+     * Get TopicDescription
+     * @return TopicDescription
+     */
+    const TopicDescription* get_topicdescription() const;
+
+    /**
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
-    ReturnCode_t get_requested_deadline_missed_status(
+    RTPS_DllAPI ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
-    bool set_attributes(
-            const fastrtps::rtps::ReaderAttributes& att);
-
-    const fastrtps::rtps::ReaderAttributes& get_attributes() const;
-
-    ReturnCode_t set_qos(
+    RTPS_DllAPI ReturnCode_t set_qos(
             const DataReaderQos& qos);
 
-    const DataReaderQos& get_qos() const;
+    RTPS_DllAPI const DataReaderQos& get_qos() const;
 
-    ReturnCode_t get_qos(
+    RTPS_DllAPI ReturnCode_t get_qos(
             DataReaderQos& qos) const;
 
-    bool set_topic(
-            const fastrtps::TopicAttributes& att);
-
-    const fastrtps::TopicAttributes& get_topic() const;
-
-    ReturnCode_t set_listener(
+    RTPS_DllAPI ReturnCode_t set_listener(
             DataReaderListener* listener);
 
-    const DataReaderListener* get_listener() const;
+    RTPS_DllAPI const DataReaderListener* get_listener() const;
 
     /* TODO
-       bool get_key_value(
+       RTPS_DllAPI bool get_key_value(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
      */
 
-    ReturnCode_t get_liveliness_changed_status(
+    RTPS_DllAPI ReturnCode_t get_liveliness_changed_status(
             LivelinessChangedStatus& status) const;
 
     /* TODO
-       bool get_requested_incompatible_qos_status(
+       RTPS_DllAPI bool get_requested_incompatible_qos_status(
             fastrtps::RequestedIncompatibleQosStatus& status) const;
      */
 
     /* TODO
-       bool get_sample_lost_status(
+       RTPS_DllAPI bool get_sample_lost_status(
             fastrtps::SampleLostStatus& status) const;
      */
 
     /* TODO
-       bool get_sample_rejected_status(
+       RTPS_DllAPI bool get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
      */
 
-    const Subscriber* get_subscriber() const;
+    RTPS_DllAPI const Subscriber* get_subscriber() const;
 
     /* TODO
-       bool wait_for_historical_data(
+       RTPS_DllAPI bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
      */
 
 private:
 
     DataReaderImpl* impl_;
+
+    friend class ::dds::sub::DataReader;
+
 };
 
 } /* namespace dds */

@@ -51,17 +51,26 @@ bool HelloWorldSubscriber::init()
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
+    qos_ = DATAREADER_QOS_DEFAULT;
     qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    topic_.topicKind = eprosima::fastrtps::rtps::NO_KEY;
-    topic_.topicDataType = "HelloWorld";
-    topic_.topicName = "DDSDynHelloWorldTopic";
 
     return true;
 }
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
+    for (const auto& it : topics_)
+    {
+        mp_subscriber->delete_datareader(it.first);
+        mp_participant->delete_topic(it.second);
+    }
+    if (mp_subscriber != nullptr)
+    {
+        mp_participant->delete_subscriber(mp_subscriber);
+    }
+
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
+    topics_.clear();
     readers_.clear();
     datas_.clear();
 }
@@ -117,7 +126,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 void HelloWorldSubscriber::SubListener::on_type_discovery(
         DomainParticipant*,
         const eprosima::fastrtps::rtps::SampleIdentity&,
-        const eprosima::fastrtps::string_255& topic,
+        const eprosima::fastrtps::string_255& topic_name,
         const eprosima::fastrtps::types::TypeIdentifier*,
         const eprosima::fastrtps::types::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
@@ -125,7 +134,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     subscriber_->participant()->register_type(m_type);
 
-    std::cout << "Discovered type: " << m_type->getName() << " from topic " << topic << std::endl;
+    std::cout << "Discovered type: " << m_type->getName() << " from topic " << topic_name << std::endl;
 
     if (subscriber_->mp_subscriber == nullptr)
     {
@@ -142,12 +151,24 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
             return;
         }
     }
-    subscriber_->topic_.topicDataType = m_type->getName();
+
+    //CREATE THE TOPIC
+    eprosima::fastdds::dds::Topic* topic = subscriber_->mp_participant->create_topic(
+            "HelloWorldTopic",
+            m_type->getName(),
+            TOPIC_QOS_DEFAULT);
+
+    if (topic == nullptr)
+    {
+        return;
+    }
+
     DataReader* reader = subscriber_->mp_subscriber->create_datareader(
-        subscriber_->topic_,
+        topic,
         subscriber_->qos_,
         &subscriber_->m_listener);
 
+    subscriber_->topics_[reader] = topic;
     subscriber_->readers_[reader] = dyn_type;
     eprosima::fastrtps::types::DynamicData_ptr data(
         eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type));

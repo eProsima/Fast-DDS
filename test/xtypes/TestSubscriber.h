@@ -47,7 +47,6 @@ public:
     bool init(
             const std::string& topicName,
             int domain,
-            eprosima::fastrtps::rtps::TopicKind_t topic_kind,
             eprosima::fastdds::dds::TypeSupport type,
             const eprosima::fastrtps::types::TypeObject* type_object,
             const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
@@ -105,6 +104,7 @@ private:
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
     eprosima::fastdds::dds::DataReader* reader_;
+    eprosima::fastdds::dds::Topic* topic_;
     void* m_Data;
     bool m_bInitialized;
     std::mutex m_mDiscovery;
@@ -114,10 +114,12 @@ private:
     std::condition_variable cv_type_discovery_;
     std::condition_variable cv_;
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
-    eprosima::fastrtps::TopicAttributes topic_att;
     eprosima::fastdds::dds::DataReaderQos reader_qos;
     bool using_typelookup_;
     bool tls_callback_called_;
+    std::string topic_name_;
+    const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos_;
+    const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos_;
 
 public:
 

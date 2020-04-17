@@ -102,6 +102,8 @@ set(${PROJECT_NAME}_source_files
     fastdds/subscriber/SubscriberImpl.cpp
     fastdds/subscriber/qos/SubscriberQos.cpp
     fastdds/subscriber/Subscriber.cpp
+    fastdds/subscriber/DataReader.cpp
+    fastdds/subscriber/DataReaderImpl.cpp
     fastdds/domain/DomainParticipantFactory.cpp
     fastdds/domain/DomainParticipantImpl.cpp
     fastdds/domain/DomainParticipant.cpp
@@ -205,6 +207,7 @@ set(${PROJECT_NAME}_source_files
     dds/pub/AnyDataWriter.cpp
     dds/pub/DataWriter.cpp
     dds/sub/Subscriber.cpp
+    dds/sub/DataReader.cpp
     dds/topic/Topic.cpp
     )
 
