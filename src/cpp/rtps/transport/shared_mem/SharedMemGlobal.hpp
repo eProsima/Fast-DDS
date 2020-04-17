@@ -72,6 +72,8 @@ public:
      */
     struct BufferDescriptor
     {
+        alignas(8) uint32_t flags;
+        uint64_t enqueue_tick;
         SharedMemSegment::Id source_segment_id;
         SharedMemSegment::Offset buffer_node_offset;
     };
@@ -79,7 +81,7 @@ public:
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell PortCell;
 
-    static const uint32_t CURRENT_ABI_VERSION = 2;
+    static const uint32_t CURRENT_ABI_VERSION = 3;
 
     struct PortNode
     {

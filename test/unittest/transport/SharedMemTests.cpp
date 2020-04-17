@@ -1069,7 +1069,9 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
     ASSERT_FALSE(port_mocker.lock_empty_cv_mutex(*global_port));
 
     bool listerner_active;
-    SharedMemGlobal::BufferDescriptor foo;
+    SharedMemSegment::Id random_id;
+    random_id.generate();
+    SharedMemGlobal::BufferDescriptor foo = {0, 0, random_id, 0};
     ASSERT_THROW(global_port->try_push(foo, &listerner_active), std::exception);
 
     ASSERT_THROW(global_port->healthy_check(), std::exception);
@@ -1108,7 +1110,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
     bool listerners_active;
     SharedMemSegment::Id random_id;
     random_id.generate();
-    SharedMemGlobal::BufferDescriptor foo = {random_id, 0};
+    SharedMemGlobal::BufferDescriptor foo = {0,0,random_id, 0};
     ASSERT_TRUE(port->try_push(foo, &listerners_active));
     ASSERT_TRUE(listerners_active);
     ASSERT_TRUE(listener->head() != nullptr);

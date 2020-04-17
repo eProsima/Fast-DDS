@@ -545,7 +545,7 @@ public:
 
             try
             {
-                ret = global_port_->try_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()},
+                ret = global_port_->try_push({0,0, shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()},
                                 &are_listeners_active);
 
                 if (!are_listeners_active)
