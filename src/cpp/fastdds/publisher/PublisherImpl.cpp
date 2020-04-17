@@ -20,6 +20,7 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
 
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
@@ -210,6 +211,8 @@ DataWriter* PublisherImpl::create_datawriter(
         writers_[topic->get_name()].push_back(impl);
     }
 
+    topic->get_impl()->reference();
+
     return writer;
 }
 
@@ -228,6 +231,7 @@ ReturnCode_t PublisherImpl::delete_datawriter(
         if (dw_it != vit->second.end())
         {
             (*dw_it)->set_listener(nullptr);
+            (*dw_it)->get_topic()->get_impl()->dereference();
             delete (*dw_it);
             vit->second.erase(dw_it);
             if (vit->second.empty())
