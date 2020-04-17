@@ -161,6 +161,10 @@ TestPublisher::~TestPublisher()
     {
         mp_participant->delete_publisher(mp_publisher);
     }
+    if (mp_topic)
+    {
+        mp_participant->delete_topic(mp_topic);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 

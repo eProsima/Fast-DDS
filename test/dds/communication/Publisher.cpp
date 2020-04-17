@@ -330,9 +330,18 @@ int main(
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
-    publisher->delete_datawriter(writer);
-    participant->delete_publisher(publisher);
-    participant->delete_topic(topic);
+    if (writer != nullptr)
+    {
+        publisher->delete_datawriter(writer);
+    }
+    if (publisher != nullptr)
+    {
+        participant->delete_publisher(publisher);
+    }
+    if (topic != nullptr)
+    {
+        participant->delete_topic(topic);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 
     return 0;

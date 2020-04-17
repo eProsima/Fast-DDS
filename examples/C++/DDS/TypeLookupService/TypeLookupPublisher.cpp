@@ -85,12 +85,7 @@ bool TypeLookupPublisher::init()
         return false;
     }
 
-    TopicQos tqos;
-    tqos.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    tqos.history().depth = 30;
-    tqos.resource_limits().max_samples = 50;
-    tqos.resource_limits().allocated_samples = 20;
-    topic_ = mp_participant->create_topic("TypeLookupTopic", "TypeLookup", tqos);
+    topic_ = mp_participant->create_topic("TypeLookupTopic", "TypeLookup", TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -99,6 +94,10 @@ bool TypeLookupPublisher::init()
 
     // CREATE THE WRITER
     DataWriterQos wqos;
+    wqos.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    wqos.history().depth = 30;
+    wqos.resource_limits().max_samples = 50;
+    wqos.resource_limits().allocated_samples = 20;
     wqos.reliable_writer_data().times.heartbeatPeriod.seconds = 2;
     wqos.reliable_writer_data().times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     writer_ = mp_publisher->create_datawriter(topic_, wqos, &m_listener);
@@ -114,6 +113,18 @@ bool TypeLookupPublisher::init()
 
 TypeLookupPublisher::~TypeLookupPublisher()
 {
+    if (writer_ != nullptr)
+    {
+        mp_publisher->delete_datawriter(writer_);
+    }
+    if (mp_publisher != nullptr)
+    {
+        mp_participant->delete_publisher(mp_publisher);
+    }
+    if (topic_ != nullptr)
+    {
+        mp_participant->delete_topic(topic_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 

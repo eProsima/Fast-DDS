@@ -33,6 +33,8 @@ using namespace eprosima::fastdds::dds;
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(nullptr)
+    , topic_(nullptr)
+    , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -80,6 +82,18 @@ bool HelloWorldPublisher::init()
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
+    if (writer_ != nullptr)
+    {
+        publisher_->delete_datawriter(writer_);
+    }
+    if (publisher_ != nullptr)
+    {
+        participant_->delete_publisher(publisher_);
+    }
+    if (topic_ != nullptr)
+    {
+        participant_->delete_topic(topic_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 

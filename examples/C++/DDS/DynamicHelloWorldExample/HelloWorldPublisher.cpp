@@ -114,6 +114,18 @@ bool HelloWorldPublisher::init()
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
+    if (writer_ != nullptr)
+    {
+        mp_publisher->delete_datawriter(writer_);
+    }
+    if (mp_publisher != nullptr)
+    {
+        mp_participant->delete_publisher(mp_publisher);
+    }
+    if (topic_ != nullptr)
+    {
+        mp_participant->delete_topic(topic_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 
