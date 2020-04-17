@@ -3,13 +3,7 @@
     <profiles>
         <library_settings>
             <intraprocess_delivery>FULL</intraprocess_delivery>
-        </library_settings>
-        <transport_descriptors>
-            <transport_descriptor>
-                <transport_id>disable_shm</transport_id>
-                <type>UDPv4</type>
-            </transport_descriptor>
-        </transport_descriptors>
+        </library_settings>        
         <participant profile_name="simple_participant_profile" is_default_profile="true">
             <rtps>
                 <builtin>
@@ -18,11 +12,7 @@
                             <sec>360</sec>
                         </leaseDuration>
                     </discovery_config>
-                </builtin>
-                <userTransports>
-                    <transport_id>disable_shm</transport_id>
-                </userTransports>
-                <useBuiltinTransports>false</useBuiltinTransports>
+                </builtin>                
             </rtps>
         </participant>
     </profiles>
