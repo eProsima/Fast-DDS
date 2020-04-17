@@ -22,14 +22,51 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/types.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/sub/DataReader.hpp>
 #include <dds/sub/qos/DataReaderQos.hpp>
 #include <dds/topic/Topic.hpp>
 
+#include <fastrtps/rtps/history/ReaderHistory.h>
+
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+class FooType
+{
+public:
+
+    FooType()
+    {
+    }
+
+    ~FooType()
+    {
+    }
+
+    inline std::string& message()
+    {
+        return message_;
+    }
+
+    inline void message(
+            const std::string& message)
+    {
+        message_ = message;
+    }
+
+    bool isKeyDefined()
+    {
+        return false;
+    }
+
+private:
+
+    std::string message_;
+};
 
 class TopicDataTypeMock : public TopicDataType
 {
@@ -245,6 +282,33 @@ TEST(SubscriberTests, CreatePSMDataReader)
 }
 */
 
+
+TEST(SubscriberTests, ReadData)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type_(new TopicDataTypeMock());
+    participant->register_type(type_);
+
+    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    FooType data;
+    SampleInfo info;
+    ASSERT_EQ(data_reader->read_next_sample(&data, &info), ReturnCode_t::RETCODE_NO_DATA);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
 
 } // namespace dds
 } // namespace fastdds
