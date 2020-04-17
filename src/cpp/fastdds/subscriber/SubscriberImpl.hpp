@@ -164,6 +164,35 @@ public:
     bool type_in_use(
             const std::string& type_name) const;
 
+    /**
+     * Set Qos from another instance
+     * @param to Reference to the qos instance to be changed.
+     * @param from Reference to the qos instance with the new values.
+     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
+     */
+    static void set_qos(
+            SubscriberQos& to,
+            const SubscriberQos& from,
+            bool first_time);
+
+    /**
+     * Check if the Qos values are compatible between each other.
+     * @param qos Reference to the qos instance to check.
+     * @return True if correct.
+     */
+    static ReturnCode_t check_qos(
+            const SubscriberQos& qos);
+
+    /**
+     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+     * @param to Reference to the qos instance to be changed.
+     * @param from Reference to the qos instance with the new values.
+     * @return True if they can be updated.
+     */
+    static bool can_qos_be_updated(
+            const SubscriberQos& to,
+            const SubscriberQos& from);
+
 private:
 
     //!Participant
