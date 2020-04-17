@@ -494,11 +494,11 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     CryptoPlugin->keyfactory()->unregister_participant(unintended_remote, exception);
 
 
-    //Now lets do the same with 256GCM
+    //Now lets do the same with 128GCM
     //Fill prop_handle with info about the new mode we want
     eprosima::fastrtps::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
-    prop1.value("256");
+    prop1.value("128");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
@@ -1081,10 +1081,10 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
-    //Lets do it with the 256 version
+    //Lets do it with the 128 version
     eprosima::fastrtps::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
-    prop1.value("256");
+    prop1.value("128");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
@@ -1301,10 +1301,10 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
-    //Test the GCM256 version
+    //Test the GCM128 version
     eprosima::fastrtps::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
-    prop1.value("256");
+    prop1.value("128");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
@@ -1525,10 +1525,10 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
-    //Test the GCM256 version
+    //Test the GCM128 version
     eprosima::fastrtps::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
-    prop1.value("256");
+    prop1.value("128");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
