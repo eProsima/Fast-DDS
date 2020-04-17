@@ -106,8 +106,6 @@ public:
                 const eprosima::fastrtps::types::TypeObject* object,
                 eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
 
-        eprosima::fastrtps::SampleInfo_t m_info;
-
         int n_matched;
 
         uint32_t n_samples;

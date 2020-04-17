@@ -21,6 +21,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
@@ -75,15 +76,15 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     datas_.clear();
 }
 
-eprosima::fastdds::dds::DomainParticipant* HelloWorldSubscriber::participant()
+DomainParticipant* HelloWorldSubscriber::participant()
 {
     const std::lock_guard<std::mutex> lock(mutex_);
     return mp_participant;
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
-        eprosima::fastdds::dds::DataReader*,
-        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
@@ -103,16 +104,17 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 }
 
 void HelloWorldSubscriber::SubListener::on_data_available(
-        eprosima::fastdds::dds::DataReader* reader)
+        DataReader* reader)
 {
     auto dit = subscriber_->datas_.find(reader);
 
     if (dit != subscriber_->datas_.end())
     {
         eprosima::fastrtps::types::DynamicData_ptr data = dit->second;
-        if (reader->take_next_sample(data.get(), &m_info) == ReturnCode_t::RETCODE_OK)
+        SampleInfo info;
+        if (reader->take_next_sample(data.get(), &info) == ReturnCode_t::RETCODE_OK)
         {
-            if (m_info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
+            if (info.instance_state == ALIVE)
             {
                 eprosima::fastrtps::types::DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;
@@ -153,7 +155,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
     }
 
     //CREATE THE TOPIC
-    eprosima::fastdds::dds::Topic* topic = subscriber_->mp_participant->create_topic(
+    Topic* topic = subscriber_->mp_participant->create_topic(
             "HelloWorldTopic",
             m_type->getName(),
             TOPIC_QOS_DEFAULT);

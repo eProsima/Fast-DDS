@@ -23,6 +23,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 using namespace eprosima::fastdds::dds;
@@ -100,8 +101,8 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
-        eprosima::fastdds::dds::DataReader*,
-        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
@@ -121,11 +122,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 }
 
 void HelloWorldSubscriber::SubListener::on_data_available(
-        eprosima::fastdds::dds::DataReader* reader)
+        DataReader* reader)
 {
-    if (reader->take_next_sample(&hello_, &info_) == ReturnCode_t::RETCODE_OK)
+    SampleInfo info;
+    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info_.sampleKind == eprosima::fastrtps::rtps::ALIVE)
+        if (info.instance_state == ALIVE)
         {
             samples_++;
             // Print your structure data here.

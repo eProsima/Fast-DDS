@@ -104,8 +104,6 @@ public:
                 const eprosima::fastrtps::string_255 type_name,
                 const eprosima::fastrtps::types::TypeInformation& type_information) override;
 
-        eprosima::fastrtps::SampleInfo_t m_info;
-
         int n_matched;
 
         uint32_t n_samples;

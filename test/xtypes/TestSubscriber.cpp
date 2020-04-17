@@ -30,6 +30,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
@@ -275,9 +276,10 @@ void TestSubscriber::SubListener::on_subscription_matched(
 void TestSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (!!reader->take_next_sample(mParent->m_Data, &m_info))
+    SampleInfo info;
+    if (!!reader->take_next_sample(mParent->m_Data, &info))
     {
-        if (m_info.sampleKind == ALIVE)
+        if (info.instance_state == eprosima::fastdds::dds::ALIVE)
         {
             ++n_samples;
             mParent->cv_.notify_one();
