@@ -1637,6 +1637,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         if (submessage)
         {
             uint16_t length = static_cast<uint16_t>(actual_size + final_size + sizeof(uint32_t));
+            length = (length + 3) & ~3;
             serializer << length;
         }
 
@@ -1760,7 +1761,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
             continue;
         }
         serializer << remote_entity->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id;
-        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, serializer.getCurrentPosition());
+        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, AES_BLOCK_SIZE, serializer.getCurrentPosition());
         serializer.jump(16);
         EVP_CIPHER_CTX_free(e_ctx);
 
@@ -1864,7 +1865,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
             continue;
         }
         serializer << remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id;
-        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, 16, serializer.getCurrentPosition());
+        EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, AES_BLOCK_SIZE, serializer.getCurrentPosition());
         serializer.jump(16);
         EVP_CIPHER_CTX_free(e_ctx);
 
@@ -2096,7 +2097,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
             return false;
         }
 
-        if (!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.receiver_mac.data()))
+        if (!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, AES_BLOCK_SIZE, tag.receiver_mac.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
             EVP_CIPHER_CTX_free(d_ctx);
