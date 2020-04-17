@@ -2,7 +2,7 @@
 
 <a href="https://twitter.com/intent/tweet?text=I+recommend+@EProsima+%23FastRTPS,+the+ most+complete+open+source+dds+middleware!&url=https%3A%2F%2Fgithub.com%2FeProsima%2FFast-RTPS&hashtags=github&original_referer=http%3A%2F%2Fgithub.com%2F&tw_p=tweetbutton" target="_blank">
   <img align="right"; hspace="20" src="https://www.eprosima.com/images/icons/eProsima_tweet.png"
-       alt="tweet button" title="Rommend Fast RTPS on Twitter"></img>
+       alt="tweet button" title="Recommend Fast RTPS on Twitter"></img>
 </a>
 
 [![FIWARE Robotics](https://nexus.lab.fiware.org/static/badges/chapters/robotics.svg)](https://www.fiware.org/developers/catalogue/)
