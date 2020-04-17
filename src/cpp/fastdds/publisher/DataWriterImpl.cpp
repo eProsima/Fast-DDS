@@ -200,15 +200,25 @@ ReturnCode_t DataWriterImpl::write(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
-    //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
-    // but it need to check if there is an existing entity with that handle
-    if (!handle.isDefined())
+    InstanceHandle_t instance_handle;
+    if (type_.get()->m_isGetKeyDefined)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_.get()->getKey(data, &instance_handle, is_key_protected);
+    }
+
+    //Check if the Handle is different from the special value HANDLE_NIL and
+    //does not correspond with the instance referred by the data
+    if (handle.isDefined() && handle.value != instance_handle.value)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    if (create_new_change_with_params(ALIVE, data, wparams, handle))
+    if (create_new_change_with_params(ALIVE, data, wparams, instance_handle))
     {
         return ReturnCode_t::RETCODE_OK;
     }
