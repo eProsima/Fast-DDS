@@ -200,9 +200,9 @@ TypeSupport DataReader::type()
 }
 
 
-const TopicDescription* DataReader::topic() const
+const TopicDescription* DataReader::get_topicdescription() const
 {
-    return impl_->topic();
+    return impl_->get_topicdescription();
 }
 
 } /* namespace dds */

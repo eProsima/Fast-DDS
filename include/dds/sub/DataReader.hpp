@@ -28,6 +28,8 @@ namespace sub {
 
 class DataReaderListener;
 
+//TODO: [ILG] Decide if we need to templatize the DataReader and derive from a AnyDataReader
+
 /**
  * @brief
  * A DataReader allows the application to declare the data it wishes to receive.

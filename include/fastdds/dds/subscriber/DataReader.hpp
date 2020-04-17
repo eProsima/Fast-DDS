@@ -157,7 +157,7 @@ public:
      * Get TopicDescription
      * @return TopicDescription
      */
-    const TopicDescription* topic() const;
+    const TopicDescription* get_topicdescription() const;
 
     /**
      * @brief Get the requested deadline missed status

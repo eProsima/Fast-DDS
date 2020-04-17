@@ -98,7 +98,7 @@ class NoOpSubscriberListener;
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
 // TODO Uncomment when PSM listeners are implemented.
-//class OMG_DDS_API SubscriberListener : public virtual AnySubscriberListener
+//class OMG_DDS_API SubscriberListener : public virtual AnyDataReaderListener
 // TODO Remove the PSM listeners are implemented.
 class SubscriberListener : public eprosima::fastdds::dds::SubscriberListener
 {

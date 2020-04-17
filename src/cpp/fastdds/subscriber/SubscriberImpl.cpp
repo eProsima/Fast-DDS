@@ -191,14 +191,14 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    auto it = readers_.find(reader->impl_->topic()->get_name());
+    auto it = readers_.find(reader->impl_->get_topicdescription()->get_name());
     if (it != readers_.end())
     {
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
         if (dr_it != it->second.end())
         {
             (*dr_it)->set_listener(nullptr);
-            (*dr_it)->topic()->get_impl()->dereference();
+            (*dr_it)->get_topicdescription()->get_impl()->dereference();
             delete (*dr_it);
             it->second.erase(dr_it);
             if (it->second.empty())

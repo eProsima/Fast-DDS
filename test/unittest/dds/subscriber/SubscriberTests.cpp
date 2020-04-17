@@ -203,7 +203,8 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-
+//TODO: [ILG] Activate the test once PSM API for DataReader is in place
+/*
 TEST(SubscriberTests, CreatePSMDataReader)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
@@ -226,7 +227,7 @@ TEST(SubscriberTests, CreatePSMDataReader)
 
     ASSERT_NE(data_reader, ::dds::core::null);
 }
-
+*/
 
 
 } // namespace dds

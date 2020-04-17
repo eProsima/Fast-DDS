@@ -592,7 +592,7 @@ const Subscriber* DataReaderImpl::get_subscriber() const
    }
  */
 
-const TopicDescription* DataReaderImpl::topic() const
+const TopicDescription* DataReaderImpl::get_topicdescription() const
 {
     return topic_;
 }
