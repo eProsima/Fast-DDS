@@ -39,6 +39,7 @@ namespace dds {
 class TopicDataTypeMock : public TopicDataType
 {
 public:
+
     TopicDataTypeMock()
         : TopicDataType()
     {
@@ -65,7 +66,7 @@ public:
         return std::function<uint32_t()>();
     }
 
-    void * createData() override
+    void* createData() override
     {
         return nullptr;
     }
@@ -82,6 +83,7 @@ public:
     {
         return true;
     }
+
 };
 
 
@@ -144,7 +146,8 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
+                participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 
@@ -153,7 +156,8 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
+                participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 
@@ -165,7 +169,8 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
+                participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
@@ -188,7 +193,8 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
     ASSERT_EQ(qos, pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(PARTICIPANT_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(
+                PARTICIPANT_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
 
 }
 
@@ -489,8 +495,22 @@ TEST(ParticipantTests, DeleteTopicInUse)
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+
+    topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_writer, nullptr);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 

@@ -106,9 +106,9 @@ public:
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
                         g_topic = g_participant->create_topic(
-                                topic_name.to_string(),
-                                type_name.to_string(),
-                                TOPIC_QOS_DEFAULT);
+                            topic_name.to_string(),
+                            type_name.to_string(),
+                            TOPIC_QOS_DEFAULT);
 
                         g_reader = g_subscriber->create_datareader(
                             g_topic,
@@ -349,12 +349,6 @@ int main(
     SubListener listener;
 
     //CREATE THE SUBSCRIBER
-    //Domain::getDefaultSubscriberAttributes(subscriber_attributes);
-    //g_subscriber_attributes.topic.topicKind = NO_KEY;
-    //g_subscriber_attributes.topic.topicDataType = type.getName();
-    g_topic.topicName = topic.str();
-    //g_subscriber_attributes.qos.m_liveliness.lease_duration = 3;
-    //g_subscriber_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
     g_subscriber = g_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
 
     if (g_subscriber == nullptr)
