@@ -659,6 +659,12 @@ public:
             , segment_id_(segment_id)
         {
             segment_node_ = segment_->get().find<SegmentNode>("segment_node").first;
+
+            if(!segment_node_)
+            {
+                throw std::runtime_error("segment_node not found");
+            }
+
             segment_node_->ref_count.fetch_add(1);
         }
 
