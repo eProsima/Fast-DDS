@@ -673,7 +673,7 @@ TopicDescription* DomainParticipantImpl::lookup_topicdescription(
         const std::string& topic_name) const
 {
     auto it = topics_.find(topic_name);
-    
+
     if (it != topics_.end())
     {
         return it->second->user_topic_;
@@ -836,7 +836,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 {
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
-        participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
+        participant_->listener_->on_participant_authentication(participant_->participant_, std::move(info));
     }
 }
 

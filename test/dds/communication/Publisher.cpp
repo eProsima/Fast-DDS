@@ -94,7 +94,7 @@ public:
     }
 
 #if HAVE_SECURITY
-    void onParticipantAuthentication(
+    void on_participant_authentication(
             DomainParticipant* participant,
             rtps::ParticipantAuthenticationInfo&& info) override
     {

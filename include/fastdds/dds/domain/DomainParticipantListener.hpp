@@ -42,9 +42,13 @@ class DomainParticipantListener
 {
 public:
 
-    DomainParticipantListener() {}
+    DomainParticipantListener()
+    {
+    }
 
-    virtual ~DomainParticipantListener() {}
+    virtual ~DomainParticipantListener()
+    {
+    }
 
     /*!
      * This method is called when a new Participant is discovered, or a previously discovered participant changes
@@ -60,12 +64,13 @@ public:
     }
 
 #if HAVE_SECURITY
-    virtual void onParticipantAuthentication(
+    virtual void on_participant_authentication(
             DomainParticipant* participant,
             fastrtps::rtps::ParticipantAuthenticationInfo&& info)
     {
         (void)participant, (void)info;
     }
+
 #endif
 
     /*!
