@@ -849,11 +849,11 @@ void AESGCMGMAC_KeyFactory::create_key(
 {
     std::array<uint8_t, 4> transformationtype = encrypt_then_sign
             ? (use_256_bits
-            ? c_transfrom_kind_aes256_gcm
-            : c_transfrom_kind_aes128_gcm)
+                ? c_transfrom_kind_aes256_gcm
+                : c_transfrom_kind_aes128_gcm)
             : (use_256_bits
-            ? c_transfrom_kind_aes256_gmac
-            : c_transfrom_kind_aes128_gmac);
+                ? c_transfrom_kind_aes256_gmac
+                : c_transfrom_kind_aes128_gmac);
 
     int nBytes = use_256_bits ? 32 : 16;
 
