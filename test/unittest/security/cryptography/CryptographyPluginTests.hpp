@@ -451,7 +451,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
 
     char message[] = "RPTSMessage"; //Length 11
     memcpy(plain_rtps_message.buffer, message, 11);
-
+    plain_rtps_message.length = 11;
 
     eprosima::fastrtps::rtps::security::ParticipantCryptoHandle* unintended_remote =
             CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA, *i_handle, *perm_handle,
@@ -472,7 +472,9 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
         ASSERT_TRUE(memcmp(plain_rtps_message.buffer, decoded_rtps_message.buffer, decoded_rtps_message.length) == 0);
         plain_rtps_message.pos = 0;
         encoded_rtps_message.pos = 0;
+        encoded_rtps_message.length = 0;
         decoded_rtps_message.pos = 0;
+        decoded_rtps_message.length = 0;
     }
     //Send message to unintended participant
 
@@ -480,11 +482,14 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     receivers.push_back(unintended_remote);
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_rtps_message(encoded_rtps_message, plain_rtps_message,
             *ParticipantA, receivers, exception));
+    encoded_rtps_message.pos = 0;
     ASSERT_FALSE(CryptoPlugin->cryptotransform()->decode_rtps_message(decoded_rtps_message, encoded_rtps_message,
             *ParticipantB, *ParticipantB_remote, exception));
     plain_rtps_message.pos = 0;
     encoded_rtps_message.pos = 0;
+    encoded_rtps_message.length = 0;
     decoded_rtps_message.pos = 0;
+    decoded_rtps_message.length = 0;
 
 
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA, exception);
@@ -1066,9 +1071,15 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     //Send message to intended participant
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload,
             *writer, exception));
+    encoded_payload.pos = 0;
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos,
             *reader, *remote_writer, exception));
     ASSERT_TRUE(memcmp(plain_payload.data, decoded_payload.data, 18) == 0);
+    plain_payload.pos = 0;
+    encoded_payload.pos = 0;
+    encoded_payload.length = 0;
+    decoded_payload.pos = 0;
+    decoded_payload.length = 0;
 
     CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
     CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer, exception);
@@ -1140,6 +1151,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     //Send message to intended participant
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload,
             *writer, exception));
+    encoded_payload.pos = 0;
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos,
             *reader, *remote_writer, exception));
     ASSERT_TRUE(memcmp(plain_payload.data, decoded_payload.data, 18) == 0);
