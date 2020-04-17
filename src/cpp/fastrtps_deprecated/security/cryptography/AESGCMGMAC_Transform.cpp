@@ -118,7 +118,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t, 12> initialization_vector; //96 bytes, session_id + suffix
     memcpy(initialization_vector.data(), &(session->session_id), 4);
-    memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
+    memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t, 4> session_id;
     memcpy(session_id.data(), &(session->session_id), 4);
 
@@ -682,14 +682,15 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t, 32> session_key;
+    std::array<uint8_t, 32> session_key{0};
     compute_sessionkey(session_key,
             sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0),
             session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector;
+    std::array<uint8_t, 12> initialization_vector{0};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
-    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+    memcpy(initialization_vector.data() + 4,
+            header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
 
     // Body
     uint32_t body_length = 0, body_align = 0;
@@ -1064,12 +1065,13 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     uint32_t session_id;
     memcpy(&session_id, header.session_id.data(), 4);
     //Sessionkey
-    std::array<uint8_t, 32> session_key;
+    std::array<uint8_t, 32> session_key{0};
     compute_sessionkey(session_key, *keyMat, session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector;
+    std::array<uint8_t, 12> initialization_vector{0};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
-    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+    memcpy(initialization_vector.data() + 4,
+            header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
 
     // Body
     uint32_t body_length = 0, body_align = 0;
@@ -1243,12 +1245,13 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     uint32_t session_id;
     memcpy(&session_id, header.session_id.data(), 4);
     //Sessionkey
-    std::array<uint8_t, 32> session_key;
+    std::array<uint8_t, 32> session_key{0};
     compute_sessionkey(session_key, *keyMat, session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector;
+    std::array<uint8_t, 12> initialization_vector{0};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
-    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+    memcpy(initialization_vector.data() + 4,
+            header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
 
     // Body
     uint32_t body_length = 0, body_align = 0;
@@ -1398,12 +1401,13 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t, 32> session_key;
+    std::array<uint8_t, 32> session_key{0};
     compute_sessionkey(session_key, *keyMat, session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector;
+    std::array<uint8_t, 12> initialization_vector{0};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
-    memcpy(initialization_vector.data() + 4, header.initialization_vector_suffix.data(), 8);
+    memcpy(initialization_vector.data() + 4,
+            header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
 
     // Body
     uint32_t body_length = 0, body_align = 0;
@@ -1553,6 +1557,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
     // AES_BLOCK_SIZE = 16
     int cipher_block_size = 0, actual_size = 0, final_size = 0;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
+
     if (!use_256_bits)
     {
         if (!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(session_key.data()),
@@ -1657,7 +1662,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
             return false;
         }
 
-        if (!EVP_EncryptFinal(e_ctx, output_buffer_raw, &final_size))
+        if (!EVP_EncryptFinal(e_ctx, &output_buffer_raw[actual_size], &final_size))
         {
             logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
@@ -1734,7 +1739,6 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
     //Check the list of receivers, search for keys and compute session keys as needed
     for (auto rec = receiving_crypto_list.begin(); rec != receiving_crypto_list.end(); ++rec)
     {
-
         AESGCMGMAC_EntityCryptoHandle& remote_entity = AESGCMGMAC_ReaderCryptoHandle::narrow(**rec);
 
         if (remote_entity.nil())
@@ -2017,7 +2021,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
 
     EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, AES_BLOCK_SIZE, tag.common_mac.data());
 
-    if (!EVP_DecryptFinal(d_ctx, output_buffer, &final_size))
+    if (!EVP_DecryptFinal(d_ctx, &output_buffer[actual_size], &final_size))
     {
         logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
@@ -2131,7 +2135,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(
         int actual_size = 0, final_size = 0;
 
         //Get ReceiverSpecificSessionKey
-        std::array<uint8_t, 32> specific_session_key;
+        std::array<uint8_t, 32> specific_session_key{0};
         compute_sessionkey(specific_session_key, true, receiver_specific_key, master_salt, session_id);
 
         //Verify specific MAC

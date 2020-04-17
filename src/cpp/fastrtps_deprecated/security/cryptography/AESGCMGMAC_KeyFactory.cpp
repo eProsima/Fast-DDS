@@ -322,7 +322,7 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datawriter(
     auto plugin_attrs = datawriter_security_properties.plugin_endpoint_attributes;
     bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
     bool is_payload_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED) != 0;
-    bool use_256_bits = false;
+    bool use_256_bits = true;
     bool use_kx_keys = false;
     int maxblockspersession = 32; //Default to key update every 32 usages
     if (!datawriter_prop.empty())
@@ -331,9 +331,9 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datawriter(
         {
             if (it->name().compare("dds.sec.crypto.keysize") == 0)
             {
-                if (it->value().compare("256") == 0)
+                if (it->value().compare("128") == 0)
                 {
-                    use_256_bits = true;
+                    use_256_bits = false;
                 }
             }
             else if (it->name().compare("dds.sec.crypto.maxblockspersession") == 0)
@@ -541,7 +541,7 @@ DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datareader(
 
     auto plugin_attrs = datareder_security_attributes.plugin_endpoint_attributes;
     bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
-    bool use_256_bits = false;
+    bool use_256_bits = true;
     bool use_kx_keys = false;
     int maxblockspersession = 32; //Default to key update every 32 usages
     if (!datareader_properties.empty())
@@ -550,9 +550,9 @@ DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datareader(
         {
             if (it->name().compare("dds.sec.crypto.keysize") == 0)
             {
-                if (it->value().compare("256") == 0)
+                if (it->value().compare("128") == 0)
                 {
-                    use_256_bits = true;
+                    use_256_bits = false;
                 }
             }
             else if (it->name().compare("dds.sec.crypto.maxblockspersession") == 0)
@@ -848,12 +848,12 @@ void AESGCMGMAC_KeyFactory::create_key(
         bool use_256_bits)
 {
     std::array<uint8_t, 4> transformationtype = encrypt_then_sign
-            ? use_256_bits
+            ? (use_256_bits
             ? c_transfrom_kind_aes256_gcm
-            : c_transfrom_kind_aes128_gcm
-            : use_256_bits
+            : c_transfrom_kind_aes128_gcm)
+            : (use_256_bits
             ? c_transfrom_kind_aes256_gmac
-            : c_transfrom_kind_aes128_gmac;
+            : c_transfrom_kind_aes128_gmac);
 
     int nBytes = use_256_bits ? 32 : 16;
 
