@@ -221,7 +221,9 @@ public:
         : participant_listener_(*this)
         , listener_(*this)
         , participant_(nullptr)
+        , topic_(nullptr)
         , subscriber_(nullptr)
+        , datareader_(nullptr)
         , topic_name_(topic_name)
         , initialized_(false)
         , matched_(0)
@@ -296,6 +298,7 @@ public:
         // Create topic
         //
         topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+        ASSERT_NE(topic_, nullptr);
 
         //TODO
         eprosima::fastrtps::TopicAttributes ta;
@@ -315,6 +318,21 @@ public:
 
     void destroy()
     {
+        if (datareader_)
+        {
+            subscriber_->delete_datareader(datareader_);
+            datareader_ = nullptr;
+        }
+        if (subscriber_)
+        {
+            participant_->delete_subscriber(subscriber_);
+            subscriber_ = nullptr;
+        }
+        if (topic_)
+        {
+            participant_->delete_topic(topic_);
+            topic_ = nullptr;
+        }
         if (participant_ != nullptr)
         {
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
