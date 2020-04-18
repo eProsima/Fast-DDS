@@ -22,6 +22,7 @@
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -33,8 +34,7 @@ class Publisher;
  * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
  * @ingroup FASTDDS_MODULE
  */
-//TODO: Uncomment when the PublisherListener methods are substituted by the DataWriter ones
-class PublisherListener //: public DataWriterListener
+class PublisherListener : public DataWriterListener
 {
 public:
 
@@ -44,45 +44,6 @@ public:
 
     RTPS_DllAPI virtual ~PublisherListener()
     {
-    }
-
-    /**
-     * This method is called when the Publisher is matched (or unmatched) against an endpoint.
-     * @param pub Pointer to the associated Publisher
-     * @param info Information regarding the matched subscriber
-     */
-    RTPS_DllAPI virtual void on_publication_matched(
-            Publisher* pub,
-            const fastdds::dds::PublicationMatchedStatus& info)
-    {
-        (void)pub;
-        (void)info;
-    }
-
-    /**
-     * A method called when a deadline is missed
-     * @param pub Pointer to the associated Publisher
-     * @param status The deadline missed status
-     */
-    RTPS_DllAPI virtual void on_offered_deadline_missed(
-            Publisher* pub,
-            const fastrtps::OfferedDeadlineMissedStatus& status)
-    {
-        (void)pub;
-        (void)status;
-    }
-
-    /**
-     * @brief Method called when the livelivess of a publisher is lost
-     * @param pub The publisher
-     * @param status The liveliness lost status
-     */
-    RTPS_DllAPI virtual void on_liveliness_lost(
-            Publisher* pub,
-            const LivelinessLostStatus& status)
-    {
-        (void)pub;
-        (void)status;
     }
 
 };

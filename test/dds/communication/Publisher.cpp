@@ -131,7 +131,7 @@ public:
     }
 
     void on_publication_matched(
-            Publisher* /*publisher*/,
+            DataWriter* /*publisher*/,
             const PublicationMatchedStatus& info) override
     {
         std::unique_lock<std::mutex> lock(mutex_);

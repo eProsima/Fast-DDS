@@ -35,8 +35,7 @@ class Subscriber;
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup FASTDDS_MODULE
  */
-//TODO: Uncomment when the SubscriberListener methods are substituted by the DataReader ones
-class SubscriberListener //: public DataReaderListener
+class SubscriberListener : public DataReaderListener
 {
 public:
 
@@ -50,53 +49,13 @@ public:
 
     /**
      * Virtual function to be implemented by the user containing the actions to be performed when a new
-     * Data Message is received.
+     * Data Message is available on any reader.
      * @param sub Subscriber
      */
-    RTPS_DllAPI virtual void on_new_data_message(
+    RTPS_DllAPI virtual void on_data_on_readers(
             Subscriber* sub)
     {
         (void)sub;
-    }
-
-    /**
-     * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched);
-     * i.e., when a writer publishing in the same topic is discovered.
-     * @param sub Subscriber
-     * @param info Matching information
-     */
-    RTPS_DllAPI virtual void on_subscription_matched(
-            Subscriber* sub,
-            const fastdds::dds::SubscriptionMatchedStatus& info)
-    {
-        (void)sub;
-        (void)info;
-    }
-
-    /**
-     * Virtual method to be called when a topic misses the deadline period
-     * @param sub Subscriber
-     * @param status The requested deadline missed status
-     */
-    RTPS_DllAPI virtual void on_requested_deadline_missed(
-            Subscriber* sub,
-            const fastrtps::RequestedDeadlineMissedStatus& status)
-    {
-        (void)sub;
-        (void)status;
-    }
-
-    /**
-     * @brief Method called when the liveliness status associated to a subscriber changes
-     * @param sub The subscriber
-     * @param status The liveliness changed status
-     */
-    RTPS_DllAPI virtual void on_liveliness_changed(
-            Subscriber* sub,
-            const fastrtps::LivelinessChangedStatus& status)
-    {
-        (void)sub;
-        (void)status;
     }
 
 };

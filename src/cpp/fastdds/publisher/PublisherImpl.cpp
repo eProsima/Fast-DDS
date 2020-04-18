@@ -132,32 +132,32 @@ ReturnCode_t PublisherImpl::set_listener(
 }
 
 void PublisherImpl::PublisherWriterListener::on_publication_matched(
-        DataWriter* /*writer*/,
+        DataWriter* writer,
         const PublicationMatchedStatus& info)
 {
     if (publisher_->listener_ != nullptr)
     {
-        publisher_->listener_->on_publication_matched(publisher_->user_publisher_, info);
+        publisher_->listener_->on_publication_matched(writer, info);
     }
 }
 
 void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
-        DataWriter* /*writer*/,
+        DataWriter* writer,
         const LivelinessLostStatus& status)
 {
     if (publisher_->listener_ != nullptr)
     {
-        publisher_->listener_->on_liveliness_lost(publisher_->user_publisher_, status);
+        publisher_->listener_->on_liveliness_lost(writer, status);
     }
 }
 
 void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
-        DataWriter* /*writer*/,
+        DataWriter* writer,
         const fastrtps::OfferedDeadlineMissedStatus& status)
 {
     if (publisher_->listener_ != nullptr)
     {
-        publisher_->listener_->on_offered_deadline_missed(publisher_->user_publisher_, status);
+        publisher_->listener_->on_offered_deadline_missed(writer, status);
     }
 }
 

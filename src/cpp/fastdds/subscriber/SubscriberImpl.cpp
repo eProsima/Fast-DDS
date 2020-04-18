@@ -345,41 +345,42 @@ const DomainParticipant* SubscriberImpl::get_participant() const
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_data_available(
-        DataReader* /*reader*/)
+        DataReader* reader)
 {
     if (subscriber_->listener_ != nullptr)
     {
-        subscriber_->listener_->on_new_data_message(subscriber_->user_subscriber_);
+        subscriber_->listener_->on_data_available(reader);
+        subscriber_->listener_->on_data_on_readers(subscriber_->user_subscriber_);
     }
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_subscription_matched(
-        DataReader* /*reader*/,
+        DataReader* reader,
         const fastdds::dds::SubscriptionMatchedStatus& info)
 {
     if (subscriber_->listener_ != nullptr)
     {
-        subscriber_->listener_->on_subscription_matched(subscriber_->user_subscriber_, info);
+        subscriber_->listener_->on_subscription_matched(reader, info);
     }
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_requested_deadline_missed(
-        DataReader* /*reader*/,
+        DataReader* reader,
         const fastrtps::RequestedDeadlineMissedStatus& status)
 {
     if (subscriber_->listener_ != nullptr)
     {
-        subscriber_->listener_->on_requested_deadline_missed(subscriber_->user_subscriber_, status);
+        subscriber_->listener_->on_requested_deadline_missed(reader, status);
     }
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
-        DataReader* /*reader*/,
+        DataReader* reader,
         const fastrtps::LivelinessChangedStatus& status)
 {
     if (subscriber_->listener_ != nullptr)
     {
-        subscriber_->listener_->on_liveliness_changed(subscriber_->user_subscriber_, status);
+        subscriber_->listener_->on_liveliness_changed(reader, status);
     }
 }
 
@@ -390,7 +391,7 @@ void SubscriberImpl::SubscriberReaderListener::on_sample_rejected(
     /* TODO
        if (subscriber_->listener_ != nullptr)
        {
-        subscriber_->listener_->on_sample_rejected(subscriber_->user_subscriber_, status);
+        subscriber_->listener_->on_sample_rejected(reader, status);
        }
      */
 }
@@ -402,7 +403,7 @@ void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
     /* TODO
        if (subscriber_->listener_ != nullptr)
        {
-        subscriber_->listener_->on_requested_incompatible_qos(subscriber_->user_subscriber_, status);
+        subscriber_->listener_->on_requested_incompatible_qos(reader, status);
        }
      */
 }
@@ -414,7 +415,7 @@ void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
     /* TODO
        if (subscriber_->listener_ != nullptr)
        {
-        subscriber_->listener_->on_sample_rejected(subscriber_->user_subscriber_, status);
+        subscriber_->listener_->on_sample_rejected(reader, status);
        }
      */
 }
