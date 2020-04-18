@@ -223,7 +223,7 @@ bool SharedMemTransport::init()
     }
 
     try
-    {        
+    {
         shared_mem_manager_ = std::make_shared<SharedMemManager>(SHM_MANAGER_DOMAIN);
         shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
                         configuration_.port_queue_capacity());
