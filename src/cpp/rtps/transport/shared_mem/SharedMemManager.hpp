@@ -38,16 +38,193 @@ class SharedMemManager
 private:
 
     struct BufferNode
-    {
-        std::atomic<int> ref_count;
+    {        
+        struct Status
+        {
+            // When buffers are enqued in a port this validity_id is copied to the BufferDescriptor in the port.
+            // If the sender process needs to recover the buffer by force, just increment this validity_id, the
+            // receiver process must check this validity_id vs the validity_id in the BufferDescriptor, if not equal
+            // the buffer has been invalidated by the sender.
+            uint64_t validity_id : 24;
+            // This counter is incremented each time the buffer is enqueued in a port, an decremented when pop
+            // from the port to be processed
+            uint64_t enqueued_count : 20;
+            // When listener processes start processing this buffer increments the processing_count. This way 
+            // the sender can know whether the buffer is been processed or is just only enqueued in some ports.
+            uint64_t processing_count : 20;
+        };
+
+        std::atomic<Status> status;
         uint32_t data_size;
         SharedMemSegment::Offset data_offset;
+        
+        /**
+         * Atomically invalidates a buffer.
+         */
+        inline void invalidate_buffer()
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            while (!status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id+1, (uint64_t)0u, (uint64_t)0u },
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+        }
+
+        /**
+         * Atomically invalidates a buffer, only, when the buffer is valid for the caller.
+         * @return true when succedded, false when the buffer was invalid for the caller.
+         */
+        inline bool invalidate_buffer(
+                uint32_t listener_validity_id)
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            while (listener_validity_id == s.validity_id &&
+                    !status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id+1, (uint64_t)0u, (uint64_t)0u },
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+
+            return (listener_validity_id == s.validity_id);
+        }
+
+        /**
+         * Atomically invalidates a buffer, only, if the buffer is not being processed.
+         * @return true when succedded, false otherwise.
+         */
+        bool invalidate_if_not_processing()
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            // If the buffer is not beeing processed by any listener => is invalidated
+            while (s.processing_count == 0 &&
+                    !status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id+1, (uint64_t)0u, (uint64_t)0u},
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+
+            return (s.processing_count == 0);
+        }
+
+        /**
+         * @return true if listener_validity_id == current buffer validity_id.
+         */
+        inline bool is_valid(
+                uint32_t listener_validity_id) const
+        {
+            return (status.load(std::memory_order_relaxed).validity_id == listener_validity_id);
+        }
+        
+        /**
+         * Atomically decrease enqueued count & increase the buffer processing counts, only, if the buffer is valid.
+         * @return true when succedded, false when the buffer has been invalidated.
+         */
+        inline bool dec_enqueued_inc_processing_counts(
+                uint32_t listener_validity_id)
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            while (listener_validity_id == s.validity_id &&
+                    !status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id, (uint64_t)s.enqueued_count-1, (uint64_t)s.processing_count+1 },
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+
+            return (listener_validity_id == s.validity_id);
+        }
+
+        /**
+         * Atomically increase the buffer processing count, only, if the buffer is valid.
+         * @return true when succedded, false when the buffer has been invalidated.
+         */
+        inline bool inc_processing_count(
+                uint32_t listener_validity_id)
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            while (listener_validity_id == s.validity_id &&
+                    !status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id, (uint64_t)s.enqueued_count, (uint64_t)s.processing_count+1 },
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+
+            return (listener_validity_id == s.validity_id);
+        }
+
+        /**
+         * Atomically increase the buffer enqueued count, only, if the buffer is valid.
+         * @return true when succedded, false when the buffer has been invalidated.
+         */
+        inline bool inc_enqueued_count(
+                uint32_t listener_validity_id)
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            while (listener_validity_id == s.validity_id &&
+                    !status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id, (uint64_t)s.enqueued_count+1, (uint64_t)s.processing_count },
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+
+            return (listener_validity_id == s.validity_id);
+        }
+
+        /**
+         * Atomically decrease the buffer enqueued count, only, if the buffer is valid.
+         * @return true when succedded, false when the buffer has been invalidated.
+         */
+        inline bool dec_enqueued_count(
+                uint32_t listener_validity_id)
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            while (listener_validity_id == s.validity_id &&
+                    !status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id, (uint64_t)s.enqueued_count-1, (uint64_t)s.processing_count },
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+
+            return (listener_validity_id == s.validity_id);
+        }
+
+        inline bool is_not_referenced() const
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            return (s.enqueued_count == 0) && (s.processing_count == 0);
+        }
+
+        /**
+         * Atomically decrease the buffer processing count, only, if the buffer is valid.
+         * @return true when succedded, false when the buffer has been invalidated.
+         */
+        inline bool dec_processing_count(
+                uint32_t listener_validity_id)
+        {
+            auto s = status.load(std::memory_order_relaxed);
+            while (listener_validity_id == s.validity_id &&
+                    !status.compare_exchange_weak(s,
+                    { (uint64_t)s.validity_id, (uint64_t)s.enqueued_count, (uint64_t)s.processing_count-1 },
+                    std::memory_order_release,
+                    std::memory_order_relaxed))
+            {
+            }
+
+            return (listener_validity_id == s.validity_id);
+        }        
     };
 
     struct SegmentNode
     {
         std::atomic<uint32_t> ref_count;
-        std::atomic<uint32_t> free_bytes;
+        uint32_t pad;
     };
 
 public:
@@ -62,6 +239,8 @@ public:
                     on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
                 })
     {
+        static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
+
         if (domain_name.length() > SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH)
         {
             throw std::runtime_error(
@@ -85,11 +264,11 @@ public:
 
     class Buffer
     {
-protected:
+    protected:
 
         virtual ~Buffer() = default;
 
-public:
+    public:
 
         virtual void* data() = 0;
         virtual uint32_t size() = 0;
@@ -103,20 +282,18 @@ public:
                 std::shared_ptr<SharedMemSegment>& segment,
                 const SharedMemSegment::Id& segment_id,
                 BufferNode* buffer_node,
-                SegmentNode* segment_node)
+                uint32_t original_validity_id)
             : segment_(segment)
             , segment_id_(segment_id)
             , buffer_node_(buffer_node)
-            , segment_node_(segment_node)
+            , original_validity_id_(original_validity_id)
         {
-            increase_ref();
-
             data_ = segment_->get_address_from_offset(buffer_node_->data_offset);
         }
 
         ~SharedMemBuffer() override
         {
-            decrease_ref();
+            buffer_node_->dec_processing_count(original_validity_id_);
         }
 
         void* data() override
@@ -129,40 +306,38 @@ public:
             return buffer_node_->data_size;
         }
 
-        SharedMemSegment::Offset node_offset()
+        SharedMemSegment::Offset node_offset() const
         {
             return segment_->get_offset_from_address(buffer_node_);
         }
 
-        SharedMemSegment::Id segment_id()
+        SharedMemSegment::Id segment_id() const
         {
             return segment_id_;
         }
 
-        void increase_ref()
+        inline uint32_t validity_id() const
         {
-            buffer_node_->ref_count.fetch_add(1);
+            return original_validity_id_;
         }
 
-        void decrease_ref()
+        void inc_enqueued_count(uint32_t validity_id)
         {
-            int32_t buffer_size = buffer_node_->data_size;
-
-            // Last reference to the buffer
-            if (buffer_node_->ref_count.fetch_sub(1) == 1)
-            {
-                // Anotate the new free space
-                segment_node_->free_bytes.fetch_add(buffer_size);
-            }
+            buffer_node_->inc_enqueued_count(validity_id);
         }
 
-private:
+        void dec_enqueued_count(uint32_t validity_id)
+        {
+            buffer_node_->dec_enqueued_count(validity_id);
+        }
+
+    private:
 
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
         BufferNode* buffer_node_;
-        SegmentNode* segment_node_;
         void* data_;
+        uint32_t original_validity_id_;
     };
 
     /**
@@ -171,7 +346,7 @@ private:
      */
     class Segment
     {
-public:
+    public:
 
         Segment(
                 uint32_t size,
@@ -205,7 +380,9 @@ public:
             // Init the segment node
             segment_node_ = segment_->get().construct<SegmentNode>("segment_node")();
             segment_node_->ref_count.exchange(1);
-            segment_node_->free_bytes.exchange(payload_size);
+            segment_node_->pad = 0;
+
+            free_bytes_ = payload_size;
 
             // Alloc the buffer nodes
             auto buffers_nodes = segment_->get().construct<BufferNode>
@@ -214,6 +391,9 @@ public:
             // All buffer nodes are free
             for (uint32_t i = 0; i<max_allocations; i++)
             {
+                buffers_nodes[i].status.exchange({0, 0, 0});
+                buffers_nodes[i].data_size = 0;
+                buffers_nodes[i].data_offset = 0;
                 free_buffers_.push_back(&buffers_nodes[i]);
             }
         }
@@ -256,30 +436,42 @@ public:
 
             try
             {
-                data = segment_->get().allocate(size);
+                buffer_node = pop_free_node();
 
-                BufferNode* buffer_node = get_free_node();
-                buffer_node->ref_count.store(0, std::memory_order_relaxed);
+                data = segment_->get().allocate(size);
+                free_bytes_-= size;
+                
                 buffer_node->data_offset = segment_->get_offset_from_address(data);
                 buffer_node->data_size = size;
 
+                auto validity_id = buffer_node->status.load(std::memory_order_relaxed).validity_id;
+                                
                 // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
-                new_buffer = std::make_shared<SharedMemBuffer>(segment_, segment_id_, buffer_node, segment_node_);
+                new_buffer = std::make_shared<SharedMemBuffer>(segment_, segment_id_, buffer_node, 
+                    static_cast<uint32_t>(validity_id));
 
+                if (new_buffer)
+                {
+                    buffer_node->inc_processing_count(static_cast<uint32_t>(validity_id));
+                }
+                else
+                {
+                    throw std::runtime_error("alloc_buffer: out of memory");
+                }
+                
                 // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                 allocated_buffers_.push_back(buffer_node);
-
-                segment_node_->free_bytes.fetch_sub(size);
             }
             catch (const std::exception&)
             {
                 if (buffer_node)
                 {
-                    release_buffer(buffer_node);
-                }
-                else if (data)
-                {
-                    segment_->get().deallocate(data);
+                    if (data)
+                    {
+                        release_buffer(buffer_node);
+                    }
+
+                    free_buffers_.push_back(buffer_node);
                 }
 
                 overflows_count_++;
@@ -290,22 +482,27 @@ public:
             return new_buffer;
         }
 
-private:
+    private:
 
         SegmentNode* segment_node_;
+
+        // TODO(Adolfo) : Dynamic allocations. Use foonathan to convert it to static allocation
         std::list<BufferNode*> free_buffers_;
         std::list<BufferNode*> allocated_buffers_;
+
         std::mutex alloc_mutex_;
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
         uint64_t overflows_count_;
 
+        uint32_t free_bytes_;
+
 #ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
         uint32_t max_payload_size_;
 #endif
-        inline BufferNode* get_free_node()
+        inline BufferNode* pop_free_node()
         {
-            if(free_buffers_.empty())
+            if (free_buffers_.empty())
             {
                 throw std::runtime_error("BufferNodes overflow");
             }
@@ -317,11 +514,11 @@ private:
 
         void release_buffer(
                 BufferNode* buffer_node)
-        {
+        {            
             segment_->get().deallocate(
                 segment_->get_address_from_offset(buffer_node->data_offset));
-                
-            free_buffers_.push_back(buffer_node);
+
+            free_bytes_ += buffer_node->data_size;
         }
 
         void release_unused_buffers()
@@ -329,12 +526,13 @@ private:
             auto node_it = allocated_buffers_.begin();
             while (node_it != allocated_buffers_.end())
             {
-                // This shouldn't normally be negative, but when processes crashes
-                // due to fault-tolerance mecanishms it could happen.
-                if ((*node_it)->ref_count.load() <= 0)
+                if ((*node_it)->is_not_referenced())
                 {
+                    (*node_it)->invalidate_buffer();
+
                     release_buffer(*node_it);
                     
+                    free_buffers_.push_back(*node_it);
                     allocated_buffers_.erase(node_it++);
                 }
                 else
@@ -368,12 +566,48 @@ private:
 #else
             (void)max_blocking_time_point;
 #endif
-            if (segment_node_->free_bytes.load(std::memory_order_relaxed) < size)
+            // Overflows
+            if (free_bytes_ < size)
             {
-                throw std::runtime_error("allocation timeout");
+                // Try to recover oldest buffers not beeing processed by any listener
+                if (!recover_buffers(size))
+                {
+                    throw std::runtime_error("allocation timeout");
+                }
             }
         }
 
+        /**
+         * Invalidades oldest buffers not being processed by any listener until enough free bytes
+         * @return true if at least required_data_size bytes are free after the invalidation, false otherwise.
+         */
+        bool recover_buffers(uint32_t required_data_size)
+        {            
+            auto it = allocated_buffers_.begin();
+
+            while(it != allocated_buffers_.end())
+            {
+                // Buffer is not beign processed by any listener
+                if ((*it)->invalidate_if_not_processing())
+                {
+                    release_buffer(*it);
+
+                    free_buffers_.push_back(*it);
+                    it = allocated_buffers_.erase(it);
+
+                    if (free_bytes_ >= required_data_size)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    it++;
+                }
+            }
+
+            return false;
+        }
 
     }; // Segment
 
@@ -385,7 +619,7 @@ private:
      */
     class Listener
     {
-public:
+    public:
 
         Listener(
                 SharedMemManager* shared_mem_manager,
@@ -430,47 +664,70 @@ public:
         std::shared_ptr<Buffer> pop()
         {
             std::shared_ptr<Buffer> buffer_ref;
+            bool is_buffer_valid = false;
 
             try
             {
-                bool was_cell_freed;
-
-                SharedMemGlobal::PortCell* head_cell = nullptr;
-
-                while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
+                while(!is_buffer_valid)
                 {
-                    // Wait until there's data to pop
-                    global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
-                }
+                    bool was_cell_freed;
 
-                if (!head_cell)
-                {
-                    return nullptr;
-                }
+                    SharedMemGlobal::PortCell* head_cell = nullptr;
+                    buffer_ref.reset();
 
-                if (!global_port_->is_port_ok())
-                {
-                    throw std::runtime_error("");
-                }
+                    while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
+                    {
+                        // Wait until there's data to pop
+                        global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
+                    }
 
-                SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
+                    if (!head_cell)
+                    {
+                        return nullptr;
+                    }
 
-                SegmentNode* segment_node;
-                auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id, &segment_node);
-                auto buffer_node =
-                        static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.buffer_node_offset));
+                    if (!global_port_->is_port_ok())
+                    {
+                        throw std::runtime_error("");
+                    }
 
-                // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
-                buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
-                                buffer_node,
-                                segment_node);
+                    SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
 
-                // If the cell has been read by all listeners
-                global_port_->pop(*global_listener_, was_cell_freed);
+                    SegmentNode* segment_node;
+                    auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id, &segment_node);
+                    auto buffer_node =
+                            static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.buffer_node_offset));
 
-                if (was_cell_freed)
-                {
-                    buffer_node->ref_count.fetch_sub(1);
+                    // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
+                    buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
+                                    buffer_node,
+                                    buffer_descriptor.validity_id);
+
+                    // If the cell has been read by all listeners
+                    global_port_->pop(*global_listener_, was_cell_freed);
+
+                    if (buffer_ref)
+                    {
+                        if (was_cell_freed)
+                        {
+                            // Atomically increase processing & decrease enqueued 
+                            is_buffer_valid = buffer_node->dec_enqueued_inc_processing_counts(
+                                buffer_descriptor.validity_id);
+                        }
+                        else
+                        {
+                            is_buffer_valid = buffer_node->inc_processing_count(buffer_descriptor.validity_id);
+                        }
+                    }
+                    else
+                    {
+                        if (was_cell_freed)
+                        {
+                            buffer_node->dec_enqueued_count(buffer_descriptor.validity_id);
+                        }
+                        
+                        throw std::runtime_error("pop() : out of memory");
+                    }
                 }
             }
             catch (const std::exception& e)
@@ -514,7 +771,7 @@ public:
             global_port_->close_listener(&is_closed_);
         }
 
-private:
+    private:
 
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
 
@@ -532,7 +789,7 @@ private:
      */
     class Port
     {
-public:
+    public:
 
         Port(
                 SharedMemManager* shared_mem_manager,
@@ -565,24 +822,27 @@ public:
             assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
 
             SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
-            shared_mem_buffer->increase_ref();
 
             bool ret;
             bool are_listeners_active = false;
+            auto validity_id = shared_mem_buffer->validity_id();
+
+            shared_mem_buffer->inc_enqueued_count(validity_id);
 
             try
             {
-                ret = global_port_->try_push({0,0, shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()},
+                ret = global_port_->try_push( {shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset(),
+                                               validity_id},
                                 &are_listeners_active);
 
                 if (!are_listeners_active)
                 {
-                    shared_mem_buffer->decrease_ref();
+                    shared_mem_buffer->dec_enqueued_count(validity_id);
                 }
             }
             catch (std::exception& e)
             {
-                shared_mem_buffer->decrease_ref();
+                shared_mem_buffer->dec_enqueued_count(validity_id);
 
                 if (!global_port_->is_port_ok())
                 {
@@ -606,7 +866,7 @@ public:
             return std::make_shared<Listener>(shared_mem_manager_, global_port_);
         }
 
-private:
+    private:
 
         void regenerate_port()
         {
@@ -639,8 +899,10 @@ private:
     {
         // Every buffer allocated implies two internal allocations, node and payload.
         // Every internal allocation consumes 'per_allocation_extra_size_' bytes
-        uint32_t allocation_extra_size = sizeof(SegmentNode) + per_allocation_extra_size_ +
-                max_allocations * ((sizeof(BufferNode) + per_allocation_extra_size_) + per_allocation_extra_size_);
+        uint32_t allocation_extra_size = 
+            sizeof(SegmentNode) + per_allocation_extra_size_ +
+            (max_allocations * sizeof(BufferNode)) + per_allocation_extra_size_ +
+            max_allocations * per_allocation_extra_size_;
 
         return std::make_shared<Segment>(size + allocation_extra_size, size, max_allocations);
     }
@@ -672,7 +934,7 @@ private:
      */
     class SegmentWrapper
     {
-public:
+    public:
 
         SegmentWrapper()
         {
@@ -719,7 +981,7 @@ public:
         std::shared_ptr<SharedMemSegment> segment() { return segment_; }
         SegmentNode* segment_node() { return segment_node_; }
 
-private:
+    private:
 
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
@@ -783,14 +1045,7 @@ private:
                 auto buffer_node =
                         static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor->buffer_node_offset));
 
-                int32_t buffer_size = buffer_node->data_size;
-
-                // Last reference to the buffer
-                if (buffer_node->ref_count.fetch_sub(1) == 1)
-                {
-                    // Anotate the new free space
-                    segment_node->free_bytes.fetch_add(buffer_size);
-                }
+                buffer_node->dec_enqueued_count(buffer_descriptor->validity_id);
             }
         }
         catch (const std::exception& e)

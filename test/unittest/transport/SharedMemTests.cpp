@@ -896,7 +896,7 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
 
             thread_listener2_state = 3;
         }
-            );
+    );
 
     auto port_sender = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
     auto segment = shared_mem_manager.create_segment(1024, 16);
@@ -973,9 +973,6 @@ TEST_F(SHMTransportTests, on_port_failure_free_enqueued_descriptors)
         *static_cast<uint8_t*>(buffers.back()->data()) = static_cast<uint8_t>(i+1);
     }
 
-    // Not enough space for more allocations
-    ASSERT_THROW(buffers.push_back(segment->alloc_buffer(4, std::chrono::steady_clock::time_point())), std::exception);
-
     auto port_sender = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
 
     // Enqueued all buffers in the port
@@ -985,9 +982,6 @@ TEST_F(SHMTransportTests, on_port_failure_free_enqueued_descriptors)
     }
 
     buffers.clear();
-
-    // Not enough space for more allocations
-    ASSERT_THROW(buffers.push_back(segment->alloc_buffer(4, std::chrono::steady_clock::time_point())), std::exception);
 
     std::atomic<uint32_t> thread_listener2_state(0);
     std::thread thread_listener2([&]
@@ -1071,7 +1065,7 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
     bool listerner_active;
     SharedMemSegment::Id random_id;
     random_id.generate();
-    SharedMemGlobal::BufferDescriptor foo = {0, 0, random_id, 0};
+    SharedMemGlobal::BufferDescriptor foo = {random_id, 0, 0};
     ASSERT_THROW(global_port->try_push(foo, &listerner_active), std::exception);
 
     ASSERT_THROW(global_port->healthy_check(), std::exception);
@@ -1110,7 +1104,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
     bool listerners_active;
     SharedMemSegment::Id random_id;
     random_id.generate();
-    SharedMemGlobal::BufferDescriptor foo = {0,0,random_id, 0};
+    SharedMemGlobal::BufferDescriptor foo = {random_id, 0, 0};
     ASSERT_TRUE(port->try_push(foo, &listerners_active));
     ASSERT_TRUE(listerners_active);
     ASSERT_TRUE(listener->head() != nullptr);

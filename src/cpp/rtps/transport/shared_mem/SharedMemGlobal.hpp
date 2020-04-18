@@ -72,10 +72,9 @@ public:
      */
     struct BufferDescriptor
     {
-        alignas(8) uint32_t flags;
-        uint64_t enqueue_tick;
         SharedMemSegment::Id source_segment_id;
         SharedMemSegment::Offset buffer_node_offset;
+        uint32_t validity_id;
     };
 
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
