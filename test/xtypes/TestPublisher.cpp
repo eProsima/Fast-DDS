@@ -101,15 +101,15 @@ bool TestPublisher::init(
         m_Type->auto_fill_type_object(false);
         if (type_object != nullptr)
         {
-            m_Type->type_object(TypeObjectV1(*type_object));
+            m_Type->type_object(*type_object);
         }
         if (type_identifier != nullptr)
         {
-            m_Type->type_identifier(TypeIdV1(*type_identifier));
+            m_Type->type_identifier(*type_identifier);
         }
         if (type_info != nullptr)
         {
-            m_Type->type_information(TypeInformation(*type_info));
+            m_Type->type_information(*type_info);
         }
         mp_participant->register_type(m_Type);
     }
