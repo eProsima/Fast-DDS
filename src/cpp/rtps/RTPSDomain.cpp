@@ -171,6 +171,20 @@ RTPSParticipant* RTPSDomain::createParticipant(
         pimpl = new RTPSParticipantImpl(domain_id, PParam, guidP, p, listen);
     }
 
+    // Above constructors create the sender resources. If a given listening port cannot be allocated an iterative
+    // mechanism will allocate another by default. This change would be translated to the PParam. Change the default
+    // listening port is unacceptable for server discovery.
+    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
+         || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+         && !((PParam.builtin.metatrafficMulticastLocatorList == attrs.builtin.metatrafficMulticastLocatorList)
+         && (PParam.builtin.metatrafficUnicastLocatorList == attrs.builtin.metatrafficUnicastLocatorList)))
+     {
+        // we do not log an error because the library may use participant creation as a trial for server existence
+        logInfo(RTPS_PARTICIPANT, "Server wasn't able to allocate the specified listening port");
+        delete pimpl;
+        return nullptr;
+     }
+
     // Check there is at least one transport registered.
     if (!pimpl->networkFactoryHasRegisteredTransports())
     {
