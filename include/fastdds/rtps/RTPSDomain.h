@@ -16,8 +16,6 @@
  * @file RTPSDomain.h
  */
 
-
-
 #ifndef _FASTDDS_RTPS_DOMAIN_H_
 #define _FASTDDS_RTPS_DOMAIN_H_
 
@@ -139,6 +137,16 @@ public:
     {
         m_maxRTPSParticipantID = maxRTPSParticipantId;
     }
+
+    /**
+     * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
+     * @param attrs RTPSParticipant Attributes.
+     * @param plisten Pointer to the ParticipantListener.
+     * @return Pointer to the RTPSParticipant.
+     */
+    static RTPSParticipant* rosEnvironmentCreationOverride(
+            const RTPSParticipantAttributes& attrs,
+            RTPSParticipantListener* listen /*= nullptr*/);
 
 private:
 
