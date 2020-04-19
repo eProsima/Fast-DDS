@@ -140,11 +140,13 @@ public:
 
     /**
      * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
+     * @param domain_id DDS domain associated
      * @param attrs RTPSParticipant Attributes.
      * @param plisten Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
      */
     static RTPSParticipant* rosEnvironmentCreationOverride(
+            uint32_t domain_id,
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* listen /*= nullptr*/);
 

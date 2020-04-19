@@ -317,10 +317,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultMulticastLocatorList.clear();
     }
 
-    // keep original metatraffic locatorList_t values to detect mutation
-    LocatorList_t former_multicast(m_att.builtin.metatrafficMulticastLocatorList),
-    former_unicast(m_att.builtin.metatrafficUnicastLocatorList);
-
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
@@ -352,15 +348,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         }
     }
 #endif
-
-    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
-            || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
-            && !(former_multicast == m_att.builtin.metatrafficMulticastLocatorList
-            && former_unicast == m_att.builtin.metatrafficUnicastLocatorList))
-    {
-        logError(RTPS_PARTICIPANT, "Cannot create server participant,"
-                " because the desired locators were not available.");
-    }
 
     mp_builtinProtocols = new BuiltinProtocols();
 
@@ -1428,6 +1415,15 @@ void RTPSParticipantImpl::return_send_buffer(
 uint32_t RTPSParticipantImpl::get_domain_id() const
 {
     return domain_id_;
+}
+
+//!Compare metatraffic locators list searching for mutations
+bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
+    LocatorList_t MulticastLocatorList,
+    LocatorList_t UnicastLocatorList) const
+{
+    return !(m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
+        && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList);
 }
 
 } /* namespace rtps */

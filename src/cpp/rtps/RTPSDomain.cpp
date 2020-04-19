@@ -184,13 +184,14 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     // Above constructors create the sender resources. If a given listening port cannot be allocated an iterative
-    // mechanism will allocate another by default. This change would be translated to the PParam. Change the default
-    // listening port is unacceptable for server discovery.
+    // mechanism will allocate another by default. Change the default listening port is unacceptable for server
+    // discovery.
     if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
          || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
-         && !((PParam.builtin.metatrafficMulticastLocatorList == attrs.builtin.metatrafficMulticastLocatorList)
-         && (PParam.builtin.metatrafficUnicastLocatorList == attrs.builtin.metatrafficUnicastLocatorList)))
-     {
+         && pimpl->did_mutation_took_place_on_meta(
+             PParam.builtin.metatrafficMulticastLocatorList,
+             PParam.builtin.metatrafficUnicastLocatorList))
+    {
         // we do not log an error because the library may use participant creation as a trial for server existence
         logInfo(RTPS_PARTICIPANT, "Server wasn't able to allocate the specified listening port");
         delete pimpl;
@@ -344,6 +345,7 @@ bool RTPSDomain::removeRTPSReader(
 }
 
 RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
+        uint32_t domain_id,
         const RTPSParticipantAttributes& att,
         RTPSParticipantListener* listen /*= nullptr*/)
 {
@@ -392,7 +394,7 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
     // a client instead
     RTPSParticipant* part = nullptr;
     Locator_t server_address(port);
-    setIPv4(server_address, ip_address);
+    IPLocator::setIPv4(server_address, ip_address);
 
     {
         RTPSParticipantAttributes server_attr = att;
@@ -400,7 +402,7 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         server_attr.ReadguidPrefix(DEFAULT_ROS2_SERVER_GUIDPREFIX);
         server_attr.builtin.metatrafficUnicastLocatorList.push_back(server_address);
 
-        if( part = RTPSDomain::createParticipant(server_attr, listen) )
+        if( part = RTPSDomain::createParticipant(domain_id, server_attr, listen) )
         {
             // There wasn't any previous default server, now there is one
             logInfo(DOMAIN, "Ros2 default client-server setup. Default server created.");
@@ -420,7 +422,7 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         ratt.metatrafficUnicastLocatorList.push_back(server_address);
         client_attr.builtin.discovery_config.m_DiscoveryServers.push_back(ratt);
 
-        if( part = RTPSDomain::createParticipant(client_attr, listen) )
+        if( part = RTPSDomain::createParticipant(domain_id, client_attr, listen) )
         {
             // client successfully created
             logInfo(DOMAIN, "Ros2 default client-server setup. Default client created.");
