@@ -349,6 +349,14 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         const RTPSParticipantAttributes& att,
         RTPSParticipantListener* listen /*= nullptr*/)
 {
+    // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
+    if(att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
+    {
+        logInfo(DOMAIN, "Detected non simple discovery protocol attributes."
+            << " Ignoring ros2 default client-server setup.");
+        return nullptr;
+    }
+
     // Check for the environment variable
     const char* address = std::getenv(DEFAULT_ROS2_MASTER_URI);
 
@@ -382,37 +390,37 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         return nullptr;
     }
 
-    // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
-    if( att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE )
-    {
-        logInfo(DOMAIN, "Detected non simple discovery protocol attributes."
-            << " Ignoring ros2 default client-server setup.");
-        return nullptr;
-    }
-
-    // Try to create a Server. If it's already a default one the creation process would fail and we will create
-    // a client instead
+    // Check if the IP address belong to the local interfaces
     RTPSParticipant* part = nullptr;
+    LocatorList_t locals;
     Locator_t server_address(port);
     IPLocator::setIPv4(server_address, ip_address);
 
+    IPFinder::getIP4Address(&locals);
+    if(locals.end() != std::find_if(locals.begin(), locals.end(),
+        [&server_address](const Locator_t & loc) -> bool
+        {
+            return IPLocator::compareAddress(server_address, loc);
+        }))
     {
         RTPSParticipantAttributes server_attr = att;
         server_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
         server_attr.ReadguidPrefix(DEFAULT_ROS2_SERVER_GUIDPREFIX);
         server_attr.builtin.metatrafficUnicastLocatorList.push_back(server_address);
 
-        if( part = RTPSDomain::createParticipant(domain_id, server_attr, listen) )
+        if(part = RTPSDomain::createParticipant(domain_id, server_attr, listen))
         {
             // There wasn't any previous default server, now there is one
             logInfo(DOMAIN, "Ros2 default client-server setup. Default server created.");
             return part;
         }
-
-        logInfo(DOMAIN, "Ros2 default client-server setup. Server already present trying to create client.");
     }
 
-    // There was a server already let's create a client
+    // Try to create a Server. If it's already a default one the creation process would fail and we will create
+    // a client instead
+    logInfo(DOMAIN, "Ros2 default client-server setup. Server already present trying to create client.");
+
+    // There was a server already or server IP doesn't match this machine. Let's create a client
     {
         rtps::RTPSParticipantAttributes client_attr = att;
         client_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
@@ -433,7 +441,6 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
     // unable to create ros2 client server default participants
     logError(DOMAIN, "Ros2 default client-server setup. Unable to create either server or client.");
     return nullptr;
-
 }
 
 RTPSReader* RTPSDomainImpl::find_local_reader(
