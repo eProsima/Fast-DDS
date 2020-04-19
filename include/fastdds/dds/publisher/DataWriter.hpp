@@ -153,19 +153,19 @@ public:
     /**
      * Establishes the DataWriterQos for this DataWriter.
      */
-    ReturnCode_t set_qos(
+    RTPS_DllAPI ReturnCode_t set_qos(
             const DataWriterQos& qos);
 
     /**
      * Retrieves the DataWriterQos for this DataWriter.
      */
-    const DataWriterQos& get_qos() const;
+    RTPS_DllAPI const DataWriterQos& get_qos() const;
 
     /**
      * Fills the DataWriterQos with the values of this DataWriter.
      * @return true
      */
-    ReturnCode_t get_qos(
+    RTPS_DllAPI ReturnCode_t get_qos(
             DataWriterQos& qos) const;
 
     /**
