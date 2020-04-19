@@ -300,9 +300,7 @@ public:
         topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         ASSERT_NE(topic_, nullptr);
 
-        //TODO
-        eprosima::fastrtps::TopicAttributes ta;
-        datareader_ = subscriber_->create_datareader(ta, datareader_qos_, &listener_);
+        datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_);
         ASSERT_NE(datareader_, nullptr);
 
         std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
