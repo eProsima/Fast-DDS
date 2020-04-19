@@ -354,9 +354,6 @@ public:
                 uint32_t max_allocations)
             : segment_id_()
             , overflows_count_(0)
-#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
-            , max_payload_size_(payload_size)
-#endif
         {
             segment_id_.generate();
 
@@ -424,11 +421,14 @@ public:
                 uint32_t size,
                 const std::chrono::steady_clock::time_point& max_blocking_time_point)
         {
+            (void)max_blocking_time_point;
+
             std::lock_guard<std::mutex> lock(alloc_mutex_);
 
-            wait_for_avaible_space(size, max_blocking_time_point);
-
-            release_unused_buffers();
+            if (!recover_buffers(size))
+            {
+                throw std::runtime_error("allocation overflow");
+            }
 
             void* data = nullptr;
             BufferNode* buffer_node = nullptr;
@@ -497,9 +497,6 @@ public:
 
         uint32_t free_bytes_;
 
-#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
-        uint32_t max_payload_size_;
-#endif
         inline BufferNode* pop_free_node()
         {
             if (free_buffers_.empty())
@@ -521,92 +518,52 @@ public:
             free_bytes_ += buffer_node->data_size;
         }
 
-        void release_unused_buffers()
-        {
-            auto node_it = allocated_buffers_.begin();
-            while (node_it != allocated_buffers_.end())
-            {
-                if ((*node_it)->is_not_referenced())
-                {
-                    (*node_it)->invalidate_buffer();
-
-                    release_buffer(*node_it);
-                    
-                    free_buffers_.push_back(*node_it);
-                    allocated_buffers_.erase(node_it++);
-                }
-                else
-                {
-                    node_it++;
-                }
-            }
-        }
-
-        void wait_for_avaible_space(
-                uint32_t size,
-                const std::chrono::steady_clock::time_point& max_blocking_time_point)
-        {
-#ifdef SHM_SEGMENT_OVERFLOW_TIMEOUT
-            SharedMemSegment::spin_wait spin_wait;
-
-            // Not enough avaible space
-            while ( segment_node_->free_bytes.load(std::memory_order_relaxed) < size &&
-                    std::chrono::steady_clock::now() < max_blocking_time_point )
-            {
-                if (size > max_payload_size_)
-                {
-                    throw std::runtime_error("buffer bigger than whole segment size");
-                }
-
-                // Optimized active wait. We're in overflow with timeout case.
-                // Much higher throughput is achive with active wait over shared-memory
-                // vs interprocess_mutex + interprocess_cv.
-                spin_wait.yield();
-            }
-#else
-            (void)max_blocking_time_point;
-#endif
-            // Overflows
-            if (free_bytes_ < size)
-            {
-                // Try to recover oldest buffers not beeing processed by any listener
-                if (!recover_buffers(size))
-                {
-                    throw std::runtime_error("allocation timeout");
-                }
-            }
-        }
-
         /**
-         * Invalidades oldest buffers not being processed by any listener until enough free bytes
-         * @return true if at least required_data_size bytes are free after the invalidation, false otherwise.
+         * Recover unreferenced buffers and, in case of overflow, also recovers the oldest buffers not being
+         * processed by any listener (until enough free bytes is gathered to solve the overflow).
+         * @return true if at least required_data_size bytes are free after the recovery, false otherwise.
          */
         bool recover_buffers(uint32_t required_data_size)
-        {            
+        {
             auto it = allocated_buffers_.begin();
 
             while(it != allocated_buffers_.end())
             {
-                // Buffer is not beign processed by any listener
-                if ((*it)->invalidate_if_not_processing())
+                // There is enough space to allocate the buffer
+                if (free_bytes_ >= required_data_size)
                 {
-                    release_buffer(*it);
-
-                    free_buffers_.push_back(*it);
-                    it = allocated_buffers_.erase(it);
-
-                    if (free_bytes_ >= required_data_size)
+                    if ((*it)->is_not_referenced())
                     {
-                        return true;
+                        (*it)->invalidate_buffer();
+
+                        release_buffer(*it);
+
+                        free_buffers_.push_back(*it);
+                        it = allocated_buffers_.erase(it);
+                    }
+                    else
+                    {
+                        it++;
                     }
                 }
-                else
+                else // No enough space, try to recover oldest not processing buffers
                 {
-                    it++;
+                    // Buffer is not beign processed by any listener
+                    if ((*it)->invalidate_if_not_processing())
+                    {
+                        release_buffer(*it);
+
+                        free_buffers_.push_back(*it);
+                        it = allocated_buffers_.erase(it);
+                    }
+                    else
+                    {
+                        it++;
+                    }
                 }
             }
 
-            return false;
+            return free_bytes_ >= required_data_size;
         }
 
     }; // Segment
