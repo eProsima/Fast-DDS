@@ -102,7 +102,7 @@ DataReaderImpl::DataReaderImpl(
         att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
     }
 
-    att.times = qos.reliable_reader_qos().reader_times;
+    att.times = qos.reliable_reader_qos().times;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -602,7 +602,8 @@ TypeSupport DataReaderImpl::type()
     return type_;
 }
 
-ReturnCode_t DataReaderImpl::check_qos (const DataReaderQos& qos)
+ReturnCode_t DataReaderImpl::check_qos (
+        const DataReaderQos& qos)
 {
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
     {
@@ -800,8 +801,6 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
 
     return topic_att;
 }
-
-
 
 } /* namespace dds */
 } /* namespace fastdds */

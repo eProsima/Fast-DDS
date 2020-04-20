@@ -93,8 +93,8 @@ public:
                (this->publish_mode_ == b.publish_mode()) &&
                (this->representation_ == b.representation()) &&
                (this->properties_ == b.properties()) &&
-               (this->reliable_writer_data_ == b.reliable_writer_data()) &&
-               (this->endpoint_data_ == b.endpoint_data()) &&
+               (this->reliable_writer_qos_ == b.reliable_writer_qos()) &&
+               (this->endpoint_ == b.endpoint()) &&
                (this->writer_resources_ == b.writer_resources()) &&
                (this->throughput_controller_ == b.throughput_controller());
     }
@@ -611,56 +611,56 @@ public:
      * Getter for RTPSReliableWriterQos
      * @return RTPSReliableWriterQos reference
      */
-    RTPS_DllAPI RTPSReliableWriterQos& reliable_writer_data()
+    RTPS_DllAPI RTPSReliableWriterQos& reliable_writer_qos()
     {
-        return reliable_writer_data_;
+        return reliable_writer_qos_;
     }
 
     /**
      * Getter for RTPSReliableWriterQos
      * @return RTPSReliableWriterQos reference
      */
-    RTPS_DllAPI const RTPSReliableWriterQos& reliable_writer_data() const
+    RTPS_DllAPI const RTPSReliableWriterQos& reliable_writer_qos() const
     {
-        return reliable_writer_data_;
+        return reliable_writer_qos_;
     }
 
     /**
      * Setter for RTPSReliableWriterQos
      * @param reliable_writer_data
      */
-    RTPS_DllAPI void reliable_writer_data(
-            const RTPSReliableWriterQos& reliable_writer_data)
+    RTPS_DllAPI void reliable_writer_qos(
+            const RTPSReliableWriterQos& reliable_writer_qos)
     {
-        reliable_writer_data_ = reliable_writer_data;
+        reliable_writer_qos_ = reliable_writer_qos;
     }
 
     /**
      * Getter for RTPSEndpointQos
      * @return RTPSEndpointQos reference
      */
-    RTPS_DllAPI RTPSEndpointQos& endpoint_data()
+    RTPS_DllAPI RTPSEndpointQos& endpoint()
     {
-        return endpoint_data_;
+        return endpoint_;
     }
 
     /**
      * Getter for RTPSEndpointQos
      * @return RTPSEndpointQos reference
      */
-    RTPS_DllAPI const RTPSEndpointQos& endpoint_data() const
+    RTPS_DllAPI const RTPSEndpointQos& endpoint() const
     {
-        return endpoint_data_;
+        return endpoint_;
     }
 
     /**
      * Setter for RTPSEndpointQos
      * @param endpoint_data
      */
-    RTPS_DllAPI void endpoint_data(
-            const RTPSEndpointQos& endpoint_data)
+    RTPS_DllAPI void endpoint(
+            const RTPSEndpointQos& endpoint)
     {
-        endpoint_data_ = endpoint_data;
+        endpoint_ = endpoint;
     }
 
     /**
@@ -776,10 +776,10 @@ private:
     PropertyPolicyQos properties_;
 
     //!RTPS Reliable Writer Qos
-    RTPSReliableWriterQos reliable_writer_data_;
+    RTPSReliableWriterQos reliable_writer_qos_;
 
     //!RTPS Endpoint Qos
-    RTPSEndpointQos endpoint_data_;
+    RTPSEndpointQos endpoint_;
 
     //!Writer Resource Limits Qos
     WriterResourceLimitsQos writer_resources_;

@@ -98,8 +98,8 @@ bool TypeLookupPublisher::init()
     wqos.history().depth = 30;
     wqos.resource_limits().max_samples = 50;
     wqos.resource_limits().allocated_samples = 20;
-    wqos.reliable_writer_data().times.heartbeatPeriod.seconds = 2;
-    wqos.reliable_writer_data().times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
+    wqos.reliable_writer_qos().times.heartbeatPeriod.seconds = 2;
+    wqos.reliable_writer_qos().times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     writer_ = mp_publisher->create_datawriter(topic_, wqos, &m_listener);
 
     if (writer_ == nullptr)
