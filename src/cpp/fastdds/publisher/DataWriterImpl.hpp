@@ -188,6 +188,14 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
+    /**
+     * Removes all changes from the History.
+     * @param[out] removed Number of removed elements
+     * @return True if correct.
+     */
+    bool remove_all_changes(
+            size_t* removed);
+
 private:
 
     PublisherImpl* publisher_;
@@ -301,14 +309,6 @@ public:
      * @return True if correct.
      */
     bool remove_min_seq_change();
-
-    /**
-     * Removes all changes from the History.
-     * @param[out] removed Number of removed elements
-     * @return True if correct.
-     */
-    bool remove_all_change(
-            size_t* removed);
 
     /**
      * @brief A method called when an instance misses the deadline

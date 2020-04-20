@@ -435,7 +435,7 @@ bool DataWriterImpl::remove_min_seq_change()
     return history_.removeMinChange();
 }
 
-bool DataWriterImpl::remove_all_change(
+bool DataWriterImpl::remove_all_changes(
         size_t* removed)
 {
     return history_.removeAllChange(removed);
