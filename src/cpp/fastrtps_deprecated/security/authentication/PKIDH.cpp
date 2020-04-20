@@ -32,6 +32,12 @@
 #define OPENSSL_CONST
 #endif
 
+#if OPENSSL_VERSION_NUMBER >= 0x10101040L
+#define IS_OPENSSL_1_1_1d 1
+#else
+#define IS_OPENSSL_1_1_1d 0
+#endif
+
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
@@ -908,7 +914,7 @@ static EVP_PKEY* generate_dh_peer_key(
 
                 if (key != nullptr)
                 {
-#if IS_OPENSSL_1_1
+#if IS_OPENSSL_1_1_1d
                     int type = DH_get0_q(dh) == NULL ? EVP_PKEY_DH : EVP_PKEY_DHX;
                     if (EVP_PKEY_assign(key, type, dh) > 0)
 #else
