@@ -31,8 +31,8 @@ class RobustInterprocessCondition
 public:
 
     RobustInterprocessCondition()
-        : list_listening_(SemaphoreList::LIST_NULL)
-        , list_free_(MAX_LISTENERS-1)
+        : list_listening_(SemaphoreList::LIST_NULL, SemaphoreList::LIST_NULL)
+        , list_free_(0, MAX_LISTENERS-1)
     {
         init_sem_list();
     }
@@ -50,7 +50,7 @@ public:
     {
         bi::scoped_lock<bi::interprocess_mutex> lock(semaphore_lists_mutex_);
 
-        auto sem_index = list_listening_.tail();
+        auto sem_index = list_listening_.head();
 
         if (sem_index != SemaphoreList::LIST_NULL)
         {
@@ -67,12 +67,12 @@ public:
     {
         bi::scoped_lock<bi::interprocess_mutex> lock(semaphore_lists_mutex_);
 
-        auto sem_index = list_listening_.tail();
+        auto sem_index = list_listening_.head();
 
         while (sem_index != SemaphoreList::LIST_NULL)
         {
             semaphores_pool_[sem_index].sem.post();
-            sem_index = semaphores_pool_[sem_index].prev;
+            sem_index = semaphores_pool_[sem_index].next;
         }
     }
 
@@ -100,7 +100,9 @@ public:
             Pr pred)
     {
         while (!pred())
+        {
             do_wait(*lock.mutex());
+        }
     }
 
     /**
@@ -145,7 +147,8 @@ public:
             wait(lock, pred);
             return true;
         }
-        while (!pred()){
+        while (!pred())
+        {
             if (!do_timed_wait(abs_time, *lock.mutex()))
             {
                 return pred();
@@ -170,6 +173,7 @@ private:
     {
     private:
 
+        uint32_t head_;
         uint32_t tail_;
 
     public:
@@ -177,8 +181,10 @@ private:
         static constexpr uint32_t LIST_NULL = static_cast<uint32_t>(-1);
 
         SemaphoreList(
+                uint32_t head,
                 uint32_t tail)
-            : tail_(tail)
+            : head_(head)
+            , tail_(tail)
         {
         }
 
@@ -190,11 +196,16 @@ private:
             {
                 sem_pool[tail_].next = sem_index;
             }
-
+            
             sem_pool[sem_index].prev = tail_;
             sem_pool[sem_index].next = LIST_NULL;
 
             tail_ = sem_index;
+
+            if (head_ == LIST_NULL)
+            {
+                head_ = sem_index;
+            }
         }
 
         inline uint32_t pop(
@@ -212,12 +223,22 @@ private:
             {
                 sem_pool[tail_].next = LIST_NULL;
             }
+            else
+            {
+                head_ = LIST_NULL;
+            }
+            
             return sem_index;
         }
 
         inline uint32_t tail() const
         {
             return tail_;
+        }
+
+        inline uint32_t head() const
+        {
+            return head_;
         }
 
         inline void remove(
@@ -237,6 +258,11 @@ private:
             if (next != LIST_NULL)
             {
                 sem_pool[next].prev = prev;
+            }
+
+            if (head_ == sem_index)
+            {
+                head_ = next;
             }
 
             if (tail_ == sem_index)
