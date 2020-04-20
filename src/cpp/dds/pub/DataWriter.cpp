@@ -195,25 +195,25 @@ DataWriter<T>::~DataWriter()
 //    //    }
 //}
 
-template<typename T>
-DataWriter<T>& DataWriter<T>::operator <<(
-        const ::dds::pub::qos::DataWriterQos& qos)
-{
-    ReturnCode_t code = this->delegate()->set_qos(qos);
-    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
-    {
-        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
-    }
-    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
-    {
-        throw dds::core::UnsupportedError("Unsupported values on DataWriterQos");
-    }
-    else if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
-    {
-        throw dds::core::ImmutablePolicyError("Immutable Qos");
-    }
-    return *this;
-}
+//template<typename T>
+//DataWriter<T>& DataWriter<T>::operator <<(
+//        const ::dds::pub::qos::DataWriterQos& qos)
+//{
+//    ReturnCode_t code = this->delegate()->set_qos(qos);
+//    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+//    {
+//        throw dds::core::InconsistentPolicyError("Inconsistent Qos");
+//    }
+//    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+//    {
+//        throw dds::core::UnsupportedError("Unsupported values on DataWriterQos");
+//    }
+//    else if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+//    {
+//        throw dds::core::ImmutablePolicyError("Immutable Qos");
+//    }
+//    return *this;
+//}
 
 //template<typename T>
 //DataWriter<T>& DataWriter<T>::operator <<(

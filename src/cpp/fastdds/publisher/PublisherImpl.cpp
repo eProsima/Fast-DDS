@@ -20,6 +20,7 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
 
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
@@ -131,122 +132,64 @@ ReturnCode_t PublisherImpl::set_listener(
 }
 
 void PublisherImpl::PublisherWriterListener::on_publication_matched(
-        DataWriter* /*writer*/,
+        DataWriter* writer,
         const PublicationMatchedStatus& info)
 {
     if (publisher_->listener_ != nullptr)
     {
-        publisher_->listener_->on_publication_matched(publisher_->user_publisher_, info);
+        publisher_->listener_->on_publication_matched(writer, info);
     }
 }
 
 void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
-        DataWriter* /*writer*/,
+        DataWriter* writer,
         const LivelinessLostStatus& status)
 {
     if (publisher_->listener_ != nullptr)
     {
-        publisher_->listener_->on_liveliness_lost(publisher_->user_publisher_, status);
+        publisher_->listener_->on_liveliness_lost(writer, status);
     }
 }
 
 void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
-        DataWriter* /*writer*/,
+        DataWriter* writer,
         const fastrtps::OfferedDeadlineMissedStatus& status)
 {
     if (publisher_->listener_ != nullptr)
     {
-        publisher_->listener_->on_offered_deadline_missed(publisher_->user_publisher_, status);
+        publisher_->listener_->on_offered_deadline_missed(writer, status);
     }
 }
 
 DataWriter* PublisherImpl::create_datawriter(
-        const fastrtps::TopicAttributes& topic_att,
+        Topic* topic,
         const DataWriterQos& qos,
-        DataWriterListener* listener)
+        DataWriterListener* listener,
+        const StatusMask& mask)
 {
-    logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic_att.getTopicName());
+    logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
-    TypeSupport type_support = participant_->find_type(topic_att.getTopicDataType().to_string());
+    TypeSupport type_support = participant_->find_type(topic->get_type_name());
 
     /// Preconditions
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(PUBLISHER, "Type: " << topic_att.getTopicDataType() << " Not Registered");
+        logError(PUBLISHER, "Type: " << topic->get_type_name() << " Not Registered");
         return nullptr;
     }
 
-    // Check the type supports keys.
-    if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
-    {
-        logError(PUBLISHER, "Keyed Topic " << topic_att.getTopicName() << " needs getKey function");
-        return nullptr;
-    }
-
-    if (!topic_att.checkQos() || !DataWriterImpl::check_qos(qos))
+    if (!DataWriterImpl::check_qos(qos))
     {
         return nullptr;
     }
 
-    WriterAttributes w_att;
-    w_att.throughputController = qos.throughput_controller();
-    w_att.endpoint.durabilityKind = qos.durability().durabilityKind();
-    w_att.endpoint.endpointKind = WRITER;
-    w_att.endpoint.multicastLocatorList = qos.endpoint_data().multicast_locator_list;
-    w_att.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    w_att.endpoint.topicKind = topic_att.topicKind;
-    w_att.endpoint.unicastLocatorList = qos.endpoint_data().unicast_locator_list;
-    w_att.endpoint.remoteLocatorList = qos.endpoint_data().remote_locator_list;
-    w_att.mode = qos.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
-    w_att.endpoint.properties = qos.properties();
-
-    if (qos.endpoint_data().entity_id > 0)
-    {
-        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint_data().entity_id));
-    }
-
-    if (qos.endpoint_data().user_defined_id > 0)
-    {
-        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint_data().user_defined_id));
-    }
-
-    w_att.times = qos.reliable_writer_data().times;
-    w_att.liveliness_kind = qos.liveliness().kind;
-    w_att.liveliness_lease_duration = qos.liveliness().lease_duration;
-    w_att.matched_readers_allocation = qos.writer_resources().matched_subscriber_allocation;
-
-    // TODO(Ricardo) Remove in future
-    // Insert topic_name and partitions
-    Property property;
-    property.name("topic_name");
-    property.value(topic_att.getTopicName().c_str());
-    w_att.endpoint.properties.properties().push_back(std::move(property));
-
-    if (qos_.partition().names().size() > 0)
-    {
-        property.name("partitions");
-        std::string partitions;
-        for (auto partition : qos_.partition().names())
-        {
-            partitions += partition + ";";
-        }
-        property.value(std::move(partitions));
-        w_att.endpoint.properties.properties().push_back(std::move(property));
-    }
-
-    if (qos.reliable_writer_data().disable_positive_acks.enabled &&
-            qos.reliable_writer_data().disable_positive_acks.duration != c_TimeInfinite)
-    {
-        w_att.disable_positive_acks = true;
-        w_att.keep_duration = qos.reliable_writer_data().disable_positive_acks.duration;
-    }
+    topic->get_impl()->reference();
 
     DataWriterImpl* impl = new DataWriterImpl(
         this,
         type_support,
-        topic_att,
-        w_att,
+        topic,
         qos,
         listener);
 
@@ -254,19 +197,21 @@ DataWriter* PublisherImpl::create_datawriter(
     {
         logError(PUBLISHER, "Problem creating associated Writer");
         delete impl;
+        topic->get_impl()->dereference();
         return nullptr;
     }
 
-    DataWriter* writer = new DataWriter(impl);
+    DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
 
     //REGISTER THE WRITER
-    WriterQos wqos = qos.get_writerqos(qos_);
+    WriterQos wqos = qos.get_writerqos(qos_, topic->get_qos());
+    fastrtps::TopicAttributes topic_att = DataWriterImpl::get_topic_attributes(qos, *topic, type_support);
     rtps_participant_->registerWriter(impl->writer_, topic_att, wqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
-        writers_[topic_att.getTopicName().to_string()].push_back(impl);
+        writers_[topic->get_name()].push_back(impl);
     }
 
     return writer;
@@ -280,13 +225,14 @@ ReturnCode_t PublisherImpl::delete_datawriter(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_writers_);
-    auto vit = writers_.find(writer->get_topic().getTopicName().to_string());
+    auto vit = writers_.find(writer->get_topic()->get_name());
     if (vit != writers_.end())
     {
         auto dw_it = std::find(vit->second.begin(), vit->second.end(), writer->impl_);
         if (dw_it != vit->second.end())
         {
             (*dw_it)->set_listener(nullptr);
+            (*dw_it)->get_topic()->get_impl()->dereference();
             delete (*dw_it);
             vit->second.erase(dw_it);
             if (vit->second.empty())
@@ -474,7 +420,7 @@ bool PublisherImpl::type_in_use(
     {
         for (DataWriterImpl* writer : it.second)
         {
-            if (writer->get_topic().getTopicDataType() == type_name)
+            if (writer->get_topic()->get_type_name() == type_name)
             {
                 return true; // Is in use
             }

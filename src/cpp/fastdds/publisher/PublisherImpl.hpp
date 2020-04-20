@@ -27,7 +27,10 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/IncompatibleQosStatus.hpp>
 
 #include <mutex>
 #include <map>
@@ -54,6 +57,7 @@ class DomainParticipantImpl;
 class DomainParticipant;
 class Publisher;
 class DataWriterImpl;
+class Topic;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
@@ -88,9 +92,10 @@ public:
             PublisherListener* listener);
 
     DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
-            const DataWriterQos& writer_qos,
-            DataWriterListener* listener);
+            Topic* topic,
+            const DataWriterQos& qos,
+            DataWriterListener* listener,
+            const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_datawriter(
             DataWriter* writer);

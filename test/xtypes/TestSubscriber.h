@@ -97,10 +97,12 @@ public:
 
     eprosima::fastdds::dds::DomainParticipant* participant();
 
+    eprosima::fastdds::dds::TypeSupport m_Type;
+
 private:
 
     std::string m_Name;
-    eprosima::fastdds::dds::TypeSupport m_Type;
+
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
     eprosima::fastdds::dds::DataReader* reader_;

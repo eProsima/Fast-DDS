@@ -24,6 +24,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -36,6 +37,7 @@
 #include <asio.hpp>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::xtypes;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -65,7 +67,6 @@ bool TestPublisher::init(
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-        eprosima::fastrtps::rtps::TopicKind_t topic_kind,
         bool use_typelookup)
 {
     m_Name = name;
@@ -90,42 +91,37 @@ bool TestPublisher::init(
     }
 
     // CREATE THE PUBLISHER
-    TopicAttributes topic;
-    topic.auto_fill_type_object = false;
-    topic.auto_fill_type_information = false;
-    topic.topicKind = topic_kind;
-    topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
-    DataWriterQos qos;
+    std::string data_type = m_Type != nullptr ? m_Type->getName() : "";
+    DataWriterQos wqos;
 
     //REGISTER THE TYPE
     if (m_Type != nullptr)
     {
+        m_Type->auto_fill_type_information(false);
+        m_Type->auto_fill_type_object(false);
+        if (type_object != nullptr)
+        {
+            m_Type->type_object(*type_object);
+        }
+        if (type_identifier != nullptr)
+        {
+            m_Type->type_identifier(*type_identifier);
+        }
+        if (type_info != nullptr)
+        {
+            m_Type->type_information(*type_info);
+        }
         mp_participant->register_type(m_Type);
     }
 
     std::ostringstream t;
     t << topicName << "_" << asio::ip::host_name() << "_" << domain;
-    topic.topicName = t.str();
-    if (type_object != nullptr)
-    {
-        topic.type = *type_object;
-    }
-    if (type_identifier != nullptr)
-    {
-        topic.type_id = *type_identifier;
-    }
-    if (type_info != nullptr)
-    {
-        topic.type_information = *type_info;
-    }
+    topic_name_ = t.str();
 
     if (dataRepresentationQos != nullptr)
     {
-        qos.representation(*dataRepresentationQos);
+        wqos.representation(*dataRepresentationQos);
     }
-    // topic.dataRepresentationQos = XCDR_DATA_REPRESENTATION
-    // topic.dataRepresentationQos = XML_DATA_REPRESENTATION
-    // topic.dataRepresentationQos = XCDR2_DATA_REPRESENTATION
 
     if (m_Type != nullptr)
     {
@@ -135,13 +131,19 @@ bool TestPublisher::init(
             return false;
         }
 
-        writer_ = mp_publisher->create_datawriter(topic, qos, &m_pubListener);
+        mp_topic = mp_participant->create_topic(t.str(), data_type, TOPIC_QOS_DEFAULT);
+        if (mp_topic == nullptr)
+        {
+            return false;
+        }
+
+        writer_ = mp_publisher->create_datawriter(mp_topic, wqos, &m_pubListener);
+
         m_Data = m_Type->createData();
     }
 
     m_bInitialized = true;
-    topic_att = topic;
-    writer_qos = qos;
+    writer_qos = wqos;
 
     return true;
 }
@@ -156,7 +158,14 @@ TestPublisher::~TestPublisher()
     {
         mp_publisher->delete_datawriter(writer_);
     }
-    mp_participant->delete_publisher(mp_publisher);
+    if (mp_publisher)
+    {
+        mp_participant->delete_publisher(mp_publisher);
+    }
+    if (mp_topic)
+    {
+        mp_participant->delete_topic(mp_topic);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 
@@ -323,8 +332,12 @@ DataWriter* TestPublisher::create_datawriter()
             return nullptr;
         }
     }
-    topic_att.topicDataType = disc_type_->get_name();
-    return mp_publisher->create_datawriter(topic_att, writer_qos, &m_pubListener);
+    mp_topic = mp_participant->create_topic(topic_name_, disc_type_->get_name(), TOPIC_QOS_DEFAULT);
+    if (mp_topic == nullptr)
+    {
+        return nullptr;
+    }
+    return mp_publisher->create_datawriter(mp_topic, writer_qos, &m_pubListener);
 
 }
 
@@ -337,7 +350,7 @@ void TestPublisher::delete_datawriter(
 bool TestPublisher::register_discovered_type()
 {
     TypeSupport type(disc_type_);
-    topic_att.auto_fill_type_object = true;
-    topic_att.auto_fill_type_information = true;
+    type->auto_fill_type_object(true);
+    type->auto_fill_type_information(true);
     return mp_participant->register_type(type, disc_type_->get_name());
 }

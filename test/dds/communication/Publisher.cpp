@@ -131,7 +131,7 @@ public:
     }
 
     void on_publication_matched(
-            Publisher* /*publisher*/,
+            DataWriter* /*publisher*/,
             const PublicationMatchedStatus& info) override
     {
         std::unique_lock<std::mutex> lock(mutex_);
@@ -258,18 +258,14 @@ int main(
     PubListener listener;
 
     // Generate topic name
-    std::ostringstream topic;
-    topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
+    std::ostringstream topic_name;
+    topic_name << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
-    TopicAttributes topic_attr;
-    topic_attr.topicKind = NO_KEY;
-    topic_attr.topicDataType = type->getName();
-    topic_attr.topicName = topic.str();
-    DataWriterQos qos;
-    qos.liveliness().lease_duration = 3;
-    qos.liveliness().announcement_period = 1;
-    qos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
+    DataWriterQos wqos;
+    wqos.liveliness().lease_duration = 3;
+    wqos.liveliness().announcement_period = 1;
+    wqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener);
     if (publisher == nullptr)
@@ -277,10 +273,19 @@ int main(
         DomainParticipantFactory::get_instance()->delete_participant(participant);
         return 1;
     }
+    Topic* topic = participant->create_topic(topic_name.str(), type.get_type_name(), TOPIC_QOS_DEFAULT);
+    if (topic == nullptr)
+    {
+        participant->delete_publisher(publisher);
+        DomainParticipantFactory::get_instance()->delete_participant(participant);
+        return 1;
+    }
 
-    DataWriter* writer = publisher->create_datawriter(topic_attr, qos, nullptr);
+    DataWriter* writer = publisher->create_datawriter(topic, wqos, nullptr);
     if (writer == nullptr)
     {
+        participant->delete_publisher(publisher);
+        participant->delete_topic(topic);
         DomainParticipantFactory::get_instance()->delete_participant(participant);
         return 1;
     }
@@ -325,6 +330,18 @@ int main(
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
+    if (writer != nullptr)
+    {
+        publisher->delete_datawriter(writer);
+    }
+    if (publisher != nullptr)
+    {
+        participant->delete_publisher(publisher);
+    }
+    if (topic != nullptr)
+    {
+        participant->delete_topic(topic);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 
     return 0;

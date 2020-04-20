@@ -80,18 +80,12 @@ bool HelloWorldPublisher::init()
     }
 
     //REGISTER THE TYPE
+    m_type.get()->auto_fill_type_information(false);
+    m_type.get()->auto_fill_type_object(true);
+
     mp_participant->register_type(m_type);
 
     //CREATE THE PUBLISHER
-    //PublisherQos qos;
-    eprosima::fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicKind = eprosima::fastrtps::rtps::NO_KEY;
-    topic_attr.topicDataType = "HelloWorld";
-    topic_attr.topicName = "DDSDynHelloWorldTopic";
-    topic_attr.auto_fill_type_object = true; // Share the type with readers.
-    topic_attr.auto_fill_type_information = false;
-    DataWriterQos qos;
-    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (mp_publisher == nullptr)
@@ -99,8 +93,15 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
+    topic_ = mp_participant->create_topic("DDSDynHelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+
+    if (topic_ == nullptr)
+    {
+        return false;
+    }
+
     // CREATE THE WRITER
-    writer_ = mp_publisher->create_datawriter(topic_attr, qos, &m_listener);
+    writer_ = mp_publisher->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &m_listener);
 
     if (writer_ == nullptr)
     {
@@ -113,6 +114,18 @@ bool HelloWorldPublisher::init()
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
+    if (writer_ != nullptr)
+    {
+        mp_publisher->delete_datawriter(writer_);
+    }
+    if (mp_publisher != nullptr)
+    {
+        mp_participant->delete_publisher(mp_publisher);
+    }
+    if (topic_ != nullptr)
+    {
+        mp_participant->delete_topic(topic_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 

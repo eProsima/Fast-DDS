@@ -73,23 +73,11 @@ bool TypeLookupPublisher::init()
     }
 
     //REGISTER THE TYPE
+    m_type.get()->auto_fill_type_information(true);
+    m_type.get()->auto_fill_type_object(false);
     mp_participant->register_type(m_type);
 
     //CREATE THE PUBLISHER
-    TopicAttributes topic_attr;
-    topic_attr.topicKind = NO_KEY;
-    topic_attr.topicDataType = "TypeLookup";
-    topic_attr.topicName = "TypeLookupTopic";
-    topic_attr.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    topic_attr.historyQos.depth = 30;
-    topic_attr.resourceLimitsQos.max_samples = 50;
-    topic_attr.resourceLimitsQos.allocated_samples = 20;
-    topic_attr.auto_fill_type_object = false;
-    topic_attr.auto_fill_type_information = true; // Share the type with readers.
-    DataWriterQos qos;
-    qos.reliable_writer_data().times.heartbeatPeriod.seconds = 2;
-    qos.reliable_writer_data().times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
-    qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (mp_publisher == nullptr)
@@ -97,8 +85,22 @@ bool TypeLookupPublisher::init()
         return false;
     }
 
+    topic_ = mp_participant->create_topic("TypeLookupTopic", "TypeLookup", TOPIC_QOS_DEFAULT);
+
+    if (topic_ == nullptr)
+    {
+        return false;
+    }
+
     // CREATE THE WRITER
-    writer_ = mp_publisher->create_datawriter(topic_attr, qos, &m_listener);
+    DataWriterQos wqos;
+    wqos.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    wqos.history().depth = 30;
+    wqos.resource_limits().max_samples = 50;
+    wqos.resource_limits().allocated_samples = 20;
+    wqos.reliable_writer_data().times.heartbeatPeriod.seconds = 2;
+    wqos.reliable_writer_data().times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
+    writer_ = mp_publisher->create_datawriter(topic_, wqos, &m_listener);
 
     if (writer_ == nullptr)
     {
@@ -111,6 +113,18 @@ bool TypeLookupPublisher::init()
 
 TypeLookupPublisher::~TypeLookupPublisher()
 {
+    if (writer_ != nullptr)
+    {
+        mp_publisher->delete_datawriter(writer_);
+    }
+    if (mp_publisher != nullptr)
+    {
+        mp_participant->delete_publisher(mp_publisher);
+    }
+    if (topic_ != nullptr)
+    {
+        mp_participant->delete_topic(topic_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 

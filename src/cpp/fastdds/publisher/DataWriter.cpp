@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 
 namespace eprosima {
 
@@ -28,8 +29,21 @@ namespace fastdds {
 namespace dds {
 
 DataWriter::DataWriter(
-        DataWriterImpl* impl)
-    : impl_(impl)
+        DataWriterImpl* impl,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(impl)
+{
+}
+
+DataWriter::DataWriter(
+        Publisher* pub,
+        Topic* topic,
+        const DataWriterQos& qos,
+        DataWriterListener* listener,
+        const StatusMask& mask)
+    : DomainEntity(mask)
+    , impl_(pub->create_datawriter(topic, qos, listener, mask)->impl_)
 {
 }
 
@@ -80,17 +94,6 @@ fastrtps::rtps::InstanceHandle_t DataWriter::get_instance_handle() const
     return impl_->get_instance_handle();
 }
 
-bool DataWriter::set_attributes(
-        const fastrtps::rtps::WriterAttributes& att)
-{
-    return impl_->set_attributes(att);
-}
-
-const fastrtps::rtps::WriterAttributes& DataWriter::get_attributes() const
-{
-    return impl_->get_attributes();
-}
-
 ReturnCode_t DataWriter::set_qos(
         const DataWriterQos& qos)
 {
@@ -120,13 +123,7 @@ const DataWriterListener* DataWriter::get_listener() const
     return impl_->get_listener();
 }
 
-bool DataWriter::set_topic(
-        const TopicAttributes& att)
-{
-    return impl_->set_topic(att);
-}
-
-const TopicAttributes& DataWriter::get_topic() const
+Topic* DataWriter::get_topic() const
 {
     return impl_->get_topic();
 }

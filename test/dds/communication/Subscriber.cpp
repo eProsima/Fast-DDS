@@ -106,9 +106,9 @@ public:
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
                         g_topic = g_participant->create_topic(
-                                topic_name.to_string(),
-                                type_name.to_string(),
-                                TOPIC_QOS_DEFAULT);
+                            topic_name.to_string(),
+                            type_name.to_string(),
+                            TOPIC_QOS_DEFAULT);
 
                         g_reader = g_subscriber->create_datareader(
                             g_topic,
@@ -190,7 +190,7 @@ public:
     }
 
     void on_subscription_matched(
-            Subscriber* /*subscriber*/,
+            DataReader* /*reader*/,
             const SubscriptionMatchedStatus& info) override
     {
         if (info.current_count_change == 1)
@@ -208,15 +208,14 @@ public:
         }
     }
 
-    void on_new_data_message(
-            Subscriber* subscriber) override
+    void on_data_available(
+            DataReader* reader) override
     {
         if (nullptr != g_type)
         {
             types::DynamicPubSubType pst(g_type);
             types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
             SampleInfo_t info;
-            DataReader* reader = subscriber->lookup_datareader(g_topic->get_name());
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {
@@ -241,10 +240,9 @@ public:
     }
 
     void on_liveliness_changed(
-            Subscriber* sub,
+            DataReader* /*reader*/,
             const eprosima::fastdds::dds::LivelinessChangedStatus& status) override
     {
-        (void)sub;
         if (status.alive_count_change == 1)
         {
             std::cout << "Publisher recovered liveliness" << std::endl;
@@ -349,12 +347,6 @@ int main(
     SubListener listener;
 
     //CREATE THE SUBSCRIBER
-    //Domain::getDefaultSubscriberAttributes(subscriber_attributes);
-    //g_subscriber_attributes.topic.topicKind = NO_KEY;
-    //g_subscriber_attributes.topic.topicDataType = type.getName();
-    //g_subscriber_attributes.topic.topicName = topic.str();
-    //g_subscriber_attributes.qos.m_liveliness.lease_duration = 3;
-    //g_subscriber_attributes.qos.m_liveliness.kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
     g_subscriber = g_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
 
     if (g_subscriber == nullptr)

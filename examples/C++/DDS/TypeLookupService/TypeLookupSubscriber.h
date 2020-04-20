@@ -24,7 +24,6 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/rtps/common/Types.h>
 
@@ -76,8 +75,7 @@ private:
 public:
 
     class SubListener
-        : public eprosima::fastdds::dds::DataReaderListener
-        , public eprosima::fastdds::dds::DomainParticipantListener
+        : public eprosima::fastdds::dds::DomainParticipantListener
     {
 public:
 

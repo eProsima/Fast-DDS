@@ -33,6 +33,8 @@ using namespace eprosima::fastdds::dds;
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(nullptr)
+    , topic_(nullptr)
+    , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -54,11 +56,6 @@ bool HelloWorldPublisher::init()
     type_.register_type(participant_, type_->getName());
 
     //CREATE THE PUBLISHER
-    eprosima::fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicDataType = "HelloWorld";
-    topic_attr.topicName = "HelloWorldTopic";
-    DataWriterQos qos;
-    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (publisher_ == nullptr)
@@ -66,19 +63,37 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
+    topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+
+    if (topic_ == nullptr)
+    {
+        return false;
+    }
+
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_attr, qos, &listener_);
+    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
 
     if (writer_ == nullptr)
     {
         return false;
     }
-
     return true;
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
+    if (writer_ != nullptr)
+    {
+        publisher_->delete_datawriter(writer_);
+    }
+    if (publisher_ != nullptr)
+    {
+        participant_->delete_publisher(publisher_);
+    }
+    if (topic_ != nullptr)
+    {
+        participant_->delete_topic(topic_);
+    }
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 

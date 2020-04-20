@@ -23,6 +23,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
         set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp)
         set(PUBLISHERTESTS_SOURCE PublisherTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/pub/DataWriter.cpp
             )
 
         if(WIN32)

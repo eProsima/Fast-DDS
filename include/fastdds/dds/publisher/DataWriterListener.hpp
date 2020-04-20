@@ -20,9 +20,10 @@
 #define _FASTRTPS_DATAWRITERLISTENER_HPP_
 
 #include <fastdds/rtps/common/Types.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -47,7 +48,7 @@ public:
      */
     virtual void on_publication_matched(
             DataWriter* writer,
-            const fastdds::dds::PublicationMatchedStatus& info)
+            const PublicationMatchedStatus& info)
     {
         (void)writer;
         (void)info;
@@ -60,7 +61,20 @@ public:
      */
     virtual void on_offered_deadline_missed(
             DataWriter* writer,
-            const fastrtps::OfferedDeadlineMissedStatus& status)
+            const OfferedDeadlineMissedStatus& status)
+    {
+        (void)writer;
+        (void)status;
+    }
+
+    /**
+     * A method called when an incompatible QoS is offered
+     * @param writer Pointer to the associated Publisher
+     * @param status The deadline missed status
+     */
+    virtual void on_offered_incompatible_qos(
+            DataWriter* writer,
+            const OfferedIncompatibleQosStatus& status)
     {
         (void)writer;
         (void)status;

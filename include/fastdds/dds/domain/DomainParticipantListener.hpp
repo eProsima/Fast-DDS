@@ -23,6 +23,9 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/topic/TopicListener.hpp>
 
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObject.h>
@@ -38,13 +41,20 @@ class DomainParticipant;
  * Class DomainParticipantListener, overrides behaviour towards certain events.
  * @ingroup FASTDDS_MODULE
  */
-class DomainParticipantListener
+class DomainParticipantListener :
+    public PublisherListener,
+    public SubscriberListener,
+    public TopicListener
 {
 public:
 
-    DomainParticipantListener() {}
+    DomainParticipantListener()
+    {
+    }
 
-    virtual ~DomainParticipantListener() {}
+    virtual ~DomainParticipantListener()
+    {
+    }
 
     /*!
      * This method is called when a new Participant is discovered, or a previously discovered participant changes
@@ -66,6 +76,7 @@ public:
     {
         (void)participant, (void)info;
     }
+
 #endif
 
     /*!

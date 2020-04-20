@@ -52,7 +52,6 @@ public:
             const eprosima::fastrtps::types::TypeInformation* type_info,
             const std::string& name,
             const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-            eprosima::fastrtps::rtps::TopicKind_t topic_kind = eprosima::fastrtps::rtps::NO_KEY,
             bool use_typelookup = false);
 
     //!Publish a sample
@@ -101,11 +100,15 @@ public:
 
     bool register_discovered_type();
 
+    eprosima::fastdds::dds::TypeSupport m_Type;
+
 private:
 
     std::string m_Name;
 
-    eprosima::fastdds::dds::TypeSupport m_Type;
+    std::string topic_name_;
+
+
 
     int m_iSamples;
 
@@ -135,11 +138,11 @@ private:
 
     eprosima::fastdds::dds::Publisher* mp_publisher;
 
+    eprosima::fastdds::dds::Topic* mp_topic;
+
     eprosima::fastdds::dds::DataWriter* writer_;
 
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
-
-    eprosima::fastrtps::TopicAttributes topic_att;
 
     eprosima::fastdds::dds::DataWriterQos writer_qos;
 
