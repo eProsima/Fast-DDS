@@ -234,10 +234,10 @@ public:
         : global_segment_(
             domain_name,
             []( const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
-            const std::string& domain_name)
-                {
-                    on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
-                })
+                const std::string& domain_name)
+            {
+                on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
+            })
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
 
@@ -252,11 +252,10 @@ public:
 
         SharedMemGlobal::Port::on_failure_buffer_descriptors_handler(
             []( const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
-            const std::string& domain_name)
-                    {
-                        on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
-                    }
-            );
+                const std::string& domain_name)
+            {
+                on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
+            });
 
         per_allocation_extra_size_ =
                 SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
