@@ -21,6 +21,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
@@ -139,9 +140,10 @@ void TypeLookupSubscriber::SubListener::on_data_available(
     if (dit != subscriber_->datas_.end())
     {
         types::DynamicData_ptr data = dit->second;
-        if (reader->take_next_sample(data.get(), &m_info) == ReturnCode_t::RETCODE_OK)
+        SampleInfo info;
+        if (reader->take_next_sample(data.get(), &info) == ReturnCode_t::RETCODE_OK)
         {
-            if (m_info.sampleKind == ALIVE)
+            if (info.instance_state == eprosima::fastdds::dds::ALIVE)
             {
                 types::DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;

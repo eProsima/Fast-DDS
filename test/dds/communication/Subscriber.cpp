@@ -25,6 +25,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -215,11 +216,11 @@ public:
         {
             types::DynamicPubSubType pst(g_type);
             types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
-            SampleInfo_t info;
+            eprosima::fastdds::dds::SampleInfo info;
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {
-                if (info.sampleKind == ALIVE)
+                if (info.instance_state == eprosima::fastdds::dds::ALIVE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
                     ++number_samples_;

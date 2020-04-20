@@ -182,7 +182,6 @@ public:
                 eprosima::fastdds::dds::DataReader* reader) override;
 
         TestSubscriber* mParent;
-        eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         uint32_t n_samples;
     } m_subListener;

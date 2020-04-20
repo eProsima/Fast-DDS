@@ -27,6 +27,7 @@
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+
 #include <vector>
 #include <cstdint>
 
@@ -50,9 +51,6 @@ class ReaderAttributes;
 struct GUID_t;
 struct InstanceHandle_t;
 } // namespace rtps
-
-class SampleInfo_t;
-
 } // namespace fastrtps
 
 namespace fastdds {
@@ -66,6 +64,7 @@ class TypeSupport;
 class DataReaderQos;
 class TopicDescription;
 struct LivelinessChangedStatus;
+struct SampleInfo;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -110,24 +109,24 @@ public:
     /* TODO
        RTPS_DllAPI bool read(
             std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo_t>& sample_infos,
+            std::vector<SampleInfo>& sample_infos,
             uint32_t max_samples);
      */
 
     RTPS_DllAPI ReturnCode_t read_next_sample(
             void* data,
-            fastrtps::SampleInfo_t* info);
+            SampleInfo* info);
 
     /* TODO
        RTPS_DllAPI bool take(
             std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo_t>& sample_infos,
+            std::vector<SampleInfo>& sample_infos,
             uint32_t max_samples);
      */
 
     RTPS_DllAPI ReturnCode_t take_next_sample(
             void* data,
-            fastrtps::SampleInfo_t* info);
+            SampleInfo* info);
 
     ///@}
 
@@ -137,7 +136,7 @@ public:
      * @return RETCODE_OK if sample info was returned. RETCODE_NO_DATA if there is no sample to take.
      */
     RTPS_DllAPI ReturnCode_t get_first_untaken_info(
-            fastrtps::SampleInfo_t* info);
+            SampleInfo* info);
 
     /**
      * Get associated GUID

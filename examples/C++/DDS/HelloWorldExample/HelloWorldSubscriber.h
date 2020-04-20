@@ -80,8 +80,6 @@ public:
 
         HelloWorld hello_;
 
-        eprosima::fastrtps::SampleInfo_t info_;
-
         int matched_;
 
         uint32_t samples_;

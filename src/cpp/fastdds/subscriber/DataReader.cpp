@@ -20,6 +20,8 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+
 
 
 namespace eprosima {
@@ -61,20 +63,20 @@ bool DataReader::wait_for_unread_message(
 
 ReturnCode_t DataReader::read_next_sample(
         void* data,
-        SampleInfo_t* info)
+        SampleInfo* info)
 {
     return impl_->read_next_sample(data, info);
 }
 
 ReturnCode_t DataReader::take_next_sample(
         void* data,
-        SampleInfo_t* info)
+        SampleInfo* info)
 {
     return impl_->take_next_sample(data, info);
 }
 
 ReturnCode_t DataReader::get_first_untaken_info(
-        SampleInfo_t* info)
+        SampleInfo* info)
 {
     return impl_->get_first_untaken_info(info);
 }
@@ -116,7 +118,7 @@ ReturnCode_t DataReader::get_requested_deadline_missed_status(
 /* TODO
    bool DataReader::read(
         std::vector<void *>& data_values,
-        std::vector<SampleInfo_t>& sample_infos,
+        std::vector<SampleInfo>& sample_infos,
         uint32_t max_samples)
    {
     return impl_->read(...);
@@ -124,7 +126,7 @@ ReturnCode_t DataReader::get_requested_deadline_missed_status(
 
    bool DataReader::take(
         std::vector<void *>& data_values,
-        std::vector<SampleInfo_t>& sample_infos,
+        std::vector<SampleInfo>& sample_infos,
         uint32_t max_samples)
    {
     return impl_->take(...);

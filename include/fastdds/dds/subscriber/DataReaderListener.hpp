@@ -37,101 +37,101 @@ class DataReader;
  * Class DataReaderListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DataReaderListener
+class DataReaderListener
 {
-    public:
+public:
 
-        DataReaderListener(){}
+    RTPS_DllAPI DataReaderListener(){}
 
-        virtual ~DataReaderListener(){}
+    RTPS_DllAPI virtual ~DataReaderListener(){}
 
-        /**
-         * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
-         * @param reader DataReader
-         */
-        virtual void on_data_available(
-                DataReader* reader)
-        {
-            (void)reader;
-        }
+    /**
+     * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
+     * @param reader DataReader
+     */
+    RTPS_DllAPI virtual void on_data_available(
+            DataReader* reader)
+    {
+        (void)reader;
+    }
 
-        /**
-         * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
-         * @param reader DataReader
-         * @param info Matching information
-         */
-        virtual void on_subscription_matched(
-                DataReader* reader,
-                const fastdds::dds::SubscriptionMatchedStatus& info)
-        {
-            (void)reader;
-            (void)info;
-        }
+    /**
+     * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
+     * @param reader DataReader
+     * @param info Matching information
+     */
+    RTPS_DllAPI virtual void on_subscription_matched(
+            DataReader* reader,
+            const fastdds::dds::SubscriptionMatchedStatus& info)
+    {
+        (void)reader;
+        (void)info;
+    }
 
-        /**
-         * Virtual method to be called when a topic misses the deadline period
-         * @param reader DataReader
-         * @param status The requested deadline missed status
-         */
-        virtual void on_requested_deadline_missed(
-                DataReader* reader,
-                const fastrtps::RequestedDeadlineMissedStatus& status)
-        {
-            (void)reader;
-            (void)status;
-        }
+    /**
+     * Virtual method to be called when a topic misses the deadline period
+     * @param reader DataReader
+     * @param status The requested deadline missed status
+     */
+    RTPS_DllAPI virtual void on_requested_deadline_missed(
+            DataReader* reader,
+            const fastrtps::RequestedDeadlineMissedStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
 
-        /**
-         * @brief Method called when the liveliness status associated to a subscriber changes
-         * @param reader The DataReader
-         * @param status The liveliness changed status
-         */
-        virtual void on_liveliness_changed(
-                DataReader* reader,
-                const fastrtps::LivelinessChangedStatus& status)
-        {
-            (void)reader;
-            (void)status;
-        }
+    /**
+     * @brief Method called when the liveliness status associated to a subscriber changes
+     * @param reader The DataReader
+     * @param status The liveliness changed status
+     */
+    RTPS_DllAPI virtual void on_liveliness_changed(
+            DataReader* reader,
+            const fastrtps::LivelinessChangedStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
 
-        /**
-         * @brief Method called when a sample was rejected.
-         * @param reader The DataReader
-         * @param status The rejected status
-         */
-        virtual void on_sample_rejected(
-                DataReader* reader,
-                const fastrtps::SampleRejectedStatus& status)
-        {
-            (void)reader;
-            (void)status;
-        }
+    /**
+     * @brief Method called when a sample was rejected.
+     * @param reader The DataReader
+     * @param status The rejected status
+     */
+    RTPS_DllAPI virtual void on_sample_rejected(
+            DataReader* reader,
+            const fastrtps::SampleRejectedStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
 
-        /**
-         * @brief Method called an incompatible QoS was requested.
-         * @param reader The DataReader
-         * @param status The RequestedIncompatibleQos status
-         */
-        virtual void on_requested_incompatible_qos(
-                DataReader* reader,
-                const RequestedIncompatibleQosStatus& status)
-        {
-            (void)reader;
-            (void)status;
-        }
+    /**
+     * @brief Method called an incompatible QoS was requested.
+     * @param reader The DataReader
+     * @param status The RequestedIncompatibleQos status
+     */
+    RTPS_DllAPI virtual void on_requested_incompatible_qos(
+            DataReader* reader,
+            const RequestedIncompatibleQosStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
 
-        /**
-         * @brief Method called when a sample was lost.
-         * @param reader The DataReader
-         * @param status The SampleLost status
-         */
-        virtual void on_sample_lost(
-                DataReader* reader,
-                const SampleLostStatus& status)
-        {
-            (void)reader;
-            (void)status;
-        }
+    /**
+     * @brief Method called when a sample was lost.
+     * @param reader The DataReader
+     * @param status The SampleLost status
+     */
+    RTPS_DllAPI virtual void on_sample_lost(
+            DataReader* reader,
+            const SampleLostStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
 };
 
 } /* namespace dds */

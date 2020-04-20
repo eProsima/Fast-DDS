@@ -20,6 +20,7 @@
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -31,6 +32,7 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -41,6 +43,36 @@ using namespace std::chrono;
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+void sample_info_to_dds (const SampleInfo_t& rtps_info, SampleInfo* dds_info)
+{
+    dds_info->sample_state = NOT_READ;
+    dds_info->view_state = NOT_NEW;
+    dds_info->disposed_generation_count = 0;
+    dds_info->no_writers_generation_count = 1;
+    dds_info->sample_rank = 0;
+    dds_info->generation_rank = 0;
+    dds_info->absoulte_generation_rank = 0;
+    dds_info->source_timestamp = rtps_info.sourceTimestamp;
+    dds_info->instance_handle = rtps_info.iHandle;
+    dds_info->publication_handle = fastrtps::rtps::InstanceHandle_t(rtps_info.sample_identity.writer_guid());
+    dds_info->valid_data = rtps_info.sampleKind == eprosima::fastrtps::rtps::ALIVE ? true : false;
+
+    switch (rtps_info.sampleKind)
+    {
+    case eprosima::fastrtps::rtps::ALIVE:
+        dds_info->instance_state = ALIVE;
+        break;
+    case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
+        dds_info->instance_state = NOT_ALIVE_DISPOSED;
+        break;
+    default:
+        //TODO [ILG] change this if the other kinds ever get implemented
+        dds_info->instance_state = ALIVE;
+        break;
+    }
+}
+
 
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
@@ -171,16 +203,23 @@ bool DataReaderImpl::wait_for_unread_message(
 
 ReturnCode_t DataReaderImpl::read_next_sample(
         void* data,
-        SampleInfo_t* info)
+        SampleInfo* info)
 {
+    if (history_.getHistorySize() == 0)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
 #endif
-    if (history_.readNextData(data, info, max_blocking_time))
+    SampleInfo_t rtps_info;
+    if (history_.readNextData(data, &rtps_info, max_blocking_time))
     {
+        sample_info_to_dds(rtps_info, info);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
@@ -188,25 +227,39 @@ ReturnCode_t DataReaderImpl::read_next_sample(
 
 ReturnCode_t DataReaderImpl::take_next_sample(
         void* data,
-        SampleInfo_t* info)
+        SampleInfo* info)
 {
+    if (history_.getHistorySize() == 0)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+
     auto max_blocking_time = std::chrono::steady_clock::now() +
 #if HAVE_STRICT_REALTIME
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
 #endif
-    if (history_.takeNextData(data, info, max_blocking_time))
+
+    SampleInfo_t rtps_info;
+    if (history_.takeNextData(data, &rtps_info, max_blocking_time))
     {
+        sample_info_to_dds(rtps_info, info);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
 }
 
 ReturnCode_t DataReaderImpl::get_first_untaken_info(
-        SampleInfo_t* info)
+        SampleInfo* info)
 {
-    return history_.get_first_untaken_info(info) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_NO_DATA;
+    SampleInfo_t rtps_info;
+    if (history_.get_first_untaken_info(&rtps_info))
+    {
+        sample_info_to_dds(rtps_info, info);
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_NO_DATA;
 }
 
 const GUID_t& DataReaderImpl::guid()

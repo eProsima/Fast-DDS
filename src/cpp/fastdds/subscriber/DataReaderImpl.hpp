@@ -45,9 +45,6 @@ class RTPSReader;
 class TimedEvent;
 
 } // namespace rtps
-
-class SampleInfo_t;
-
 } // namespace fastrtps
 
 namespace fastdds {
@@ -56,6 +53,7 @@ namespace dds {
 class Subscriber;
 class SubscriberImpl;
 class TopicDescription;
+struct SampleInfo;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -95,34 +93,34 @@ public:
     /* TODO
        bool read(
             std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo_t>& sample_infos,
+            std::vector<fastrtps::SampleInfo>& sample_infos,
             uint32_t max_samples);
      */
 
     ReturnCode_t read_next_sample(
             void* data,
-            fastrtps::SampleInfo_t* info);
+            SampleInfo* info);
 
     /* TODO
        bool take(
             std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo_t>& sample_infos,
+            std::vector<fastrtps::SampleInfo>& sample_infos,
             uint32_t max_samples);
      */
 
     ReturnCode_t take_next_sample(
             void* data,
-            fastrtps::SampleInfo_t* info);
+            SampleInfo* info);
 
     ///@}
 
     /**
      * @brief Returns information about the first untaken sample.
-     * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     * @param [out] info Pointer to a SampleInfo structure to store first untaken sample information.
      * @return true if sample info was returned. false if there is no sample to take.
      */
     ReturnCode_t get_first_untaken_info(
-            fastrtps::SampleInfo_t* info);
+            SampleInfo* info);
 
     /**
     * Get associated GUID
