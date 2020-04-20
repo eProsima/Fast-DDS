@@ -65,7 +65,7 @@ DataWriterImpl::DataWriterImpl(
             + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
 #endif
-            , qos.endpoint_data().history_memory_policy)
+            , qos.endpoint().history_memory_policy)
     //, history_(std::move(history))
     , listener_(listen)
 #pragma warning (disable : 4355 )
@@ -95,25 +95,25 @@ DataWriterImpl::DataWriterImpl(
     w_att.throughputController = qos.throughput_controller();
     w_att.endpoint.durabilityKind = qos.durability().durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
-    w_att.endpoint.multicastLocatorList = qos.endpoint_data().multicast_locator_list;
+    w_att.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
     w_att.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     w_att.endpoint.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    w_att.endpoint.unicastLocatorList = qos.endpoint_data().unicast_locator_list;
-    w_att.endpoint.remoteLocatorList = qos.endpoint_data().remote_locator_list;
+    w_att.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
+    w_att.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
     w_att.mode = qos.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     w_att.endpoint.properties = qos.properties();
 
-    if (qos.endpoint_data().entity_id > 0)
+    if (qos.endpoint().entity_id > 0)
     {
-        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint_data().entity_id));
+        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
     }
 
-    if (qos.endpoint_data().user_defined_id > 0)
+    if (qos.endpoint().user_defined_id > 0)
     {
-        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint_data().user_defined_id));
+        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
     }
 
-    w_att.times = qos.reliable_writer_data().times;
+    w_att.times = qos.reliable_writer_qos().times;
     w_att.liveliness_kind = qos.liveliness().kind;
     w_att.liveliness_lease_duration = qos.liveliness().lease_duration;
     w_att.matched_readers_allocation = qos.writer_resources().matched_subscriber_allocation;
@@ -137,11 +137,11 @@ DataWriterImpl::DataWriterImpl(
         w_att.endpoint.properties.properties().push_back(std::move(property));
     }
 
-    if (qos.reliable_writer_data().disable_positive_acks.enabled &&
-            qos.reliable_writer_data().disable_positive_acks.duration != c_TimeInfinite)
+    if (qos.reliable_writer_qos().disable_positive_acks.enabled &&
+            qos.reliable_writer_qos().disable_positive_acks.duration != c_TimeInfinite)
     {
         w_att.disable_positive_acks = true;
-        w_att.keep_duration = qos.reliable_writer_data().disable_positive_acks.duration;
+        w_att.keep_duration = qos.reliable_writer_qos().disable_positive_acks.duration;
     }
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
@@ -845,13 +845,13 @@ void DataWriterImpl::set_qos(
     {
         to.properties() = from.properties();
     }
-    if (is_default && !(to.reliable_writer_data() == from.reliable_writer_data()))
+    if (is_default && !(to.reliable_writer_qos() == from.reliable_writer_qos()))
     {
-        to.reliable_writer_data() = from.reliable_writer_data();
+        to.reliable_writer_qos() = from.reliable_writer_qos();
     }
-    if (is_default && !(to.endpoint_data() == from.endpoint_data()))
+    if (is_default && !(to.endpoint() == from.endpoint()))
     {
-        to.endpoint_data() = from.endpoint_data();
+        to.endpoint() = from.endpoint();
     }
     if (is_default && !(to.writer_resources() == from.writer_resources()))
     {

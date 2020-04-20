@@ -48,7 +48,7 @@ public:
     bool operator ==(
             const RTPSReliableReaderQos& b) const
     {
-        return (this->reader_times == b.reader_times) &&
+        return (this->times == b.times) &&
                (this->disable_positive_ACKs == b.disable_positive_ACKs);
     }
 
@@ -61,7 +61,7 @@ public:
     /*!
      * @brief Times associated with the Reliable Readers events.
      */
-    fastrtps::rtps::ReaderTimes reader_times;
+    fastrtps::rtps::ReaderTimes times;
 
     /*!
      * @brief Control the sending of positive ACKs
@@ -394,6 +394,7 @@ public:
     {
         resource_limits_ = new_value;
     }
+
     /**
      * Getter for UserDataQosPolicy
      * @return UserDataQosPolicy reference
@@ -421,6 +422,7 @@ public:
     {
         user_data_ = new_value;
     }
+
     /**
      * Getter for OwnershipQosPolicy
      * @return OwnershipQosPolicy reference
@@ -721,6 +723,7 @@ public:
     }
 
 private:
+
     //!Durability Qos, implemented in the library.
     DurabilityQosPolicy durability_;
 

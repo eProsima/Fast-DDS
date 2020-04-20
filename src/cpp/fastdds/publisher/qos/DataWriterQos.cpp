@@ -36,7 +36,7 @@ WriterQos DataWriterQos::get_writerqos(
     WriterQos qos;
     qos.m_deadline = deadline();
     qos.m_destinationOrder = destination_order();
-    qos.m_disablePositiveACKs = reliable_writer_data().disable_positive_acks;
+    qos.m_disablePositiveACKs = reliable_writer_qos().disable_positive_acks;
     qos.m_durability = durability();
     qos.m_durabilityService = durability_service();
     qos.m_groupData = pqos.group_data();
