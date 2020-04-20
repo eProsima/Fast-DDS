@@ -353,6 +353,9 @@ public:
             const DataWriterQos& to,
             const DataWriterQos& from);
 
+    void subscriber_qos_updated();
+
+
 };
 
 } /* namespace dds */

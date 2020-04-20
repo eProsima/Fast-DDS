@@ -103,6 +103,16 @@ ReturnCode_t PublisherImpl::set_qos(
             return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
         }
         set_qos(qos_, default_qos, false);
+
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        for (auto topic_writers : writers_)
+        {
+            for (auto writer : topic_writers.second)
+            {
+                writer->subscriber_qos_updated();
+            }
+        }
+
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -116,6 +126,16 @@ ReturnCode_t PublisherImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(qos_, qos, false);
+
+    std::lock_guard<std::mutex> lock(mtx_writers_);
+    for (auto topic_writers : writers_)
+    {
+        for (auto writer : topic_writers.second)
+        {
+            writer->subscriber_qos_updated();
+        }
+    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 

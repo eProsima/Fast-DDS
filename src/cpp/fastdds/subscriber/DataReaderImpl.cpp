@@ -277,6 +277,13 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
     return handle;
 }
 
+void DataReaderImpl::subscriber_qos_updated()
+{
+    //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+    ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
+    subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+}
+
 ReturnCode_t DataReaderImpl::set_qos(
         const DataReaderQos& qos)
 {

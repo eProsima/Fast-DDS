@@ -314,6 +314,8 @@ public:
 
     fastrtps::TopicAttributes topic_attributes() const;
 
+    void subscriber_qos_updated();
+
 };
 
 } /* namespace dds */

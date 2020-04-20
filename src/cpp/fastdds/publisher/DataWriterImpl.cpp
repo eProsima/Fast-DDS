@@ -453,6 +453,13 @@ InstanceHandle_t DataWriterImpl::get_instance_handle() const
     return handle;
 }
 
+void DataWriterImpl::subscriber_qos_updated()
+{
+    //NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
+    WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
+    publisher_->rtps_participant()->updateWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
+}
+
 ReturnCode_t DataWriterImpl::set_qos(
         const DataWriterQos& qos)
 {

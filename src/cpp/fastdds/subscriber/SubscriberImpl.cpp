@@ -101,6 +101,16 @@ ReturnCode_t SubscriberImpl::set_qos(
         }
 
         set_qos(qos_, default_qos, false);
+
+        std::lock_guard<std::mutex> lock(mtx_readers_);
+        for (auto topic_readers : readers_)
+        {
+            for (auto reader : topic_readers.second)
+            {
+                reader->subscriber_qos_updated();
+            }
+        }
+
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -114,6 +124,16 @@ ReturnCode_t SubscriberImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(qos_, qos, false);
+
+    std::lock_guard<std::mutex> lock(mtx_readers_);
+    for (auto topic_readers : readers_)
+    {
+        for (auto reader : topic_readers.second)
+        {
+            reader->subscriber_qos_updated();
+        }
+    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
