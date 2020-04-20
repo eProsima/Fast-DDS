@@ -216,7 +216,7 @@ public:
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* /*datawriter*/,
-                const eprosima::fastdds::dds::PublicationMatchedStatus& info) const
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override
         {
             if (0 < info.current_count_change)
             {
@@ -679,18 +679,18 @@ private:
     }
 
     void publication_matched(
-            eprosima::fastrtps::rtps::MatchingInfo& info)
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info)
     {
         std::lock_guard<std::mutex> guard(mutexDiscovery_);
-        matched_writers_.insert(info.remoteEndpointGuid);
+        matched_writers_.insert(info.last_subscription_handle);
         cvDiscovery_.notify_one();
     }
 
     void publication_unmatched(
-            eprosima::fastrtps::rtps::MatchingInfo& info)
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info)
     {
         std::lock_guard<std::mutex> guard(mutexDiscovery_);
-        matched_writers_.erase(info.remoteEndpointGuid);
+        matched_writers_.erase(info.last_subscription_handle);
         cvDiscovery_.notify_one();
     }
 
