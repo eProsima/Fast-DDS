@@ -863,29 +863,6 @@ public:
         return *this;
     }
 
-    PubSubWriter& load_participant_qos(
-            const std::string& xml)
-    {
-        /*TODO
-           std::unique_ptr<eprosima::fastrtps::xmlparser::BaseNode> root;
-           if (eprosima::fastrtps::xmlparser::XMLParser::loadXML(xml.data(), xml.size(),
-                root) == eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK)
-           {
-            for (const auto& profile : root->getChildren())
-            {
-                if (profile->getType() == eprosima::fastrtps::xmlparser::NodeType::PARTICIPANT)
-                {
-                    participant_qos_ =
-         *(dynamic_cast<eprosima::fastrtps::xmlparser::DataNode<eprosima::fastrtps::ParticipantAttributes>
-         *>(
-                                profile.get())->get());
-                }
-            }
-           }
-         */
-        return *this;
-    }
-
     PubSubWriter& load_publisher_attr(
             const std::string& xml)
     {
@@ -906,6 +883,7 @@ public:
             }
            }
          */
+        publisher_qos_.partition().push_back("A");
         return *this;
     }
 
