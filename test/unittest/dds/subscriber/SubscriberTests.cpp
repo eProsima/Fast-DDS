@@ -154,6 +154,22 @@ TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
     ASSERT_EQ(rqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
 }
 
+TEST(SubscriberTests, GetSubscriberParticipant)
+{
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+    ASSERT_EQ(subscriber->get_participant(), participant);
+}
+
+TEST(SubscriberTests, GetPSMSubscriberParticipant)
+{
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
+
+    ASSERT_EQ(subscriber.participant().delegate().get(), participant.delegate().get());
+}
+
 TEST(SubscriberTests, CreateDataReader)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
