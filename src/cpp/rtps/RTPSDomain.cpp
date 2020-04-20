@@ -410,7 +410,7 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         server_attr.builtin.metatrafficUnicastLocatorList.push_back(server_address);
 
         part = RTPSDomain::createParticipant(domain_id, server_attr, listen);
-        if(nullptr == part)
+        if(nullptr != part)
         {
             // There wasn't any previous default server, now there is one
             logInfo(DOMAIN, "Ros2 default client-server setup. Default server created.");
@@ -433,7 +433,7 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         client_attr.builtin.discovery_config.m_DiscoveryServers.push_back(ratt);
 
         part = RTPSDomain::createParticipant(domain_id, client_attr, listen);
-        if(nullptr == part)
+        if(nullptr != part)
         {
             // client successfully created
             logInfo(DOMAIN, "Ros2 default client-server setup. Default client created.");
