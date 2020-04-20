@@ -265,22 +265,7 @@ public:
 
     ~PubSubWriter()
     {
-        if (datawriter_)
-        {
-            publisher_->delete_datawriter(datawriter_);
-        }
-        if (publisher_)
-        {
-            participant_->delete_publisher(publisher_);
-        }
-        if (topic_)
-        {
-            participant_->delete_topic(topic_);
-        }
-        if (participant_)
-        {
-            DomainParticipantFactory::get_instance()->delete_participant(participant_);
-        }
+        destroy();
     }
 
     void init()
@@ -309,7 +294,8 @@ public:
 
         //TODO Remove this TopicAttributes and use Topic once Publisher::create_datawriter is in place
         eprosima::fastrtps::TopicAttributes ta;
-        ta.topicKind = type_->m_isGetKeyDefined ? ::eprosima::fastrtps::rtps::WITH_KEY : ::eprosima::fastrtps::rtps::NO_KEY;
+        ta.topicKind =
+                type_->m_isGetKeyDefined ? ::eprosima::fastrtps::rtps::WITH_KEY : ::eprosima::fastrtps::rtps::NO_KEY;
         ta.topicName = topic_->get_name();
         ta.topicDataType = type_->getName();
         ta.historyQos = datawriter_qos_.history();

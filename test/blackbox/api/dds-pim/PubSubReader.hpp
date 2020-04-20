@@ -258,22 +258,7 @@ public:
 
     ~PubSubReader()
     {
-        if (datareader_)
-        {
-            subscriber_->delete_datareader(datareader_);
-        }
-        if (subscriber_)
-        {
-            participant_->delete_subscriber(subscriber_);
-        }
-        if (topic_)
-        {
-            participant_->delete_topic(topic_);
-        }
-        if (participant_)
-        {
-            DomainParticipantFactory::get_instance()->delete_participant(participant_);
-        }
+        destroy();
     }
 
     void init()
@@ -296,7 +281,6 @@ public:
         ASSERT_NE(subscriber_, nullptr);
 
         // Create topic
-        //
         topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         ASSERT_NE(topic_, nullptr);
 
