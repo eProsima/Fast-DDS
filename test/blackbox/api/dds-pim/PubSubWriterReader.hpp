@@ -438,6 +438,8 @@ public:
             publisher_->delete_datawriter(std::get<1>(tuple));
             participant_->delete_topic(std::get<0>(tuple));
         }
+        entities_extra_.clear();
+
         if (datareader_)
         {
             subscriber_->delete_datareader(datareader_);
