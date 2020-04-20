@@ -135,6 +135,9 @@ DataReaderImpl::DataReaderImpl(
     }
 
     att.times = qos.reliable_reader_qos().times;
+    att.liveliness_lease_duration = qos.liveliness().lease_duration;
+    att.liveliness_kind_ = qos.liveliness().kind;
+
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
