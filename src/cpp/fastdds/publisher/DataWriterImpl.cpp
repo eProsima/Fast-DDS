@@ -473,12 +473,11 @@ ReturnCode_t DataWriterImpl::set_qos(
         set_qos(qos_, default_qos, false);
     }
 
-    bool update_user_data = false;
     if (publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data == 0 ||
             publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data >
             qos.user_data().getValue().size())
     {
-        update_user_data = true;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
 
     ReturnCode_t ret_val = check_qos(qos);
@@ -762,8 +761,7 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
 void DataWriterImpl::set_qos(
         DataWriterQos& to,
         const DataWriterQos& from,
-        bool is_default,
-        bool update_user_data)
+        bool is_default)
 {
     if (is_default && !(to.durability() == from.durability()))
     {
@@ -820,7 +818,7 @@ void DataWriterImpl::set_qos(
         to.lifespan() = from.lifespan();
         to.lifespan().hasChanged = true;
     }
-    if (update_user_data && !(to.user_data() == from.user_data()))
+    if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
         to.user_data().hasChanged = true;

@@ -301,6 +301,14 @@ ReturnCode_t DataReaderImpl::set_qos(
         set_qos(qos_, default_qos, false);
         return ReturnCode_t::RETCODE_OK;
     }
+
+    if (subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data == 0 ||
+            subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data >
+            qos.user_data().getValue().size())
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+
     ReturnCode_t check_result = check_qos(qos);
     if (!check_result)
     {

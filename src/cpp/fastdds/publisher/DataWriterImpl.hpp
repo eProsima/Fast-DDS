@@ -343,8 +343,7 @@ public:
     static void set_qos(
             DataWriterQos& to,
             const DataWriterQos& from,
-            bool is_default,
-            bool update_user_data = true);
+            bool is_default);
 
     static ReturnCode_t check_qos(
             const DataWriterQos& qos);
