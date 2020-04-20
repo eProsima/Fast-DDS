@@ -111,7 +111,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
         const std::array<uint8_t, 32>& master_key, 
         const std::array<uint8_t, 32>& master_salt, 
         const uint32_t session_id, 
-        int key_len = 32);
+        int key_len);
 
     void compute_sessionkey(
         std::array<uint8_t, 32>& session_key, 
@@ -154,7 +154,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
 
     bool deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
             eprosima::fastcdr::Cdr::state& body_state, SecureDataTag& tag, uint32_t body_length,
-            const std::array<uint8_t, 4> transformation_kind,
+            const std::array<uint8_t, 4>& transformation_kind,
             const std::array<uint8_t,32>& session_key, const std::array<uint8_t, 12>& initialization_vector,
             octet* plain_buffer, uint32_t& plain_buffer_len);
 
