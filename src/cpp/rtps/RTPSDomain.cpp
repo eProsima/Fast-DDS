@@ -358,6 +358,7 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
     }
 
     // Check for the environment variable
+    #pragma warning(suppress:4996)
     const char* address = std::getenv(DEFAULT_ROS2_MASTER_URI);
 
     if( nullptr == address )
@@ -408,7 +409,8 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         server_attr.ReadguidPrefix(DEFAULT_ROS2_SERVER_GUIDPREFIX);
         server_attr.builtin.metatrafficUnicastLocatorList.push_back(server_address);
 
-        if(part = RTPSDomain::createParticipant(domain_id, server_attr, listen))
+        part = RTPSDomain::createParticipant(domain_id, server_attr, listen);
+        if(nullptr == part)
         {
             // There wasn't any previous default server, now there is one
             logInfo(DOMAIN, "Ros2 default client-server setup. Default server created.");
@@ -430,7 +432,8 @@ RTPSParticipant* RTPSDomain::rosEnvironmentCreationOverride(
         ratt.metatrafficUnicastLocatorList.push_back(server_address);
         client_attr.builtin.discovery_config.m_DiscoveryServers.push_back(ratt);
 
-        if( part = RTPSDomain::createParticipant(domain_id, client_attr, listen) )
+        part = RTPSDomain::createParticipant(domain_id, client_attr, listen);
+        if(nullptr == part)
         {
             // client successfully created
             logInfo(DOMAIN, "Ros2 default client-server setup. Default client created.");
