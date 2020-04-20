@@ -312,6 +312,7 @@ fastrtps::rtps::RTPSParticipantAttributes DomainParticipantFactory::get_attribut
     rtps_attr.useBuiltinTransports = qos.transport().use_builtin_transports;
     rtps_attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
     rtps_attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
+    rtps_attr.userData = qos.user_data().data_vec();
     return rtps_attr;
 }
 
