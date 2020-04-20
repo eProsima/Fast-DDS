@@ -1455,6 +1455,8 @@ void AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t, 32>& session_k
     const std::array<uint8_t, 32>& master_key, const std::array<uint8_t, 32>& master_salt,
     const uint32_t session_id, int key_len)
 {
+    session_key.fill(0);
+
     int sourceLen = 0;
     unsigned char source[18 + 32 + 4];
     const char seq[] = "SessionKey";
@@ -1891,7 +1893,7 @@ SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(eprosima::fa
 
 bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
         eprosima::fastcdr::Cdr::state& body_state, SecureDataTag& tag, const uint32_t body_length,
-        const std::array<uint8_t, 4> transformation_kind,
+        const std::array<uint8_t, 4>& transformation_kind,
         const std::array<uint8_t,32>& session_key, const std::array<uint8_t, 12>& initialization_vector,
         octet* plain_buffer, uint32_t& plain_buffer_len)
 {
@@ -2062,17 +2064,18 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
 
         //Get ReceiverSpecificSessionKey
         std::array<uint8_t, 32> specific_session_key{0};
-        compute_sessionkey(specific_session_key, true, receiver_specific_key, master_salt, session_id);
 
         //Verify specific MAC
         if(transformation_kind == c_transfrom_kind_aes128_gcm ||
                 transformation_kind == c_transfrom_kind_aes128_gmac)
         {
+            compute_sessionkey(specific_session_key, true, receiver_specific_key, master_salt, session_id, 16);
             d_cipher = EVP_aes_128_gcm();
         }
         else if(transformation_kind == c_transfrom_kind_aes256_gcm ||
                 transformation_kind == c_transfrom_kind_aes256_gmac)
         {
+            compute_sessionkey(specific_session_key, true, receiver_specific_key, master_salt, session_id, 32);
             d_cipher = EVP_aes_256_gcm();
         }
         else
