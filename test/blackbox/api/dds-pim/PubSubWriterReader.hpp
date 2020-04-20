@@ -33,7 +33,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 #include <string>
 #include <list>
@@ -322,14 +322,14 @@ public:
         topic_name_ = t.str();
 
         // By default, memory mode is preallocated (the most restritive)
-        datawriter_qos_.endpoint_data().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+        datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
         datareader_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
-        datawriter_qos_.reliable_writer_data().times.heartbeatPeriod.seconds = 0;
-        datawriter_qos_.reliable_writer_data().times.heartbeatPeriod.nanosec = 100000000;
-        datawriter_qos_.reliable_writer_data().times.nackResponseDelay.seconds = 0;
-        datawriter_qos_.reliable_writer_data().times.nackResponseDelay.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.nanosec = 100000000;
 
         // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
         // big CPU overhead sometimes
@@ -337,8 +337,8 @@ public:
         datawriter_qos_.reliability().max_blocking_time.nanosec = 0;
 
         // By default, heartbeat period delay is 100 milliseconds.
-        datareader_qos_.reliable_reader_qos().reader_times.heartbeatResponseDelay.seconds = 0;
-        datareader_qos_.reliable_reader_qos().reader_times.heartbeatResponseDelay.nanosec = 100000000;
+        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 0;
+        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 100000000;
     }
 
     ~PubSubWriterReader()
@@ -656,7 +656,7 @@ private:
     {
         returnedValue = false;
         type data;
-        eprosima::fastrtps::SampleInfo_t info;
+        eprosima::fastdds::dds::SampleInfo info;
 
         if ((ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&data, &info)))
         {
@@ -668,7 +668,7 @@ private:
             ASSERT_LT(last_seq, info.sample_identity.sequence_number());
             last_seq = info.sample_identity.sequence_number();
 
-            if (info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
+            if (info.instance_state == eprosima::fastdds::dds::ALIVE)
             {
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                 ASSERT_NE(it, total_msgs_.end());

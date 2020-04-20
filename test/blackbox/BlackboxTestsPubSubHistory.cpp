@@ -160,7 +160,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
     while (data.size() > 1)
     {
         auto data_backup(data);
-        decltype(data) expected_data;
+        decltype(data)expected_data;
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
 
@@ -475,7 +475,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 
     // Only last sample should be present
     HelloWorld received;
-    ASSERT_TRUE(reader.takeNextData(&received, nullptr));
+    ASSERT_TRUE(reader.takeNextData(&received));
     ASSERT_EQ(received.index(), 3u);
 }
 

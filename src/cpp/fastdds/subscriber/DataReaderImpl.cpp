@@ -44,7 +44,9 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-void sample_info_to_dds (const SampleInfo_t& rtps_info, SampleInfo* dds_info)
+void sample_info_to_dds (
+        const SampleInfo_t& rtps_info,
+        SampleInfo* dds_info)
 {
     dds_info->sample_state = NOT_READ;
     dds_info->view_state = NOT_NEW;
@@ -56,23 +58,24 @@ void sample_info_to_dds (const SampleInfo_t& rtps_info, SampleInfo* dds_info)
     dds_info->source_timestamp = rtps_info.sourceTimestamp;
     dds_info->instance_handle = rtps_info.iHandle;
     dds_info->publication_handle = fastrtps::rtps::InstanceHandle_t(rtps_info.sample_identity.writer_guid());
+    dds_info->sample_identity = rtps_info.sample_identity;
+    dds_info->related_sample_identity = rtps_info.related_sample_identity;
     dds_info->valid_data = rtps_info.sampleKind == eprosima::fastrtps::rtps::ALIVE ? true : false;
 
     switch (rtps_info.sampleKind)
     {
-    case eprosima::fastrtps::rtps::ALIVE:
-        dds_info->instance_state = ALIVE;
-        break;
-    case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-        dds_info->instance_state = NOT_ALIVE_DISPOSED;
-        break;
-    default:
-        //TODO [ILG] change this if the other kinds ever get implemented
-        dds_info->instance_state = ALIVE;
-        break;
+        case eprosima::fastrtps::rtps::ALIVE:
+            dds_info->instance_state = ALIVE;
+            break;
+        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
+            dds_info->instance_state = NOT_ALIVE_DISPOSED;
+            break;
+        default:
+            //TODO [ILG] change this if the other kinds ever get implemented
+            dds_info->instance_state = ALIVE;
+            break;
     }
 }
-
 
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,

@@ -917,10 +917,10 @@ public:
     }
 
     bool takeNextData(
-            void* data,
-            eprosima::fastrtps::SampleInfo_t* info)
+            void* data)
     {
-        if (subscriber_->takeNextData(data, info))
+        eprosima::fastrtps::SampleInfo_t info;
+        if (subscriber_->takeNextData(data, &info))
         {
             current_received_count_++;
             return true;

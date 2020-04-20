@@ -249,13 +249,13 @@ public:
         topic_name_ = t.str();
 
         // By default, memory mode is preallocated (the most restritive)
-        datawriter_qos_.endpoint_data().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+        datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
-        datawriter_qos_.reliable_writer_data().times.heartbeatPeriod.seconds = 0;
-        datawriter_qos_.reliable_writer_data().times.heartbeatPeriod.nanosec = 100000000;
-        datawriter_qos_.reliable_writer_data().times.nackResponseDelay.seconds = 0;
-        datawriter_qos_.reliable_writer_data().times.nackResponseDelay.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.nanosec = 100000000;
 
         // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
         // big CPU overhead sometimes
@@ -595,8 +595,8 @@ public:
     PubSubWriter& keep_duration(
             const eprosima::fastrtps::Duration_t duration)
     {
-        datawriter_qos_.reliable_writer_data().disable_positive_acks.enabled = true;
-        datawriter_qos_.reliable_writer_data().disable_positive_acks.duration = duration;
+        datawriter_qos_.reliable_writer_qos().disable_positive_acks.enabled = true;
+        datawriter_qos_.reliable_writer_qos().disable_positive_acks.duration = duration;
         return *this;
     }
 
@@ -704,21 +704,21 @@ public:
     PubSubWriter& heartbeat_period_seconds(
             int32_t sec)
     {
-        datawriter_qos_.reliable_writer_data().times.heartbeatPeriod.seconds = sec;
+        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = sec;
         return *this;
     }
 
     PubSubWriter& heartbeat_period_nanosec(
             uint32_t nanosec)
     {
-        datawriter_qos_.reliable_writer_data().times.heartbeatPeriod.nanosec = nanosec;
+        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = nanosec;
         return *this;
     }
 
     PubSubWriter& unicastLocatorList(
             eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
     {
-        datawriter_qos_.endpoint_data().unicast_locator_list = unicastLocators;
+        datawriter_qos_.endpoint().unicast_locator_list = unicastLocators;
         return *this;
     }
 
@@ -729,7 +729,7 @@ public:
         eprosima::fastrtps::rtps::Locator_t loc;
         IPLocator::setIPv4(loc, ip);
         loc.port = port;
-        datawriter_qos_.endpoint_data().unicast_locator_list.push_back(loc);
+        datawriter_qos_.endpoint().unicast_locator_list.push_back(loc);
 
         return *this;
     }
@@ -737,7 +737,7 @@ public:
     PubSubWriter& multicastLocatorList(
             eprosima::fastrtps::rtps::LocatorList_t multicastLocators)
     {
-        datawriter_qos_.endpoint_data().multicast_locator_list = multicastLocators;
+        datawriter_qos_.endpoint().multicast_locator_list = multicastLocators;
         return *this;
     }
 
@@ -748,7 +748,7 @@ public:
         eprosima::fastrtps::rtps::Locator_t loc;
         IPLocator::setIPv4(loc, ip);
         loc.port = port;
-        datawriter_qos_.endpoint_data().multicast_locator_list.push_back(loc);
+        datawriter_qos_.endpoint().multicast_locator_list.push_back(loc);
 
         return *this;
     }
@@ -825,8 +825,8 @@ public:
             uint8_t UserID,
             uint8_t EntityID)
     {
-        datawriter_qos_.endpoint_data().user_defined_id = UserID;
-        datawriter_qos_.endpoint_data().entity_id = EntityID;
+        datawriter_qos_.endpoint().user_defined_id = UserID;
+        datawriter_qos_.endpoint().entity_id = EntityID;
         return *this;
     }
 
