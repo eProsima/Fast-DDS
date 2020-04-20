@@ -594,18 +594,6 @@ public:
         return *this;
     }
 
-    PubSubWriter& key(
-            bool keyed)
-    {
-        /* TODO
-           datawriter_qos_.topic.topicKind =
-                keyed ?
-                eprosima::fastrtps::rtps::TopicKind_t::WITH_KEY :
-                eprosima::fastrtps::rtps::TopicKind_t::NO_KEY;
-         */
-        return *this;
-    }
-
     PubSubWriter& lifespan_period(
             const eprosima::fastrtps::Duration_t lifespan_period)
     {
@@ -656,13 +644,6 @@ public:
             const int32_t depth)
     {
         datawriter_qos_.history().depth = depth;
-        return *this;
-    }
-
-    PubSubWriter& topic_kind(
-            const eprosima::fastrtps::rtps::TopicKind_t kind)
-    {
-        //TODO datawriter_qos_.topic.topicKind = kind;
         return *this;
     }
 

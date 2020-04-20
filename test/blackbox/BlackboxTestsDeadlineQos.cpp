@@ -160,8 +160,8 @@ TEST_P(DeadlineQos, KeyedTopicLongDeadline)
     // Deadline period in milliseconds
     uint32_t deadline_period_ms = 100000;
 
-    reader.deadline_period(deadline_period_ms * 1e-3).key(true).init();
-    writer.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+    reader.deadline_period(deadline_period_ms * 1e-3).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -205,8 +205,8 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
     // Deadline period in ms
     uint32_t deadline_period_ms = 10;
 
-    reader.deadline_period(deadline_period_ms * 1e-3).key(true).init();
-    writer.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+    reader.deadline_period(deadline_period_ms * 1e-3).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -239,9 +239,9 @@ INSTANTIATE_TEST_CASE_P(DeadlineQos,
         DeadlineQos,
         testing::Values(false, true),
         [](const testing::TestParamInfo<DeadlineQos::ParamType>& info) {
-            if (info.param)
-            {
-                return "Intraprocess";
-            }
-            return "NonIntraprocess";
-        });
+    if (info.param)
+    {
+        return "Intraprocess";
+    }
+    return "NonIntraprocess";
+});

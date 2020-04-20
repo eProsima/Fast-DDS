@@ -46,6 +46,7 @@ public:
             xmlparser::XMLProfileManager::library_settings(library_settings);
         }
     }
+
 };
 
 // Test created to check bug #1568 (Github #34)
@@ -159,7 +160,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
     while (data.size() > 1)
     {
         auto data_backup(data);
-        decltype(data)expected_data;
+        decltype(data) expected_data;
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
 
@@ -487,14 +488,12 @@ TEST(BlackBox, PubSubAsReliableKeepLastWithKey)
 
     reader.resource_limits_max_instances(keys).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-    key(true).init();
+    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    key(true).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -522,23 +521,21 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
     uint32_t depth = 2;
 
     reader.history_depth(depth).
-    resource_limits_max_samples(keys*depth).
-    resource_limits_allocated_samples(keys*depth).
+    resource_limits_max_samples(keys * depth).
+    resource_limits_allocated_samples(keys * depth).
     resource_limits_max_instances(keys).
     resource_limits_max_samples_per_instance(depth).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-    key(true).init();
+    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(depth).
-    resource_limits_max_samples(keys*depth).
-    resource_limits_allocated_samples(keys*depth).
+    resource_limits_max_samples(keys * depth).
+    resource_limits_allocated_samples(keys * depth).
     resource_limits_max_instances(keys).
     resource_limits_max_samples_per_instance(depth).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    key(true).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -547,8 +544,8 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
     reader.wait_discovery();
 
     //We want the number of messages to be multiple of keys*depth
-    auto data = default_keyedhelloworld_data_generator(3*keys*depth);
-    while(data.size() > 1)
+    auto data = default_keyedhelloworld_data_generator(3 * keys * depth);
+    while (data.size() > 1)
     {
         auto expected_data(data);
 
@@ -558,9 +555,9 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         reader.startReception(expected_data);
-        size_t current_received = reader.block_for_at_least(keys*depth);
+        size_t current_received = reader.block_for_at_least(keys * depth);
         reader.stopReception();
-        ASSERT_EQ(current_received, keys*depth);
+        ASSERT_EQ(current_received, keys * depth);
 
         data = reader.data_not_received();
     }
@@ -570,10 +567,9 @@ INSTANTIATE_TEST_CASE_P(PubSubHistory,
         PubSubHistory,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PubSubHistory::ParamType>& info) {
-            if (info.param)
-            {
-                return "Intraprocess";
-            }
-            return "NonIntraprocess";
-        });
-
+    if (info.param)
+    {
+        return "Intraprocess";
+    }
+    return "NonIntraprocess";
+});

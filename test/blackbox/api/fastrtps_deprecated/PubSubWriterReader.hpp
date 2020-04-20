@@ -316,6 +316,10 @@ public:
         publisher_attr_.topic.topicName = t.str();
         subscriber_attr_.topic.topicName = t.str();
         topic_name_ = t.str();
+        publisher_attr_.topic.topicKind =
+                type_.m_isGetKeyDefined ? ::eprosima::fastrtps::rtps::WITH_KEY : ::eprosima::fastrtps::rtps::NO_KEY;
+        subscriber_attr_.topic.topicKind =
+                type_.m_isGetKeyDefined ? ::eprosima::fastrtps::rtps::WITH_KEY : ::eprosima::fastrtps::rtps::NO_KEY;
 
         // By default, memory mode is preallocated (the most restritive)
         publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;

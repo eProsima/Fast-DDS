@@ -243,6 +243,8 @@ public:
         std::ostringstream t;
         t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
         subscriber_attr_.topic.topicName = t.str();
+        subscriber_attr_.topic.topicKind =
+                type_.m_isGetKeyDefined ? ::eprosima::fastrtps::rtps::WITH_KEY : ::eprosima::fastrtps::rtps::NO_KEY;
 
         // By default, memory mode is preallocated (the most restritive)
         subscriber_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
@@ -555,26 +557,10 @@ public:
         return subscriber_attr_.qos.m_latencyBudget.duration;
     }
 
-    PubSubReader& key(
-            bool keyed)
-    {
-        subscriber_attr_.topic.topicKind = keyed
-                ? eprosima::fastrtps::rtps::TopicKind_t::WITH_KEY
-                : eprosima::fastrtps::rtps::TopicKind_t::NO_KEY;
-        return *this;
-    }
-
     PubSubReader& lifespan_period(
             const eprosima::fastrtps::Duration_t lifespan_period)
     {
         subscriber_attr_.qos.m_lifespan.duration = lifespan_period;
-        return *this;
-    }
-
-    PubSubReader& topic_kind(
-            const eprosima::fastrtps::rtps::TopicKind_t kind)
-    {
-        subscriber_attr_.topic.topicKind = kind;
         return *this;
     }
 
