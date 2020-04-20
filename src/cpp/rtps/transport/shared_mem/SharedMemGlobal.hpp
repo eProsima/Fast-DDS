@@ -790,7 +790,7 @@ public:
             }
 
             try
-            {                
+            {
                 port->healthy_check();
 
                 if ( (port_node->is_opened_read_exclusive && open_mode != Port::OpenMode::Write) ||
@@ -864,6 +864,16 @@ public:
         }
 
         return port;
+    }
+
+    /**
+     * Remove a port from the system.
+     */
+    void remove_port(
+            uint32_t port_id)
+    {
+        auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
+        SharedMemSegment::remove(port_segment_name.c_str());
     }
 
 private:

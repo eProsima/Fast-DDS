@@ -875,6 +875,14 @@ public:
     }
 
     /**
+     * Remove a port from the system.
+     */
+    void remove_port(uint32_t port_id)
+    {
+        global_segment_.remove_port(port_id);
+    }
+
+    /**
      * @return Pointer to the underlying global segment. The pointer is only valid
      * while this SharedMemManager is alive.
      */

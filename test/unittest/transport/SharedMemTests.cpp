@@ -1115,6 +1115,152 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
     thread_wait_deadlock.join();
 }
 
+TEST_F(SHMTransportTests, buffer_recover)
+{
+    const std::string domain_name("SHMTests");
+
+    SharedMemManager shared_mem_manager(domain_name);
+    
+    auto segment = shared_mem_manager.create_segment(3,3);
+
+    shared_mem_manager.remove_port(1);
+    auto pub_sub1_write = shared_mem_manager.open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
+
+    shared_mem_manager.remove_port(2);
+    auto pub_sub2_write = shared_mem_manager.open_port(2, 8, 1000,SharedMemGlobal::Port::OpenMode::Write);
+
+    auto sub1_read = shared_mem_manager.open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+
+    auto sub2_read = shared_mem_manager.open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    
+    bool exit_listeners = false;
+
+    uint32_t listener1_sleep_ms = 400u;
+    uint32_t listener2_sleep_ms = 100u;
+
+    auto listener1 = sub1_read->create_listener();
+
+    std::atomic<uint32_t> listener1_recv_count(0);
+    auto thread_listener1 = std::thread( [&]
+        {
+            while(!exit_listeners)
+            {
+                auto buffer = listener1->pop();
+
+                if(buffer)
+                {
+                    listener1_recv_count.fetch_add(1);
+                    // This is a slow listener
+                    std::this_thread::sleep_for(std::chrono::milliseconds(listener1_sleep_ms));
+                    buffer.reset();
+                }
+            }
+        });
+
+    auto listener2 = sub2_read->create_listener();
+    std::atomic<uint32_t> listener2_recv_count(0u);
+    SharedMemSegment::condition_variable received_cv;
+    SharedMemSegment::mutex received_mutex;
+    auto thread_listener2 = std::thread( [&]
+        {
+            while(!exit_listeners)
+            {
+                auto buffer = listener2->pop();
+
+                if(buffer)
+                {
+                    {
+                        std::lock_guard<SharedMemSegment::mutex> lock(received_mutex);
+                        listener2_recv_count.fetch_add(1);
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(listener2_sleep_ms));
+                    buffer.reset();
+                    received_cv.notify_one();
+                }
+            }
+        });
+
+    // Test 1 (without port overflow)
+    uint32_t send_counter = 0u;
+    while(listener1_recv_count.load() < 16u)
+    {        
+        {
+            // The segment should never overflow
+            auto buf = segment->alloc_buffer(1, std::chrono::steady_clock::time_point());
+
+            ASSERT_EQ(true, pub_sub1_write->try_push(buf));
+            ASSERT_EQ(true, pub_sub2_write->try_push(buf));
+        }
+
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(received_mutex);
+            send_counter++;
+            // Wait until listener2 (the fast listener) receives the buffer
+            received_cv.wait(lock, [&] { return send_counter == listener2_recv_count.load();});
+        }
+    }
+
+    // The slow listener is 4 times slower than the fast one
+    ASSERT_LT(listener1_recv_count.load()*3, listener2_recv_count.load());
+    ASSERT_GT(listener1_recv_count.load(), listener2_recv_count.load()/5);
+    std::cout << "Test1:" 
+        << " Listener1_recv_count " << listener1_recv_count.load()
+        << " Listener2_recv_count " << listener2_recv_count.load()
+        << std::endl;
+
+    // Test 2 (with port overflow)
+    listener2_sleep_ms = 0u;
+    send_counter = 0u;
+    listener1_recv_count.exchange(0u);
+    listener2_recv_count.exchange(0u);
+    uint32_t port_overflows1 = 0u;
+    uint32_t port_overflows2 = 0u;
+    while(listener1_recv_count.load() < 16u)
+    {        
+        {
+            // The segment should never overflow
+            auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
+
+            if(!pub_sub1_write->try_push(buf))
+            {
+                port_overflows1++;
+            }
+            
+            if(!pub_sub2_write->try_push(buf))
+            {
+                port_overflows2++;
+            }
+        }
+
+        send_counter++;
+    }
+
+    std::cout << "Test2:"
+        << " port_overflows1 " << port_overflows1
+        << " port_overflows2 " << port_overflows2
+        << " send_counter " << send_counter
+        << " listener1_recv_count " << listener1_recv_count.load()
+        << " listener2_recv_count " << listener2_recv_count.load()
+        << std::endl;
+
+    ASSERT_GT(port_overflows1, 0u);
+    ASSERT_GT(port_overflows2, 0u);
+    ASSERT_LT(port_overflows2*4u, port_overflows1);
+    ASSERT_LT(listener1_recv_count.load()*4u, listener2_recv_count.load());
+    ASSERT_GT(send_counter, listener2_recv_count.load());
+    
+    exit_listeners = true;
+
+    {
+        auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
+        ASSERT_EQ(true, pub_sub1_write->try_push(buf));
+        ASSERT_EQ(true, pub_sub2_write->try_push(buf));
+    }
+
+    thread_listener1.join();
+    thread_listener2.join();
+}
+
 /*TEST_F(SHMTransportTests, simple_latency)
    {
     int num_samples = 1000;
