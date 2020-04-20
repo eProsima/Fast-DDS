@@ -292,30 +292,7 @@ public:
         topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         ASSERT_NE(topic_, nullptr);
 
-        //TODO Remove this TopicAttributes and use Topic once Publisher::create_datawriter is in place
-        eprosima::fastrtps::TopicAttributes ta;
-        ta.topicKind =
-                type_->m_isGetKeyDefined ? ::eprosima::fastrtps::rtps::WITH_KEY : ::eprosima::fastrtps::rtps::NO_KEY;
-        ta.topicName = topic_->get_name();
-        ta.topicDataType = type_->getName();
-        ta.historyQos = datawriter_qos_.history();
-        ta.resourceLimitsQos = datawriter_qos_.resource_limits();
-        ta.auto_fill_type_object = type_->auto_fill_type_object();
-        ta.auto_fill_type_information = type_->auto_fill_type_information();
-        if (type_->type_identifier())
-        {
-            ta.type_id = *type_->type_identifier();
-        }
-        if (type_->type_object())
-        {
-            ta.type = *type_->type_object();
-        }
-        if (type_->type_information())
-        {
-            ta.type_information = *type_->type_information();
-        }
-
-        datawriter_ = publisher_->create_datawriter(ta, datawriter_qos_, &listener_);
+        datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_);
         ASSERT_NE(datawriter_, nullptr);
 
         std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
