@@ -274,31 +274,45 @@ public:
             (uint32_t)GET_PID() % 230,
             participant_qos_,
             &participant_listener_);
-        ASSERT_NE(participant_, nullptr);
 
-        participant_guid_ = participant_->guid();
+        if (participant_ != nullptr)
+        {
+            participant_guid_ = participant_->guid();
 
-        type_.reset(new type_support());
+            type_.reset(new type_support());
 
-        // Register type
-        ASSERT_EQ(participant_->register_type(type_), true);
+            // Register type
+            ASSERT_EQ(participant_->register_type(type_), true);
 
-        // Create subscriber
-        publisher_ = participant_->create_publisher(publisher_qos_);
-        ASSERT_NE(publisher_, nullptr);
+            // Create subscriber
+            publisher_ = participant_->create_publisher(publisher_qos_);
 
-        // Create topic
-        //
-        topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-        ASSERT_NE(topic_, nullptr);
+            // Create topic
+            topic_ = participant_->create_topic(topic_name_, type_->getName(),
+                            eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
-        datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_);
-        ASSERT_NE(datawriter_, nullptr);
+            if (publisher_ != nullptr && topic_ != nullptr)
+            {
+                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_);
+                if (datawriter_ != nullptr)
+                {
+                    std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
+                        topic_name_ << std::endl;
+                    initialized_ = true;
+                    return;
+                }
+            }
+            if (publisher_ != nullptr)
+            {
+                participant_->delete_publisher(publisher_);
+            }
+            if (topic_ != nullptr)
+            {
+                participant_->delete_topic(topic_);
+            }
+            DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        }
 
-        std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
-            topic_name_ << std::endl;
-
-        initialized_ = true;
     }
 
     bool isInitialized() const
