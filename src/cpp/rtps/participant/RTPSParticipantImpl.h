@@ -442,8 +442,8 @@ public:
 
     //!Compare metatraffic locators list searching for mutations
     bool did_mutation_took_place_on_meta(
-        LocatorList_t MulticastLocatorList,
-        LocatorList_t UnicastLocatorList) const;
+        const LocatorList_t& MulticastLocatorList,
+        const LocatorList_t& UnicastLocatorList) const;
 
 private:
 

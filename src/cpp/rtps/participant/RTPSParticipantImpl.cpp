@@ -37,6 +37,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 #include <fastdds/rtps/RTPSDomain.h>
@@ -52,6 +53,7 @@
 #include <fastrtps/utils/System.h>
 
 #include <mutex>
+#include <functional>
 #include <algorithm>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -1419,11 +1421,98 @@ uint32_t RTPSParticipantImpl::get_domain_id() const
 
 //!Compare metatraffic locators list searching for mutations
 bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
-    LocatorList_t MulticastLocatorList,
-    LocatorList_t UnicastLocatorList) const
+    const LocatorList_t& MulticastLocatorList,
+    const LocatorList_t& UnicastLocatorList) const
 {
-    return !(m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
-        && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList);
+    if(m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
+        && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
+    {
+        // no mutation
+        return false;
+    }
+
+    // TCP is a special case because physical ports are taken from the TransportDescriptors
+    struct ResetLogical : public std::unary_function<Locator_t, const Locator_t&>
+    {
+        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
+
+        ResetLogical(const Transports& tp) 
+            : Transports_(tp)
+            , tcp4(nullptr)
+            , tcp6(nullptr)
+        {
+            for(auto desc : Transports_)
+            {
+                if(nullptr == tcp4)
+                {
+                    tcp4 = dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(desc.get());
+                }
+
+                if(nullptr == tcp6)
+                {
+                    tcp6 = dynamic_cast<fastdds::rtps::TCPv6TransportDescriptor*>(desc.get());
+                }
+            }
+        }
+
+        uint16_t Tcp4ListeningPort() const
+        {
+            return tcp4 ? ( tcp4->listening_ports.empty() ? 0 : tcp4->listening_ports[0]) : 0;
+        }
+
+        uint16_t Tcp6ListeningPort() const
+        {
+            return tcp6 ? ( tcp6->listening_ports.empty() ? 0 : tcp6->listening_ports[0]) : 0;
+        }
+
+        Locator_t operator()(const Locator_t& loc) const
+        {
+            Locator_t ret(loc);
+            switch(loc.kind)
+            {
+            case LOCATOR_KIND_TCPv4:
+                IPLocator::setPhysicalPort(ret, Tcp4ListeningPort());
+                break;
+            case LOCATOR_KIND_TCPv6:
+                IPLocator::setPhysicalPort(ret, Tcp6ListeningPort());
+                break;
+            }
+            return ret;
+        }
+
+        // reference to the transports
+        const Transports& Transports_;
+        TCPTransportDescriptor *tcp4, *tcp6;
+
+    } transform_functor(m_att.userTransports);
+
+    // transform-copy
+    std::list<Locator_t> update_attributes;
+
+    std::transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
+            m_att.builtin.metatrafficMulticastLocatorList.end(),
+            std::back_inserter(update_attributes),
+            transform_functor);
+
+    std::transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
+            m_att.builtin.metatrafficUnicastLocatorList.end(),
+            std::back_inserter(update_attributes),
+            transform_functor);
+
+    std::list<Locator_t> original_ones;
+
+    std::transform(MulticastLocatorList.begin(),
+        MulticastLocatorList.end(),
+        std::back_inserter(original_ones),
+        transform_functor);
+
+    std::transform(UnicastLocatorList.begin(),
+        UnicastLocatorList.end(),
+        std::back_inserter(original_ones),
+        transform_functor);
+
+    // if equal then no mutation took place on physical ports
+    return !(update_attributes == original_ones);
 }
 
 } /* namespace rtps */
