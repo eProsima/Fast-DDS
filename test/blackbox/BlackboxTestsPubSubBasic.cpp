@@ -333,17 +333,8 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    const std::string xml =
-            R"(<profiles>
-                <participant><rtps>
-                    <allocation>
-                        <max_user_data> 4 </max_user_data>
-                        <max_partitions> 28 </max_partitions>
-                    </allocation>
-                </rtps></participant>
-            </profiles>)";
-
-    reader.load_participant_attr(xml)
+    reader.user_data_max_size(4)
+          .partitions_max_size(28)
           .history_depth(100)
           .partition("A")
           .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -375,16 +366,7 @@ TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    const std::string xml =
-            R"(<profiles>
-                <participant><rtps>
-                    <allocation>
-                        <max_user_data> 4 </max_user_data>
-                    </allocation>
-                </rtps></participant>
-            </profiles>)";
-
-    reader.load_participant_attr(xml)
+    reader.user_data_max_size(4)
           .history_depth(100)
           .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
@@ -408,16 +390,7 @@ TEST_P(PubSubBasic, ReceivedPartitionDataExceedsSizeLimit)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    const std::string xml =
-            R"(<profiles>
-                <participant><rtps>
-                    <allocation>
-                        <max_partitions> 20 </max_partitions>
-                    </allocation>
-                </rtps></participant>
-            </profiles>)";
-
-    reader.load_participant_attr(xml)
+    reader.partitions_max_size(20)
           .history_depth(100)
           .partition("A")
           .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -511,16 +484,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
     //Expected properties have exactly size 52
-    const std::string xml =
-            R"(<profiles>
-                <participant><rtps>
-                    <allocation>
-                        <max_properties> 52 </max_properties>
-                    </allocation>
-                </rtps></participant>
-            </profiles>)";
-
-    reader.load_participant_attr(xml).
+    reader.properties_max_size(52).
     static_discovery("PubSubReader.xml").
     unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
     setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
@@ -615,19 +579,10 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
     //Expected properties have size 52
-    const std::string xml =
-            R"(<profiles>
-                <participant><rtps>
-                    <allocation>
-                        <max_properties> 50 </max_properties>
-                    </allocation>
-                </rtps></participant>
-            </profiles>)";
-
-    reader.load_participant_attr(xml).
-    static_discovery("PubSubReader.xml").
-    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-    setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+    reader.properties_max_size(50)
+            .static_discovery("PubSubReader.xml")
+            .unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators)
+            .setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
