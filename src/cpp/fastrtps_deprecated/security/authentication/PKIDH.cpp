@@ -33,6 +33,12 @@
 #define OPENSSL_CONST
 #endif
 
+#if OPENSSL_VERSION_NUMBER >= 0x10101040L
+#define IS_OPENSSL_1_1_1d 1
+#else
+#define IS_OPENSSL_1_1_1d 0
+#endif
+
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
@@ -742,7 +748,7 @@ static EVP_PKEY* generate_dh_key(
             return nullptr;
         }
     }
-    else
+    else if (type == EVP_PKEY_DH)
     {
         params = EVP_PKEY_new();
         if (params != nullptr)
@@ -759,6 +765,11 @@ static EVP_PKEY* generate_dh_key(
             exception = _SecurityException_("Cannot allocate EVP parameters");
             return nullptr;
         }
+    }
+    else
+    {
+        exception = _SecurityException_("Wrong DH kind");
+        return nullptr;
     }
 
     EVP_PKEY* keys = nullptr;
@@ -796,41 +807,50 @@ static EVP_PKEY* generate_dh_key(
 
 static bool store_dh_public_key(
         EVP_PKEY* dhkey,
+        int type,
         std::vector<uint8_t>& buffer,
         SecurityException& exception)
 {
     bool returnedValue = false;
-    DH* dh =
-#if IS_OPENSSL_1_1
-            EVP_PKEY_get0_DH(dhkey);
-#else
-            dhkey->pkey.dh;
-#endif
 
-    if (dh != nullptr)
+    if (type == EVP_PKEY_DH)
     {
+        DH* dh =
 #if IS_OPENSSL_1_1
-        const BIGNUM* pub_key = nullptr;
-        const BIGNUM* priv_key = nullptr;
-        DH_get0_key(dh, &pub_key, &priv_key);
-
+                EVP_PKEY_get0_DH(dhkey);
 #else
-        const BIGNUM* pub_key = dh->pub_key;
+                dhkey->pkey.dh;
 #endif
 
-        int len = BN_num_bytes(pub_key);
-        buffer.resize(len);
-        unsigned char* pointer = buffer.data();
-        if (BN_bn2bin(pub_key, pointer) == len)
+        if (dh != nullptr)
         {
-            returnedValue =  true;
+#if IS_OPENSSL_1_1
+            const BIGNUM* pub_key = nullptr;
+            const BIGNUM* priv_key = nullptr;
+            DH_get0_key(dh, &pub_key, &priv_key);
+
+#else
+            const BIGNUM* pub_key = dh->pub_key;
+#endif
+
+            int len = BN_num_bytes(pub_key);
+            buffer.resize(len);
+            unsigned char* pointer = buffer.data();
+            if (BN_bn2bin(pub_key, pointer) == len)
+            {
+                returnedValue = true;
+            }
+            else
+            {
+                exception = _SecurityException_("Cannot serialize public key");
+            }
         }
         else
         {
-            exception = _SecurityException_("Cannot serialize public key");
+            exception = _SecurityException_("OpenSSL library doesn't retrieve DH");
         }
     }
-    else
+    else if (type == EVP_PKEY_EC)
     {
         EC_KEY* ec =
 #if IS_OPENSSL_1_1
@@ -858,6 +878,10 @@ static bool store_dh_public_key(
             exception = _SecurityException_("OpenSSL library doesn't retrieve DH");
         }
     }
+    else
+    {
+        exception = _SecurityException_("Wrong DH kind");
+    }
 
     return returnedValue;
 }
@@ -865,7 +889,7 @@ static bool store_dh_public_key(
 static EVP_PKEY* generate_dh_peer_key(
         const std::vector<uint8_t>& buffer,
         SecurityException& exception,
-        int alg_kind = EVP_PKEY_DH)
+        int alg_kind)
 {
     if (alg_kind == EVP_PKEY_DH)
     {
@@ -891,7 +915,12 @@ static EVP_PKEY* generate_dh_peer_key(
 
                 if (key != nullptr)
                 {
+#if IS_OPENSSL_1_1_1d
+                    int type = DH_get0_q(dh) == NULL ? EVP_PKEY_DH : EVP_PKEY_DHX;
+                    if (EVP_PKEY_assign(key, type, dh) > 0)
+#else
                     if (EVP_PKEY_assign_DH(key, dh) > 0)
+#endif
                     {
                         return key;
                     }
@@ -917,7 +946,7 @@ static EVP_PKEY* generate_dh_peer_key(
             exception = _SecurityException_("OpenSSL library cannot create dh");
         }
     }
-    else
+    else if (alg_kind == EVP_PKEY_EC)
     {
         EC_KEY* ec = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
 
@@ -962,6 +991,10 @@ static EVP_PKEY* generate_dh_peer_key(
         {
             exception = _SecurityException_("OpenSSL library cannot create ec");
         }
+    }
+    else
+    {
+        exception = _SecurityException_("Wrong DH kind");
     }
 
     return nullptr;
@@ -1382,14 +1415,15 @@ ValidationResult_t PKIDH::begin_handshake_request(
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
+    int kagree_kind = get_dh_type((*handshake_handle_aux)->kagree_alg_);
+
     // dh1
-    if (((*handshake_handle_aux)->dhkeys_ =
-            generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_), exception)) != nullptr)
+    if (((*handshake_handle_aux)->dhkeys_ = generate_dh_key(kagree_kind, exception)) != nullptr)
     {
         bproperty.name("dh1");
         bproperty.propagate(true);
 
-        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
+        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, kagree_kind, bproperty.value(), exception))
         {
             (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
@@ -1451,7 +1485,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Req") != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
-            handshake_message_in.class_id() + ")");
+                handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1749,7 +1783,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
         bproperty.name("dh2");
         bproperty.propagate(true);
 
-        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
+        if (store_dh_public_key((*handshake_handle_aux)->dhkeys_, kagree_kind, bproperty.value(), exception))
         {
             (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
@@ -1856,7 +1890,7 @@ ValidationResult_t PKIDH::process_handshake(
         else
         {
             WARNING_SECURITY_LOGGING("PKIDH",
-                std::string("Handshake message not supported (") + handshake->handshake_message_.class_id() + ")");
+                    std::string("Handshake message not supported (") + handshake->handshake_message_.class_id() + ")");
         }
     }
 
@@ -1876,7 +1910,7 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Reply") != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
-            handshake_message_in.class_id() + ")");
+                handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2034,7 +2068,7 @@ ValidationResult_t PKIDH::process_handshake_request(
     if (s_kagree_algo.compare(handshake_handle->kagree_alg_) != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Invalid key agreement algorithm. Received ") +
-            s_kagree_algo + ", expected " + handshake_handle->kagree_alg_);
+                s_kagree_algo + ", expected " + handshake_handle->kagree_alg_);
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -2074,14 +2108,15 @@ ValidationResult_t PKIDH::process_handshake_request(
 
     // dh2
     BinaryProperty* dh2 = DataHolderHelper::find_binary_property(handshake_message_in, "dh2");
-
     if (dh2 == nullptr)
     {
         WARNING_SECURITY_LOGGING("PKIDH", "Cannot find property dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    if ((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value(), exception)) == nullptr)
+    int kagree_kind = get_dh_type(s_kagree_algo);
+
+    if ((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value(), exception, kagree_kind)) == nullptr)
     {
         exception = _SecurityException_("Cannot store peer key from dh2");
         EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
@@ -2307,7 +2342,7 @@ ValidationResult_t PKIDH::process_handshake_reply(
     if (handshake_message_in.class_id().compare("DDS:Auth:PKI-DH:1.0+Final") != 0)
     {
         WARNING_SECURITY_LOGGING("PKIDH", std::string("Bad HandshakeMessageToken (") +
-            handshake_message_in.class_id() + ")");
+                handshake_message_in.class_id() + ")");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
