@@ -690,8 +690,8 @@ public:
             size_t initial,
             size_t maximum)
     {
-        datawriter_qos_.writer_resources().matched_subscriber_allocation.initial = initial;
-        datawriter_qos_.writer_resources().matched_subscriber_allocation.maximum = maximum;
+        datawriter_qos_.writer_resource_limits().matched_subscriber_allocation.initial = initial;
+        datawriter_qos_.writer_resource_limits().matched_subscriber_allocation.maximum = maximum;
         return *this;
     }
 

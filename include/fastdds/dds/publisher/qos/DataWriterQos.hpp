@@ -95,7 +95,7 @@ public:
                (this->properties_ == b.properties()) &&
                (this->reliable_writer_qos_ == b.reliable_writer_qos()) &&
                (this->endpoint_ == b.endpoint()) &&
-               (this->writer_resources_ == b.writer_resources()) &&
+               (this->writer_resource_limits_ == b.writer_resource_limits()) &&
                (this->throughput_controller_ == b.throughput_controller());
     }
 
@@ -667,28 +667,28 @@ public:
      * Getter for WriterResourceLimitsQos
      * @return WriterResourceLimitsQos reference
      */
-    RTPS_DllAPI WriterResourceLimitsQos& writer_resources()
+    RTPS_DllAPI WriterResourceLimitsQos& writer_resource_limits()
     {
-        return writer_resources_;
+        return writer_resource_limits_;
     }
 
     /**
      * Getter for WriterResourceLimitsQos
      * @return WriterResourceLimitsQos reference
      */
-    RTPS_DllAPI const WriterResourceLimitsQos& writer_resources() const
+    RTPS_DllAPI const WriterResourceLimitsQos& writer_resource_limits() const
     {
-        return writer_resources_;
+        return writer_resource_limits_;
     }
 
     /**
      * Setter for WriterResourceLimitsQos
      * @param writer_resources
      */
-    RTPS_DllAPI void writer_resources(
-            const WriterResourceLimitsQos& writer_resources)
+    RTPS_DllAPI void writer_resource_limits(
+            const WriterResourceLimitsQos& writer_resource_limits)
     {
-        writer_resources_ = writer_resources;
+        writer_resource_limits_ = writer_resource_limits;
     }
 
     /**
@@ -782,7 +782,7 @@ private:
     RTPSEndpointQos endpoint_;
 
     //!Writer Resource Limits Qos
-    WriterResourceLimitsQos writer_resources_;
+    WriterResourceLimitsQos writer_resource_limits_;
 
     //!Throughput controller
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller_;

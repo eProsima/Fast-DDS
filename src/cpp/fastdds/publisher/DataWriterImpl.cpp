@@ -116,7 +116,8 @@ DataWriterImpl::DataWriterImpl(
     w_att.times = qos.reliable_writer_qos().times;
     w_att.liveliness_kind = qos.liveliness().kind;
     w_att.liveliness_lease_duration = qos.liveliness().lease_duration;
-    w_att.matched_readers_allocation = qos.writer_resources().matched_subscriber_allocation;
+    w_att.liveliness_announcement_period = qos.liveliness().announcement_period;
+    w_att.matched_readers_allocation = qos.writer_resource_limits().matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -858,9 +859,9 @@ void DataWriterImpl::set_qos(
     {
         to.endpoint() = from.endpoint();
     }
-    if (is_default && !(to.writer_resources() == from.writer_resources()))
+    if (is_default && !(to.writer_resource_limits() == from.writer_resource_limits()))
     {
-        to.writer_resources() = from.writer_resources();
+        to.writer_resource_limits() = from.writer_resource_limits();
     }
     if (is_default && !(to.throughput_controller() == from.throughput_controller()))
     {

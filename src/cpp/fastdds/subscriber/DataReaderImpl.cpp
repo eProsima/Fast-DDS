@@ -140,6 +140,7 @@ DataReaderImpl::DataReaderImpl(
     att.times = qos.reliable_reader_qos().times;
     att.liveliness_lease_duration = qos.liveliness().lease_duration;
     att.liveliness_kind_ = qos.liveliness().kind;
+    att.matched_writers_allocation = qos.reader_resource_limits().matched_publisher_allocation;
 
 
     // TODO(Ricardo) Remove in future
