@@ -21,6 +21,8 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/TypesBase.h>
+
 #include <string>
 #include <functional>
 #include <memory>
@@ -42,6 +44,8 @@ class DomainParticipant;
 class TypeSupport : public std::shared_ptr<fastdds::dds::TopicDataType>
 {
 public:
+
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     using Base = std::shared_ptr<fastdds::dds::TopicDataType>;
     using Base::operator ->;
@@ -84,7 +88,10 @@ public:
     {
     }
 
-    RTPS_DllAPI virtual bool register_type(
+    RTPS_DllAPI virtual ReturnCode_t register_type(
+            DomainParticipant* participant) const;
+
+    RTPS_DllAPI virtual ReturnCode_t register_type(
             DomainParticipant* participant,
             std::string type_name) const;
 

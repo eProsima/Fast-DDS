@@ -163,10 +163,10 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
 
     participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
 
-    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
@@ -418,8 +418,8 @@ TEST(ParticipantTests, CreateTopic)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_, "footype");
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, "footype");
 
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -429,8 +429,8 @@ TEST(ParticipantTests, PSMCreateTopic)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_, "footype");
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant.delegate().get(), "footype");
 
     ::dds::topic::Topic topic = ::dds::core::null;
     topic = ::dds::topic::Topic(participant, "footopic", "footype", TOPIC_QOS_DEFAULT);
@@ -443,8 +443,8 @@ TEST(ParticipantTests, DeleteTopic)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
     DomainParticipant* participant2 = DomainParticipantFactory::get_instance()->create_participant(1);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_, "footype");
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, "footype");
 
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
 
@@ -463,8 +463,8 @@ TEST(ParticipantTests, LookupTopicDescription)
     ASSERT_EQ(participant->lookup_topicdescription(topic_name), nullptr);
 
     // After topic creation ...
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_, "footype");
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, "footype");
     Topic* topic = participant->create_topic(topic_name, "footype", TOPIC_QOS_DEFAULT);
     EXPECT_NE(topic, nullptr);
 
@@ -480,8 +480,8 @@ TEST(ParticipantTests, DeleteTopicInUse)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_, "footype");
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, "footype");
 
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
 

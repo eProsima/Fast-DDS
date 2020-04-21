@@ -171,7 +171,7 @@ public:
      * @param type_name The name that will be used to identify the Type.
      * @return True if registered.
      */
-    bool register_type(
+    ReturnCode_t register_type(
             TypeSupport type,
             const std::string& type_name);
 
@@ -180,8 +180,8 @@ public:
      * @param typeName Name of the type
      * @return True if unregistered.
      */
-    bool unregister_type(
-            const char* typeName);
+    ReturnCode_t unregister_type(
+            const std::string& typeName);
 
     // TODO create/delete topic
 
@@ -305,7 +305,7 @@ public:
     fastrtps::rtps::SampleIdentity get_types(
             const fastrtps::types::TypeIdentifierSeq& in) const;
 
-    bool register_remote_type(
+    ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
@@ -433,7 +433,7 @@ public:
     bool exists_entity_id(
             const fastrtps::rtps::EntityId_t& entity_id) const;
 
-    bool register_dynamic_type(
+    ReturnCode_t register_dynamic_type(
             fastrtps::types::DynamicType_ptr dyn_type);
 
     bool register_dynamic_type_to_factories(

@@ -22,9 +22,15 @@
 
 using namespace eprosima::fastdds::dds;
 
-bool TypeSupport::register_type(
+ReturnCode_t TypeSupport::register_type(
         DomainParticipant* participant,
         std::string type_name) const
 {
-    return participant->register_type(*this, type_name);
+    return participant->register_type(*this, type_name == "" ? get_type_name() : type_name);
+}
+
+ReturnCode_t TypeSupport::register_type(
+        DomainParticipant* participant) const
+{
+    return participant->register_type(*this, get_type_name());
 }

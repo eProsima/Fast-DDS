@@ -123,7 +123,7 @@ TEST(DataWriterTests, ChangeDataWriterQos)
     ASSERT_NE(publisher, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
-    participant->register_type(type);
+    type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -180,7 +180,7 @@ TEST(DataWriterTests, Write)
     ASSERT_NE(publisher, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
-    participant->register_type(type);
+    type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);

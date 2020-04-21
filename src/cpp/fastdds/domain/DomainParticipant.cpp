@@ -123,21 +123,21 @@ TopicDescription* DomainParticipant::lookup_topicdescription(
     return impl_->lookup_topicdescription(topic_name);
 }
 
-bool DomainParticipant::register_type(
+ReturnCode_t DomainParticipant::register_type(
         TypeSupport type,
         const std::string& type_name)
 {
     return impl_->register_type(type, type_name);
 }
 
-bool DomainParticipant::register_type(
+ReturnCode_t DomainParticipant::register_type(
         TypeSupport type)
 {
     return impl_->register_type(type, type.get_type_name());
 }
 
-bool DomainParticipant::unregister_type(
-        const char* typeName)
+ReturnCode_t DomainParticipant::unregister_type(
+        const std::string& typeName)
 {
     return impl_->unregister_type(typeName);
 }
@@ -327,7 +327,7 @@ fastrtps::rtps::SampleIdentity DomainParticipant::get_types(
     return impl_->get_types(in);
 }
 
-bool DomainParticipant::register_remote_type(
+ReturnCode_t DomainParticipant::register_remote_type(
         const fastrtps::types::TypeInformation& type_information,
         const std::string& type_name,
         std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)

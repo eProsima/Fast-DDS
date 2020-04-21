@@ -159,7 +159,7 @@ public:
      * @param type_name The name that will be used to identify the Type.
      * @return True if registered.
      */
-    RTPS_DllAPI bool register_type(
+    RTPS_DllAPI ReturnCode_t register_type(
             TypeSupport type,
             const std::string& type_name);
 
@@ -168,7 +168,7 @@ public:
      * @param type TypeSupport.
      * @return True if registered.
      */
-    RTPS_DllAPI bool register_type(
+    RTPS_DllAPI ReturnCode_t register_type(
             TypeSupport type);
 
     /**
@@ -176,8 +176,8 @@ public:
      * @param typeName Name of the type
      * @return True if unregistered.
      */
-    RTPS_DllAPI bool unregister_type(
-            const char* typeName);
+    RTPS_DllAPI ReturnCode_t unregister_type(
+            const std::string& typeName);
 
     // TODO delete topic
     /**
@@ -500,7 +500,7 @@ public:
      * @return true if type is already available (callback will not be called). false if type isn't available yet
      * (the callback will be called if negotiation is success, and ignored in other case).
      */
-    RTPS_DllAPI bool register_remote_type(
+    RTPS_DllAPI ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
