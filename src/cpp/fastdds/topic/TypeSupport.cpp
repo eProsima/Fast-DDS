@@ -28,3 +28,9 @@ ReturnCode_t TypeSupport::register_type(
 {
     return participant->register_type(*this, type_name == "" ? get_type_name() : type_name);
 }
+
+ReturnCode_t TypeSupport::register_type(
+        DomainParticipant* participant) const
+{
+    return participant->register_type(*this, get_type_name());
+}

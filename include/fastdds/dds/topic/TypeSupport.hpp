@@ -89,6 +89,9 @@ public:
     }
 
     RTPS_DllAPI virtual ReturnCode_t register_type(
+            DomainParticipant* participant) const;
+
+    RTPS_DllAPI virtual ReturnCode_t register_type(
             DomainParticipant* participant,
             std::string type_name) const;
 
