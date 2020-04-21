@@ -370,7 +370,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
 
     #pragma warning( pop )
 
-    // ros variable has precedence over fastdds one
+    // ros variable has preference over fastdds one
     if( address_ros )
     {
         address = address_ros;
