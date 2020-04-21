@@ -359,10 +359,16 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     }
 
     // Check for the environment variable
+    #pragma warning( push )
+    #pragma warning( disable:4996 )
+
     std::string address;
-    #pragma warning(suppress:4996)
-    const char *address_ros(std::getenv(DEFAULT_ROS2_MASTER_URI)), \
-               *address_fastdds(std::getenv(DEFAULT_FASTDDS_MASTER_URI));
+    const char *address_ros, *address_fastdds;
+
+    address_ros = std::getenv(DEFAULT_ROS2_MASTER_URI);
+    address_fastdds = std::getenv(DEFAULT_FASTDDS_MASTER_URI);
+
+    #pragma warning( pop )
 
     // ros variable has precedence over fastdds one
     if( address_ros )
