@@ -357,7 +357,7 @@ public:
                                 (*port_it)->node->is_port_ok = false;
 
                                 logWarning(RTPS_TRANSPORT_SHM, "Port " << (*port_it)->node->port_id
-                                    << " error: " << e.what());
+                                    << ": " << e.what());
 
                                 // Remove the port from watch
                                 port_it = watched_ports_.erase(port_it);
