@@ -867,8 +867,10 @@ public:
             uint32_t size,
             uint32_t max_allocations)
     {
-        // Every buffer allocated implies two internal allocations, node and payload.
-        // Every internal allocation consumes 'per_allocation_extra_size_' bytes
+        // Every buffer allocation of 'n-bytes', consumes an extra 'per_allocation_extra_size_' bytes.
+        // This is due to the allocator internal structures (also residing in the shared-memory segment)
+        // used to manage the allocation algorithm. 
+        // So with an estimation of 'max_allocations' user buffers, the total segment extra size is computed.
         uint32_t allocation_extra_size = 
             sizeof(SegmentNode) + per_allocation_extra_size_ +
             (max_allocations * sizeof(BufferNode)) + per_allocation_extra_size_ +
