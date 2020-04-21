@@ -473,8 +473,8 @@ ReturnCode_t DataWriterImpl::set_qos(
         set_qos(qos_, default_qos, false);
     }
 
-    if (publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data == 0 ||
-            publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data >
+    if (publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data != 0 &&
+            publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data <
             qos.user_data().getValue().size())
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
@@ -489,7 +489,7 @@ ReturnCode_t DataWriterImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    set_qos(qos_, qos, false, update_user_data);
+    set_qos(qos_, qos, false);
 
     //Notify the participant that a Writer has changed its QOS
     fastrtps::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
