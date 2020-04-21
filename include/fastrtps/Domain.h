@@ -213,6 +213,7 @@ class Domain
         RTPS_DllAPI static bool loadXMLProfilesFile(const std::string& xml_profile_file);
 
     private:
+
         typedef std::pair<Participant*,ParticipantImpl*> t_p_Participant;
 
         Domain();

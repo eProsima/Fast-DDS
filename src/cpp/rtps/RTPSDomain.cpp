@@ -43,10 +43,23 @@
 
 #include <chrono>
 #include <thread>
+#include <cstdlib>
+#include <regex>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+// environment variables that forces server-client discovery
+// it must contain an IPv4 address
+const char* DEFAULT_ROS2_MASTER_URI = "ROS2_AUTO_CLIENT_SERVER";
+const char* DEFAULT_FASTDDS_MASTER_URI = "FASTDDS_AUTO_CLIENT_SERVER";
+// ros environment variable pattern, example: 192.168.2.23:24353 where the port is optional
+const std::regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+// port use if the ros environment variable doesn't specified one
+const int DEFAULT_ROS2_SERVER_PORT = 11311;
+// default server guidPrefix
+const char* DEFAULT_AUTO_SERVER_GUIDPREFIX = "41.55.54.4F.5F.43.4C.54.5F.53.56.52";
 
 std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
@@ -170,6 +183,21 @@ RTPSParticipant* RTPSDomain::createParticipant(
     {
         pimpl = new RTPSParticipantImpl(domain_id, PParam, guidP, p, listen);
     }
+
+    // Above constructors create the sender resources. If a given listening port cannot be allocated an iterative
+    // mechanism will allocate another by default. Change the default listening port is unacceptable for server
+    // discovery.
+    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
+         || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+         && pimpl->did_mutation_took_place_on_meta(
+             PParam.builtin.metatrafficMulticastLocatorList,
+             PParam.builtin.metatrafficUnicastLocatorList))
+    {
+        // we do not log an error because the library may use participant creation as a trial for server existence
+        logInfo(RTPS_PARTICIPANT, "Server wasn't able to allocate the specified listening port");
+        delete pimpl;
+        return nullptr;
+     }
 
     // Check there is at least one transport registered.
     if (!pimpl->networkFactoryHasRegisteredTransports())
@@ -315,6 +343,139 @@ bool RTPSDomain::removeRTPSReader(
         }
     }
     return false;
+}
+
+RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
+        uint32_t domain_id,
+        const RTPSParticipantAttributes& att,
+        RTPSParticipantListener* listen /*= nullptr*/)
+{
+    // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
+    if(att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
+    {
+        logInfo(DOMAIN, "Detected non simple discovery protocol attributes."
+            << " Ignoring auto default client-server setup.");
+        return nullptr;
+    }
+
+    // Check for the environment variable
+    #pragma warning( push )
+    #pragma warning( disable:4996 )
+
+    std::string address;
+    const char *address_ros, *address_fastdds;
+
+    address_ros = std::getenv(DEFAULT_ROS2_MASTER_URI);
+    address_fastdds = std::getenv(DEFAULT_FASTDDS_MASTER_URI);
+
+    #pragma warning( pop )
+
+    // ros variable has preference over fastdds one
+    if( address_ros )
+    {
+        address = address_ros;
+
+        if( address_fastdds && address.compare(address_fastdds) )
+        {
+            logError(DOMAIN, "The environment variables " << DEFAULT_ROS2_MASTER_URI
+                << " and " << DEFAULT_FASTDDS_MASTER_URI << " are both present with different values."
+                << " Using configuration from " << DEFAULT_ROS2_MASTER_URI);
+        }
+    }
+    else if( address_fastdds )
+    {
+        address = address_fastdds;
+    }
+    else
+    {
+        // Back to default creation procedure
+        return nullptr;
+    }
+
+    logInfo(DOMAIN, "Detected auto client-server environment variable. Trying to setup client-server default setup.");
+
+    // Parse the IPv4Address and port.
+    std::smatch mr;
+    std::string ip_address;
+    int port = DEFAULT_ROS2_SERVER_PORT;
+
+    if(regex_match(address, mr, ROS2_IPV4_PATTERN))
+    {
+        std::smatch::iterator it = mr.cbegin();
+        ip_address = (++it)->str();
+
+        if((++it)->matched)
+        {
+            port = std::stoi(it->str());
+        }
+    }
+    else
+    {
+        logError(DOMAIN, "The environment variable '" << DEFAULT_ROS2_MASTER_URI
+            << "' has an invalid IPv4 pattern '" << address << "'");
+        return nullptr;
+    }
+
+    // Check if the IP address belong to the local interfaces
+    RTPSParticipant* part = nullptr;
+    LocatorList_t locals;
+    Locator_t server_address(port);
+    IPLocator::setIPv4(server_address, ip_address);
+
+    // if any choose localhost
+    if(IPLocator::isAny(server_address))
+    {
+        IPLocator::setIPv4(server_address,"127.0.0.1");
+    }
+
+    IPFinder::getIP4Address(&locals);
+    if( IPLocator::isLocal(server_address)
+        || (locals.end() != std::find_if(locals.begin(), locals.end(),
+            [&server_address](const Locator_t & loc) -> bool
+            {
+                return IPLocator::compareAddress(server_address, loc);
+            })))
+    {
+        RTPSParticipantAttributes server_attr = att;
+        server_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+        server_attr.ReadguidPrefix(DEFAULT_AUTO_SERVER_GUIDPREFIX);
+        server_attr.builtin.metatrafficUnicastLocatorList.push_back(server_address);
+
+        part = RTPSDomain::createParticipant(domain_id, server_attr, listen);
+        if(nullptr != part)
+        {
+            // There wasn't any previous default server, now there is one
+            logInfo(DOMAIN, "Auto default client-server setup. Default server created.");
+            return part;
+        }
+    }
+
+    // Try to create a Server. If it's already a default one the creation process would fail and we will create
+    // a client instead
+    logInfo(DOMAIN, "Auto default client-server setup. Server already present trying to create client.");
+
+    // There was a server already or server IP doesn't match this machine. Let's create a client
+    {
+        rtps::RTPSParticipantAttributes client_attr = att;
+        client_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+
+        RemoteServerAttributes ratt;
+        ratt.ReadguidPrefix(DEFAULT_AUTO_SERVER_GUIDPREFIX);
+        ratt.metatrafficUnicastLocatorList.push_back(server_address);
+        client_attr.builtin.discovery_config.m_DiscoveryServers.push_back(ratt);
+
+        part = RTPSDomain::createParticipant(domain_id, client_attr, listen);
+        if(nullptr != part)
+        {
+            // client successfully created
+            logInfo(DOMAIN, "Auto default client-server setup. Default client created.");
+            return part;
+        }
+    }
+
+    // unable to create auto client server default participants
+    logError(DOMAIN, "Auto default client-server setup. Unable to create either server or client.");
+    return nullptr;
 }
 
 RTPSReader* RTPSDomainImpl::find_local_reader(
