@@ -1654,7 +1654,7 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
     .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
     .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
     .pub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(1u));
+    ASSERT_TRUE(publishers.init_publisher(2u));
 
     // Assert liveliness
     publishers.assert_liveliness_participant();
@@ -1671,10 +1671,10 @@ INSTANTIATE_TEST_CASE_P(LivelinessQos,
         LivelinessQos,
         testing::Values(false, true),
         [](const testing::TestParamInfo<LivelinessQos::ParamType>& info) {
-            if (info.param)
-            {
-                return "Intraprocess";
-            }
-            return "NonIntraprocess";
-        });
+    if (info.param)
+    {
+        return "Intraprocess";
+    }
+    return "NonIntraprocess";
+});
 

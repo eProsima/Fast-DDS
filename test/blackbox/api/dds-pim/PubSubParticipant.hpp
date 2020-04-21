@@ -178,28 +178,40 @@ public:
 
     ~PubSubParticipant()
     {
-        for (auto p : publishers_)
-        {
-            std::get<0>(p)->delete_datawriter(std::get<1>(p));
-            participant_->delete_publisher(std::get<0>(p));
-        }
-        publishers_.clear();
-        for (auto s : subscribers_)
-        {
-            std::get<0>(s)->delete_datareader(std::get<1>(s));
-            participant_->delete_subscriber(std::get<0>(s));
-        }
-        subscribers_.clear();
-        if (datawriter_topic_)
-        {
-            participant_->delete_topic(datawriter_topic_);
-        }
-        if (datareader_topic_)
-        {
-            participant_->delete_topic(datareader_topic_);
-        }
         if (participant_ != nullptr)
         {
+            for (auto p : publishers_)
+            {
+                if (std::get<0>(p))
+                {
+                    if (std::get<1>(p))
+                    {
+                        std::get<0>(p)->delete_datawriter(std::get<1>(p));
+                    }
+                    participant_->delete_publisher(std::get<0>(p));
+                }
+            }
+            publishers_.clear();
+            for (auto s : subscribers_)
+            {
+                if (std::get<0>(s))
+                {
+                    if (std::get<1>(s))
+                    {
+                        std::get<0>(s)->delete_datareader(std::get<1>(s));
+                    }
+                    participant_->delete_subscriber(std::get<0>(s));
+                }
+            }
+            subscribers_.clear();
+            if (datawriter_topic_)
+            {
+                participant_->delete_topic(datawriter_topic_);
+            }
+            if (datareader_topic_)
+            {
+                participant_->delete_topic(datareader_topic_);
+            }
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
         }
     }
