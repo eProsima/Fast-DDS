@@ -304,14 +304,16 @@ public:
             if (publisher_ != nullptr)
             {
                 participant_->delete_publisher(publisher_);
+                publisher_ = nullptr;
             }
             if (topic_ != nullptr)
             {
                 participant_->delete_topic(topic_);
+                topic_ = nullptr;
             }
             DomainParticipantFactory::get_instance()->delete_participant(participant_);
+            participant_ = nullptr;
         }
-
     }
 
     bool isInitialized() const
