@@ -171,7 +171,7 @@ public:
      * @param type_name The name that will be used to identify the Type.
      * @return True if registered.
      */
-    bool register_type(
+    ReturnCode_t register_type(
             TypeSupport type,
             const std::string& type_name);
 
@@ -180,8 +180,8 @@ public:
      * @param typeName Name of the type
      * @return True if unregistered.
      */
-    bool unregister_type(
-            const char* typeName);
+    ReturnCode_t unregister_type(
+            const std::string& typeName);
 
     // TODO create/delete topic
 

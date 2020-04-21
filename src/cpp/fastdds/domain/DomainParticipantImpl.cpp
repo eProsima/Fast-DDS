@@ -697,27 +697,27 @@ const TypeSupport DomainParticipantImpl::find_type(
     return TypeSupport(nullptr);
 }
 
-bool DomainParticipantImpl::register_type(
+ReturnCode_t DomainParticipantImpl::register_type(
         const TypeSupport type,
         const std::string& type_name)
 {
-    TypeSupport t = find_type(type_name);
-
-    if (t != nullptr)
-    {
-        if (t == type)
-        {
-            return true;
-        }
-
-        logError(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
-        return false;
-    }
-
     if (type_name.size() <= 0)
     {
         logError(PARTICIPANT, "Registered Type must have a name");
-        return false;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    TypeSupport t = find_type(type_name);
+
+    if (!t.empty())
+    {
+        if (t == type)
+        {
+            return ReturnCode_t::RETCODE_OK;
+        }
+
+        logError(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
     logInfo(PARTICIPANT, "Type " << type_name << " registered.");
@@ -729,7 +729,7 @@ bool DomainParticipantImpl::register_type(
         register_dynamic_type_to_factories(type);
     }
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DomainParticipantImpl::register_dynamic_type_to_factories(
@@ -777,14 +777,20 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
     return false; // Isn't a registered dynamic type.
 }
 
-bool DomainParticipantImpl::unregister_type(
-        const char* type_name)
+ReturnCode_t DomainParticipantImpl::unregister_type(
+        const std::string& type_name)
 {
+    if (type_name.size() <= 0)
+    {
+        logError(PARTICIPANT, "Registered Type must have a name");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
     TypeSupport t = find_type(type_name);
 
     if (t.empty())
     {
-        return true; // Not registered, so unregistering complete.
+        return ReturnCode_t::RETCODE_OK; // Not registered, so unregistering complete.
     }
 
     {
@@ -795,7 +801,7 @@ bool DomainParticipantImpl::unregister_type(
         {
             if (sit.second->type_in_use(type_name))
             {
-                return false; // Is in use
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -808,7 +814,7 @@ bool DomainParticipantImpl::unregister_type(
         {
             if (pit.second->type_in_use(type_name))
             {
-                return false; // Is in use
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -816,7 +822,7 @@ bool DomainParticipantImpl::unregister_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.erase(type_name);
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
@@ -1282,7 +1288,7 @@ bool DomainParticipantImpl::register_dynamic_type(
         fastrtps::types::DynamicType_ptr dyn_type)
 {
     TypeSupport type(new fastrtps::types::DynamicPubSubType(dyn_type));
-    return participant_->register_type(type);
+    return participant_->register_type(type) == ReturnCode_t::RETCODE_OK;
 }
 
 void DomainParticipantImpl::remove_parent_request(
