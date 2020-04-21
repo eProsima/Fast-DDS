@@ -75,7 +75,7 @@ bool TypeLookupPublisher::init()
     //REGISTER THE TYPE
     m_type.get()->auto_fill_type_information(true);
     m_type.get()->auto_fill_type_object(false);
-    m_type.register_type(mp_participant, m_type.get_type_name());
+    m_type.register_type(mp_participant);
 
     //CREATE THE PUBLISHER
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
