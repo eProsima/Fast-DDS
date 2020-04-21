@@ -130,7 +130,7 @@ public:
             return buffer_node_->header.data_size;
         }
 
-        SharedMemSegment::offset node_offset()
+        SharedMemSegment::Offset node_offset()
         {
             return segment_->get_offset_from_address(buffer_node_);
         }
@@ -545,7 +545,7 @@ public:
 
             try
             {
-                ret = global_port_->try_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()},
+                ret = global_port_->try_push({0,0, shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()},
                                 &are_listeners_active);
 
                 if (!are_listeners_active)
@@ -659,6 +659,12 @@ public:
             , segment_id_(segment_id)
         {
             segment_node_ = segment_->get().find<SegmentNode>("segment_node").first;
+
+            if(!segment_node_)
+            {
+                throw std::runtime_error("segment_node not found");
+            }
+
             segment_node_->ref_count.fetch_add(1);
         }
 
