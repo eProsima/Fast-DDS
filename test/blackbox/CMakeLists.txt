@@ -162,6 +162,35 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ###############################################################################
         # Unit tests
         ###############################################################################
+        file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "RTPSBlackboxTests*.cpp")
+        set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
+            types/HelloWorld.cpp
+            types/HelloWorldType.cpp
+            types/KeyedHelloWorld.cpp
+            types/KeyedHelloWorldType.cpp
+            types/String.cpp
+            types/StringType.cpp
+            types/Data64kb.cpp
+            types/Data64kbType.cpp
+            types/Data1mb.cpp
+            types/Data1mbType.cpp
+            types/FixedSized.cpp
+            types/FixedSizedType.cpp
+
+            utils/data_generators.cpp
+            utils/lambda_functions.cpp
+            utils/print_functions.cpp
+            )
+        add_executable(BlackboxTests_RTPS ${RTPS_BLACKBOXTESTS_SOURCE})
+        target_compile_definitions(BlackboxTests_RTPS PRIVATE
+            $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+            )
+        target_include_directories(BlackboxTests_RTPS PRIVATE
+            ${GTEST_INCLUDE_DIRS})
+        target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+        add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
+            )
+
         file(GLOB BLACKBOXTESTS_TEST_SOURCE "BlackboxTests*.cpp")
         set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp

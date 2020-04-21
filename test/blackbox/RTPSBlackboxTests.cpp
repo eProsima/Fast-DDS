@@ -14,13 +14,10 @@
 
 #include "BlackboxTests.hpp"
 
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
-#include "ReqRepAsReliableHelloWorldReplier.hpp"
-#include "TCPReqRepHelloWorldRequester.hpp"
-#include "TCPReqRepHelloWorldReplier.hpp"
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-#include "PubSubWriterReader.hpp"
+#include "RTPSAsSocketReader.hpp"
+#include "RTPSAsSocketWriter.hpp"
+#include "RTPSWithRegistrationReader.hpp"
+#include "RTPSWithRegistrationWriter.hpp"
 
 #include <gtest/gtest.h>
 
@@ -89,13 +86,6 @@ int main(
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
-
-#if HAVE_SECURITY
-    blackbox_security_init();
-#endif
-#if TLS_FOUND
-    tls_init();
-#endif
 
     return RUN_ALL_TESTS();
 }
