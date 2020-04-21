@@ -20,7 +20,6 @@
 #ifndef _TEST_BLACKBOX_PUBSUBREADER_HPP_
 #define _TEST_BLACKBOX_PUBSUBREADER_HPP_
 
-#include <fastrtps/fastrtps_fwd.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>

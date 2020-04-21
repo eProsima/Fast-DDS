@@ -181,8 +181,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             utils/lambda_functions.cpp
             utils/print_functions.cpp
 
-            ReqRepHelloWorldRequester.cpp
-            ReqRepHelloWorldReplier.cpp
             TCPReqRepHelloWorldRequester.cpp
             TCPReqRepHelloWorldReplier.cpp
             )
@@ -203,7 +201,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
 
         if(FASTRTPS_API_TESTS)
-            add_executable(BlackboxTests_FastRTPS ${BLACKBOXTESTS_SOURCE})
+            set(BLACKBOXTESTS_FASTRTPS_SOURCE
+                ${BLACKBOXTESTS_SOURCE}
+                api/fastrtps_deprecated/ReqRepHelloWorldRequester.cpp
+                api/fastrtps_deprecated/ReqRepHelloWorldReplier.cpp
+                )
+
+            add_executable(BlackboxTests_FastRTPS ${BLACKBOXTESTS_FASTRTPS_SOURCE})
             target_compile_definitions(BlackboxTests_FastRTPS PRIVATE
                 $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
                 )
@@ -221,7 +225,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         endif(FASTRTPS_API_TESTS)
 
         if(FASTDDS_PIM_API_TESTS)
-            add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_SOURCE})
+            set(BLACKBOXTESTS_FASTDDS_PIM_SOURCE
+                ${BLACKBOXTESTS_SOURCE}
+                api/dds-pim/ReqRepHelloWorldRequester.cpp
+                api/dds-pim/ReqRepHelloWorldReplier.cpp
+                )
+            add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_FASTDDS_PIM_SOURCE})
             target_compile_definitions(BlackboxTests_DDS_PIM PRIVATE
                 $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
                 )
