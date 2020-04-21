@@ -83,7 +83,7 @@ bool HelloWorldPublisher::init()
     m_type.get()->auto_fill_type_information(false);
     m_type.get()->auto_fill_type_object(true);
 
-    mp_participant->register_type(m_type);
+    m_type.register_type(mp_participant, m_type.get_type_name());
 
     //CREATE THE PUBLISHER
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);

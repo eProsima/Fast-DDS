@@ -134,7 +134,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    subscriber_->participant()->register_type(m_type);
+    m_type.register_type(subscriber_->participant(), m_type.get_type_name());
 
     std::cout << "Discovered type: " << m_type->getName() << " from topic " << topic_name << std::endl;
 

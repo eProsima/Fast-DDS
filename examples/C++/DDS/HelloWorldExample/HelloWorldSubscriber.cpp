@@ -49,7 +49,7 @@ bool HelloWorldSubscriber::init()
     }
 
     //REGISTER THE TYPE
-    type_.register_type(participant_, type_->getName());
+    type_.register_type(participant_, type_.get_type_name());
 
     //CREATE THE SUBSCRIBER
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
