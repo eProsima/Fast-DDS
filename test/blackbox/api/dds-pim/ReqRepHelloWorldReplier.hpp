@@ -30,6 +30,7 @@
 
 #include <list>
 #include <condition_variable>
+#include <asio.hpp>
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -138,9 +139,24 @@ private:
     void wait_discovery();
     void matched();
     virtual void configDatareader(
-            const std::string& suffix) = 0;
+            const std::string& suffix)
+    {
+        std::ostringstream t;
+
+        t << "ReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+
+        datareader_topicname_ = t.str();
+    }
+
     virtual void configDatawriter(
-            const std::string& suffix) = 0;
+            const std::string& suffix)
+    {
+        std::ostringstream t;
+
+        t << "ReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+
+        datawriter_topicname_ = t.str();
+    }
 
 protected:
 

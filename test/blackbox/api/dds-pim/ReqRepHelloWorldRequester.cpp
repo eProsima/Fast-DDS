@@ -92,27 +92,27 @@ void ReqRepHelloWorldRequester::init()
     type_.reset(new HelloWorldType());
     ASSERT_EQ(participant_->register_type(type_), true);
 
-    reply_topic_ = participant_->create_topic(datareader_topicname_,
-                    type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-    ASSERT_NE(reply_topic_, nullptr);
-
-    request_topic_ = participant_->create_topic(datawriter_topicname_,
-                    type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-    ASSERT_NE(request_topic_, nullptr);
-
     reply_subscriber_ = participant_->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(reply_subscriber_, nullptr);
 
     request_publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(request_publisher_, nullptr);
 
-    //Create subscriber
     configDatareader("Reply");
+    reply_topic_ = participant_->create_topic(datareader_topicname_,
+                    type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    ASSERT_NE(reply_topic_, nullptr);
+
+    configDatawriter("Request");
+    request_topic_ = participant_->create_topic(datawriter_topicname_,
+                    type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    ASSERT_NE(request_topic_, nullptr);
+
+    //Create DataReader
     reply_datareader_ = reply_subscriber_->create_datareader(reply_topic_, datareader_qos_, &reply_listener_);
     ASSERT_NE(reply_datareader_, nullptr);
 
-    //Create publisher
-    configDatawriter("Request");
+    //Create DataWriter
     request_datawriter_ = request_publisher_->create_datawriter(request_topic_, datawriter_qos_,
                     &request_listener_);
     ASSERT_NE(request_datawriter_, nullptr);

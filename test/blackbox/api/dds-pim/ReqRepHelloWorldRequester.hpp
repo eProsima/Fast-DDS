@@ -32,6 +32,7 @@
 
 #include <list>
 #include <condition_variable>
+#include <asio.hpp>
 
 
 #if defined(_WIN32)
@@ -159,13 +160,22 @@ private:
     virtual void configDatareader(
             const std::string& suffix)
     {
-        (void) suffix;
+        std::ostringstream t;
+
+        t << "ReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+
+        datareader_topicname_ = t.str();
     }
 
     virtual void configDatawriter(
             const std::string& suffix)
     {
-        (void) suffix;
+
+        std::ostringstream t;
+
+        t << "ReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+
+        datawriter_topicname_ = t.str();
     }
 
 protected:

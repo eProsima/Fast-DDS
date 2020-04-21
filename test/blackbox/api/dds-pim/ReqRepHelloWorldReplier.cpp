@@ -94,10 +94,12 @@ void ReqRepHelloWorldReplier::init()
     type_.reset(new HelloWorldType());
     ASSERT_EQ(participant_->register_type(type_), true);
 
+    configDatareader("Request");
     request_topic_ = participant_->create_topic(datareader_topicname_,
                     type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(request_topic_, nullptr);
 
+    configDatawriter("Reply");
     reply_topic_ = participant_->create_topic(datawriter_topicname_,
                     type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(reply_topic_, nullptr);
@@ -109,13 +111,11 @@ void ReqRepHelloWorldReplier::init()
     ASSERT_NE(reply_publisher_, nullptr);
 
     //Create datareader
-    configDatareader("Request");
     request_datareader_ = request_subscriber_->create_datareader(request_topic_, datareader_qos_,
                     &request_listener_);
     ASSERT_NE(request_datareader_, nullptr);
 
-    //Create publisher
-    configDatawriter("Reply");
+    //Create datawriter
     reply_datawriter_ = reply_publisher_->create_datawriter(reply_topic_, datawriter_qos_, &reply_listener_);
     ASSERT_NE(reply_datawriter_, nullptr);
 
