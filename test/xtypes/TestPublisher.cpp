@@ -111,7 +111,7 @@ bool TestPublisher::init(
         {
             m_Type->type_information(*type_info);
         }
-        mp_participant->register_type(m_Type);
+        m_Type.register_type(mp_participant, "");
     }
 
     std::ostringstream t;
@@ -352,5 +352,5 @@ bool TestPublisher::register_discovered_type()
     TypeSupport type(disc_type_);
     type->auto_fill_type_object(true);
     type->auto_fill_type_information(true);
-    return mp_participant->register_type(type, disc_type_->get_name());
+    return type.register_type(mp_participant, disc_type_->get_name()) == ReturnCode_t::RETCODE_OK;
 }

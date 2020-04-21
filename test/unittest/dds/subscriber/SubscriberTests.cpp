@@ -215,10 +215,10 @@ TEST(SubscriberTests, CreateDataReader)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, type.get_type_name());
 
-    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
@@ -238,10 +238,10 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, type.get_type_name());
 
-    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
@@ -267,8 +267,8 @@ TEST(SubscriberTests, CreatePSMDataReader)
 
     ASSERT_NE(subscriber, ::dds::core::null);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_, type_->getName());
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant.delegate().get(), type.get_type_name());
 
     ::dds::topic::Topic topic = ::dds::core::null;
     topic = ::dds::topic::Topic(participant, "footopic", type_->getName(), TOPIC_QOS_DEFAULT);
@@ -291,10 +291,10 @@ TEST(SubscriberTests, ReadData)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    TypeSupport type_(new TopicDataTypeMock());
-    participant->register_type(type_);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, type.get_type_name());
 
-    Topic* topic = participant->create_topic("footopic", type_->getName(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);

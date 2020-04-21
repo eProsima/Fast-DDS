@@ -116,7 +116,7 @@ bool TestSubscriber::init(
 
         m_Type->auto_fill_type_information(false);
         m_Type->auto_fill_type_object(false);
-        mp_participant->register_type(m_Type);
+        m_Type.register_type(mp_participant, "");
 
         //CREATE THE TOPIC
         topic_ = mp_participant->create_topic(
@@ -372,7 +372,7 @@ bool TestSubscriber::register_discovered_type()
     TypeSupport type(disc_type_);
     type->auto_fill_type_object(true);
     type->auto_fill_type_information(true);
-    return mp_participant->register_type(type, disc_type_->get_name());
+    return type.register_type(mp_participant, disc_type_->get_name()) == ReturnCode_t::RETCODE_OK;
 }
 
 void TestSubscriber::run()
