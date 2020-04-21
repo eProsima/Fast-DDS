@@ -223,7 +223,7 @@ bool SharedMemTransport::init()
     }
 
     try
-    {        
+    {
         shared_mem_manager_ = std::make_shared<SharedMemManager>(SHM_MANAGER_DOMAIN);
         shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
                         configuration_.port_queue_capacity());
@@ -410,7 +410,8 @@ bool SharedMemTransport::send(
     }
     catch (const std::exception& e)
     {
-        logWarning(RTPS_MSG_OUT, e.what());
+        logInfo(RTPS_TRANSPORT_SHM, e.what());
+        (void)e;
 
         // Segment overflow with discard policy doesn't return error.
         if (!shared_buffer)
@@ -454,7 +455,7 @@ bool SharedMemTransport::push_discard(
     {
         if (!find_port(remote_locator.port)->try_push(buffer))
         {
-            logWarning(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+            logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
         }
     }
     catch (const std::exception& error)

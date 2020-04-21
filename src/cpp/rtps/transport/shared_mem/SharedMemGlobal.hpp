@@ -72,10 +72,9 @@ public:
      */
     struct BufferDescriptor
     {
-        alignas(8) uint32_t flags;
-        uint64_t enqueue_tick;
         SharedMemSegment::Id source_segment_id;
         SharedMemSegment::Offset buffer_node_offset;
+        uint32_t validity_id;
     };
 
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
@@ -358,7 +357,7 @@ public:
                                 (*port_it)->node->is_port_ok = false;
 
                                 logWarning(RTPS_TRANSPORT_SHM, "Port " << (*port_it)->node->port_id
-                                    << " error: " << e.what());
+                                    << ": " << e.what());
 
                                 // Remove the port from watch
                                 port_it = watched_ports_.erase(port_it);
@@ -791,7 +790,7 @@ public:
             }
 
             try
-            {                
+            {
                 port->healthy_check();
 
                 if ( (port_node->is_opened_read_exclusive && open_mode != Port::OpenMode::Write) ||
@@ -865,6 +864,16 @@ public:
         }
 
         return port;
+    }
+
+    /**
+     * Remove a port from the system.
+     */
+    void remove_port(
+            uint32_t port_id)
+    {
+        auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
+        SharedMemSegment::remove(port_segment_name.c_str());
     }
 
 private:
