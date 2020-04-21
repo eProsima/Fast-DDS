@@ -560,10 +560,130 @@ TEST_F(SHMCondition, robust_condition_fix_glibc_deadlock)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-        }                
-    }    
+        }
+    }
 }
 #endif
+
+TEST_F(SHMCondition, max_listeners)
+{
+    SharedMemSegment::condition_variable cv;
+    SharedMemSegment::mutex mutex;
+    bool condition = false;
+
+    std::cout << "sizeof(SharedMemSegment::condition_variable) = "
+              << sizeof(SharedMemSegment::condition_variable)
+              << std::endl;
+
+    static constexpr uint32_t max_test_listeners = 1024;
+    std::vector<std::thread> threads;
+
+    std::atomic<uint32_t> waiting_threads;
+    std::atomic<uint32_t> wait_exception;
+    std::atomic<uint32_t> wait_ok;
+
+    for (uint32_t i=0; i<max_test_listeners; i++)
+    {
+        threads.emplace_back([&]
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+            waiting_threads.fetch_add(1);
+            try
+            {
+                cv.wait(lock, [&]
+                {
+                    return condition;
+                });
+
+                wait_ok.fetch_add(1);
+            }
+            catch (const std::exception&)
+            {
+                wait_exception.fetch_add(1);
+            }
+        });
+    }
+
+    std::cout << threads.size() << " listeners spawned." << std::endl;
+
+    do
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    } while (waiting_threads.load() + wait_exception.load() < threads.size());
+
+    std::cout << waiting_threads.load() << " waiting. " << wait_exception.load() << " failed." << std::endl;
+
+    {
+        std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+        condition = true;
+    }
+    cv.notify_all();
+
+    std::cout << "all notified" << std::endl;
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    std::cout << "all joined!" << std::endl;
+
+    ASSERT_EQ(wait_ok.load(), waiting_threads.load() - wait_exception.load());
+    ASSERT_GT(wait_exception.load(), 0u);
+}
+
+TEST_F(SHMCondition, fifo_policy)
+{
+    SharedMemSegment::condition_variable cv;
+    SharedMemSegment::mutex mutex;
+    bool condition = false;
+
+    std::vector<std::thread> threads;
+    std::vector<uint32_t> exit_order;
+
+    auto wait_lambda = [&](uint32_t id, const boost::posix_time::ptime& end_time_point)
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+            ASSERT_NO_THROW(cv.timed_wait(lock, end_time_point, [&] { return condition; }));
+            exit_order.push_back(id);
+        };
+
+    // Check notify is FIFO
+    // Three elements remove the intermediate
+    auto now = boost::posix_time::microsec_clock::universal_time();
+    threads.emplace_back(std::thread(wait_lambda, 0, now + boost::posix_time::seconds(3600)));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    threads.emplace_back(std::thread(wait_lambda, 1, now + boost::posix_time::seconds(3600)));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    threads.emplace_back(std::thread(wait_lambda, 2, now + boost::posix_time::seconds(3600)));
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    {
+        std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+        condition = true;
+    }
+
+    
+    ASSERT_EQ(exit_order.size(), 0u);
+    cv.notify_one();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    ASSERT_EQ(exit_order.size(), 1u);
+    cv.notify_one();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    ASSERT_EQ(exit_order.size(), 2u);
+    cv.notify_one();
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    ASSERT_EQ(exit_order, std::vector<uint32_t>({0,1,2}));
+    threads.clear();
+    exit_order.clear();
+}
+
 
 TEST_F(SHMTransportTests, opening_and_closing_input_channel)
 {
