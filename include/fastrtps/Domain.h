@@ -214,17 +214,7 @@ class Domain
 
     private:
 
-         /**
-         * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
-         * @param attrs RTPSParticipant Attributes.
-         * @param plisten Pointer to the ParticipantListener.
-         * @return Pointer to the RTPSParticipant.
-         */
-        static Participant* rosEnvironmentCreationOverride(
-                const eprosima::fastrtps::ParticipantAttributes& att,
-                ParticipantListener* listen = nullptr);
-
-       typedef std::pair<Participant*,ParticipantImpl*> t_p_Participant;
+        typedef std::pair<Participant*,ParticipantImpl*> t_p_Participant;
 
         Domain();
 

@@ -145,7 +145,7 @@ public:
      * @param plisten Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
      */
-    static RTPSParticipant* rosEnvironmentCreationOverride(
+    static RTPSParticipant* clientServerEnvironmentCreationOverride(
             uint32_t domain_id,
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* listen /*= nullptr*/);
