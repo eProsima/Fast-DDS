@@ -378,7 +378,8 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         if( address_fastdds && address.compare(address_fastdds) )
         {
             logError(DOMAIN, "The environment variables " << DEFAULT_ROS2_MASTER_URI
-                << " and " << DEFAULT_FASTDDS_MASTER_URI << " are both present with different values");
+                << " and " << DEFAULT_FASTDDS_MASTER_URI << " are both present with different values."
+                << " Using configuration from " << DEFAULT_ROS2_MASTER_URI);
         }
     }
     else if( address_fastdds )
