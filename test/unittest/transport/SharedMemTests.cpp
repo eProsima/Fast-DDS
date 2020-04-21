@@ -1244,7 +1244,6 @@ TEST_F(SHMTransportTests, buffer_recover)
         << std::endl;
 
     ASSERT_GT(port_overflows1, 0u);
-    ASSERT_GT(port_overflows2, 0u);
     ASSERT_LT(port_overflows2*4u, port_overflows1);
     ASSERT_LT(listener1_recv_count.load()*4u, listener2_recv_count.load());
     ASSERT_GT(send_counter, listener2_recv_count.load());
