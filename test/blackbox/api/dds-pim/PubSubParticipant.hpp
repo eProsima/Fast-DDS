@@ -142,6 +142,8 @@ public:
         , num_expected_publishers_(num_expected_publishers)
         , publishers_(num_publishers)
         , subscribers_(num_subscribers)
+        , datawriter_topic_(nullptr)
+        , datareader_topic_(nullptr)
         , pub_listener_(this)
         , sub_listener_(this)
         , pub_matched_(0)
@@ -178,22 +180,27 @@ public:
     {
         for (auto p : publishers_)
         {
-            std::get<1>(p)->delete_datawriter(std::get<2>(p));
-            participant_->delete_publisher(std::get<1>(p));
-            participant_->delete_topic(std::get<0>(p));
+            std::get<0>(p)->delete_datawriter(std::get<1>(p));
+            participant_->delete_publisher(std::get<0>(p));
         }
         publishers_.clear();
         for (auto s : subscribers_)
         {
-            std::get<1>(s)->delete_datareader(std::get<2>(s));
-            participant_->delete_subscriber(std::get<1>(s));
-            participant_->delete_topic(std::get<0>(s));
+            std::get<0>(s)->delete_datareader(std::get<1>(s));
+            participant_->delete_subscriber(std::get<0>(s));
         }
         subscribers_.clear();
+        if (datawriter_topic_)
+        {
+            participant_->delete_topic(datawriter_topic_);
+        }
+        if (datareader_topic_)
+        {
+            participant_->delete_topic(datareader_topic_);
+        }
         if (participant_ != nullptr)
         {
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
-            participant_ = nullptr;
         }
     }
 
@@ -225,17 +232,20 @@ public:
             return false;
         }
 
-        auto topic = participant_->create_topic(publisher_topicname_,
-                        type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-        if (topic)
+        if (datawriter_topic_ == nullptr)
+        {
+            datawriter_topic_ = participant_->create_topic(publisher_topicname_,
+                            type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+        }
+        if (datawriter_topic_)
         {
             auto publisher = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
             if (publisher)
             {
-                auto datawriter = publisher->create_datawriter(topic, datawriter_qos_, &pub_listener_);
+                auto datawriter = publisher->create_datawriter(datawriter_topic_, datawriter_qos_, &pub_listener_);
                 if (datawriter)
                 {
-                    publishers_[index] = {topic, publisher, datawriter};
+                    publishers_[index] = {publisher, datawriter};
                     return true;
                 }
             }
@@ -246,21 +256,29 @@ public:
     bool init_subscriber(
             unsigned int index)
     {
+        if (participant_ == nullptr)
+        {
+            return false;
+        }
         if (index >= num_subscribers_)
         {
             return false;
         }
-        auto topic = participant_->create_topic(subscriber_topicname_,
-                        type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-        if (topic)
+
+        if (datareader_topic_ == nullptr)
+        {
+            datareader_topic_ = participant_->create_topic(subscriber_topicname_,
+                            type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+        }
+        if (datareader_topic_)
         {
             auto subscriber = participant_->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT);
             if (subscriber)
             {
-                auto datareader = subscriber->create_datareader(topic, datareader_qos_, &sub_listener_);
+                auto datareader = subscriber->create_datareader(datareader_topic_, datareader_qos_, &sub_listener_);
                 if (datareader)
                 {
-                    subscribers_[index] = {topic, subscriber, datareader};
+                    subscribers_[index] = {subscriber, datareader};
                     return true;
                 }
             }
@@ -272,7 +290,7 @@ public:
             type& msg,
             unsigned int index = 0)
     {
-        return std::get<2>(publishers_[index])->write((void*)&msg);
+        return std::get<1>(publishers_[index])->write((void*)&msg);
     }
 
     void assert_liveliness_participant()
@@ -283,7 +301,7 @@ public:
     void assert_liveliness(
             unsigned int index = 0)
     {
-        std::get<2>(publishers_[index])->assert_liveliness();
+        std::get<1>(publishers_[index])->assert_liveliness();
     }
 
     void pub_wait_discovery(
@@ -438,16 +456,16 @@ public:
         {
             return false;
         }
-        if (std::get<2>(subscribers_[index]) == nullptr)
+        if (std::get<1>(subscribers_[index]) == nullptr)
         {
             return false;
         }
 
         eprosima::fastdds::dds::DataReaderQos qos;
-        qos = std::get<2>(subscribers_[index])->get_qos();
+        qos = std::get<1>(subscribers_[index])->get_qos();
         qos.deadline().period = deadline_period;
 
-        return ReturnCode_t::RETCODE_OK == std::get<2>(subscribers_[index])->set_qos(qos);
+        return ReturnCode_t::RETCODE_OK == std::get<1>(subscribers_[index])->set_qos(qos);
     }
 
     void pub_liveliness_lost()
@@ -536,14 +554,14 @@ private:
     unsigned int num_expected_publishers_;
     //! A vector of publishers
     std::vector<std::tuple<
-                eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Publisher*,
                 eprosima::fastdds::dds::DataWriter*> > publishers_;
     //! A vector of subscribers
     std::vector<std::tuple<
-                eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Subscriber*,
                 eprosima::fastdds::dds::DataReader*> > subscribers_;
+    eprosima::fastdds::dds::Topic* datawriter_topic_;
+    eprosima::fastdds::dds::Topic* datareader_topic_;
     //! Publisher attributes
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
     //! Subscriber attributes
