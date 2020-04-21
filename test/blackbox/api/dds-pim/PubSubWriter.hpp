@@ -899,7 +899,7 @@ public:
     }
 
     PubSubWriter& load_publisher_attr(
-            const std::string& xml)
+            const std::string& /*xml*/)
     {
         /*TODO
            std::unique_ptr<eprosima::fastrtps::xmlparser::BaseNode> root;

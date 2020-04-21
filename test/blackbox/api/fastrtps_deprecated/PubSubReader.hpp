@@ -887,6 +887,27 @@ public:
         return *this;
     }
 
+    PubSubReader& user_data_max_size(
+            size_t size)
+    {
+        participant_attr_.rtps.allocation.data_limits.max_user_data = size;
+        return *this;
+    }
+
+    PubSubReader& properties_max_size(
+            size_t max_properties)
+    {
+        participant_attr_.rtps.allocation.data_limits.max_properties = max_properties;
+        return *this;
+    }
+
+    PubSubReader& partitions_max_size(
+            size_t max_partitions)
+    {
+        participant_attr_.rtps.allocation.data_limits.max_partitions = max_partitions;
+        return *this;
+    }
+
     bool update_partition(
             const std::string& partition)
     {

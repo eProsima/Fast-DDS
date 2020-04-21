@@ -858,21 +858,21 @@ public:
     }
 
     PubSubReader& user_data_max_size(
-            uint32_t max_user_data)
+            size_t max_user_data)
     {
         participant_qos_.allocation().data_limits.max_user_data = max_user_data;
         return *this;
     }
 
     PubSubReader& properties_max_size(
-            uint32_t max_properties)
+            size_t max_properties)
     {
         participant_qos_.allocation().data_limits.max_properties = max_properties;
         return *this;
     }
 
     PubSubReader& partitions_max_size(
-            uint32_t max_partitions)
+            size_t max_partitions)
     {
         participant_qos_.allocation().data_limits.max_partitions = max_partitions;
         return *this;
