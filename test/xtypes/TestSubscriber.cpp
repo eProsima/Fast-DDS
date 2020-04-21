@@ -116,7 +116,7 @@ bool TestSubscriber::init(
 
         m_Type->auto_fill_type_information(false);
         m_Type->auto_fill_type_object(false);
-        m_Type.register_type(mp_participant, "");
+        m_Type.register_type(mp_participant);
 
         //CREATE THE TOPIC
         topic_ = mp_participant->create_topic(

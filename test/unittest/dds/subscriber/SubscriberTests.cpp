@@ -216,7 +216,7 @@ TEST(SubscriberTests, CreateDataReader)
     ASSERT_NE(subscriber, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant, type.get_type_name());
+    type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -239,7 +239,7 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
     ASSERT_NE(subscriber, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant, type.get_type_name());
+    type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -268,7 +268,7 @@ TEST(SubscriberTests, CreatePSMDataReader)
     ASSERT_NE(subscriber, ::dds::core::null);
 
     TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant.delegate().get(), type.get_type_name());
+    type.register_type(participant.delegate().get());
 
     ::dds::topic::Topic topic = ::dds::core::null;
     topic = ::dds::topic::Topic(participant, "footopic", type_->getName(), TOPIC_QOS_DEFAULT);
@@ -292,7 +292,7 @@ TEST(SubscriberTests, ReadData)
     ASSERT_NE(subscriber, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant, type.get_type_name());
+    type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);

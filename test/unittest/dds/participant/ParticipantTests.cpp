@@ -164,7 +164,7 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
     TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant, "");
+    type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);

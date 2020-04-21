@@ -253,7 +253,7 @@ int main(
 
     types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
     TypeSupport type(new types::DynamicPubSubType(dyn_type));
-    type.register_type(participant, type.get_type_name());
+    type.register_type(participant);
 
     PubListener listener;
 

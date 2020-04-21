@@ -111,7 +111,7 @@ bool TestPublisher::init(
         {
             m_Type->type_information(*type_info);
         }
-        m_Type.register_type(mp_participant, "");
+        m_Type.register_type(mp_participant);
     }
 
     std::ostringstream t;
