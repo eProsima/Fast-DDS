@@ -274,7 +274,7 @@ public:
         type_.reset(new type_support());
 
         // Register type
-        ASSERT_EQ(participant_->register_type(type_), true);
+        ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
         // Create subscriber
         subscriber_ = participant_->create_subscriber(subscriber_qos_);
@@ -867,7 +867,7 @@ public:
     }
 
     PubSubReader& load_participant_attr(
-            const std::string& xml)
+            const std::string& /*xml*/)
     {
         /* TODO
            std::unique_ptr<eprosima::fastrtps::xmlparser::BaseNode> root;
@@ -890,7 +890,7 @@ public:
     }
 
     PubSubReader& load_subscriber_attr(
-            const std::string& xml)
+            const std::string& /*xml*/)
     {
         /* TODO
            std::unique_ptr<eprosima::fastrtps::xmlparser::BaseNode> root;

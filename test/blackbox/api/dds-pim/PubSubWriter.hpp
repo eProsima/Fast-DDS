@@ -281,7 +281,7 @@ public:
             type_.reset(new type_support());
 
             // Register type
-            ASSERT_EQ(participant_->register_type(type_), true);
+            ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
             // Create subscriber
             publisher_ = participant_->create_publisher(publisher_qos_);

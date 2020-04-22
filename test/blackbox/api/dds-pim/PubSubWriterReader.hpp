@@ -361,7 +361,7 @@ public:
         type_.reset(new type_support());
 
         // Register type
-        ASSERT_EQ(participant_->register_type(type_), true);
+        ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
         //Create publisher
         publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
@@ -397,23 +397,24 @@ public:
                 topic_name += "/";
                 eprosima::fastdds::dds::Topic* topic = participant_->create_topic(topic_name,
                                 type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-                if (!(ret_val &= (nullptr != topic)))
+                ret_val &= (nullptr != topic);
+                if (!ret_val)
                 {
                     break;
                 }
 
                 eprosima::fastdds::dds::DataWriter* datawriter = publisher_->create_datawriter(topic, datawriter_qos_,
                                 &pub_listener_);
-
-                if (!(ret_val &= (nullptr != datawriter)))
+                ret_val &= (nullptr != datawriter);
+                if (!ret_val)
                 {
                     break;
                 }
 
                 eprosima::fastdds::dds::DataReader* datareader = subscriber_->create_datareader(topic, datareader_qos_,
                                 &sub_listener_);
-
-                if (!(ret_val &= (nullptr != datareader)))
+                ret_val &= (nullptr != datareader);
+                if (!ret_val)
                 {
                     break;
                 }

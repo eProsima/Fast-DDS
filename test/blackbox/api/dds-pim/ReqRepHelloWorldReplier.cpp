@@ -92,7 +92,7 @@ void ReqRepHelloWorldReplier::init()
 
     // Register type
     type_.reset(new HelloWorldType());
-    ASSERT_EQ(participant_->register_type(type_), true);
+    ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
     configDatareader("Request");
     request_topic_ = participant_->create_topic(datareader_topicname_,
