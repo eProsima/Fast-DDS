@@ -45,6 +45,12 @@ DomainParticipant::~DomainParticipant()
 {
 }
 
+ReturnCode_t DomainParticipant::enable()
+{
+    Entity::enable();
+    return impl_->enable();
+}
+
 ReturnCode_t DomainParticipant::set_qos(
         const DomainParticipantQos& qos) const
 {

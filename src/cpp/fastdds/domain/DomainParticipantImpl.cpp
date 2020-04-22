@@ -162,6 +162,13 @@ DomainParticipantImpl::~DomainParticipantImpl()
     participant_ = nullptr;
 }
 
+ReturnCode_t DomainParticipantImpl::enable()
+{
+    rtps_participant_->enable();
+    return ReturnCode_t::RETCODE_OK;
+}
+
+
 ReturnCode_t DomainParticipantImpl::set_qos(
         const DomainParticipantQos& qos)
 {

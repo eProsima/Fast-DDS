@@ -83,6 +83,8 @@ private:
 
 public:
 
+    ReturnCode_t enable();
+
     ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
 

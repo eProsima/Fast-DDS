@@ -165,6 +165,11 @@ uint32_t RTPSParticipant::get_domain_id() const
     return mp_impl->get_domain_id();
 }
 
+void RTPSParticipant::enable()
+{
+    mp_impl->enable();
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

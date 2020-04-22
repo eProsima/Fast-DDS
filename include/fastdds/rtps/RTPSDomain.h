@@ -77,6 +77,21 @@ public:
             RTPSParticipantListener* plisten = nullptr);
 
     /**
+     * @brief Create a RTPSParticipant.
+     * @snippet fastrtps_example.cpp ex_RTPSParticipantCreation
+     * @param domain_id DomainId to be used by the RTPSParticipant (80 by default).
+     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
+     * @param attrs RTPSParticipant Attributes.
+     * @param plisten Pointer to the ParticipantListener.
+     * @return Pointer to the RTPSParticipant.
+     */
+    RTPS_DllAPI static RTPSParticipant* createParticipant(
+            uint32_t domain_id,
+            bool enabled,
+            const RTPSParticipantAttributes& attrs,
+            RTPSParticipantListener* plisten = nullptr);
+
+    /**
      * Create a RTPSWriter in a participant.
      * @param p Pointer to the RTPSParticipant.
      * @param watt Writer Attributes.

@@ -75,14 +75,7 @@ DomainParticipantFactory::~DomainParticipantFactory()
             for (auto pit : it.second)
             {
                 pit->disable();
-            }
-        }
-        // Delete participants
-        for (auto it : participants_)
-        {
-            for (auto pit = it.second.begin(); pit != it.second.end(); ++pit)
-            {
-                delete *pit;
+                delete pit;
             }
         }
         participants_.clear();
@@ -147,6 +140,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
                 if ((*pit)->get_participant() == part
                         || (*pit)->get_participant()->guid() == part->guid())
                 {
+                    (*pit)->disable();
                     delete (*pit);
                     PartVectorIt next_it = vit->second.erase(pit);
                     pit = next_it;
@@ -179,7 +173,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, pqos, listen);
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr = get_attributes(pqos);
-    RTPSParticipant* part = RTPSDomain::createParticipant(did, rtps_attr, &dom_part_impl->rtps_listener_);
+    RTPSParticipant* part = RTPSDomain::createParticipant(did, false, rtps_attr, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
     {
