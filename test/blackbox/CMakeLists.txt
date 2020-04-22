@@ -138,7 +138,7 @@ endmacro()
 
 option(RTPS_API_TESTS "Enable tests using RTPS API" ON)
 option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" ON)
-option(FASTDDS_PIM_API_TESTS "Enable tests using FastRTPS API" OFF)
+option(FASTDDS_PIM_API_TESTS "Enable tests using FastDDS API" OFF)
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)

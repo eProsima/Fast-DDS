@@ -203,6 +203,7 @@ public:
                     participant_->delete_topic(std::get<0>(s));
                 }
             }
+            subscribers_.clear();
 
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
         }

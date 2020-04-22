@@ -328,23 +328,23 @@ public:
 
     void destroy()
     {
-        if (datawriter_)
-        {
-            publisher_->delete_datawriter(datawriter_);
-            datawriter_ = nullptr;
-        }
-        if (publisher_)
-        {
-            participant_->delete_publisher(publisher_);
-            publisher_ = nullptr;
-        }
-        if (topic_)
-        {
-            participant_->delete_topic(topic_);
-            topic_ = nullptr;
-        }
         if (participant_)
         {
+            if (datawriter_)
+            {
+                publisher_->delete_datawriter(datawriter_);
+                datawriter_ = nullptr;
+            }
+            if (publisher_)
+            {
+                participant_->delete_publisher(publisher_);
+                publisher_ = nullptr;
+            }
+            if (topic_)
+            {
+                participant_->delete_topic(topic_);
+                topic_ = nullptr;
+            }
             DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }

@@ -434,39 +434,48 @@ public:
     {
         for (auto& tuple : entities_extra_)
         {
-            subscriber_->delete_datareader(std::get<2>(tuple));
-            publisher_->delete_datawriter(std::get<1>(tuple));
-            participant_->delete_topic(std::get<0>(tuple));
+            if (subscriber_)
+            {
+                subscriber_->delete_datareader(std::get<2>(tuple));
+            }
+            if (publisher_)
+            {
+                publisher_->delete_datawriter(std::get<1>(tuple));
+            }
+            if (participant_)
+            {
+                participant_->delete_topic(std::get<0>(tuple));
+            }
         }
         entities_extra_.clear();
 
-        if (datareader_)
-        {
-            subscriber_->delete_datareader(datareader_);
-            datareader_ = nullptr;
-        }
-        if (subscriber_)
-        {
-            participant_->delete_subscriber(subscriber_);
-            subscriber_ = nullptr;
-        }
-        if (datawriter_)
-        {
-            publisher_->delete_datawriter(datawriter_);
-            datawriter_ = nullptr;
-        }
-        if (publisher_)
-        {
-            participant_->delete_publisher(publisher_);
-            publisher_ = nullptr;
-        }
-        if (topic_)
-        {
-            participant_->delete_topic(topic_);
-            topic_ = nullptr;
-        }
         if (participant_)
         {
+            if (subscriber_)
+            {
+                if (datareader_)
+                {
+                    subscriber_->delete_datareader(datareader_);
+                    datareader_ = nullptr;
+                }
+                participant_->delete_subscriber(subscriber_);
+                subscriber_ = nullptr;
+            }
+            if (publisher_)
+            {
+                if (datawriter_)
+                {
+                    publisher_->delete_datawriter(datawriter_);
+                    datawriter_ = nullptr;
+                }
+                participant_->delete_publisher(publisher_);
+                publisher_ = nullptr;
+            }
+            if (topic_)
+            {
+                participant_->delete_topic(topic_);
+                topic_ = nullptr;
+            }
             DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }

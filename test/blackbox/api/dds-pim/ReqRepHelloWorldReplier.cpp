@@ -53,32 +53,32 @@ ReqRepHelloWorldReplier::ReqRepHelloWorldReplier()
 
 ReqRepHelloWorldReplier::~ReqRepHelloWorldReplier()
 {
-    if (request_datareader_)
-    {
-        request_subscriber_->delete_datareader(request_datareader_);
-    }
-    if (reply_datawriter_)
-    {
-        reply_publisher_->delete_datawriter(reply_datawriter_);
-    }
-    if (request_subscriber_)
-    {
-        participant_->delete_subscriber(request_subscriber_);
-    }
-    if (reply_publisher_)
-    {
-        participant_->delete_publisher(reply_publisher_);
-    }
-    if (request_topic_)
-    {
-        participant_->delete_topic(request_topic_);
-    }
-    if (reply_topic_)
-    {
-        participant_->delete_topic(reply_topic_);
-    }
     if (participant_ != nullptr)
     {
+        if (request_subscriber_)
+        {
+            if (request_datareader_)
+            {
+                request_subscriber_->delete_datareader(request_datareader_);
+            }
+            participant_->delete_subscriber(request_subscriber_);
+        }
+        if (reply_publisher_)
+        {
+            if (reply_datawriter_)
+            {
+                reply_publisher_->delete_datawriter(reply_datawriter_);
+            }
+            participant_->delete_publisher(reply_publisher_);
+        }
+        if (request_topic_)
+        {
+            participant_->delete_topic(request_topic_);
+        }
+        if (reply_topic_)
+        {
+            participant_->delete_topic(reply_topic_);
+        }
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }

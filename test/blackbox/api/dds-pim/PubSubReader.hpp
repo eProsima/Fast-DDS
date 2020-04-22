@@ -300,23 +300,23 @@ public:
 
     void destroy()
     {
-        if (datareader_)
-        {
-            subscriber_->delete_datareader(datareader_);
-            datareader_ = nullptr;
-        }
-        if (subscriber_)
-        {
-            participant_->delete_subscriber(subscriber_);
-            subscriber_ = nullptr;
-        }
-        if (topic_)
-        {
-            participant_->delete_topic(topic_);
-            topic_ = nullptr;
-        }
         if (participant_ != nullptr)
         {
+            if (datareader_)
+            {
+                subscriber_->delete_datareader(datareader_);
+                datareader_ = nullptr;
+            }
+            if (subscriber_)
+            {
+                participant_->delete_subscriber(subscriber_);
+                subscriber_ = nullptr;
+            }
+            if (topic_)
+            {
+                participant_->delete_topic(topic_);
+                topic_ = nullptr;
+            }
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }
@@ -574,30 +574,10 @@ public:
         return datareader_qos_.latency_budget().duration;
     }
 
-    PubSubReader& key(
-            bool keyed)
-    {
-        /*TODO
-           datareader_qos_.topic.topicKind = keyed
-                ? eprosima::fastrtps::rtps::TopicKind_t::WITH_KEY
-                : eprosima::fastrtps::rtps::TopicKind_t::NO_KEY;
-         */
-        return *this;
-    }
-
     PubSubReader& lifespan_period(
             const eprosima::fastrtps::Duration_t lifespan_period)
     {
         datareader_qos_.lifespan().duration = lifespan_period;
-        return *this;
-    }
-
-    PubSubReader& topic_kind(
-            const eprosima::fastrtps::rtps::TopicKind_t kind)
-    {
-        /*TODO
-           datareader_qos_.topic.topicKind = kind;
-         */
         return *this;
     }
 
