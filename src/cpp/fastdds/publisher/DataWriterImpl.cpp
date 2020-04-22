@@ -436,10 +436,10 @@ bool DataWriterImpl::remove_min_seq_change()
     return history_.removeMinChange();
 }
 
-bool DataWriterImpl::remove_all_changes(
+ReturnCode_t DataWriterImpl::clear_history(
         size_t* removed)
 {
-    return history_.removeAllChange(removed);
+    return (history_.removeAllChange(removed) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ERROR);
 }
 
 const GUID_t& DataWriterImpl::guid()
@@ -454,7 +454,7 @@ InstanceHandle_t DataWriterImpl::get_instance_handle() const
     return handle;
 }
 
-void DataWriterImpl::subscriber_qos_updated()
+void DataWriterImpl::publisher_qos_updated()
 {
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());

@@ -156,10 +156,10 @@ ReturnCode_t DataWriter::assert_liveliness()
     return impl_->assert_liveliness();
 }
 
-bool DataWriter::remove_all_changes(
+ReturnCode_t DataWriter::clear_history(
         size_t* removed)
 {
-    return impl_->remove_all_changes(removed);
+    return impl_->clear_history(removed);
 }
 
 } // namespace dds

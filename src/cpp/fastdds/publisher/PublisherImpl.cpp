@@ -109,7 +109,7 @@ ReturnCode_t PublisherImpl::set_qos(
         {
             for (auto writer : topic_writers.second)
             {
-                writer->subscriber_qos_updated();
+                writer->publisher_qos_updated();
             }
         }
 
@@ -132,7 +132,7 @@ ReturnCode_t PublisherImpl::set_qos(
     {
         for (auto writer : topic_writers.second)
         {
-            writer->subscriber_qos_updated();
+            writer->publisher_qos_updated();
         }
     }
 

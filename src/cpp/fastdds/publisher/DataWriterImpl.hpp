@@ -191,9 +191,9 @@ public:
     /**
      * Removes all changes from the History.
      * @param[out] removed Number of removed elements
-     * @return True if correct.
+     * @return ReturnCode_t::RETCODE_OK if correct, ReturnCode_t::RETCODE_ERROR if not.
      */
-    bool remove_all_changes(
+    ReturnCode_t clear_history(
             size_t* removed);
 
 private:
@@ -352,7 +352,7 @@ public:
             const DataWriterQos& to,
             const DataWriterQos& from);
 
-    void subscriber_qos_updated();
+    void publisher_qos_updated();
 
 
 };

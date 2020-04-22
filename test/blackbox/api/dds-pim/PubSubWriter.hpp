@@ -968,7 +968,7 @@ public:
     bool remove_all_changes(
             size_t* number_of_changes_removed)
     {
-        return datawriter_->remove_all_changes(number_of_changes_removed);
+        return (ReturnCode_t::RETCODE_OK == datawriter_->clear_history(number_of_changes_removed));
     }
 
     bool is_matched() const

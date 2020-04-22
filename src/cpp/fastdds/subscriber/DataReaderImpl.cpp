@@ -124,7 +124,6 @@ DataReaderImpl::DataReaderImpl(
     att.endpoint.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     att.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
-    att.expectsInlineQos = qos.expects_inline_qos();
     att.endpoint.properties = qos.properties();
 
     if (qos.endpoint().entity_id > 0)
@@ -141,6 +140,8 @@ DataReaderImpl::DataReaderImpl(
     att.liveliness_lease_duration = qos.liveliness().lease_duration;
     att.liveliness_kind_ = qos.liveliness().kind;
     att.matched_writers_allocation = qos.reader_resource_limits().matched_publisher_allocation;
+    att.expectsInlineQos = qos.expects_inline_qos();
+    att.disable_positive_acks = qos.reliable_reader_qos().disable_positive_ACKs.enabled;
 
 
     // TODO(Ricardo) Remove in future
@@ -159,10 +160,6 @@ DataReaderImpl::DataReaderImpl(
         }
         property.value(std::move(partitions));
         att.endpoint.properties.properties().push_back(std::move(property));
-    }
-    if (qos.reliable_reader_qos().disable_positive_ACKs.enabled)
-    {
-        att.disable_positive_acks = true;
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(

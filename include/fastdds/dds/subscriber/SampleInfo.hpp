@@ -94,9 +94,10 @@ struct SampleInfo
     //! whether the DataSample contains data or is only used to communicate of a change in the instance
     bool valid_data;
 
-    //!Sample Identity (Extension)
+    //!Sample Identity (Extension for RPC)
     fastrtps::rtps::SampleIdentity sample_identity;
 
+    //!Related Sample Identity (Extension for RPC)
     fastrtps::rtps::SampleIdentity related_sample_identity;
 
 };
