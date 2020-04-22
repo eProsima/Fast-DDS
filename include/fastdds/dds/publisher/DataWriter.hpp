@@ -214,9 +214,6 @@ public:
 
     RTPS_DllAPI ReturnCode_t assert_liveliness();
 
-    RTPS_DllAPI bool remove_all_changes(
-            size_t* removed);
-
     RTPS_DllAPI ReturnCode_t clear_history(
             size_t* removed);
 
