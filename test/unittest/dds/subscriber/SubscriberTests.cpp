@@ -144,7 +144,7 @@ TEST(SubscriberTests, ChangeSubscriberQos)
 
 }
 
-TEST(SubscriberTests, ChangePSMSubscriberQos)
+TEST(SubscriberTests, DISABLED_ChangePSMSubscriberQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
     ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant);
@@ -185,7 +185,7 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
+TEST(SubscriberTests, DISABLED_ChangePSMDefaultDataReaderQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
@@ -216,7 +216,7 @@ TEST(SubscriberTests, GetSubscriberParticipant)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(SubscriberTests, GetPSMSubscriberParticipant)
+TEST(SubscriberTests, DISABLED_GetPSMSubscriberParticipant)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
     ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);

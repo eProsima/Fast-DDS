@@ -95,7 +95,7 @@ TEST(PublisherTests, GetPublisherParticipant)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(PublisherTests, GetPSMPublisherParticipant)
+TEST(PublisherTests, DISABLED_GetPSMPublisherParticipant)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant, PUBLISHER_QOS_DEFAULT);
@@ -128,7 +128,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
 }
 
 
-TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
+TEST(PublisherTests, DISABLED_ChangePSMDefaultDataWriterQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
@@ -171,7 +171,7 @@ TEST(PublisherTests, ChangePublisherQos)
 
 }
 
-TEST(PublisherTests, ChangePSMPublisherQos)
+TEST(PublisherTests, DISABLED_ChangePSMPublisherQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
     ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
