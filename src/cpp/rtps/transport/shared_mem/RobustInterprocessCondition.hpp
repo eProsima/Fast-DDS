@@ -161,7 +161,7 @@ private:
 
     struct SemaphoreNode
     {
-        bi::interprocess_semaphore sem;
+        bi::interprocess_semaphore sem {0};
         uint32_t next;
         uint32_t prev;
     };
