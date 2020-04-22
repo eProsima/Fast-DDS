@@ -102,7 +102,7 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = pid % 230;
+    PParam.domainId = pid % 230;
     PParam.rtps.properties = part_property_policy;
     PParam.rtps.setName("Participant_pub");
 
