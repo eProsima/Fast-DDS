@@ -188,6 +188,14 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
+    /**
+     * Removes all changes from the History.
+     * @param[out] removed Number of removed elements
+     * @return ReturnCode_t::RETCODE_OK if correct, ReturnCode_t::RETCODE_ERROR if not.
+     */
+    ReturnCode_t clear_history(
+            size_t* removed);
+
 private:
 
     PublisherImpl* publisher_;
@@ -303,14 +311,6 @@ public:
     bool remove_min_seq_change();
 
     /**
-     * Removes all changes from the History.
-     * @param[out] removed Number of removed elements
-     * @return True if correct.
-     */
-    bool remove_all_change(
-            size_t* removed);
-
-    /**
      * @brief A method called when an instance misses the deadline
      */
     bool deadline_missed();
@@ -343,8 +343,7 @@ public:
     static void set_qos(
             DataWriterQos& to,
             const DataWriterQos& from,
-            bool is_default,
-            bool update_user_data = true);
+            bool is_default);
 
     static ReturnCode_t check_qos(
             const DataWriterQos& qos);
@@ -352,6 +351,9 @@ public:
     static bool can_qos_be_updated(
             const DataWriterQos& to,
             const DataWriterQos& from);
+
+    void publisher_qos_updated();
+
 
 };
 

@@ -214,6 +214,9 @@ public:
 
     RTPS_DllAPI ReturnCode_t assert_liveliness();
 
+    RTPS_DllAPI ReturnCode_t clear_history(
+            size_t* removed);
+
 private:
 
     DataWriterImpl* impl_;

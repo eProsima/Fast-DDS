@@ -18,23 +18,17 @@
 
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-
 TEST(LatencyBudgetQos, DurationCheck)
 {
-	ReqRepHelloWorldRequester requester;
+    ReqRepHelloWorldRequester requester;
 
-	Duration_t latency_budget_pub(10);
-	Duration_t latency_budget_sub(20);
+    eprosima::fastrtps::Duration_t latency_budget_pub(10);
+    eprosima::fastrtps::Duration_t latency_budget_sub(20);
 
-	requester.init_with_latency(latency_budget_pub, latency_budget_sub);
+    requester.init_with_latency(latency_budget_pub, latency_budget_sub);
 
-	ASSERT_TRUE(requester.isInitialized());
+    ASSERT_TRUE(requester.isInitialized());
 
-	const Publisher* publisher = requester.get_publisher();
-	const Subscriber* subscriber = requester.get_subscriber();
-
-    EXPECT_EQ(publisher->getAttributes().qos.m_latencyBudget.duration, latency_budget_pub);
-    EXPECT_EQ(subscriber->getAttributes().qos.m_latencyBudget.duration, latency_budget_sub);
+    EXPECT_EQ(requester.datawriter_latency_budget_duration(), latency_budget_pub);
+    EXPECT_EQ(requester.datareader_latency_budget_duration(), latency_budget_sub);
 }

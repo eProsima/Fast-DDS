@@ -44,7 +44,9 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-void sample_info_to_dds (const SampleInfo_t& rtps_info, SampleInfo* dds_info)
+void sample_info_to_dds (
+        const SampleInfo_t& rtps_info,
+        SampleInfo* dds_info)
 {
     dds_info->sample_state = NOT_READ;
     dds_info->view_state = NOT_NEW;
@@ -56,23 +58,24 @@ void sample_info_to_dds (const SampleInfo_t& rtps_info, SampleInfo* dds_info)
     dds_info->source_timestamp = rtps_info.sourceTimestamp;
     dds_info->instance_handle = rtps_info.iHandle;
     dds_info->publication_handle = fastrtps::rtps::InstanceHandle_t(rtps_info.sample_identity.writer_guid());
+    dds_info->sample_identity = rtps_info.sample_identity;
+    dds_info->related_sample_identity = rtps_info.related_sample_identity;
     dds_info->valid_data = rtps_info.sampleKind == eprosima::fastrtps::rtps::ALIVE ? true : false;
 
     switch (rtps_info.sampleKind)
     {
-    case eprosima::fastrtps::rtps::ALIVE:
-        dds_info->instance_state = ALIVE;
-        break;
-    case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-        dds_info->instance_state = NOT_ALIVE_DISPOSED;
-        break;
-    default:
-        //TODO [ILG] change this if the other kinds ever get implemented
-        dds_info->instance_state = ALIVE;
-        break;
+        case eprosima::fastrtps::rtps::ALIVE:
+            dds_info->instance_state = ALIVE;
+            break;
+        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
+            dds_info->instance_state = NOT_ALIVE_DISPOSED;
+            break;
+        default:
+            //TODO [ILG] change this if the other kinds ever get implemented
+            dds_info->instance_state = ALIVE;
+            break;
     }
 }
-
 
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
@@ -121,7 +124,6 @@ DataReaderImpl::DataReaderImpl(
     att.endpoint.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     att.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
-    att.expectsInlineQos = qos.expects_inline_qos();
     att.endpoint.properties = qos.properties();
 
     if (qos.endpoint().entity_id > 0)
@@ -135,6 +137,12 @@ DataReaderImpl::DataReaderImpl(
     }
 
     att.times = qos.reliable_reader_qos().times;
+    att.liveliness_lease_duration = qos.liveliness().lease_duration;
+    att.liveliness_kind_ = qos.liveliness().kind;
+    att.matched_writers_allocation = qos.reader_resource_limits().matched_publisher_allocation;
+    att.expectsInlineQos = qos.expects_inline_qos();
+    att.disable_positive_acks = qos.reliable_reader_qos().disable_positive_ACKs.enabled;
+
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -152,10 +160,6 @@ DataReaderImpl::DataReaderImpl(
         }
         property.value(std::move(partitions));
         att.endpoint.properties.properties().push_back(std::move(property));
-    }
-    if (qos.reliable_reader_qos().disable_positive_ACKs.enabled)
-    {
-        att.disable_positive_acks = true;
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
@@ -274,6 +278,13 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
     return handle;
 }
 
+void DataReaderImpl::subscriber_qos_updated()
+{
+    //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+    ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
+    subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+}
+
 ReturnCode_t DataReaderImpl::set_qos(
         const DataReaderQos& qos)
 {
@@ -288,6 +299,14 @@ ReturnCode_t DataReaderImpl::set_qos(
         set_qos(qos_, default_qos, false);
         return ReturnCode_t::RETCODE_OK;
     }
+
+    if (subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data != 0 &&
+            subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data <
+            qos.user_data().getValue().size())
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+
     ReturnCode_t check_result = check_qos(qos);
     if (!check_result)
     {

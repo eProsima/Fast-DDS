@@ -116,7 +116,8 @@ DataWriterImpl::DataWriterImpl(
     w_att.times = qos.reliable_writer_qos().times;
     w_att.liveliness_kind = qos.liveliness().kind;
     w_att.liveliness_lease_duration = qos.liveliness().lease_duration;
-    w_att.matched_readers_allocation = qos.writer_resources().matched_subscriber_allocation;
+    w_att.liveliness_announcement_period = qos.liveliness().announcement_period;
+    w_att.matched_readers_allocation = qos.writer_resource_limits().matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -435,10 +436,10 @@ bool DataWriterImpl::remove_min_seq_change()
     return history_.removeMinChange();
 }
 
-bool DataWriterImpl::remove_all_change(
+ReturnCode_t DataWriterImpl::clear_history(
         size_t* removed)
 {
-    return history_.removeAllChange(removed);
+    return (history_.removeAllChange(removed) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ERROR);
 }
 
 const GUID_t& DataWriterImpl::guid()
@@ -451,6 +452,13 @@ InstanceHandle_t DataWriterImpl::get_instance_handle() const
     InstanceHandle_t handle;
     handle = writer_->getGuid();
     return handle;
+}
+
+void DataWriterImpl::publisher_qos_updated()
+{
+    //NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
+    WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
+    publisher_->rtps_participant()->updateWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
 }
 
 ReturnCode_t DataWriterImpl::set_qos(
@@ -466,12 +474,11 @@ ReturnCode_t DataWriterImpl::set_qos(
         set_qos(qos_, default_qos, false);
     }
 
-    bool update_user_data = false;
-    if (publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data == 0 ||
-            publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data >
+    if (publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data != 0 &&
+            publisher_->get_participant()->get_qos().allocation().data_limits.max_user_data <
             qos.user_data().getValue().size())
     {
-        update_user_data = true;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
 
     ReturnCode_t ret_val = check_qos(qos);
@@ -483,7 +490,7 @@ ReturnCode_t DataWriterImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    set_qos(qos_, qos, false, update_user_data);
+    set_qos(qos_, qos, false);
 
     //Notify the participant that a Writer has changed its QOS
     fastrtps::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
@@ -755,8 +762,7 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
 void DataWriterImpl::set_qos(
         DataWriterQos& to,
         const DataWriterQos& from,
-        bool is_default,
-        bool update_user_data)
+        bool is_default)
 {
     if (is_default && !(to.durability() == from.durability()))
     {
@@ -813,7 +819,7 @@ void DataWriterImpl::set_qos(
         to.lifespan() = from.lifespan();
         to.lifespan().hasChanged = true;
     }
-    if (update_user_data && !(to.user_data() == from.user_data()))
+    if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
         to.user_data().hasChanged = true;
@@ -853,9 +859,9 @@ void DataWriterImpl::set_qos(
     {
         to.endpoint() = from.endpoint();
     }
-    if (is_default && !(to.writer_resources() == from.writer_resources()))
+    if (is_default && !(to.writer_resource_limits() == from.writer_resource_limits()))
     {
-        to.writer_resources() = from.writer_resources();
+        to.writer_resource_limits() = from.writer_resource_limits();
     }
     if (is_default && !(to.throughput_controller() == from.throughput_controller()))
     {

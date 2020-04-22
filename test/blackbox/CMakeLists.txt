@@ -52,20 +52,20 @@ macro(add_blackbox_gtest)
                 string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
-                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
                     COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
 
                 # Add environment
                 if(WIN32)
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
+                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
 
                 # Add labels
-                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+                set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
 
             endforeach()
             file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX "^TEST_P" )
@@ -74,35 +74,35 @@ macro(add_blackbox_gtest)
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
 
-                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess
+                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess
                     COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/NonIntraprocess)
 
                 # Add environment
                 if(WIN32)
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess APPEND PROPERTY ENVIRONMENT "${property}")
+                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
 
                 # Add labels
-                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess PROPERTY LABELS "${GTEST_LABELS}")
+                set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess PROPERTY LABELS "${GTEST_LABELS}")
 
-                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess
+                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess
                     COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess)
 
                 # Add environment
                 if(WIN32)
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "${property}")
+                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
 
                 # Add labels
-                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess PROPERTY LABELS "${GTEST_LABELS}")
+                set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess PROPERTY LABELS "${GTEST_LABELS}")
 
             endforeach()
         endforeach()
@@ -136,6 +136,10 @@ macro(add_blackbox_gtest)
     endif()
 endmacro()
 
+option(RTPS_API_TESTS "Enable tests using RTPS API" ON)
+option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" ON)
+option(FASTDDS_PIM_API_TESTS "Enable tests using FastDDS API" OFF)
+
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
@@ -158,6 +162,35 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ###############################################################################
         # Unit tests
         ###############################################################################
+        file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "RTPSBlackboxTests*.cpp")
+        set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
+            types/HelloWorld.cpp
+            types/HelloWorldType.cpp
+            types/KeyedHelloWorld.cpp
+            types/KeyedHelloWorldType.cpp
+            types/String.cpp
+            types/StringType.cpp
+            types/Data64kb.cpp
+            types/Data64kbType.cpp
+            types/Data1mb.cpp
+            types/Data1mbType.cpp
+            types/FixedSized.cpp
+            types/FixedSizedType.cpp
+
+            utils/data_generators.cpp
+            utils/lambda_functions.cpp
+            utils/print_functions.cpp
+            )
+        add_executable(BlackboxTests_RTPS ${RTPS_BLACKBOXTESTS_SOURCE})
+        target_compile_definitions(BlackboxTests_RTPS PRIVATE
+            $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+            )
+        target_include_directories(BlackboxTests_RTPS PRIVATE
+            ${GTEST_INCLUDE_DIRS})
+        target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+        add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
+            )
+
         file(GLOB BLACKBOXTESTS_TEST_SOURCE "BlackboxTests*.cpp")
         set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
@@ -177,8 +210,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             utils/lambda_functions.cpp
             utils/print_functions.cpp
 
-            ReqRepHelloWorldRequester.cpp
-            ReqRepHelloWorldReplier.cpp
             TCPReqRepHelloWorldRequester.cpp
             TCPReqRepHelloWorldReplier.cpp
             )
@@ -198,18 +229,51 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader.xml.in
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
 
-        add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
-        target_compile_definitions(BlackboxTests PRIVATE
-            $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
-            )
-        target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
-            ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
-            "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
-            "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
-            "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
-            )
+        if(FASTRTPS_API_TESTS)
+            set(BLACKBOXTESTS_FASTRTPS_SOURCE
+                ${BLACKBOXTESTS_SOURCE}
+                api/fastrtps_deprecated/ReqRepHelloWorldRequester.cpp
+                api/fastrtps_deprecated/ReqRepHelloWorldReplier.cpp
+                )
+
+            add_executable(BlackboxTests_FastRTPS ${BLACKBOXTESTS_FASTRTPS_SOURCE})
+            target_compile_definitions(BlackboxTests_FastRTPS PRIVATE
+                $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+                )
+            target_include_directories(BlackboxTests_FastRTPS PRIVATE
+                api/fastrtps_deprecated
+                ${GTEST_INCLUDE_DIRS})
+            target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+            add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
+                ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+                "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+                "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+                "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+                )
+        endif(FASTRTPS_API_TESTS)
+
+        if(FASTDDS_PIM_API_TESTS)
+            set(BLACKBOXTESTS_FASTDDS_PIM_SOURCE
+                ${BLACKBOXTESTS_SOURCE}
+                api/dds-pim/ReqRepHelloWorldRequester.cpp
+                api/dds-pim/ReqRepHelloWorldReplier.cpp
+                )
+            add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_FASTDDS_PIM_SOURCE})
+            target_compile_definitions(BlackboxTests_DDS_PIM PRIVATE
+                $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+                )
+            target_include_directories(BlackboxTests_DDS_PIM PRIVATE
+                api/dds-pim
+                ${GTEST_INCLUDE_DIRS})
+            target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+            add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
+                ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+                "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+                "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+                "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+                )
+        endif(FASTDDS_PIM_API_TESTS)
     endif()
 endif()

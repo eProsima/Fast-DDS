@@ -156,6 +156,12 @@ ReturnCode_t DataWriter::assert_liveliness()
     return impl_->assert_liveliness();
 }
 
+ReturnCode_t DataWriter::clear_history(
+        size_t* removed)
+{
+    return impl_->clear_history(removed);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

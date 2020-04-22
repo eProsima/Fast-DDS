@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -92,6 +93,12 @@ struct SampleInfo
 
     //! whether the DataSample contains data or is only used to communicate of a change in the instance
     bool valid_data;
+
+    //!Sample Identity (Extension for RPC)
+    fastrtps::rtps::SampleIdentity sample_identity;
+
+    //!Related Sample Identity (Extension for RPC)
+    fastrtps::rtps::SampleIdentity related_sample_identity;
 
 };
 
