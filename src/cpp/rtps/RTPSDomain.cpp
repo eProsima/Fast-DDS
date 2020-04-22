@@ -422,14 +422,15 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     Locator_t server_address(port);
     IPLocator::setIPv4(server_address, ip_address);
 
-    // if any choose localhost
-    if(IPLocator::isAny(server_address))
+    // indulge the people that thinks 127.0.0.1 means actually 0.0.0.0
+    if(IPLocator::isLocal(server_address))
     {
-        IPLocator::setIPv4(server_address,"127.0.0.1");
+        // by doing this using 127.0.0.1 allows over network not only interprocess (the expected result)
+        IPLocator::setIPv4(server_address, "0.0.0.0");
     }
 
     IPFinder::getIP4Address(&locals);
-    if( IPLocator::isLocal(server_address)
+    if( IPLocator::isAny(server_address)
         || (locals.end() != std::find_if(locals.begin(), locals.end(),
             [&server_address](const Locator_t & loc) -> bool
             {

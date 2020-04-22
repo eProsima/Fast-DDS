@@ -1431,6 +1431,53 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         return false;
     }
 
+    // If one of the locators is 0.0.0.0 we must replace it by all local interfaces like the framework does
+    std::list<Locator_t> unicast_real_locators;
+    LocatorListConstIterator it = UnicastLocatorList.begin(), old_it;
+    LocatorList_t locals;
+ 
+    do
+    {
+        // copy ordinary locators till the first ANY
+        old_it = it;
+        it = std::find_if(it, UnicastLocatorList.end(), IPLocator::isAny);
+
+        bool replace = it != UnicastLocatorList.end();
+        if(replace && it != UnicastLocatorList.begin())
+        {
+            --it;
+        }
+
+        // copy ordinary locators
+        std::copy(old_it, it, std::back_inserter(unicast_real_locators));
+
+        // transform new ones if needed
+        if(replace)
+        {
+            const Locator_t & an_any = *it;
+
+            // load interfaces if needed
+            if(locals.empty())
+            {
+                IPFinder::getIP4Address(&locals);
+            }
+
+            // add a locator for each local
+            std::transform(locals.begin(),
+                locals.end(),
+                std::back_inserter(unicast_real_locators),
+                [&an_any](const Locator_t & loc) -> Locator_t
+                {
+                    Locator_t specific(loc);
+                    specific.port = an_any.port;
+                    return specific;
+                });
+
+            // search for the next if any
+            ++it;
+        }
+    } while(it != UnicastLocatorList.end());
+
     // TCP is a special case because physical ports are taken from the TransportDescriptors
     struct ResetLogical : public std::unary_function<Locator_t, const Locator_t&>
     {
@@ -1487,28 +1534,28 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     } transform_functor(m_att.userTransports);
 
     // transform-copy
-    std::list<Locator_t> update_attributes;
+    std::set<Locator_t> update_attributes;
 
     std::transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(),
-            std::back_inserter(update_attributes),
+            std::inserter(update_attributes,update_attributes.begin()),
             transform_functor);
 
     std::transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
             m_att.builtin.metatrafficUnicastLocatorList.end(),
-            std::back_inserter(update_attributes),
+            std::inserter(update_attributes,update_attributes.begin()),
             transform_functor);
 
-    std::list<Locator_t> original_ones;
+    std::set<Locator_t> original_ones;
 
     std::transform(MulticastLocatorList.begin(),
         MulticastLocatorList.end(),
-        std::back_inserter(original_ones),
+        std::inserter(original_ones,original_ones.begin()),
         transform_functor);
 
-    std::transform(UnicastLocatorList.begin(),
-        UnicastLocatorList.end(),
-        std::back_inserter(original_ones),
+    std::transform(unicast_real_locators.begin(),
+        unicast_real_locators.end(),
+        std::inserter(original_ones, original_ones.begin()),
         transform_functor);
 
     // if equal then no mutation took place on physical ports
