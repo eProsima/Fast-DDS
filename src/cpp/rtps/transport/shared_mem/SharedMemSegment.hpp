@@ -37,7 +37,7 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
-
+#include "RobustInterprocessCondition.hpp"
 #include "SharedMemUUID.hpp"
 
 namespace eprosima {
@@ -53,12 +53,20 @@ using Log = fastdds::dds::Log;
 class SharedMemSegment
 {
 public:
-
-    typedef std::ptrdiff_t offset;
-    typedef boost::interprocess::interprocess_condition condition_variable;
+    
+    typedef RobustInterprocessCondition condition_variable;
     typedef boost::interprocess::interprocess_mutex mutex;
     typedef boost::interprocess::named_mutex named_mutex;
     typedef boost::interprocess::spin_wait spin_wait;
+
+    // Offset must be the same size for 32/64-bit versions, so no size_t used here.
+    typedef std::uint32_t Offset;
+    typedef boost::interprocess::offset_ptr<void, Offset, std::uint64_t> VoidPointerT;
+	typedef boost::interprocess::basic_managed_shared_memory<
+        char, 
+        boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family, 
+        VoidPointerT>, 
+        boost::interprocess::iset_index> managed_shared_memory_type;
 
     static constexpr boost::interprocess::open_only_t open_only = boost::interprocess::open_only_t();
     static constexpr boost::interprocess::create_only_t create_only = boost::interprocess::create_only_t();
@@ -73,7 +81,7 @@ public:
             boost::interprocess::create_only_t,
             const std::string& name,
             size_t size)
-        : segment_(boost::interprocess::create_only, name.c_str(), size + EXTRA_SEGMENT_SIZE)
+        : segment_(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size + EXTRA_SEGMENT_SIZE))
         , name_(name)
     {
     }
@@ -90,24 +98,24 @@ public:
             boost::interprocess::open_or_create_t,
             const std::string& name,
             size_t size)
-        : segment_(boost::interprocess::create_only, name.c_str(), size)
+        : segment_(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size))
         , name_(name)
     {
     }
 
     void* get_address_from_offset(
-            SharedMemSegment::offset offset) const
+            SharedMemSegment::Offset offset) const
     {
         return segment_.get_address_from_handle(offset);
     }
 
-    SharedMemSegment::offset get_offset_from_address(
+    SharedMemSegment::Offset get_offset_from_address(
             void* address) const
     {
         return segment_.get_handle_from_address(address);
     }
 
-    boost::interprocess::managed_shared_memory& get() { return segment_;}
+    managed_shared_memory_type& get() { return segment_;}
 
     static void remove(
             const std::string& name)
@@ -276,7 +284,7 @@ private:
 
     class EnvironmentInitializer
     {
-public:
+    public:
 
         EnvironmentInitializer()
         {
@@ -284,7 +292,7 @@ public:
         }
     } shared_mem_environment_initializer_;
 
-    boost::interprocess::managed_shared_memory segment_;
+    managed_shared_memory_type segment_;
 
     std::string name_;
 };

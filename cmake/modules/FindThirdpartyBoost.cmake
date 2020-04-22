@@ -23,6 +23,7 @@ try_compile(IS_THIRDPARTY_BOOST_OK
         ${CMAKE_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}/thirdparty/boost/test/ThirdpartyBoostCompile_test.cpp
          CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${THIRDPARTY_BOOST_INCLUDE_DIR}"
+         CXX_STANDARD 11
          LINK_LIBRARIES ${THIRDPARTY_BOOST_LINK_LIBS}
          OUTPUT_VARIABLE OUT
     )

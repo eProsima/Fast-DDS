@@ -257,6 +257,11 @@ endif()
 option(SQLITE3_SUPPORT "Activate SQLITE3 support" ON)
 
 ###############################################################################
+# SHM as Default transport
+###############################################################################
+option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" ON)
+
+###############################################################################
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
@@ -280,11 +285,6 @@ endif()
 if(COMPILE_EXAMPLES)
     add_subdirectory(examples)
 endif()
-
-###############################################################################
-# SHM as Default transport
-###############################################################################
-option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" OFF)
 
 ###############################################################################
 # Documentation

@@ -75,6 +75,63 @@ public:
     SharedMemTransportDescriptor descriptor;
 };
 
+class SHMCondition : public ::testing::Test
+{
+public:
+
+    SHMCondition()
+    {
+        eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
+    }
+
+    ~SHMCondition()
+    {
+        eprosima::fastdds::dds::Log::Flush();
+        eprosima::fastdds::dds::Log::KillThread();
+    }
+
+    static constexpr uint32_t TEST_MAX_NOTIFICATIONS = 3;
+
+    void wait_test(int id, 
+        SharedMemSegment::mutex& mutex,
+        SharedMemSegment::condition_variable& cv,
+        bool* condition,
+        std::atomic<uint32_t>& notifications_counter,
+        boost::posix_time::milliseconds time_out)
+    {
+        std::thread thread_wait([&] 
+            {
+                std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+
+                while(notifications_counter.load() < TEST_MAX_NOTIFICATIONS)
+                {                                   
+                    boost::system_time const timeout =
+                        boost::get_system_time()+ time_out;
+
+                    std::cout << "P" << id << " waiting..." << std::endl;
+
+                    if(cv.timed_wait(lock, timeout, [&] { return *condition; }))
+                    {
+                        notifications_counter.fetch_add(1);
+                        *condition = false;
+
+                        std::cout << "P" << id << " " << notifications_counter.load()
+                            << " notifications received." << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "P" << id << " wait timeout!" << std::endl;
+                    }
+                } 
+            });
+        
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        thread_wait.join();
+    }
+};
+
+
 class SHMRingBuffer : public ::testing::Test
 {
 protected:
@@ -392,30 +449,121 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
     }
 }
 
-TEST_F(SHMTransportTests, locators_with_kind_16_supported)
+TEST_F(SHMCondition, wait_notify)
 {
-    // Given
-    SharedMemTransport transportUnderTest(descriptor);
-    ASSERT_TRUE(transportUnderTest.init());
+    SharedMemSegment::condition_variable cv;
+    SharedMemSegment::mutex mutex;  
+    bool condition = false;  
 
-    Locator_t supportedLocator;
-    supportedLocator.kind = LOCATOR_KIND_SHM;
-    Locator_t unsupportedLocatorTcpv4;
-    unsupportedLocatorTcpv4.kind = LOCATOR_KIND_TCPv4;
-    Locator_t unsupportedLocatorTcpv6;
-    unsupportedLocatorTcpv6.kind = LOCATOR_KIND_TCPv6;
-    Locator_t unsupportedLocatorUdpv4;
-    unsupportedLocatorUdpv4.kind = LOCATOR_KIND_UDPv4;
-    Locator_t unsupportedLocatorUdpv6;
-    unsupportedLocatorUdpv6.kind = LOCATOR_KIND_UDPv6;
+    std::thread thread_wait([&]
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+            cv.wait(lock, [&] 
+                { 
+                    return condition; 
+                });
+        });
 
-    // Then
-    ASSERT_TRUE(transportUnderTest.IsLocatorSupported(supportedLocator));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorTcpv4));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorTcpv6));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorUdpv4));
-    ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocatorUdpv6));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    {
+        std::lock_guard<SharedMemSegment::mutex> lock(mutex);
+        condition = true;  
+    }
+
+    cv.notify_one();
+
+    thread_wait.join();
 }
+
+// POSIX glibc 2.25 conditions are not robust when used with interprocess shared memory:
+// https://sourceware.org/bugzilla/show_bug.cgi?id=21422
+// FastRTPS > v1.10.0 SHM has implemented robust conditions to solve issue #1144
+// This is the correspoding regresion test
+#ifndef _MSC_VER
+TEST_F(SHMCondition, robust_condition_fix_glibc_deadlock)
+{
+    struct SharedSegment
+    {
+        std::atomic<uint32_t> notify_count[2];
+        SharedMemSegment::mutex mutex;
+        SharedMemSegment::condition_variable cv;
+        bool condition;                
+    };
+
+    auto p1 = fork();
+    if(p1 == 0)
+    {
+        auto p2 = fork();
+        if(p2 == 0)
+        {
+            printf("p2 go!\n");
+            //P2
+            boost::interprocess::shared_memory_object::remove("robust_condition_fix_test");
+            boost::interprocess::managed_shared_memory shm(boost::interprocess::create_only, 
+                "robust_condition_fix_test", 1024 + sizeof(SharedSegment));
+
+            auto shared_segment = shm.construct<SharedSegment>("shared_segment")();
+            shared_segment->notify_count[0].exchange(0);
+            shared_segment->notify_count[1].exchange(0);
+    
+            wait_test(2, shared_segment->mutex, 
+                shared_segment->cv, 
+                &shared_segment->condition, 
+                shared_segment->notify_count[1],
+                boost::posix_time::milliseconds(60*1000));
+        }
+        else //P1
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            printf("p1 go!\n");            
+
+            // Kill p2
+            ASSERT_EQ(0, system((std::string("kill -9 ") + std::to_string(p2)).c_str()));
+            printf("p2 killed!\n");            
+
+            boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only, 
+                "robust_condition_fix_test");
+
+            auto shared_segment = shm.find<SharedSegment>("shared_segment").first;
+
+            // P2 died without notifications
+            ASSERT_EQ(shared_segment->notify_count[1].load(), 0u);
+    
+            wait_test(1, shared_segment->mutex, 
+                shared_segment->cv, 
+                &shared_segment->condition, 
+                shared_segment->notify_count[0],
+                boost::posix_time::milliseconds(500));
+        }            
+    }
+    else // P0
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        printf("p0 go!\n");
+
+        boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only, 
+                "robust_condition_fix_test");
+
+        auto shared_segment = shm.find<SharedSegment>("shared_segment").first;
+
+        for(uint32_t i=0;i<TEST_MAX_NOTIFICATIONS;i++)
+        {
+            {
+                std::unique_lock<boost::interprocess::interprocess_mutex> lock(shared_segment->mutex);
+                shared_segment->condition = true;            
+            }        
+            shared_segment->cv.notify_all();        
+
+            // Wait until P1 receives the last notification
+            while(shared_segment->notify_count[0].load() < i+1)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }                
+    }    
+}
+#endif
 
 TEST_F(SHMTransportTests, opening_and_closing_input_channel)
 {
@@ -748,7 +896,7 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
 
             thread_listener2_state = 3;
         }
-            );
+    );
 
     auto port_sender = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
     auto segment = shared_mem_manager.create_segment(1024, 16);
@@ -825,9 +973,6 @@ TEST_F(SHMTransportTests, on_port_failure_free_enqueued_descriptors)
         *static_cast<uint8_t*>(buffers.back()->data()) = static_cast<uint8_t>(i+1);
     }
 
-    // Not enough space for more allocations
-    ASSERT_THROW(buffers.push_back(segment->alloc_buffer(4, std::chrono::steady_clock::time_point())), std::exception);
-
     auto port_sender = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
 
     // Enqueued all buffers in the port
@@ -837,9 +982,6 @@ TEST_F(SHMTransportTests, on_port_failure_free_enqueued_descriptors)
     }
 
     buffers.clear();
-
-    // Not enough space for more allocations
-    ASSERT_THROW(buffers.push_back(segment->alloc_buffer(4, std::chrono::steady_clock::time_point())), std::exception);
 
     std::atomic<uint32_t> thread_listener2_state(0);
     std::thread thread_listener2([&]
@@ -921,7 +1063,9 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
     ASSERT_FALSE(port_mocker.lock_empty_cv_mutex(*global_port));
 
     bool listerner_active;
-    SharedMemGlobal::BufferDescriptor foo;
+    SharedMemSegment::Id random_id;
+    random_id.generate();
+    SharedMemGlobal::BufferDescriptor foo = {random_id, 0, 0};
     ASSERT_THROW(global_port->try_push(foo, &listerner_active), std::exception);
 
     ASSERT_THROW(global_port->healthy_check(), std::exception);
@@ -960,7 +1104,7 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
     bool listerners_active;
     SharedMemSegment::Id random_id;
     random_id.generate();
-    SharedMemGlobal::BufferDescriptor foo = {random_id, 0};
+    SharedMemGlobal::BufferDescriptor foo = {random_id, 0, 0};
     ASSERT_TRUE(port->try_push(foo, &listerners_active));
     ASSERT_TRUE(listerners_active);
     ASSERT_TRUE(listener->head() != nullptr);
@@ -969,6 +1113,152 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 
     deadlocked_port->close_listener(&is_listener_closed);
     thread_wait_deadlock.join();
+}
+
+TEST_F(SHMTransportTests, buffer_recover)
+{
+    const std::string domain_name("SHMTests");
+
+    SharedMemManager shared_mem_manager(domain_name);
+    
+    auto segment = shared_mem_manager.create_segment(3,3);
+
+    shared_mem_manager.remove_port(1);
+    auto pub_sub1_write = shared_mem_manager.open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
+
+    shared_mem_manager.remove_port(2);
+    auto pub_sub2_write = shared_mem_manager.open_port(2, 8, 1000,SharedMemGlobal::Port::OpenMode::Write);
+
+    auto sub1_read = shared_mem_manager.open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+
+    auto sub2_read = shared_mem_manager.open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    
+    bool exit_listeners = false;
+
+    uint32_t listener1_sleep_ms = 400u;
+    uint32_t listener2_sleep_ms = 100u;
+
+    auto listener1 = sub1_read->create_listener();
+
+    std::atomic<uint32_t> listener1_recv_count(0);
+    auto thread_listener1 = std::thread( [&]
+        {
+            while(!exit_listeners)
+            {
+                auto buffer = listener1->pop();
+
+                if(buffer)
+                {
+                    listener1_recv_count.fetch_add(1);
+                    // This is a slow listener
+                    std::this_thread::sleep_for(std::chrono::milliseconds(listener1_sleep_ms));
+                    buffer.reset();
+                }
+            }
+        });
+
+    auto listener2 = sub2_read->create_listener();
+    std::atomic<uint32_t> listener2_recv_count(0u);
+    SharedMemSegment::condition_variable received_cv;
+    SharedMemSegment::mutex received_mutex;
+    auto thread_listener2 = std::thread( [&]
+        {
+            while(!exit_listeners)
+            {
+                auto buffer = listener2->pop();
+
+                if(buffer)
+                {
+                    {
+                        std::lock_guard<SharedMemSegment::mutex> lock(received_mutex);
+                        listener2_recv_count.fetch_add(1);
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(listener2_sleep_ms));
+                    buffer.reset();
+                    received_cv.notify_one();
+                }
+            }
+        });
+
+    // Test 1 (without port overflow)
+    uint32_t send_counter = 0u;
+    while(listener1_recv_count.load() < 16u)
+    {        
+        {
+            // The segment should never overflow
+            auto buf = segment->alloc_buffer(1, std::chrono::steady_clock::time_point());
+
+            ASSERT_EQ(true, pub_sub1_write->try_push(buf));
+            ASSERT_EQ(true, pub_sub2_write->try_push(buf));
+        }
+
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(received_mutex);
+            send_counter++;
+            // Wait until listener2 (the fast listener) receives the buffer
+            received_cv.wait(lock, [&] { return send_counter == listener2_recv_count.load();});
+        }
+    }
+
+    // The slow listener is 4 times slower than the fast one
+    ASSERT_LT(listener1_recv_count.load()*3, listener2_recv_count.load());
+    ASSERT_GT(listener1_recv_count.load(), listener2_recv_count.load()/5);
+    std::cout << "Test1:" 
+        << " Listener1_recv_count " << listener1_recv_count.load()
+        << " Listener2_recv_count " << listener2_recv_count.load()
+        << std::endl;
+
+    // Test 2 (with port overflow)
+    listener2_sleep_ms = 0u;
+    send_counter = 0u;
+    listener1_recv_count.exchange(0u);
+    listener2_recv_count.exchange(0u);
+    uint32_t port_overflows1 = 0u;
+    uint32_t port_overflows2 = 0u;
+    while(listener1_recv_count.load() < 16u)
+    {        
+        {
+            // The segment should never overflow
+            auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
+
+            if(!pub_sub1_write->try_push(buf))
+            {
+                port_overflows1++;
+            }
+            
+            if(!pub_sub2_write->try_push(buf))
+            {
+                port_overflows2++;
+            }
+        }
+
+        send_counter++;
+    }
+
+    std::cout << "Test2:"
+        << " port_overflows1 " << port_overflows1
+        << " port_overflows2 " << port_overflows2
+        << " send_counter " << send_counter
+        << " listener1_recv_count " << listener1_recv_count.load()
+        << " listener2_recv_count " << listener2_recv_count.load()
+        << std::endl;
+
+    ASSERT_GT(port_overflows1, 0u);
+    ASSERT_GT(port_overflows2, 0u);
+    ASSERT_LT(port_overflows2*4u, port_overflows1);
+    ASSERT_LT(listener1_recv_count.load()*4u, listener2_recv_count.load());
+    ASSERT_GT(send_counter, listener2_recv_count.load());
+    
+    exit_listeners = true;
+
+    {
+        auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
+        ASSERT_EQ(true, pub_sub1_write->try_push(buf));
+        ASSERT_EQ(true, pub_sub2_write->try_push(buf));
+    }
+
+    thread_listener1.join();
+    thread_listener2.join();
 }
 
 /*TEST_F(SHMTransportTests, simple_latency)
