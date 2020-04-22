@@ -70,26 +70,6 @@ public:
     }
 
     /**
-     * Copy constructor.
-     *
-     * Construct an StatusMask with existing StatusMask.
-     *
-     * @param other the StatusMask to copy from
-     */
-    StatusMask(
-            const StatusMask& other)
-        : std::bitset<FASTDDS_STATUS_COUNT>(other)
-    {
-    }
-
-    /** @cond */
-    ~StatusMask()
-    {
-    }
-
-    /** @endcond */
-
-    /**
      * Shift (merge) given StatusMask bits into this StatusMask bitset.
      *
      * @return StatusMask this
