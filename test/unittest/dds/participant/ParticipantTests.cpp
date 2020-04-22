@@ -87,7 +87,7 @@ public:
 };
 
 
-TEST(ParticipantTest, DomainParticipantFactoryGetInstance)
+TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
 {
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
 

@@ -90,6 +90,12 @@ public:
     RTPS_DllAPI const DomainParticipantQos& get_qos() const;
 
     /**
+     * @brief enable This operation enables the DomainParticipant
+     * @return true
+     */
+    RTPS_DllAPI ReturnCode_t enable() override;
+
+    /**
      * This operation sets the value of the DomainParticipant QoS policies.
      * This operation will check that the resulting policies are self consistent; if they are not,
      * the operation will have no effect and return INCONSISTENT_POLICY.

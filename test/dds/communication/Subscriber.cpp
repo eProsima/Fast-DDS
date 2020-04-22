@@ -329,6 +329,11 @@ int main(
        }
      */
 
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().builtin.typelookup_config.use_client = true;
     ParListener participant_listener;
@@ -338,6 +343,7 @@ int main(
 
     if (g_participant == nullptr)
     {
+        std::cout << "Error creating subscriber participant" << std::endl;
         return 1;
     }
 
@@ -352,9 +358,13 @@ int main(
 
     if (g_subscriber == nullptr)
     {
+        std::cout << "Error creating subscriber" << std::endl;
         DomainParticipantFactory::get_instance()->delete_participant(g_participant);
         return 1;
     }
+
+    //Now that everything is created we can enable the protocols
+    g_participant->enable();
 
     while (notexit && g_run)
     {

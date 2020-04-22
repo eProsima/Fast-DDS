@@ -29,6 +29,7 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 
 using namespace eprosima::fastdds::dds;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : mp_participant(nullptr)
@@ -39,16 +40,23 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
 bool HelloWorldSubscriber::init()
 {
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
-    {
-        const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener);
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener);
 
-        if (mp_participant == nullptr)
-        {
-            return false;
-        }
+    if (mp_participant == nullptr)
+    {
+        return false;
+    }
+    if (mp_participant->enable() != ReturnCode_t::RETCODE_OK)
+    {
+        DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
+        return false;
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
@@ -74,12 +82,6 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     topics_.clear();
     readers_.clear();
     datas_.clear();
-}
-
-DomainParticipant* HelloWorldSubscriber::participant()
-{
-    const std::lock_guard<std::mutex> lock(mutex_);
-    return mp_participant;
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
@@ -134,7 +136,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    m_type.register_type(subscriber_->participant());
+    m_type.register_type(subscriber_->mp_participant);
 
     std::cout << "Discovered type: " << m_type->getName() << " from topic " << topic_name << std::endl;
 

@@ -80,15 +80,17 @@ bool TestPublisher::init(
     pqos.wire_protocol().builtin.typelookup_config.use_server = using_typelookup_;
     pqos.name(m_Name.c_str());
 
-    {
-        const std::lock_guard<std::mutex> lock(mutex_);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(domain, pqos, &part_listener_);
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
-        if (mp_participant == nullptr)
-        {
-            return false;
-        }
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(domain, pqos, &part_listener_);
+    if (mp_participant == nullptr)
+    {
+        return false;
     }
+    mp_participant->enable();
 
     // CREATE THE PUBLISHER
     std::string data_type = m_Type != nullptr ? m_Type->getName() : "";
@@ -167,12 +169,6 @@ TestPublisher::~TestPublisher()
         mp_participant->delete_topic(mp_topic);
     }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
-}
-
-eprosima::fastdds::dds::DomainParticipant* TestPublisher::participant()
-{
-    const std::lock_guard<std::mutex> lock(mutex_);
-    return mp_participant;
 }
 
 void TestPublisher::waitDiscovery(
@@ -283,7 +279,7 @@ void TestPublisher::PartListener::on_type_information_received(
             };
 
     std::cout << "Received type information: " << type_name << " on topic: " << topic_name << std::endl;
-    parent_->participant()->register_remote_type(type_information, type_name.to_string(), callback);
+    parent_->mp_participant->register_remote_type(type_information, type_name.to_string(), callback);
 }
 
 void TestPublisher::runThread()

@@ -233,6 +233,11 @@ public:
      */
     uint32_t get_domain_id() const;
 
+    /**
+     * @brief This operation enables the RTPSParticipantImpl
+     */
+    void enable();
+
 private:
 
     //!Pointer to the implementation.

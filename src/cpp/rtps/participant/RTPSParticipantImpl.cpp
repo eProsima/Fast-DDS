@@ -353,12 +353,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     mp_builtinProtocols = new BuiltinProtocols();
 
-    //Start reception
-    for (auto& receiver : m_receiverResourcelist)
-    {
-        receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
-    }
-
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
 }
 

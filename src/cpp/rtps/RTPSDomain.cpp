@@ -90,6 +90,15 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
+    return createParticipant(domain_id, true, attrs, listen);
+}
+
+RTPSParticipant* RTPSDomain::createParticipant(
+        uint32_t domain_id,
+        bool enabled,
+        const RTPSParticipantAttributes& attrs,
+        RTPSParticipantListener* listen)
+{
     logInfo(RTPS_PARTICIPANT, "");
 
     RTPSParticipantAttributes PParam = attrs;
@@ -222,8 +231,11 @@ RTPSParticipant* RTPSDomain::createParticipant(
         m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
     }
 
-    // Start protocols
-    pimpl->enable();
+    if (enabled)
+    {
+        // Start protocols
+        pimpl->enable();
+    }
     return p;
 }
 

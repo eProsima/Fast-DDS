@@ -248,6 +248,7 @@ int main(
 
     if (participant == nullptr)
     {
+        std::cout << "Error creating publisher participant" << std::endl;
         return 1;
     }
 
@@ -270,12 +271,14 @@ int main(
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener);
     if (publisher == nullptr)
     {
+        std::cout << "Error creating publisher" << std::endl;
         DomainParticipantFactory::get_instance()->delete_participant(participant);
         return 1;
     }
     Topic* topic = participant->create_topic(topic_name.str(), type.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic == nullptr)
     {
+        std::cout << "Error creating publisher topic" << std::endl;
         participant->delete_publisher(publisher);
         DomainParticipantFactory::get_instance()->delete_participant(participant);
         return 1;
