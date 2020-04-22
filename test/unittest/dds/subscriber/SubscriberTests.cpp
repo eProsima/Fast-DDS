@@ -71,6 +71,7 @@ private:
 class TopicDataTypeMock : public TopicDataType
 {
 public:
+
     TopicDataTypeMock()
         : TopicDataType()
     {
@@ -97,7 +98,7 @@ public:
         return std::function<uint32_t()>();
     }
 
-    void * createData() override
+    void* createData() override
     {
         return nullptr;
     }
@@ -114,12 +115,15 @@ public:
     {
         return true;
     }
+
 };
 
 TEST(SubscriberTests, ChangeSubscriberQos)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
 
     SubscriberQos qos;
     ASSERT_EQ(subscriber->get_qos(qos), ReturnCode_t::RETCODE_OK);
@@ -134,6 +138,9 @@ TEST(SubscriberTests, ChangeSubscriberQos)
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
 }
 
@@ -156,7 +163,9 @@ TEST(SubscriberTests, ChangePSMSubscriberQos)
 TEST(SubscriberTests, ChangeDefaultDataReaderQos)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
 
     DataReaderQos qos;
     subscriber->get_default_datareader_qos(qos);
@@ -171,6 +180,9 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
 
     ASSERT_EQ(qos, wqos);
     ASSERT_EQ(wqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
+
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
@@ -194,9 +206,14 @@ TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
 TEST(SubscriberTests, GetSubscriberParticipant)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
 
     ASSERT_EQ(subscriber->get_participant(), participant);
+
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST(SubscriberTests, GetPSMSubscriberParticipant)
@@ -258,8 +275,8 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
 
 //TODO: [ILG] Activate the test once PSM API for DataReader is in place
 /*
-TEST(SubscriberTests, CreatePSMDataReader)
-{
+   TEST(SubscriberTests, CreatePSMDataReader)
+   {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
 
     ::dds::sub::Subscriber subscriber = ::dds::core::null;
@@ -279,8 +296,8 @@ TEST(SubscriberTests, CreatePSMDataReader)
     data_reader = ::dds::sub::DataReader(subscriber, topic);
 
     ASSERT_NE(data_reader, ::dds::core::null);
-}
-*/
+   }
+ */
 
 
 TEST(SubscriberTests, ReadData)

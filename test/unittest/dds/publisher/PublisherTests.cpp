@@ -85,9 +85,14 @@ public:
 TEST(PublisherTests, GetPublisherParticipant)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
 
     ASSERT_EQ(publisher->get_participant(), participant);
+
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST(PublisherTests, GetPSMPublisherParticipant)
@@ -102,7 +107,9 @@ TEST(PublisherTests, GetPSMPublisherParticipant)
 TEST(PublisherTests, ChangeDefaultDataWriterQos)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
     DataWriterQos qos;
     publisher->get_default_datawriter_qos(qos);
     ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
@@ -115,6 +122,9 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
 
     ASSERT_TRUE(qos == wqos);
     ASSERT_EQ(wqos.deadline().period, 260);
+
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 
@@ -138,7 +148,9 @@ TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
 TEST(PublisherTests, ChangePublisherQos)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
 
     PublisherQos qos;
     publisher->get_qos(qos);
@@ -153,6 +165,9 @@ TEST(PublisherTests, ChangePublisherQos)
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
+
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
 }
 
