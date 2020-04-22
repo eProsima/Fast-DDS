@@ -91,8 +91,6 @@ public:
         return disc_type_;
     }
 
-    eprosima::fastdds::dds::DomainParticipant* participant();
-
     eprosima::fastdds::dds::DataWriter* create_datawriter();
 
     void delete_datawriter(
@@ -127,8 +125,6 @@ private:
     std::mutex m_mDiscovery;
 
     std::mutex mtx_type_discovery_;
-
-    std::mutex mutex_;
 
     std::condition_variable m_cvDiscovery;
 
