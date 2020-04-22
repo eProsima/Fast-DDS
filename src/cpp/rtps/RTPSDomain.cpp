@@ -422,25 +422,28 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     Locator_t server_address(port);
     IPLocator::setIPv4(server_address, ip_address);
 
-    // indulge the people that thinks 127.0.0.1 means actually 0.0.0.0
-    if(IPLocator::isLocal(server_address))
-    {
-        // by doing this using 127.0.0.1 allows over network not only interprocess (the expected result)
-        IPLocator::setIPv4(server_address, "0.0.0.0");
-    }
-
     IPFinder::getIP4Address(&locals);
     if( IPLocator::isAny(server_address)
+        || IPLocator::isLocal(server_address)
         || (locals.end() != std::find_if(locals.begin(), locals.end(),
             [&server_address](const Locator_t & loc) -> bool
             {
                 return IPLocator::compareAddress(server_address, loc);
             })))
     {
+        Locator_t listening_locator(server_address);
+
+        // indulge the people that thinks 127.0.0.1 means actually 0.0.0.0
+        if(IPLocator::isLocal(listening_locator))
+        {
+            // by doing this using 127.0.0.1 allows over network not only interprocess (the expected result)
+            IPLocator::setIPv4(listening_locator, "0.0.0.0");
+        }
+
         RTPSParticipantAttributes server_attr = att;
         server_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
         server_attr.ReadguidPrefix(DEFAULT_AUTO_SERVER_GUIDPREFIX);
-        server_attr.builtin.metatrafficUnicastLocatorList.push_back(server_address);
+        server_attr.builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
 
         part = RTPSDomain::createParticipant(domain_id, server_attr, listen);
         if(nullptr != part)
@@ -457,6 +460,13 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
 
     // There was a server already or server IP doesn't match this machine. Let's create a client
     {
+        // if a real IP was not specified then we can only reach localhost servers
+        if(IPLocator::isAny(server_address))
+        {
+            // by doing this using 127.0.0.1 allows over network not only interprocess (the expected result)
+            IPLocator::setIPv4(server_address, "127.0.0.1");
+        }
+
         rtps::RTPSParticipantAttributes client_attr = att;
         client_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
 
