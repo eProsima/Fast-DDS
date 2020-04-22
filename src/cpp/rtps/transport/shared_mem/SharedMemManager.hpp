@@ -592,7 +592,14 @@ public:
             global_listener_.reset();
             if (global_port_)
             {
-                global_port_->unregister_listener();
+                try
+                {
+                    global_port_->unregister_listener();
+                }
+                catch(const std::exception& e)
+                {
+                    logWarning(RTPS_TRANSPORT_SHM, e.what());
+                }
             }
         }
 
@@ -723,8 +730,15 @@ public:
          */
         void close()
         {
-            // Just in case a thread is blocked in pop() function
-            global_port_->close_listener(&is_closed_);
+            try
+            {
+                // Just in case a thread is blocked in pop() function
+                global_port_->close_listener(&is_closed_);
+            }
+            catch(const std::exception& e)
+            {
+                logWarning(RTPS_TRANSPORT_SHM, e.what());
+            }
         }
 
     private:

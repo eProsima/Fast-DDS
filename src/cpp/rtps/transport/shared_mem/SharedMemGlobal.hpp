@@ -91,7 +91,7 @@ public:
         SharedMemSegment::Offset buffer_node;
 
         uint32_t port_id;
-        uint32_t num_listeners;        
+        uint32_t num_listeners;
         uint32_t healthy_check_timeout_ms;
         uint32_t port_wait_timeout_ms;
         uint32_t max_buffer_descriptors;
@@ -670,6 +670,7 @@ public:
 
         /**
          * Decrement the number of listeners by one
+         * @throw std::exception when error
          */
         void unregister_listener()
         {
