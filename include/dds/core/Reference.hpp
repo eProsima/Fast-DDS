@@ -116,6 +116,18 @@ public:
         : impl_(ref.impl_)
     {
     }
+    
+    /**
+     * Assign a Reference from another.
+     *
+     * @param ref the other reference
+     */
+    Reference& operator = (
+            const Reference& ref)
+    {
+        impl_ = ref.impl_;
+        return *this;
+    }
 
     /**
      * Creates a Reference from other Reference type safely.
