@@ -1436,17 +1436,11 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         old_it = it;
         it = std::find_if(it, UnicastLocatorList.end(), IPLocator::isAny);
 
-        bool replace = it != UnicastLocatorList.end();
-        if(replace && it != UnicastLocatorList.begin())
-        {
-            --it;
-        }
-
         // copy ordinary locators
         std::copy(old_it, it, std::back_inserter(unicast_real_locators));
 
         // transform new ones if needed
-        if(replace)
+        if(it != UnicastLocatorList.end())
         {
             const Locator_t & an_any = *it;
 
