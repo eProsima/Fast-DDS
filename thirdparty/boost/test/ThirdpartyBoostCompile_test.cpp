@@ -16,6 +16,7 @@
 #include <boost/interprocess/managed_shared_memory.hpp>
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
@@ -31,6 +32,7 @@ public:
     ThirdpartyBoostCompileTest()
     {
         boost::interprocess::named_mutex::remove("foo");
+        boost::interprocess::interprocess_semaphore sem {0};
 
         try
         {
