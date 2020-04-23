@@ -71,7 +71,8 @@ SharedMemTransport::SharedMemTransport()
 
 SharedMemTransport::~SharedMemTransport()
 {
-    clean();
+    // Safely clean already opened resources
+    clean_up();
 }
 
 bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
@@ -172,9 +173,12 @@ bool SharedMemTransport::is_local_locator(
     return true;
 }
 
-void SharedMemTransport::clean()
+void SharedMemTransport::delete_input_channel(SharedMemChannelResource* channel)
 {
-    assert(input_channels_.size() == 0);
+    channel->disable();
+    channel->release();
+    channel->clear();
+    delete channel;
 }
 
 bool SharedMemTransport::CloseInputChannel(
@@ -186,10 +190,7 @@ bool SharedMemTransport::CloseInputChannel(
     {
         if ( (*it)->locator() == locator)
         {
-            (*it)->disable();
-            (*it)->release();
-            (*it)->clear();
-            delete (*it);
+            delete_input_channel((*it));            
             input_channels_.erase(it);
 
             return true;
@@ -197,6 +198,33 @@ bool SharedMemTransport::CloseInputChannel(
     }
 
     return false;
+}
+
+void SharedMemTransport::clean_up()
+{
+    try
+    {
+        // Delete send ports
+        opened_ports_.clear();
+        
+        // Delete input channels
+        {
+            std::lock_guard<std::recursive_mutex> lock(input_channels_mutex_);
+
+            for (auto input_channel : input_channels_)
+            {
+                delete_input_channel(input_channel);
+            }
+
+            input_channels_.clear();
+        }
+
+        shared_mem_segment_.reset();
+    }
+    catch(const std::exception& e)
+    {
+        logWarning(RTPS_MSG_OUT, e.what());
+    }
 }
 
 bool SharedMemTransport::DoInputLocatorsMatch(

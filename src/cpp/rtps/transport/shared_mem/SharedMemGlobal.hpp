@@ -626,6 +626,7 @@ public:
          * This function is used when destroying a listener waiting for messages
          * in the port.
          * @param is_listener_closed pointer to the atomic is_closed flag of the Listener object.
+         * @throw std::exception on error
          */
         void close_listener(
                 std::atomic<bool>* is_listener_closed)
