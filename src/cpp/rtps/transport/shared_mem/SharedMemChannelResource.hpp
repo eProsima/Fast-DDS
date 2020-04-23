@@ -99,7 +99,14 @@ public:
 
     void release()
     {
-        listener_->close();
+        try
+        {
+            listener_->close();
+        }
+        catch(const std::exception& e)
+        {
+            logWarning(RTPS_MSG_IN, e.what());
+        }
     }
 
 private:

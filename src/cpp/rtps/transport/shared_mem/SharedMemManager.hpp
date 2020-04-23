@@ -725,7 +725,8 @@ public:
         }
 
         /**
-         * Unblock a thread blocked in pop() call, not allowing pop() to block again,
+         * Unblock a thread blocked in pop() call, not allowing pop() to block again.
+         * @throw std::exception on error
          */
         void close()
         {
