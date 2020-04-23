@@ -94,7 +94,10 @@ DomainParticipantImpl::DomainParticipantImpl(
 
 void DomainParticipantImpl::disable()
 {
-    participant_->set_listener(nullptr);
+    if (participant_)
+    {
+        participant_->set_listener(nullptr);
+    }
     rtps_listener_.participant_ = nullptr;
     rtps_participant_->set_listener(nullptr);
     {
@@ -158,8 +161,11 @@ DomainParticipantImpl::~DomainParticipantImpl()
         types_.clear();
     }
 
-    delete participant_;
-    participant_ = nullptr;
+    if (participant_)
+    {
+        delete participant_;
+        participant_ = nullptr;
+    }
 }
 
 ReturnCode_t DomainParticipantImpl::enable()
@@ -167,7 +173,6 @@ ReturnCode_t DomainParticipantImpl::enable()
     rtps_participant_->enable();
     return ReturnCode_t::RETCODE_OK;
 }
-
 
 ReturnCode_t DomainParticipantImpl::set_qos(
         const DomainParticipantQos& qos)
@@ -680,7 +685,7 @@ TopicDescription* DomainParticipantImpl::lookup_topicdescription(
         const std::string& topic_name) const
 {
     auto it = topics_.find(topic_name);
-    
+
     if (it != topics_.end())
     {
         return it->second->user_topic_;

@@ -71,6 +71,7 @@ class SubscriberListener;
 class DomainParticipantImpl
 {
     friend class DomainParticipantFactory;
+    friend class DomainParticipant;
 
 private:
 

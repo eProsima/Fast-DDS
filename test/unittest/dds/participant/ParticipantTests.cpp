@@ -124,7 +124,7 @@ TEST(ParticipantTests, CreateDomainParticipant)
 
 }
 
-TEST(ParticipantTests, DISABLED_CreatePSMDomainParticipant)
+TEST(ParticipantTests, CreatePSMDomainParticipant)
 {
     ::dds::domain::DomainParticipant participant = ::dds::core::null;
     participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);

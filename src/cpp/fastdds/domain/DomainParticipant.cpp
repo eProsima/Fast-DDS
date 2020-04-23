@@ -43,6 +43,7 @@ DomainParticipant::DomainParticipant(
 
 DomainParticipant::~DomainParticipant()
 {
+    impl_->participant_ = nullptr;
 }
 
 ReturnCode_t DomainParticipant::enable()
