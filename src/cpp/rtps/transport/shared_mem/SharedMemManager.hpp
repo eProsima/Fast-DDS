@@ -589,17 +589,23 @@ public:
 
         ~Listener()
         {
-            global_listener_.reset();
-            if (global_port_)
+            if(global_port_)
             {
-                global_port_->unregister_listener();
+                try
+                {
+                    global_port_->unregister_listener(&global_listener_);
+                }
+                catch(const std::exception& e)
+                {
+                    logWarning(RTPS_TRANSPORT_SHM, e.what());
+                }
             }
         }
 
         Listener& operator = (
                 Listener&& other)
         {
-            global_listener_ = other.global_listener_;
+            global_listener_ = std::move(other.global_listener_);
             other.global_listener_.reset();
             global_port_ = other.global_port_;
             other.global_port_.reset();
@@ -731,7 +737,7 @@ public:
 
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
 
-        std::shared_ptr<SharedMemGlobal::Listener> global_listener_;
+        std::unique_ptr<SharedMemGlobal::Listener> global_listener_;
         uint32_t listener_index_;
 
         SharedMemManager* shared_mem_manager_;
