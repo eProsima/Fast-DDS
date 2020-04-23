@@ -131,7 +131,7 @@ bool StatefulReader::matched_writer_add(
         else
         {
             logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
-                    ") reached for writer " << m_guid << endl);
+                    ") reached for writer " << m_guid);
             return false;
         }
     }

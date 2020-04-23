@@ -29,6 +29,9 @@ using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+using std::cout;
+using std::endl;
+
 VideoTestSubscriber::VideoTestSubscriber()
     : mp_participant(nullptr)
     , mp_commandpub(nullptr)

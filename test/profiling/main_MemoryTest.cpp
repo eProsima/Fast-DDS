@@ -37,6 +37,9 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+using std::cout;
+using std::endl;
+
 #if defined(__LITTLE_ENDIAN__)
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #elif defined (__BIG_ENDIAN__)
