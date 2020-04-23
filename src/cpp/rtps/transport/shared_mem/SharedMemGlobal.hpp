@@ -659,7 +659,7 @@ public:
          * @return A shared_ptr to the listener.
          * The listener will be unregistered when shared_ptr is destroyed.
          */
-        std::shared_ptr<Listener> create_listener(uint32_t* listener_index)
+        std::unique_ptr<Listener> create_listener(uint32_t* listener_index)
         {
             std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
 
@@ -672,11 +672,28 @@ public:
          * Decrement the number of listeners by one
          * @throw std::exception when error
          */
-        void unregister_listener()
+        void unregister_listener(std::unique_ptr<Listener>* listener)
         {
-            std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
+            try
+            {
+                std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
 
-            node_->num_listeners--;
+                (*listener).reset();
+                node_->num_listeners--;
+            }
+            catch(const std::exception&)
+            {
+                // The port is not OK
+                if(node_->is_port_ok)
+                {
+                    node_->is_port_ok = false;
+                }
+
+                (*listener).reset();
+                node_->num_listeners--;
+
+                throw;
+            }
         }
 
         /**
