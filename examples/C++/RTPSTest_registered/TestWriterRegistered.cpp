@@ -34,7 +34,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-
+using namespace std;
 
 TestWriterRegistered::TestWriterRegistered()
     : mp_participant(nullptr)

@@ -42,10 +42,13 @@
 
 #include <mutex>
 
+#include "../../../../fastdds/core/policy/ParameterList.hpp"
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
 using eprosima::fastdds::dds::PublicationMatchedStatus;
 using eprosima::fastdds::dds::SubscriptionMatchedStatus;
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {

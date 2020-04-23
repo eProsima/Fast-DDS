@@ -40,6 +40,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include "../../../../fastdds/core/policy/ParameterList.hpp"
+
+using ParameterList = eprosima::fastdds::dds::ParameterList;
+
 // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
 // Keep change information on local variables to check consistency later
 #define PREVENT_PDP_DEADLOCK(reader, change, pdp)                         \

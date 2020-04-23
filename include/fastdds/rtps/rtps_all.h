@@ -40,7 +40,6 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/qos/QosPolicies.h>
 
 #include <fastdds/dds/log/Log.hpp>

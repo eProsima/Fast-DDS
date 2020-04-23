@@ -21,7 +21,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/all_common.h>
-#include <fastrtps/qos/ParameterList.h>
 
 #include <unordered_map>
 #include <mutex>

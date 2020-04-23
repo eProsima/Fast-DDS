@@ -22,6 +22,9 @@
 #include <fastdds/rtps/network/NetworkFactory.h>
 #include <rtps/builtin/data/ProxyDataFilters.hpp>
 #include "../../../fastdds/core/policy/QosPoliciesSerializer.hpp"
+#include "../../../fastdds/core/policy/ParameterList.hpp"
+
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {

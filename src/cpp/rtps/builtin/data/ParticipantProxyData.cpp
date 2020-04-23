@@ -33,10 +33,13 @@
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 
+#include "../../../fastdds/core/policy/ParameterList.hpp"
+
 #include <mutex>
 #include <chrono>
 
 using namespace eprosima::fastrtps;
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {

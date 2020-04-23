@@ -18,12 +18,12 @@
 #ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
+#include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/RemoteLocators.hpp>
 #include <fastrtps/rtps/common/Token.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastrtps/qos/ParameterList.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>

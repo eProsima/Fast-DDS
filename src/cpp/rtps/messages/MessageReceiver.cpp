@@ -26,6 +26,8 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#include "../../fastdds/core/policy/ParameterList.hpp"
+
 #include <cassert>
 #include <limits>
 #include <mutex>
@@ -34,10 +36,11 @@
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
+using ParameterList = eprosima::fastdds::dds::ParameterList;
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
 
 MessageReceiver::MessageReceiver(
         RTPSParticipantImpl* participant,

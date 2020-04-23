@@ -37,6 +37,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include "../../../../fastdds/core/policy/ParameterList.hpp"
+
+using ParameterList = eprosima::fastdds::dds::ParameterList;
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

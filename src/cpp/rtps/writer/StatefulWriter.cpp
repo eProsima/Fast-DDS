@@ -1189,7 +1189,7 @@ bool StatefulWriter::matched_reader_add(
     {
         if (it->guid() == rdata.guid())
         {
-            logInfo(RTPS_WRITER, "Attempting to add existing reader, updating information." << endl);
+            logInfo(RTPS_WRITER, "Attempting to add existing reader, updating information." << std::endl);
             if (it->update(rdata))
             {
                 update_reader_info(true);
@@ -1211,7 +1211,7 @@ bool StatefulWriter::matched_reader_add(
         else
         {
             logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
-                    ") reached for writer " << m_guid << endl);
+                    ") reached for writer " << m_guid << std::endl);
             return false;
         }
     }

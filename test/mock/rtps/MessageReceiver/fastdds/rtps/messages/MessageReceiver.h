@@ -22,7 +22,6 @@
 #define _FASTDDS_RTPS_MESSAGERECEIVER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/common/all_common.h>
-#include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 

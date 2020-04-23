@@ -26,7 +26,6 @@
 #include <fastdds/rtps/common/InstanceHandle.h>
 
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/qos/ParameterList.h>
 
 namespace eprosima {
 namespace fastrtps{
