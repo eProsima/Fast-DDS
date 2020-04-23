@@ -45,7 +45,7 @@ bool AllocTestSubscriber::init(const char* profile, int domainId, const std::str
         eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
             participant_att))
     {
-        participant_att.rtps.builtin.domainId = domainId;
+        participant_att.domainId = domainId;
         mp_participant = Domain::createParticipant(participant_att);
     }
 

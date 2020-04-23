@@ -106,11 +106,11 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
 
     if (m_forcedDomain >= 0)
     {
-        PParam.rtps.builtin.domainId = m_forcedDomain;
+        PParam.domainId = m_forcedDomain;
     }
     else
     {
-        PParam.rtps.builtin.domainId = pid % 230;
+        PParam.domainId = pid % 230;
     }
     PParam.rtps.setName("video_test_subscriber");
     PParam.rtps.properties = part_property_policy;
@@ -124,7 +124,7 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
                 eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                     participant_att))
             {
-                participant_att.rtps.builtin.domainId = m_forcedDomain;
+                participant_att.domainId = m_forcedDomain;
                 mp_participant = Domain::createParticipant(participant_att);
             }
         }
