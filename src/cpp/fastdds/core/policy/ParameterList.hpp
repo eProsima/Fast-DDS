@@ -69,11 +69,75 @@ public:
      * @param[out] qos_size Number of bytes processed.
      * @return true if parsing was correct, false otherwise.
      */
+    template<typename Pred>
     static bool readParameterListfromCDRMsg(
             fastrtps::rtps::CDRMessage_t& msg,
-            std::function<bool(fastrtps::rtps::CDRMessage_t* msg, const ParameterId_t, uint16_t)> processor,
+            Pred processor,
             bool use_encapsulation,
-            uint32_t& qos_size);
+            uint32_t& qos_size)
+    {
+        qos_size = 0;
+
+        if (use_encapsulation)
+        {
+            // Read encapsulation
+            msg.pos += 1;
+            fastrtps::rtps::octet encapsulation = 0;
+            fastrtps::rtps::CDRMessage::readOctet(&msg, &encapsulation);
+            if (encapsulation == PL_CDR_BE)
+            {
+                msg.msg_endian = fastrtps::rtps::Endianness_t::BIGEND;
+            }
+            else if (encapsulation == PL_CDR_LE)
+            {
+                msg.msg_endian = fastrtps::rtps::Endianness_t::LITTLEEND;
+            }
+            else
+            {
+                return false;
+            }
+            // Skip encapsulation options
+            msg.pos += 2;
+        }
+
+        uint32_t original_pos = msg.pos;
+        bool is_sentinel = false;
+        while (!is_sentinel)
+        {
+            msg.pos = original_pos + qos_size;
+
+            ParameterId_t pid;
+            uint16_t plength = 0;
+            bool valid = true;
+            valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+            valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+
+            if (pid == PID_SENTINEL)
+            {
+                // PID_SENTINEL is always considered of length 0
+                plength = 0;
+                is_sentinel = true;
+            }
+
+            qos_size += (4 + plength);
+
+            // Align to 4 byte boundary and prepare for next iteration
+            qos_size = (qos_size + 3) & ~3;
+
+            if (!valid || ((msg.pos + plength) > msg.length))
+            {
+                return false;
+            }
+            else if (!is_sentinel)
+            {
+                if (!processor(&msg, pid, plength))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     /**
      * Read guid from the KEY_HASH or another specific PID parameter of a CDRMessage
