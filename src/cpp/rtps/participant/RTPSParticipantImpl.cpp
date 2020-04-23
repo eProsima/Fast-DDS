@@ -1458,6 +1458,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
                 {
                     Locator_t specific(loc);
                     specific.port = an_any.port;
+                    specific.kind = an_any.kind;
                     return specific;
                 });
 
