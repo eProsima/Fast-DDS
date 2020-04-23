@@ -188,7 +188,6 @@ void MessageReceiver::processCDRMsg(
 #if HAVE_SECURITY
     security::SecurityManager& security = participant_->security_manager();
     CDRMessage_t* auxiliary_buffer = &crypto_msg_;
-    CDRMessage::initCDRMsg(auxiliary_buffer);
 
     int decode_ret = security.decode_rtps_message(*msg, *auxiliary_buffer, source_guid_prefix_);
 
@@ -214,7 +213,6 @@ void MessageReceiver::processCDRMsg(
         CDRMessage_t* submessage = msg;
 
 #if HAVE_SECURITY
-        CDRMessage::initCDRMsg(auxiliary_buffer);
         decode_ret = security.decode_rtps_submessage(*msg, *auxiliary_buffer, source_guid_prefix_);
 
         if (decode_ret < 0)
