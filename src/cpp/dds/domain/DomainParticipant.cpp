@@ -29,18 +29,6 @@
 namespace dds {
 namespace domain {
 
-//DomainParticipant::DomainParticipant(
-//        uint32_t did)
-//    : dds::core::Reference<detail::DomainParticipant>(
-//        new detail::DomainParticipant(
-//            did,
-//            eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT,
-//            nullptr,
-//            dds::core::status::StatusMask::all()))
-//{
-//    std::cout << "Constructor PSM " << this << std::endl;
-//}
-
 DomainParticipant::DomainParticipant(
         uint32_t did)
     : dds::core::Reference<detail::DomainParticipant>(
@@ -54,7 +42,7 @@ DomainParticipant::DomainParticipant(
         dds::domain::DomainParticipantListener* listener,
         const dds::core::status::StatusMask& mask)
     : dds::core::Reference<detail::DomainParticipant>(
-        new detail::DomainParticipant(
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
             id,
             qos,
             listener,

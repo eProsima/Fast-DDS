@@ -367,6 +367,30 @@ bool DomainParticipantFactory::can_qos_be_updated(
     return true;
 }
 
+void DomainParticipantFactory::update_active_participants(
+        DomainParticipantImpl* part)
+{
+    auto it = participants_.find(part->get_domain_id());
+    if (it != participants_.end())
+    {
+        for (auto pit = it->second.begin(); pit != it->second.end();)
+        {
+            if ((*pit) == part || (*pit)->guid() == part->guid())
+            {
+                it->second.erase(pit);
+            }
+            else
+            {
+                ++pit;
+            }
+        }
+        if (it->second.empty())
+        {
+            participants_.erase(it);
+        }
+    }
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

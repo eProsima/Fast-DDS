@@ -151,6 +151,8 @@ DomainParticipantImpl::~DomainParticipantImpl()
         topics_by_handle_.clear();
     }
 
+    DomainParticipantFactory::get_instance()->update_active_participants(this);
+
     if (rtps_participant_ != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(rtps_participant_);

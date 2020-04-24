@@ -44,6 +44,7 @@ DomainParticipant::DomainParticipant(
 DomainParticipant::~DomainParticipant()
 {
     impl_->participant_ = nullptr;
+    delete impl_;
 }
 
 ReturnCode_t DomainParticipant::enable()
