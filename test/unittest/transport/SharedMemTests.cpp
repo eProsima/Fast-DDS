@@ -1195,6 +1195,7 @@ TEST_F(SHMTransportTests, port_not_ok_listener_recover)
     
     MockPortSharedMemGlobal port_mocker;
     port_mocker.set_port_not_ok(*port);
+    (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
 
     while(stage.load() != 1u)
     { 
