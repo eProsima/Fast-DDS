@@ -5,11 +5,11 @@
 option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast RTPS" OFF)
 
 if(NOT (TINYXML2_FROM_SOURCE OR THIRDPARTY))
-    find_package(TinyXML2 CONFIG QUIET)
+    find_package(tinyxml2 CONFIG)
 endif()
 
-if(TinyXML2_FOUND AND NOT THIRDPARTY)
-    message(STATUS "Found TinyXML2: ${TinyXML2_DIR}")
+if(tinyxml2_FOUND AND NOT THIRDPARTY)
+    message(STATUS "Found TinyXML2: ${tinyxml2_DIR}")
     if(NOT TINYXML2_LIBRARY)
         # in this case, we're probably using TinyXML2 version 5.0.0 or greater
         # in which case tinyxml2 is an exported target and we should use that
