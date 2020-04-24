@@ -124,7 +124,7 @@ private:
 
     int open_and_lock_file(const std::string& file_path)
     {
-        auto fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0444);
+        auto fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
 
         if (fd == -1)
         {
