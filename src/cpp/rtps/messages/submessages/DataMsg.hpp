@@ -17,9 +17,10 @@
  *
  */
 
-#include "../../../fastdds/core/policy/ParameterSerializer.hpp"
-#include "../../../fastdds/core/policy/ParameterList.hpp"
 #include <fastrtps/qos/ParameterTypes.h>
+
+#include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/core/policy/ParameterList.hpp>
 
 namespace eprosima {
 namespace fastrtps {

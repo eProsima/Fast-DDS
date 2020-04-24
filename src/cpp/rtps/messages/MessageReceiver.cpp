@@ -18,15 +18,14 @@
  */
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/reader/ReaderListener.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include "../../fastdds/core/policy/ParameterList.hpp"
+#include <fastdds/core/policy/ParameterList.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <cassert>
 #include <limits>

@@ -18,31 +18,31 @@
  */
 
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+
 #include <fastrtps/attributes/TopicAttributes.h>
 
 #include <fastrtps/utils/StringMatching.h>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps/types/TypeObjectFactory.h>
 
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
-
-#include "../../../../fastdds/core/policy/ParameterList.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
