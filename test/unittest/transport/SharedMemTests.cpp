@@ -578,9 +578,9 @@ TEST_F(SHMCondition, max_listeners)
     static constexpr uint32_t max_test_listeners = 1024;
     std::vector<std::thread> threads;
 
-    std::atomic<uint32_t> waiting_threads;
-    std::atomic<uint32_t> wait_exception;
-    std::atomic<uint32_t> wait_ok;
+    std::atomic<uint32_t> waiting_threads(0);
+    std::atomic<uint32_t> wait_exception(0);
+    std::atomic<uint32_t> wait_ok(0);
 
     for (uint32_t i=0; i<max_test_listeners; i++)
     {
@@ -981,6 +981,22 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
     thread_locker.join();
 }
 
+TEST_F(SHMTransportTests, port_lock_read_exclusive)
+{
+    const std::string domain_name("SHMTests");
+
+    SharedMemManager shared_mem_manager(domain_name);
+
+    shared_mem_manager.remove_port(0);
+
+    auto port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    ASSERT_THROW(shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive),
+        std::exception);
+
+    port.reset();
+    port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+}
+
 TEST_F(SHMTransportTests, port_listener_dead_recover)
 {
     const std::string domain_name("SHMTests");
@@ -1194,13 +1210,14 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
     thread_locker.join();
 }
 
-TEST_F(SHMTransportTests, dead_listener_port_recover)
+TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 {
     const std::string domain_name("SHMTests");
 
     SharedMemManager shared_mem_manager(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
     
+    shared_mem_global->remove_port(0);
     auto deadlocked_port = shared_mem_global->open_port(0, 1, 1000);
     uint32_t listener_index;
     auto deadlocked_listener = deadlocked_port->create_listener(&listener_index);
@@ -1233,6 +1250,52 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 
     deadlocked_port->close_listener(&is_listener_closed);
     thread_wait_deadlock.join();
+}
+
+TEST_F(SHMTransportTests, port_not_ok_listener_recover)
+{
+    const std::string domain_name("SHMTests");
+
+    SharedMemManager shared_mem_manager(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
+
+    shared_mem_global->remove_port(0);
+    auto read_port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    auto listener = read_port->create_listener();
+
+    std::atomic<uint32_t> stage(0u);
+
+    // Simulates a deadlocked wait_pop
+    std::thread thread_listener([&]
+        {
+            auto buff = listener->pop();
+            // The pop is broken by port regeneration
+            ASSERT_TRUE(buff == nullptr);
+            stage.exchange(1u);
+            buff = listener->pop();
+            ASSERT_TRUE(*static_cast<uint8_t*>(buff->data()) == 6);
+        });
+
+    // Open the deadlocked port
+    auto port = shared_mem_global->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
+    auto managed_port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
+    auto data_segment = shared_mem_manager.create_segment(1, 1);
+    
+    MockPortSharedMemGlobal port_mocker;
+    port_mocker.set_port_not_ok(*port);
+
+    while(stage.load() != 1u)
+    { 
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    auto buffer = data_segment->alloc_buffer(1, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+    *static_cast<uint8_t*>(buffer->data()) = 6;
+    // Fail because port regeneration
+    ASSERT_FALSE(managed_port->try_push(buffer));
+    ASSERT_TRUE(managed_port->try_push(buffer));
+
+    thread_listener.join();
 }
 
 TEST_F(SHMTransportTests, buffer_recover)
