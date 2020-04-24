@@ -712,12 +712,7 @@ public:
 
         void regenerate_port()
         {
-            auto new_port = shared_mem_manager_->open_port(
-                global_port_->port_id(),
-                global_port_->max_buffer_descriptors(),
-                global_port_->healthy_check_timeout_ms(),
-                global_port_->open_mode()
-                );
+            auto new_port = shared_mem_manager_->regenerate_port(global_port_, global_port_->open_mode());
 
             auto new_listener = new_port->create_listener();
 
@@ -832,12 +827,8 @@ public:
     private:
 
         void regenerate_port()
-        {
-            auto new_port = shared_mem_manager_->open_port(
-                global_port_->port_id(),
-                global_port_->max_buffer_descriptors(),
-                global_port_->healthy_check_timeout_ms(),
-                open_mode_);
+        {            
+            auto new_port = shared_mem_manager_->regenerate_port(global_port_, open_mode_);
 
             *this = std::move(*new_port);
         }
@@ -902,6 +893,11 @@ public:
 
 private:
 
+    std::shared_ptr<Port> regenerate_port(std::shared_ptr<SharedMemGlobal::Port> port, SharedMemGlobal::Port::OpenMode open_mode)
+    {
+        return std::make_shared<Port>(this, global_segment_.regenerate_port(port, open_mode), open_mode);
+    }
+
     /**
      * Controls life-cycle of a remote segment
      */
@@ -911,7 +907,6 @@ private:
 
         SegmentWrapper()
         {
-
         }
 
         SegmentWrapper(

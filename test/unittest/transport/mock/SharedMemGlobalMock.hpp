@@ -80,6 +80,11 @@ public:
         is_listener_closed.exchange(true);
         port.node_->empty_cv.notify_all();
     }
+
+    static void set_port_not_ok(SharedMemGlobal::Port& port)
+    {
+        port.node_->is_port_ok = false;
+    }
 };
 
 } // namespace rtps
