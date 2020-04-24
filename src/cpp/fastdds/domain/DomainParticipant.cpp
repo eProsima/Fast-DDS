@@ -43,8 +43,12 @@ DomainParticipant::DomainParticipant(
 
 DomainParticipant::~DomainParticipant()
 {
-    impl_->participant_ = nullptr;
-    delete impl_;
+    if (impl_)
+    {
+        impl_->participant_ = nullptr;
+        delete impl_;
+        impl_ = nullptr;
+    }
 }
 
 ReturnCode_t DomainParticipant::enable()

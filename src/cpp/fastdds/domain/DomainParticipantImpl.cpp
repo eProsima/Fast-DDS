@@ -165,6 +165,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
     if (participant_)
     {
+        participant_->impl_ = nullptr;
         delete participant_;
         participant_ = nullptr;
     }
