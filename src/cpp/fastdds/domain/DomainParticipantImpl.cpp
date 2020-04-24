@@ -391,7 +391,11 @@ Publisher* DomainParticipantImpl::create_publisher(
 
 DomainId_t DomainParticipantImpl::get_domain_id() const
 {
-    return rtps_participant_->get_domain_id();
+    if (rtps_participant())
+    {
+        return rtps_participant_->get_domain_id();
+    }
+    return -1;
 }
 
 /* TODO
