@@ -232,12 +232,7 @@ public:
     SharedMemManager(
             const std::string& domain_name)
         : global_segment_(
-            domain_name,
-            []( const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
-                const std::string& domain_name)
-            {
-                on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
-            })
+            domain_name)
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
 
@@ -249,13 +244,6 @@ public:
                       std::to_string(SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH) +
                       " characters");
         }
-
-        SharedMemGlobal::Port::on_failure_buffer_descriptors_handler(
-            []( const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
-                const std::string& domain_name)
-            {
-                on_failure_buffer_descriptor_handler(buffer_descriptors, domain_name);
-            });
 
         per_allocation_extra_size_ =
                 SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
@@ -990,36 +978,6 @@ private:
         }
 
         return segment;
-    }
-
-    /**
-     * Called by PortWatchdog when a dead listener has been detected.
-     * At this point the port is marked as not OK, and a vector of
-     * the recovered descriptors, from the port, are passed to
-     * this function that performs their release.
-     */
-    static void on_failure_buffer_descriptor_handler(
-            const std::vector<const SharedMemGlobal::BufferDescriptor*>& buffer_descriptors,
-            const std::string& domain_name)
-    {
-        try
-        {
-            SharedMemManager shared_mem_manager(domain_name);
-
-            for (auto buffer_descriptor : buffer_descriptors)
-            {
-                SegmentNode* segment_node;
-                auto segment = shared_mem_manager.find_segment(buffer_descriptor->source_segment_id, &segment_node);
-                auto buffer_node =
-                        static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor->buffer_node_offset));
-
-                buffer_node->dec_enqueued_count(buffer_descriptor->validity_id);
-            }
-        }
-        catch (const std::exception& e)
-        {
-            logError(RTPS_TRANSPORT_SHM, e.what());
-        }
     }
 };
 

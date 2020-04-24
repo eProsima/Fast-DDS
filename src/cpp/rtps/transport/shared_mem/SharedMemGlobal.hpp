@@ -38,16 +38,12 @@ class SharedMemGlobal
 public:
 
     struct BufferDescriptor;
-    typedef std::function<void(const std::vector<
-                const SharedMemGlobal::BufferDescriptor*>&,
-                const std::string& domain_name)> PortFailureHandler;
 
     // Long names for SHM files could cause problems on some platforms
     static constexpr uint32_t MAX_DOMAIN_NAME_LENGTH = 16; 
 
     SharedMemGlobal(
-        const std::string& domain_name,
-        PortFailureHandler failure_handler)
+        const std::string& domain_name)
         : domain_name_(domain_name)
     {
         if (domain_name.length() > MAX_DOMAIN_NAME_LENGTH)
@@ -58,8 +54,6 @@ public:
                     std::to_string(MAX_DOMAIN_NAME_LENGTH) +
                     " characters");
         }
-
-        Port::on_failure_buffer_descriptors_handler(failure_handler);
     }
 
     ~SharedMemGlobal()
@@ -178,30 +172,6 @@ public:
             }
 
             /**
-             * Sets the on_failure_buffer_descriptors_handler_.
-             * This is done only the first time the function is called,
-             * as the handler must be a static inmutable function.
-             */
-            void on_failure_buffer_descriptors_handler(
-                    std::function<void(const std::vector<
-                        const BufferDescriptor*>&,
-                    const std::string& domain_name)> handler)
-            {
-                if (!is_on_failure_buffer_descriptors_handler_set_)
-                {
-                    std::lock_guard<std::mutex> lock(watched_ports_mutex_);
-
-                    // Checking is_on_failure_buffer_descriptors_handler_set_ twice can be weird but avoid
-                    // the use of a recursive_mutex here.
-                    if (!is_on_failure_buffer_descriptors_handler_set_)
-                    {
-                        on_failure_buffer_descriptors_handler_ = handler;
-                        is_on_failure_buffer_descriptors_handler_set_ = true;
-                    }
-                }
-            }
-
-            /**
              * Called by the Port constructor, adds a port to the watching list.
              */
             void add_port_to_watch(
@@ -259,16 +229,9 @@ public:
 
             bool exit_thread_;
 
-            std::function<void(
-                        const std::vector<const BufferDescriptor*>&,
-                        const std::string& domain_name)> on_failure_buffer_descriptors_handler_;
-
-            bool is_on_failure_buffer_descriptors_handler_set_;
-
             Watchdog()
                 : wake_run_(false)
                 , exit_thread_(false)
-                , is_on_failure_buffer_descriptors_handler_set_(false)
             {
                 thread_run_ = std::thread(&Watchdog::run, this);
             }
@@ -346,10 +309,6 @@ public:
                                     if ((*port_it)->node->is_port_ok)
                                     {
                                         (*port_it)->node->is_port_ok = false;
-                                        (*port_it)->buffer->copy(&descriptors_enqueued);
-                                        assert(on_failure_buffer_descriptors_handler_);
-                                        on_failure_buffer_descriptors_handler_(descriptors_enqueued,
-                                                (*port_it)->node->domain_name);
                                     }
                                 }
 
@@ -471,15 +430,6 @@ public:
                 SharedMemSegment::remove(segment_name.c_str());
                 SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
             }
-        }
-
-        static void on_failure_buffer_descriptors_handler(
-                std::function<void(
-                    const std::vector<const BufferDescriptor*>&,
-                    const std::string& domain_name)> handler)
-
-        {
-            Watchdog::get().on_failure_buffer_descriptors_handler(handler);
         }
 
         /**
