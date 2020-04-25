@@ -56,11 +56,6 @@ public:
         }
     }
 
-    ~SharedMemGlobal()
-    {
-
-    }
-
     /**
      * Identifies a data buffer given its segment_id (shared-memory segment global_name)
      * and offset inside the segment
