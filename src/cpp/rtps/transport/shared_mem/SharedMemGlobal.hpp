@@ -725,7 +725,7 @@ public:
 
     /**
      * Delete the port and open a new one with the same ID.
-     * It's is used when a port has been marked as not OK.
+     * It is used when a port has been marked as not OK.
      * @return A shared_ptr to the new port
      * @throw std::exception on error
      */
