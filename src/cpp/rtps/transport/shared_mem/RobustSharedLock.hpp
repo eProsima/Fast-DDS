@@ -134,7 +134,7 @@ private:
         // Lock the file other processes
         if (0 != flock(fd, LOCK_EX | LOCK_NB))
         {
-            close(fd_);
+            close(fd);
             throw std::runtime_error(("failed to lock " + file_path).c_str());
         }
 
