@@ -21,7 +21,7 @@
 
 #include <rtps/transport/shared_mem/SharedMemSegment.hpp>
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
-#include <rtps/transport/shared_mem/RobustSharedLock.hpp>
+#include <rtps/transport/shared_mem/RobustExclusiveLock.hpp>
 
 #define THREADID "(ID:" << std::this_thread::get_id() <<") "
 
@@ -129,7 +129,7 @@ public:
 
         uint64_t overflows_count_;
 
-        std::unique_ptr<RobustSharedLock> read_exclusive_lock_;
+        std::unique_ptr<RobustExclusiveLock> read_exclusive_lock_;
 
         inline void notify_unicast(
                 bool was_buffer_empty_before_push)
@@ -691,8 +691,8 @@ public:
 
         void lock_read_exclusive()
         {
-            std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_sl";
-            read_exclusive_lock_ = std::unique_ptr<RobustSharedLock>(new RobustSharedLock(lock_name));
+            std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_el";
+            read_exclusive_lock_ = std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
         }
 
         void unlock_read_exclusive()
