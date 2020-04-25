@@ -81,41 +81,57 @@ public:
             boost::interprocess::create_only_t,
             const std::string& name,
             size_t size)
-        : segment_(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size + EXTRA_SEGMENT_SIZE))
-        , name_(name)
+        : name_(name)
     {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), 
+                static_cast<Offset>(size + EXTRA_SEGMENT_SIZE)));
     }
 
     SharedMemSegment(
             boost::interprocess::open_only_t,
             const std::string& name)
-        : segment_(boost::interprocess::open_only, name.c_str())
-        , name_(name)
+        : name_(name)
     {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::open_only, name.c_str()));
     }
 
     SharedMemSegment(
             boost::interprocess::open_or_create_t,
             const std::string& name,
             size_t size)
-        : segment_(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size))
-        , name_(name)
+        : name_(name)
     {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size)));
+    }
+
+    ~SharedMemSegment()
+    {
+        try
+        {
+            segment_.reset();
+        }
+        catch(const std::exception& e)
+        {
+            logWarning(RTPS_TRANSPORT_SHM, e.what());
+        }
     }
 
     void* get_address_from_offset(
             SharedMemSegment::Offset offset) const
     {
-        return segment_.get_address_from_handle(offset);
+        return segment_->get_address_from_handle(offset);
     }
 
     SharedMemSegment::Offset get_offset_from_address(
             void* address) const
     {
-        return segment_.get_handle_from_address(address);
+        return segment_->get_handle_from_address(address);
     }
 
-    managed_shared_memory_type& get() { return segment_;}
+    managed_shared_memory_type& get() { return *segment_;}
 
     static void remove(
             const std::string& name)
@@ -292,7 +308,7 @@ private:
         }
     } shared_mem_environment_initializer_;
 
-    managed_shared_memory_type segment_;
+    std::unique_ptr<managed_shared_memory_type> segment_;
 
     std::string name_;
 };
