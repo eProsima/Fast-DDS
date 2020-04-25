@@ -232,8 +232,7 @@ public:
 
     SharedMemManager(
             const std::string& domain_name)
-        : global_segment_(
-            domain_name)
+        : global_segment_(domain_name)
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
 

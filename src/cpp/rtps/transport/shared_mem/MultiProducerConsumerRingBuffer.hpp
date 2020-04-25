@@ -245,10 +245,10 @@ public:
     /**
      * Register a new listener (consumer)
      * The new listener's read pointer is equal to the ring-buffer write pointer at the registering moment.
-     * @return A shared_ptr to the listener.
+     * @return A unique_ptr to the listener.
      * @remarks This operation is not lock-free with push() / pop() operations, so the upper layer is responsible
      * for the mutual exclusion handling.
-     * The listener will be unregistered when shared_ptr is destroyed.
+     * The listener will be unregistered when the unique_ptr is destroyed.
      */
     std::unique_ptr<Listener> register_listener()
     {
@@ -358,8 +358,9 @@ private:
     }
 
     /**
-     * @remarks This operation is not lock-free with push() / pop() operations, so the upper layer is responsible
-     * for the mutual exclusion handling.
+     * Unregister a listener.
+     * @param listener Reference to the listener to unregister.
+     * @remarks This operation is not lock-free with push() / pop() operations, so the upper layer is responsible.
      */
     void unregister_listener(
             Listener& listener)

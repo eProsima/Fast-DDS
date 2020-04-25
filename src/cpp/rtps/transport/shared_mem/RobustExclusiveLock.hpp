@@ -54,6 +54,9 @@ public:
         name_ = name;
     }
 
+    /**
+     *  Unlock the interprocess lock.
+     */
     ~RobustExclusiveLock()
     {
         unlock_and_close();
