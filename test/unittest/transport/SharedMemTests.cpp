@@ -997,6 +997,52 @@ TEST_F(SHMTransportTests, port_lock_read_exclusive)
     port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
 }
 
+TEST_F(SHMTransportTests, robust_shared_lock)
+{
+    const std::string lock_name = "robust_shared_lock_test1_sl";
+
+    RobustSharedLock::remove(lock_name.c_str());
+
+    ASSERT_FALSE(RobustSharedLock::is_locked(lock_name));
+
+    auto sl1 = std::make_shared<RobustSharedLock>(lock_name);
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    auto sl2 = std::make_shared<RobustSharedLock>(lock_name);
+
+    sl1.reset();
+    // sl2 holds the lock
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    auto new_lock = RobustSharedLock::try_lock_as_new(lock_name);
+    // sl2 holds the lock
+    ASSERT_TRUE(new_lock == nullptr);
+
+    sl2.reset();
+    // the lock is free
+    ASSERT_FALSE(RobustSharedLock::is_locked(lock_name));
+
+    // and has been removed
+    ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
+
+    new_lock = RobustSharedLock::try_lock_as_new(lock_name);
+    // Create a new lock
+    ASSERT_FALSE(new_lock == nullptr);
+
+    sl1 = std::make_shared<RobustSharedLock>(lock_name);
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    new_lock.reset();
+    // sl1 holds the lock
+    new_lock = RobustSharedLock::try_lock_as_new(lock_name);
+    ASSERT_TRUE(new_lock == nullptr);
+
+    sl1.reset();
+    
+    // Thre resource has been removed
+    ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
+}
+
 TEST_F(SHMTransportTests, port_listener_dead_recover)
 {
     const std::string domain_name("SHMTests");
