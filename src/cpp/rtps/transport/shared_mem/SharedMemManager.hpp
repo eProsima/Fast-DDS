@@ -338,13 +338,14 @@ public:
         Segment(
                 uint32_t size,
                 uint32_t payload_size,
-                uint32_t max_allocations)
+                uint32_t max_allocations,
+                const std::string& domain_name)
             : segment_id_()
             , overflows_count_(0)
         {
             segment_id_.generate();
 
-            auto segment_name = segment_id_.to_string();
+            auto segment_name = domain_name + "_" + segment_id_.to_string();
 
             SharedMemSegment::remove(segment_name.c_str());
 
@@ -848,7 +849,7 @@ public:
             (max_allocations * sizeof(BufferNode)) + per_allocation_extra_size_ +
             max_allocations * per_allocation_extra_size_;
 
-        return std::make_shared<Segment>(size + allocation_extra_size, size, max_allocations);
+        return std::make_shared<Segment>(size + allocation_extra_size, size, max_allocations, global_segment_.domain_name());
     }
 
     std::shared_ptr<Port> open_port(
@@ -899,9 +900,9 @@ private:
 
         SegmentWrapper(
                 std::shared_ptr<SharedMemSegment> segment_,
-                SharedMemSegment::Id segment_id)
+                const std::string& segment_name)
             : segment_(segment_)
-            , segment_id_(segment_id)
+            , segment_name_(segment_name)
         {
             segment_node_ = segment_->get().find<SegmentNode>("segment_node").first;
 
@@ -917,7 +918,7 @@ private:
                 SegmentWrapper&& other)
         {
             segment_ = other.segment_;
-            segment_id_ = other.segment_id_;
+            segment_name_ = other.segment_name_;
             segment_node_ = other.segment_node_;
 
             other.segment_.reset();
@@ -930,7 +931,7 @@ private:
             if (segment_ != nullptr && segment_node_->ref_count.fetch_sub(1) == 1)
             {
                 segment_.reset();
-                SharedMemSegment::remove(segment_id_.to_string().c_str());
+                SharedMemSegment::remove(segment_name_.c_str());
             }
         }
 
@@ -940,7 +941,7 @@ private:
     private:
 
         std::shared_ptr<SharedMemSegment> segment_;
-        SharedMemSegment::Id segment_id_;
+        std::string segment_name_;
         SegmentNode* segment_node_;
     };
 
@@ -970,8 +971,9 @@ private:
         }
         catch (std::out_of_range&)
         {
-            segment = std::make_shared<SharedMemSegment>(boost::interprocess::open_only, id.to_string());
-            SegmentWrapper segment_wrapper(segment, id);
+            auto segment_name = global_segment_.domain_name() + "_" + id.to_string();
+            segment = std::make_shared<SharedMemSegment>(boost::interprocess::open_only, segment_name);
+            SegmentWrapper segment_wrapper(segment, segment_name);
 
             *segment_node = segment_wrapper.segment_node();
             ids_segments_[id.get()] = std::move(segment_wrapper);

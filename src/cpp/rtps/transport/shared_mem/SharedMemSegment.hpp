@@ -239,7 +239,7 @@ public:
     {
     public:
 
-        typedef UUID<16> type;
+        typedef UUID<8> type;
 
         Id()
         {
