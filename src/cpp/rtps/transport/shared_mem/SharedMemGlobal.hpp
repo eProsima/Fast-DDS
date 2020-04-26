@@ -749,6 +749,11 @@ public:
         SharedMemSegment::remove(port_segment_name.c_str());
     }
 
+    std::string domain_name()
+    {
+        return domain_name_;
+    }
+
 private:
 
     std::string domain_name_;

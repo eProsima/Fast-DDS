@@ -192,10 +192,10 @@ private:
 
 namespace std {
 template <>
-struct hash<eprosima::fastdds::rtps::UUID<16> >
+struct hash<eprosima::fastdds::rtps::UUID<8> >
 {
     std::size_t operator()(
-            const eprosima::fastdds::rtps::UUID<16>& k) const
+            const eprosima::fastdds::rtps::UUID<8>& k) const
     {
         return k.hash();
     }
