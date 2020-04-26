@@ -150,11 +150,10 @@ public:
 
     struct Node
     {
-        std::atomic<Pointer> pointer_;
+        alignas(8) std::atomic<Pointer> pointer_;
         uint32_t total_cells_;
 
         uint32_t registered_listeners_;
-        uint32_t pad;
     };
 
     MultiProducerConsumerRingBuffer(
