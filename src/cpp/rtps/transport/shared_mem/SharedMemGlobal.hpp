@@ -70,7 +70,7 @@ public:
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell PortCell;
 
-    static const uint32_t CURRENT_ABI_VERSION = 4;
+    static const uint32_t CURRENT_ABI_VERSION = 5;
 
     struct PortNode
     {

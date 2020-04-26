@@ -222,12 +222,6 @@ private:
         }        
     };
 
-    struct SegmentNode
-    {
-        std::atomic<uint32_t> ref_count;
-        uint32_t pad;
-    };
-
 public:
 
     SharedMemManager(
@@ -343,29 +337,22 @@ public:
             : segment_id_()
             , overflows_count_(0)
         {
-            segment_id_.generate();
+            generate_segment_id_and_name(domain_name);
 
-            auto segment_name = domain_name + "_" + segment_id_.to_string();
-
-            SharedMemSegment::remove(segment_name.c_str());
+            SharedMemSegment::remove(segment_name_.c_str());
 
             try
             {
                 segment_ = std::unique_ptr<SharedMemSegment>(
-                    new SharedMemSegment(boost::interprocess::create_only, segment_name.c_str(), size));
+                    new SharedMemSegment(boost::interprocess::create_only, segment_name_.c_str(), size));
             }
             catch (const std::exception& e)
             {
-                logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << segment_name
+                logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << segment_name_
                                                                          << ": " << e.what());
 
                 throw;
             }
-
-            // Init the segment node
-            segment_node_ = segment_->get().construct<SegmentNode>("segment_node")();
-            segment_node_->ref_count.exchange(1);
-            segment_node_->pad = 0;
 
             free_bytes_ = payload_size;
 
@@ -385,11 +372,13 @@ public:
 
         ~Segment()
         {
-            if (segment_node_->ref_count.fetch_sub(1) == 1)
-            {
-                segment_.reset();
-                SharedMemSegment::remove(segment_id_.to_string().c_str());
-            }
+            segment_.reset();
+
+            // After remove(), remote processes with the segment open will still have the memory block mapped,
+            // but that block is unlinked to the namespace, so next trials to open a segment called segment_name_
+            // will fail.
+            // The memory block will be freed, by the OS, when last handle is closed.
+            SharedMemSegment::remove(segment_name_.c_str());
 
             if (overflows_count_)
             {
@@ -472,7 +461,9 @@ public:
 
     private:
 
-        SegmentNode* segment_node_;
+        std::string segment_name_;
+
+        std::unique_ptr<RobustExclusiveLock> segment_name_lock_;
 
         // TODO(Adolfo) : Dynamic allocations. Use foonathan to convert it to static allocation
         std::list<BufferNode*> free_buffers_;
@@ -484,6 +475,36 @@ public:
         uint64_t overflows_count_;
 
         uint32_t free_bytes_;
+
+        void generate_segment_id_and_name(
+                const std::string& domain_name)
+        {
+            static constexpr uint32_t MAX_COLLISIONS = 16;
+            uint32_t collisions_count = MAX_COLLISIONS;
+
+            do
+            {
+                // No collisions are most probable
+                segment_id_.generate();
+                segment_name_ = domain_name + "_" + segment_id_.to_string();
+
+                try
+                {
+                    // Lock exclusive the segment name while the segment is alive
+                    segment_name_lock_ =
+                            std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(segment_name_ + "_el"));
+                }
+                catch (const std::exception&)
+                {
+                    collisions_count--;
+                }
+            } while (collisions_count > 0 && nullptr == segment_name_lock_);
+
+            if (nullptr == segment_name_lock_)
+            {
+                throw std::runtime_error("error: couldn't generate segment_name");
+            }
+        }
 
         inline BufferNode* pop_free_node()
         {
@@ -644,8 +665,7 @@ public:
 
                     SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
 
-                    SegmentNode* segment_node;
-                    auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id, &segment_node);
+                    auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
                     auto buffer_node =
                             static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.buffer_node_offset));
 
@@ -844,9 +864,7 @@ public:
         // This is due to the allocator internal structures (also residing in the shared-memory segment)
         // used to manage the allocation algorithm. 
         // So with an estimation of 'max_allocations' user buffers, the total segment extra size is computed.
-        uint32_t allocation_extra_size = 
-            sizeof(SegmentNode) + per_allocation_extra_size_ +
-            (max_allocations * sizeof(BufferNode)) + per_allocation_extra_size_ +
+        uint32_t allocation_extra_size = (max_allocations * sizeof(BufferNode)) + per_allocation_extra_size_ +
             max_allocations * per_allocation_extra_size_;
 
         return std::make_shared<Segment>(size + allocation_extra_size, size, max_allocations, global_segment_.domain_name());
@@ -904,14 +922,6 @@ private:
             : segment_(segment_)
             , segment_name_(segment_name)
         {
-            segment_node_ = segment_->get().find<SegmentNode>("segment_node").first;
-
-            if (!segment_node_)
-            {
-                throw std::runtime_error("segment_node not found");
-            }
-
-            segment_node_->ref_count.fetch_add(1);
         }
 
         SegmentWrapper& operator=(
@@ -919,30 +929,18 @@ private:
         {
             segment_ = other.segment_;
             segment_name_ = other.segment_name_;
-            segment_node_ = other.segment_node_;
 
             other.segment_.reset();
 
             return *this;
         }
 
-        ~SegmentWrapper()
-        {
-            if (segment_ != nullptr && segment_node_->ref_count.fetch_sub(1) == 1)
-            {
-                segment_.reset();
-                SharedMemSegment::remove(segment_name_.c_str());
-            }
-        }
-
         std::shared_ptr<SharedMemSegment> segment() { return segment_; }
-        SegmentNode* segment_node() { return segment_node_; }
 
     private:
 
         std::shared_ptr<SharedMemSegment> segment_;
         std::string segment_name_;
-        SegmentNode* segment_node_;
     };
 
     uint32_t per_allocation_extra_size_;
@@ -954,8 +952,7 @@ private:
     SharedMemGlobal global_segment_;
 
     std::shared_ptr<SharedMemSegment> find_segment(
-            SharedMemSegment::Id id,
-            SegmentNode** segment_node)
+            SharedMemSegment::Id id)
     {
         std::lock_guard<std::mutex> lock(ids_segments_mutex_);
 
@@ -967,7 +964,6 @@ private:
         {
             SegmentWrapper& segment_wrapper = ids_segments_.at(id.get());
             segment = segment_wrapper.segment();
-            *segment_node = segment_wrapper.segment_node();
         }
         catch (std::out_of_range&)
         {
@@ -975,7 +971,6 @@ private:
             segment = std::make_shared<SharedMemSegment>(boost::interprocess::open_only, segment_name);
             SegmentWrapper segment_wrapper(segment, segment_name);
 
-            *segment_node = segment_wrapper.segment_node();
             ids_segments_[id.get()] = std::move(segment_wrapper);
         }
 
