@@ -44,6 +44,48 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+static void set_qos_from_attributes(
+        DomainParticipantQos& qos,
+        const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr)
+{
+    qos.user_data().setValue(attr.userData);
+    qos.allocation() = attr.allocation;
+    qos.properties() = attr.properties;
+    qos.wire_protocol().prefix = attr.prefix;
+    qos.wire_protocol().participant_id = attr.participantID;
+    qos.wire_protocol().builtin = attr.builtin;
+    qos.wire_protocol().port = attr.port;
+    qos.wire_protocol().throughput_controller = attr.throughputController;
+    qos.wire_protocol().default_unicast_locator_list = attr.defaultUnicastLocatorList;
+    qos.wire_protocol().default_multicast_locator_list = attr.defaultMulticastLocatorList;
+    qos.transport().user_transports = attr.userTransports;
+    qos.transport().use_builtin_transports = attr.useBuiltinTransports;
+    qos.transport().send_socket_buffer_size = attr.sendSocketBufferSize;
+    qos.transport().listen_socket_buffer_size = attr.listenSocketBufferSize;
+    qos.name() = attr.getName();
+}
+
+static void set_attributes_from_qos(
+        fastrtps::rtps::RTPSParticipantAttributes& attr,
+        const DomainParticipantQos& qos)
+{
+    attr.allocation = qos.allocation();
+    attr.properties = qos.properties();
+    attr.setName(qos.name());
+    attr.prefix = qos.wire_protocol().prefix;
+    attr.participantID = qos.wire_protocol().participant_id;
+    attr.builtin = qos.wire_protocol().builtin;
+    attr.port = qos.wire_protocol().port;
+    attr.throughputController = qos.wire_protocol().throughput_controller;
+    attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
+    attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
+    attr.userTransports = qos.transport().user_transports;
+    attr.useBuiltinTransports = qos.transport().use_builtin_transports;
+    attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
+    attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
+    attr.userData = qos.user_data().data_vec();
+}
+    
 class DomainParticipantFactoryReleaser
 {
 public:
@@ -167,12 +209,15 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen,
         const StatusMask& mask)
 {
+    load_profiles();
+
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
     DomainParticipant* dom_part = new DomainParticipant(mask);
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, pqos, listen);
 
-    fastrtps::rtps::RTPSParticipantAttributes rtps_attr = get_attributes(pqos);
+    fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
+    set_attributes_from_qos(rtps_attr, pqos);
     RTPSParticipant* part = RTPSDomain::createParticipant(did, false, rtps_attr, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
@@ -212,6 +257,26 @@ DomainParticipant* DomainParticipantFactory::create_participant(
                 });
 
     return dom_part;
+}
+
+DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
+        DomainId_t did,
+        const std::string& profile_name,
+        DomainParticipantListener* listen,
+        const StatusMask& mask)
+{
+    load_profiles();
+
+    // TODO (Miguel C): Change when we have full XML support for DDS QoS profiles
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
+    {
+        DomainParticipantQos qos;
+        set_qos_from_attributes(qos, attr.rtps);
+        return create_participant(did, qos, listen, mask);
+    }
+
+    return nullptr;
 }
 
 DomainParticipant* DomainParticipantFactory::lookup_participant(
@@ -254,7 +319,7 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const DomainParticipantQos& DomainParticipantFactory::get_default_participant_qos()
+const DomainParticipantQos& DomainParticipantFactory::get_default_participant_qos() const
 {
     return default_participant_qos_;
 }
@@ -264,7 +329,7 @@ ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
 {
     if (&qos == &PARTICIPANT_QOS_DEFAULT)
     {
-        DomainParticipantImpl::set_qos(default_participant_qos_, PARTICIPANT_QOS_DEFAULT, true);
+        reset_default_participant_qos();
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -277,43 +342,31 @@ ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool DomainParticipantFactory::load_XML_profiles_file(
-        const std::string& xml_profile_file)
+ReturnCode_t DomainParticipantFactory::load_profiles()
 {
     if (false == default_xml_profiles_loaded)
     {
         XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
+
+        if (default_participant_qos_ == PARTICIPANT_QOS_DEFAULT)
+        {
+            reset_default_participant_qos();
+        }
     }
 
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
+        const std::string& xml_profile_file)
+{
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
         logError(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
-        return false;
+        return ReturnCode_t::RETCODE_ERROR;
     }
-    return true;
-}
-
-fastrtps::rtps::RTPSParticipantAttributes DomainParticipantFactory::get_attributes(
-        const DomainParticipantQos& qos)
-{
-    fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
-    rtps_attr.allocation = qos.allocation();
-    rtps_attr.properties = qos.properties();
-    rtps_attr.setName(qos.name());
-    rtps_attr.prefix = qos.wire_protocol().prefix;
-    rtps_attr.participantID = qos.wire_protocol().participant_id;
-    rtps_attr.builtin = qos.wire_protocol().builtin;
-    rtps_attr.port = qos.wire_protocol().port;
-    rtps_attr.throughputController = qos.wire_protocol().throughput_controller;
-    rtps_attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
-    rtps_attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
-    rtps_attr.userTransports = qos.transport().user_transports;
-    rtps_attr.useBuiltinTransports = qos.transport().use_builtin_transports;
-    rtps_attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
-    rtps_attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
-    rtps_attr.userData = qos.user_data().data_vec();
-    return rtps_attr;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::get_qos(
@@ -337,6 +390,18 @@ ReturnCode_t DomainParticipantFactory::set_qos(
     }
     set_qos(factory_qos_, qos, false);
     return ReturnCode_t::RETCODE_OK;
+}
+
+void DomainParticipantFactory::reset_default_participant_qos()
+{
+    // TODO (Miguel C): Change when we have full XML support for DDS QoS profiles
+    DomainParticipantImpl::set_qos(default_participant_qos_, PARTICIPANT_QOS_DEFAULT, true);
+    if (true == default_xml_profiles_loaded)
+    {
+        eprosima::fastrtps::ParticipantAttributes attr;
+        XMLProfileManager::getDefaultParticipantAttributes(attr);
+        set_qos_from_attributes(default_participant_qos_, attr.rtps);
+    }
 }
 
 void DomainParticipantFactory::set_qos(

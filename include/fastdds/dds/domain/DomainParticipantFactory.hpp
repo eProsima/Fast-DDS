@@ -69,6 +69,20 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     /**
+     * Create a Participant.
+     * @param domain_id Domain Id.
+     * @param profile Participant profile name.
+     * @param listener DomainParticipantListener Pointer.
+     * @param mask StatusMask Reference.
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     */
+    RTPS_DllAPI DomainParticipant* create_participant_with_profile(
+            DomainId_t domain_id,
+            const std::string& profile_name,
+            DomainParticipantListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
      * This operation retrieves a previously created DomainParticipant belonging to specified domain_id.
      * If no such DomainParticipant exists, the operation will return 'nullptr'.
      * If multiple DomainParticipant entities belonging to that domain_id exist,
@@ -87,12 +101,11 @@ public:
     RTPS_DllAPI std::vector<DomainParticipant*> lookup_participants(
             DomainId_t domain_id) const;
 
-    //!Fills participant_attributes with the default values.
+    //! Fills qos with the default values.
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
             DomainParticipantQos& qos) const;
 
-    RTPS_DllAPI const DomainParticipantQos& get_default_participant_qos();
-
+    RTPS_DllAPI const DomainParticipantQos& get_default_participant_qos() const;
 
     RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const DomainParticipantQos& qos);
@@ -100,17 +113,23 @@ public:
     /**
      * Remove a Participant and all associated publishers and subscribers.
      * @param part Pointer to the participant.
-     * @return True if correctly removed.
+     * @return One of the standard return codes.
      */
     RTPS_DllAPI ReturnCode_t delete_participant(
             DomainParticipant* part);
 
     /**
+     * Load profiles from default XML file.
+     * @return One of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t load_profiles();
+
+    /**
      * Load profiles from XML file.
      * @param xml_profile_file XML profile file.
-     * @return True if correctly loaded.
+     * @return One of the standard return codes.
      */
-    RTPS_DllAPI bool load_XML_profiles_file(
+    RTPS_DllAPI ReturnCode_t load_XML_profiles_file(
             const std::string& xml_profile_file);
 
     /**
@@ -135,9 +154,6 @@ public:
     RTPS_DllAPI ReturnCode_t set_qos(
             const DomainParticipantFactoryQos& qos);
 
-    fastrtps::rtps::RTPSParticipantAttributes get_attributes(
-            const DomainParticipantQos& qos);
-
 private:
 
     friend class DomainParticipantFactoryReleaser;
@@ -148,6 +164,8 @@ private:
     DomainParticipantFactory();
 
     virtual ~DomainParticipantFactory();
+
+    void reset_default_participant_qos();
 
     static bool delete_instance();
 
