@@ -105,16 +105,32 @@ public:
                 {
                     if (nullptr != g_subscriber)
                     {
+                        if (g_participant->lookup_topicdescription(topic_name.to_string()) != nullptr)
+                        {
+                            std::cout << "ERROR: Cannot create Topic with name " << topic_name
+                                      << " - Topic already exists" << std::endl;
+                            return;
+                        }
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
                         g_topic = g_participant->create_topic(
                             topic_name.to_string(),
                             type_name.to_string(),
                             TOPIC_QOS_DEFAULT);
+                        if (g_topic == nullptr)
+                        {
+                            std::cout << "ERROR: Could not create topic " << topic_name << std::endl;
+                            return;
+                        }
 
                         g_reader = g_subscriber->create_datareader(
                             g_topic,
                             g_qos,
                             nullptr);
+                        if (g_reader == nullptr)
+                        {
+                            std::cout << "ERROR: Could not create reader for topic " << topic_name << std::endl;
+                            return;
+                        }
 
                         if (type == nullptr)
                         {
