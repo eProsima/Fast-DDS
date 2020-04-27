@@ -252,7 +252,12 @@ int main(
         return 1;
     }
 
-    types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    const xmlparser::p_dynamictypebuilder_t dynamic_type_builder = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup");
+    if (dynamic_type_builder == nullptr) {
+        std::cout << "Please run in the same CWD as the program" << std::endl;
+        return 1;
+    }
+    types::DynamicType_ptr dyn_type = dynamic_type_builder->build();
     TypeSupport type(new types::DynamicPubSubType(dyn_type));
     type.register_type(participant);
 

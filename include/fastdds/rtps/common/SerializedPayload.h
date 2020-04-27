@@ -101,6 +101,9 @@ struct RTPS_DllAPI SerializedPayload_t
             bool with_limit = true)
     {
         length = serData->length;
+        if (length == 0) {
+            return true;
+        }
 
         if (serData->length > max_size)
         {
