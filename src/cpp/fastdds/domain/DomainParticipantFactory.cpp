@@ -48,7 +48,7 @@ static void set_qos_from_attributes(
         DomainParticipantQos& qos,
         const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr)
 {
-    qos.user_data() = attr.userData;
+    qos.user_data().setValue(attr.userData);
     qos.allocation() = attr.allocation;
     qos.properties() = attr.properties;
     qos.wire_protocol().prefix = attr.prefix;
