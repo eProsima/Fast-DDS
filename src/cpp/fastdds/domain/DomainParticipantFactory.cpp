@@ -129,6 +129,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
+        std::lock_guard<std::mutex> guard(mtx_participants_);
 
         VectorIt vit = participants_.find(part->get_domain_id());
 
