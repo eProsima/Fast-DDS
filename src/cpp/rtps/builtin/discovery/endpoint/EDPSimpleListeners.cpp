@@ -42,23 +42,6 @@
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
-// Release reader lock to avoid ABBA lock. PDP mutex should always be first.
-// Keep change information on local variables to check consistency later
-#define PREVENT_PDP_DEADLOCK(reader, change, pdp)                         \
-    GUID_t writer_guid = (change)->writerGUID;                            \
-    SequenceNumber_t seq_num = (change)->sequenceNumber;                  \
-    (reader)->getMutex().unlock();                                        \
-    std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
-    (reader)->getMutex().lock();                                          \
-                                                                          \
-    if ( (ALIVE != (change)->kind) ||                                     \
-         (seq_num != (change)->sequenceNumber) ||                         \
-         (writer_guid != (change)->writerGUID) )                          \
-    {                                                                     \
-        return;                                                           \
-    }                                                                     \
-    (void)seq_num
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -75,7 +58,6 @@ void EDPBasePUBListener::add_writer_from_change(
     if (temp_writer_data_.readFromCDRMessage(&tempMsg, network,
         edp->mp_RTPSParticipant->has_shm_transport()))
     {
-        change->instanceHandle = temp_writer_data_.key();
         if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
             && !ongoingDeserialization(edp))
         {
@@ -106,23 +88,22 @@ void EDPBasePUBListener::add_writer_from_change(
         GUID_t participant_guid;
         WriterProxyData* writer_data =
                 edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
+
+        //Removing change from history
+        reader_history->remove_change(change);
+
+        // At this point we can release reader lock, cause change is not used
+        reader->getMutex().unlock();
         if (writer_data != nullptr)
         {
-            //Removing change from history
-            reader_history->remove_change(change);
-
-            // At this point we can release reader lock, cause change is not used
-            reader->getMutex().unlock();
-
             edp->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
-
-            // Take again the reader lock.
-            reader->getMutex().lock();
         }
         else //NOT ADDED BECAUSE IT WAS ALREADY THERE
         {
             logWarning(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
         }
+        // Take again the reader lock.
+        reader->getMutex().lock();
     }
 }
 
@@ -147,8 +128,6 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        PREVENT_PDP_DEADLOCK(reader, change, sedp_->mp_PDP);
-
         // Note: change is removed from history inside this method.
         add_writer_from_change(reader, reader_history, change, sedp_);
     }
@@ -196,7 +175,6 @@ void EDPBaseSUBListener::add_reader_from_change(
     if (temp_reader_data_.readFromCDRMessage(&tempMsg, network,
         edp->mp_RTPSParticipant->has_shm_transport()))
     {
-        change->instanceHandle = temp_reader_data_.key();
         if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
             && !ongoingDeserialization(edp))
         {
@@ -227,23 +205,25 @@ void EDPBaseSUBListener::add_reader_from_change(
         GUID_t participant_guid;
         ReaderProxyData* reader_data =
                 edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
+
+        // Remove change from history.
+        reader_history->remove_change(change);
+
+        // At this point we can release reader lock, cause change is not used
+        reader->getMutex().unlock();
+
         if (reader_data != nullptr) //ADDED NEW DATA
         {
-            // Remove change from history.
-            reader_history->remove_change(change);
-
-            // At this point we can release reader lock, cause change is not used
-            reader->getMutex().unlock();
-
             edp->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
 
-            // Take again the reader lock.
-            reader->getMutex().lock();
         }
         else
         {
             logWarning(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
         }
+
+        // Take again the reader lock.
+        reader->getMutex().lock();
     }
 }
 
@@ -268,8 +248,6 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
-        PREVENT_PDP_DEADLOCK(reader, change, sedp_->mp_PDP);
-
         // Note: change is removed from history inside this method.
         add_reader_from_change(reader, reader_history, change, sedp_);
     }
