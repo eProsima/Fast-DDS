@@ -411,21 +411,40 @@ public:
             {
                 auto segment_name = port_segment_->name();
 
-                logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port " << node_->port_id
-                        << segment_name.c_str() << " removed." << "overflows_count " 
-                        << overflows_count_);
-
-                if (overflows_count_)
+                try
                 {
-                    logWarning(RTPS_TRANSPORT_SHM, "Port " << node_->port_id
-                        << segment_name.c_str() << " had overflows_count " 
-                        << overflows_count_);
+                    std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
+                            SharedMemSegment::try_open_and_lock_named_mutex(segment_name + "_mutex");
+
+                    if (node_->is_port_ok)
+                    {
+                        node_->is_port_ok = false;
+
+                        if (overflows_count_)
+                        {
+                            logWarning(RTPS_TRANSPORT_SHM, "Port " << node_->port_id
+                                << segment_name.c_str() << " closed with overflows_count "
+                                << overflows_count_);
+                        }
+
+                        node_ = nullptr;
+                        port_segment_.reset();
+
+                        SharedMemSegment::remove(segment_name.c_str());
+                        port_mutex.reset();
+                        SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
+                    }
                 }
+                catch (const std::exception& e)
+                {
+                    if (node_)
+                    {
+                        node_->is_port_ok = false;
+                    }
 
-                port_segment_.reset();
-
-                SharedMemSegment::remove(segment_name.c_str());
-                SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
+                    logWarning(RTPS_TRANSPORT_SHM, THREADID << segment_name.c_str()
+                        << e.what());
+                }
             }
         }
 
@@ -914,6 +933,8 @@ private:
                         << port_id << " failed unlock_read_exclusive " << e.what());
                 }
 
+                port_node->is_port_ok = false;
+
                 auto port_uuid = port_node->uuid.to_string();
 
                 logWarning(RTPS_TRANSPORT_SHM, THREADID << "Existing Port "
@@ -985,8 +1006,8 @@ private:
 
         // Port node allocation
         port_node = segment->get().construct<PortNode>(("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str())();
+        port_node->is_port_ok = false;
         port_node->port_id = port_id;
-        port_node->is_port_ok = true;
         UUID<8>::generate(port_node->uuid);
         port_node->waiting_count = 0;
         port_node->is_opened_read_exclusive = (open_mode == Port::OpenMode::ReadExclusive);
@@ -1020,6 +1041,7 @@ private:
 
         port_node->buffer_node = segment->get_offset_from_address(buffer_node);
 
+        port_node->is_port_ok = true;
         port = std::make_shared<Port>(std::move(segment), port_node, std::move(lock_read_exclusive));
         
         logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
