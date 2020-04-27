@@ -380,10 +380,12 @@ public:
 
         Port(
                 std::shared_ptr<SharedMemSegment>&& port_segment,
-                PortNode* node)
+                PortNode* node,
+                std::unique_ptr<RobustExclusiveLock>&& read_exclusive_lock = std::unique_ptr<RobustExclusiveLock>())
             : port_segment_(std::move(port_segment))
             , node_(node)
             , overflows_count_(0)
+            , read_exclusive_lock_(std::move(read_exclusive_lock))
         {
             auto buffer_base = static_cast<MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell*>(
                 port_segment_->get_address_from_offset(node_->buffer));
@@ -699,6 +701,33 @@ public:
             read_exclusive_lock_.reset();
         }
 
+        static std::unique_ptr<RobustExclusiveLock> lock_read_exclusive(
+            uint32_t port_id,
+            const std::string& domain_name)
+        {
+            std::string lock_name = std::string(domain_name) + "_port" + std::to_string(port_id) + "_el";
+            return std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
+        }
+
+        static bool is_zombie(
+                uint32_t port_id,
+                const std::string& domain_name)
+        {
+            bool was_lock_created;
+            std::string lock_name = domain_name + "_port" + std::to_string(port_id) + "_el";
+
+            try
+            {
+                RobustExclusiveLock zombie_test(lock_name, &was_lock_created);
+            }
+            catch (const std::exception&)
+            {
+                return false;
+            }
+
+            return !was_lock_created;
+        }
+
     }; // Port
 
     /**
@@ -793,6 +822,16 @@ private:
 
         try
         {
+            if(Port::is_zombie(port_id, domain_name_))
+            {
+                logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                    << port_id << " Zombie. Reset the port");
+
+                SharedMemSegment::remove(port_segment_name.c_str());
+
+                throw std::runtime_error("zombie port");
+            }
+
             // Try to open
             auto port_segment = std::shared_ptr<SharedMemSegment>(
                 new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
@@ -801,6 +840,11 @@ private:
 
             try
             {
+                if(!port_segment->check_sanity())
+                {
+                    throw std::runtime_error("check_sanity failed");
+                }
+
                 port_node = port_segment->get().find<PortNode>(
                     ("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str()).first;
 
@@ -905,6 +949,8 @@ private:
             }
             catch (std::exception & e)
             {
+                SharedMemSegment::remove(port_segment_name.c_str());
+
                 logError(RTPS_TRANSPORT_SHM, "Failed to create port segment " << port_segment_name
                     << ": " << e.what());
 
@@ -931,74 +977,51 @@ private:
         PortNode* port_node = nullptr;
         MultiProducerConsumerRingBuffer<BufferDescriptor>::Node* buffer_node = nullptr;
 
-        try
-        {
-            // Port node allocation
-            port_node = segment->get().construct<PortNode>(("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str())();
-            port_node->port_id = port_id;
-            port_node->is_port_ok = true;
-            UUID<8>::generate(port_node->uuid);
-            port_node->waiting_count = 0;
-            port_node->is_opened_read_exclusive = (open_mode == Port::OpenMode::ReadExclusive);
-            port_node->is_opened_for_reading = (open_mode != Port::OpenMode::Write);
-            port_node->num_listeners = 0;
-            port_node->healthy_check_timeout_ms = healthy_check_timeout_ms;
-            port_node->last_listeners_status_check_time_ms = 
-                std::chrono::duration_cast<std::chrono::milliseconds>(
-                    std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-            port_node->port_wait_timeout_ms = healthy_check_timeout_ms / 3;
-            port_node->max_buffer_descriptors = max_buffer_descriptors;
-            memset(port_node->listeners_status, 0, sizeof(port_node->listeners_status));
-#ifdef _MSC_VER
-            strncpy_s(port_node->domain_name, sizeof(port_node->domain_name),
-                domain_name_.c_str(), sizeof(port_node->domain_name)-1);
-#else
-            strncpy(port_node->domain_name, domain_name_.c_str(), sizeof(port_node->domain_name)-1);
-#endif
-            port_node->domain_name[sizeof(port_node->domain_name)-1] = 0;
-
-            // Buffer cells allocation
-            auto buffer = segment->get().construct<MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell>(
-                boost::interprocess::anonymous_instance)[max_buffer_descriptors]();            
-            port_node->buffer = segment->get_offset_from_address(buffer);            
-
-            // Buffer node allocation
-            buffer_node = segment->get().construct<MultiProducerConsumerRingBuffer<BufferDescriptor>::Node>(
-                boost::interprocess::anonymous_instance)();
-
-            MultiProducerConsumerRingBuffer<BufferDescriptor>::init_node(buffer_node, max_buffer_descriptors);
-
-            port_node->buffer_node = segment->get_offset_from_address(buffer_node);
-
-            port = std::make_shared<Port>(std::move(segment), port_node);
-        }
-        catch (const std::exception&)
-        {
-            if (port_node)
-            {
-                segment->get().destroy_ptr(port_node);
-            }
-
-            if (buffer_node)
-            {
-                segment->get().destroy_ptr(buffer_node);
-            }
-
-            throw;
-        }
-
+        std::unique_ptr<RobustExclusiveLock> lock_read_exclusive;
         if(open_mode == Port::OpenMode::ReadExclusive)
         {
-            try
-            {
-                port->lock_read_exclusive();
-            }
-            catch(const std::exception&)
-            {
-                port.reset();
-            }
+            lock_read_exclusive = Port::lock_read_exclusive(port_id, domain_name_);
         }
 
+        // Port node allocation
+        port_node = segment->get().construct<PortNode>(("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str())();
+        port_node->port_id = port_id;
+        port_node->is_port_ok = true;
+        UUID<8>::generate(port_node->uuid);
+        port_node->waiting_count = 0;
+        port_node->is_opened_read_exclusive = (open_mode == Port::OpenMode::ReadExclusive);
+        port_node->is_opened_for_reading = (open_mode != Port::OpenMode::Write);
+        port_node->num_listeners = 0;
+        port_node->healthy_check_timeout_ms = healthy_check_timeout_ms;
+        port_node->last_listeners_status_check_time_ms = 
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+        port_node->port_wait_timeout_ms = healthy_check_timeout_ms / 3;
+        port_node->max_buffer_descriptors = max_buffer_descriptors;
+        memset(port_node->listeners_status, 0, sizeof(port_node->listeners_status));
+#ifdef _MSC_VER
+        strncpy_s(port_node->domain_name, sizeof(port_node->domain_name),
+            domain_name_.c_str(), sizeof(port_node->domain_name)-1);
+#else
+        strncpy(port_node->domain_name, domain_name_.c_str(), sizeof(port_node->domain_name)-1);
+#endif
+        port_node->domain_name[sizeof(port_node->domain_name)-1] = 0;
+
+        // Buffer cells allocation
+        auto buffer = segment->get().construct<MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell>(
+            boost::interprocess::anonymous_instance)[max_buffer_descriptors]();
+        port_node->buffer = segment->get_offset_from_address(buffer);
+
+        // Buffer node allocation
+        buffer_node = segment->get().construct<MultiProducerConsumerRingBuffer<BufferDescriptor>::Node>(
+            boost::interprocess::anonymous_instance)();
+
+        MultiProducerConsumerRingBuffer<BufferDescriptor>::init_node(buffer_node, max_buffer_descriptors);
+
+        port_node->buffer_node = segment->get_offset_from_address(buffer_node);
+
+        port = std::make_shared<Port>(std::move(segment), port_node, std::move(lock_read_exclusive));
+        
         logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
                 << port_node->port_id << " (" << port_node->uuid.to_string() 
                 << Port::open_mode_to_string(open_mode) << ") Created.");
