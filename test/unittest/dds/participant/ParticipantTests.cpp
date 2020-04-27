@@ -124,7 +124,7 @@ TEST(ParticipantTests, CreateDomainParticipant)
 
 }
 
-TEST(ParticipantTests, DISABLED_CreatePSMDomainParticipant)
+TEST(ParticipantTests, CreatePSMDomainParticipant)
 {
     ::dds::domain::DomainParticipant participant = ::dds::core::null;
     participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
@@ -200,7 +200,7 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
 
 }
 
-TEST(ParticipantTests, DISABLED_ChangePSMDefaultParticipantQos)
+TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
 
@@ -242,7 +242,7 @@ TEST(ParticipantTests, ChangeDomainParticipantQos)
 
 }
 
-TEST(ParticipantTests, DISABLED_ChangePSMDomainParticipantQos)
+TEST(ParticipantTests, ChangePSMDomainParticipantQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::core::null;
     participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
@@ -272,7 +272,7 @@ TEST(ParticipantTests, CreatePublisher)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, DISABLED_CreatePSMPublisher)
+TEST(ParticipantTests, CreatePSMPublisher)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::pub::Publisher publisher = ::dds::core::null;
@@ -303,7 +303,7 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, DISABLED_ChangePSMDefaultPublisherQos)
+TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::pub::qos::PublisherQos qos = participant.default_publisher_qos();
@@ -330,7 +330,7 @@ TEST(ParticipantTests, CreateSubscriber)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, DISABLED_CreatePSMSubscriber)
+TEST(ParticipantTests, CreatePSMSubscriber)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::sub::Subscriber subscriber = ::dds::core::null;
@@ -383,7 +383,7 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, DISABLED_ChangePSMDefaultSubscriberQos)
+TEST(ParticipantTests, ChangePSMDefaultSubscriberQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::sub::qos::SubscriberQos qos = participant.default_subscriber_qos();
@@ -420,7 +420,7 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, DISABLED_ChangePSMDefaultTopicQos)
+TEST(ParticipantTests, ChangePSMDefaultTopicQos)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
     ::dds::topic::qos::TopicQos qos = participant.default_topic_qos();
@@ -450,7 +450,7 @@ TEST(ParticipantTests, CreateTopic)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, DISABLED_PSMCreateTopic)
+TEST(ParticipantTests, PSMCreateTopic)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
 

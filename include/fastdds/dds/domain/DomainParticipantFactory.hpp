@@ -141,6 +141,7 @@ public:
 private:
 
     friend class DomainParticipantFactoryReleaser;
+    friend class DomainParticipant;
 
     std::map<DomainId_t, std::vector<DomainParticipantImpl*> > participants_;
 
@@ -161,6 +162,9 @@ private:
     static bool can_qos_be_updated(
             const DomainParticipantFactoryQos& to,
             const DomainParticipantFactoryQos& from);
+
+    void participant_has_been_deleted(
+            DomainParticipantImpl* part);
 
     mutable std::mutex mtx_participants_;
 
