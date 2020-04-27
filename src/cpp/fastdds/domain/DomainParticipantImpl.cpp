@@ -151,8 +151,6 @@ DomainParticipantImpl::~DomainParticipantImpl()
         topics_by_handle_.clear();
     }
 
-    DomainParticipantFactory::get_instance()->update_active_participants(this);
-
     if (rtps_participant_ != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(rtps_participant_);
@@ -395,7 +393,7 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
     {
         return rtps_participant_->get_domain_id();
     }
-    return -1;
+    return (DomainId_t) -1;
 }
 
 /* TODO

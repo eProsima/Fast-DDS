@@ -45,6 +45,7 @@ DomainParticipant::~DomainParticipant()
 {
     if (impl_)
     {
+        DomainParticipantFactory::get_instance()->participant_has_been_deleted(impl_);
         impl_->participant_ = nullptr;
         delete impl_;
         impl_ = nullptr;

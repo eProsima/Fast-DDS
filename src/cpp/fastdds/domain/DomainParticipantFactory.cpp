@@ -141,12 +141,18 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
                 {
                     (*pit)->disable();
                     delete (*pit);
+                    PartVectorIt next_it = vit->second.erase(pit);
+                    pit = next_it;
                     break;
                 }
                 else
                 {
                     ++pit;
                 }
+            }
+            if (vit->second.empty())
+            {
+                participants_.erase(vit);
             }
             return ReturnCode_t::RETCODE_OK;
         }
@@ -360,7 +366,7 @@ bool DomainParticipantFactory::can_qos_be_updated(
     return true;
 }
 
-void DomainParticipantFactory::update_active_participants(
+void DomainParticipantFactory::participant_has_been_deleted(
         DomainParticipantImpl* part)
 {
     std::lock_guard<std::mutex> guard(mtx_participants_);
