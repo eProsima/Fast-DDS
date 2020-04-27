@@ -213,7 +213,7 @@ private:
     TransportConfigQos transport_;
 
     //!Name of the participant.
-    fastrtps::string_255 name_;
+    fastrtps::string_255 name_ = "RTPSParticipant";
 
 };
 
