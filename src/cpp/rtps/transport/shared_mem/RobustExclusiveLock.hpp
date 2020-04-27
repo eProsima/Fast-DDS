@@ -45,11 +45,28 @@ public:
      * @throw std::exception if a RobustExclusiveLock with name is alive.
      */
     RobustExclusiveLock(
-            const std::string& name)
+        const std::string& name,
+        bool* was_lock_created)
     {
         auto file_path = get_file_path(name);
 
-        fd_ = open_and_lock_file(file_path);
+        fd_ = open_and_lock_file(file_path, was_lock_created);
+
+        name_ = name;
+    }
+
+    /**
+     * Create the interprocess lock.
+     * @throw std::exception if a RobustExclusiveLock with name is alive.
+     */
+    RobustExclusiveLock(
+            const std::string& name)
+    {
+        bool was_lock_created;
+
+        auto file_path = get_file_path(name);
+
+        fd_ = open_and_lock_file(file_path, &was_lock_created);
 
         name_ = name;
     }
@@ -106,10 +123,25 @@ private:
 
 #ifdef _MSC_VER
 
-    int open_and_lock_file(const std::string& file_path)
+    int open_and_lock_file(
+            const std::string& file_path,
+            bool* was_lock_created)
     {
+        int test_exist;
+        auto ret = _sopen_s(&test_exist, file_path.c_str(), O_RDONLY, _SH_DENYRW, _S_IREAD | _S_IWRITE);
+
+        if (ret == 0)
+        {
+            *was_lock_created = false;
+            _close(test_exist);
+        }
+        else
+        {
+            *was_lock_created = true;
+        }
+
         int fd;
-        auto ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | O_RDONLY, _SH_DENYRW, _S_IREAD | _S_IWRITE);
+        ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | O_RDONLY, _SH_DENYRW, _S_IREAD | _S_IWRITE);
 
         if (ret != 0)
         {
@@ -133,8 +165,22 @@ private:
 
 #else
 
-    int open_and_lock_file(const std::string& file_path)
+    int open_and_lock_file(
+            const std::string& file_path,
+            bool* was_lock_created)
     {
+        auto test_exist = open(file_path.c_str(), O_RDONLY, 0666);
+
+        if (test_exist != -1)
+        {
+            *was_lock_created = false;
+            close(test_exist);
+        }
+        else
+        {
+            *was_lock_created = true;
+        }
+
         auto fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
 
         if (fd == -1)

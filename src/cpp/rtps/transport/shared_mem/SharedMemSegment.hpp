@@ -233,6 +233,15 @@ public:
     }
 
     /**
+     * Check the allocator internal structures
+     * @return true if structures are ok, false otherwise
+     */
+    bool check_sanity()
+    {
+        return segment_->check_sanity();
+    }
+
+    /**
      * Unique ID of the memory segment
      */
     class Id
@@ -290,7 +299,7 @@ public:
             return Id(type(type::null_t()));
         }
 
-private:
+    private:
 
         type uuid_;
 
