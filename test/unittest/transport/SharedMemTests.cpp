@@ -997,6 +997,39 @@ TEST_F(SHMTransportTests, port_lock_read_exclusive)
     port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
 }
 
+TEST_F(SHMTransportTests, robust_exclusive_lock)
+{
+    const std::string lock_name = "robust_exclusive_lock_test1_el";
+
+    RobustExclusiveLock::remove(lock_name.c_str());
+
+    // Lock
+    auto el1 = std::make_shared<RobustExclusiveLock>(lock_name);
+
+    // A second lock fail
+    ASSERT_THROW(std::make_shared<RobustExclusiveLock>(lock_name), std::exception);
+
+    // Remove lock
+    el1.reset();
+
+    bool was_created;
+    el1 = std::make_shared<RobustExclusiveLock>(lock_name, &was_created);
+    // The resource did not exits
+    ASSERT_TRUE(was_created);
+
+    el1.reset();
+    // Has been already deleted
+    ASSERT_FALSE(RobustExclusiveLock::remove(lock_name.c_str()));
+
+    // Create a fake file
+    FILE* f = fopen(RobustLock::get_file_path(lock_name).c_str(), "w+");
+    ASSERT_TRUE(f != nullptr);
+    fclose(f);
+
+    el1 = std::make_shared<RobustExclusiveLock>(lock_name, &was_created);
+    ASSERT_FALSE(was_created);
+}
+
 TEST_F(SHMTransportTests, robust_shared_lock)
 {
     const std::string lock_name = "robust_shared_lock_test1_sl";
