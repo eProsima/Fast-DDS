@@ -193,8 +193,6 @@ public:
     {
         std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
 
-        // Todo(Adolfo) : Dataraces could occur, this algorithm has to be improved
-
         named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
             new SharedMemSegment::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
 
@@ -224,13 +222,12 @@ public:
     {
         std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
 
-        // Todo(Adolfo) : Dataraces could occur, this algorithm has to be improved
-
         named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
             new SharedMemSegment::named_mutex(boost::interprocess::open_only, mutex_name.c_str()));
 
         boost::posix_time::ptime wait_time
-            = boost::posix_time::microsec_clock::universal_time();
+            = boost::posix_time::microsec_clock::universal_time()
+                + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS*2);
         if (!named_mutex->timed_lock(wait_time))
         {
             throw std::runtime_error("Couldn't lock name_mutex: " + mutex_name);

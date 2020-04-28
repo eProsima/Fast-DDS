@@ -416,7 +416,8 @@ public:
                     std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
                             SharedMemSegment::try_open_and_lock_named_mutex(segment_name + "_mutex");
 
-                    if (node_->is_port_ok)
+                    if (node_->ref_counter.load(std::memory_order_relaxed) == 0 
+                        && node_->is_port_ok)
                     {
                         node_->is_port_ok = false;
 
