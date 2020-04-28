@@ -40,9 +40,11 @@ public:
     }
 
 #else
+
     static std::string get_file_path(
             const std::string& filename)
     {
+        // Default value from: glibc-2.29/sysdeps/unix/sysv/linux/shm-directory.c
         static const char defaultdir[] = "/dev/shm/";
 
         std::string filepath;
