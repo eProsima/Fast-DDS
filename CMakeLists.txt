@@ -259,11 +259,11 @@ option(SQLITE3_SUPPORT "Activate SQLITE3 support" ON)
 ###############################################################################
 # SHM as Default transport
 ###############################################################################
-option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" ON)
+option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" OFF)
 
-if(WIN32 AND NOT EPROSIMA_BUILD)
+if(EPROSIMA_BUILD)
     message(STATUS "Disabling faulty SHM on Windows")
-    set(SHM_TRANSPORT_DEFAULT OFF)
+    set(SHM_TRANSPORT_DEFAULT ON)
 endif()
 
 ###############################################################################
