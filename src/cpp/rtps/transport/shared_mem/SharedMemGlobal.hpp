@@ -407,7 +407,7 @@ public:
         {
             Watchdog::get().remove_port_from_watch(node_);
 
-            if (node_->ref_counter.fetch_sub(1) == 1 && node_->is_port_ok)
+            if (node_->ref_counter.fetch_sub(1) == 1)
             {
                 auto segment_name = port_segment_->name();
 
@@ -721,8 +721,8 @@ public:
         }
 
         static std::unique_ptr<RobustExclusiveLock> lock_read_exclusive(
-            uint32_t port_id,
-            const std::string& domain_name)
+                uint32_t port_id,
+                const std::string& domain_name)
         {
             std::string lock_name = std::string(domain_name) + "_port" + std::to_string(port_id) + "_el";
             return std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
