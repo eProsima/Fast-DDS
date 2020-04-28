@@ -25,8 +25,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <boostconfig.hpp>
-#include <boost/interprocess/detail/shared_dir_helpers.hpp>
+#include "RobustLock.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -41,13 +40,14 @@ class RobustSharedLock
 public:
 
     /**
-     * Create the interprocess lock.
-     * @throw std::exception if the lock cannot be acquired
+     * Open or create and acquire the interprocess lock.
+     * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
+     * @throw std::exception if lock coulnd't be acquired
      */
     RobustSharedLock(
             const std::string& name)
     {
-        auto file_path = get_file_path(name);
+        auto file_path = RobustLock::get_file_path(name);
 
         fd_ = open_and_lock_file(file_path);
 
@@ -55,7 +55,7 @@ public:
     }
 
     /**
-     * Release de lock
+     * Release the lock
      */
     ~RobustSharedLock()
     {
@@ -64,26 +64,29 @@ public:
 
     /**
      * Check if there is some process holding the lock
+     * @param in name Is the object's interprocess global name.
      * @return true is the resource is locked, false if not locked by anyone
      */
     static bool is_locked(
             const std::string& name)
     {
-        return test_lock(get_file_path(name)) == LockStatus::LOCKED;
+        return test_lock(RobustLock::get_file_path(name)) == LockStatus::LOCKED;
     }
 
     /**
      * Remove the object
+     * @param in name Is the object's interprocess global name.
      * @return true when success, false otherwise.
      */
     static bool remove(
             const std::string& name)
     {
-        return 0 == std::remove(get_file_path(name).c_str());
+        return 0 == std::remove(RobustLock::get_file_path(name).c_str());
     }
 
     /**
      * Creates a new lock instance.
+     * @param in name Is the object's interprocess global name.
      * @return nullptr if the resource is locked, std::unique_ptr to the new lock if the resource was not locked.
      */
     static std::unique_ptr<RobustSharedLock> try_lock_as_new(
@@ -113,43 +116,6 @@ private:
         LOCKED
     };
 
-#if !defined(BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS)
-
-    static std::string get_file_path(
-            const std::string& file_name)
-    {
-        std::string shmfile;
-        boost::interprocess::ipcdetail::shared_filepath(file_name.c_str(), shmfile);
-        return shmfile;
-    }
-
-#else
-
-    static std::string get_file_path(
-            const std::string& filename)
-    {
-        std::string filepath;
-        #if defined(BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
-        const bool add_leading_slash = false;
-        #elif defined(BOOST_INTERPROCESS_RUNTIME_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
-        const bool add_leading_slash = !boost::interprocess::shared_memory_object_detail::use_filesystem_based_posix();
-        #else
-        const bool add_leading_slash = true;
-        #endif
-        if (add_leading_slash)
-        {
-            boost::interprocess::ipcdetail::add_leading_slash(filename.c_str(), filepath);
-        }
-        else
-        {
-            boost::interprocess::ipcdetail::shared_filepath(filename.c_str(), filepath);
-        }
-
-        return "/dev/shm" + filepath;
-    }
-
-#endif
-
 #ifdef _MSC_VER
 
     int open_and_lock_file(
@@ -173,7 +139,7 @@ private:
     {
         _close(fd_);
 
-        test_lock(get_file_path(name_), true);
+        test_lock(RobustLock::get_file_path(name_), true);
     }
 
     static LockStatus test_lock(
@@ -221,7 +187,7 @@ private:
     static std::unique_ptr<RobustSharedLock> try_lock_internal(
         const std::string& name)
     {
-        auto file_path = get_file_path(name);
+        auto file_path = RobustLock::get_file_path(name);
 
         int fd;
 
@@ -271,7 +237,7 @@ private:
         flock(fd_, LOCK_UN | LOCK_NB);
         close(fd_);
 
-        test_lock(get_file_path(name_), true);
+        test_lock(RobustLock::get_file_path(name_), true);
     }
 
     static LockStatus test_lock(
@@ -315,7 +281,7 @@ private:
     static std::unique_ptr<RobustSharedLock> try_lock_internal(
             const std::string& name)
     {
-        auto file_path = get_file_path(name);
+        auto file_path = RobustLock::get_file_path(name);
 
         auto fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
 
@@ -325,7 +291,7 @@ private:
         }
 
         // Lock exclusive
-        if (0 == flock(fd, LOCK_EX |LOCK_NB))
+        if (0 == flock(fd, LOCK_EX | LOCK_NB))
         {
             // Exclusive => shared
             flock(fd, LOCK_SH | LOCK_NB);

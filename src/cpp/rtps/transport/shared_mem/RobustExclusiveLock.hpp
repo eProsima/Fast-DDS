@@ -25,8 +25,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <boostconfig.hpp>
-#include <boost/interprocess/detail/shared_dir_helpers.hpp>
+#include "RobustLock.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -41,14 +40,16 @@ class RobustExclusiveLock
 public:
 
     /**
-     * Create the interprocess lock.
-     * @throw std::exception if a RobustExclusiveLock with name is alive.
+     * Open or create and acquire the interprocess lock.
+     * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
+     * @param out If the lock succeeded, this parameter return whether the lock has been created or it already exist.
+     * @throw std::exception if lock coulnd't be acquired
      */
     RobustExclusiveLock(
-        const std::string& name,
-        bool* was_lock_created)
+            const std::string& name,
+            bool* was_lock_created)
     {
-        auto file_path = get_file_path(name);
+        auto file_path = RobustLock::get_file_path(name);
 
         fd_ = open_and_lock_file(file_path, was_lock_created);
 
@@ -56,15 +57,16 @@ public:
     }
 
     /**
-     * Create the interprocess lock.
-     * @throw std::exception if a RobustExclusiveLock with name is alive.
+     * Open or create and acquire the interprocess lock.
+     * @param in name Is the object interprocess global name, visible for all processes in the same machine.
+     * @throw std::exception if lock coulnd't be acquired
      */
     RobustExclusiveLock(
             const std::string& name)
     {
         bool was_lock_created;
 
-        auto file_path = get_file_path(name);
+        auto file_path = RobustLock::get_file_path(name);
 
         fd_ = open_and_lock_file(file_path, &was_lock_created);
 
@@ -79,53 +81,26 @@ public:
         unlock_and_close();
     }
 
+    /**
+     * Remove the object
+     * @return true when success, false otherwise.
+     */
+    static bool remove(
+            const std::string& name)
+    {
+        return 0 == std::remove(RobustLock::get_file_path(name).c_str());
+    }
+
 private:
 
     std::string name_;
     int fd_;
 
-#if !defined(BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS)
-
-    std::string get_file_path(  
-            const std::string& file_name)
-    {
-        std::string shmfile;
-        boost::interprocess::ipcdetail::shared_filepath(file_name.c_str(), shmfile);
-        return shmfile;
-    }
-
-#else
-
-    std::string get_file_path(
-            const std::string& filename)
-    {
-        std::string filepath;
-        #if defined(BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
-        const bool add_leading_slash = false;
-        #elif defined(BOOST_INTERPROCESS_RUNTIME_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
-        const bool add_leading_slash = !boost::interprocess::shared_memory_object_detail::use_filesystem_based_posix();
-        #else
-        const bool add_leading_slash = true;
-        #endif
-        if (add_leading_slash)
-        {
-            boost::interprocess::ipcdetail::add_leading_slash(filename.c_str(), filepath);
-        }
-        else
-        {
-            boost::interprocess::ipcdetail::shared_filepath(filename.c_str(), filepath);
-        }
-
-        return "/dev/shm" + filepath;
-    }
-
-#endif
-
 #ifdef _MSC_VER
 
     int open_and_lock_file(
             const std::string& file_path,
-            bool* was_lock_created)
+            bool* was_lock_created) const
     {
         int test_exist;
         auto ret = _sopen_s(&test_exist, file_path.c_str(), O_RDONLY, _SH_DENYRW, _S_IREAD | _S_IWRITE);
@@ -133,11 +108,7 @@ private:
         if (ret == 0)
         {
             *was_lock_created = false;
-            _close(test_exist);
-        }
-        else
-        {
-            *was_lock_created = true;
+            return test_exist;
         }
 
         int fd;
@@ -150,6 +121,8 @@ private:
             throw std::runtime_error("failed to open/create " + file_path + " " + std::string(errmsg));
         }
 
+        *was_lock_created = true;
+
         return fd;
     }
 
@@ -157,9 +130,9 @@ private:
     {
         _close(fd_);
 
-        if(0 != std::remove(get_file_path(name_).c_str()))
+        if (0 != std::remove(RobustLock::get_file_path(name_).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << get_file_path(name_));
+            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name_));
         }
     }
 
@@ -167,28 +140,26 @@ private:
 
     int open_and_lock_file(
             const std::string& file_path,
-            bool* was_lock_created)
+            bool* was_lock_created) const
     {
-        auto test_exist = open(file_path.c_str(), O_RDONLY, 0666);
+        auto fd = open(file_path.c_str(), O_RDONLY, 0666);
 
-        if (test_exist != -1)
+        if (fd != -1)
         {
             *was_lock_created = false;
-            close(test_exist);
         }
         else
         {
             *was_lock_created = true;
+            fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
         }
-
-        auto fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
 
         if (fd == -1)
         {
             throw std::runtime_error(("failed to open/create " + file_path + " " + std::strerror(errno)).c_str());
         }
 
-        // Lock the file other processes
+        // Lock the file
         if (0 != flock(fd, LOCK_EX | LOCK_NB))
         {
             close(fd);
@@ -203,9 +174,9 @@ private:
         flock(fd_, LOCK_UN | LOCK_NB);
         close(fd_);
 
-        if(0 != std::remove(get_file_path(name_).c_str()))
+        if (0 != std::remove(RobustLock::get_file_path(name_).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << get_file_path(name_));
+            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name_));
         }
     }
 
