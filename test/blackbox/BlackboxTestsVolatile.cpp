@@ -21,6 +21,8 @@
 
 #include <gtest/gtest.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 
 using namespace eprosima::fastrtps;
 
@@ -315,6 +317,79 @@ TEST_P(Volatile, AsyncVolatileSubBetweenTransientPubs)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+}
+
+TEST_P(Volatile, VolatileLateJoinerSubGapLost)
+{
+    PubSubReader<HelloWorldType> reader1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader2(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+
+    reader1.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    //heartbeatResponseDelay(5,0).
+    init();
+
+    ASSERT_TRUE(reader1.isInitialized());
+
+    // To simulate lossy conditions
+    int gaps_to_drop = 2;
+    auto testTransport = std::make_shared<rtps::test_UDPv4TransportDescriptor>();
+    testTransport->drop_gap_messages_filter_ = [&gaps_to_drop](rtps::CDRMessage_t& )
+            {
+                if (gaps_to_drop > 0)
+                {
+                    --gaps_to_drop;
+                    return true;
+                }
+                return false;
+            };
+    testTransport->dropLogLength = 1;
+
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    resource_limits_allocated_samples(9).
+    resource_limits_max_samples(9).
+    disable_builtin_transport().
+    add_user_transport_to_pparams(testTransport).
+    asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE).
+    init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+
+    writer.wait_discovery();
+    reader1.wait_discovery();
+
+    auto data = default_helloworld_data_generator(5);
+
+    reader1.startReception(data);
+
+    writer.send_sample(data.front());
+
+    reader2.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    init();
+
+    ASSERT_TRUE(reader2.isInitialized());
+
+    reader2.wait_discovery();
+
+    data.pop_front();
+
+    reader2.startReception(data);
+
+    // Send data with some interval, to let async writer thread send samples
+    writer.send(data, 300);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader1.block_for_all();
+    reader2.block_for_all();
 }
 
 INSTANTIATE_TEST_CASE_P(Volatile,
