@@ -307,6 +307,7 @@ void StatefulWriter::unsent_change_added_to_history(
                     {
                         if (it->is_local_reader())
                         {
+                            intraprocess_heartbeat(it, false);
                             bool delivered = intraprocess_delivery(change, it);
                             it->set_change_to_status(
                                 change->sequenceNumber,
@@ -321,6 +322,7 @@ void StatefulWriter::unsent_change_added_to_history(
                     {
                         if (it->is_local_reader())
                         {
+                            intraprocess_heartbeat(it, false);
                             bool delivered = intraprocess_delivery(change, it);
                             it->set_change_to_status(
                                 change->sequenceNumber,
