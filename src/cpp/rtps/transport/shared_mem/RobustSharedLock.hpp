@@ -87,7 +87,8 @@ public:
     /**
      * Creates a new lock instance.
      * @param in name Is the object's interprocess global name.
-     * @return nullptr if the resource is locked, std::unique_ptr to the new lock if the resource was not locked.
+     * @return nullptr if the resource is shared-locked by someone, or std::unique_ptr to the new lock 
+     * if the resource was not locked.
      */
     static std::unique_ptr<RobustSharedLock> try_lock_as_new(
             const std::string& name)
