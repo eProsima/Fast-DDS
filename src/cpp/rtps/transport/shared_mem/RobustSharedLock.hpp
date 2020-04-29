@@ -42,14 +42,35 @@ public:
     /**
      * Open or create and acquire the interprocess lock.
      * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
+     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created 
+     * or it already exist.
+     * @throw std::exception if lock coulnd't be acquired
+     */
+    RobustSharedLock(
+            const std::string& name,
+            bool* was_lock_created,
+            bool* was_lock_released)
+    {
+        auto file_path = RobustLock::get_file_path(name);
+
+        fd_ = open_and_lock_file(file_path, was_lock_created, was_lock_released);
+
+        name_ = name;
+    }
+
+    /**
+     * Open or create and acquire the interprocess lock.
+     * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
      * @throw std::exception if lock coulnd't be acquired
      */
     RobustSharedLock(
             const std::string& name)
     {
+        bool was_lock_created;
+
         auto file_path = RobustLock::get_file_path(name);
 
-        fd_ = open_and_lock_file(file_path);
+        fd_ = open_and_lock_file(file_path, &was_lock_created, nullptr);
 
         name_ = name;
     }
@@ -84,28 +105,7 @@ public:
         return 0 == std::remove(RobustLock::get_file_path(name).c_str());
     }
 
-    /**
-     * Creates a new lock instance.
-     * @param in name Is the object's interprocess global name.
-     * @return nullptr if the resource is shared-locked by someone, or std::unique_ptr to the new lock 
-     * if the resource was not locked.
-     */
-    static std::unique_ptr<RobustSharedLock> try_lock_as_new(
-            const std::string& name)
-    {
-        return try_lock_internal(name);
-    }
-
 private:
-
-    RobustSharedLock(
-            const std::string& name,
-            int file_descriptor)
-    {
-        fd_ = file_descriptor;
-
-        name_ = name;
-    }
 
     std::string name_;
     int fd_;
@@ -120,11 +120,56 @@ private:
 #ifdef _MSC_VER
 
     int open_and_lock_file(
-            const std::string& file_path)
+            const std::string& file_path,
+            bool* was_lock_created,
+            bool* was_lock_released)
     {
+        int test_exist;
+
+        // Try open exclusive
+        auto ret = _sopen_s(&test_exist, file_path.c_str(), _O_WRONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
+
+        if(ret == 0)
+        {
+            *was_lock_created = false;
+
+            if(was_lock_released)
+            {
+                *was_lock_released = true;
+            }
+
+            _close(test_exist);
+        }
+        else
+        {   
+            // Try open shared
+            ret = _sopen_s(&test_exist, file_path.c_str(), _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
+
+            if(ret == 0)
+            {
+                if(was_lock_released)
+                {
+                    *was_lock_released = false;
+                }
+                
+                *was_lock_created = false;
+
+                return test_exist;
+            }
+            else
+            {
+                if(was_lock_released)
+                {
+                    *was_lock_released = true;
+                }
+
+                *was_lock_created = true;
+            }
+        }
+        
         int fd;
-        // Lock shared
-        auto ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
+        // Open or create shared
+        ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
 
         if (ret != 0)
         {
@@ -185,42 +230,39 @@ private:
         return lock_status;
     }
 
-    static std::unique_ptr<RobustSharedLock> try_lock_internal(
-        const std::string& name)
-    {
-        auto file_path = RobustLock::get_file_path(name);
-
-        int fd;
-
-        // Lock exclusive
-        auto ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | _O_WRONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
-        if (ret == 0)
-        {
-            _close(fd);
-            // TODO(Adolfo): Is there a safer way (like in linux) to conmute the lock 
-            // from exclusive to shared atomically (without close / open)?
-            // Lock shared
-            ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
-
-            if (ret == 0)
-            {
-                return std::unique_ptr<RobustSharedLock>(new RobustSharedLock(name, fd));
-            }
-        }
-
-        return nullptr;
-    }
-
 #else
 
     int open_and_lock_file(
-            const std::string& file_path)
+            const std::string& file_path,
+            bool* was_lock_created,
+            bool* was_lock_released)
     {
-        auto fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
+        auto fd = open(file_path.c_str(), O_RDONLY, 0666);
 
-        if (fd == -1)
+        if (fd != -1)
         {
-            throw std::runtime_error(("failed to open/create " + file_path + " " + std::strerror(errno)).c_str());
+            *was_lock_created = false;
+        }
+        else
+        {
+            *was_lock_created = true;
+            fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
+        }
+
+        if(was_lock_released != nullptr)
+        {
+            // Lock exclusive
+            if (0 == flock(fd, LOCK_EX | LOCK_NB))
+            {
+                // Exclusive => shared
+                flock(fd, LOCK_SH | LOCK_NB);
+                *was_lock_released = true;
+                return fd;
+            }
+            else
+            {
+                *was_lock_released = false;
+            }
         }
 
         // Lock shared
@@ -277,33 +319,6 @@ private:
         }
 
         return lock_status;
-    }
-
-    static std::unique_ptr<RobustSharedLock> try_lock_internal(
-            const std::string& name)
-    {
-        auto file_path = RobustLock::get_file_path(name);
-
-        auto fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
-
-        if (fd == -1)
-        {
-            return nullptr;
-        }
-
-        // Lock exclusive
-        if (0 == flock(fd, LOCK_EX | LOCK_NB))
-        {
-            // Exclusive => shared
-            flock(fd, LOCK_SH | LOCK_NB);
-            return std::unique_ptr<RobustSharedLock>(new RobustSharedLock(name, fd));
-        }
-        else
-        {
-            close(fd);
-        }
-
-        return nullptr;
     }
 
 #endif

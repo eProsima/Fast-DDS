@@ -85,6 +85,14 @@ public:
     {
         port.node_->is_port_ok = false;
     }
+
+    static void forze_listener_leak(SharedMemGlobal::Port& port)
+    {
+        port.node_->ref_counter.fetch_add(1);
+        auto listener = port.buffer_->register_listener();
+        listener.release();
+        port.node_->num_listeners++;
+    }
 };
 
 } // namespace rtps

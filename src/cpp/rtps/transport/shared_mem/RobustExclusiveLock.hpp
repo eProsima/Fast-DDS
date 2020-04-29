@@ -42,7 +42,8 @@ public:
     /**
      * Open or create and acquire the interprocess lock.
      * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
-     * @param out If the lock succeeded, this parameter return whether the lock has been created or it already exist.
+     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created 
+     * or it already exist.
      * @throw std::exception if lock coulnd't be acquired
      */
     RobustExclusiveLock(
