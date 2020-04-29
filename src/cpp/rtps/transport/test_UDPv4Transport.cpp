@@ -15,6 +15,7 @@
 #include <asio.hpp>
 #include <fastdds/rtps/transport/test_UDPv4Transport.h>
 #include <cstdlib>
+#include <functional>
 
 using namespace std;
 
@@ -36,14 +37,21 @@ bool test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage),
+    drop_data_messages_filter_(descriptor.drop_data_messages_filter_),
     drop_participant_builtin_topic_data_(descriptor.dropParticipantBuiltinTopicData),
     drop_publication_builtin_topic_data_(descriptor.dropPublicationBuiltinTopicData),
     drop_subscription_builtin_topic_data_(descriptor.dropSubscriptionBuiltinTopicData),
     drop_data_frag_messages_percentage_(descriptor.dropDataFragMessagesPercentage),
+    drop_data_frag_messages_filter_(descriptor.drop_data_frag_messages_filter_),
     drop_heartbeat_messages_percentage_(descriptor.dropHeartbeatMessagesPercentage),
+    drop_heartbeat_messages_filter_(descriptor.drop_heartbeat_messages_filter_),
     drop_ack_nack_messages_percentage_(descriptor.dropAckNackMessagesPercentage),
-    sequence_number_data_messages_to_drop_(descriptor.sequenceNumberDataMessagesToDrop),
-    percentage_of_messages_to_drop_(descriptor.percentageOfMessagesToDrop)
+    drop_ack_nack_messages_filter_(descriptor.drop_ack_nack_messages_filter_),
+    drop_gap_messages_percentage_(descriptor.dropGapMessagesPercentage),
+    drop_gap_messages_filter_(descriptor.drop_gap_messages_filter_),
+    percentage_of_messages_to_drop_(descriptor.percentageOfMessagesToDrop),
+    messages_filter_(descriptor.messages_filter_),
+    sequence_number_data_messages_to_drop_(descriptor.sequenceNumberDataMessagesToDrop)
     {
         test_UDPv4Transport_DropLogLength = 0;
         test_UDPv4Transport_ShutdownAllNetwork = false;
@@ -60,13 +68,20 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
     SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange),
     dropDataMessagesPercentage(0),
+    drop_data_messages_filter_([](CDRMessage_t&){return false;}),
     dropParticipantBuiltinTopicData(false),
     dropPublicationBuiltinTopicData(false),
     dropSubscriptionBuiltinTopicData(false),
     dropDataFragMessagesPercentage(0),
+    drop_data_frag_messages_filter_([](CDRMessage_t&){return false;}),
     dropHeartbeatMessagesPercentage(0),
+    drop_heartbeat_messages_filter_([](CDRMessage_t&){return false;}),
     dropAckNackMessagesPercentage(0),
+    drop_ack_nack_messages_filter_([](CDRMessage_t&){return false;}),
+    dropGapMessagesPercentage(0),
+    drop_gap_messages_filter_([](CDRMessage_t&){return false;}),
     percentageOfMessagesToDrop(0),
+    messages_filter_([](CDRMessage_t&){return false;}),
     sequenceNumberDataMessagesToDrop(),
     dropLogLength(0)
     {
@@ -226,11 +241,15 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
 
                 if(should_be_dropped(&drop_data_messages_percentage_))
                     return true;
+                if(drop_data_messages_filter_(cdrMessage))
+                    return true;
 
                 break;
 
             case fastrtps::rtps::ACKNACK:
                 if(should_be_dropped(&drop_ack_nack_messages_percentage_))
+                    return true;
+                if(drop_ack_nack_messages_filter_(cdrMessage))
                     return true;
 
                 break;
@@ -242,11 +261,15 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                 cdrMessage.pos = old_pos;
                 if(should_be_dropped(&drop_heartbeat_messages_percentage_))
                     return true;
+                if(drop_heartbeat_messages_filter_(cdrMessage))
+                    return true;
 
                 break;
 
             case fastrtps::rtps::DATA_FRAG:
                 if(should_be_dropped(&drop_data_frag_messages_percentage_))
+                    return true;
+                if(drop_data_frag_messages_filter_(cdrMessage))
                     return true;
 
                 break;
@@ -256,6 +279,10 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                 fastrtps::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
                 fastrtps::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
+                if(should_be_dropped(&drop_gap_messages_percentage_))
+                    return true;
+                if(drop_gap_messages_filter_(cdrMessage))
+                    return true;
 
                 break;
         }
@@ -269,7 +296,9 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
         cdrMessage.pos += cdrSubMessageHeader.submessageLength;
     }
 
-    if(random_chance_drop())
+    if(should_be_dropped(&percentage_of_messages_to_drop_))
+        return true;
+    if(messages_filter_(cdrMessage))
         return true;
 
     return false;
@@ -286,11 +315,6 @@ bool test_UDPv4Transport::log_drop(const octet* buffer, uint32_t size)
     }
 
     return false;
-}
-
-bool test_UDPv4Transport::random_chance_drop()
-{
-    return should_be_dropped(&percentage_of_messages_to_drop_);
 }
 
 bool test_UDPv4Transport::should_be_dropped(PercentageData* percent)

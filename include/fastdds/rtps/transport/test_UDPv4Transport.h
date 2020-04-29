@@ -66,15 +66,25 @@ private:
         uint8_t accumulator;
     };
 
+    typedef std::function<bool(fastrtps::rtps::CDRMessage_t& msg)> filter;
+
     PercentageData drop_data_messages_percentage_;
+    test_UDPv4TransportDescriptor::filter drop_data_messages_filter_;
     bool drop_participant_builtin_topic_data_;
     bool drop_publication_builtin_topic_data_;
     bool drop_subscription_builtin_topic_data_;
     PercentageData drop_data_frag_messages_percentage_;
+    test_UDPv4TransportDescriptor::filter drop_data_frag_messages_filter_;
     PercentageData drop_heartbeat_messages_percentage_;
+    test_UDPv4TransportDescriptor::filter drop_heartbeat_messages_filter_;
     PercentageData drop_ack_nack_messages_percentage_;
-    std::vector<fastrtps::rtps::SequenceNumber_t> sequence_number_data_messages_to_drop_;
+    test_UDPv4TransportDescriptor::filter drop_ack_nack_messages_filter_;
+    PercentageData drop_gap_messages_percentage_;
+    test_UDPv4TransportDescriptor::filter drop_gap_messages_filter_;
     PercentageData percentage_of_messages_to_drop_;
+    test_UDPv4TransportDescriptor::filter messages_filter_;
+    std::vector<fastrtps::rtps::SequenceNumber_t> sequence_number_data_messages_to_drop_;
+
 
     bool log_drop(const fastrtps::rtps::octet* buffer, uint32_t size);
     bool packet_should_drop(const fastrtps::rtps::octet* send_buffer, uint32_t send_buffer_size);
