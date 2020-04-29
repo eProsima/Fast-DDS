@@ -980,33 +980,46 @@ private:
             uint32_t extra = 512;
             uint32_t segment_size = sizeof(PortNode) + sizeof(PortCell) * max_buffer_descriptors;
 
+            std::unique_ptr<SharedMemSegment> port_segment;
+
             try
             {
-                auto port_segment = std::unique_ptr<SharedMemSegment>(
+                port_segment = std::unique_ptr<SharedMemSegment>(
                     new SharedMemSegment(boost::interprocess::create_only, port_segment_name.c_str(),
                         segment_size + extra));
-
-                // Memset the whole segment to zero in order to force physical map of the buffer
-                auto payload = port_segment->get().allocate(segment_size);
-                memset(payload, 0, segment_size);
-                port_segment->get().deallocate(payload);
-
-                port = init_port(port_id, port_segment, max_buffer_descriptors, open_mode, healthy_check_timeout_ms);
             }
-            catch (std::exception & e)
+            catch(std::exception& e)
             {
-                SharedMemSegment::remove(port_segment_name.c_str());
-
-                logError(RTPS_TRANSPORT_SHM, "Failed to create port segment " << port_segment_name
+                logWarning(RTPS_TRANSPORT_SHM, "Failed to create port segment " << port_segment_name
                     << ": " << e.what());
+            }
 
-                throw;
+            if(port_segment)
+            {
+                try
+                {
+                    // Memset the whole segment to zero in order to force physical map of the buffer
+                    auto payload = port_segment->get().allocate(segment_size);
+                    memset(payload, 0, segment_size);
+                    port_segment->get().deallocate(payload);
+
+                    port = init_port(port_id, port_segment, max_buffer_descriptors, open_mode, healthy_check_timeout_ms);
+                }
+                catch (std::exception & e)
+                {
+                    SharedMemSegment::remove(port_segment_name.c_str());
+
+                    logError(RTPS_TRANSPORT_SHM, "Failed init_port " << port_segment_name
+                        << ": " << e.what());
+
+                    throw;
+                }
             }
         }
 
         if (port == nullptr)
         {
-            throw std::runtime_error("Coulnd't open port " + err_reason);
+            throw std::runtime_error("Couldn't open port " + err_reason);
         }
 
         return port;
