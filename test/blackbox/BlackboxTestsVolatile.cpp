@@ -360,6 +360,48 @@ TEST_P(Volatile, AsyncVolatileSubBetweenTransientPubs)
     reader.block_for_all();
 }
 
+TEST_P(Volatile, VolatileSubBetweenTransientPubs)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer
+        .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .resource_limits_allocated_samples(9)
+        .resource_limits_max_samples(9)
+        .heartbeat_period_seconds(3600)
+        .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    HelloWorld hello;
+    hello.index(1);
+    hello.message("HelloWorld 1");
+
+    writer.send_sample(hello);
+
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+        init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(1);
+    reader.startReception(data);
+    // Send data with some interval, to let async writer thread send samples
+    writer.send(data, 300);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
 TEST_P(Volatile, VolatileLateJoinerSubGapLost)
 {
     PubSubReader<HelloWorldType> reader1(TEST_TOPIC_NAME);
@@ -410,6 +452,7 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
     reader1.startReception(data);
 
     writer.send_sample(data.front());
+    data.pop_front();
 
     reader2.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
@@ -420,8 +463,6 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
 
     reader2.wait_discovery();
     writer.wait_discovery(2);
-
-    data.pop_front();
 
     reader2.startReception(data);
 
