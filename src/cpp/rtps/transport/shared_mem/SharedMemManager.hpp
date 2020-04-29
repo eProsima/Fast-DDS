@@ -240,7 +240,8 @@ public:
         }
 
         per_allocation_extra_size_ =
-                SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
+                SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value,
+                    domain_name);
     }
 
     class Buffer
