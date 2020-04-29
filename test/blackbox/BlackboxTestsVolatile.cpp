@@ -378,6 +378,7 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
     ASSERT_TRUE(reader2.isInitialized());
 
     reader2.wait_discovery();
+    writer.wait_discovery(2);
 
     data.pop_front();
 
