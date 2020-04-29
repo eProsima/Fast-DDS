@@ -1756,6 +1756,20 @@ void StatefulWriter::send_heartbeat_to_nts(
     {
         RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
         send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
+        SequenceNumber_t first_seq = get_seq_num_min();
+        if (first_seq != c_SequenceNumber_Unknown)
+        {
+            if (remoteReaderProxy.durability_kind() < TRANSIENT_LOCAL ||
+                getAttributes().durabilityKind < TRANSIENT_LOCAL)
+            {
+                SequenceNumber_t last_irrelevance = remoteReaderProxy.changes_low_mark();
+                if (first_seq <= last_irrelevance)
+                {
+                    group.add_gap(first_seq, SequenceNumberSet_t(last_irrelevance + 1));
+                }
+            }
+
+        }
     }
     catch (const RTPSMessageGroup::timeout&)
     {
