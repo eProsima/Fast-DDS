@@ -740,37 +740,48 @@ public:
         }
 
         static bool is_zombie(
-                OpenMode open_mode,
                 uint32_t port_id,
                 const std::string& domain_name)
         {
-            bool is_zombie;
+            bool was_lock_created;
+            std::string lock_name;
 
-            if(open_mode != OpenMode::ReadShared)
+            try
             {
-                bool was_lock_created;
-                std::string lock_name = domain_name + "_port" + std::to_string(port_id) + "_el";
-
-                try
+                // An exclusive port is zombie when it has a "_el" file & the file is not locked
+                lock_name = domain_name + "_port" + std::to_string(port_id) + "_el";
+                RobustExclusiveLock zombie_test(lock_name, &was_lock_created);
+                // Lock acquired, did the file exist before the acquire?
+                if(!was_lock_created)
                 {
-                    RobustExclusiveLock zombie_test(lock_name, &was_lock_created);
+                    // Yes, is zombie
+                    return true;
                 }
-                catch (const std::exception&)
-                {
-                    return false;
-                }
-
-                is_zombie = !was_lock_created;
             }
-            else
+            catch (const std::exception&)
             {
-                std::string lock_name = domain_name + "_port" + std::to_string(port_id) + "_sl";
-                auto shared_lock = RobustSharedLock::try_lock_as_new(lock_name);
-                // If resource was not locked by anyone => is zombie
-                is_zombie = (shared_lock != nullptr);
+                // Resource locked => not zombie.
             }
 
-            return is_zombie;
+            try
+            {
+                // A shared port is zombie when it has a "_sl" file & the file is not locked
+                lock_name = domain_name + "_port" + std::to_string(port_id) + "_sl";
+                bool was_lock_released;
+                RobustSharedLock zombie_test(lock_name, &was_lock_created, &was_lock_released);
+                // Lock acquired, did the file exist and was release before the acquire?
+                if(!was_lock_created && was_lock_released)
+                {
+                    // Yes, is zombie
+                    return true;
+                }
+            }
+            catch (const std::exception&)
+            {
+                // Resource locked => not zombie.
+            }
+            
+            return false;
         }
 
     }; // Port
@@ -867,7 +878,7 @@ private:
 
         try
         {
-            if(Port::is_zombie(open_mode, port_id, domain_name_))
+            if(Port::is_zombie(port_id, domain_name_))
             {
                 logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port "
                     << port_id << " Zombie. Reset the port");

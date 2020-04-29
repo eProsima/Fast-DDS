@@ -1047,32 +1047,56 @@ TEST_F(SHMTransportTests, robust_shared_lock)
     // sl2 holds the lock
     ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
 
-    auto new_lock = RobustSharedLock::try_lock_as_new(lock_name);
-    // sl2 holds the lock
-    ASSERT_TRUE(new_lock == nullptr);
+    bool was_lock_created;
+    bool was_lock_released;
+    auto new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
+    // sl2 holds the lock so the object exists
+    ASSERT_FALSE(was_lock_created);
+    ASSERT_FALSE(was_lock_released);
 
     sl2.reset();
-    // the lock is free
+    // still locked by new_lock
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    new_lock.reset();
+    // not locked
     ASSERT_FALSE(RobustSharedLock::is_locked(lock_name));
 
     // and has been removed
     ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
 
-    new_lock = RobustSharedLock::try_lock_as_new(lock_name);
-    // Create a new lock
-    ASSERT_FALSE(new_lock == nullptr);
+    new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
+    // A new object was been created
+    ASSERT_TRUE(was_lock_created);
+    ASSERT_TRUE(was_lock_released);
 
     sl1 = std::make_shared<RobustSharedLock>(lock_name);
     ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
 
     new_lock.reset();
+    new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
     // sl1 holds the lock
-    new_lock = RobustSharedLock::try_lock_as_new(lock_name);
-    ASSERT_TRUE(new_lock == nullptr);
+    ASSERT_FALSE(was_lock_created);
+    ASSERT_FALSE(was_lock_released);
 
     sl1.reset();
+    new_lock.reset();
     
-    // Thre resource has been removed
+    // The resource has been removed
+    ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
+
+    // Create a fake file
+    FILE* f = fopen(RobustLock::get_file_path(lock_name).c_str(), "w+");
+    ASSERT_TRUE(f != nullptr);
+    fclose(f);
+
+    new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
+    // sl1 holds the lock
+    ASSERT_FALSE(was_lock_created);
+    ASSERT_TRUE(was_lock_released);
+
+    new_lock.reset();
+    // The resource has been removed
     ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
 }
 
