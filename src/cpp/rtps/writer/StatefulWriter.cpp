@@ -728,6 +728,7 @@ void StatefulWriter::send_all_intraprocess_changes(
     {
         if (remoteReader->is_local_reader())
         {
+            intraprocess_heartbeat(remoteReader, false);
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
             {
