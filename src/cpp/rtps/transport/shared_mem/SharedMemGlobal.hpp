@@ -22,6 +22,7 @@
 #include <rtps/transport/shared_mem/SharedMemSegment.hpp>
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
 #include <rtps/transport/shared_mem/RobustExclusiveLock.hpp>
+#include <rtps/transport/shared_mem/RobustSharedLock.hpp>
 
 #define THREADID "(ID:" << std::this_thread::get_id() <<") "
 
@@ -130,6 +131,7 @@ public:
         uint64_t overflows_count_;
 
         std::unique_ptr<RobustExclusiveLock> read_exclusive_lock_;
+        std::unique_ptr<RobustSharedLock> read_shared_lock_;
 
         inline void notify_unicast(
                 bool was_buffer_empty_before_push)
@@ -717,9 +719,16 @@ public:
             read_exclusive_lock_ = std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
         }
 
-        void unlock_read_exclusive()
+        void lock_read_shared()
+        {
+            std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_sl";
+            read_shared_lock_ = std::unique_ptr<RobustSharedLock>(new RobustSharedLock(lock_name));
+        }
+
+        void unlock_read_locks()
         {
             read_exclusive_lock_.reset();
+            read_shared_lock_.reset();
         }
 
         static std::unique_ptr<RobustExclusiveLock> lock_read_exclusive(
@@ -731,22 +740,37 @@ public:
         }
 
         static bool is_zombie(
+                OpenMode open_mode,
                 uint32_t port_id,
                 const std::string& domain_name)
         {
-            bool was_lock_created;
-            std::string lock_name = domain_name + "_port" + std::to_string(port_id) + "_el";
+            bool is_zombie;
 
-            try
+            if(open_mode != OpenMode::ReadShared)
             {
-                RobustExclusiveLock zombie_test(lock_name, &was_lock_created);
+                bool was_lock_created;
+                std::string lock_name = domain_name + "_port" + std::to_string(port_id) + "_el";
+
+                try
+                {
+                    RobustExclusiveLock zombie_test(lock_name, &was_lock_created);
+                }
+                catch (const std::exception&)
+                {
+                    return false;
+                }
+
+                is_zombie = !was_lock_created;
             }
-            catch (const std::exception&)
+            else
             {
-                return false;
+                std::string lock_name = domain_name + "_port" + std::to_string(port_id) + "_sl";
+                auto shared_lock = RobustSharedLock::try_lock_as_new(lock_name);
+                // If resource was not locked by anyone => is zombie
+                is_zombie = (shared_lock != nullptr);
             }
 
-            return !was_lock_created;
+            return is_zombie;
         }
 
     }; // Port
@@ -832,18 +856,18 @@ private:
         {
             try
             {
-                regenerating_port->unlock_read_exclusive();
+                regenerating_port->unlock_read_locks();
             }
             catch (std::exception & e)
             {
                 logError(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                    << port_id << " failed unlock_read_exclusive " << e.what());
+                    << port_id << " failed unlock_read_locks " << e.what());
             }
         }
 
         try
         {
-            if(Port::is_zombie(port_id, domain_name_))
+            if(Port::is_zombie(open_mode, port_id, domain_name_))
             {
                 logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port "
                     << port_id << " Zombie. Reset the port");
@@ -927,12 +951,12 @@ private:
             {
                 try
                 {
-                    port->unlock_read_exclusive();
+                    port->unlock_read_locks();
                 }
                 catch (std::exception & e)
                 {
                     logError(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                        << port_id << " failed unlock_read_exclusive " << e.what());
+                        << port_id << " failed unlock_read_locks " << e.what());
                 }
 
                 port_node->is_port_ok = false;
@@ -1045,6 +1069,11 @@ private:
 
         port_node->is_port_ok = true;
         port = std::make_shared<Port>(std::move(segment), port_node, std::move(lock_read_exclusive));
+
+        if(open_mode == Port::OpenMode::ReadShared)
+        {
+            port->lock_read_shared();
+        }
         
         logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
                 << port_node->port_id << " (" << port_node->uuid.to_string() 
