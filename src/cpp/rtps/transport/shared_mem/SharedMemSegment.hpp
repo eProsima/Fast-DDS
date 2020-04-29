@@ -148,7 +148,8 @@ public:
      * Estimates the extra segment space required for an allocation
      */
     static uint32_t compute_per_allocation_extra_size(
-            size_t allocation_alignment)
+            size_t allocation_alignment,
+            const std::string& domain_name)
     {
         Id uuid;
 
@@ -163,8 +164,10 @@ public:
                 SharedMemEnvironment::get().init();
 
                 {
+                    auto name = domain_name + "_" + uuid.to_string();
+
                     boost::interprocess::managed_shared_memory
-                            test_segment(boost::interprocess::create_only, uuid.to_string().c_str(),
+                            test_segment(boost::interprocess::create_only, name.c_str(),
                                 (std::max)((size_t)1024, allocation_alignment* 4));
 
                     auto m1 = test_segment.get_free_memory();
