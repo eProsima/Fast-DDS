@@ -121,14 +121,29 @@ public:
 
     /**
      * This operation creates a DataReader. The returned DataReader will be attached and belong to the Subscriber.
-     * @param topic_attr
-     * @param reader_qos
-     * @param listener
+     * @param topic Topic the DataReader will be listening.
+     * @param reader_qos QoS of the DataReader.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask.
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     RTPS_DllAPI DataReader* create_datareader(
             TopicDescription* topic,
             const DataReaderQos& reader_qos,
+            DataReaderListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * This operation creates a DataReader. The returned DataReader will be attached and belongs to the Subscriber.
+     * @param topic Topic the DataReader will be listening.
+     * @param profile DataReader profile name.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask.
+     * @return Pointer to the created DataReader. nullptr if failed.
+     */
+    RTPS_DllAPI DataReader* create_datareader_with_profile(
+            TopicDescription* topic,
+            const std::string& profile_name,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 

@@ -80,6 +80,15 @@ DataReader* Subscriber::create_datareader(
     return impl_->create_datareader(topic, reader_qos, listener, mask);
 }
 
+DataReader* Subscriber::create_datareader_with_profile(
+        TopicDescription* topic,
+        const std::string& profile_name,
+        DataReaderListener* listener = nullptr,
+        const StatusMask& mask = StatusMask::all())
+{
+    return impl_->create_datareader_with_profile(topic, profile_name, listener, mask);
+}
+
 ReturnCode_t Subscriber::delete_datareader(
         DataReader* reader)
 {

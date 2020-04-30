@@ -279,6 +279,24 @@ DataWriter* PublisherImpl::create_datawriter(
     return writer;
 }
 
+DataWriter* PublisherImpl::create_datawriter_with_profile(
+        Topic* topic,
+        const std::string& profile_name,
+        DataWriterListener* listener,
+        const StatusMask& mask = StatusMask::all())
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    {
+        DataWriterQos qos;
+        set_qos_from_attributes(qos, attr);
+        return create_datawriter(topic, qos, listener, mask);
+    }
+
+    return nullptr;
+}
+
 ReturnCode_t PublisherImpl::delete_datawriter(
         DataWriter* writer)
 {

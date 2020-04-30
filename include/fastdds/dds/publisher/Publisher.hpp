@@ -116,14 +116,29 @@ public:
 
     /**
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
-     * @param topic_attr
-     * @param writer_qos
-     * @param listener
+     * @param topic Topic the DataWriter will be listening
+     * @param qos QoS of the DataWriter.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask.
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter(
             Topic* topic,
             const DataWriterQos& qos = DATAWRITER_QOS_DEFAULT,
+            DataWriterListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
+     * @param topic Topic the DataWriter will be listening
+     * @param profile DataWriter profile name.
+     * @param listener Pointer to the listener.
+     * @param mask StatusMask.
+     * @return Pointer to the created DataWriter. nullptr if failed.
+     */
+    RTPS_DllAPI DataWriter* create_datawriter_with_profile(
+            Topic* topic,
+            const std::string& profile_name,
             DataWriterListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 

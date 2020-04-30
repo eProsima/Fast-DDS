@@ -94,6 +94,12 @@ public:
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
+    DataReader* create_datareader_with_profile(
+            TopicDescription* topic,
+            const std::string& profile_name,
+            DataReaderListener* listener,
+            const StatusMask& mask = StatusMask::all());
+
     ReturnCode_t delete_datareader(
             DataReader* reader);
 

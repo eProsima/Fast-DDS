@@ -245,6 +245,24 @@ DataReader* SubscriberImpl::create_datareader(
     return reader;
 }
 
+DataReader* SubscriberImpl::create_datareader_with_profile(
+        TopicDescription* topic,
+        const std::string& profile_name,
+        DataReaderListener* listener,
+        const StatusMask& mask = StatusMask::all())
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
+    {
+        DataReaderQos qos;
+        set_qos_from_attributes(qos, attr);
+        return create_datareader(topic, qos, listener, mask);
+    }
+
+    return nullptr;
+}
+
 ReturnCode_t SubscriberImpl::delete_datareader(
         DataReader* reader)
 {

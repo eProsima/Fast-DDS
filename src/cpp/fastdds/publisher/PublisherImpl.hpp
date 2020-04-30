@@ -97,6 +97,12 @@ public:
             DataWriterListener* listener,
             const StatusMask& mask = StatusMask::all());
 
+    DataWriter* create_datawriter_with_profile(
+            Topic* topic,
+            const std::string& profile_name,
+            DataWriterListener* listener,
+            const StatusMask& mask = StatusMask::all());
+
     ReturnCode_t delete_datawriter(
             DataWriter* writer);
 
