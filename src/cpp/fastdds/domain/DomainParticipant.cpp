@@ -144,8 +144,8 @@ Topic* DomainParticipant::create_topic_with_profile(
         const std::string& topic_name,
         const std::string& type_name,
         const std::string& profile_name,
-        TopicListener* listener = nullptr,
-        const StatusMask& mask = StatusMask::all())
+        TopicListener* listener,
+        const StatusMask& mask)
 {
     return impl_->create_topic_with_profile(topic_name, type_name, profile_name, listener, mask);
 }

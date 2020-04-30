@@ -50,7 +50,7 @@ static void set_qos_from_attributes(
 {
     qos.reader_resource_limits().matched_publisher_allocation = attr.matched_publisher_allocation;
     qos.properties() = attr.properties;
-    qos.expects_inline_qos() = attr.expectsInlineQos;
+    qos.expects_inline_qos(attr.expectsInlineQos);
     qos.endpoint().unicast_locator_list = attr.unicastLocatorList;
     qos.endpoint().multicast_locator_list = attr.multicastLocatorList;
     qos.endpoint().remote_locator_list = attr.remoteLocatorList;
@@ -88,9 +88,9 @@ SubscriberImpl::SubscriberImpl(
     , rtps_participant_(p->rtps_participant())
     , default_datareader_qos_(DATAREADER_QOS_DEFAULT)
 {
-    SubscriberAttributes pub_attr;
-    XMLProfileManager::getDefaultSubscriberAttributes(pub_attr);
-    set_qos_from_attributes(default_datareader_qos_, pub_attr);
+    SubscriberAttributes sub_attr;
+    XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
+    set_qos_from_attributes(default_datareader_qos_, sub_attr);
 }
 
 void SubscriberImpl::disable()
@@ -249,7 +249,7 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
         TopicDescription* topic,
         const std::string& profile_name,
         DataReaderListener* listener,
-        const StatusMask& mask = StatusMask::all())
+        const StatusMask& mask)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     SubscriberAttributes attr;

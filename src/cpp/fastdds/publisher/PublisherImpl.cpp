@@ -283,7 +283,7 @@ DataWriter* PublisherImpl::create_datawriter_with_profile(
         Topic* topic,
         const std::string& profile_name,
         DataWriterListener* listener,
-        const StatusMask& mask = StatusMask::all())
+        const StatusMask& mask)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     PublisherAttributes attr;
