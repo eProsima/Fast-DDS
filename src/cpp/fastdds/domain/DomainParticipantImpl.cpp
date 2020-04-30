@@ -58,7 +58,11 @@ namespace fastdds {
 namespace dds {
 
 using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
 using fastrtps::ParticipantAttributes;
+using fastrtps::TopicAttributes;
+using fastrtps::SubscriberAttributes;
+using fastrtps::PublisherAttributes;
 using fastrtps::rtps::RTPSDomain;
 using fastrtps::rtps::RTPSParticipant;
 using fastrtps::rtps::ParticipantDiscoveryInfo;
@@ -77,7 +81,7 @@ using eprosima::fastdds::dds::Log;
 
 static void set_qos_from_attributes(
         TopicQos& qos,
-        const eprosima::fastrtps::TopicAttributes& attr)
+        const TopicAttributes& attr)
 {
     qos.history() = attr.historyQos;
     qos.resource_limits() = attr.resourceLimitsQos;
@@ -85,7 +89,7 @@ static void set_qos_from_attributes(
 
 static void set_qos_from_attributes(
         SubscriberQos& qos,
-        const eprosima::fastrtps::SubscriberAttributes& attr)
+        const SubscriberAttributes& attr)
 {
     qos.group_data().setValue(attr.qos.m_groupData);
     qos.partition() = attr.qos.m_partition;
@@ -94,7 +98,7 @@ static void set_qos_from_attributes(
 
 static void set_qos_from_attributes(
         PublisherQos& qos,
-        const eprosima::fastrtps::PublisherAttributes& attr)
+        const PublisherAttributes& attr)
 {
     qos.group_data().setValue(attr.qos.m_groupData);
     qos.partition() = attr.qos.m_partition;
@@ -117,15 +121,15 @@ DomainParticipantImpl::DomainParticipantImpl(
 {
     participant_->impl_ = this;
 
-    eprosima::fastrtps::PublisherAttributes pub_attr;
+    PublisherAttributes pub_attr;
     XMLProfileManager::getDefaultPublisherAttributes(pub_attr);
     set_qos_from_attributes(default_pub_qos_, pub_attr);
 
-    eprosima::fastrtps::SubscriberAttributes sub_attr;
+    SubscriberAttributes sub_attr;
     XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
     set_qos_from_attributes(default_sub_qos_, sub_attr);
 
-    eprosima::fastrtps::TopicAttributes top_attr;
+    TopicAttributes top_attr;
     XMLProfileManager::getDefaultTopicAttributes(top_attr);
     set_qos_from_attributes(default_topic_qos_, top_attr);
 }
@@ -375,6 +379,23 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_[pub] = pubimpl;
 
     return pub;
+}
+
+Publisher* DomainParticipantImpl::create_publisher_with_profile(
+        const std::string& profile_name,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    {
+        PublisherQos qos;
+        set_qos_from_attributes(qos, attr);
+        return create_publisher(qos, listener, mask);
+    }
+
+    return nullptr;
 }
 
 /* TODO
@@ -673,6 +694,23 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     return sub;
 }
 
+Subscriber* DomainParticipantImpl::create_subscriber_with_profile(
+        const std::string& profile_name,
+        SubscriberListener* listener,
+        const StatusMask& mask)
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
+    {
+        SubscriberQos qos;
+        set_qos_from_attributes(qos, attr);
+        return create_subscriber(qos, listener, mask);
+    }
+
+    return nullptr;
+}
+
 Topic* DomainParticipantImpl::create_topic(
         const std::string& topic_name,
         const std::string& type_name,
@@ -722,6 +760,25 @@ Topic* DomainParticipantImpl::create_topic(
     topics_[topic_name] = topic_impl;
 
     return topic;
+}
+
+Topic* DomainParticipantImpl::create_topic_with_profile(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const std::string& profile_name,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    TopicAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
+    {
+        TopicQos qos;
+        set_qos_from_attributes(qos, attr);
+        return create_topic(topic_name, type_name, qos, listener, mask);
+    }
+
+    return nullptr;
 }
 
 TopicDescription* DomainParticipantImpl::lookup_topicdescription(
