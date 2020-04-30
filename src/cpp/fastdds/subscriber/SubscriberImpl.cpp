@@ -30,12 +30,51 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+#include <fastrtps/attributes/SubscriberAttributes.h>
+
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::rtps::InstanceHandle_t;
+using fastrtps::Duration_t;
+using fastrtps::SubscriberAttributes;
+
+static void set_qos_from_attributes(
+        DataReaderQos& qos,
+        const SubscriberAttributes& attr)
+{
+    qos.reader_resource_limits().matched_publisher_allocation = attr.matched_publisher_allocation;
+    qos.properties() = attr.properties;
+    qos.expects_inline_qos() = attr.expectsInlineQos;
+    qos.endpoint().unicast_locator_list = attr.unicastLocatorList;
+    qos.endpoint().multicast_locator_list = attr.multicastLocatorList;
+    qos.endpoint().remote_locator_list = attr.remoteLocatorList;
+    qos.endpoint().history_memory_policy = attr.historyMemoryPolicy;
+    qos.endpoint().user_defined_id = attr.getUserDefinedID();
+    qos.endpoint().entity_id = attr.getEntityID();
+    qos.reliable_reader_qos().times = attr.times;
+    qos.reliable_reader_qos().disable_positive_ACKs = attr.qos.m_disablePositiveACKs;
+    qos.durability() = attr.qos.m_durability;
+    qos.durability_service() = attr.qos.m_durabilityService;
+    qos.deadline() = attr.qos.m_deadline;
+    qos.latency_budget() = attr.qos.m_latencyBudget;
+    qos.liveliness() = attr.qos.m_liveliness;
+    qos.reliability() = attr.qos.m_reliability;
+    qos.lifespan() = attr.qos.m_lifespan;
+    qos.user_data().setValue(attr.qos.m_userData);
+    qos.ownership() = attr.qos.m_ownership;
+    qos.destination_order() = attr.qos.m_destinationOrder;
+    qos.type_consistency().type_consistency = attr.qos.type_consistency;
+    qos.type_consistency().representation = attr.qos.representation;
+    qos.time_based_filter() = attr.qos.m_timeBasedFilter;
+    qos.history() = attr.topic.historyQos;
+    qos.resource_limits() = attr.topic.resourceLimitsQos;
+}
 
 SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
@@ -49,6 +88,9 @@ SubscriberImpl::SubscriberImpl(
     , rtps_participant_(p->rtps_participant())
     , default_datareader_qos_(DATAREADER_QOS_DEFAULT)
 {
+    SubscriberAttributes pub_attr;
+    XMLProfileManager::getDefaultSubscriberAttributes(pub_attr);
+    set_qos_from_attributes(default_datareader_qos_, pub_attr);
 }
 
 void SubscriberImpl::disable()
