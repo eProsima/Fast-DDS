@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastdds/dds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include "ParameterList.hpp"
 #include "ParameterSerializer.hpp"
 
 #include <functional>
@@ -49,146 +49,73 @@ bool ParameterList::updateCacheChangeFromInlineQos(
         fastrtps::rtps::CDRMessage_t* msg,
         uint32_t& qos_size)
 {
-    auto parameter_process = [&](fastrtps::rtps::CDRMessage_t* msg, const ParameterId_t pid, uint16_t plength)
+    auto parameter_process = [&](
+        fastrtps::rtps::CDRMessage_t* msg,
+        const ParameterId_t pid,
+        uint16_t plength)
+    {
+        switch (pid)
+        {
+            case PID_KEY_HASH:
             {
-                switch (pid)
+                ParameterKey_t p(pid, plength);
+                if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
                 {
-                    case PID_KEY_HASH:
-                    {
-                        ParameterKey_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
-                        {
-                            return false;
-                        }
-
-                        change.instanceHandle = p.key;
-                        break;
-                    }
-
-                    case PID_RELATED_SAMPLE_IDENTITY:
-                    {
-                        if (plength >= 24)
-                        {
-                            ParameterSampleIdentity_t p(pid, plength);
-                            if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
-                                    msg, plength))
-                            {
-                                return false;
-                            }
-
-                            change.write_params.sample_identity(p.sample_id);
-                        }
-                        break;
-                    }
-
-                    case PID_STATUS_INFO:
-                    {
-                        ParameterStatusInfo_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterStatusInfo_t>::read_from_cdr_message(p, msg,
-                                plength))
-                        {
-                            return false;
-                        }
-
-                        if (p.status == 1)
-                        {
-                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
-                        }
-                        else if (p.status == 2)
-                        {
-                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
-                        }
-                        else if (p.status == 3)
-                        {
-                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
-                        }
-                        break;
-                    }
-
-                    default:
-                        break;
+                    return false;
                 }
 
-                return true;
-            };
-    try
-    {
-        return readParameterListfromCDRMsg(*msg, parameter_process, false, qos_size);
-    }
-    catch (std::bad_alloc& ba)
-    {
-        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-        return false;
-    }
-}
-
-bool ParameterList::readParameterListfromCDRMsg(
-        fastrtps::rtps::CDRMessage_t& msg,
-        std::function<bool(fastrtps::rtps::CDRMessage_t*, const ParameterId_t, uint16_t)> processor,
-        bool use_encapsulation,
-        uint32_t& qos_size)
-{
-    qos_size = 0;
-
-    if (use_encapsulation)
-    {
-        // Read encapsulation
-        msg.pos += 1;
-        fastrtps::rtps::octet encapsulation = 0;
-        fastrtps::rtps::CDRMessage::readOctet(&msg, &encapsulation);
-        if (encapsulation == PL_CDR_BE)
-        {
-            msg.msg_endian = fastrtps::rtps::Endianness_t::BIGEND;
-        }
-        else if (encapsulation == PL_CDR_LE)
-        {
-            msg.msg_endian = fastrtps::rtps::Endianness_t::LITTLEEND;
-        }
-        else
-        {
-            return false;
-        }
-        // Skip encapsulation options
-        msg.pos += 2;
-    }
-
-    uint32_t original_pos = msg.pos;
-    bool is_sentinel = false;
-    while (!is_sentinel)
-    {
-        msg.pos = original_pos + qos_size;
-
-        ParameterId_t pid;
-        uint16_t plength = 0;
-        bool valid = true;
-        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
-
-        if (pid == PID_SENTINEL)
-        {
-            // PID_SENTINEL is always considered of length 0
-            plength = 0;
-            is_sentinel = true;
-        }
-
-        qos_size += (4 + plength);
-
-        // Align to 4 byte boundary and prepare for next iteration
-        qos_size = (qos_size + 3) & ~3;
-
-        if (!valid || ((msg.pos + plength) > msg.length))
-        {
-            return false;
-        }
-        else if (!is_sentinel)
-        {
-            if (!processor(&msg, pid, plength))
-            {
-                return false;
+                change.instanceHandle = p.key;
+                break;
             }
+
+            case PID_RELATED_SAMPLE_IDENTITY:
+            {
+                if (plength >= 24)
+                {
+                    ParameterSampleIdentity_t p(pid, plength);
+                    if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
+                            msg, plength))
+                    {
+                        return false;
+                    }
+
+                    change.write_params.sample_identity(p.sample_id);
+                }
+                break;
+            }
+
+            case PID_STATUS_INFO:
+            {
+                ParameterStatusInfo_t p(pid, plength);
+                if (!fastdds::dds::ParameterSerializer<ParameterStatusInfo_t>::read_from_cdr_message(p, msg,
+                        plength))
+                {
+                    return false;
+                }
+
+                if (p.status == 1)
+                {
+                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
+                }
+                else if (p.status == 2)
+                {
+                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
+                }
+                else if (p.status == 3)
+                {
+                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
+                }
+                break;
+            }
+
+            default:
+                break;
         }
-    }
-    return true;
+
+        return true;
+    };
+
+    return readParameterListfromCDRMsg(*msg, parameter_process, false, qos_size);
 }
 
 bool ParameterList::read_guid_from_cdr_msg(

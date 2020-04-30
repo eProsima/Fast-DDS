@@ -3427,6 +3427,8 @@ int SecurityManager::decode_rtps_submessage(
         return 0;
     }
 
+    CDRMessage::initCDRMsg(&out_message);
+
     std::unique_lock<std::mutex> lock(mutex_);
 
     const GUID_t remote_participant_key(sending_participant, c_EntityId_RTPSParticipant);

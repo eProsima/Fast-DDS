@@ -17,7 +17,7 @@
 #include <thread>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/qos/ParameterList.h>
+#include <fastrtps/qos/ParameterTypes.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 

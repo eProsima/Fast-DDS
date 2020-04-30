@@ -21,6 +21,9 @@
  *              grcanosa@gmail.com
  */
 
+using std::cout;
+using std::endl;
+
 using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 

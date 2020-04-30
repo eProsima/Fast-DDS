@@ -20,7 +20,7 @@
 #ifndef FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
 #define FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
 
-#include <fastdds/dds/core/policy/ParameterList.hpp>
+#include "ParameterList.hpp"
 #include <fastdds/rtps/common/CDRMessage_t.h>
 
 namespace eprosima {

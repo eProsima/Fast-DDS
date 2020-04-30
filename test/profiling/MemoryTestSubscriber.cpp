@@ -27,6 +27,9 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
+using std::cout;
+using std::endl;
+
 MemoryTestSubscriber::MemoryTestSubscriber()
     : mp_participant(nullptr)
     , mp_commandpub(nullptr)

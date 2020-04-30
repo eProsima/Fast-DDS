@@ -17,25 +17,26 @@
  *
  */
 
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
-
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
-#include <fastdds/dds/log/Log.hpp>
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {

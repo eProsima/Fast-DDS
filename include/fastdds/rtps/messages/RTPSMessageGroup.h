@@ -23,7 +23,6 @@
 
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/qos/ParameterList.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
 
 #include <vector>

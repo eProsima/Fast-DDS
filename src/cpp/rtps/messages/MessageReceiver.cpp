@@ -18,12 +18,13 @@
  */
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/reader/ReaderListener.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <cassert>
@@ -34,10 +35,11 @@
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
+using ParameterList = eprosima::fastdds::dds::ParameterList;
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
 
 MessageReceiver::MessageReceiver(
         RTPSParticipantImpl* participant,
@@ -185,7 +187,6 @@ void MessageReceiver::processCDRMsg(
 #if HAVE_SECURITY
     security::SecurityManager& security = participant_->security_manager();
     CDRMessage_t* auxiliary_buffer = &crypto_msg_;
-    CDRMessage::initCDRMsg(auxiliary_buffer);
 
     int decode_ret = security.decode_rtps_message(*msg, *auxiliary_buffer, source_guid_prefix_);
 
@@ -211,7 +212,6 @@ void MessageReceiver::processCDRMsg(
         CDRMessage_t* submessage = msg;
 
 #if HAVE_SECURITY
-        CDRMessage::initCDRMsg(auxiliary_buffer);
         decode_ret = security.decode_rtps_submessage(*msg, *auxiliary_buffer, source_guid_prefix_);
 
         if (decode_ret < 0)

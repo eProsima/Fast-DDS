@@ -25,6 +25,8 @@
 
 #include <openssl/opensslv.h>
 
+#include "../../../fastdds/core/policy/ParameterList.hpp"
+
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 #define IS_OPENSSL_1_1 1
 #define OPENSSL_CONST const
@@ -54,6 +56,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
+
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 static const unsigned char* BN_deserialize_raw(
         BIGNUM** bn,

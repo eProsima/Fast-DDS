@@ -38,6 +38,9 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+using std::cout;
+using std::endl;
+
 #if defined(_WIN32)
 #define COPYSTR strcpy_s
 #else

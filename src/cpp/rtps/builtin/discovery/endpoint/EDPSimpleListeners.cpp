@@ -17,28 +17,30 @@
  *
  */
 
-#include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
+#include "EDPSimpleListeners.h"
 
-#include <fastdds/rtps/network/NetworkFactory.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPServer.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-
-#include <fastdds/rtps/common/InstanceHandle.h>
-
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/core/policy/ParameterList.hpp>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 
 #include <mutex>
 
-#include <fastdds/dds/log/Log.hpp>
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
 // Keep change information on local variables to check consistency later

@@ -18,27 +18,29 @@
  */
 
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+
 #include <fastrtps/attributes/TopicAttributes.h>
 
 #include <fastrtps/utils/StringMatching.h>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps/types/TypeObjectFactory.h>
 
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
@@ -46,6 +48,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
 using eprosima::fastdds::dds::PublicationMatchedStatus;
 using eprosima::fastdds::dds::SubscriptionMatchedStatus;
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {
@@ -772,23 +775,23 @@ bool EDP::validMatching(
             && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
     //Means our reader is reliable but hte writer is not
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "): Remote Writer "
-                                                         << wdata->guid() << " is Best Effort and local reader is RELIABLE " << endl;
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "): Remote Writer " << wdata->guid()
+                                                         << " is Best Effort and local reader is RELIABLE "
                 );
         return false;
     }
     if (rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
     {
         // TODO (MCC) Change log message
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter "
-                                                         << wdata->guid() << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL" << endl;
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " << wdata->guid()
+                                                         << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL";
                 );
         return false;
     }
     if (rdata->m_qos.m_ownership.kind != wdata->m_qos.m_ownership.kind)
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer "
-                                                         << wdata->guid() << " has different Ownership Kind" << endl; );
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer " << wdata->guid()
+                                                         << " has different Ownership Kind");
         return false;
     }
     if (rdata->m_qos.m_deadline.period < wdata->m_qos.m_deadline.period)

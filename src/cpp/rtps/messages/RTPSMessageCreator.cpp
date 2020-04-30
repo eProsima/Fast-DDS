@@ -18,12 +18,14 @@
  */
 
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastrtps/qos/ParameterList.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/messages/CDRMessage.h>
+
+#include <fastdds/core/policy/ParameterList.hpp>
 
 using namespace eprosima::fastrtps;
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {

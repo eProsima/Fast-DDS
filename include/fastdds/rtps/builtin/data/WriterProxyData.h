@@ -23,7 +23,6 @@
 
 #include <fastrtps/qos/WriterQos.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/ParameterList.h>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>

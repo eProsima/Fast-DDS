@@ -39,6 +39,8 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
+using std::cout;
+using std::endl;
 
 MemoryTestPublisher::MemoryTestPublisher()
     : mp_participant(nullptr)

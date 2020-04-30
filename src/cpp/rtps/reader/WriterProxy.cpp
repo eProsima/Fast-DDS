@@ -564,7 +564,7 @@ bool WriterProxy::send(
         return true;
     }
 
-    ResourceLimitedVector<Locator_t> remote_locators = remote_locators_shrinked();
+    const ResourceLimitedVector<Locator_t>& remote_locators = remote_locators_shrinked();
     
     return reader_->send_sync_nts(message,
                    Locators(remote_locators.begin()),

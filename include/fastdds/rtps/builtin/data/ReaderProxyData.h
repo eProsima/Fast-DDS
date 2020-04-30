@@ -22,7 +22,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/qos/ReaderQos.h>
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>
