@@ -18,32 +18,26 @@
  */
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
-
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-
-#include <fastdds/topic/TopicImpl.hpp>
-
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
-
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-
 #include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -51,13 +45,19 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/topic/TopicImpl.hpp>
 
 #include <chrono>
 
-using namespace eprosima;
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
+using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::ParticipantAttributes;
 using fastrtps::rtps::RTPSDomain;
 using fastrtps::rtps::RTPSParticipant;
@@ -75,6 +75,31 @@ using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
+static void set_qos_from_attributes(
+        TopicQos& qos,
+        const eprosima::fastrtps::TopicAttributes& attr)
+{
+    qos.history() = attr.historyQos;
+    qos.resource_limits() = attr.resourceLimitsQos;
+}
+
+static void set_qos_from_attributes(
+        SubscriberQos& qos,
+        const eprosima::fastrtps::SubscriberAttributes& attr)
+{
+    qos.group_data().setValue(attr.qos.m_groupData);
+    qos.partition() = attr.qos.m_partition;
+    qos.presentation() = attr.qos.m_presentation;
+}
+
+static void set_qos_from_attributes(
+        PublisherQos& qos,
+        const eprosima::fastrtps::PublisherAttributes& attr)
+{
+    qos.group_data().setValue(attr.qos.m_groupData);
+    qos.partition() = attr.qos.m_partition;
+    qos.presentation() = attr.qos.m_presentation;
+}
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
@@ -86,10 +111,23 @@ DomainParticipantImpl::DomainParticipantImpl(
     , listener_(listen)
     , default_pub_qos_(PUBLISHER_QOS_DEFAULT)
     , default_sub_qos_(SUBSCRIBER_QOS_DEFAULT)
+    , default_topic_qos_(TOPIC_QOS_DEFAULT)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
 {
     participant_->impl_ = this;
+
+    eprosima::fastrtps::PublisherAttributes pub_attr;
+    XMLProfileManager::getDefaultPublisherAttributes(pub_attr);
+    set_qos_from_attributes(default_pub_qos_, pub_attr);
+
+    eprosima::fastrtps::SubscriberAttributes sub_attr;
+    XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
+    set_qos_from_attributes(default_sub_qos_, sub_attr);
+
+    eprosima::fastrtps::TopicAttributes top_attr;
+    XMLProfileManager::getDefaultTopicAttributes(top_attr);
+    set_qos_from_attributes(default_topic_qos_, top_attr);
 }
 
 void DomainParticipantImpl::disable()
@@ -1489,3 +1527,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
     }
     return updatable;
 }
+
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
