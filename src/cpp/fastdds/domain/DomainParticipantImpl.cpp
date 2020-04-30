@@ -484,7 +484,7 @@ ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
 {
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
-        PublisherImpl::set_qos(default_pub_qos_, PUBLISHER_QOS_DEFAULT, true);
+        reset_default_publisher_qos();
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -497,6 +497,15 @@ ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+void DomainParticipantImpl::reset_default_publisher_qos()
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    PublisherImpl::set_qos(default_pub_qos_, PUBLISHER_QOS_DEFAULT, true);
+    PublisherAttributes attr;
+    XMLProfileManager::getDefaultPublisherAttributes(attr);
+    set_qos_from_attributes(default_pub_qos_, attr);
+}
+
 const PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const
 {
     return default_pub_qos_;
@@ -507,7 +516,7 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
 {
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
-        SubscriberImpl::set_qos(default_sub_qos_, SUBSCRIBER_QOS_DEFAULT, true);
+        reset_default_subscriber_qos();
         return ReturnCode_t::RETCODE_OK;
     }
     ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
@@ -517,6 +526,15 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
     }
     SubscriberImpl::set_qos(default_sub_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
+}
+
+void DomainParticipantImpl::reset_default_subscriber_qos()
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    SubscriberImpl::set_qos(default_sub_qos_, SUBSCRIBER_QOS_DEFAULT, true);
+    SubscriberAttributes attr;
+    XMLProfileManager::getDefaultSubscriberAttributes(attr);
+    set_qos_from_attributes(default_sub_qos_, attr);
 }
 
 const SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const
@@ -529,7 +547,7 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
 {
     if (&qos == &TOPIC_QOS_DEFAULT)
     {
-        TopicImpl::set_qos(default_topic_qos_, TOPIC_QOS_DEFAULT, true);
+        reset_default_topic_qos();
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -541,6 +559,15 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
 
     TopicImpl::set_qos(default_topic_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
+}
+
+void DomainParticipantImpl::reset_default_topic_qos()
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    TopicImpl::set_qos(default_topic_qos_, TOPIC_QOS_DEFAULT, true);
+    TopicAttributes attr;
+    XMLProfileManager::getDefaultTopicAttributes(attr);
+    set_qos_from_attributes(default_topic_qos_, attr);
 }
 
 const TopicQos& DomainParticipantImpl::get_default_topic_qos() const

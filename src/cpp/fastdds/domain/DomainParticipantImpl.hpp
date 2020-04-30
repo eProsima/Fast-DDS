@@ -259,15 +259,21 @@ public:
     ReturnCode_t set_default_publisher_qos(
             const PublisherQos& qos);
 
+    void reset_default_publisher_qos();
+
     const PublisherQos& get_default_publisher_qos() const;
 
     ReturnCode_t set_default_subscriber_qos(
             const SubscriberQos& qos);
 
+    void reset_default_subscriber_qos();
+
     const SubscriberQos& get_default_subscriber_qos() const;
 
     ReturnCode_t set_default_topic_qos(
             const TopicQos& qos);
+
+    void reset_default_topic_qos();
 
     const TopicQos& get_default_topic_qos() const;
 
