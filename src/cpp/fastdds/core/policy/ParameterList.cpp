@@ -49,77 +49,73 @@ bool ParameterList::updateCacheChangeFromInlineQos(
         fastrtps::rtps::CDRMessage_t* msg,
         uint32_t& qos_size)
 {
-    auto parameter_process = [&](fastrtps::rtps::CDRMessage_t* msg, const ParameterId_t pid, uint16_t plength)
+    auto parameter_process = [&](
+        fastrtps::rtps::CDRMessage_t* msg,
+        const ParameterId_t pid,
+        uint16_t plength)
+    {
+        switch (pid)
+        {
+            case PID_KEY_HASH:
             {
-                switch (pid)
+                ParameterKey_t p(pid, plength);
+                if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
                 {
-                    case PID_KEY_HASH:
-                    {
-                        ParameterKey_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
-                        {
-                            return false;
-                        }
-
-                        change.instanceHandle = p.key;
-                        break;
-                    }
-
-                    case PID_RELATED_SAMPLE_IDENTITY:
-                    {
-                        if (plength >= 24)
-                        {
-                            ParameterSampleIdentity_t p(pid, plength);
-                            if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
-                                    msg, plength))
-                            {
-                                return false;
-                            }
-
-                            change.write_params.sample_identity(p.sample_id);
-                        }
-                        break;
-                    }
-
-                    case PID_STATUS_INFO:
-                    {
-                        ParameterStatusInfo_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterStatusInfo_t>::read_from_cdr_message(p, msg,
-                                plength))
-                        {
-                            return false;
-                        }
-
-                        if (p.status == 1)
-                        {
-                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
-                        }
-                        else if (p.status == 2)
-                        {
-                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
-                        }
-                        else if (p.status == 3)
-                        {
-                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
-                        }
-                        break;
-                    }
-
-                    default:
-                        break;
+                    return false;
                 }
 
-                return true;
-            };
-    try
-    {
-        return readParameterListfromCDRMsg(*msg, parameter_process, false, qos_size);
-    }
-    catch (std::bad_alloc& ba)
-    {
-        std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-        return false;
-    }
+                change.instanceHandle = p.key;
+                break;
+            }
+
+            case PID_RELATED_SAMPLE_IDENTITY:
+            {
+                if (plength >= 24)
+                {
+                    ParameterSampleIdentity_t p(pid, plength);
+                    if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
+                            msg, plength))
+                    {
+                        return false;
+                    }
+
+                    change.write_params.sample_identity(p.sample_id);
+                }
+                break;
+            }
+
+            case PID_STATUS_INFO:
+            {
+                ParameterStatusInfo_t p(pid, plength);
+                if (!fastdds::dds::ParameterSerializer<ParameterStatusInfo_t>::read_from_cdr_message(p, msg,
+                        plength))
+                {
+                    return false;
+                }
+
+                if (p.status == 1)
+                {
+                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
+                }
+                else if (p.status == 2)
+                {
+                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
+                }
+                else if (p.status == 3)
+                {
+                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+
+        return true;
+    };
+
+    return readParameterListfromCDRMsg(*msg, parameter_process, false, qos_size);
 }
 
 bool ParameterList::read_guid_from_cdr_msg(
