@@ -286,6 +286,7 @@ TEST_P(Volatile, VolatileSubBetweenPubs)
         durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
         resource_limits_allocated_samples(9).
         resource_limits_max_samples(9).
+        asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(3600).
         init();
 
@@ -309,8 +310,8 @@ TEST_P(Volatile, VolatileSubBetweenPubs)
 
     auto data = default_helloworld_data_generator(1);
     reader.startReception(data);
-    // Send data with some interval, to let async writer thread send samples
-    writer.send(data, 300);
+    // Send all data
+    writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
@@ -371,6 +372,7 @@ TEST_P(Volatile, VolatileSubBetweenTransientPubs)
         .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
         .resource_limits_allocated_samples(9)
         .resource_limits_max_samples(9)
+        .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
         .heartbeat_period_seconds(3600)
         .init();
 
@@ -394,8 +396,8 @@ TEST_P(Volatile, VolatileSubBetweenTransientPubs)
 
     auto data = default_helloworld_data_generator(1);
     reader.startReception(data);
-    // Send data with some interval, to let async writer thread send samples
-    writer.send(data, 300);
+    // Send all data
+    writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
