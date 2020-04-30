@@ -284,7 +284,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
         if (dr_it != it->second.end())
         {
-            //First extract the raeder from the maps to free the mutex
+            //First extract the reader from the maps to free the mutex
             DataReaderImpl* reader_impl = *dr_it;
             reader_impl->set_listener(nullptr);
             it->second.erase(dr_it);

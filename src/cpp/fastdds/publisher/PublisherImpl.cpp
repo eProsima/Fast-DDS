@@ -316,7 +316,7 @@ ReturnCode_t PublisherImpl::delete_datawriter(
         auto dw_it = std::find(vit->second.begin(), vit->second.end(), writer->impl_);
         if (dw_it != vit->second.end())
         {
-            //First extract the raeder from the maps to free the mutex
+            //First extract the writer from the maps to free the mutex
             DataWriterImpl* writer_impl = *dw_it;
             writer_impl->set_listener(nullptr);
             vit->second.erase(dw_it);
