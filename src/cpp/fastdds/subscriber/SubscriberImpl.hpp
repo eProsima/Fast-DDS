@@ -137,6 +137,8 @@ public:
     ReturnCode_t set_default_datareader_qos(
             const DataReaderQos& qos);
 
+    void reset_default_datareader_qos();
+
     const DataReaderQos& get_default_datareader_qos() const;
 
     DataReaderQos& get_default_datareader_qos();

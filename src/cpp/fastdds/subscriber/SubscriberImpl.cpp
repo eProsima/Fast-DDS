@@ -367,7 +367,7 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
 {
     if (&qos == &DATAREADER_QOS_DEFAULT)
     {
-        DataReaderImpl::set_qos(default_datareader_qos_, DATAREADER_QOS_DEFAULT, true);
+        reset_default_datareader_qos();
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -379,6 +379,15 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
 
     DataReaderImpl::set_qos(default_datareader_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
+}
+
+void SubscriberImpl::reset_default_datareader_qos()
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    DataReaderImpl::set_qos(default_datareader_qos_, DATAREADER_QOS_DEFAULT, true);
+    SubscriberAttributes attr;
+    XMLProfileManager::getDefaultSubscriberAttributes(attr);
+    set_qos_from_attributes(default_datareader_qos_, attr);
 }
 
 const DataReaderQos& SubscriberImpl::get_default_datareader_qos() const

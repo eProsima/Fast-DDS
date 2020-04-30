@@ -416,7 +416,8 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
 {
     if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
-        DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
+        reset_default_datawriter_qos();
+        return ReturnCode_t::RETCODE_OK;
     }
 
     ReturnCode_t ret_val = DataWriterImpl::check_qos(qos);
@@ -426,6 +427,15 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
     }
     DataWriterImpl::set_qos(default_datawriter_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
+}
+
+void PublisherImpl::reset_default_datawriter_qos()
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
+    PublisherAttributes attr;
+    XMLProfileManager::getDefaultPublisherAttributes(attr);
+    set_qos_from_attributes(default_datawriter_qos_, attr);
 }
 
 const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const

@@ -145,6 +145,8 @@ public:
     ReturnCode_t set_default_datawriter_qos(
             const DataWriterQos& qos);
 
+    void reset_default_datawriter_qos();
+
     const DataWriterQos& get_default_datawriter_qos() const;
 
     /* TODO
