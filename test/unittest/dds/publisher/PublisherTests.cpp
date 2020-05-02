@@ -27,10 +27,18 @@
 #include <dds/pub/qos/PublisherQos.hpp>
 #include <dds/pub/DataWriter.hpp>
 #include <dds/topic/Topic.hpp>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+using fastrtps::PublisherAttributes;
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
 
 class TopicDataTypeMock : public TopicDataType
 {
@@ -205,6 +213,74 @@ TEST(PublisherTests, CreateDataWriter)
     ASSERT_NE(datawriter, nullptr);
 
     ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+
+void check_datawriter_with_profile (DataWriter* datawriter, const std::string& profile_name)
+{
+    DataWriterQos qos;
+    datawriter->get_qos(qos);
+
+    PublisherAttributes publisher_atts;
+    XMLProfileManager::fillPublisherAttributes(profile_name, publisher_atts);
+
+    //Values taken from profile
+    ASSERT_TRUE(qos.writer_resource_limits().matched_subscriber_allocation == publisher_atts.matched_subscriber_allocation);
+    ASSERT_TRUE(qos.properties() == publisher_atts.properties);
+    ASSERT_TRUE(qos.throughput_controller() == publisher_atts.throughputController);
+    ASSERT_TRUE(qos.endpoint().unicast_locator_list == publisher_atts.unicastLocatorList);
+    ASSERT_TRUE(qos.endpoint().multicast_locator_list == publisher_atts.multicastLocatorList);
+    ASSERT_TRUE(qos.endpoint().remote_locator_list == publisher_atts.remoteLocatorList);
+    ASSERT_TRUE(qos.endpoint().history_memory_policy == publisher_atts.historyMemoryPolicy);
+    ASSERT_TRUE(qos.endpoint().user_defined_id == publisher_atts.getUserDefinedID());
+    ASSERT_TRUE(qos.endpoint().entity_id == publisher_atts.getEntityID());
+    ASSERT_TRUE(qos.reliable_writer_qos().times == publisher_atts.times);
+    ASSERT_TRUE(qos.reliable_writer_qos().disable_positive_acks == publisher_atts.qos.m_disablePositiveACKs);
+    ASSERT_TRUE(qos.durability() == publisher_atts.qos.m_durability);
+    ASSERT_TRUE(qos.durability_service() == publisher_atts.qos.m_durabilityService);
+    ASSERT_TRUE(qos.deadline() == publisher_atts.qos.m_deadline);
+    ASSERT_TRUE(qos.latency_budget() == publisher_atts.qos.m_latencyBudget);
+    ASSERT_TRUE(qos.liveliness() == publisher_atts.qos.m_liveliness);
+    ASSERT_TRUE(qos.reliability() == publisher_atts.qos.m_reliability);
+    ASSERT_TRUE(qos.lifespan() == publisher_atts.qos.m_lifespan);
+    ASSERT_TRUE(qos.user_data().data_vec() == publisher_atts.qos.m_userData.data_vec());
+    ASSERT_TRUE(qos.ownership() == publisher_atts.qos.m_ownership);
+    ASSERT_TRUE(qos.ownership_strength() == publisher_atts.qos.m_ownershipStrength);
+    ASSERT_TRUE(qos.destination_order() == publisher_atts.qos.m_destinationOrder);
+    ASSERT_TRUE(qos.representation() == publisher_atts.qos.representation);
+    ASSERT_TRUE(qos.publish_mode() == publisher_atts.qos.m_publishMode);
+    ASSERT_TRUE(qos.history() == publisher_atts.topic.historyQos);
+    ASSERT_TRUE(qos.resource_limits() == publisher_atts.topic.resourceLimitsQos);
+
+    //Values not implemented on attributes (taken from default QoS)
+    ASSERT_TRUE(qos.transport_priority() == DATAWRITER_QOS_DEFAULT.transport_priority());
+    ASSERT_TRUE(qos.writer_data_lifecycle() == DATAWRITER_QOS_DEFAULT.writer_data_lifecycle());
+}
+
+TEST(PublisherTests, CreateDataWriterWithProfile)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+
+    //Datawriter using the default profile
+    DataWriter* default_datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(default_datawriter, nullptr);
+    check_datawriter_with_profile(default_datawriter, "test_default_publisher_profile");
+    ASSERT_TRUE(publisher->delete_datawriter(default_datawriter) == ReturnCode_t::RETCODE_OK);
+
+    //participant using non-default profile
+    DataWriter* datawriter = publisher->create_datawriter_with_profile(topic, "test_publisher_profile");
+    ASSERT_NE(datawriter, nullptr);
+    check_datawriter_with_profile(datawriter, "test_publisher_profile");
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);

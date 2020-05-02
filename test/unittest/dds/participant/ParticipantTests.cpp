@@ -30,10 +30,22 @@
 #include <dds/sub/Subscriber.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/topic/Topic.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+using fastrtps::ParticipantAttributes;
+using fastrtps::PublisherAttributes;
+using fastrtps::SubscriberAttributes;
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
+
 
 // Mocked TopicDataType for Topic creation tests
 class TopicDataTypeMock : public TopicDataType
@@ -86,7 +98,6 @@ public:
 
 };
 
-
 TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
 {
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
@@ -124,13 +135,60 @@ TEST(ParticipantTests, CreateDomainParticipant)
 
 }
 
+void check_participant_with_profile (DomainParticipant* participant, const std::string& profile_name)
+{
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    ParticipantAttributes participant_atts;
+    XMLProfileManager::fillParticipantAttributes(profile_name, participant_atts);
+
+    //Values taken from profile
+    ASSERT_TRUE(qos.allocation() == participant_atts.rtps.allocation);
+    ASSERT_TRUE(qos.properties() == participant_atts.rtps.properties);
+    ASSERT_TRUE(qos.name().to_string() == participant_atts.rtps.getName());
+    ASSERT_TRUE(qos.wire_protocol().prefix == participant_atts.rtps.prefix);
+    ASSERT_TRUE(qos.wire_protocol().participant_id == participant_atts.rtps.participantID);
+    ASSERT_TRUE(qos.wire_protocol().builtin == participant_atts.rtps.builtin);
+    ASSERT_TRUE(qos.wire_protocol().port == participant_atts.rtps.port);
+    ASSERT_TRUE(qos.wire_protocol().throughput_controller == participant_atts.rtps.throughputController);
+    ASSERT_TRUE(qos.wire_protocol().default_unicast_locator_list == participant_atts.rtps.defaultUnicastLocatorList);
+    ASSERT_TRUE(qos.wire_protocol().default_multicast_locator_list == participant_atts.rtps.defaultMulticastLocatorList);
+    ASSERT_TRUE(qos.transport().user_transports == participant_atts.rtps.userTransports);
+    ASSERT_TRUE(qos.transport().use_builtin_transports == participant_atts.rtps.useBuiltinTransports);
+    ASSERT_TRUE(qos.transport().send_socket_buffer_size == participant_atts.rtps.sendSocketBufferSize);
+    ASSERT_TRUE(qos.transport().listen_socket_buffer_size == participant_atts.rtps.listenSocketBufferSize);
+    ASSERT_TRUE(qos.user_data().data_vec() == participant_atts.rtps.userData);
+
+    //Values not implemented on attributes (taken from default QoS)
+    ASSERT_TRUE(qos.entity_factory() == PARTICIPANT_QOS_DEFAULT.entity_factory());
+}
+
+TEST(ParticipantTests, CreateDomainParticipantWithProfile)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+
+    //participant using the default profile
+    DomainParticipant* default_participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    ASSERT_NE(default_participant, nullptr);
+    ASSERT_EQ(default_participant->get_domain_id(), 0); //Keep the DID given to the method, not the one on the profile
+    check_participant_with_profile(default_participant, "test_default_participant_profile");
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(default_participant) == ReturnCode_t::RETCODE_OK);
+
+    //participant using non-default profile
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(0, "test_participant_profile");
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(participant->get_domain_id(), 0); //Keep the DID given to the method, not the one on the profile
+    check_participant_with_profile(participant, "test_participant_profile");
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
 TEST(ParticipantTests, CreatePSMDomainParticipant)
 {
     ::dds::domain::DomainParticipant participant = ::dds::core::null;
     participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
 
     ASSERT_NE(participant, ::dds::core::null);
-
 }
 
 TEST(ParticipantTests, DeleteDomainParticipant)
@@ -138,7 +196,6 @@ TEST(ParticipantTests, DeleteDomainParticipant)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
-
 }
 
 TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
@@ -197,7 +254,6 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(
                 PARTICIPANT_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
-
 }
 
 TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
@@ -272,6 +328,43 @@ TEST(ParticipantTests, CreatePublisher)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+void check_publisher_with_profile (Publisher* publisher, const std::string& profile_name)
+{
+    PublisherQos qos;
+    publisher->get_qos(qos);
+
+    PublisherAttributes publisher_atts;
+    XMLProfileManager::fillPublisherAttributes(profile_name, publisher_atts);
+
+    //Values taken from profile
+    ASSERT_TRUE(qos.group_data().dataVec() == publisher_atts.qos.m_groupData.dataVec());
+    ASSERT_TRUE(qos.partition() == publisher_atts.qos.m_partition);
+    ASSERT_TRUE(qos.presentation() == publisher_atts.qos.m_presentation);
+
+    //Values not implemented on attributes (taken from default QoS)
+    ASSERT_TRUE(qos.entity_factory() == PUBLISHER_QOS_DEFAULT.entity_factory());
+}
+
+TEST(ParticipantTests, CreatePublisherWithProfile)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    //publisher using the default profile
+    Publisher* default_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(default_publisher, nullptr);
+    check_publisher_with_profile(default_publisher, "test_default_publisher_profile");
+    ASSERT_TRUE(participant->delete_publisher(default_publisher) == ReturnCode_t::RETCODE_OK);
+
+    //participant using non-default profile
+    Publisher* publisher = participant->create_publisher_with_profile("test_publisher_profile");
+    ASSERT_NE(publisher, nullptr);
+    check_publisher_with_profile(publisher, "test_publisher_profile");
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
 TEST(ParticipantTests, CreatePSMPublisher)
 {
     ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
@@ -327,6 +420,43 @@ TEST(ParticipantTests, CreateSubscriber)
     ASSERT_NE(subscriber, nullptr);
 
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+void check_subscriber_with_profile (Subscriber* subscriber, const std::string& profile_name)
+{
+    SubscriberQos qos;
+    subscriber->get_qos(qos);
+
+    SubscriberAttributes subscriber_atts;
+    XMLProfileManager::fillSubscriberAttributes(profile_name, subscriber_atts);
+
+    //Values taken from profile
+    ASSERT_TRUE(qos.group_data().dataVec() == subscriber_atts.qos.m_groupData.dataVec());
+    ASSERT_TRUE(qos.partition() == subscriber_atts.qos.m_partition);
+    ASSERT_TRUE(qos.presentation() == subscriber_atts.qos.m_presentation);
+
+    //Values not implemented on attributes (taken from default QoS)
+    ASSERT_TRUE(qos.entity_factory() == SUBSCRIBER_QOS_DEFAULT.entity_factory());
+}
+
+TEST(ParticipantTests, CreateSubscriberWithProfile)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+
+    //subscriber using the default profile
+    Subscriber* default_subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(default_subscriber, nullptr);
+    check_subscriber_with_profile(default_subscriber, "test_default_subscriber_profile");
+    ASSERT_TRUE(participant->delete_subscriber(default_subscriber) == ReturnCode_t::RETCODE_OK);
+
+    //participant using non-default profile
+    Subscriber* subscriber = participant->create_subscriber_with_profile("test_subscriber_profile");
+    ASSERT_NE(subscriber, nullptr);
+    check_subscriber_with_profile(subscriber, "test_subscriber_profile");
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 

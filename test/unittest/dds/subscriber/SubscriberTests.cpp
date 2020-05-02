@@ -29,11 +29,20 @@
 #include <dds/topic/Topic.hpp>
 
 #include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+using fastrtps::PublisherAttributes;
+using fastrtps::SubscriberAttributes;
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
+
 
 class FooType
 {
@@ -244,6 +253,72 @@ TEST(SubscriberTests, CreateDataReader)
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+void check_datareader_with_profile (DataReader* datareader, const std::string& profile_name)
+{
+    DataReaderQos qos;
+    datareader->get_qos(qos);
+
+    SubscriberAttributes subscriber_atts;
+    XMLProfileManager::fillSubscriberAttributes(profile_name, subscriber_atts);
+
+    //Values taken from profile
+    ASSERT_TRUE(qos.reader_resource_limits().matched_publisher_allocation == subscriber_atts.matched_publisher_allocation);
+    ASSERT_TRUE(qos.properties() == subscriber_atts.properties);
+    ASSERT_TRUE(qos.expects_inline_qos() == subscriber_atts.expectsInlineQos);
+    ASSERT_TRUE(qos.endpoint().unicast_locator_list == subscriber_atts.unicastLocatorList);
+    ASSERT_TRUE(qos.endpoint().multicast_locator_list == subscriber_atts.multicastLocatorList);
+    ASSERT_TRUE(qos.endpoint().remote_locator_list == subscriber_atts.remoteLocatorList);
+    ASSERT_TRUE(qos.endpoint().history_memory_policy == subscriber_atts.historyMemoryPolicy);
+    ASSERT_TRUE(qos.endpoint().user_defined_id == subscriber_atts.getUserDefinedID());
+    ASSERT_TRUE(qos.endpoint().entity_id == subscriber_atts.getEntityID());
+    ASSERT_TRUE(qos.reliable_reader_qos().times == subscriber_atts.times);
+    ASSERT_TRUE(qos.reliable_reader_qos().disable_positive_ACKs == subscriber_atts.qos.m_disablePositiveACKs);
+    ASSERT_TRUE(qos.durability() == subscriber_atts.qos.m_durability);
+    ASSERT_TRUE(qos.durability_service() == subscriber_atts.qos.m_durabilityService);
+    ASSERT_TRUE(qos.deadline() == subscriber_atts.qos.m_deadline);
+    ASSERT_TRUE(qos.latency_budget() == subscriber_atts.qos.m_latencyBudget);
+    ASSERT_TRUE(qos.liveliness() == subscriber_atts.qos.m_liveliness);
+    ASSERT_TRUE(qos.reliability() == subscriber_atts.qos.m_reliability);
+    ASSERT_TRUE(qos.lifespan() == subscriber_atts.qos.m_lifespan);
+    ASSERT_TRUE(qos.user_data().data_vec() == subscriber_atts.qos.m_userData.data_vec());
+    ASSERT_TRUE(qos.ownership() == subscriber_atts.qos.m_ownership);
+    ASSERT_TRUE(qos.destination_order() == subscriber_atts.qos.m_destinationOrder);
+    ASSERT_TRUE(qos.type_consistency().type_consistency == subscriber_atts.qos.type_consistency);
+    ASSERT_TRUE(qos.type_consistency().representation == subscriber_atts.qos.representation);
+    ASSERT_TRUE(qos.time_based_filter() == subscriber_atts.qos.m_timeBasedFilter);
+    ASSERT_TRUE(qos.history() == subscriber_atts.topic.historyQos);
+    ASSERT_TRUE(qos.resource_limits() == subscriber_atts.topic.resourceLimitsQos);
+
+    //Values not implemented on attributes (taken from default QoS)
+    ASSERT_TRUE(qos.reader_data_lifecycle() == DATAREADER_QOS_DEFAULT.reader_data_lifecycle());
+}
+
+TEST(SubscriberTests, CreateDataReaderWithProfile)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+
+    //Datareader using the default profile
+    DataReader* default_datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(default_datareader, nullptr);
+    check_datareader_with_profile(default_datareader, "test_default_subscriber_profile");
+    ASSERT_TRUE(subscriber->delete_datareader(default_datareader) == ReturnCode_t::RETCODE_OK);
+
+    //participant using non-default profile
+    DataReader* datareader = subscriber->create_datareader_with_profile(topic, "test_subscriber_profile");
+    ASSERT_NE(datareader, nullptr);
+    check_datareader_with_profile(datareader, "test_subscriber_profile");
+    ASSERT_TRUE(subscriber->delete_datareader(datareader) == ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
