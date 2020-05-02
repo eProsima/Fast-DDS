@@ -255,7 +255,7 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
     SubscriberAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
-        DataReaderQos qos;
+        DataReaderQos qos = default_datareader_qos_;
         set_qos_from_attributes(qos, attr);
         return create_datareader(topic, qos, listener, mask);
     }

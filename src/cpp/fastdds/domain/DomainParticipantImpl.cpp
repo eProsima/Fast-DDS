@@ -390,7 +390,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
     PublisherAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
-        PublisherQos qos;
+        PublisherQos qos = default_pub_qos_;
         set_qos_from_attributes(qos, attr);
         return create_publisher(qos, listener, mask);
     }
@@ -730,7 +730,7 @@ Subscriber* DomainParticipantImpl::create_subscriber_with_profile(
     SubscriberAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
-        SubscriberQos qos;
+        SubscriberQos qos = default_sub_qos_;
         set_qos_from_attributes(qos, attr);
         return create_subscriber(qos, listener, mask);
     }
@@ -800,7 +800,7 @@ Topic* DomainParticipantImpl::create_topic_with_profile(
     TopicAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
-        TopicQos qos;
+        TopicQos qos = default_topic_qos_;
         set_qos_from_attributes(qos, attr);
         return create_topic(topic_name, type_name, qos, listener, mask);
     }
