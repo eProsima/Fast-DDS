@@ -289,7 +289,7 @@ DataWriter* PublisherImpl::create_datawriter_with_profile(
     PublisherAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
-        DataWriterQos qos;
+        DataWriterQos qos = default_datawriter_qos_;
         set_qos_from_attributes(qos, attr);
         return create_datawriter(topic, qos, listener, mask);
     }
