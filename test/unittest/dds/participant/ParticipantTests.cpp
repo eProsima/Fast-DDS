@@ -171,14 +171,14 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
     //participant using the default profile
     DomainParticipant* default_participant = DomainParticipantFactory::get_instance()->create_participant(0);
     ASSERT_NE(default_participant, nullptr);
-    ASSERT_EQ(default_participant->get_domain_id(), 0); //Keep the DID given to the method, not the one on the profile
+    ASSERT_EQ(default_participant->get_domain_id(), 0u); //Keep the DID given to the method, not the one on the profile
     check_participant_with_profile(default_participant, "test_default_participant_profile");
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(default_participant) == ReturnCode_t::RETCODE_OK);
 
     //participant using non-default profile
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(0, "test_participant_profile");
     ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_domain_id(), 0); //Keep the DID given to the method, not the one on the profile
+    ASSERT_EQ(participant->get_domain_id(), 0u); //Keep the DID given to the method, not the one on the profile
     check_participant_with_profile(participant, "test_participant_profile");
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
