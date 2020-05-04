@@ -682,12 +682,12 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t, 32> session_key{0};
+    std::array<uint8_t, 32> session_key{};
     compute_sessionkey(session_key,
             sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0),
             session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector{0};
+    std::array<uint8_t, 12> initialization_vector{};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
     memcpy(initialization_vector.data() + 4,
             header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
@@ -1065,10 +1065,10 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     uint32_t session_id;
     memcpy(&session_id, header.session_id.data(), 4);
     //Sessionkey
-    std::array<uint8_t, 32> session_key{0};
+    std::array<uint8_t, 32> session_key{};
     compute_sessionkey(session_key, *keyMat, session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector{0};
+    std::array<uint8_t, 12> initialization_vector{};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
     memcpy(initialization_vector.data() + 4,
             header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
@@ -1245,10 +1245,10 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     uint32_t session_id;
     memcpy(&session_id, header.session_id.data(), 4);
     //Sessionkey
-    std::array<uint8_t, 32> session_key{0};
+    std::array<uint8_t, 32> session_key{};
     compute_sessionkey(session_key, *keyMat, session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector{0};
+    std::array<uint8_t, 12> initialization_vector{};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
     memcpy(initialization_vector.data() + 4,
             header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
@@ -1401,10 +1401,10 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t, 32> session_key{0};
+    std::array<uint8_t, 32> session_key{};
     compute_sessionkey(session_key, *keyMat, session_id);
     //IV
-    std::array<uint8_t, 12> initialization_vector{0};
+    std::array<uint8_t, 12> initialization_vector{};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
     memcpy(initialization_vector.data() + 4,
             header.initialization_vector_suffix.data(), initialization_vector_suffix_length);
@@ -2138,7 +2138,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(
         int actual_size = 0, final_size = 0;
 
         //Get ReceiverSpecificSessionKey
-        std::array<uint8_t, 32> specific_session_key{0};
+        std::array<uint8_t, 32> specific_session_key{};
 
         //Verify specific MAC
         if (transformation_kind == c_transfrom_kind_aes128_gcm ||
