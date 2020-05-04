@@ -382,19 +382,6 @@ enum ChangeForReaderStatus_t
 };
 
 /**
- * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
- *  @ingroup COMMON_MODULE
- */
-enum ChangeFromWriterStatus_t
-{
-    UNKNOWN = 0,
-    MISSING = 1,
-    //REQUESTED_WITH_NACK,
-    RECEIVED = 2,
-    LOST = 3
-};
-
-/**
  * Struct ChangeForReader_t used to represent the state of a specific change with respect to a specific reader, as well as its relevance.
  *  @ingroup COMMON_MODULE
  */
@@ -594,102 +581,6 @@ struct ChangeForReaderCmp
 
 };
 
-/**
- * Struct ChangeFromWriter_t used to indicate the state of a specific change with respect to a specific writer, as well as its relevance.
- *  @ingroup COMMON_MODULE
- */
-class ChangeFromWriter_t
-{
-    friend struct ChangeFromWriterCmp;
-
-public:
-
-    ChangeFromWriter_t()
-        : status_(UNKNOWN)
-        , is_relevant_(true)
-    {
-
-    }
-
-    ChangeFromWriter_t(
-            const ChangeFromWriter_t& ch)
-        : status_(ch.status_)
-        , is_relevant_(ch.is_relevant_)
-        , seq_num_(ch.seq_num_)
-    {
-    }
-
-    ChangeFromWriter_t(
-            const SequenceNumber_t& seq_num)
-        : status_(UNKNOWN)
-        , is_relevant_(true)
-        , seq_num_(seq_num)
-    {
-    }
-
-    ~ChangeFromWriter_t()
-    {
-    };
-
-    ChangeFromWriter_t& operator =(
-            const ChangeFromWriter_t& ch)
-    {
-        status_ = ch.status_;
-        is_relevant_ = ch.is_relevant_;
-        seq_num_ = ch.seq_num_;
-        return *this;
-    }
-
-    void setStatus(
-            const ChangeFromWriterStatus_t status)
-    {
-        status_ = status;
-    }
-
-    ChangeFromWriterStatus_t getStatus() const
-    {
-        return status_;
-    }
-
-    void setRelevance(
-            const bool relevance)
-    {
-        is_relevant_ = relevance;
-    }
-
-    bool isRelevant() const
-    {
-        return is_relevant_;
-    }
-
-    const SequenceNumber_t getSequenceNumber() const
-    {
-        return seq_num_;
-    }
-
-    //! Set change as not valid
-    void notValid()
-    {
-        is_relevant_ = false;
-    }
-
-    bool operator < (
-            const ChangeFromWriter_t& rhs) const
-    {
-        return seq_num_ < rhs.seq_num_;
-    }
-
-private:
-
-    //! Status
-    ChangeFromWriterStatus_t status_;
-
-    //! Boolean specifying if this change is relevant
-    bool is_relevant_;
-
-    //! Sequence number
-    SequenceNumber_t seq_num_;
-};
 #endif
 }
 }
