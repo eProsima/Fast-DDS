@@ -167,6 +167,44 @@ public:
     }
 
     /**
+     * Returns the lowest value set in the range.
+     *
+     * @return the lowest value set in the range. If the range is empty, the result is undetermined.
+     */
+    T min() const noexcept
+    {
+        // Traverse through the significant items on the bitmap
+        T item = base_;
+        uint32_t n_longs = (num_bits_ + 31UL) / 32UL;
+        for (uint32_t i = 0; i < n_longs; i++)
+        {
+            // Check if item has at least one bit set
+            uint32_t bits = bitmap_[i];
+            if (bits)
+            {
+                // We use an intrinsic to find the index of the highest bit set.
+                // Most modern CPUs have an instruction to count the leading zeroes of a word.
+                // The number of leading zeroes will give us the index we need.
+#if _MSC_VER
+                unsigned long bit;
+                _BitScanReverse(&bit, bits);
+                uint32_t offset = 31UL ^ bit;
+#else
+                uint32_t offset = __builtin_clz(bits);
+#endif
+
+                // Found first bit set in bitmap
+                return item + offset;
+            }
+
+            // There are 32 items on each bitmap item.
+            item = item + 32UL;
+        }
+
+        return base_;
+    }
+
+    /**
      * Checks if an element is present in the bitmap.
      *
      * @param item   Value to be checked.
