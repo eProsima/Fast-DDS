@@ -76,6 +76,7 @@ struct RTPS_DllAPI CacheChange_t
      */
     CacheChange_t()
     {
+        missing_fragments_ = new FragmentNumberSet_t();
     }
 
     CacheChange_t(
@@ -94,6 +95,7 @@ struct RTPS_DllAPI CacheChange_t
         : serializedPayload(payload_size)
         , is_untyped_(is_untyped)
     {
+        missing_fragments_ = new FragmentNumberSet_t();
     }
 
     /*!
@@ -113,7 +115,7 @@ struct RTPS_DllAPI CacheChange_t
         isRead = ch_ptr->isRead;
         fragment_size_ = ch_ptr->fragment_size_;
         fragment_count_ = ch_ptr->fragment_count_;
-        first_missing_fragment_ = ch_ptr->first_missing_fragment_;
+        *missing_fragments_ = *(ch_ptr->missing_fragments_);
 
         return serializedPayload.copy(&ch_ptr->serializedPayload, !ch_ptr->is_untyped_);
     }
@@ -143,6 +145,7 @@ struct RTPS_DllAPI CacheChange_t
 
     ~CacheChange_t()
     {
+        delete missing_fragments_;
     }
 
     /*!
@@ -169,7 +172,7 @@ struct RTPS_DllAPI CacheChange_t
      */
     bool is_fully_assembled()
     {
-        return first_missing_fragment_ >= fragment_count_;
+        return missing_fragments_->empty();
     }
 
     /*!
@@ -179,16 +182,7 @@ struct RTPS_DllAPI CacheChange_t
     void get_missing_fragments(
             FragmentNumberSet_t& frag_sns)
     {
-        // Note: Fragment numbers are 1-based but we keep them 0 based.
-        frag_sns.base(first_missing_fragment_ + 1);
-
-        // Traverse list of missing fragments, adding them to frag_sns
-        uint32_t current_frag = first_missing_fragment_;
-        while (current_frag < fragment_count_)
-        {
-            frag_sns.add(current_frag + 1);
-            current_frag = get_next_missing_fragment(current_frag);
-        }
+        frag_sns = *missing_fragments_;
     }
 
     /*!
@@ -206,7 +200,7 @@ struct RTPS_DllAPI CacheChange_t
     {
         fragment_size_ = fragment_size;
         fragment_count_ = 0;
-        first_missing_fragment_ = 0;
+        missing_fragments_->base(0);
 
         if (fragment_size > 0)
         {
@@ -215,19 +209,16 @@ struct RTPS_DllAPI CacheChange_t
 
             if (create_fragment_list)
             {
-                // Keep index of next fragment on the payload portion at the beginning of each fragment. Last
-                // fragment will have fragment_count_ as 'next fragment index'
-                size_t offset = 0;
-                for (uint32_t i = 1; i <= fragment_count_; i++, offset += fragment_size_)
-                {
-                    set_next_missing_fragment(i - 1, i);  // index to next fragment in missing list
-                }
+                // Fill range of missing fragments
+                uint32_t first_missing = 1u;
+                uint32_t first_not_missing = fragment_count_ + 1u;
+                missing_fragments_->base(first_missing);
+                missing_fragments_->add_range(first_missing, first_not_missing);
             }
             else
             {
                 // List not created. This means we are going to send this change fragmented, so it is already
-                // assembled, and the missing list is empty (i.e. first missing points to fragment count)
-                first_missing_fragment_ = fragment_count_;
+                // assembled, and the missing set is empty
             }
         }
     }
@@ -282,32 +273,8 @@ private:
     // Number of fragments
     uint32_t fragment_count_ = 0;
 
-    // First fragment in missing list
-    uint32_t first_missing_fragment_ = 0;
-
-    uint32_t get_next_missing_fragment(
-            uint32_t fragment_index)
-    {
-        uint32_t* ptr = next_fragment_pointer(fragment_index);
-        return *ptr;
-    }
-
-    void set_next_missing_fragment(
-            uint32_t fragment_index,
-            uint32_t next_fragment_index)
-    {
-        uint32_t* ptr = next_fragment_pointer(fragment_index);
-        *ptr = next_fragment_index;
-    }
-
-    uint32_t* next_fragment_pointer(
-            uint32_t fragment_index)
-    {
-        size_t offset = fragment_size_;
-        offset *= fragment_index;
-        offset = (offset + 3) & ~3;
-        return reinterpret_cast<uint32_t*>(&serializedPayload.data[offset]);
-    }
+    // Missing fragments bitmap with sliding window
+    BitmapRange<uint32_t>* missing_fragments_;
 
     /*!
      * Mark a set of consecutive fragments as received.
@@ -329,36 +296,53 @@ private:
                 last_fragment = fragment_count_;
             }
 
-            if (initial_fragment <= first_missing_fragment_)
+            // Update to 1-based fragment numbers
+            initial_fragment++;
+            last_fragment++;
+
+            // We always keep the first missing fragment at the base of the bitmap
+            uint32_t first_missing_fragment = missing_fragments_->base();
+            assert(missing_fragments_->is_set(first_missing_fragment));
+            if (initial_fragment <= first_missing_fragment)
             {
-                // Perform first = *first until first >= last_received
-                while (first_missing_fragment_ < last_fragment)
+                // This will remove all from the beginning to last_fragment - 1.
+                missing_fragments_->base_update(last_fragment);
+
+                // There may be 0's at the beginning. Make sure that first missing is base()
+                if (missing_fragments_->empty())
                 {
-                    first_missing_fragment_ = get_next_missing_fragment(first_missing_fragment_);
+                    // Items removed from bitmap were the only ones present.
+                    // This means either that all fragments have alread been received, or that
+                    // we are on the worst case of the sliding window (1 0 0 ...... 0).
+                    // This means we are safe in assuming that the next missing fragment would be one
+                    // complete window ahead.
+                    first_missing_fragment += 256UL;
+                    if (first_missing_fragment > fragment_count_)
+                    {
+                        // Getting here means there are no fragments pending
+                        return;
+                    }
+
+                    // Try to add all possible fragments from the first one missing
+                    missing_fragments_->base(first_missing_fragment);
+                    missing_fragments_->add_range(first_missing_fragment, fragment_count_ + 1);
+                }
+                else
+                {
+                    // Remove possible leading 0's
+                    first_missing_fragment = missing_fragments_->min();
+                    missing_fragments_->base_update(first_missing_fragment);
+
+                    // Try to add all possible fragments from the last one missing
+                    first_missing_fragment = missing_fragments_->max();
+                    missing_fragments_->add_range(first_missing_fragment, fragment_count_ + 1);
                 }
             }
             else
             {
-                // Find prev in missing list
-                uint32_t current_frag = first_missing_fragment_;
-                while (current_frag < initial_fragment)
+                for (uint32_t i = initial_fragment; i < last_fragment; ++i)
                 {
-                    uint32_t next_frag = get_next_missing_fragment(current_frag);
-                    if (next_frag >= initial_fragment)
-                    {
-                        // This is the fragment previous to initial_fragment.
-                        // Find future value for next by repeating next = *next until next >= last_fragment.
-                        uint32_t next_missing_fragment = next_frag;
-                        while (next_missing_fragment < last_fragment)
-                        {
-                            next_missing_fragment = get_next_missing_fragment(next_missing_fragment);
-                        }
-
-                        // Update next and finish loop
-                        set_next_missing_fragment(current_frag, next_missing_fragment);
-                        break;
-                    }
-                    current_frag = next_frag;
+                    missing_fragments_->remove(i);
                 }
             }
         }
@@ -578,106 +562,10 @@ struct ChangeForReaderCmp
     {
         return a.seq_num_ < b.seq_num_;
     }
-
 };
 
-/**
- * Struct ChangeFromWriter_t used to indicate the state of a specific change with respect to a specific writer, as well as its relevance.
- *  @ingroup COMMON_MODULE
- */
-class ChangeFromWriter_t
-{
-    friend struct ChangeFromWriterCmp;
-
-public:
-
-    ChangeFromWriter_t()
-        : status_(UNKNOWN)
-        , is_relevant_(true)
-    {
-
-    }
-
-    ChangeFromWriter_t(
-            const ChangeFromWriter_t& ch)
-        : status_(ch.status_)
-        , is_relevant_(ch.is_relevant_)
-        , seq_num_(ch.seq_num_)
-    {
-    }
-
-    ChangeFromWriter_t(
-            const SequenceNumber_t& seq_num)
-        : status_(UNKNOWN)
-        , is_relevant_(true)
-        , seq_num_(seq_num)
-    {
-    }
-
-    ~ChangeFromWriter_t()
-    {
-    };
-
-    ChangeFromWriter_t& operator =(
-            const ChangeFromWriter_t& ch)
-    {
-        status_ = ch.status_;
-        is_relevant_ = ch.is_relevant_;
-        seq_num_ = ch.seq_num_;
-        return *this;
-    }
-
-    void setStatus(
-            const ChangeFromWriterStatus_t status)
-    {
-        status_ = status;
-    }
-
-    ChangeFromWriterStatus_t getStatus() const
-    {
-        return status_;
-    }
-
-    void setRelevance(
-            const bool relevance)
-    {
-        is_relevant_ = relevance;
-    }
-
-    bool isRelevant() const
-    {
-        return is_relevant_;
-    }
-
-    const SequenceNumber_t getSequenceNumber() const
-    {
-        return seq_num_;
-    }
-
-    //! Set change as not valid
-    void notValid()
-    {
-        is_relevant_ = false;
-    }
-
-    bool operator < (
-            const ChangeFromWriter_t& rhs) const
-    {
-        return seq_num_ < rhs.seq_num_;
-    }
-
-private:
-
-    //! Status
-    ChangeFromWriterStatus_t status_;
-
-    //! Boolean specifying if this change is relevant
-    bool is_relevant_;
-
-    //! Sequence number
-    SequenceNumber_t seq_num_;
-};
 #endif
+
 }
 }
 }
