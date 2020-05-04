@@ -382,19 +382,6 @@ enum ChangeForReaderStatus_t
 };
 
 /**
- * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
- *  @ingroup COMMON_MODULE
- */
-enum ChangeFromWriterStatus_t
-{
-    UNKNOWN = 0,
-    MISSING = 1,
-    //REQUESTED_WITH_NACK,
-    RECEIVED = 2,
-    LOST = 3
-};
-
-/**
  * Struct ChangeForReader_t used to represent the state of a specific change with respect to a specific reader, as well as its relevance.
  *  @ingroup COMMON_MODULE
  */
