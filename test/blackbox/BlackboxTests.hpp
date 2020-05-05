@@ -48,6 +48,17 @@ extern void tls_init();
 
 extern uint16_t global_port;
 
+/****** Auxiliary data_integrity functions  ******/
+template<class Type>
+void default_integrity_failed(
+        const Type&)
+{
+}
+
+template<>
+void default_integrity_failed(
+        const Data1mb& data);
+
 /****** Auxiliary print functions  ******/
 template<class Type>
 void default_receive_print(

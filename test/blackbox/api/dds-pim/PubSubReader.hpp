@@ -1056,6 +1056,11 @@ private:
             if (info.instance_state == eprosima::fastdds::dds::ALIVE)
             {
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                if (it == total_msgs_.end())
+                {
+                    std::cout << "Data integrity failed on seq " << last_seq << std::endl;
+                    default_integrity_failed<type>(data);
+                }
                 ASSERT_NE(it, total_msgs_.end());
                 total_msgs_.erase(it);
                 ++current_received_count_;

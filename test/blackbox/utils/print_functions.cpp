@@ -17,6 +17,21 @@
 #include <iostream>
 
 template<>
+void default_integrity_failed(const Data1mb& data)
+{
+    size_t data_size = data.data().size();
+    unsigned char d = data.data()[0];
+    for (size_t i = 0; i < data_size; ++i, ++d)
+    {
+        if (data.data()[i] != d)
+        {
+            std::cout << " Mismatch at index " << i << std::endl;
+            break;
+        }
+    }
+}
+
+template<>
 void default_receive_print(const HelloWorld& hello)
 {
     std::cout << "Received HelloWorld " << hello.index() << std::endl;
