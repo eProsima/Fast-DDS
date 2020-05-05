@@ -241,6 +241,11 @@ public:
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
+    /**
+     * Deletes an existing Topic.
+     * @param topic to be deleted.
+     * @return RETCODE_OK if the Topic was deleted, or an error code otherwise.
+     */
     RTPS_DllAPI ReturnCode_t delete_topic(
             Topic* topic);
 
