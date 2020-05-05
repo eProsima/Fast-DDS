@@ -156,7 +156,7 @@ public:
 
     /**
      * @brief Get the requested deadline missed status
-     * @return The deadline missed status
+     * @param status The deadline missed status
      */
     void get_requested_deadline_missed_status(
             RequestedDeadlineMissedStatus& status);
