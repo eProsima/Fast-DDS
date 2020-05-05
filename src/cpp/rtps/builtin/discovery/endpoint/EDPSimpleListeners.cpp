@@ -42,6 +42,23 @@
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
+// Release reader lock to avoid ABBA lock. PDP mutex should always be first.
+// Keep change information on local variables to check consistency later
+#define PREVENT_PDP_DEADLOCK(reader, change, pdp)                         \
+    GUID_t writer_guid = (change)->writerGUID;                            \
+    SequenceNumber_t seq_num = (change)->sequenceNumber;                  \
+    (reader)->getMutex().unlock();                                        \
+    std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
+    (reader)->getMutex().lock();                                          \
+                                                                          \
+    if ( (ALIVE != (change)->kind) ||                                     \
+         (seq_num != (change)->sequenceNumber) ||                         \
+         (writer_guid != (change)->writerGUID) )                          \
+    {                                                                     \
+        return;                                                           \
+    }                                                                     \
+    (void)seq_num
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -129,6 +146,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
+        PREVENT_PDP_DEADLOCK(reader, change, sedp_->mp_PDP);
+
         // Note: change is removed from history inside this method.
         add_writer_from_change(reader, reader_history, change, sedp_);
     }
@@ -250,6 +269,8 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 
     if (change->kind == ALIVE)
     {
+        PREVENT_PDP_DEADLOCK(reader, change, sedp_->mp_PDP);
+
         // Note: change is removed from history inside this method.
         add_reader_from_change(reader, reader_history, change, sedp_);
     }
