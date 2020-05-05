@@ -95,11 +95,6 @@ public:
             const fastrtps::rtps::Locator_t& local_locator,
             const fastrtps::rtps::Locator_t& remote_locator) override;
 
-    uint32_t max_recv_buffer_size() const override
-    {
-        return low_level_transport_->max_recv_buffer_size();
-    }
-
 protected:
 
     //! Size of the underlying transport buffer.

@@ -198,6 +198,11 @@ public:
         return low_level_transport_->transform_remote_locator(remote_locator, result_locator);
     }
 
+    virtual uint32_t max_recv_buffer_size() const override
+    {
+        return low_level_transport_->max_recv_buffer_size();
+    }
+
     virtual bool send(
             fastrtps::rtps::SenderResource* low_sender_resource,
             const fastrtps::rtps::octet* send_buffer,

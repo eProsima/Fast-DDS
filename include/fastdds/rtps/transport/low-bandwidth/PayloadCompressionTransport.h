@@ -78,8 +78,9 @@ public:
             fastrtps::rtps::SenderResource* low_sender_resource,
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
-            const fastrtps::rtps::Locator_t& remote_locator,
-            const std::chrono::microseconds& timeout) override;
+            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& timeout) override;
 
     /**
      * Blocking Receive from the specified channel. It will extract the timestamp information and perform

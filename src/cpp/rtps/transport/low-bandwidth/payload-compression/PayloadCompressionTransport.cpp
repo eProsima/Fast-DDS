@@ -234,8 +234,9 @@ bool PayloadCompressionTransport::send(
         fastrtps::rtps::SenderResource* low_sender_resource,
         const fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
-        const fastrtps::rtps::Locator_t& remote_locator,
-        const std::chrono::microseconds& timeout)
+        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end,
+        const std::chrono::steady_clock::time_point& timeout)
 {
     std::unique_lock<std::mutex> scopedLock(compress_buffer_mutex_);
     uint32_t send_size = compress_buffer_len_;
@@ -248,19 +249,22 @@ bool PayloadCompressionTransport::send(
     {
         if (send_size < send_buffer_size)
         {
-            ret_val = low_sender_resource->send(compress_buffer_, send_size, remote_locator, timeout);
+            ret_val = low_sender_resource->send(compress_buffer_, send_size,
+                            destination_locators_begin, destination_locators_end, timeout);
         }
         else
         {
             if (strncmp((const char*) send_buffer, "RTPS", 4) == 0)
             {
-                ret_val = low_sender_resource->send(send_buffer, send_buffer_size, remote_locator, timeout);
+                ret_val = low_sender_resource->send(send_buffer, send_buffer_size,
+                                destination_locators_begin, destination_locators_end, timeout);
             }
             else
             {
                 compress_buffer_[0] = (fastrtps::rtps::octet) 'R';
                 memcpy(&compress_buffer_[1], send_buffer, send_buffer_size);
-                ret_val = low_sender_resource->send(compress_buffer_, send_buffer_size + 1, remote_locator, timeout);
+                ret_val = low_sender_resource->send(compress_buffer_, send_buffer_size + 1,
+                                destination_locators_begin, destination_locators_end, timeout);
             }
         }
     }
