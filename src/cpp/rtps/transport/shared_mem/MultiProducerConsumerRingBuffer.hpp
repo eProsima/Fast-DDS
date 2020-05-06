@@ -72,12 +72,21 @@ public:
                 uint32_t write_p)
             : buffer_(buffer)
             , read_p_(write_p)
+            , is_detached_(false)
         {
         }
 
         ~Listener()
         {
-            buffer_.unregister_listener(*this);
+            if (!is_detached_)
+            {
+                buffer_.unregister_listener(*this);
+            }
+        }
+
+        inline void detach()
+        {
+            is_detached_ = true;
         }
 
         /**
@@ -107,6 +116,8 @@ public:
          */
         bool pop()
         {
+            assert(!is_detached_);
+
             auto cell = head();
 
             if (!cell)
@@ -136,10 +147,20 @@ public:
             return (counter == 1);
         }
 
-    private:
+        /**
+         * Read pointer
+         * @return the current read_p value
+         */
+        inline uint32_t read_p() const
+        {
+            return read_p_;
+        }
+
+    private: // Listener
 
         MultiProducerConsumerRingBuffer<T>& buffer_;
         uint32_t read_p_;
+        bool is_detached_;
     };
 
     struct Pointer
@@ -196,17 +217,22 @@ public:
 
     /**
      * Push a new element into the buffer initializing the cell's ref_counter,
-     * @return true if there are listeners registered, false if no listeners => buffer not enqueued
-     * @throw std::runtime_error if the buffer is full
+     * @param [in] data reference to the data to be pushed
+     * @param [out] there_are_listeners_registered returns whether there are listeners registered
+     * @return false if overflow, true otherwise
      */
     bool push(
-            const T& data)
+            const T& data,
+            bool* there_are_listeners_registered)
     {
         // If no listeners the buffer is dropped
         if (node_->registered_listeners_ == 0)
         {
-            return false;
+            *there_are_listeners_registered = false;
+            return true;
         }
+
+        *there_are_listeners_registered = true;
 
         auto pointer = node_->pointer_.load(std::memory_order_relaxed);
 
@@ -220,7 +246,8 @@ public:
 
         if (pointer.free_cells == 0)
         {
-            throw std::runtime_error("Buffer full");
+            // Buffer full
+            return false;
         }
 
         auto& cell = cells_[get_pointer_value(pointer.write_p)];
@@ -239,6 +266,33 @@ public:
     bool is_buffer_empty()
     {
         return (node_->pointer_.load(std::memory_order_relaxed).free_cells == node_->total_cells_);
+    }
+
+    inline uint32_t write_p() const
+    {
+        return node_->pointer_.load(std::memory_order_relaxed).write_p;
+    }
+
+    /**
+     * Meause the distance of a read pointer from the write pointer
+     * @return The distance
+     */
+    inline uint32_t distance(
+            uint32_t read_p,
+            uint32_t write_p) const
+    {
+        uint32_t value_r = read_p & 0x7FFFFFFF;
+        uint32_t value_w = write_p & 0x7FFFFFFF;
+
+        // Both are in the same loop
+        if (read_p >> 31 == write_p >> 31)
+        {
+            return value_w - value_r;
+        }
+        else // read_p is in a previous loop
+        {
+            return (node_->total_cells_ - value_r) + value_w;
+        }
     }
 
     /**

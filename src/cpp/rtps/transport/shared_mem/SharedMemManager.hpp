@@ -595,7 +595,7 @@ public:
             , shared_mem_manager_(shared_mem_manager)
             , is_closed_(false)
         {
-            global_listener_ = global_port_->create_listener(&listener_index_);
+            global_listener_ = global_port_->create_listener(&listener_index_, &instance_id_);
         }
 
         ~Listener()
@@ -604,7 +604,7 @@ public:
             {
                 try
                 {
-                    global_port_->unregister_listener(&global_listener_);
+                    global_port_->unregister_listener(&global_listener_, listener_index_, instance_id_);
                 }
                 catch(const std::exception& e)
                 {
@@ -622,6 +622,8 @@ public:
             other.global_port_.reset();
             shared_mem_manager_ = other.shared_mem_manager_;
             is_closed_.exchange(other.is_closed_);
+            listener_index_ = other.listener_index_;
+            instance_id_ = other.instance_id_;
 
             return *this;
         }
@@ -633,11 +635,13 @@ public:
          * @return A shared_ptr to the buffer, this shared_ptr can be nullptr if the
          * wait was interrupted because errors or close operations.
          * @remark Multithread not supported.
+         * @throw std::exception on error.
          */
         std::shared_ptr<Buffer> pop()
         {
             std::shared_ptr<Buffer> buffer_ref;
             bool is_buffer_valid = false;
+            SharedMemGlobal::BufferDescriptor buffer_descriptor;
 
             try
             {
@@ -645,26 +649,25 @@ public:
                 {
                     bool was_cell_freed;
 
-                    SharedMemGlobal::PortCell* head_cell = nullptr;
                     buffer_ref.reset();
 
-                    while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
+                    try
                     {
                         // Wait until there's data to pop
-                        global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
+                        buffer_descriptor = global_port_->wait_pop(*global_listener_, is_closed_, 
+                            listener_index_, instance_id_);
                     }
-
-                    if (!head_cell)
+                    catch(std::exception&)
                     {
-                        return nullptr;
+                        if(is_closed_.load())
+                        {
+                            return nullptr;
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
-
-                    if (!global_port_->is_port_ok())
-                    {
-                        throw std::runtime_error("");
-                    }
-
-                    SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
 
                     auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
                     auto buffer_node =
@@ -676,7 +679,7 @@ public:
                                     buffer_descriptor.validity_id);
 
                     // If the cell has been read by all listeners
-                    global_port_->pop(*global_listener_, was_cell_freed);
+                    global_port_->pop(*global_listener_, listener_index_, instance_id_, &was_cell_freed);
 
                     if (buffer_ref)
                     {
@@ -706,9 +709,29 @@ public:
             {
                 if (global_port_->is_port_ok())
                 {
-                    throw;
+                    if (!global_port_->is_listener_valid(listener_index_, instance_id_))
+                    {
+                        try
+                        {
+                            regenerate_listener();
+
+                            logWarning(RTPS_TRANSPORT_SHM, "SHM Listener on port " << global_port_->port_id() 
+                                << " failure: "
+                                << e.what());
+                        }
+                        catch(std::exception&)
+                        {
+                            // Listener regeneration failed. For sure the port is not ok so will be regenerated bellow.
+                        }
+                    }
+                    else // Everything looks fine, so pass the exception up
+                    {
+                        throw;
+                    }
                 }
-                else
+
+                // Check again because could have become not ok after regenerate_listener()
+                if (!global_port_->is_port_ok())
                 {
                     logWarning(RTPS_TRANSPORT_SHM, "SHM Listener on port " << global_port_->port_id() << " failure: "
                                                                            << e.what());
@@ -729,6 +752,14 @@ public:
             *this = std::move(*new_listener);
         }
 
+        void regenerate_listener()
+        {
+            // The listener was remotelly removed because was causing overflow. 
+            global_port_->unregister_listener(&global_listener_, listener_index_, instance_id_);
+            // Reattach
+            global_listener_ = global_port_->create_listener(&listener_index_, &instance_id_);
+        }
+
         /**
          * Unblock a thread blocked in pop() call, not allowing pop() to block again.
          * @throw std::exception on error
@@ -739,12 +770,13 @@ public:
             global_port_->close_listener(&is_closed_);
         }
 
-    private:
+    private: // Listener
 
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
 
         std::unique_ptr<SharedMemGlobal::Listener> global_listener_;
         uint32_t listener_index_;
+        uint32_t instance_id_;
 
         SharedMemManager* shared_mem_manager_;
 
@@ -757,6 +789,8 @@ public:
      */
     class Port
     {
+        friend class MockPortSharedMemGlobal;
+        
     public:
 
         Port(

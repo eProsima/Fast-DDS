@@ -177,13 +177,17 @@ class SHMRingBufferMultiThread
 
 TEST_F(SHMRingBuffer, test_read_write_bounds)
 {
+    bool listeners_registered;
     auto listener = ring_buffer_->register_listener();
 
-    for (uint32_t i = 0; i<buffer_size_; i++){
-        ring_buffer_->push({0,i});
+    for (uint32_t i = 0; i<buffer_size_; i++)
+    {
+        ASSERT_TRUE(ring_buffer_->push({0,i}, &listeners_registered));
+        ASSERT_TRUE(listeners_registered);
     }
 
-    ASSERT_THROW(ring_buffer_->push({0,(std::numeric_limits<uint32_t>::max)()}), std::exception);
+    ASSERT_FALSE(ring_buffer_->push({0,(std::numeric_limits<uint32_t>::max)()}, &listeners_registered));
+    ASSERT_TRUE(listeners_registered);
 
     for (uint32_t i = 0; i<buffer_size_; i++)
     {
@@ -196,6 +200,8 @@ TEST_F(SHMRingBuffer, test_read_write_bounds)
 
 TEST_F(SHMRingBuffer, circular_pointer)
 {
+    bool listeners_registered;
+
     uint32_t r = 0;
     uint32_t w = 0;
     uint32_t i = 0;
@@ -204,7 +210,7 @@ TEST_F(SHMRingBuffer, circular_pointer)
 
     // Buffer full
     for (; i<buffer_size_; i++){
-        ring_buffer_->push({0,w++});
+        ASSERT_TRUE(ring_buffer_->push({0,w++}, &listeners_registered));
     }
 
     i = (i % buffer_size_);
@@ -215,7 +221,7 @@ TEST_F(SHMRingBuffer, circular_pointer)
     {
         ASSERT_EQ(listener->head()->data().counter, r++);
         listener->pop();
-        ring_buffer_->push({0,w++});
+        ASSERT_TRUE(ring_buffer_->push({0,w++}, &listeners_registered));
     }
 
     i = (i % buffer_size_);
@@ -232,14 +238,74 @@ TEST_F(SHMRingBuffer, circular_pointer)
     ASSERT_THROW(listener->pop(), std::exception);
 }
 
+TEST_F(SHMRingBuffer, test_distance)
+{
+    bool listeners_registered;
+    auto listener = ring_buffer_->register_listener();
+
+    uint32_t d;
+    uint32_t read_p;
+    uint32_t write_p;
+
+    for (d = 0; d < buffer_size_; d++)
+    {
+        read_p = listener->read_p();
+        write_p = ring_buffer_->write_p();
+        ASSERT_EQ(d, ring_buffer_->distance(read_p, write_p));
+        ASSERT_TRUE(ring_buffer_->push({0,d}, &listeners_registered));
+    }
+
+    for (d = 0; d < buffer_size_; d++)
+    {
+        read_p = listener->read_p();
+        write_p = ring_buffer_->write_p();
+        ASSERT_EQ(buffer_size_ - d, ring_buffer_->distance(read_p, write_p));
+        ASSERT_TRUE(listener->pop());
+    }
+
+    // Second loop
+    for (d = 0; d < buffer_size_; d++)
+    {
+        read_p = listener->read_p();
+        write_p = ring_buffer_->write_p();
+        ASSERT_EQ(d, ring_buffer_->distance(read_p, write_p));
+        ASSERT_TRUE(ring_buffer_->push({0,d}, &listeners_registered));
+    }
+    
+    for (d = 0; d < buffer_size_; d++)
+    {
+        read_p = listener->read_p();
+        write_p = ring_buffer_->write_p();
+        ASSERT_EQ(buffer_size_ - d, ring_buffer_->distance(read_p, write_p));
+        ASSERT_TRUE(listener->pop());
+    }
+
+    read_p = listener->read_p();
+    write_p = ring_buffer_->write_p();
+    ASSERT_EQ(0u, ring_buffer_->distance(read_p, write_p));
+    ASSERT_TRUE(ring_buffer_->push({0,d}, &listeners_registered));
+
+    // Keep distance 1 for two loops
+    for (d = 0; d < buffer_size_ * 2; d++)
+    {
+        ASSERT_TRUE(listener->pop());
+        ASSERT_TRUE(ring_buffer_->push({0,d}, &listeners_registered));
+        read_p = listener->read_p();
+        write_p = ring_buffer_->write_p();
+        ASSERT_EQ(1u, ring_buffer_->distance(read_p, write_p));        
+    }
+}
+
+
 TEST_F(SHMRingBuffer, one_listener_reads_all)
 {
+    bool listeners_registered;
     auto listener1 = ring_buffer_->register_listener();
     auto listener2 = ring_buffer_->register_listener();
 
     for (uint32_t i=0; i<buffer_size_; i++)
     {
-        ring_buffer_->push({0,i});
+        ASSERT_TRUE(ring_buffer_->push({0,i}, &listeners_registered));
     }
 
     for (uint32_t i=0; i<buffer_size_; i++)
@@ -252,6 +318,8 @@ TEST_F(SHMRingBuffer, one_listener_reads_all)
 
 TEST_F(SHMRingBuffer, copy)
 {
+    bool listeners_registered;
+
     std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> > ring_buffer;
 
     std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]> cells
@@ -269,12 +337,12 @@ TEST_F(SHMRingBuffer, copy)
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(0u, enqueued_data.size());
 
-    ring_buffer->push({ 0,0 });
+    ASSERT_TRUE(ring_buffer->push({ 0,0 }, &listeners_registered));
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(1u, enqueued_data.size());
     enqueued_data.clear();
 
-    ring_buffer->push({ 0,1 });
+    ASSERT_TRUE(ring_buffer->push({ 0,1 }, &listeners_registered));
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(2u, enqueued_data.size());
 
@@ -284,7 +352,7 @@ TEST_F(SHMRingBuffer, copy)
     listener->pop();
 
     enqueued_data.clear();
-    ring_buffer->push({ 0,2 });
+    ASSERT_TRUE(ring_buffer->push({ 0,2 }, &listeners_registered));
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(2u, enqueued_data.size());
 
@@ -294,7 +362,7 @@ TEST_F(SHMRingBuffer, copy)
     listener->pop();
 
     enqueued_data.clear();
-    ring_buffer->push({ 0,3 });
+    ASSERT_TRUE(ring_buffer->push({ 0,3 }, &listeners_registered));
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(2u, enqueued_data.size());
 
@@ -314,19 +382,25 @@ TEST_F(SHMRingBuffer, copy)
 
 TEST_F(SHMRingBuffer, listeners_register_unregister)
 {
+    bool listeners_registered;
+
     // 0 Must be discarted because no listeners
-    ring_buffer_->push({0,0});
+    ASSERT_TRUE(ring_buffer_->push({0,0}, &listeners_registered));
+    ASSERT_FALSE(listeners_registered);
 
     auto listener1 = ring_buffer_->register_listener();
     // 1 Must be only read by listener1
-    ring_buffer_->push({0,1});
+    ASSERT_TRUE(ring_buffer_->push({0,1}, &listeners_registered));
+    ASSERT_TRUE(listeners_registered);
 
     auto listener2 = ring_buffer_->register_listener();
     // 2 Must be read by listener1 and listener 2
-    ring_buffer_->push({0,2});
+    ASSERT_TRUE(ring_buffer_->push({0,2}, &listeners_registered));
+    ASSERT_TRUE(listeners_registered);
 
     // 3
-    ring_buffer_->push({0,3});
+    ASSERT_TRUE(ring_buffer_->push({0,3}, &listeners_registered));
+    ASSERT_TRUE(listeners_registered);
 
     ASSERT_EQ(listener1->head()->data().counter, 1u);
     ASSERT_EQ(listener2->head()->data().counter, 2u);
@@ -340,17 +414,24 @@ TEST_F(SHMRingBuffer, listeners_register_unregister)
     listener1.reset();
 
     // 4
-    ring_buffer_->push({0,4});
+    ASSERT_TRUE(ring_buffer_->push({0,4}, &listeners_registered));
+    ASSERT_TRUE(listeners_registered);
 
     ASSERT_EQ(listener2->head()->data().counter, 3u);
     listener2->pop(); // 3
 
     ASSERT_EQ(listener2->head()->data().counter, 4u);
     listener2->pop();
+
+    listener2.reset();
+    ASSERT_TRUE(ring_buffer_->push({0,5}, &listeners_registered));
+    ASSERT_FALSE(listeners_registered);
 }
 
 TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
 {
+    bool listeners_registered;
+
     const uint32_t elements_to_push = buffer_size_ * std::get<1>(GetParam());
     std::vector<std::thread> threads;
     std::atomic<uint32_t> ready_listeners;
@@ -406,7 +487,7 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
                 {
                     try
                     {
-                        ring_buffer_->push({thread_number, c});
+                        ASSERT_TRUE(ring_buffer_->push({thread_number, c}, &listeners_registered));
                         success = true;
                     }
                     catch (const std::exception&)
@@ -975,7 +1056,7 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
 
     auto global_port2 = shared_mem_global->open_port(0, 1, 1000);
 
-    ASSERT_NO_THROW(global_port2->healthy_check());
+    ASSERT_TRUE(global_port2->is_port_ok());
 
     sem_end_thread_locker.post();
     thread_locker.join();
@@ -1105,35 +1186,43 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
     const std::string domain_name("SHMTests");
 
     SharedMemManager shared_mem_manager(domain_name);
-    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
 
-    uint32_t listener1_index;
-    auto port1 = shared_mem_global->open_port(0, 1, 1000);
-    auto listener1 = port1->create_listener(&listener1_index);
+    auto port1 = shared_mem_manager.open_port(0, 1, 1000);
+    auto listener1 = port1->create_listener();
 
     auto listener2 = shared_mem_manager.open_port(0, 1, 1000)->create_listener();
 
-    std::atomic<uint32_t> thread_listener2_state(0);
+    std::atomic<uint32_t> thread_listener_state(0);
     std::thread thread_listener2([&]
         {
             // lock has to be done in another thread because
             // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
-            auto buf = listener2->pop();
-            ASSERT_TRUE(*static_cast<uint8_t*>(buf->data()) == 1);
+            auto bufl2 = listener2->pop();
 
-            thread_listener2_state = 1;
+            ASSERT_TRUE(*static_cast<uint8_t*>(bufl2->data()) == 1);
 
-            buf = listener2->pop();
-            // The pop is broken by port regeneration
-            ASSERT_TRUE(buf == nullptr);
+            thread_listener_state = 1;
 
-            thread_listener2_state = 2;
+            while(*static_cast<uint8_t*>(bufl2->data()) != 2)
+            {
+                bufl2 = listener2->pop();
+            }
 
-            buf = listener2->pop();
-            // 2 is received in the new regenerated port
-            ASSERT_TRUE(*static_cast<uint8_t*>(buf->data()) == 2);
+            thread_listener_state = 2;
 
-            thread_listener2_state = 3;
+            // Continue until receive 3
+            while(*static_cast<uint8_t*>(bufl2->data()) != 2)
+            {
+                bufl2 = listener2->pop();
+            }
+
+            // Continue until listener1 has recover and also receive 3
+            while(thread_listener_state.load() != 3)
+            {
+                bufl2 = listener2->pop();
+            }
+
+            thread_listener_state = 4;
         }
     );
 
@@ -1142,12 +1231,14 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
     auto buf = segment->alloc_buffer(1, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
     ASSERT_TRUE(buf != nullptr);
     memset(buf->data(), 0, buf->size());
+
     *static_cast<uint8_t*>(buf->data()) = 1u;
     ASSERT_TRUE(port_sender->try_push(buf));
 
     // Wait until message received
-    while (thread_listener2_state.load() < 1u)
+    while (thread_listener_state.load() < 1u)
     {
+        //port_sender->try_push(buf);
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
@@ -1156,35 +1247,43 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
     std::thread thread_listener1([&]
         {
             // Deadlock the listener.
-            port_mocker.wait_pop_deadlock(*port1, *listener1, is_listener1_closed, listener1_index);
-        }
-            );
+            port_mocker.wait_pop_deadlock(*port1, is_listener1_closed);
 
-    // Wait until port is regenerated
-    while (thread_listener2_state.load() < 2u)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
+            auto bufl1 = listener1->pop();
+            while(!bufl1 || *static_cast<uint8_t*>(bufl1->data()) != 3)
+            {
+                bufl1 = listener1->pop();
+            }
 
+            thread_listener_state = 3;
+        });
+
+    *static_cast<uint8_t*>(buf->data()) = 1u;
+    // Push until port overflow 
+    while(port_sender->try_push(buf));
+
+    // At some point the listener1 has to be removed because is blocking.
     *static_cast<uint8_t*>(buf->data()) = 2u;
-    // This push must fail because port is not OK
-    ASSERT_FALSE(port_sender->try_push(buf));
-
-    // This push must success because port was regenerated in the last try_push call.
-    ASSERT_TRUE(port_sender->try_push(buf));
-
-    // Wait until port is regenerated
-    while (thread_listener2_state.load() < 3u)
+    while (thread_listener_state.load() < 2u)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        // Push until that happens and listener 1 receives 2u and pass to state 2
+        port_sender->try_push(buf);
     }
-
-    thread_listener2.join();
 
     // Unblocks thread_listener1
     port_mocker.unblock_wait_pop(*port1, is_listener1_closed);
 
+    *static_cast<uint8_t*>(buf->data()) = 3u;
+    while (thread_listener_state.load() < 4u)
+    {
+        // Push until listener1 receives 3u and pass to state 3 and listener2 receives 3 and pass to state 4
+        port_sender->try_push(buf);
+    }
+
+    thread_listener2.join();
     thread_listener1.join();
+
+    segment.reset();
 }
 
 TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
@@ -1206,8 +1305,7 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
             ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
             sem_lock_done.post();
             sem_end_thread_locker.wait();
-        }
-            );
+        });
 
     sem_lock_done.wait();
 
@@ -1219,7 +1317,7 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
     SharedMemGlobal::BufferDescriptor foo = {random_id, 0, 0};
     ASSERT_THROW(global_port->try_push(foo, &listerner_active), std::exception);
 
-    ASSERT_THROW(global_port->healthy_check(), std::exception);
+    ASSERT_THROW(global_port->is_port_ok(), std::exception);
 
     sem_end_thread_locker.post();
     thread_locker.join();
@@ -1227,24 +1325,20 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
 
 TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 {
-    const std::string domain_name("SHMTests");
+    /*const std::string domain_name("SHMTests");
 
     SharedMemManager shared_mem_manager(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
     
     shared_mem_global->remove_port(0);
-    auto deadlocked_port = shared_mem_global->open_port(0, 1, 1000);
-    uint32_t listener_index;
-    auto deadlocked_listener = deadlocked_port->create_listener(&listener_index);
+    auto deadlocked_port = shared_mem_manager.open_port(0, 1, 1000);
+    auto deadlocked_listener = deadlocked_port->create_listener();
 
     // Simulates a deadlocked wait_pop
     std::atomic_bool is_listener_closed(false);
     std::thread thread_wait_deadlock([&]
         {
-            MockPortSharedMemGlobal port_mocker;
-            port_mocker.wait_pop_deadlock(*deadlocked_port, *deadlocked_listener, 
-                is_listener_closed, listener_index);
-            (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
+            MockPortSharedMemGlobal::wait_pop_deadlock(*deadlocked_port, is_listener_closed);
         });
 
     // Assert the thread is waiting
@@ -1252,7 +1346,7 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 
     // Open the deadlocked port
     auto port = shared_mem_global->open_port(0, 1, 1000);
-    auto listener = port->create_listener(&listener_index);
+    auto listener = port->create_listener);
     bool listerners_active;
     SharedMemSegment::Id random_id;
     random_id.generate();
@@ -1264,7 +1358,7 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
     ASSERT_TRUE(listener->pop());
 
     deadlocked_port->close_listener(&is_listener_closed);
-    thread_wait_deadlock.join();
+    thread_wait_deadlock.join();*/
 }
 
 TEST_F(SHMTransportTests, port_not_ok_listener_recover)

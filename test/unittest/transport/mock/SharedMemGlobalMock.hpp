@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_MOCKSHAREDMEM_GLOBAL_H_
 #define _FASTDDS_MOCKSHAREDMEM_GLOBAL_H_
 
-#include <rtps/transport/shared_mem/SharedMemGlobal.hpp>
+#include <rtps/transport/shared_mem/SharedMemManager.hpp>
 
 namespace eprosima{
 namespace fastdds{
@@ -52,33 +52,22 @@ public:
      * Deadlock until is_listener_closed is true
      */
     static void wait_pop_deadlock(
-            SharedMemGlobal::Port& port,
-            SharedMemGlobal::Listener& listener,
-            const std::atomic<bool>& is_listener_closed,
-            uint32_t listener_index)
+            SharedMemManager::Port& port,
+            const std::atomic<bool>& is_listener_closed)
     {
-        (void)listener;
+        std::unique_lock<SharedMemSegment::mutex> lock(port.global_port_->node_->empty_cv_mutex);
 
-        std::unique_lock<SharedMemSegment::mutex> lock(port.node_->empty_cv_mutex);
-        
-        port.node_->waiting_count++;
-        auto& status = port.node_->listeners_status[listener_index];
-        status.is_waiting = 1;
-
-        port.node_->empty_cv.wait(lock, [&] {
+        port.global_port_->node_->empty_cv.wait(lock, [&] {
                 return is_listener_closed.load();
             });
-
-        status.is_waiting = 0;
-        port.node_->waiting_count--;
     }
 
     static void unblock_wait_pop(
-        SharedMemGlobal::Port& port,
+        SharedMemManager::Port& port,
         std::atomic<bool>& is_listener_closed)
     {
         is_listener_closed.exchange(true);
-        port.node_->empty_cv.notify_all();
+        port.global_port_->node_->empty_cv.notify_all();
     }
 
     static void set_port_not_ok(SharedMemGlobal::Port& port)
