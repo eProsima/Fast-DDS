@@ -671,7 +671,7 @@ ReaderProxyData* PDP::addReaderProxyData(
     logInfo(RTPS_PDP, "Adding reader proxy data " << reader_guid);
     ReaderProxyData* ret_val = nullptr;
 
-    std::unique_lock<std::recursive_mutex> lockPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
@@ -695,8 +695,6 @@ ReaderProxyData* PDP::addReaderProxyData(
                 RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                 if (listener)
                 {
-                    //Unlock before calling listeners
-                    lockPDP.unlock();
                     ReaderDiscoveryInfo info(*ret_val);
                     info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
                     listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
@@ -744,8 +742,6 @@ ReaderProxyData* PDP::addReaderProxyData(
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
             if (listener)
             {
-                //Unlock before calling listeners
-                lockPDP.unlock();
                 ReaderDiscoveryInfo info(*ret_val);
                 info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
@@ -767,7 +763,7 @@ WriterProxyData* PDP::addWriterProxyData(
     logInfo(RTPS_PDP, "Adding reader proxy data " << writer_guid);
     WriterProxyData* ret_val = nullptr;
 
-    std::unique_lock<std::recursive_mutex> lockPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
@@ -791,8 +787,6 @@ WriterProxyData* PDP::addWriterProxyData(
                 RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                 if (listener)
                 {
-                    //Unlock before calling listeners
-                    lockPDP.unlock();
                     WriterDiscoveryInfo info(*ret_val);
                     info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
                     listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
@@ -840,8 +834,6 @@ WriterProxyData* PDP::addWriterProxyData(
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
             if (listener)
             {
-                //Unlock before calling listeners
-                lockPDP.unlock();
                 WriterDiscoveryInfo info(*ret_val);
                 info.status = WriterDiscoveryInfo::DISCOVERED_WRITER;
                 listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
