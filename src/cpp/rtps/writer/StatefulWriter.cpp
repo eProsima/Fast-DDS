@@ -1244,8 +1244,7 @@ bool StatefulWriter::matched_reader_add(
         RTPSGapBuilder gap_builder(group);
         bool is_reliable = rp->is_reliable();
 
-        for (std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
-                cit != mp_history->changesEnd(); ++cit)
+        for (History::iterator cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); ++cit)
         {
             // This is to cover the case when there are holes in the history
             if (is_reliable)
@@ -1528,34 +1527,64 @@ void StatefulWriter::check_acked_status()
         }
     }
 
-    if (get_seq_num_min() != SequenceNumber_t::unknown())
+    SequenceNumber_t min_seq = get_seq_num_min();
+    if (min_seq != SequenceNumber_t::unknown())
     {
-        // Inform of samples acked.
-        if (mp_listener != nullptr)
+        // In the case where we haven't received an acknack from a recently matched reader,
+        // min_low_mark will be zero, and no change will be notified as received by all
+        if (next_all_acked_notify_sequence_ <= min_low_mark)
         {
-            // In the case where we haven't received an acknack from a recently matched reader,
-            // min_low_mark will be zero, and no change will be notified as received by all
-            SequenceNumber_t current_seq;
-            for (current_seq = next_all_acked_notify_sequence_; current_seq <= min_low_mark; ++current_seq)
+            if ( (mp_listener != nullptr) && (min_low_mark >= get_seq_num_min()))
             {
-                std::vector<CacheChange_t*>::iterator history_end = mp_history->changesEnd();
-                std::vector<CacheChange_t*>::iterator cit =
-                        std::lower_bound(mp_history->changesBegin(), history_end, current_seq,
-                                [](
-                                    const CacheChange_t* change,
-                                    const SequenceNumber_t& seq)
+                // We will inform backwards about the changes received by all readers, starting
+                // on min_low_mark down until next_all_acked_notify_sequence_. This way we can
+                // safely proceed with the traversal, in case a change is removed from the history
+                // inside the callback
+                History::iterator history_end = mp_history->changesEnd();
+                History::iterator cit =
+                    std::lower_bound(mp_history->changesBegin(), history_end, min_low_mark,
+                        [](
+                            const CacheChange_t* change,
+                            const SequenceNumber_t& seq)
+                        {
+                            return change->sequenceNumber < seq;
+                        });
+                if (cit != history_end && (*cit)->sequenceNumber == min_low_mark)
                 {
-                    return change->sequenceNumber < seq;
-                });
-                if (cit != history_end && (*cit)->sequenceNumber == current_seq)
-                {
-                    mp_listener->onWriterChangeReceivedByAll(this, *cit);
+                    ++cit;
                 }
+
+                SequenceNumber_t seq{};
+                SequenceNumber_t end_seq = min_seq > next_all_acked_notify_sequence_ ?
+                    min_seq : next_all_acked_notify_sequence_;
+
+                // The iterator starts pointing to the change inmediately after min_low_mark
+                --cit;
+
+                do
+                {
+                    // Avoid notifying changes before next_all_acked_notify_sequence_
+                    CacheChange_t* change = *cit;
+                    seq = change->sequenceNumber;
+                    if (seq < next_all_acked_notify_sequence_)
+                    {
+                        break;
+                    }
+
+                    // Change iterator before it possibly becomes invalidated
+                    if (cit != mp_history->changesBegin())
+                    {
+                        --cit;
+                    }
+
+                    // Notify reception of change (may remove that change on VOLATILE writers)
+                    mp_listener->onWriterChangeReceivedByAll(this, change);
+
+                    // Stop if we got to either next_all_acked_notify_sequence_ or the first change
+                } while (seq > end_seq);
             }
 
-            // This will change next_all_acked_notify_sequence_ to min_low_mark + 1 on the most usual case.
-            // On the special case where an acknack has not been received for a reader, it will remain unchanged.
-            next_all_acked_notify_sequence_ = current_seq;
+            next_all_acked_notify_sequence_ = min_low_mark + 1;
         }
 
         if (min_low_mark >= get_seq_num_min())
