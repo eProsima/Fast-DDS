@@ -297,7 +297,7 @@ public:
 
             if (item == max_value)
             {
-                calc_maximum_bit_set(pos, 0);
+                calc_maximum_bit_set(pos + 1, 0);
             }
         }
     }

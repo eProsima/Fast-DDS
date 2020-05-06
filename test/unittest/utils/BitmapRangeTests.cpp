@@ -68,6 +68,21 @@ struct TestInputAddRange
     }
 };
 
+struct TestInputRemove
+{
+    uint32_t offset_begin;
+    uint32_t offset_end;
+
+    bool perform_input(ValueType base, TestType& uut) const
+    {
+        for (uint32_t offset = offset_begin; offset < offset_end; ++offset)
+        {
+            uut.remove(base + offset);
+        }
+        return true;
+    }
+};
+
 template<
         typename InputType>
 struct TestStep
@@ -86,7 +101,6 @@ struct TestCase
     void Test(ValueType base, TestType& uut) const
     {
         ASSERT_TRUE(initialization.Check(initialization.result, uut));
-
         
         for (auto step : steps)
         {
@@ -264,6 +278,59 @@ class BitmapRangeTests: public ::testing::Test
             }
         };
 
+        const TestCase<TestInputRemove> test_remove0 =
+        {
+            // initialization (starts from full word)
+            {
+                true, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+            },
+            // steps
+            {
+                // Removing out of range
+                {
+                    {32, 33},
+                    {
+                        true, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+                    }
+                },
+                // Removing single in the middle
+                {
+                    {5, 6},
+                    {
+                        true, 32, 1, {0xFBFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+                    }
+                },
+                // Removing several in the middle
+                {
+                    {6, 31},
+                    {
+                        true, 32, 1, {0xF8000001UL, 0, 0, 0, 0, 0, 0, 0}
+                    }
+                },
+                // Removing all except first and last
+                {
+                    {1, 31},
+                    {
+                        true, 32, 1, {0x80000001UL, 0, 0, 0, 0, 0, 0, 0}
+                    }
+                },
+                // Removing last
+                {
+                    {31, 32},
+                    {
+                        true, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    }
+                },
+                // Removing first
+                {
+                    {0, 1},
+                    {
+                        true, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+                    }
+                }
+            }
+        };
+
 };
 
 TEST_F(BitmapRangeTests, default_constructor)
@@ -389,6 +456,14 @@ TEST_F(BitmapRangeTests, sliding_window)
     ASSERT_EQ(uut.max(), sliding_base - 100UL);
     uut.base_update(0);
     ASSERT_TRUE(uut.empty());
+}
+
+TEST_F(BitmapRangeTests, remove)
+{
+    TestType uut(explicit_base);
+    uut.add_range(explicit_base, explicit_base + 32UL);
+
+    test_remove0.Test(explicit_base, uut);
 }
 
 int main(int argc, char **argv)
