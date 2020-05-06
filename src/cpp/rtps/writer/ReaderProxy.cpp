@@ -43,7 +43,7 @@ ReaderProxy::ReaderProxy(
         StatefulWriter* writer)
     : is_active_(false)
     , locator_info_(
-        writer->getRTPSParticipant(), writer, loc_alloc.max_unicast_locators,
+        writer, loc_alloc.max_unicast_locators,
         loc_alloc.max_multicast_locators)
     , durability_kind_(VOLATILE)
     , expects_inline_qos_(false)

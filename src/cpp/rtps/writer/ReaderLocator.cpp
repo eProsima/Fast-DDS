@@ -31,12 +31,11 @@ namespace fastrtps {
 namespace rtps {
 
 ReaderLocator::ReaderLocator(
-        RTPSParticipantImpl* participant_owner,
         RTPSWriter* owner,
         size_t max_unicast_locators,
         size_t max_multicast_locators)
-    : participant_owner_(participant_owner)
-    , owner_(owner)
+    : owner_(owner)
+    , participant_owner_(owner->getRTPSParticipant())
     , locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)
     , is_local_reader_(false)

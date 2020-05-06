@@ -52,12 +52,11 @@ public:
     /**
      * Construct a ReaderLocator.
      *
-     * @param owner                   Pointer to the RTPSParticipantImpl creating this object.
+     * @param owner                   Pointer to the RTPSWriter creating this object.
      * @param max_unicast_locators    Maximum number of unicast locators to hold.
      * @param max_multicast_locators  Maximum number of multicast locators to hold.
      */
     ReaderLocator(
-            RTPSParticipantImpl* /*participant_owner*/,
             RTPSWriter* /*owner*/,
             size_t /*max_unicast_locators*/,
             size_t /*max_multicast_locators*/)
