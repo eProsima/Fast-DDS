@@ -53,11 +53,7 @@ static bool add_change_to_rtps_group(
         {
             for (uint32_t frag = 1; frag <= n_fragments; frag++)
             {
-                if (group.add_data_frag(*change, frag, inline_qos))
-                {
-                    reader_change->markFragmentsAsSent(frag);
-                }
-                else
+                if (!group.add_data_frag(*change, frag, inline_qos))
                 {
                     logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
                 }
