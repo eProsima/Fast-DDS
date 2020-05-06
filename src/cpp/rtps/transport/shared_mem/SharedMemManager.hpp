@@ -604,7 +604,7 @@ public:
             {
                 try
                 {
-                    global_port_->unregister_listener(&global_listener_);
+                    global_port_->unregister_listener(&global_listener_, listener_index_);
                 }
                 catch(const std::exception& e)
                 {

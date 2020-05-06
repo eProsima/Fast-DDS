@@ -71,7 +71,7 @@ public:
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell PortCell;
 
-    static const uint32_t CURRENT_ABI_VERSION = 5;
+    static const uint32_t CURRENT_ABI_VERSION = 6;
 
     struct PortNode
     {
@@ -104,7 +104,7 @@ public:
             uint8_t is_waiting              : 1;
             uint8_t counter                 : 3;
             uint8_t last_verified_counter   : 3;
-            uint8_t pad                     : 1;
+            uint8_t is_in_use               : 1;
         };
         ListenerStatus listeners_status[LISTENERS_STATUS_SIZE];
                         
@@ -243,19 +243,31 @@ public:
             bool update_status_all_listeners(
                     PortNode* port_node)
             {
-                for (uint32_t i = 0; i < port_node->num_listeners; i++)
+                uint32_t listeners_found = 0;
+
+                for (uint32_t i = 0; i<PortNode::LISTENERS_STATUS_SIZE; i++)
                 {
                     auto& status = port_node->listeners_status[i];
-                    // Check only currently waiting listeners
-                    if (status.is_waiting)
+
+                    if (status.is_in_use)
                     {
-                        if (status.counter != status.last_verified_counter)
+                        listeners_found++;
+                        // Check only currently waiting listeners
+                        if (status.is_waiting)
                         {
-                            status.last_verified_counter = status.counter;
+                            if (status.counter != status.last_verified_counter)
+                            {
+                                status.last_verified_counter = status.counter;
+                            }
+                            else             // Counter is freeze => this listener is blocked!!!
+                            {
+                                return false;
+                            }
                         }
-                        else         // Counter is freeze => this listener is blocked!!!
+
+                        if (listeners_found == port_node->num_listeners)
                         {
-                            return false;
+                            break;
                         }
                     }
                 }
@@ -264,7 +276,7 @@ public:
                     std::chrono::duration_cast<std::chrono::milliseconds>(
                         std::chrono::high_resolution_clock::now().time_since_epoch()).count());
 
-                return true;
+                return listeners_found == port_node->num_listeners;
             }
 
             void run()
@@ -333,20 +345,27 @@ public:
 
         bool check_status_all_listeners() const
         {
-            for (uint32_t i = 0; i < node_->num_listeners; i++)
+            uint32_t listeners_found = 0;
+
+            for (uint32_t i = 0; i < PortNode::LISTENERS_STATUS_SIZE; i++)
             {
                 auto& status = node_->listeners_status[i];
-                // Check only currently waiting listeners
-                if (status.is_waiting)
+
+                if (status.is_in_use)
                 {
-                    if (status.counter == status.last_verified_counter)
+                    listeners_found++;
+                    // Check only currently waiting listeners
+                    if (status.is_waiting)
                     {
-                        return false;
+                        if (status.counter == status.last_verified_counter)
+                        {
+                            return false;
+                        }
                     }
                 }
             }
 
-            return true;
+            return (listeners_found == node_->num_listeners);
         }
         
     public:
@@ -631,20 +650,46 @@ public:
          * used to reference the elements from the listeners_status array.
          * @return A shared_ptr to the listener.
          * The listener will be unregistered when shared_ptr is destroyed.
+         * @throw std::exception on error
          */
         std::unique_ptr<Listener> create_listener(uint32_t* listener_index)
         {
+            std::unique_ptr<Listener> listener;
+
             std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
 
-            *listener_index = node_->num_listeners++;
+            uint32_t i;
+            // Find a free listener_status
+            for (i = 0; i<PortNode::LISTENERS_STATUS_SIZE; i++)
+            {
+                if (!node_->listeners_status[i].is_in_use)
+                {
+                    break;
+                }
+            }
 
-            return buffer_->register_listener();
+            if (i < PortNode::LISTENERS_STATUS_SIZE)
+            {
+                *listener_index = i;
+                node_->listeners_status[i].is_in_use = true;
+                node_->num_listeners++;
+                listener = buffer_->register_listener();
+            }
+            else
+            {
+                 throw std::runtime_error("max listeners reached");
+            }
+
+            return listener;
         }
 
         /**
-         * Decrement the number of listeners by one
+         * Remove the listener from the port, the cells still not processed by the listener are freed
+         * @throw std::exception on failure
          */
-        void unregister_listener(std::unique_ptr<Listener>* listener)
+        void unregister_listener(
+                std::unique_ptr<Listener>* listener,
+                uint32_t listener_index)
         {
             try
             {
@@ -652,17 +697,13 @@ public:
 
                 (*listener).reset();
                 node_->num_listeners--;
+                node_->listeners_status[listener_index].is_in_use = false;
             }
-            catch(const std::exception&)
+            catch (const std::exception&)
             {
-                // The port is not OK
-                if(node_->is_port_ok)
-                {
-                    node_->is_port_ok = false;
-                }
+                node_->is_port_ok = false;
 
                 (*listener).reset();
-                node_->num_listeners--;
 
                 throw;
             }
