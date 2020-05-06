@@ -786,6 +786,8 @@ void StatefulWriter::send_all_unsent_changes(
 
     if (there_are_remote_readers_)
     {
+        static constexpr uint32_t implicit_flow_controller_size = RTPSMessageGroup::get_max_fragment_payload_size();
+
         NetworkFactory& network = mp_RTPSParticipant->network_factory();
         locator_selector_.reset(true);
         network.select_locators(locator_selector_);
@@ -807,8 +809,12 @@ void StatefulWriter::send_all_unsent_changes(
         };
 
         RTPSGapBuilder gap_builder(group);
+        uint32_t total_sent_size = 0;
 
-        for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
+        History::iterator cit;
+        for (cit = mp_history->changesBegin();
+             cit != mp_history->changesEnd() && (total_sent_size < implicit_flow_controller_size);
+             cit++)
         {
             SequenceNumber_t seq = (*cit)->sequenceNumber;
 
@@ -854,6 +860,7 @@ void StatefulWriter::send_all_unsent_changes(
                     bool sent_ok = send_data_or_fragments(group, *cit, inline_qos, sent_fun);
                     if (sent_ok)
                     {
+                        total_sent_size += (*cit)->serializedPayload.length;
                         bool tmp_bool = false;
                         for (ReaderProxy* remoteReader : matched_readers_)
                         {
@@ -872,9 +879,6 @@ void StatefulWriter::send_all_unsent_changes(
                     }
                 }
             }
-
-            // Skip change's sequence number
-            seq++;
         }
 
         // Heartbeat piggyback.
@@ -888,6 +892,11 @@ void StatefulWriter::send_all_unsent_changes(
         locator_selector_.reset(true);
         network.select_locators(locator_selector_);
         compute_selected_guids();
+
+        if (cit != mp_history->changesEnd())
+        {
+            mp_RTPSParticipant->async_thread().wake_up(this);
+        }
     }
 }
 
