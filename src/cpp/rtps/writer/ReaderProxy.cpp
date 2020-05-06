@@ -42,7 +42,9 @@ ReaderProxy::ReaderProxy(
         const RemoteLocatorsAllocationAttributes& loc_alloc,
         StatefulWriter* writer)
     : is_active_(false)
-    , locator_info_(writer->getRTPSParticipant(), loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , locator_info_(
+        writer->getRTPSParticipant(), writer, loc_alloc.max_unicast_locators,
+        loc_alloc.max_multicast_locators)
     , durability_kind_(VOLATILE)
     , expects_inline_qos_(false)
     , is_reliable_(false)

@@ -32,6 +32,7 @@ namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
+class RTPSWriter;
 class RTPSReader;
 
 /**
@@ -53,7 +54,8 @@ public:
      * @param max_multicast_locators  Maximum number of multicast locators to hold.
      */
     ReaderLocator(
-            RTPSParticipantImpl* owner,
+            RTPSParticipantImpl* participant_owner,
+            RTPSWriter* owner,
             size_t max_unicast_locators,
             size_t max_multicast_locators);
 
@@ -179,7 +181,8 @@ public:
 
 private:
 
-    RTPSParticipantImpl* owner_;
+    RTPSParticipantImpl* participant_owner_;
+    RTPSWriter* owner_;
     LocatorSelectorEntry locator_info_;
     bool expects_inline_qos_;
     bool is_local_reader_;
