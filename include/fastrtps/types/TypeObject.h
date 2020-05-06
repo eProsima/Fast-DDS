@@ -325,7 +325,7 @@ private:
 typedef std::vector<MinimalStructMember> MinimalStructMemberSeq;
 
 /*struct AppliedBuiltinTypeAnnotations {
-    AppliedVerbatimAnnotation verbatim;  // @verbatim(...) // @optional
+    AppliedVerbatimAnnotation verbatim;  // verbatim(...) // optional
    };*/
 class AppliedBuiltinTypeAnnotations
 {
@@ -407,8 +407,8 @@ private:
 };
 
 /*struct CompleteTypeDetail final{
-    AppliedBuiltinTypeAnnotations  ann_builtin; // @optional
-    AppliedAnnotationSeq           ann_custom; // @optional
+    AppliedBuiltinTypeAnnotations  ann_builtin; // optional
+    AppliedAnnotationSeq           ann_custom; // optional
     QualifiedTypeName                        type_name;
    };*/
 class CompleteTypeDetail
