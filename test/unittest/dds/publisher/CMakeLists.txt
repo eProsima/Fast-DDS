@@ -20,6 +20,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND AND GMOCK_FOUND)
         find_package(Threads REQUIRED)
 
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
+            COPYONLY)
+
         set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
         set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp)
         set(PUBLISHERTESTS_SOURCE PublisherTests.cpp

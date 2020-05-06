@@ -94,6 +94,12 @@ public:
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
+    DataReader* create_datareader_with_profile(
+            TopicDescription* topic,
+            const std::string& profile_name,
+            DataReaderListener* listener,
+            const StatusMask& mask = StatusMask::all());
+
     ReturnCode_t delete_datareader(
             DataReader* reader);
 
@@ -130,6 +136,8 @@ public:
 
     ReturnCode_t set_default_datareader_qos(
             const DataReaderQos& qos);
+
+    void reset_default_datareader_qos();
 
     const DataReaderQos& get_default_datareader_qos() const;
 

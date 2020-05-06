@@ -93,7 +93,7 @@ DataReaderImpl::DataReaderImpl(
             type_.get(),
             qos_.get_readerqos(subscriber_->get_qos()),
             type_->m_typeSize + 3,    /* Possible alignment */
-            qos.endpoint().history_memory_policy)
+            qos_.endpoint().history_memory_policy)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -117,31 +117,31 @@ DataReaderImpl::DataReaderImpl(
 
     fastrtps::rtps::ReaderAttributes att;
 
-    att.endpoint.durabilityKind = qos.durability().durabilityKind();
+    att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     att.endpoint.endpointKind = READER;
-    att.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
-    att.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
+    att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     att.endpoint.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    att.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
-    att.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
-    att.endpoint.properties = qos.properties();
+    att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
+    att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
+    att.endpoint.properties = qos_.properties();
 
-    if (qos.endpoint().entity_id > 0)
+    if (qos_.endpoint().entity_id > 0)
     {
-        att.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
+        att.endpoint.setEntityID(static_cast<uint8_t>(qos_.endpoint().entity_id));
     }
 
-    if (qos.endpoint().user_defined_id > 0)
+    if (qos_.endpoint().user_defined_id > 0)
     {
-        att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
+        att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.endpoint().user_defined_id));
     }
 
-    att.times = qos.reliable_reader_qos().times;
-    att.liveliness_lease_duration = qos.liveliness().lease_duration;
-    att.liveliness_kind_ = qos.liveliness().kind;
-    att.matched_writers_allocation = qos.reader_resource_limits().matched_publisher_allocation;
-    att.expectsInlineQos = qos.expects_inline_qos();
-    att.disable_positive_acks = qos.reliable_reader_qos().disable_positive_ACKs.enabled;
+    att.times = qos_.reliable_reader_qos().times;
+    att.liveliness_lease_duration = qos_.liveliness().lease_duration;
+    att.liveliness_kind_ = qos_.liveliness().kind;
+    att.matched_writers_allocation = qos_.reader_resource_limits().matched_publisher_allocation;
+    att.expectsInlineQos = qos_.expects_inline_qos();
+    att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_ACKs.enabled;
 
 
     // TODO(Ricardo) Remove in future

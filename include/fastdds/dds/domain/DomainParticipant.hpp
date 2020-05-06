@@ -132,6 +132,18 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     /**
+     * Create a Publisher in this Participant.
+     * @param profile Publisher profile name.
+     * @param listen Pointer to the listener.
+     * @param mask StatusMask
+     * @return Pointer to the created Publisher.
+     */
+    RTPS_DllAPI Publisher* create_publisher_with_profile(
+            const std::string& profile_name,
+            PublisherListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
      * Deletes an existing Publisher.
      * @param publisher to be deleted.
      * @return if publisher was deleted.
@@ -148,6 +160,18 @@ public:
      */
     RTPS_DllAPI Subscriber* create_subscriber(
             const SubscriberQos& qos,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Subscriber in this Participant.
+     * @param profile Subscriber profile name.
+     * @param listen Pointer to the listener.
+     * @param mask StatusMask
+     * @return Pointer to the created Subscriber.
+     */
+    RTPS_DllAPI Subscriber* create_subscriber_with_profile(
+            const std::string& profile_name,
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
@@ -185,7 +209,6 @@ public:
     RTPS_DllAPI ReturnCode_t unregister_type(
             const std::string& typeName);
 
-    // TODO delete topic
     /**
      * Create a Topic in this Participant.
      * @param topic_name Name of the Topic.
@@ -202,6 +225,27 @@ public:
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
+    /**
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Data type of the Topic.
+     * @param profile Topic profile name.
+     * @param listen Pointer to the listener.
+     * @param mask StatusMask that holds statuses the listener responds to
+     * @return Pointer to the created Topic.
+     */
+    RTPS_DllAPI Topic* create_topic_with_profile(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const std::string& profile_name,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Deletes an existing Topic.
+     * @param topic to be deleted.
+     * @return RETCODE_OK if the Topic was deleted, or an error code otherwise.
+     */
     RTPS_DllAPI ReturnCode_t delete_topic(
             Topic* topic);
 

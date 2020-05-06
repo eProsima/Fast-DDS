@@ -94,6 +94,14 @@ Publisher* DomainParticipant::create_publisher(
     return impl_->create_publisher(qos, listener, mask);
 }
 
+Publisher* DomainParticipant::create_publisher_with_profile(
+        const std::string& profile_name,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_publisher_with_profile(profile_name, listener, mask);
+}
+
 ReturnCode_t DomainParticipant::delete_publisher(
         Publisher* publisher)
 {
@@ -106,6 +114,14 @@ Subscriber* DomainParticipant::create_subscriber(
         const StatusMask& mask)
 {
     return impl_->create_subscriber(qos, listener, mask);
+}
+
+Subscriber* DomainParticipant::create_subscriber_with_profile(
+        const std::string& profile_name,
+        SubscriberListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_subscriber_with_profile(profile_name, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_subscriber(
@@ -122,6 +138,16 @@ Topic* DomainParticipant::create_topic(
         const StatusMask& mask)
 {
     return impl_->create_topic(topic_name, type_name, qos, listener, mask);
+}
+
+Topic* DomainParticipant::create_topic_with_profile(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const std::string& profile_name,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_topic_with_profile(topic_name, type_name, profile_name, listener, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_topic(

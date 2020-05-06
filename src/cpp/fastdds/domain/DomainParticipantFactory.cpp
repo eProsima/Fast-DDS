@@ -271,7 +271,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     ParticipantAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
     {
-        DomainParticipantQos qos;
+        DomainParticipantQos qos = default_participant_qos_;
         set_qos_from_attributes(qos, attr.rtps);
         return create_participant(did, qos, listen, mask);
     }

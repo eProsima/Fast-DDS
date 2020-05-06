@@ -31,14 +31,53 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/dds/log/Log.hpp>
 
-#include <functional>
+#include <fastrtps/attributes/PublisherAttributes.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <functional>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::rtps::InstanceHandle_t;
+using fastrtps::Duration_t;
+using fastrtps::PublisherAttributes;
+
+static void set_qos_from_attributes(
+        DataWriterQos& qos,
+        const PublisherAttributes& attr)
+{
+    qos.writer_resource_limits().matched_subscriber_allocation = attr.matched_subscriber_allocation;
+    qos.properties() = attr.properties;
+    qos.throughput_controller() = attr.throughputController;
+    qos.endpoint().unicast_locator_list = attr.unicastLocatorList;
+    qos.endpoint().multicast_locator_list = attr.multicastLocatorList;
+    qos.endpoint().remote_locator_list = attr.remoteLocatorList;
+    qos.endpoint().history_memory_policy = attr.historyMemoryPolicy;
+    qos.endpoint().user_defined_id = attr.getUserDefinedID();
+    qos.endpoint().entity_id = attr.getEntityID();
+    qos.reliable_writer_qos().times = attr.times;
+    qos.reliable_writer_qos().disable_positive_acks = attr.qos.m_disablePositiveACKs;
+    qos.durability() = attr.qos.m_durability;
+    qos.durability_service() = attr.qos.m_durabilityService;
+    qos.deadline() = attr.qos.m_deadline;
+    qos.latency_budget() = attr.qos.m_latencyBudget;
+    qos.liveliness() = attr.qos.m_liveliness;
+    qos.reliability() = attr.qos.m_reliability;
+    qos.lifespan() = attr.qos.m_lifespan;
+    qos.user_data().setValue(attr.qos.m_userData);
+    qos.ownership() = attr.qos.m_ownership;
+    qos.ownership_strength() = attr.qos.m_ownershipStrength;
+    qos.destination_order() = attr.qos.m_destinationOrder;
+    qos.representation() = attr.qos.representation;
+    qos.publish_mode() = attr.qos.m_publishMode;
+    qos.history() = attr.topic.historyQos;
+    qos.resource_limits() = attr.topic.resourceLimitsQos;
+}
 
 PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
@@ -52,6 +91,9 @@ PublisherImpl::PublisherImpl(
     , rtps_participant_(p->rtps_participant())
     , default_datawriter_qos_(DATAWRITER_QOS_DEFAULT)
 {
+    PublisherAttributes pub_attr;
+    XMLProfileManager::getDefaultPublisherAttributes(pub_attr);
+    set_qos_from_attributes(default_datawriter_qos_, pub_attr);
 }
 
 void PublisherImpl::disable()
@@ -237,6 +279,24 @@ DataWriter* PublisherImpl::create_datawriter(
     return writer;
 }
 
+DataWriter* PublisherImpl::create_datawriter_with_profile(
+        Topic* topic,
+        const std::string& profile_name,
+        DataWriterListener* listener,
+        const StatusMask& mask)
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    {
+        DataWriterQos qos = default_datawriter_qos_;
+        set_qos_from_attributes(qos, attr);
+        return create_datawriter(topic, qos, listener, mask);
+    }
+
+    return nullptr;
+}
+
 ReturnCode_t PublisherImpl::delete_datawriter(
         DataWriter* writer)
 {
@@ -356,7 +416,8 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
 {
     if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
-        DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
+        reset_default_datawriter_qos();
+        return ReturnCode_t::RETCODE_OK;
     }
 
     ReturnCode_t ret_val = DataWriterImpl::check_qos(qos);
@@ -366,6 +427,15 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
     }
     DataWriterImpl::set_qos(default_datawriter_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
+}
+
+void PublisherImpl::reset_default_datawriter_qos()
+{
+    // TODO (ILG): Change when we have full XML support for DDS QoS profiles
+    DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
+    PublisherAttributes attr;
+    XMLProfileManager::getDefaultPublisherAttributes(attr);
+    set_qos_from_attributes(default_datawriter_qos_, attr);
 }
 
 const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const
@@ -401,7 +471,7 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
             // Check ellapsed time and decrement
             participant_->get_current_time(end);
             current = current - (end - begin);
-            if (current < c_TimeZero)
+            if (current < fastrtps::c_TimeZero)
             {
                 return ReturnCode_t::RETCODE_TIMEOUT;
             }

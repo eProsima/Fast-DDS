@@ -86,6 +86,15 @@ DataWriter* Publisher::create_datawriter(
     return impl_->create_datawriter(topic, qos, listener, mask);
 }
 
+DataWriter* Publisher::create_datawriter_with_profile(
+        Topic* topic,
+        const std::string& profile_name,
+        DataWriterListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_datawriter_with_profile(topic, profile_name, listener, mask);
+}
+
 ReturnCode_t Publisher::delete_datawriter(
         DataWriter* writer)
 {

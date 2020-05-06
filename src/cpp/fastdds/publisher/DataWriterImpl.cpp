@@ -65,7 +65,7 @@ DataWriterImpl::DataWriterImpl(
             + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
 #endif
-            , qos.endpoint().history_memory_policy)
+            , qos_.endpoint().history_memory_policy)
     //, history_(std::move(history))
     , listener_(listen)
 #pragma warning (disable : 4355 )
@@ -92,32 +92,32 @@ DataWriterImpl::DataWriterImpl(
                     qos_.lifespan().duration.to_ns() * 1e-6);
 
     WriterAttributes w_att;
-    w_att.throughputController = qos.throughput_controller();
-    w_att.endpoint.durabilityKind = qos.durability().durabilityKind();
+    w_att.throughputController = qos_.throughput_controller();
+    w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
-    w_att.endpoint.multicastLocatorList = qos.endpoint().multicast_locator_list;
-    w_att.endpoint.reliabilityKind = qos.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    w_att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
+    w_att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     w_att.endpoint.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    w_att.endpoint.unicastLocatorList = qos.endpoint().unicast_locator_list;
-    w_att.endpoint.remoteLocatorList = qos.endpoint().remote_locator_list;
-    w_att.mode = qos.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
-    w_att.endpoint.properties = qos.properties();
+    w_att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
+    w_att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
+    w_att.mode = qos_.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
+    w_att.endpoint.properties = qos_.properties();
 
-    if (qos.endpoint().entity_id > 0)
+    if (qos_.endpoint().entity_id > 0)
     {
-        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos.endpoint().entity_id));
+        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos_.endpoint().entity_id));
     }
 
-    if (qos.endpoint().user_defined_id > 0)
+    if (qos_.endpoint().user_defined_id > 0)
     {
-        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos.endpoint().user_defined_id));
+        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.endpoint().user_defined_id));
     }
 
-    w_att.times = qos.reliable_writer_qos().times;
-    w_att.liveliness_kind = qos.liveliness().kind;
-    w_att.liveliness_lease_duration = qos.liveliness().lease_duration;
-    w_att.liveliness_announcement_period = qos.liveliness().announcement_period;
-    w_att.matched_readers_allocation = qos.writer_resource_limits().matched_subscriber_allocation;
+    w_att.times = qos_.reliable_writer_qos().times;
+    w_att.liveliness_kind = qos_.liveliness().kind;
+    w_att.liveliness_lease_duration = qos_.liveliness().lease_duration;
+    w_att.liveliness_announcement_period = qos_.liveliness().announcement_period;
+    w_att.matched_readers_allocation = qos_.writer_resource_limits().matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -138,11 +138,11 @@ DataWriterImpl::DataWriterImpl(
         w_att.endpoint.properties.properties().push_back(std::move(property));
     }
 
-    if (qos.reliable_writer_qos().disable_positive_acks.enabled &&
-            qos.reliable_writer_qos().disable_positive_acks.duration != c_TimeInfinite)
+    if (qos_.reliable_writer_qos().disable_positive_acks.enabled &&
+            qos_.reliable_writer_qos().disable_positive_acks.duration != c_TimeInfinite)
     {
         w_att.disable_positive_acks = true;
-        w_att.keep_duration = qos.reliable_writer_qos().disable_positive_acks.duration;
+        w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
     }
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
