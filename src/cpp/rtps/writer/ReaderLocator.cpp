@@ -31,10 +31,11 @@ namespace fastrtps {
 namespace rtps {
 
 ReaderLocator::ReaderLocator(
-        RTPSParticipantImpl* owner,
+        RTPSWriter* owner,
         size_t max_unicast_locators,
         size_t max_multicast_locators)
     : owner_(owner)
+    , participant_owner_(owner->getRTPSParticipant())
     , locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)
     , is_local_reader_(false)
@@ -132,11 +133,13 @@ bool ReaderLocator::send(
     {
         if (locator_info_.unicast.size() > 0)
         {
-            return owner_->sendSync(message, Locators(locator_info_.unicast.begin()), Locators(locator_info_.unicast.end()), max_blocking_time_point);
+            return participant_owner_->sendSync(message, Locators(locator_info_.unicast.begin()),
+                           Locators(locator_info_.unicast.end()), max_blocking_time_point);
         }
         else
         {
-            return owner_->sendSync(message, Locators(locator_info_.multicast.begin()), Locators(locator_info_.multicast.end()), max_blocking_time_point);
+            return participant_owner_->sendSync(message, Locators(locator_info_.multicast.begin()),
+                           Locators(locator_info_.multicast.end()), max_blocking_time_point);
         }
     }
 

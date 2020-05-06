@@ -104,7 +104,7 @@ StatelessWriter::StatelessWriter(
     for (size_t i = 0; i < attributes.matched_readers_allocation.initial; ++i)
     {
         matched_readers_.emplace_back(
-            mp_RTPSParticipant,
+            this,
             loc_alloc.max_unicast_locators,
             loc_alloc.max_multicast_locators);
     }
@@ -673,7 +673,7 @@ bool StatelessWriter::matched_reader_add(
         const RemoteLocatorsAllocationAttributes& loc_alloc =
                 mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;
         new_reader = matched_readers_.emplace_back(
-            mp_RTPSParticipant,
+            this,
             loc_alloc.max_unicast_locators,
             loc_alloc.max_multicast_locators);
         if (new_reader != nullptr)

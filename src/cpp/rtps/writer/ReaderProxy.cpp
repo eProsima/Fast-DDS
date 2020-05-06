@@ -42,7 +42,9 @@ ReaderProxy::ReaderProxy(
         const RemoteLocatorsAllocationAttributes& loc_alloc,
         StatefulWriter* writer)
     : is_active_(false)
-    , locator_info_(writer->getRTPSParticipant(), loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , locator_info_(
+        writer, loc_alloc.max_unicast_locators,
+        loc_alloc.max_multicast_locators)
     , durability_kind_(VOLATILE)
     , expects_inline_qos_(false)
     , is_reliable_(false)
@@ -56,15 +58,15 @@ ReaderProxy::ReaderProxy(
     , last_nackfrag_count_(0)
 {
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
-            [&]() -> bool
-            {
-                writer_->perform_nack_supression(guid());
-                return false;
-            },
-            TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+                    [&]() -> bool
+                {
+                    writer_->perform_nack_supression(guid());
+                    return false;
+                },
+                    TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
     initial_heartbeat_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
-            [&]() -> bool
+                    [&]() -> bool
                 {
                     writer_->intraprocess_heartbeat(this);
                     return false;
@@ -106,7 +108,7 @@ void ReaderProxy::start(
     {
         SequenceNumber_t min_sequence = writer_->get_seq_num_min();
         changes_low_mark_ = (min_sequence == SequenceNumber_t::unknown()) ?
-            writer_->next_sequence_number() - 1 : min_sequence - 1;
+                writer_->next_sequence_number() - 1 : min_sequence - 1;
     }
     else
     {
@@ -259,7 +261,7 @@ bool ReaderProxy::change_is_unsent(
     }
 
     ChangeConstIterator chit = find_change(seq_num);
-     if (chit == changes_for_reader_.end())
+    if (chit == changes_for_reader_.end())
     {
         // There is a hole in changes_for_reader_
         // This means a change was removed.
