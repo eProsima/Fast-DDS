@@ -132,6 +132,7 @@ History::const_iterator ReaderHistory::remove_change_nts(
     (void)a_change;
     assert(nullptr != a_change);
     assert((*position) == a_change);
+    m_changePool.release_Cache(a_change);
     return m_changes.erase(position);
 }
 

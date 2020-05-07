@@ -620,6 +620,8 @@ bool StatefulReader::processGapMsg(
             }
         });
 
+        mp_history->updateMaxMinSeqNum();
+
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
 
