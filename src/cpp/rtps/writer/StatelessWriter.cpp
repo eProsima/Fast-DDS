@@ -362,6 +362,13 @@ bool StatelessWriter::is_acked_by_all(
     return true;
 }
 
+bool StatelessWriter::try_remove_change(
+        std::chrono::steady_clock::time_point&,
+        std::unique_lock<RecursiveTimedMutex>&)
+{
+    return mp_history->remove_min_change();
+}
+
 void StatelessWriter::update_unsent_changes(
         const SequenceNumber_t& seq_num,
         const FragmentNumber_t& frag_num)
