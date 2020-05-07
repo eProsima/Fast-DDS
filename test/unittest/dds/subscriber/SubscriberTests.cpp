@@ -129,7 +129,7 @@ public:
 
 TEST(SubscriberTests, ChangeSubscriberQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -155,7 +155,7 @@ TEST(SubscriberTests, ChangeSubscriberQos)
 
 TEST(SubscriberTests, ChangePSMSubscriberQos)
 {
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant);
 
     ::dds::sub::qos::SubscriberQos qos = subscriber.qos();
@@ -171,7 +171,7 @@ TEST(SubscriberTests, ChangePSMSubscriberQos)
 
 TEST(SubscriberTests, ChangeDefaultDataReaderQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -214,7 +214,7 @@ TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
 
 TEST(SubscriberTests, GetSubscriberParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -227,7 +227,7 @@ TEST(SubscriberTests, GetSubscriberParticipant)
 
 TEST(SubscriberTests, GetPSMSubscriberParticipant)
 {
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
 
     ASSERT_EQ(subscriber.participant().delegate().get(), participant.delegate().get());
@@ -235,7 +235,7 @@ TEST(SubscriberTests, GetPSMSubscriberParticipant)
 
 TEST(SubscriberTests, CreateDataReader)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -299,7 +299,7 @@ void check_datareader_with_profile (DataReader* datareader, const std::string& p
 TEST(SubscriberTests, CreateDataReaderWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -324,7 +324,7 @@ TEST(SubscriberTests, CreateDataReaderWithProfile)
 
 TEST(SubscriberTests, DeleteSubscriberWithReaders)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -377,7 +377,7 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
 
 TEST(SubscriberTests, ReadData)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);

@@ -64,7 +64,7 @@ public:
      */
     RTPS_DllAPI DomainParticipant* create_participant(
             DomainId_t domain_id,
-            const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
+            const DomainParticipantQos& qos,
             DomainParticipantListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
