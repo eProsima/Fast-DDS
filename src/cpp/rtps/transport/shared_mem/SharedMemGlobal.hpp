@@ -434,27 +434,26 @@ public:
 
                 try
                 {
-                    std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
-                            SharedMemSegment::try_open_and_lock_named_mutex(segment_name + "_mutex");
-
-                    if (node_->ref_counter.load(std::memory_order_relaxed) == 0 
-                        && node_->is_port_ok)
+                    // This check avoid locking port_mutex when the port is not OK, also avoid
+                    // recursive lock of port_mutex in create_port()
+                    if(node_->is_port_ok)
                     {
-                        node_->is_port_ok = false;
+                        std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
+                                SharedMemSegment::try_open_and_lock_named_mutex(segment_name + "_mutex");
 
-                        if (overflows_count_)
+                        std::unique_lock<SharedMemSegment::named_mutex> port_lock(*port_mutex, std::adopt_lock);
+                        
+                        // Check again to ensure nobody has re-opened the port while we were locking port_mutex
+                        if (node_->ref_counter.load(std::memory_order_relaxed) == 0
+                                && is_port_ok())
                         {
-                            logWarning(RTPS_TRANSPORT_SHM, "Port " << node_->port_id
-                                << segment_name.c_str() << " closed with overflows_count "
-                                << overflows_count_);
+                            node_->is_port_ok = false;
+                            node_ = nullptr;
+                            port_segment_.reset();
+
+                            SharedMemSegment::remove(segment_name.c_str());
+                            SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
                         }
-
-                        node_ = nullptr;
-                        port_segment_.reset();
-
-                        SharedMemSegment::remove(segment_name.c_str());
-                        port_mutex.reset();
-                        SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
                     }
                 }
                 catch (const std::exception& e)
@@ -1000,15 +999,7 @@ private:
             }
             catch (std::exception&)
             {
-                try
-                {
-                    port->unlock_read_locks();
-                }
-                catch (std::exception & e)
-                {
-                    logError(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                        << port_id << " failed unlock_read_locks " << e.what());
-                }
+                port->unlock_read_locks();
 
                 port_node->is_port_ok = false;
 
