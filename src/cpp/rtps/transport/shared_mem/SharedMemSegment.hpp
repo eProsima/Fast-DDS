@@ -161,11 +161,11 @@ public:
             {
                 uuid.generate();
 
+                auto name = domain_name + "_" + uuid.to_string();
+
                 SharedMemEnvironment::get().init();
 
                 {
-                    auto name = domain_name + "_" + uuid.to_string();
-
                     boost::interprocess::managed_shared_memory
                             test_segment(boost::interprocess::create_only, name.c_str(),
                                 (std::max)((size_t)1024, allocation_alignment* 4));
@@ -176,7 +176,7 @@ public:
                     extra_size = static_cast<uint32_t>(m1 - m2);
                 }
 
-                boost::interprocess::shared_memory_object::remove(uuid.to_string().c_str());
+                boost::interprocess::shared_memory_object::remove(name.c_str());
             }
 
             return extra_size;
