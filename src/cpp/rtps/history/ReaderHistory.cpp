@@ -225,13 +225,8 @@ void ReaderHistory::updateMaxMinSeqNum()
     }
     else
     {
-        auto minmax = std::minmax_element(m_changes.begin(),
-                        m_changes.end(),
-                        [](CacheChange_t* c1, CacheChange_t* c2){
-                        return c1->sequenceNumber < c2->sequenceNumber;
-                    });
-        mp_minSeqCacheChange = *(minmax.first);
-        mp_maxSeqCacheChange = *(minmax.second);
+        mp_minSeqCacheChange = m_changes.front();
+        mp_maxSeqCacheChange = m_changes.back();
     }
 }
 
