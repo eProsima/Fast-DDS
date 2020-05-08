@@ -59,7 +59,7 @@ public:
      * @param change Pointer to the change
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(CacheChange_t * change, size_t);
+    RTPS_DllAPI virtual bool received_change(CacheChange_t* change, size_t);
 
     /**
      * Add a CacheChange_t to the ReaderHistory.
@@ -80,7 +80,7 @@ public:
     /**
      * Remove a specific change from the history.
      * @param ch Pointer to the CacheChange_t.
-     * @param hint Iterator where the CacheChange_t is located in the history.
+     * @param position Iterator where the CacheChange_t is located in the history.
      * @return An iterator pointing to the new location of the element that followed the removed CacheChange_t.
      */
     const_iterator remove_change_nts(

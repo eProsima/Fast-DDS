@@ -33,16 +33,23 @@ class Subscriber;
 
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
+ * It also inherits all DataReaderListener callbacks.
  * @ingroup FASTDDS_MODULE
  */
 class SubscriberListener : public DataReaderListener
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI SubscriberListener()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~SubscriberListener()
     {
     }

@@ -31,7 +31,7 @@ namespace dds {
 /**
  * Log consumer that writes the log events to a file.
  *
- * @file FileConsumer.h
+ * @file FileConsumer.hpp
  */
 class FileConsumer : public LogConsumer
 {

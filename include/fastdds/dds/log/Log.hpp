@@ -28,20 +28,20 @@
  * not covered by the current verbosity level, there is some overhead on calling a log macro. For maximum performance, you can
  * opt out of logging any particular level by defining the following symbols:
  *
- * * #define LOG_NO_ERROR
- * * #define LOG_NO_WARNING
- * * #define LOG_NO_INFO
+ * * define LOG_NO_ERROR
+ * * define LOG_NO_WARNING
+ * * define LOG_NO_INFO
  *
  * Additionally. the lowest level (Info) is disabled by default on release branches.
  */
 
 // Logging API:
 
-//! Logs an info message. Disable it through Log::SetVerbosity, #define LOG_NO_INFO, or being in a release branch
+//! Logs an info message. Disable it through Log::SetVerbosity, define LOG_NO_INFO, or being in a release branch
 #define logInfo(cat, msg) logInfo_(cat, msg)
-//! Logs a warning. Disable reporting through Log::SetVerbosity or #define LOG_NO_WARNING
+//! Logs a warning. Disable reporting through Log::SetVerbosity or define LOG_NO_WARNING
 #define logWarning(cat, msg) logWarning_(cat, msg)
-//! Logs an error. Disable reporting through #define LOG_NO_ERROR
+//! Logs an error. Disable reporting through define LOG_NO_ERROR
 #define logError(cat, msg) logError_(cat, msg)
 
 namespace eprosima {
@@ -203,7 +203,9 @@ class LogConsumer
 {
 public:
 
-    virtual ~LogConsumer(){}
+    virtual ~LogConsumer()
+    {
+    }
 
     virtual void Consume(
             const Log::Entry&) = 0;
@@ -251,10 +253,10 @@ protected:
 #define logError_(cat, msg)        \
     {                              \
         auto tmp_lambda = [&]()    \
-        {                          \
-            std::stringstream ss;  \
-            ss << msg;             \
-        };                         \
+                {                          \
+                    std::stringstream ss;  \
+                    ss << msg;             \
+                };                         \
         (void)tmp_lambda;          \
     }
 #else
@@ -276,10 +278,10 @@ protected:
 #define logWarning_(cat, msg)      \
     {                              \
         auto tmp_lambda = [&]()    \
-        {                          \
-            std::stringstream ss;  \
-            ss << msg;             \
-        };                         \
+                {                          \
+                    std::stringstream ss;  \
+                    ss << msg;             \
+                };                         \
         (void)tmp_lambda;          \
     }
 #else
@@ -302,10 +304,10 @@ protected:
 #define logInfo_(cat, msg)         \
     {                              \
         auto tmp_lambda = [&]()    \
-        {                          \
-            std::stringstream ss;  \
-            ss << msg;             \
-        };                         \
+                {                          \
+                    std::stringstream ss;  \
+                    ss << msg;             \
+                };                         \
         (void)tmp_lambda;          \
     }
 #else

@@ -407,7 +407,7 @@ private:
     ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
     TimedEvent* nack_supression_event_;
-    TimedEvent* initial_heartbeat_event_; 
+    TimedEvent* initial_heartbeat_event_;
     //! Are timed events enabled?
     std::atomic_bool timers_enabled_;
     //! Last ack/nack count
@@ -448,6 +448,7 @@ private:
     /**
      * @brief Find a change with the specified sequence number.
      * @param seq_num Sequence number to find.
+     * @param exact
      * @return Iterator pointing to the change, changes_for_reader_.end() if not found.
      */
     ChangeIterator find_change(

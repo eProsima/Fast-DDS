@@ -36,10 +36,16 @@ class DomainParticipantQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DomainParticipantQos()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~DomainParticipantQos()
     {
     }
@@ -76,7 +82,7 @@ public:
 
     /**
      * Setter for UserDataQosPolicy
-     * @param value
+     * @param value UserDataQosPolicy
      */
     void user_data(
             const UserDataQosPolicy& value)
@@ -104,7 +110,7 @@ public:
 
     /**
      * Setter for EntityFactoryQosPolicy
-     * @param value
+     * @param value EntityFactoryQosPolicy
      */
     void entity_factory(
             const EntityFactoryQosPolicy& value)
@@ -112,80 +118,140 @@ public:
         entity_factory_ = value;
     }
 
+    /**
+     * Getter for ParticipantResourceLimitsQos
+     * @return ParticipantResourceLimitsQos reference
+     */
     const ParticipantResourceLimitsQos& allocation() const
     {
         return allocation_;
     }
 
+    /**
+     * Getter for ParticipantResourceLimitsQos
+     * @return ParticipantResourceLimitsQos reference
+     */
     ParticipantResourceLimitsQos& allocation()
     {
         return allocation_;
     }
 
+    /**
+     * Setter for ParticipantResourceLimitsQos
+     * @param allocation ParticipantResourceLimitsQos
+     */
     void allocation(
             const ParticipantResourceLimitsQos& allocation)
     {
         allocation_ = allocation;
     }
 
+    /**
+     * Getter for PropertyPolicyQos
+     * @return PropertyPolicyQos reference
+     */
     const PropertyPolicyQos& properties() const
     {
         return properties_;
     }
 
+    /**
+     * Getter for PropertyPolicyQos
+     * @return PropertyPolicyQos reference
+     */
     PropertyPolicyQos& properties()
     {
         return properties_;
     }
 
+    /**
+     * Setter for PropertyPolicyQos
+     * @param properties PropertyPolicyQos
+     */
     void properties(
             const PropertyPolicyQos& properties)
     {
         properties_ = properties;
     }
 
+    /**
+     * Getter for WireProtocolConfigQos
+     * @return WireProtocolConfigQos reference
+     */
     const WireProtocolConfigQos& wire_protocol() const
     {
         return wire_protocol_;
     }
 
+    /**
+     * Getter for WireProtocolConfigQos
+     * @return WireProtocolConfigQos reference
+     */
     WireProtocolConfigQos& wire_protocol()
     {
         return wire_protocol_;
     }
 
+    /**
+     * Setter for WireProtocolConfigQos
+     * @param wire_protocol WireProtocolConfigQos
+     */
     void wire_protocol(
             const WireProtocolConfigQos& wire_protocol)
     {
         wire_protocol_ = wire_protocol;
     }
 
+    /**
+     * Getter for TransportConfigQos
+     * @return TransportConfigQos reference
+     */
     const TransportConfigQos& transport() const
     {
         return transport_;
     }
 
+    /**
+     * Getter for TransportConfigQos
+     * @return TransportConfigQos reference
+     */
     TransportConfigQos& transport()
     {
         return transport_;
     }
 
+    /**
+     * Setter for TransportConfigQos
+     * @param transport TransportConfigQos
+     */
     void transport(
             const TransportConfigQos& transport)
     {
         transport_ = transport;
     }
 
+    /**
+     * Getter for the Participant name
+     * @return name
+     */
     const fastrtps::string_255& name() const
     {
         return name_;
     }
 
+    /**
+     * Getter for the Participant name
+     * @return name
+     */
     fastrtps::string_255& name()
     {
         return name_;
     }
 
+    /**
+     * Setter for the Participant name
+     * @return value New name to be set
+     */
     void name(
             const fastrtps::string_255& value)
     {

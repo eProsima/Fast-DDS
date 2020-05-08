@@ -35,14 +35,21 @@ namespace dds {
 
 using TopicAttributesQos = fastrtps::TopicAttributes;
 
+//! Qos Policy to configure the DisablePositiveACKsQos and the reader attributes
 class RTPSReliableReaderQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI RTPSReliableReaderQos()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~RTPSReliableReaderQos() = default;
 
     bool operator ==(
@@ -69,14 +76,21 @@ public:
     DisablePositiveACKsQosPolicy disable_positive_ACKs;
 };
 
+//! Qos Policy to configure the limit of the reader resources
 class ReaderResourceLimitsQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI ReaderResourceLimitsQos()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~ReaderResourceLimitsQos() = default;
 
     bool operator ==(
@@ -95,15 +109,22 @@ public:
     fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation;
 };
 
+//! Qos Policy to configure the XTypes Qos associated to the DataReader
 class TypeConsistencyQos : public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TypeConsistencyQos()
         : QosPolicy(false)
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TypeConsistencyQos() = default;
 
     bool operator ==(
@@ -138,6 +159,9 @@ class DataReaderQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DataReaderQos()
         : expects_inline_qos_(false)
     {
@@ -168,8 +192,13 @@ public:
                (reader_resource_limits_ == b.reader_resource_limits());
     }
 
+    /**
+     * @brief Change from DataReaderQos to ReaderQos
+     * @param sqos SubscriberQos
+     * @return ReaderQos generated
+     */
     RTPS_DllAPI ReaderQos get_readerqos(
-            const SubscriberQos& pqos) const;
+            const SubscriberQos& sqos) const;
 
     /**
      * Getter for DurabilityQosPolicy

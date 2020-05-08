@@ -36,10 +36,16 @@ class DomainParticipantFactoryQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DomainParticipantFactoryQos()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~DomainParticipantFactoryQos()
     {
     }
@@ -70,7 +76,7 @@ public:
 
     /**
      * Setter for EntityFactoryQosPolicy
-     * @param entity_factory
+     * @param entity_factory EntityFactoryQosPolicy
      */
     void entity_factory(
             const EntityFactoryQosPolicy& entity_factory)
@@ -80,7 +86,9 @@ public:
 
 private:
 
-    //!Auto enable on creation
+    /**
+     * @brief EntityFactoryQosPolicy
+     */
     EntityFactoryQosPolicy entity_factory_;
 };
 

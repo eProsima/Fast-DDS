@@ -29,16 +29,24 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-//! @brief A struct storing the base status
+//! @brief Specifies the behavior of the DataReaderwith regards to the lifecycle of the data-instances it manages.
+//! @note Mutable Qos Policy
 class ReaderDataLifecycleQosPolicy
 {
 public:
+
+    /**
+     * @brief Constructor
+     */
     ReaderDataLifecycleQosPolicy()
         : autopurge_no_writer_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , autopurge_disposed_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~ReaderDataLifecycleQosPolicy()
     {
     }
@@ -58,8 +66,17 @@ public:
 
 public:
 
+    /**
+     * @brief Indicates the duration the DataReader must retain information regarding instances that have the
+     * instance_state NOT_ALIVE_NO_WRITERS. <br>
+     * By default, c_TimeInfinite.
+     */
     Duration_t autopurge_no_writer_samples_delay;
-
+    /**
+     * @brief Indicates the duration the DataReader must retain information regarding instances that have the
+     * instance_state NOT_ALIVE_DISPOSED. <br>
+     * By default, c_TimeInfinite.
+     */
     Duration_t autopurge_disposed_samples_delay;
 };
 

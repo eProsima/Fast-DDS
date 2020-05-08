@@ -51,6 +51,9 @@ namespace dds {
  * @{
  */
 
+/**
+ * @brief Enum for the unique parameter identifier. Alias of uint16_t.
+ */
 enum ParameterId_t : uint16_t
 {
     PID_PAD = 0x0000,
@@ -130,6 +133,9 @@ class Parameter_t
 {
 public:
 
+    /**
+     * @brief Constructor without parameters
+     */
     RTPS_DllAPI Parameter_t()
         : Pid(PID_PAD)
         , length(0)
@@ -149,6 +155,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~Parameter_t()
     {
     }
@@ -162,9 +171,9 @@ public:
 
 public:
 
-    //!Parameter ID
+    //!Parameter ID. <br> By default, PID_PAD.
     ParameterId_t Pid;
-    //!Parameter length
+    //!Parameter length. <br> By default, 0.
     uint16_t length;
 };
 
@@ -175,8 +184,11 @@ class ParameterKey_t : public Parameter_t
 {
 public:
 
+    //!Instance Handle. <br> By default, c_InstanceHandle_Unknown.
     fastrtps::rtps::InstanceHandle_t key;
-
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterKey_t()
     {
     }
@@ -193,6 +205,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, parameter length and Instance Handle
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param ke Instance Handle to be set
+     */
     ParameterKey_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -207,14 +225,18 @@ public:
 #define PARAMETER_KEY_HASH_LENGTH 16
 
 /**
- *
+ *@ingroup PARAMETER_MODULE
  */
 class ParameterLocator_t : public Parameter_t
 {
 public:
 
+    //!Locator
     fastrtps::rtps::Locator_t locator;
 
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterLocator_t()
     {
     }
@@ -231,6 +253,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and a Locator
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param loc Locator to be set
+     */
     ParameterLocator_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -245,12 +273,15 @@ public:
 
 
 /**
- *
+ *@ingroup PARAMETER_MODULE
  */
 class ParameterString_t : public Parameter_t
 {
 public:
 
+    /**
+     * @brief Constructor without parameters.
+     */
     ParameterString_t()
     {
     }
@@ -267,6 +298,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and a string
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param strin Parameter name
+     */
     ParameterString_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -276,17 +313,29 @@ public:
     {
     }
 
+    /**
+     * @brief Getter for the name
+     * @return current name associated
+     */
     inline const char* getName() const
     {
         return string_.c_str();
     }
 
+    /**
+     * @brief Setter for the name
+     * @param name String to be set
+     */
     inline void setName(
             const char* name)
     {
         string_ = name;
     }
 
+    /**
+     * @brief Getter for the name size
+     * @return size_t
+     */
     inline size_t size() const
     {
         return string_.size();
@@ -294,17 +343,23 @@ public:
 
 private:
 
+    //!Name. <br> By default, empty string.
     fastrtps::string_255 string_;
 };
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterPort_t : public Parameter_t
 {
 public:
 
+    //!Port. <br> By default, 0.
     uint32_t port;
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterPort_t()
         : port(0)
     {
@@ -323,6 +378,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and a port
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param po Port to be set
+     */
     ParameterPort_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -337,13 +398,18 @@ public:
 #define PARAMETER_PORT_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterGuid_t : public Parameter_t
 {
 public:
 
+    //!GUID <br> By default, unknown GUID.
     fastrtps::rtps::GUID_t guid;
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterGuid_t()
     {
     }
@@ -360,6 +426,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and a GUID
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param guidin GUID to be set
+     */
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -369,6 +441,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and a Instance Handle
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param iH Instance Handle to be set as GUID
+     */
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -393,13 +471,18 @@ public:
 #define PARAMETER_GUID_LENGTH 16
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterProtocolVersion_t : public Parameter_t
 {
 public:
 
+    //!Protocol Version. <br> By default, c_ProtocolVersion.
     fastrtps::rtps::ProtocolVersion_t protocolVersion;
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterProtocolVersion_t()
     {
         protocolVersion = fastrtps::rtps::c_ProtocolVersion;
@@ -423,13 +506,18 @@ public:
 #define PARAMETER_PROTOCOL_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterVendorId_t : public Parameter_t
 {
 public:
 
+    //!Vendor Id. <br> By default, c_VendorId_eProsima.
     fastrtps::rtps::VendorId_t vendorId;
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterVendorId_t()
         : vendorId(fastrtps::rtps::c_VendorId_eProsima)
     {
@@ -453,13 +541,18 @@ public:
 #define PARAMETER_VENDOR_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterIP4Address_t : public Parameter_t
 {
 public:
 
+    //!Address <br> By default [0,0,0,0].
     fastrtps::rtps::octet address[4];
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterIP4Address_t()
     {
         this->setIP4Address(0, 0, 0, 0);
@@ -478,6 +571,13 @@ public:
         this->setIP4Address(0, 0, 0, 0);
     }
 
+    /**
+     * @brief Setter for the address
+     * @param o1 First octet
+     * @param o2 Second octet
+     * @param o3 Third octet
+     * @param o4 Fourth octet
+     */
     void setIP4Address(
             fastrtps::rtps::octet o1,
             fastrtps::rtps::octet o2,
@@ -495,13 +595,18 @@ public:
 #define PARAMETER_IP4_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterBool_t : public Parameter_t
 {
 public:
 
+    //!Boolean <br> By default, false.
     bool value;
+
+    /**
+     * @brief Constructor without parameter
+     */
     ParameterBool_t()
         : value(false)
     {
@@ -520,6 +625,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and a boolean
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param inbool Boolean to be set
+     */
     ParameterBool_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -534,13 +645,18 @@ public:
 #define PARAMETER_BOOL_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterStatusInfo_t : public Parameter_t
 {
 public:
 
+    //!Status <br> By default, 0.
     uint8_t status;
+
+    /**
+     * @brief Constructor without parameter
+     */
     ParameterStatusInfo_t()
         : status(0)
     {
@@ -559,6 +675,12 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a parameter PID, the parameter length and status value
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     * @param instatus uint8_t to be set as status
+     */
     ParameterStatusInfo_t(
             ParameterId_t pid,
             uint16_t in_length,
@@ -573,13 +695,18 @@ public:
 #define PARAMETER_STATUS_INFO_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterCount_t : public Parameter_t
 {
 public:
 
+    //!Count <br> By default, 0.
     fastrtps::rtps::Count_t count;
+
+    /**
+     * @brief Constructor without parameter
+     */
     ParameterCount_t()
         : count(0)
     {
@@ -603,13 +730,18 @@ public:
 #define PARAMETER_COUNT_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterEntityId_t : public Parameter_t
 {
 public:
 
+    //!EntityId <br> By default, ENTITYID_UNKNOWN.
     fastrtps::rtps::EntityId_t entityId;
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterEntityId_t()
         : entityId(ENTITYID_UNKNOWN)
     {
@@ -633,13 +765,18 @@ public:
 #define PARAMETER_ENTITYID_LENGTH 4
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterTime_t : public Parameter_t
 {
 public:
 
+    //!Time <br> By default, 0.
     fastrtps::rtps::Time_t time;
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterTime_t()
     {
     }
@@ -661,13 +798,18 @@ public:
 #define PARAMETER_TIME_LENGTH 8
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterBuiltinEndpointSet_t : public Parameter_t
 {
 public:
 
+    //!Builtin Endpoint Set <br> By default, 0.
     fastrtps::rtps::BuiltinEndpointSet_t endpointSet;
+
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterBuiltinEndpointSet_t()
         : endpointSet(0)
     {
@@ -691,6 +833,9 @@ public:
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
 
+/**
+ * @ingroup PARAMETER_MODULE
+ */
 class ParameterProperty_t
 {
 
@@ -698,27 +843,43 @@ class ParameterProperty_t
 
 private:
 
+    //!Data <br> By default, nullptr.
     fastrtps::rtps::octet* data;
 
 public:
 
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterProperty_t()
     {
         data = nullptr;
     }
 
+    /**
+     * @brief Constructor using a pointer
+     * @param ptr Pointer to be set as data
+     */
     explicit ParameterProperty_t(
             void* ptr)
     {
         data = (fastrtps::rtps::octet*)ptr;
     }
 
+    /**
+     * @brief Getter for the first element in data
+     * @return string with the data
+     */
     std::string first() const
     {
         //Skip the size and return the string
         return std::string((char*)data + 4);
     }
 
+    /**
+     * @brief Getter for the second element in data
+     * @return string with the data
+     */
     std::string second() const
     {
         //Skip the first element
@@ -728,6 +889,11 @@ public:
         return std::string((char*)data + size1 + 4);
     }
 
+    /**
+     * @brief Setter using a pair of strings
+     * @param new_value Pair of strings with the new values
+     * @return true if the modification is done correctly and false if the size of the new_value is not valid
+     */
     bool modify(
             const std::pair<std::string, std::string>& new_value)
     {
@@ -757,11 +923,19 @@ public:
         return true;
     }
 
+    /**
+     * @brief Getter that returns a pair of the first and second elements in data
+     * @return Pair of strings with the first and second elements data
+     */
     std::pair<const std::string, const std::string> pair() const
     {
         return std::make_pair(std::string(first()), std::string(second()));
     }
 
+    /**
+     * @brief Getter for data size
+     * @return uint32_t with the size
+     */
     uint32_t size() const
     {
         //Size of the first element (with alignment)
@@ -787,6 +961,11 @@ public:
 
 private:
 
+    /**
+     * @brief Getter for the size of a specific octet pointer
+     * @param ptr Octet pointer to measure
+     * @return Size of the pointer data
+     */
     static uint32_t element_size(
             const fastrtps::rtps::octet* ptr)
     {
@@ -798,14 +977,17 @@ private:
 };
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterPropertyList_t : public Parameter_t
 {
 private:
 
+    //!Properties
     fastrtps::rtps::SerializedPayload_t properties_;
+    //!Number of properties
     uint32_t Nproperties_ = 0;
+    //!Maximum size
     bool limit_size_ = false;
 
 public:
@@ -821,6 +1003,10 @@ public:
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
 
+        /**
+         * @brief Constructor using an octet pointer
+         * @param ptr Octet pointer to be set
+         */
         iterator(
                 fastrtps::rtps::octet* ptr)
             : ptr_(ptr)
@@ -866,12 +1052,19 @@ public:
 
 protected:
 
+        /**
+         * @brief Shift the pointer to the next value
+         */
         void advance()
         {
             ptr_ += value_.size();
             value_ = ParameterProperty_t(ptr_);
         }
 
+        /**
+         * @brief Getter for the pointer
+         * @return the pointer
+         */
         fastrtps::rtps::octet* address() const
         {
             return ptr_;
@@ -879,7 +1072,9 @@ protected:
 
 private:
 
+        //!Pointer
         fastrtps::rtps::octet* ptr_;
+        //!Parameter Property
         ParameterProperty_t value_;
     };
 
@@ -894,6 +1089,10 @@ public:
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
 
+        /**
+         * @brief Constructor using a pointer
+         * @param ptr Pointer to be set
+         */
         const_iterator(
                 const fastrtps::rtps::octet* ptr)
             : ptr_(ptr)
@@ -939,12 +1138,19 @@ public:
 
 protected:
 
+        /**
+         * @brief Shift the pointer to the next value
+         */
         void advance()
         {
             ptr_ += value_.size();
             value_ = ParameterProperty_t(const_cast<fastrtps::rtps::octet*>(ptr_));
         }
 
+        /**
+         * @brief Getter for the pointer
+         * @return the pointer
+         */
         const fastrtps::rtps::octet* address() const
         {
             return ptr_;
@@ -952,12 +1158,18 @@ protected:
 
 private:
 
+        //!Pointer
         const fastrtps::rtps::octet* ptr_;
+        //!Parameter Property
         ParameterProperty_t value_;
     };
 
 public:
 
+    /**
+     * @brief Constructor without parameters
+     * Sets PID_PROPERTY_LIST as the PID of the parameter
+     */
     ParameterPropertyList_t()
         : Parameter_t(PID_PROPERTY_LIST, 0)
         , Nproperties_ (0)
@@ -967,6 +1179,7 @@ public:
 
     /**
      * Constructor with a defined maximum size
+     * @param size Size to be set as maximum
      */
     ParameterPropertyList_t(
             uint32_t size)
@@ -990,6 +1203,10 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a Parameter Property List
+     * @param parameter_properties Properties to be set
+     */
     ParameterPropertyList_t(
             const ParameterPropertyList_t& parameter_properties)
         : Parameter_t(PID_PROPERTY_LIST, parameter_properties.length)
@@ -1015,26 +1232,47 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Getter for the first position of the ParameterPropertyList
+     * @return iterator
+     */
     iterator begin()
     {
         return iterator(properties_.data);
     }
 
+    /**
+     * @brief Getter for the end of the ParameterPropertyList
+     * @return iterator
+     */
     iterator end()
     {
         return iterator(properties_.data + properties_.length);
     }
 
+    /**
+     * @brief Getter for the first position of the ParameterPropertyList
+     * @return const_iterator
+     */
     const_iterator begin() const
     {
         return const_iterator(properties_.data);
     }
 
+    /**
+     * @brief Getter for the end of the ParameterPropertyList
+     * @return const_iterator
+     */
     const_iterator end() const
     {
         return const_iterator(properties_.data + properties_.length);
     }
 
+    /**
+     * @brief Introduce a new property in the ParameterPropertyList
+     * @param p Pair with the values of the new property
+     * @return true if it is introduced, false if not.
+     */
     bool push_back(
             std::pair<std::string, std::string> p)
     {
@@ -1061,6 +1299,14 @@ public:
         return true;
     }
 
+    /**
+     * @brief Introduce a new property in the ParameterPropertyList
+     * @param str1 Name of the property
+     * @param str1_size Size of the first string
+     * @param str2 Value of the property
+     * @param str2_size Size of the second string
+     * @return true if it is introduced, false if not.
+     */
     bool push_back(
             const unsigned char* str1,
             uint32_t str1_size,
@@ -1087,6 +1333,12 @@ public:
         return true;
     }
 
+    /**
+     * @brief Setter of a new property value on a specific position
+     * @param pos Iterator with the position of the property to be changed
+     * @param new_value Value to be set
+     * @return true if changed, false if not
+     */
     bool set_property (
             iterator pos,
             const std::pair<std::string, std::string>& new_value)
@@ -1094,17 +1346,27 @@ public:
         return pos->modify(new_value);
     }
 
+    /**
+     * @brief Clears the ParameterPropertyList
+     */
     void clear()
     {
         properties_.length = 0;
         Nproperties_ = 0;
     }
 
+    /**
+     * @brief Getter for the size of the ParameterPropertyList
+     * @return uint32_t with the size
+     */
     uint32_t size() const
     {
         return Nproperties_;
     }
 
+    /**
+     * @brief Setter for the maximum size of the ParameterPropertyList
+     */
     void set_max_size (
             uint32_t size)
     {
@@ -1112,6 +1374,10 @@ public:
         limit_size_ = true;
     }
 
+    /**
+     * @brief Getter for the maximum size of the ParameterPropertyList
+     * @return uint32_t with the size
+     */
     uint32_t max_size ()
     {
         return (limit_size_ ? properties_.max_size : 0);
@@ -1142,14 +1408,18 @@ protected:
 
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterSampleIdentity_t : public Parameter_t
 {
 public:
 
+    //!Sample Identity <br> By default, unknown.
     fastrtps::rtps::SampleIdentity sample_id;
 
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterSampleIdentity_t()
         : sample_id(fastrtps::rtps::SampleIdentity::unknown())
     {
@@ -1194,14 +1464,18 @@ public:
 #if HAVE_SECURITY
 
 /**
- *
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterToken_t : public Parameter_t
 {
 public:
 
+    //!Token
     fastrtps::rtps::Token token;
 
+    /**
+     * @brief Constructor without parameters
+     */
     ParameterToken_t()
     {
     }
@@ -1220,15 +1494,26 @@ public:
 
 };
 
+//!Default value for the ParameterParticipantSecurityInfo_t length
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
 
+/**
+ * @ingroup PARAMETER_MODULE
+ */
 class ParameterParticipantSecurityInfo_t : public Parameter_t
 {
 public:
 
+    //!Participant Security Attributes Mask <br> By default, 0.
     fastrtps::rtps::security::ParticipantSecurityAttributesMask security_attributes = 0;
+    //!Plugin Participant Security Attributes Mask <br> By default, 0.
     fastrtps::rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes = 0;
 
+    /**
+     * @brief Constructor without parameters. <br>
+     * Sets the value PID_PARTICIPANT_SECURITY_INFO for the parameter PID and PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH
+     * for the length.
+     */
     ParameterParticipantSecurityInfo_t()
         : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
     {
@@ -1248,8 +1533,12 @@ public:
 
 };
 
+//!Default value for the ParameterEndpointSecurityInfo_t length
 #define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
 
+/**
+ * @ingroup PARAMETER_MODULE
+ */
 class ParameterEndpointSecurityInfo_t : public Parameter_t
 {
 public:
@@ -1257,6 +1546,11 @@ public:
     fastrtps::rtps::security::EndpointSecurityAttributesMask security_attributes;
     fastrtps::rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
 
+    /**
+     * @brief Constructor without parameters. <br>
+     * Sets the value PID_ENDPOINT_SECURITY_INFO for the parameter PID and PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH
+     * for the length.
+     */
     ParameterEndpointSecurityInfo_t()
         : Parameter_t(PID_ENDPOINT_SECURITY_INFO, PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
     {
@@ -1275,8 +1569,6 @@ public:
     }
 
 };
-
-#define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
 
 #endif
 

@@ -81,26 +81,29 @@ public:
 
     /**
      * This operation returns the value of the DomainParticipant QoS policies
-     * @param qos
-     * @return ReturnCode
+     * @param qos DomainParticipantQos reference where the qos is going to be returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
 
+    /**
+     * @brief This operation returns the value of the DomainParticipant QoS policies
+     * @return A reference to the DomainParticipantQos
+     */
     RTPS_DllAPI const DomainParticipantQos& get_qos() const;
 
     /**
-     * @brief enable This operation enables the DomainParticipant
-     * @return true
+     * @brief This operation enables the DomainParticipant
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t enable() override;
 
     /**
      * This operation sets the value of the DomainParticipant QoS policies.
-     * This operation will check that the resulting policies are self consistent; if they are not,
-     * the operation will have no effect and return INCONSISTENT_POLICY.
-     * @param qos
-     * @return ReturnCode
+     * @param qos DomainParticipantQos to be set
+     * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
+     * self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const DomainParticipantQos& qos) const;
@@ -108,22 +111,22 @@ public:
     /**
      * Allows modifying the DomainParticipantListener.
      * @param listener
-     * @return true if the listener was updated.
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             DomainParticipantListener* listener);
 
     /**
      * Allows accessing the DomainParticipantListener.
-     * @return DomainParticipantListener
+     * @return DomainParticipantListener pointer
      */
     RTPS_DllAPI const DomainParticipantListener* get_listener() const;
 
     /**
      * Create a Publisher in this Participant.
      * @param qos QoS of the Publisher.
-     * @param listen Pointer to the listener.
-     * @param mask StatusMask
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Publisher.
      */
     RTPS_DllAPI Publisher* create_publisher(
@@ -133,9 +136,9 @@ public:
 
     /**
      * Create a Publisher in this Participant.
-     * @param profile Publisher profile name.
-     * @param listen Pointer to the listener.
-     * @param mask StatusMask
+     * @param profile_name Publisher profile name.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Publisher.
      */
     RTPS_DllAPI Publisher* create_publisher_with_profile(
@@ -146,7 +149,8 @@ public:
     /**
      * Deletes an existing Publisher.
      * @param publisher to be deleted.
-     * @return if publisher was deleted.
+     * @return RETCODE_PRECONDITION_NOT_MET if the publisher not belong to this participant or if it has active DataWriters,
+     * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_publisher(
             Publisher* publisher);
@@ -154,8 +158,8 @@ public:
     /**
      * Create a Subscriber in this Participant.
      * @param qos QoS of the Subscriber.
-     * @param listener Pointer to the listener.
-     * @param mask StatusMask that holds statuses the listener responds to
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Subscriber.
      */
     RTPS_DllAPI Subscriber* create_subscriber(
@@ -165,9 +169,9 @@ public:
 
     /**
      * Create a Subscriber in this Participant.
-     * @param profile Subscriber profile name.
-     * @param listen Pointer to the listener.
-     * @param mask StatusMask
+     * @param profile_name Subscriber profile name.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Subscriber.
      */
     RTPS_DllAPI Subscriber* create_subscriber_with_profile(
@@ -178,7 +182,8 @@ public:
     /**
      * Deletes an existing Subscriber.
      * @param subscriber to be deleted.
-     * @return if subscriber was deleted.
+     * @return RETCODE_PRECONDITION_NOT_MET if the subscriber not belong to this participant or if it has active DataReaders,
+     * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
@@ -187,7 +192,8 @@ public:
      * Register a type in this participant.
      * @param type TypeSupport.
      * @param type_name The name that will be used to identify the Type.
-     * @return True if registered.
+     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
+     * with the same name and RETCODE_OK if it is correctly registered.
      */
     RTPS_DllAPI ReturnCode_t register_type(
             TypeSupport type,
@@ -196,7 +202,8 @@ public:
     /**
      * Register a type in this participant.
      * @param type TypeSupport.
-     * @return True if registered.
+     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
+     * with the same name and RETCODE_OK if it is correctly registered.
      */
     RTPS_DllAPI ReturnCode_t register_type(
             TypeSupport type);
@@ -204,7 +211,8 @@ public:
     /**
      * Unregister a type in this participant.
      * @param typeName Name of the type
-     * @return True if unregistered.
+     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there are entities using that
+     * TypeSupport and RETCODE_OK if it is correctly unregistered.
      */
     RTPS_DllAPI ReturnCode_t unregister_type(
             const std::string& typeName);
@@ -214,8 +222,8 @@ public:
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param qos QoS of the Topic.
-     * @param listen Pointer to the listener.
-     * @param mask StatusMask that holds statuses the listener responds to
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Topic.
      */
     RTPS_DllAPI Topic* create_topic(
@@ -229,9 +237,9 @@ public:
      * Create a Topic in this Participant.
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
-     * @param profile Topic profile name.
-     * @param listen Pointer to the listener.
-     * @param mask StatusMask that holds statuses the listener responds to
+     * @param profile_name Topic profile name.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Topic.
      */
     RTPS_DllAPI Topic* create_topic_with_profile(
@@ -244,7 +252,8 @@ public:
     /**
      * Deletes an existing Topic.
      * @param topic to be deleted.
-     * @return RETCODE_OK if the Topic was deleted, or an error code otherwise.
+     * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic not belongs to
+     * this participant or if it is referenced by any entity and ETCODE_OK if the Topic was deleted.
      */
     RTPS_DllAPI ReturnCode_t delete_topic(
             Topic* topic);
@@ -255,7 +264,7 @@ public:
      *
      * @param topic_name Name of the @ref TopicDescription to search for.
      *
-     * @return Pointer to the topic description, if it has been created locally. Otherwhise, nullptr is returned.
+     * @return Pointer to the topic description, if it has been created locally. Otherwise, nullptr is returned.
      *
      * @remark UNSAFE. It is unsafe to lookup a topic description while another thread is creating a topic.
      */
@@ -306,10 +315,10 @@ public:
      * the LIVELINESS set to MANUAL_BY_PARTICIPANT and it only affects the liveliness of those DataWriter entities.
      * Otherwise, it has no effect.
      *
-     * NOTE: Writing data via the write operation on a DataWriter asserts liveliness on the DataWriter itself and its
+     * @note Writing data via the write operation on a DataWriter asserts liveliness on the DataWriter itself and its
      * DomainParticipant. Consequently the use of assert_liveliness is only needed if the application is not
      * writing data regularly.
-     * @return if liveliness was asserted.
+     * @return RETCODE_OK if the liveliness was asserted, RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t assert_liveliness();
 
@@ -323,8 +332,8 @@ public:
      * The special value PUBLISHER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_publisher_qos operation had never been called.
-     * @param qos
-     * @return if given qos was applied as default.
+     * @param qos PublisherQos to be set
+     * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_default_publisher_qos(
             const PublisherQos& qos);
@@ -347,8 +356,8 @@ public:
      *
      * The values retrieved get_default_publisher_qos will match the set of values specified on the last successful
      * call to set_default_publisher_qos, or else, if the call was never made, the default values.
-     * @param qos
-     * @return Always true.
+     * @param qos PublisherQos reference where the default_publisher_qos is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_default_publisher_qos(
             PublisherQos& qos) const;
@@ -363,8 +372,8 @@ public:
      * The special value SUBSCRIBER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_subscriber_qos operation had never been called.
-     * @param qos
-     * @return if given qos was applied as default.
+     * @param qos SubscriberQos to be set
+     * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_default_subscriber_qos(
             const SubscriberQos& qos);
@@ -387,8 +396,8 @@ public:
      *
      * The values retrieved get_default_subscriber_qos will match the set of values specified on the last successful
      * call to set_default_subscriber_qos, or else, if the call was never made, the default values.
-     * @param qos
-     * @return Always true.
+     * @param qos SubscriberQos reference where the default_subscriber_qos is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_default_subscriber_qos(
             SubscriberQos& qos) const;
@@ -404,8 +413,8 @@ public:
      * The special value TOPIC_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_topic_qos operation had never been called.
-     * @param qos
-     * @return if given qos was applied as default.
+     * @param qos TopicQos to be set
+     * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_default_topic_qos(
             const TopicQos& qos);
@@ -428,8 +437,8 @@ public:
      *
      * The values retrieved get_default_topic_qos will match the set of values specified on the last successful
      * call to set_default_topic_qos, or else, TOPIC_QOS_DEFAULT if the call was never made.
-     * @param qos
-     * @return Always true.
+     * @param qos TopicQos reference where the default_topic_qos is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_default_topic_qos(
             TopicQos& qos) const;
@@ -462,7 +471,7 @@ public:
      * @param handle InstanceHandle of the entity to look for.
      * @param recursive The containment applies recursively. That is, it applies both to entities
      * (TopicDescription, Publisher, or Subscriber) created directly using the DomainParticipant as well as
-     * entities created using a contained Publisher, or Subscriber as the factory, and so forth.
+     * entities created using a contained Publisher, or Subscriber as the factory, and so forth. (default: true)
      * @return True if entity is contained. False otherwise.
      */
     RTPS_DllAPI bool contains_entity(
@@ -472,16 +481,16 @@ public:
     /**
      * This operation returns the current value of the time that the service uses to time-stamp data-writes
      * and to set the reception-timestamp for the data-updates it receives.
-     * @param current_time
-     * @return Always true
+     * @param current_time Time_t reference where the current time is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
     /**
      * This method gives access to a registered type based on its name.
-     * @param type_name
-     * @return TypeSupport
+     * @param type_name Name of the type
+     * @return TypeSupport corresponding to the type_name
      */
     RTPS_DllAPI TypeSupport find_type(
             const std::string& type_name) const;
@@ -494,12 +503,20 @@ public:
 
     // From here legacy RTPS methods.
 
+    /**
+     * @brief Getter for the Participant GUID
+     * @return A reference to the GUID
+     */
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
 
+    /**
+     * @brief Getter for the participant names
+     * @return Vector with the names
+     */
     RTPS_DllAPI std::vector<std::string> get_participant_names() const;
 
     /**
-     * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
+     * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
      * included in FastRTPS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
      * should be activated.
@@ -513,15 +530,18 @@ public:
             uint16_t userId,
             fastrtps::rtps::EndpointKind_t kind);
 
+    /**
+     * @brief Getter for the resource event
+     * @return A reference to the resource event
+     */
     RTPS_DllAPI fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     /**
      * When a DomainParticipant receives an incomplete list of TypeIdentifiers in a
      * PublicationBuiltinTopicData or SubscriptionBuiltinTopicData, it may request the additional type
      * dependencies by invoking the getTypeDependencies operation.
-     * @param in
-     * @param out
-     * @return
+     * @param in TypeIdentifier sequence
+     * @return SampleIdentity
      */
     RTPS_DllAPI fastrtps::rtps::SampleIdentity get_type_dependencies(
             const fastrtps::types::TypeIdentifierSeq& in) const;
@@ -529,9 +549,8 @@ public:
     /**
      * A DomainParticipant may invoke the operation getTypes to retrieve the TypeObjects associated with a
      * list of TypeIdentifiers.
-     * @param in
-     * @param out
-     * @return
+     * @param in TypeIdentifier sequence
+     * @return SampleIdentity
      */
     RTPS_DllAPI fastrtps::rtps::SampleIdentity get_types(
             const fastrtps::types::TypeIdentifierSeq& in) const;
@@ -542,7 +561,7 @@ public:
      * The registration will be perform asynchronously and the user will be notified through the
      * given callback, which receives the type_name as unique argument.
      * If the type is already registered, the function will return true, but the callback will not be called.
-     * If the given type_information is enought to build the type without using the typelookup service,
+     * If the given type_information is enough to build the type without using the typelookup service,
      * it will return true and the callback will be never called.
      * @param type_information
      * @param type_name
@@ -555,8 +574,15 @@ public:
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~DomainParticipant();
 
+    /**
+     * @brief Check if the Participant has any Publisher, Subscriber or Topic
+     * @return true if any, false otherwise.
+     */
     bool has_active_entities();
 
 private:

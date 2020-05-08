@@ -33,14 +33,21 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+//! Qos Policy to configure the DisablePositiveACKsQos and the writer attributes
 class RTPSReliableWriterQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI RTPSReliableWriterQos()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~RTPSReliableWriterQos() = default;
 
     bool operator ==(
@@ -58,7 +65,7 @@ public:
 };
 
 /**
- * Class DataWriterQos, containing all the possible Qos that can be  for a determined Topic.
+ * Class DataWriterQos, containing all the possible Qos that can be set for a determined DataWriter.
  * Although these values can be  and are transmitted
  * during the Endpoint Discovery Protocol, not all of the behaviour associated with them has been implemented in the library.
  * Please consult each of them to check for implementation details and default values.
@@ -68,8 +75,14 @@ class DataWriterQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DataWriterQos();
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI ~DataWriterQos() = default;
 
     RTPS_DllAPI bool operator ==(
@@ -99,6 +112,12 @@ public:
                (this->throughput_controller_ == b.throughput_controller());
     }
 
+    /**
+     * @brief Change from DataWriterQos to WriterQos
+     * @param pqos PublisherQos
+     * @param tqos TopicQos
+     * @return WriterQos generated
+     */
     RTPS_DllAPI WriterQos get_writerqos(
             const PublisherQos& pqos,
             const TopicQos& tqos) const;
@@ -123,7 +142,7 @@ public:
 
     /**
      * Setter for DurabilityQosPolicy
-     * @param durability
+     * @param durability new value for the DurabilityQosPolicy
      */
     RTPS_DllAPI void durability(
             const DurabilityQosPolicy& durability)
@@ -151,7 +170,7 @@ public:
 
     /**
      * Setter for DurabilityServiceQosPolicy
-     * @param durability_service
+     * @param durability_service new value for the DurabilityServiceQosPolicy
      */
     RTPS_DllAPI void durability_service(
             const DurabilityServiceQosPolicy& durability_service)
@@ -179,7 +198,7 @@ public:
 
     /**
      * Setter for DeadlineQosPolicy
-     * @param deadline
+     * @param deadline new value for the DeadlineQosPolicy
      */
     RTPS_DllAPI void deadline(
             const DeadlineQosPolicy& deadline)
@@ -207,7 +226,7 @@ public:
 
     /**
      * Setter for LatencyBudgetQosPolicy
-     * @param latency_budget
+     * @param latency_budget new value for the LatencyBudgetQosPolicy
      */
     RTPS_DllAPI void latency_budget(
             const LatencyBudgetQosPolicy& latency_budget)
@@ -235,7 +254,7 @@ public:
 
     /**
      * Setter for LivelinessQosPolicy
-     * @param liveliness
+     * @param liveliness new value for the LivelinessQosPolicy
      */
     RTPS_DllAPI void liveliness(
             const LivelinessQosPolicy& liveliness)
@@ -263,7 +282,7 @@ public:
 
     /**
      * Setter for ReliabilityQosPolicy
-     * @param reliability
+     * @param reliability new value for the ReliabilityQosPolicy
      */
     RTPS_DllAPI void reliability(
             const ReliabilityQosPolicy& reliability)
@@ -291,7 +310,7 @@ public:
 
     /**
      * Setter for DestinationOrderQosPolicy
-     * @param destination_order
+     * @param destination_order new value for the DestinationOrderQosPolicy
      */
     RTPS_DllAPI void destination_order(
             const DestinationOrderQosPolicy& destination_order)
@@ -319,7 +338,7 @@ public:
 
     /**
      * Setter for HistoryQosPolicy
-     * @param history
+     * @param history new value for the HistoryQosPolicy
      */
     RTPS_DllAPI void history(
             const HistoryQosPolicy& history)
@@ -347,7 +366,7 @@ public:
 
     /**
      * Setter for ResourceLimitsQosPolicy
-     * @param resource_limits
+     * @param resource_limits new value for the ResourceLimitsQosPolicy
      */
     RTPS_DllAPI void resource_limits(
             const ResourceLimitsQosPolicy& resource_limits)
@@ -375,7 +394,7 @@ public:
 
     /**
      * Setter for TransportPriorityQosPolicy
-     * @param transport_priority
+     * @param transport_priority new value for the TransportPriorityQosPolicy
      */
     RTPS_DllAPI void transport_priority(
             const TransportPriorityQosPolicy& transport_priority)
@@ -403,7 +422,7 @@ public:
 
     /**
      * Setter for LifespanQosPolicy
-     * @param lifespan
+     * @param lifespan new value for the LifespanQosPolicy
      */
     RTPS_DllAPI void lifespan(
             const LifespanQosPolicy& lifespan)
@@ -431,7 +450,7 @@ public:
 
     /**
      * Setter for UserDataQosPolicy
-     * @param user_data
+     * @param user_data new value for the UserDataQosPolicy
      */
     RTPS_DllAPI void user_data(
             const UserDataQosPolicy& user_data)
@@ -459,7 +478,7 @@ public:
 
     /**
      * Setter for OwnershipQosPolicy
-     * @param ownership
+     * @param ownership new value for the OwnershipQosPolicy
      */
     RTPS_DllAPI void ownership(
             const OwnershipQosPolicy& ownership)
@@ -487,7 +506,7 @@ public:
 
     /**
      * Setter for OwnershipStrengthQosPolicy
-     * @param ownership_strength
+     * @param ownership_strength new value for the OwnershipStrengthQosPolicy
      */
     RTPS_DllAPI void ownership_strength(
             const OwnershipStrengthQosPolicy& ownership_strength)
@@ -515,7 +534,7 @@ public:
 
     /**
      * Setter for WriterDataLifecycleQosPolicy
-     * @param writer_data_lifecycle
+     * @param writer_data_lifecycle new value for the WriterDataLifecycleQosPolicy
      */
     RTPS_DllAPI void writer_data_lifecycle(
             const WriterDataLifecycleQosPolicy& writer_data_lifecycle)
@@ -543,7 +562,7 @@ public:
 
     /**
      * Setter for PublishModeQosPolicy
-     * @param publish_mode
+     * @param publish_mode new value for the PublishModeQosPolicy
      */
     RTPS_DllAPI void publish_mode(
             const PublishModeQosPolicy& publish_mode)
@@ -571,7 +590,7 @@ public:
 
     /**
      * Setter for DataRepresentationQosPolicy
-     * @param representation
+     * @param representation new value for the DataRepresentationQosPolicy
      */
     RTPS_DllAPI void representation(
             const DataRepresentationQosPolicy& representation)
@@ -599,7 +618,7 @@ public:
 
     /**
      * Setter for PropertyPolicyQos
-     * @param properties
+     * @param properties new value for the PropertyPolicyQos
      */
     RTPS_DllAPI void properties(
             const PropertyPolicyQos& properties)
@@ -627,7 +646,7 @@ public:
 
     /**
      * Setter for RTPSReliableWriterQos
-     * @param reliable_writer_data
+     * @param reliable_writer_qos new value for the RTPSReliableWriterQos
      */
     RTPS_DllAPI void reliable_writer_qos(
             const RTPSReliableWriterQos& reliable_writer_qos)
@@ -655,7 +674,7 @@ public:
 
     /**
      * Setter for RTPSEndpointQos
-     * @param endpoint_data
+     * @param endpoint new value for the RTPSEndpointQos
      */
     RTPS_DllAPI void endpoint(
             const RTPSEndpointQos& endpoint)
@@ -683,7 +702,7 @@ public:
 
     /**
      * Setter for WriterResourceLimitsQos
-     * @param writer_resources
+     * @param writer_resource_limits new value for the WriterResourceLimitsQos
      */
     RTPS_DllAPI void writer_resource_limits(
             const WriterResourceLimitsQos& writer_resource_limits)
@@ -711,7 +730,7 @@ public:
 
     /**
      * Setter for ThroughputControllerDescriptor
-     * @param throughput_controller
+     * @param throughput_controller new value for the ThroughputControllerDescriptor
      */
     RTPS_DllAPI void throughput_controller(
             const fastrtps::rtps::ThroughputControllerDescriptor& throughput_controller)

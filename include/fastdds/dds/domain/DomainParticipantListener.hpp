@@ -48,10 +48,16 @@ class DomainParticipantListener :
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     DomainParticipantListener()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual ~DomainParticipantListener()
     {
     }
@@ -70,6 +76,11 @@ public:
     }
 
 #if HAVE_SECURITY
+    /*!
+     * This method is called when a new Participant is authenticated.
+     * @param participant Pointer to the authenticated Participant.
+     * @param info Remote participant authentication information. User can take ownership of the object.
+     */
     virtual void onParticipantAuthentication(
             DomainParticipant* participant,
             fastrtps::rtps::ParticipantAuthenticationInfo&& info)

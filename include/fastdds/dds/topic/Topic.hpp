@@ -71,10 +71,18 @@ class Topic : public DomainEntity, public TopicDescription
             const TopicQos& qos = TOPIC_QOS_DEFAULT,
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
+
 public:
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~Topic();
 
+    /**
+     * @brief Getter for the DomainParticipant
+     * @return DomainParticipant pointer
+     */
     virtual DomainParticipant* get_participant() const override;
 
     /**
@@ -87,11 +95,13 @@ public:
 
     /**
      * Allows accessing the Topic Qos.
+     * @return reference to TopicQos
      */
     RTPS_DllAPI const TopicQos& get_qos() const;
 
     /**
      * Retrieves the Topic Qos.
+     * @param qos TopicQos where the qos is returned
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_qos(
@@ -100,7 +110,7 @@ public:
     /**
      * Allows modifying the Topic Qos.
      * The given Qos must be supported by the Topic.
-     * @param qos
+     * @param qos TopicQos where the qos is returned
      * @retval RETCODE_IMMUTABLE_POLICY if a change was not allowed.
      * @retval RETCODE_INCONSISTENT_POLICY if new qos has inconsistent values.
      * @retval RETCODE_OK if qos was updated.
@@ -110,18 +120,24 @@ public:
 
     /**
      * Retrieves the attached TopicListener.
+     * @return pointer to TopicListener
      */
     RTPS_DllAPI const TopicListener* get_listener() const;
 
     /**
      * Modifies the TopicListener.
-     * @param listener
+     * @param listener new value for the TopicListener
+     * @param mask StatusMask
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             TopicListener* listener,
             const StatusMask& mask = StatusMask::all());
 
+    /**
+     * @brief Getter for the TopicDescriptionImpl
+     * @return pointer to TopicDescriptionImpl
+     */
     TopicDescriptionImpl* get_impl() const override;
 
 private:

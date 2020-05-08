@@ -26,11 +26,16 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+//! A enum with the possible values for the sample rejected reason
 enum SampleRejectedStatusKind
 {
+    //!Default value
     NOT_REJECTED,
+    //! Exceeds the max_instance limit
     REJECTED_BY_INSTANCES_LIMIT,
+    //! Exceeds the max_samples limit
     REJECTED_BY_SAMPLES_LIMIT,
+    //! Exceeds the max_samples_per_instance limit
     REJECTED_BY_SAMPELS_PER_INSTANCE_LIMIT
 };
 
@@ -51,7 +56,7 @@ struct SampleRejectedStatus
      * Reason for rejecting the last sample rejected.
      * If no samples have been rejected, the reason is the special value NOT_REJECTED.
      */
-    SampleRejectedStatusKind last_reason;
+    SampleRejectedStatusKind last_reason = NOT_REJECTED;
 
     /**
      * Handle to the instance being updated by the last sample that was rejected.

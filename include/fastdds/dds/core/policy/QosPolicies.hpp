@@ -51,14 +51,22 @@ class QosPolicy
 {
 public:
 
+    //! Boolean that indicates if the Qos has been changed
     bool hasChanged;
 
+    /**
+     * @brief Constructor without parameters
+     */
     QosPolicy()
         : hasChanged(false)
         , send_always_(false)
     {
     }
 
+    /**
+     * @brief Constructor
+     * @param send_always Boolean that set if the Qos need to be sent even if it is not changed
+     */
     explicit QosPolicy(
             bool send_always)
         : hasChanged(false)
@@ -66,9 +74,16 @@ public:
     {
     }
 
+    /**
+     * @brief Copy Constructor
+     * @param b Another instance of QosPolicy
+     */
     QosPolicy(
             const QosPolicy& b) = default;
 
+    /**
+     * @brief Destructor
+     */
     virtual ~QosPolicy() = default;
 
     bool operator ==(
@@ -90,30 +105,54 @@ public:
         return send_always_;
     }
 
+    /**
+     * @brief Clears the QosPolicy object
+     */
     virtual inline void clear() = 0;
 
 protected:
 
+    //! Boolean that indicates if the Qos has to be sent even if it is not changed
     bool send_always_;
 };
 
+/**
+ * @brief Controls the behavior of the entity when acting as a factory for other entities. In other words,
+ * configures the side-effects of the create_* and delete_* operations.
+ * @note Mutable Qos Policy
+ */
 class EntityFactoryQosPolicy
 {
 public:
 
+    /**
+     * Specifies whether the entity acting as a factory automatically enables the instances it creates.
+     * If True the factory will automatically enable each created Entity otherwise it will not. <br>
+     * By default, True.
+     */
     bool autoenable_created_entities;
 
+    /**
+     * @brief Constructor without parameters
+     */
     RTPS_DllAPI EntityFactoryQosPolicy()
         : autoenable_created_entities(true)
     {
     }
 
+    /**
+     * @brief Constructor
+     * @param autoenable Value for the autoenable_created_entities boolean
+     */
     RTPS_DllAPI EntityFactoryQosPolicy(
             bool autoenable)
         : autoenable_created_entities(autoenable)
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~EntityFactoryQosPolicy()
     {
     }
@@ -138,23 +177,43 @@ public:
  */
 typedef enum DurabilityQosPolicyKind : fastrtps::rtps::octet
 {
-    VOLATILE_DURABILITY_QOS,        //!< Volatile Durability (default for Subscribers).
-    TRANSIENT_LOCAL_DURABILITY_QOS, //!< Transient Local Durability (default for Publishers).
-    TRANSIENT_DURABILITY_QOS,       //!< Transient Durability.
-    PERSISTENT_DURABILITY_QOS       //!< NOT IMPLEMENTED.
+    /**
+     * The Service does not need to keep any samples of data-instances on behalf of any DataReader that is not
+     * known by the DataWriter at the time the instance is written. In other words the Service will only attempt
+     * to provide the data to existing subscribers
+     */
+    VOLATILE_DURABILITY_QOS,
+    /**
+     * For TRANSIENT_LOCAL, the service is only required to keep the data in the memory of the DataWriter that
+     * wrote the data and the data is not required to survive the DataWriter.
+     */
+    TRANSIENT_LOCAL_DURABILITY_QOS,
+    /**
+     * For TRANSIENT, the service is only required to keep the data in memory and not in permanent storage; but
+     * the data is not tied to the lifecycle of the DataWriter and will, in general, survive it.
+     */
+    TRANSIENT_DURABILITY_QOS,
+    /**
+     * Data is kept on permanent storage, so that they can outlive a system session.
+     * @warning Not Supported
+     */
+    PERSISTENT_DURABILITY_QOS
 } DurabilityQosPolicyKind_t;
 
 #define PARAMETER_KIND_LENGTH 4
 #define PARAMETER_BOOL_LENGTH 4
 
 /**
- * Class DurabilityQosPolicy, to indicate the durability of the samples.
- * kind: Default value for Subscribers: VOLATILE_DURABILITY_QOS, for Publishers TRANSIENT_LOCAL_DURABILITY_QOS
+ * This policy expresses if the data should ‘outlive’ their writing time.
+ * @note Immutable Qos Policy
  */
 class DurabilityQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DurabilityQosPolicy()
         : Parameter_t(PID_DURABILITY, PARAMETER_KIND_LENGTH)
         , QosPolicy(true)
@@ -162,10 +221,14 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~DurabilityQosPolicy() = default;
 
     /**
      * Translates kind to rtps layer equivalent
+     * @return fastrtps::rtps::DurabilityKind_t
      */
     inline fastrtps::rtps::DurabilityKind_t durabilityKind() const
     {
@@ -188,7 +251,8 @@ public:
     }
 
     /**
-     * Set kind from rtps layer equivalent
+     * Set kind passing the rtps layer equivalent kind
+     * @param new_kind fastrtps::rtps::DurabilityKind_t
      */
     inline void durabilityKind(
             const fastrtps::rtps::DurabilityKind_t new_kind)
@@ -212,18 +276,26 @@ public:
 
 public:
 
+    /**
+     * @brief DurabilityQosPolicyKind. <br>
+     * By default the value for DataReaders: VOLATILE_DURABILITY_QOS, for DataWriters TRANSIENT_LOCAL_DURABILITY_QOS
+     */
     DurabilityQosPolicyKind_t kind;
 };
 
 /**
- * Class DeadlineQosPolicy, to indicate the Deadline of the samples.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * period: Default value c_TimeInifinite.
+ * @brief DataReader expects a new sample updating the value of each instance at least once every deadline period.
+ * DataWriter indicates that the application commits to write a new value (using the DataWriter) for each instance managed
+ * by the DataWriter at least once every deadline period.
+ * @note Mutable Qos Policy
  */
 class DeadlineQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DeadlineQosPolicy()
         : Parameter_t(PID_DEADLINE, PARAMETER_TIME_LENGTH)
         , QosPolicy(true)
@@ -231,6 +303,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~DeadlineQosPolicy() = default;
 
     bool operator ==(
@@ -249,18 +324,29 @@ public:
 
 public:
 
+    /**
+     * @brief Maximum time expected between samples.
+     * It is inconsistent for a DataReader to have a DEADLINE period less than its TimeBasedFilterQosPolicy
+     * minimum_separation. <br>
+     * By default, c_TimeInifinite.
+     */
     fastrtps::Duration_t period;
 };
 
 /**
- * Class LatencyBudgetQosPolicy, to indicate the LatencyBudget of the samples.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * period: Default value c_TimeZero.
+ * Specifies the maximum acceptable delay from the time the data is written until the data is inserted in the receiver's
+ * application-cache and the receiving application is notified of the fact.This policy is a hint to the Service, not something
+ * that must be monitored or enforced. The Service is not required to track or alert the user of any violation.
+ * @warning This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
+ * @note Mutable Qos Policy
  */
 class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI LatencyBudgetQosPolicy()
         : Parameter_t(PID_LATENCY_BUDGET, PARAMETER_TIME_LENGTH)
         , QosPolicy(true)
@@ -268,6 +354,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~LatencyBudgetQosPolicy() = default;
 
     bool operator ==(
@@ -286,6 +375,7 @@ public:
 
 public:
 
+    //!Maximum acceptable delay from the time is written until it is received. <br> By default, c_TimeZero.
     fastrtps::Duration_t duration;
 };
 
@@ -294,25 +384,42 @@ public:
  */
 typedef enum LivelinessQosPolicyKind : fastrtps::rtps::octet
 {
-    AUTOMATIC_LIVELINESS_QOS,             //!< Automatic Liveliness, default value.
-    MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, //!< MANUAL_BY_PARTICIPANT_LIVELINESS_QOS
-    MANUAL_BY_TOPIC_LIVELINESS_QOS        //!< MANUAL_BY_TOPIC_LIVELINESS_QOS
+    /**
+     * The infrastructure will automatically signal liveliness for the DataWriters at least as often as required by the lease_duration.
+     */
+    AUTOMATIC_LIVELINESS_QOS,
+    /**
+     * The Service will assume that as long as at least one Entity within the DomainParticipant has asserted its liveliness the other
+     * Entities in that same DomainParticipant are also alive.
+     */
+    MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+    /**
+     * The Service will only assume liveliness of the DataWriter if the application has asserted liveliness of that DataWriter itself.
+     */
+    MANUAL_BY_TOPIC_LIVELINESS_QOS
+
 } LivelinessQosPolicyKind;
 
 /**
- * Class LivelinessQosPolicy, to indicate the Liveliness of the Writers.
- * This QosPolicy can be defined for the Subscribers and is transmitted but only the Writer Liveliness protocol
- * is implemented in this version. The user should set the lease_duration and the announcement_period with values that differ
- * in at least 30%. Values too close to each other may cause the failure of the writer liveliness assertion in networks
+ * Determines the mechanism and parameters used by the application to determine whether an Entity is “active” (alive).
+ * The “liveliness” status of an Entity is used to maintain instance ownership in combination with the setting of the
+ * OwnershipQosPolicy. The application is also informed via listener when an Entity is no longer alive.The DataReader
+ * requests that liveliness of the writers is maintained by the requested means and loss of liveliness is detected with delay
+ * not to exceed the lease_duration. The DataWriter commits to signaling its liveliness using the stated means at intervals
+ * not to exceed the lease_duration.Listeners are used to notify the DataReaderof loss of liveliness and DataWriter of
+ * violations to the liveliness contract.
+ * @warning This QosPolicy can be defined for the DataReaders and is transmitted but only the Writer Liveliness protocol is implemented.
+ * The user should set the lease_duration and the announcement_period with values that differ in at least 30%.
+ * Values too close to each other may cause the failure of the writer liveliness assertion in networks
  * with high latency or with lots of communication errors.
- * kind: Default value AUTOMATIC_LIVELINESS_QOS
- * lease_duration: Default value c_TimeInfinite.
- * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
  */
 class LivelinessQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI LivelinessQosPolicy()
         : Parameter_t(PID_LIVELINESS, PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
         , QosPolicy(true)
@@ -322,6 +429,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~LivelinessQosPolicy() = default;
 
     bool operator ==(
@@ -342,8 +452,14 @@ public:
 
 public:
 
+    //!Liveliness kind <br> By default, AUTOMATIC_LIVELINESS.
     LivelinessQosPolicyKind kind;
+    //! Indicates for how much time should a remote participant consider the local participant to be alive. <br>
+    //! By default, c_TimeInfinite.
     fastrtps::Duration_t lease_duration;
+    //! The period for the participant to send PDP announcements.
+    //! By default, c_TimeInfinite.
+    //! @warning Must be < lease_duration.
     fastrtps::Duration_t announcement_period;
 };
 
@@ -352,17 +468,32 @@ public:
  */
 typedef enum ReliabilityQosPolicyKind : fastrtps::rtps::octet
 {
-    BEST_EFFORT_RELIABILITY_QOS = 0x01, //!< Best Effort reliability (default for Subscribers).
-    RELIABLE_RELIABILITY_QOS = 0x02 //!< Reliable reliability (default for Publishers).
+    /**
+     * Indicates that it is acceptable to not retry propagation of any samples. Presumably new values for the samples
+     * are generated often enough that it is not necessary to re-send or acknowledge any samples
+     */
+    BEST_EFFORT_RELIABILITY_QOS = 0x01,
+    /**
+     * Specifies the Service will attempt to deliver all samples in its history. Missed samples may be retried.
+     * In steady-state (no modifications communicated via the DataWriter) the middleware guarantees that all samples
+     * in the DataWriter history will eventually be delivered to all the DataReader1objects. Outside steady state the
+     * HistoryQosPolicy and ResourceLimitsQosPolicy will determine how samples become part of the history and whether
+     * samples can be discarded from it.
+     */
+    RELIABLE_RELIABILITY_QOS = 0x02
 } ReliabilityQosPolicyKind;
 
 /**
  * Indicates the reliability of the endpoint.
+ * @note Immutable Qos Policy
  */
 class ReliabilityQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI ReliabilityQosPolicy()
         : Parameter_t(PID_RELIABILITY, PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
         , QosPolicy(true) //indicate send always
@@ -371,6 +502,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~ReliabilityQosPolicy() = default;
 
     bool operator ==(
@@ -391,9 +525,8 @@ public:
 public:
 
     /*!
-     * @brief Defined the reliability kind of the endpoint.
-     *
-     * Default value BEST_EFFORT_RELIABILITY_QOS for ReaderQos and RELIABLE_RELIABILITY_QOS for WriterQos.
+     * @brief Defined the reliability kind of the endpoint. <br>
+     * By default, BEST_EFFORT_RELIABILITY_QOS for DataReaders and RELIABLE_RELIABILITY_QOS for DataWriters.
      */
     ReliabilityQosPolicyKind kind;
 
@@ -404,6 +537,8 @@ public:
      * - Publisher::write
      * - Subscriber::takeNextData
      * - Subscriber::readNextData
+     * <br>
+     * By default, 100 ms.
      */
     fastrtps::Duration_t max_blocking_time;
 };
@@ -415,18 +550,31 @@ public:
  */
 enum OwnershipQosPolicyKind : fastrtps::rtps::octet
 {
-    SHARED_OWNERSHIP_QOS, //!< Shared Ownership, default value.
-    EXCLUSIVE_OWNERSHIP_QOS //!< Exclusive ownership
+    /**
+     * Indicates shared ownership for each instance. Multiple writers are allowed to update the same instance and all the
+     * updates are made available to the readers. In other words there is no concept of an “owner” for the instances.
+     */
+    SHARED_OWNERSHIP_QOS,
+    /**
+     * Indicates each instance can only be owned by one DataWriter, but the owner of an instance can change dynamically.
+     * The selection of the owner is controlled by the setting of the OwnershipStrengthQosPolicy. The owner is always set
+     * to be the highest-strength DataWriter object among the ones currently “active” (as determined by the LivelinessQosPolicy).
+     */
+    EXCLUSIVE_OWNERSHIP_QOS
 };
 
 /**
- * Class OwnershipQosPolicy, to indicate the ownership kind of the endpoints.
- * kind: Default value SHARED_OWNERSHIP_QOS.
+ * Specifies whether it is allowed for multiple DataWriters to write the same instance of the data and if so, how these
+ * modifications should be arbitrated
+ * @note Immutable Qos Policy
  */
 class OwnershipQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI OwnershipQosPolicy()
         : Parameter_t(PID_OWNERSHIP, PARAMETER_KIND_LENGTH)
         , QosPolicy(true)
@@ -434,6 +582,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~OwnershipQosPolicy() = default;
 
     bool operator ==(
@@ -452,29 +603,43 @@ public:
 
 public:
 
+    //!OwnershipQosPolicyKind
     OwnershipQosPolicyKind kind;
 };
 
 /**
- * Enum OwnershipQosPolicyKind, different kinds of destination order for DestinationOrderQosPolicy.
+ * Enum DestinationOrderQosPolicyKind, different kinds of destination order for DestinationOrderQosPolicy.
  */
 enum DestinationOrderQosPolicyKind : fastrtps::rtps::octet
 {
-    BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, //!< By Reception Timestamp, default value.
-    BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS //!< By Source Timestamp.
+    /**
+     * Indicates that data is ordered based on the reception time at each Subscriber. Since each subscriber may receive
+     * the data at different times there is no guaranteed that the changes will be seen in the same order. Consequently,
+     * it is possible for each subscriber to end up with a different final value for the data.
+     */
+    BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS,
+    /**
+     * Indicates that data is ordered based on a timestamp placed at the source (by the Service or by the application).
+     * In any case this guarantees a consistent final value for the data in all subscribers.
+     */
+    BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS
 };
 
 
 
 /**
- * Class DestinationOrderQosPolicy, to indicate the Destination Order Qos.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * kind: Default value BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS
+ * Controls the criteria used to determine the logical order among changes made by Publisher entities to the same instance of
+ * data (i.e., matching Topic and key).
+ * @warning This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
+ * @note Immutable Qos Policy
  */
 class DestinationOrderQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DestinationOrderQosPolicy()
         : Parameter_t(PID_DESTINATION_ORDER, PARAMETER_KIND_LENGTH)
         , QosPolicy(true)
@@ -482,6 +647,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~DestinationOrderQosPolicy() = default;
 
     bool operator ==(
@@ -500,6 +668,7 @@ public:
 
 public:
 
+    //!DestinationOrderQosPolicyKind. <br> By default, BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS.
     DestinationOrderQosPolicyKind kind;
 };
 
@@ -721,7 +890,10 @@ public:
 };
 
 /**
- * Class TClassName, base template for user data qos policies.
+ * Class TClassName, base template for data qos policies.
+ * Data not known by the middleware, but distributed by means of built-in topics.
+ * By default, zero-sized sequence.
+ * @note Mutable Qos Policy
  */
 #define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                     \
     class TClassName : public GenericDataQosPolicy                                         \
@@ -780,19 +952,26 @@ public:                                                                         
                                                                                        \
     };
 
+
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
 TEMPLATE_DATA_QOS_POLICY(GroupDataQosPolicy, PID_GROUP_DATA)
 
 /**
- * Class TimeBasedFilterQosPolicy, to indicate the Time Based Filter Qos.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * minimum_separation: Default value c_TimeZero
+ * Filter that allows a DataReader to specify that it is interested only in (potentially) a subset of the values of the data.
+ * The filter states that the DataReader does not want to receive more than one value each minimum_separation, regardless
+ * of how fast the changes occur. It is inconsistent for a DataReader to have a minimum_separation longer than its
+ * Deadline period.
+ * @warning This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
+ * @note Mutable Qos Policy
  */
 class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TimeBasedFilterQosPolicy()
         : Parameter_t(PID_TIME_BASED_FILTER, PARAMETER_TIME_LENGTH)
         , QosPolicy(false)
@@ -800,6 +979,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy() = default;
 
     bool operator ==(
@@ -818,6 +1000,7 @@ public:
 
 public:
 
+    //! Minimum interval between samples. By default, c_TimeZero (the DataReader is interested in all values)
     fastrtps::Duration_t minimum_separation;
 };
 
@@ -826,24 +1009,41 @@ public:
  */
 enum PresentationQosPolicyAccessScopeKind : fastrtps::rtps::octet
 {
-    INSTANCE_PRESENTATION_QOS, //!< Instance Presentation, default value.
-    TOPIC_PRESENTATION_QOS, //!< Topic Presentation.
-    GROUP_PRESENTATION_QOS //!< Group Presentation.
+    /**
+     * Scope spans only a single instance. Indicates that changes to one instance need not be coherent nor ordered with
+     * respect to changes to any other instance. In other words, order and coherent changes apply to each instance
+     * separately.
+     */
+    INSTANCE_PRESENTATION_QOS,
+    /**
+     * Scope spans to all instances within the same DataWriter (or DataReader), but not across instances in different
+     * DataWriter (or DataReader).
+     */
+    TOPIC_PRESENTATION_QOS,
+    /**
+     * Scope spans to all instances belonging to DataWriter (or DataReader) entities within the same Publisher (or Subscriber).
+     */
+    GROUP_PRESENTATION_QOS
 };
 
 #define PARAMETER_PRESENTATION_LENGTH 8
 
 /**
- * Class PresentationQosPolicy, to indicate the Presentation Qos Policy.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * access_scope: Default value INSTANCE_PRESENTATION_QOS
- * coherent_access: Default value false.
- * ordered_access: Default value false.
+ * Specifies how the samples representing changes to data instances are presented to the subscribing application.
+ * This policy affects the application’s ability to specify and receive coherent changes and to see the relative
+ * order of changes.access_scope determines the largest scope spanning the entities for which the order and coherency
+ * of changes can be preserved. The two booleans control whether coherent access and ordered access are supported within
+ * the scope access_scope.
+ * @warning This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
+ * @note Immutable Qos Policy
  */
 class PresentationQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor without parameters
+     */
     RTPS_DllAPI PresentationQosPolicy()
         : Parameter_t(PID_PRESENTATION, PARAMETER_PRESENTATION_LENGTH)
         , QosPolicy(false)
@@ -853,6 +1053,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~PresentationQosPolicy() = default;
 
     bool operator ==(
@@ -873,8 +1076,19 @@ public:
 
 public:
 
+    //!Access Scope Kind <br> By default, INSTANCE_PRESENTATION_QOS.
     PresentationQosPolicyAccessScopeKind access_scope;
+    /**
+     * @brief Specifies support coherent access. That is, the ability to group a set of changes as a unit
+     * on the publishing end such that they are received as a unit at the subscribing end.
+     * by default, false.
+     */
     bool coherent_access;
+    /**
+     * @brief Specifies support for ordered access to the samples received at the subscription end. That is,
+     * the ability of the subscriber to see changes in the same order as they occurred on the publishing end.
+     * By default, false.
+     */
     bool ordered_access;
 };
 
@@ -897,6 +1111,10 @@ private:
 
 public:
 
+    /**
+     * @brief Constructor using a pointer
+     * @param ptr Pointer to be set
+     */
     explicit Partition_t(
             const void* ptr)
     {
@@ -916,11 +1134,19 @@ public:
         return !(*this == rhs);
     }
 
+    /**
+     * @brief Getter for the size
+     * @return uint32_t with the size
+     */
     uint32_t size() const
     {
         return *(uint32_t*)partition_;
     }
 
+    /**
+     * @brief Getter for the partition name
+     * @return name
+     */
     const char* name() const
     {
         return partition_ + 4;
@@ -929,7 +1155,13 @@ public:
 };
 
 /**
- * Class PartitionQosPolicy, to indicate the Partition Qos.
+ * Set of strings that introduces a logical partition among the topics visible by the Publisher and Subscriber.
+ * A DataWriter within a Publisher only communicates with a DataReader in a Subscriber if (in addition to matching the
+ * Topic and having compatible QoS) the Publisher and Subscriber have a common partition name string.
+ *
+ * The empty string ("") is considered a valid partition that is matched with other partition names using the same rules of
+ * string matching and regular-expression matching used for any other partition name.
+ * @note Mutable Qos Policy
  */
 class PartitionQosPolicy : public Parameter_t, public QosPolicy
 {
@@ -948,6 +1180,10 @@ public:
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
 
+        /**
+         * @brief Constructor using a pointer
+         * @param ptr Pointer to be set
+         */
         const_iterator(
                 const fastrtps::rtps::octet* ptr)
             : ptr_(ptr)
@@ -993,6 +1229,9 @@ public:
 
 protected:
 
+        /**
+         * @brief Shift the pointer to the next element
+         */
         void advance()
         {
             //Size of the element (with alignment)
@@ -1003,13 +1242,18 @@ protected:
 
 private:
 
+        //!Pointer
         const fastrtps::rtps::octet* ptr_;
+        //!Partition
         Partition_t value_;
 
     };
 
 public:
 
+    /**
+     * @brief Constructor without parameters
+     */
     RTPS_DllAPI PartitionQosPolicy()
         : Parameter_t(PID_PARTITION, 0)
         , QosPolicy(false)
@@ -1018,6 +1262,10 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using Parameter length
+     * @param in_length Length of the parameter
+     */
     RTPS_DllAPI PartitionQosPolicy(
             uint16_t in_length)
         : Parameter_t(PID_PARTITION, in_length)
@@ -1028,6 +1276,10 @@ public:
     {
     }
 
+    /**
+     * @brief Copy constructor
+     * @param b Another PartitionQosPolicy instance
+     */
     RTPS_DllAPI PartitionQosPolicy(
             const PartitionQosPolicy& b)
         : Parameter_t(b)
@@ -1041,6 +1293,9 @@ public:
         partitions_.copy(&b.partitions_, b.max_size_ != 0);
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~PartitionQosPolicy() = default;
 
     bool operator ==(
@@ -1068,26 +1323,46 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Getter for the first position of the ParameterPropertyList
+     * @return const_iterator
+     */
     const_iterator begin() const
     {
         return const_iterator(partitions_.data);
     }
 
+    /**
+     * @brief Getter for the end of the ParameterPropertyList
+     * @return const_iterator
+     */
     const_iterator end() const
     {
         return const_iterator(partitions_.data + partitions_.length);
     }
 
+    /**
+     * @brief Getter for the number of partitions
+     * @return uint32_t with the size
+     */
     uint32_t size() const
     {
         return Npartitions_;
     }
 
+    /**
+     * @brief Check if the set is empty
+     * @return true if it is empty, false otherwise
+     */
     uint32_t empty() const
     {
         return Npartitions_ == 0;
     }
 
+    /**
+     * @brief Setter for the maximum size
+     * @param size Size to be set
+     */
     void set_max_size (
             uint32_t size)
     {
@@ -1095,6 +1370,10 @@ public:
         max_size_ = size;
     }
 
+    /**
+     * @brief Getter for the maximum size
+     * @return uint32_t with the maximum size
+     */
     uint32_t max_size () const
     {
         return max_size_;
@@ -1196,8 +1475,11 @@ public:
 
 private:
 
+    //! Maximum size <br> By default, 0.
     uint32_t max_size_;
+    //! Paritions
     fastrtps::rtps::SerializedPayload_t partitions_;
+    //! Number of partitions. <br> By default, 0.
     uint32_t Npartitions_;
 };
 
@@ -1206,19 +1488,40 @@ private:
  */
 enum HistoryQosPolicyKind : fastrtps::rtps::octet
 {
-    KEEP_LAST_HISTORY_QOS, //!< Keep only a number of samples, default value.
-    KEEP_ALL_HISTORY_QOS //!< Keep all samples until the ResourceLimitsQosPolicy are exhausted.
+    /**
+     * On the publishing side, the Service will only attempt to keep the most recent “depth” samples of each instance
+     * of data (identified by its key) managed by the DataWriter. On the subscribing side, the DataReader will only attempt
+     * to keep the most recent “depth” samples received for each instance (identified by its key) until the application
+     * “takes” them via the DataReader’s take operation.
+     */
+    KEEP_LAST_HISTORY_QOS,
+    /**
+     * On the publishing side, the Service will attempt to keep all samples (representing each value written) of each
+     * instance of data (identified by its key) managed by the DataWriter until they can be delivered to all subscribers.
+     * On the subscribing side, the Service will attempt to keep all samples of each instance of data (identified by its
+     * key) managed by the DataReader. These samples are kept until the application “takes” them from the Service via the
+     * take operation.
+     */
+    KEEP_ALL_HISTORY_QOS
 };
 
 /**
- * Class HistoryQosPolicy, defines the HistoryQos of the topic in the Writer or Reader side.
- * kind: Default value KEEP_LAST_HISTORY_QOS.
- * depth: Default value 1000.
+ * Specifies the behavior of the Service in the case where the value of a sample changes (one or more times) before it
+ * can be successfully communicated to one or more existing subscribers. This QoS policy controls whether the Service
+ * should deliver only the most recent value, attempt to deliver all intermediate values, or do something in between.
+ * On the publishing side this policy controls the samples that should be maintained by the DataWriter on behalf of
+ * existing DataReader entities. The behavior with regards to a DataReaderentities discovered after a sample is written
+ * is controlled by the DURABILITY QoS policy. On the subscribing side it controls the samples that should be maintained
+ * until the application “takes” them from the Service.
+ * @note Immutable Qos Policy
  */
 class HistoryQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI HistoryQosPolicy()
         : Parameter_t(PID_HISTORY, PARAMETER_KIND_LENGTH + 4)
         , QosPolicy(true)
@@ -1227,6 +1530,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~HistoryQosPolicy() = default;
 
     bool operator ==(
@@ -1246,26 +1552,50 @@ public:
 
 public:
 
+    //!HistoryQosPolicyKind. <br> By default, KEEP_LAST_HISTORY_QOS.
     HistoryQosPolicyKind kind;
+    //!History depth. <br> By default, 1. If a value other than 1 is specified, it should
+    //! be consistent with the settings of the ResourceLimitsQosPolicy.
+    //! @warning Only takes effect if the kind is KEEP_LAST_HISTORY_QOS.
     int32_t depth;
 };
 
 /**
- * Class ResourceLimitsQosPolicy, defines the ResourceLimits for the Writer or the Reader.
- * max_samples: Default value 5000.
- * max_instances: Default value 10.
- * max_samples_per_instance: Default value 400.
- * allocated_samples: Default value 100.
+ * Specifies the resources that the Service can consume in order to meet the requested QoS
+ * @note Immutable Qos Policy
  */
 class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Specifies the maximum number of data-samples the DataWriter (or DataReader) can manage across all the
+     * instances associated with it. Represents the maximum samples the middleware can store for any one DataWriter
+     * (or DataReader). <br>
+     * By default, 5000.
+     * @warning It is inconsistent for this value to be less than max_samples_per_instance.
+     */
     int32_t max_samples;
+    /**
+     * @brief Represents the maximum number of instances DataWriter (or DataReader) can manage. <br>
+     * By default, 10.
+     */
     int32_t max_instances;
+    /**
+     * @brief Represents the maximum number of samples of any one instance a DataWriter(or DataReader) can manage. <br>
+     * By default, 400.
+     * @warning It is inconsistent for this value to be greater than max_samples.
+     */
     int32_t max_samples_per_instance;
+    /**
+     * @brief Number of samples currently allocated. <br>
+     * By default, 100.
+     */
     int32_t allocated_samples;
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI ResourceLimitsQosPolicy()
         : Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4)
         , QosPolicy(false)
@@ -1276,6 +1606,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~ResourceLimitsQosPolicy() = default;
 
     bool operator ==(
@@ -1300,19 +1633,18 @@ public:
 
 
 /**
- * Class DurabilityServiceQosPolicy, to indicate the Durability Service.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * service_cleanup_delay: Default value c_TimeZero.
- * history_kind: Default value KEEP_LAST_HISTORY_QOS.
- * history_depth: Default value 1.
- * max_samples: Default value -1.
- * max_instances: Default value -1.
- * max_samples_per_instance: Default value -1.
+ * Specifies the configuration of the durability service. That is, the service that implements the DurabilityQosPolicy kind
+ * of TRANSIENT and PERSISTENT.
+ * @warning This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
+ * @note Immutable Qos Policy
  */
 class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DurabilityServiceQosPolicy()
         : Parameter_t(PID_DURABILITY_SERVICE, PARAMETER_TIME_LENGTH + PARAMETER_KIND_LENGTH + 4 + 4 + 4 + 4)
         , QosPolicy(false)
@@ -1324,6 +1656,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~DurabilityServiceQosPolicy() = default;
 
     bool operator ==(
@@ -1346,23 +1681,57 @@ public:
 
 public:
 
+    /**
+     * @brief Control when the service is able to remove all information regarding a data-instance. <br>
+     * By default, c_TimeZero.
+     */
     fastrtps::Duration_t service_cleanup_delay;
+    /**
+     * @brief Controls the HistoryQosPolicy of the fictitious DataReader that stores the data within the durability service.
+     * <br>
+     * By default, KEEP_LAST_HISTORY_QOS.
+     */
     HistoryQosPolicyKind history_kind;
+    /**
+     * @brief Number of most recent values that should be maintained on the History. It only have effect if the history_kind
+     * is KEEP_LAST_HISTORY_QOS. <br>
+     * By default, 1.
+     */
     int32_t history_depth;
+    /**
+     * @brief Control the ResourceLimitsQos of the implied DataReader that stores the data within the durability service.
+     * Specifies the maximum number of data-samples the DataWriter (or DataReader) can manage across all the instances
+     * associated with it. Represents the maximum samples the middleware can store for any one DataWriter (or DataReader).
+     * It is inconsistent for this value to be less than max_samples_per_instance. <br>
+     * By default, -1 (Length Unlimited).
+     */
     int32_t max_samples;
+    /**
+     * @brief Control the ResourceLimitsQos of the implied DataReader that stores the data within the durability service.
+     * Represents the maximum number of instances DataWriter (or DataReader) can manage. <br>
+     * By default, -1 (Length Unlimited).
+     */
     int32_t max_instances;
+    /**
+     * @brief Control the ResourceLimitsQos of the implied DataReader that stores the data within the durability service.
+     * Represents the maximum number of samples of any one instance a DataWriter(or DataReader) can manage.
+     * It is inconsistent for this value to be greater than max_samples. <br>
+     * By default, -1 (Length Unlimited).
+     */
     int32_t max_samples_per_instance;
 };
 
 /**
- * Class LifespanQosPolicy, currently unimplemented.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * duration: Default value c_TimeInfinite.
+ * Specifies the maximum duration of validity of the data written by the DataWriter.
+ * @note Mutable Qos Policy
  */
 class LifespanQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI LifespanQosPolicy()
         : Parameter_t(PID_LIFESPAN, PARAMETER_TIME_LENGTH)
         , QosPolicy(true)
@@ -1370,6 +1739,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~LifespanQosPolicy() = default;
 
     bool operator ==(
@@ -1388,17 +1760,23 @@ public:
 
 public:
 
+    //! Period of validity. <br> By default, c_TimeInfinite.
     fastrtps::Duration_t duration;
 };
 
 /**
- * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
- * value: Default value 0.
+ * Specifies the value of the “strength” used to arbitrate among multiple DataWriter objects that attempt to modify the same
+ * instance of a data-object (identified by Topic + key).This policy only applies if the OWNERSHIP QoS policy is of kind
+ * EXCLUSIVE.
+ * @note Mutable Qos Policy
  */
 class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI OwnershipStrengthQosPolicy()
         : Parameter_t(PID_OWNERSHIP_STRENGTH, 4)
         , QosPolicy(false)
@@ -1406,6 +1784,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~OwnershipStrengthQosPolicy() = default;
 
     bool operator ==(
@@ -1424,21 +1805,26 @@ public:
 
 public:
 
+    //! Strength <br> By default, 0.
     uint32_t value;
 };
 
 
-
 /**
- * Class TransportPriorityQosPolicy, currently unimplemented.
- * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * value: Default value 0.
+ * This policy is a hint to the infrastructure as to how to set the priority of the underlying transport used to send the data.
+ * @warning This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
+ * @note Mutable Qos Policy
  */
 class TransportPriorityQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    //!Priority <br> By default, 0.
     uint32_t value;
+
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TransportPriorityQosPolicy()
         : Parameter_t(PID_TRANSPORT_PRIORITY, 4)
         , QosPolicy(false)
@@ -1446,6 +1832,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TransportPriorityQosPolicy() = default;
 
     bool operator ==(
@@ -1475,18 +1864,25 @@ typedef enum PublishModeQosPolicyKind : fastrtps::rtps::octet
 
 /**
  * Class PublishModeQosPolicy, defines the publication mode for a specific writer.
- * kind: Default value SYNCHRONOUS_PUBLISH_MODE.
  */
 class PublishModeQosPolicy : public QosPolicy
 {
 public:
 
+    //!PublishModeQosPolicyKind <br> By default, SYNCHRONOUS_PUBLISH_MODE.
     PublishModeQosPolicyKind kind;
+
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI PublishModeQosPolicy()
         : kind(SYNCHRONOUS_PUBLISH_MODE)
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~PublishModeQosPolicy() = default;
 
     inline void clear() override
@@ -1508,19 +1904,32 @@ typedef enum DataRepresentationId : int16_t
 } DataRepresentationId_t;
 
 /**
- * Class DataRepresentationQosPolicy,
+ * With multiple standard data Representations available, and vendor-specific extensions possible, DataWriters and
+ * DataReadersmust be able to negotiate which data representation(s) to use. This negotiation shall occur based on
+ * DataRepresentationQosPolicy.
+ * @warning If a writer’s offered representation is contained within a reader’s sequence, the offer satisfies the
+ * request and the policies are compatible. Otherwise, they are incompatible.
+ * @note Immutable Qos Policy
  */
 class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    //!List of DataRepresentationId. <br> By default, empty list.
     std::vector<DataRepresentationId_t> m_value;
+
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DataRepresentationQosPolicy()
         : Parameter_t(PID_DATA_REPRESENTATION, 0)
         , QosPolicy(true)
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~DataRepresentationQosPolicy() override = default;
 
     /**
@@ -1546,24 +1955,69 @@ public:
 
 enum TypeConsistencyKind : uint16_t
 {
+    /**
+     * The DataWriter and the DataReader must support the same data type in order for them to communicate.
+     */
     DISALLOW_TYPE_COERCION,
+    /**
+     * The DataWriter and the DataReader need not support the same data type in order for them to communicate as long as
+     * the reader’s type is assignable from the writer’s type.
+     */
     ALLOW_TYPE_COERCION
 };
 
 /**
- * Class DataRepresentationQosPolicy,
+ * The TypeConsistencyEnforcementQosPolicy defines the rules for determining whether the type used to publish a given data
+ * stream is consistent with that used to subscribe to it. It applies to DataReaders.
+ * @note Immutable Qos Policy
  */
 class TypeConsistencyEnforcementQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    //!TypeConsistencyKind. <br> By default, ALLOW_TYPE_COERCION.
     TypeConsistencyKind m_kind;
+    /**
+     * @brief This option controls whether sequence bounds are taken into consideration for type assignability. If the
+     * option is set to TRUE, sequence bounds (maximum lengths) are not considered as part of the type assignability.
+     * This means that a T2 sequence type with maximum length L2 would be assignable to a T1 sequence type with maximum
+     * length L1, even if L2 is greater than L1. If the option is set to false, then sequence bounds are taken into
+     * consideration for type assignability and in order for T1 to be assignable from T2 it is required that L1>= L2. <br>
+     * By default, true.
+     */
     bool m_ignore_sequence_bounds;
+    /**
+     * @brief This option controls whether string bounds are taken into consideration for type assignability. If the option
+     *  is set to TRUE, string bounds (maximum lengths) are not considered as part of the type assignability. This means
+     * that a T2 string type with maximum length L2 would be assignable to a T1 string type with maximum length L1, even
+     * if L2 is greater than L1. If the option is set to false, then string bounds are taken into consideration for type
+     * assignability and in order for T1 to be assignable from T2 it is required that L1>= L2. <br>
+     * By default, true.
+     */
     bool m_ignore_string_bounds;
+    /**
+     * @brief This option controls whether member names are taken into consideration for type assignability. If the option
+     * is set to TRUE, member names are considered as part of assignability in addition to member IDs (so that members with
+     * the same ID also have the same name). If the option is set to FALSE, then member names are not ignored. <br>
+     * By default, false.
+     */
     bool m_ignore_member_names;
+    /**
+     * @brief This option controls whether type widening is allowed. If the option is set to FALSE, type widening is
+     * permitted. If the option is set to TRUE,it shall cause a wider type to not be assignable to a narrower type. <br>
+     * By default, false.
+     */
     bool m_prevent_type_widening;
+    /**
+     * @brief This option requires type information to be available in order to complete matching between a DataWriter and
+     * DataReader when set to TRUE, otherwise matching can occur without complete type information when set to FALSE. <br>
+     * By default, false.
+     */
     bool m_force_type_validation;
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
         : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 8) // 2 + 5 + 1 alignment byte
         , QosPolicy(true)
@@ -1576,6 +2030,9 @@ public:
         m_force_type_validation = false;
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() override = default;
 
     bool operator ==(
@@ -1601,12 +2058,15 @@ public:
 
 /**
  * Class DisablePositiveACKsQosPolicy to disable sending of positive ACKs
- * period: Default value c_TimeInfinite.
+ * @note Immutable Qos Policy
  */
 class DisablePositiveACKsQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI DisablePositiveACKsQosPolicy()
         : Parameter_t(PID_DISABLE_POSITIVE_ACKS, PARAMETER_BOOL_LENGTH)
         , QosPolicy(true)
@@ -1615,6 +2075,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~DisablePositiveACKsQosPolicy() = default;
 
     bool operator ==(
@@ -1633,22 +2096,26 @@ public:
 
 public:
 
-    //! True if this QoS is enabled
+    //! True if this QoS is enabled. <br> By default, false
     bool enabled;
-    //! The duration to keep samples for (not serialised as not needed by reader)
+    //! The duration to keep samples for (not serialized as not needed by reader). <br> By default, c_TimeInfinite
     fastrtps::Duration_t duration;
 };
 
 /**
- * Class TypeIdV1,
+ * Class TypeIdV1
  */
 class TypeIdV1 : public Parameter_t, public QosPolicy
 {
 public:
 
+    //!Type Identifier
     fastrtps::types::TypeIdentifier m_type_identifier;
 
 
+    /**
+     * @brief Constructor without parameters
+     */
     RTPS_DllAPI TypeIdV1()
         : Parameter_t(PID_TYPE_IDV1, 0)
         , QosPolicy(false)
@@ -1656,6 +2123,10 @@ public:
     {
     }
 
+    /**
+     * @brief Copy constructor
+     * @param type Another instance of TypeIdV1
+     */
     RTPS_DllAPI TypeIdV1(
             const TypeIdV1& type)
         : Parameter_t(type.Pid, type.length)
@@ -1664,6 +2135,10 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a TypeIndentifier
+     * @param identifier TypeIdentifier to be set
+     */
     RTPS_DllAPI TypeIdV1(
             const fastrtps::types::TypeIdentifier& identifier)
         : Parameter_t(PID_TYPE_IDV1, 0)
@@ -1672,6 +2147,10 @@ public:
     {
     }
 
+    /**
+     * @brief Move constructor
+     * @param type Another instance of TypeIdV1
+     */
     RTPS_DllAPI TypeIdV1(
             TypeIdV1&& type)
         : Parameter_t(type.Pid, type.length)
@@ -1704,6 +2183,9 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TypeIdV1() override = default;
 
     inline void clear() override
@@ -1718,6 +2200,10 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Getter for the TypeIndentifier
+     * @return TypeIdentifier reference
+     */
     RTPS_DllAPI const fastrtps::types::TypeIdentifier& get() const
     {
         return m_type_identifier;
@@ -1726,14 +2212,18 @@ public:
 };
 
 /**
- * Class TypeObjectV1,
+ * Class TypeObjectV1
  */
 class TypeObjectV1 : public Parameter_t, public QosPolicy
 {
 public:
 
+    //!Type Object
     fastrtps::types::TypeObject m_type_object;
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TypeObjectV1()
         : Parameter_t(PID_TYPE_OBJECTV1, 0)
         , QosPolicy(false)
@@ -1741,6 +2231,10 @@ public:
     {
     }
 
+    /**
+     * @brief Copy constructor
+     * @param type Another instance of TypeObjectV1
+     */
     RTPS_DllAPI TypeObjectV1(
             const TypeObjectV1& type)
         : Parameter_t(type.Pid, type.length)
@@ -1749,6 +2243,10 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a TypeObject
+     * @param type TypeObject to be set
+     */
     RTPS_DllAPI TypeObjectV1(
             const fastrtps::types::TypeObject& type)
         : Parameter_t(PID_TYPE_OBJECTV1, 0)
@@ -1757,6 +2255,10 @@ public:
     {
     }
 
+    /**
+     * @brief Move constructor
+     * @param type Another instance of TypeObjectV1
+     */
     RTPS_DllAPI TypeObjectV1(
             TypeObjectV1&& type)
         : Parameter_t(type.Pid, type.length)
@@ -1789,6 +2291,9 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TypeObjectV1() override = default;
 
     inline void clear() override
@@ -1803,6 +2308,10 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Getter for the TypeObject
+     * @return TypeObject reference
+     */
     RTPS_DllAPI const fastrtps::types::TypeObject& get() const
     {
         return m_type_object;
@@ -1810,17 +2319,21 @@ public:
 
 };
 
+namespace xtypes {
+
 /**
  * Class xtypes::TypeInformation
  */
-namespace xtypes {
-
 class TypeInformation : public Parameter_t, public QosPolicy
 {
 public:
 
+    //!Type Information
     fastrtps::types::TypeInformation type_information;
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TypeInformation()
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
@@ -1829,6 +2342,10 @@ public:
     {
     }
 
+    /**
+     * @brief Copy constructor
+     * @param type Another instance of TypeInformation
+     */
     RTPS_DllAPI TypeInformation(
             const TypeInformation& type)
         : Parameter_t(type.Pid, type.length)
@@ -1838,6 +2355,10 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor using a fastrtps::types::TypeInformation
+     * @param info fastrtps::types::TypeInformation to be set
+     */
     RTPS_DllAPI TypeInformation(
             const fastrtps::types::TypeInformation& info)
         : Parameter_t(PID_TYPE_INFORMATION, 0)
@@ -1847,6 +2368,10 @@ public:
     {
     }
 
+    /**
+     * @brief Move Constructor
+     * @param type Another instance of TypeInformation
+     */
     RTPS_DllAPI TypeInformation(
             TypeInformation&& type)
         : Parameter_t(type.Pid, type.length)
@@ -1882,6 +2407,9 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TypeInformation() override = default;
 
     inline void clear() override
@@ -1889,11 +2417,19 @@ public:
         *this = TypeInformation();
     }
 
+    /**
+     * @brief Check if it is assigned
+     * @return true if assigned, false if not
+     */
     RTPS_DllAPI bool assigned() const
     {
         return assigned_;
     }
 
+    /**
+     * @brief Setter for assigned boolean
+     * @param value Boolean to be set
+     */
     RTPS_DllAPI void assigned(
             bool value)
     {
@@ -1910,6 +2446,7 @@ public:
 
 private:
 
+    //!Boolean that states if the TypeInformation has been asigned manually or not.
     bool assigned_;
 };
 
@@ -1921,17 +2458,24 @@ using ParticipantResourceLimitsQos = fastrtps::rtps::RTPSParticipantAllocationAt
 //! Property policies
 using PropertyPolicyQos = fastrtps::rtps::PropertyPolicy;
 
+//! Qos Policy that configures the wire protocol
 class WireProtocolConfigQos : public QosPolicy
 {
 
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI WireProtocolConfigQos()
         : QosPolicy(false)
         , participant_id(-1)
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~WireProtocolConfigQos() = default;
 
     bool operator ==(
@@ -1956,7 +2500,7 @@ public:
     //! Optionally allows user to define the GuidPrefix_t
     fastrtps::rtps::GuidPrefix_t prefix;
 
-    //!Participant ID
+    //!Participant ID <br> By default, -1.
     int32_t participant_id;
 
     //! Builtin parameters.
@@ -1981,10 +2525,14 @@ public:
     fastrtps::rtps::LocatorList_t default_multicast_locator_list;
 };
 
+//! Qos Policy to configure the transport layer
 class TransportConfigQos : public QosPolicy
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TransportConfigQos()
         : QosPolicy(false)
         , use_builtin_transports(true)
@@ -1993,6 +2541,9 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~TransportConfigQos() = default;
 
     bool operator ==(
@@ -2014,21 +2565,22 @@ public:
     //!User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > user_transports;
 
-    //!Set as false to disable the default UDPv4 implementation.
+    //!Set as false to disable the default UDPv4 implementation. <br> By default, true.
     bool use_builtin_transports;
 
     /*!
-     * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
-     * Default value: 0.
+     * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size. <br>
+     * By default, 0.
      */
     uint32_t send_socket_buffer_size;
 
-    /*! Listen socket buffer for all listen resources. Zero value indicates to use default system buffer size.
-     * Default value: 0.
+    /*! Listen socket buffer for all listen resources. Zero value indicates to use default system buffer size. <br>
+     * By default, 0.
      */
     uint32_t listen_socket_buffer_size;
 };
 
+//!Qos Policy to configure the endpoint
 class RTPSEndpointQos
 {
 public:
@@ -2062,24 +2614,31 @@ public:
     //!Remote locator list
     fastrtps::rtps::LocatorList_t remote_locator_list;
 
-    //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
+    //!User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
     int16_t user_defined_id;
 
-    //!Entity ID, if the user wants to specify the EntityID of the enpoint, default value -1.
+    //!Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
     int16_t entity_id;
 
-    //!Underlying History memory policy
+    //!Underlying History memory policy. <br> By default, PREALLOCATED_MEMORY_MODE.
     fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy;
 };
 
+//!Qos Policy to configure the limit of the writer resources
 class WriterResourceLimitsQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI WriterResourceLimitsQos()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual RTPS_DllAPI ~WriterResourceLimitsQos() = default;
 
     bool operator ==(
@@ -2088,6 +2647,7 @@ public:
         return (this->matched_subscriber_allocation == b.matched_subscriber_allocation);
     }
 
+    //!Matched subscribers allocation limits.
     fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
 };
 

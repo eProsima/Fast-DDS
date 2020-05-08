@@ -14,7 +14,7 @@
 
 /**
  * @file BaseStatus.hpp
-*/
+ */
 
 #ifndef _FASTDDS_BASE_STATUS_HPP_
 #define _FASTDDS_BASE_STATUS_HPP_
@@ -28,13 +28,18 @@ namespace dds {
 //! @brief A struct storing the base status
 struct BaseStatus
 {
+    //!Total cumulative count
     int32_t total_count = 0;
 
+    //!Increment since the last time the status is read
     int32_t total_count_change = 0;
 };
 
+//!Alias of BaseStatus
 using SampleLostStatus = BaseStatus;
+//!Alias of BaseStatus
 using LivelinessLostStatus = BaseStatus;
+//!Alias of BaseStatus
 using InconsistentTopicStatus = BaseStatus;
 
 } //namespace dds
