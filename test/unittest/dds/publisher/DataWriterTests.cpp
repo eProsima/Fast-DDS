@@ -116,7 +116,7 @@ public:
 
 TEST(DataWriterTests, ChangeDataWriterQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -173,7 +173,7 @@ TEST(DataWriterTests, ChangeDataWriterQos)
 
 TEST(DataWriterTests, Write)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);

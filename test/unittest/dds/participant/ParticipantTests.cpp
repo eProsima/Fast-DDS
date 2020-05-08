@@ -127,7 +127,7 @@ TEST(ParticipantTests, ChangeDomainParticipantFactoryQos)
 
 TEST(ParticipantTests, CreateDomainParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     ASSERT_NE(participant, nullptr);
 
@@ -169,7 +169,7 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
 
     //participant using the default profile
-    DomainParticipant* default_participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* default_participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(default_participant, nullptr);
     ASSERT_EQ(default_participant->get_domain_id(), 0u); //Keep the DID given to the method, not the one on the profile
     check_participant_with_profile(default_participant, "test_default_participant_profile");
@@ -193,14 +193,14 @@ TEST(ParticipantTests, CreatePSMDomainParticipant)
 
 TEST(ParticipantTests, DeleteDomainParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -210,7 +210,7 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 
-    participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -220,7 +220,7 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 
-    participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -279,7 +279,7 @@ TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
 
 TEST(ParticipantTests, ChangeDomainParticipantQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     DomainParticipantQos qos;
     participant->get_qos(qos);
 
@@ -319,7 +319,7 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
 
 TEST(ParticipantTests, CreatePublisher)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
 
     ASSERT_NE(publisher, nullptr);
@@ -348,7 +348,7 @@ void check_publisher_with_profile (Publisher* publisher, const std::string& prof
 TEST(ParticipantTests, CreatePublisherWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     //publisher using the default profile
     Publisher* default_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -376,7 +376,7 @@ TEST(ParticipantTests, CreatePSMPublisher)
 
 TEST(ParticipantTests, ChangeDefaultPublisherQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     PublisherQos qos;
     ASSERT_TRUE(participant->get_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
@@ -414,7 +414,7 @@ TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
 
 TEST(ParticipantTests, CreateSubscriber)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -443,7 +443,7 @@ void check_subscriber_with_profile (Subscriber* subscriber, const std::string& p
 TEST(ParticipantTests, CreateSubscriberWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     //subscriber using the default profile
     Subscriber* default_subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -471,7 +471,7 @@ TEST(ParticipantTests, CreatePSMSubscriber)
 
 TEST(ParticipantTests, DeletePublisher)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -482,7 +482,7 @@ TEST(ParticipantTests, DeletePublisher)
 
 TEST(ParticipantTests, DeleteSubscriber)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -493,7 +493,7 @@ TEST(ParticipantTests, DeleteSubscriber)
 
 TEST(ParticipantTests, ChangeDefaultSubscriberQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     SubscriberQos qos;
     ASSERT_EQ(participant->get_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
@@ -531,7 +531,7 @@ TEST(ParticipantTests, ChangePSMDefaultSubscriberQos)
 
 TEST(ParticipantTests, ChangeDefaultTopicQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     TopicQos qos;
     participant->get_default_topic_qos(qos);
 
@@ -552,7 +552,7 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
 
 TEST(ParticipantTests, ChangePSMDefaultTopicQos)
 {
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::topic::qos::TopicQos qos = participant.default_topic_qos();
 
     ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
@@ -568,7 +568,7 @@ TEST(ParticipantTests, ChangePSMDefaultTopicQos)
 
 TEST(ParticipantTests, CreateTopic)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant, "footype");
@@ -582,7 +582,7 @@ TEST(ParticipantTests, CreateTopic)
 
 TEST(ParticipantTests, PSMCreateTopic)
 {
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant.delegate().get(), "footype");
@@ -595,8 +595,8 @@ TEST(ParticipantTests, PSMCreateTopic)
 
 TEST(ParticipantTests, DeleteTopic)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
-    DomainParticipant* participant2 = DomainParticipantFactory::get_instance()->create_participant(1);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant2 = DomainParticipantFactory::get_instance()->create_participant(1, PARTICIPANT_QOS_DEFAULT);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant, "footype");
@@ -612,7 +612,7 @@ TEST(ParticipantTests, DeleteTopic)
 
 TEST(ParticipantTests, LookupTopicDescription)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     const std::string topic_name("footopic");
 
@@ -637,7 +637,7 @@ TEST(ParticipantTests, LookupTopicDescription)
 
 TEST(ParticipantTests, DeleteTopicInUse)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant, "footype");

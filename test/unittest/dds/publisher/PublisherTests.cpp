@@ -92,7 +92,7 @@ public:
 
 TEST(PublisherTests, GetPublisherParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -114,7 +114,7 @@ TEST(PublisherTests, GetPSMPublisherParticipant)
 
 TEST(PublisherTests, ChangeDefaultDataWriterQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -155,7 +155,7 @@ TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
 
 TEST(PublisherTests, ChangePublisherQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -181,7 +181,7 @@ TEST(PublisherTests, ChangePublisherQos)
 
 TEST(PublisherTests, ChangePSMPublisherQos)
 {
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0);
+    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
     ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
 
     ::dds::pub::qos::PublisherQos qos = publisher.qos();
@@ -197,7 +197,7 @@ TEST(PublisherTests, ChangePSMPublisherQos)
 
 TEST(PublisherTests, CreateDataWriter)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -209,7 +209,7 @@ TEST(PublisherTests, CreateDataWriter)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    DataWriter* datawriter = publisher->create_datawriter(topic);
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
     ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
@@ -263,7 +263,7 @@ void check_datawriter_with_profile (DataWriter* datawriter, const std::string& p
 TEST(PublisherTests, CreateDataWriterWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -288,7 +288,7 @@ TEST(PublisherTests, CreateDataWriterWithProfile)
 
 TEST(PublisherTests, DeletePublisherWithWriters)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -300,7 +300,7 @@ TEST(PublisherTests, DeletePublisherWithWriters)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    DataWriter* datawriter = publisher->create_datawriter(topic);
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);

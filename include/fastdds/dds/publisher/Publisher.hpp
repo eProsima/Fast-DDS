@@ -124,7 +124,7 @@ public:
      */
     RTPS_DllAPI DataWriter* create_datawriter(
             Topic* topic,
-            const DataWriterQos& qos = DATAWRITER_QOS_DEFAULT,
+            const DataWriterQos& qos,
             DataWriterListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
