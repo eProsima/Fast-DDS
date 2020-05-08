@@ -216,10 +216,28 @@ bool NetworkFactory::getDefaultMetatrafficMulticastLocators(LocatorList_t &locat
         uint32_t metatraffic_multicast_port) const
 {
     bool result = false;
+
+    TransportInterface* shm_transport = nullptr;
+
     for (auto& transport : mRegisteredTransports)
     {
-        result |= transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
+        // For better fault-tolerance reasons, SHM multicast metatraffic is avoided if it is already provided 
+        // by another transport
+        if (transport->kind() != LOCATOR_KIND_SHM)
+        {
+            result |= transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
+        }
+        else
+        {
+            shm_transport = transport.get();
+        }
     }
+
+    if(locators.size() == 0 && shm_transport)
+    {
+        result |= shm_transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
+    }
+
     return result;
 }
 
