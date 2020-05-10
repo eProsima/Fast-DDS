@@ -629,9 +629,12 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
     parameter.length = parameter_length;
 
     uint32_t pos_ref = cdr_message->pos;
-    uint32_t num_properties;
+    uint32_t num_properties = 0;
     bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_properties);
-
+    if (!valid)
+    {
+      return false;
+    }
     //properties_.reserve(parameter_length - 4);
 
     for (size_t i = 0; i < num_properties; ++i)
