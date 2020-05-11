@@ -952,9 +952,11 @@ public:                                                                         
                                                                                        \
     };
 
-
+/// @copydoc GenericDataQosPolicy
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
+/// @copydoc GenericDataQosPolicy
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
+/// @copydoc GenericDataQosPolicy
 TEMPLATE_DATA_QOS_POLICY(GroupDataQosPolicy, PID_GROUP_DATA)
 
 /**
