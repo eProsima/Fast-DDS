@@ -105,10 +105,10 @@ public:
      * @brief This operation retrieves the default value of the DomainParticipant QoS, that is, the QoS policies which will
      * be used for newly created DomainParticipant entities in the case where the QoS policies are defaulted in the
      * create_participant operation.
-     * The values retrieved get_default_participant_qos will match the set of values specified  on the last successful call
+     * The values retrieved get_default_participant_qos will match the set of values specified on the last successful call
      * to set_default_participant_qos, or else, if the call was never made, the default values.
-     * @param qos DomainParticipantQos to be set
-     * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
+     * @param qos DomainParticipantQos where the qos is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
             DomainParticipantQos& qos) const;
@@ -117,12 +117,22 @@ public:
      * @brief This operation retrieves the default value of the DomainParticipant QoS, that is, the QoS policies which will
      * be used for newly created DomainParticipant entities in the case where the QoS policies are defaulted in the
      * create_participant operation.
-     * The values retrieved get_default_participant_qos will match the set of values specified  on the last successful call
+     * The values retrieved get_default_participant_qos will match the set of values specified on the last successful call
      * to set_default_participant_qos, or else, if the call was never made, the default values.
      * @return A reference to the default DomainParticipantQos
      */
     RTPS_DllAPI const DomainParticipantQos& get_default_participant_qos() const;
 
+    /**
+     * @brief This operation sets a default value of the DomainParticipant QoS policies which will be used for
+     * newly created DomainParticipant entities in the case where the QoS policies are defaulted in the
+     * create_participant operation.
+     *
+     * This operation will check that the resulting policies are self consistent; if they are not, the operation
+     * will have no effect and return INCONSISTENT_POLICY.
+     * @param qos DomainParticipantQos to be set
+     * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
+     */
     RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const DomainParticipantQos& qos);
 

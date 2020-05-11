@@ -53,9 +53,9 @@ struct DeadlineMissedStatus
     fastrtps::rtps::InstanceHandle_t last_instance_handle;
 };
 
-//! Alias of DeadlineMissedStatus
+//! Typedef of DeadlineMissedStatus
 typedef DeadlineMissedStatus OfferedDeadlineMissedStatus;
-//! Alias of DeadlineMissedStatus
+//! Typedef of DeadlineMissedStatus
 typedef DeadlineMissedStatus RequestedDeadlineMissedStatus;
 
 } //namespace dds

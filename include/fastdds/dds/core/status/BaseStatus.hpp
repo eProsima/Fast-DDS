@@ -31,7 +31,7 @@ struct BaseStatus
     //!Total cumulative count
     int32_t total_count = 0;
 
-    //!Increment since the last time the status is read
+    //!Increment since the last time the status was read
     int32_t total_count_change = 0;
 };
 

@@ -1905,7 +1905,7 @@ typedef enum DataRepresentationId : int16_t
 
 /**
  * With multiple standard data Representations available, and vendor-specific extensions possible, DataWriters and
- * DataReadersmust be able to negotiate which data representation(s) to use. This negotiation shall occur based on
+ * DataReaders must be able to negotiate which data representation(s) to use. This negotiation shall occur based on
  * DataRepresentationQosPolicy.
  * @warning If a writer’s offered representation is contained within a reader’s sequence, the offer satisfies the
  * request and the policies are compatible. Otherwise, they are incompatible.

@@ -26,7 +26,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-//! A enum with the possible values for the sample rejected reason
+//! An enum with the possible values for the sample rejected reason
 enum SampleRejectedStatusKind
 {
     //!Default value
