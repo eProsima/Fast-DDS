@@ -265,11 +265,12 @@ struct RTPS_DllAPI CacheChange_t
             return false;
         }
 
-        received_fragments(fragment_starting_num - 1, fragments_in_submessage);
-
-        memcpy(
-            &serializedPayload.data[original_offset],
-            incoming_data.data, incoming_length);
+        if (received_fragments(fragment_starting_num - 1, fragments_in_submessage))
+        {
+            memcpy(
+                &serializedPayload.data[original_offset],
+                incoming_data.data, incoming_length);
+        }
 
         return is_fully_assembled();
     }
@@ -316,11 +317,14 @@ private:
      *
      * @param initial_fragment Index (0-based) of first received fragment.
      * @param num_of_fragments Number of received fragments. Should be strictly positive.
+     * @return true if the list of missing fragments was modified, false otherwise.
      */
-    void received_fragments(
+    bool received_fragments(
             uint32_t initial_fragment,
             uint32_t num_of_fragments)
     {
+        bool at_least_one_changed = false;
+
         if ( (fragment_size_ > 0) && (initial_fragment < fragment_count_) )
         {
             uint32_t last_fragment = initial_fragment + num_of_fragments;
@@ -335,6 +339,7 @@ private:
                 while (first_missing_fragment_ < last_fragment)
                 {
                     first_missing_fragment_ = get_next_missing_fragment(first_missing_fragment_);
+                    at_least_one_changed = true;
                 }
             }
             else
@@ -352,16 +357,22 @@ private:
                         while (next_missing_fragment < last_fragment)
                         {
                             next_missing_fragment = get_next_missing_fragment(next_missing_fragment);
+                            at_least_one_changed = true;
                         }
 
                         // Update next and finish loop
-                        set_next_missing_fragment(current_frag, next_missing_fragment);
+                        if (at_least_one_changed)
+                        {
+                            set_next_missing_fragment(current_frag, next_missing_fragment);
+                        }
                         break;
                     }
                     current_frag = next_frag;
                 }
             }
         }
+
+        return at_least_one_changed;
     }
 
 };
@@ -379,19 +390,6 @@ enum ChangeForReaderStatus_t
     UNACKNOWLEDGED = 2,            //!< UNACKNOWLEDGED
     ACKNOWLEDGED = 3,              //!< ACKNOWLEDGED
     UNDERWAY = 4                   //!< UNDERWAY
-};
-
-/**
- * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
- *  @ingroup COMMON_MODULE
- */
-enum ChangeFromWriterStatus_t
-{
-    UNKNOWN = 0,
-    MISSING = 1,
-    //REQUESTED_WITH_NACK,
-    RECEIVED = 2,
-    LOST = 3
 };
 
 /**
@@ -594,102 +592,6 @@ struct ChangeForReaderCmp
 
 };
 
-/**
- * Struct ChangeFromWriter_t used to indicate the state of a specific change with respect to a specific writer, as well as its relevance.
- *  @ingroup COMMON_MODULE
- */
-class ChangeFromWriter_t
-{
-    friend struct ChangeFromWriterCmp;
-
-public:
-
-    ChangeFromWriter_t()
-        : status_(UNKNOWN)
-        , is_relevant_(true)
-    {
-
-    }
-
-    ChangeFromWriter_t(
-            const ChangeFromWriter_t& ch)
-        : status_(ch.status_)
-        , is_relevant_(ch.is_relevant_)
-        , seq_num_(ch.seq_num_)
-    {
-    }
-
-    ChangeFromWriter_t(
-            const SequenceNumber_t& seq_num)
-        : status_(UNKNOWN)
-        , is_relevant_(true)
-        , seq_num_(seq_num)
-    {
-    }
-
-    ~ChangeFromWriter_t()
-    {
-    };
-
-    ChangeFromWriter_t& operator =(
-            const ChangeFromWriter_t& ch)
-    {
-        status_ = ch.status_;
-        is_relevant_ = ch.is_relevant_;
-        seq_num_ = ch.seq_num_;
-        return *this;
-    }
-
-    void setStatus(
-            const ChangeFromWriterStatus_t status)
-    {
-        status_ = status;
-    }
-
-    ChangeFromWriterStatus_t getStatus() const
-    {
-        return status_;
-    }
-
-    void setRelevance(
-            const bool relevance)
-    {
-        is_relevant_ = relevance;
-    }
-
-    bool isRelevant() const
-    {
-        return is_relevant_;
-    }
-
-    const SequenceNumber_t getSequenceNumber() const
-    {
-        return seq_num_;
-    }
-
-    //! Set change as not valid
-    void notValid()
-    {
-        is_relevant_ = false;
-    }
-
-    bool operator < (
-            const ChangeFromWriter_t& rhs) const
-    {
-        return seq_num_ < rhs.seq_num_;
-    }
-
-private:
-
-    //! Status
-    ChangeFromWriterStatus_t status_;
-
-    //! Boolean specifying if this change is relevant
-    bool is_relevant_;
-
-    //! Sequence number
-    SequenceNumber_t seq_num_;
-};
 #endif
 }
 }

@@ -118,11 +118,6 @@ public:
     RTPS_DllAPI bool remove_all_changes();
 
     /**
-     * Update the maximum and minimum sequenceNumbers.
-     */
-    virtual void updateMaxMinSeqNum() = 0;
-
-    /**
      * Remove a specific change from the history.
      * @param ch Pointer to the CacheChange_t.
      * @return True if removed.
@@ -219,17 +214,8 @@ protected:
     //!Variable to know if the history is full without needing to block the History mutex.
     bool m_isHistoryFull;
 
-    //!Pointer to and invalid cacheChange used to return the maximum and minimum when no changes are stored in the history.
-    CacheChange_t* mp_invalidCache;
-
     //!Pool of cache changes reserved when the History is created.
     CacheChangePool m_changePool;
-
-    //!Pointer to the minimum sequeceNumber CacheChange.
-    CacheChange_t* mp_minSeqCacheChange;
-
-    //!Pointer to the maximum sequeceNumber CacheChange.
-    CacheChange_t* mp_maxSeqCacheChange;
 
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
