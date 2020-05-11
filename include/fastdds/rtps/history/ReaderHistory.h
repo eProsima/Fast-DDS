@@ -105,11 +105,6 @@ public:
             const SequenceNumber_t& seq_num,
             const GUID_t& writer_guid);
 
-    /**
-     * Update the maximum and minimum sequenceNumber cacheChanges.
-     */
-    RTPS_DllAPI void updateMaxMinSeqNum() override;
-
     RTPS_DllAPI bool get_min_change_from(
             CacheChange_t** min_change,
             const GUID_t& writerGuid);

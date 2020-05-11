@@ -85,7 +85,6 @@ bool ReaderHistory::add_change(
         m_changes.push_back(a_change);
     }
 
-    updateMaxMinSeqNum();
     logInfo(RTPS_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
@@ -117,7 +116,6 @@ bool ReaderHistory::remove_change(
             mp_reader->change_removed_by_history(a_change);
             m_changePool.release_Cache(a_change);
             m_changes.erase(chit);
-            updateMaxMinSeqNum();
             return true;
         }
     }
@@ -180,7 +178,6 @@ bool ReaderHistory::remove_fragmented_changes_until(
         return false;
     }
 
-    bool at_least_one_removed = false;
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
     while (chit != m_changes.end())
@@ -196,7 +193,6 @@ bool ReaderHistory::remove_fragmented_changes_until(
                     mp_reader->change_removed_by_history(item);
                     m_changePool.release_Cache(item);
                     chit = m_changes.erase(chit);
-                    at_least_one_removed = true;
                     continue;
                 }
             }
@@ -208,26 +204,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
         ++chit;
     }
 
-    if (at_least_one_removed)
-    {
-        updateMaxMinSeqNum();
-    }
-
     return true;
-}
-
-void ReaderHistory::updateMaxMinSeqNum()
-{
-    if (m_changes.size() == 0)
-    {
-        mp_minSeqCacheChange = mp_invalidCache;
-        mp_maxSeqCacheChange = mp_invalidCache;
-    }
-    else
-    {
-        mp_minSeqCacheChange = m_changes.front();
-        mp_maxSeqCacheChange = m_changes.back();
-    }
 }
 
 bool ReaderHistory::get_min_change_from(
@@ -250,6 +227,6 @@ bool ReaderHistory::get_min_change_from(
     return ret;
 }
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

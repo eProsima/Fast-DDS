@@ -50,11 +50,6 @@ class WriterHistory : public History
     RTPS_DllAPI virtual ~WriterHistory() override;
 
     /**
-     * Update the maximum and minimum sequenceNumber cacheChanges.
-     */
-    RTPS_DllAPI void updateMaxMinSeqNum() override;
-
-    /**
      * Add a CacheChange_t to the WriterHistory.
      * @param a_change Pointer to the CacheChange_t to be added.
      * @return True if added.

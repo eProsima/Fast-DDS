@@ -35,25 +35,16 @@ History::History(
         const HistoryAttributes& att)
     : m_att(att)
     , m_isHistoryFull(false)
-    , mp_invalidCache(nullptr)
     , m_changePool(att.initialReservedCaches, att.payloadMaxSize, att.maximumReservedCaches, att.memoryPolicy)
-    , mp_minSeqCacheChange(nullptr)
-    , mp_maxSeqCacheChange(nullptr)
     , mp_mutex(nullptr)
 
 {
     m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
-    mp_invalidCache = new CacheChange_t();
-    mp_invalidCache->writerGUID = c_Guid_Unknown;
-    mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
-    mp_minSeqCacheChange = mp_invalidCache;
-    mp_maxSeqCacheChange = mp_invalidCache;
 }
 
 History::~History()
 {
     logInfo(RTPS_HISTORY, "");
-    delete(mp_invalidCache);
 }
 
 bool History::remove_all_changes()
@@ -74,7 +65,6 @@ bool History::remove_all_changes()
         }
         m_changes.clear();
         m_isHistoryFull = false;
-        updateMaxMinSeqNum();
         return true;
     }
     return false;
@@ -83,9 +73,9 @@ bool History::remove_all_changes()
 bool History::get_min_change(
         CacheChange_t** min_change)
 {
-    if (mp_minSeqCacheChange->sequenceNumber != mp_invalidCache->sequenceNumber)
+    if (!m_changes.empty())
     {
-        *min_change = mp_minSeqCacheChange;
+        *min_change = m_changes.front();
         return true;
     }
     return false;
@@ -95,9 +85,9 @@ bool History::get_min_change(
 bool History::get_max_change(
         CacheChange_t** max_change)
 {
-    if (mp_maxSeqCacheChange->sequenceNumber != mp_invalidCache->sequenceNumber)
+    if (!m_changes.empty())
     {
-        *max_change = mp_maxSeqCacheChange;
+        *max_change = m_changes.back();
         return true;
     }
     return false;
