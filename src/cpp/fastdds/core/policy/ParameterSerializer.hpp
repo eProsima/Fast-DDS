@@ -633,7 +633,7 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
     bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_properties);
     if (!valid)
     {
-      return false;
+        return false;
     }
     //properties_.reserve(parameter_length - 4);
 
