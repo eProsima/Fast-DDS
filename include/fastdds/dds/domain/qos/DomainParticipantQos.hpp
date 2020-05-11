@@ -260,10 +260,10 @@ public:
 
 private:
 
-    //!UserData Qos, NOT implemented in the library.
+    //!UserData Qos, implemented in the library.
     UserDataQosPolicy user_data_;
 
-    //!Auto enable on creation
+    //!EntityFactory Qos, implemented in the library.
     EntityFactoryQosPolicy entity_factory_;
 
     //!Participant allocation limits

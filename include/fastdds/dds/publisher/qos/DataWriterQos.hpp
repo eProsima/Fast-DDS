@@ -776,10 +776,10 @@ private:
     //!User Data Qos, implemented in the library.
     UserDataQosPolicy user_data_;
 
-    //!Ownership Qos, NOT implemented in the library.
+    //!Ownership Qos, implemented in the library.
     OwnershipQosPolicy ownership_;
 
-    //!Ownership Strength Qos, NOT implemented in the library.
+    //!Ownership Strength Qos, implemented in the library.
     OwnershipStrengthQosPolicy ownership_strength_;
 
     //!Writer Data Lifecycle Qos, NOT implemented in the library.

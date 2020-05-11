@@ -86,9 +86,7 @@ public:
 
 private:
 
-    /**
-     * @brief EntityFactoryQosPolicy
-     */
+    //!EntityFactoryQosPolicy, implemented in the library.
     EntityFactoryQosPolicy entity_factory_;
 };
 

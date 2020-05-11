@@ -181,7 +181,7 @@ private:
     //!Partition Qos, implemented in the library.
     PartitionQosPolicy partition_;
 
-    //!Group Data Qos, NOT implemented in the library.
+    //!Group Data Qos, implemented in the library.
     GroupDataQosPolicy group_data_;
 
     //!Entity Factory Qos, implemented in the library

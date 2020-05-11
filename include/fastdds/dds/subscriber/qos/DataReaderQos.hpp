@@ -777,10 +777,10 @@ private:
     //!Resource Limits Qos, implemented in the library.
     ResourceLimitsQosPolicy resource_limits_;
 
-    //!User Data Qos, NOT implemented in the library.
+    //!User Data Qos, implemented in the library.
     UserDataQosPolicy user_data_;
 
-    //!Ownership Qos, NOT implemented in the library.
+    //!Ownership Qos, implemented in the library.
     OwnershipQosPolicy ownership_;
 
     //!Time Based Filter Qos, NOT implemented in the library.
