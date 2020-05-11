@@ -265,11 +265,12 @@ struct RTPS_DllAPI CacheChange_t
             return false;
         }
 
-        received_fragments(fragment_starting_num - 1, fragments_in_submessage);
-
-        memcpy(
-            &serializedPayload.data[original_offset],
-            incoming_data.data, incoming_length);
+        if (received_fragments(fragment_starting_num - 1, fragments_in_submessage))
+        {
+            memcpy(
+                &serializedPayload.data[original_offset],
+                incoming_data.data, incoming_length);
+        }
 
         return is_fully_assembled();
     }
@@ -316,11 +317,14 @@ private:
      *
      * @param initial_fragment Index (0-based) of first received fragment.
      * @param num_of_fragments Number of received fragments. Should be strictly positive.
+     * @return true if the list of missing fragments was modified, false otherwise.
      */
-    void received_fragments(
+    bool received_fragments(
             uint32_t initial_fragment,
             uint32_t num_of_fragments)
     {
+        bool at_least_one_changed = false;
+
         if ( (fragment_size_ > 0) && (initial_fragment < fragment_count_) )
         {
             uint32_t last_fragment = initial_fragment + num_of_fragments;
@@ -335,6 +339,7 @@ private:
                 while (first_missing_fragment_ < last_fragment)
                 {
                     first_missing_fragment_ = get_next_missing_fragment(first_missing_fragment_);
+                    at_least_one_changed = true;
                 }
             }
             else
@@ -352,16 +357,22 @@ private:
                         while (next_missing_fragment < last_fragment)
                         {
                             next_missing_fragment = get_next_missing_fragment(next_missing_fragment);
+                            at_least_one_changed = true;
                         }
 
                         // Update next and finish loop
-                        set_next_missing_fragment(current_frag, next_missing_fragment);
+                        if (at_least_one_changed)
+                        {
+                            set_next_missing_fragment(current_frag, next_missing_fragment);
+                        }
                         break;
                     }
                     current_frag = next_frag;
                 }
             }
         }
+
+        return at_least_one_changed;
     }
 
 };
