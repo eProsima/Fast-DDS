@@ -23,7 +23,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-//! @brief Specifies the behavior of the DataWriterwith regards to the lifecycle of the data-instances it manages.
+//! @brief Specifies the behavior of the DataWriter with regards to the lifecycle of the data-instances it manages.
+//! @warning This Qos Policy will be implemented in future releases.
 //! @note Mutable Qos Policy
 class WriterDataLifecycleQosPolicy
 {
