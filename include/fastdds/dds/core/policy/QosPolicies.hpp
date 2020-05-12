@@ -952,11 +952,23 @@ public:                                                                         
                                                                                        \
     };
 
+#ifdef DOXYGEN_DOCUMENTATION
 /// @copydoc GenericDataQosPolicy
+class UserDataQosPolicy
+{
+};
+/// @copydoc GenericDataQosPolicy
+class TopicDataQosPolicy
+{
+};
+/// @copydoc GenericDataQosPolicy
+class GroupDataQosPolicy
+{
+};
+#endif
+
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
-/// @copydoc GenericDataQosPolicy
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
-/// @copydoc GenericDataQosPolicy
 TEMPLATE_DATA_QOS_POLICY(GroupDataQosPolicy, PID_GROUP_DATA)
 
 /**
@@ -1479,7 +1491,7 @@ private:
 
     //! Maximum size <br> By default, 0.
     uint32_t max_size_;
-    //! Paritions
+    //! Partitions
     fastrtps::rtps::SerializedPayload_t partitions_;
     //! Number of partitions. <br> By default, 0.
     uint32_t Npartitions_;
