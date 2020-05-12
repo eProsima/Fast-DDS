@@ -125,10 +125,7 @@ public:
 
     bool try_remove_change(
             std::chrono::steady_clock::time_point&,
-            std::unique_lock<RecursiveTimedMutex>&) override
-    {
-        return remove_older_changes(1);
-    }
+            std::unique_lock<RecursiveTimedMutex>&) override;
 
     void add_flow_controller(
             std::unique_ptr<FlowController> controller) override;

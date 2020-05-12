@@ -536,10 +536,7 @@ public:
             assert(!unsent_fragments_.is_set(base));
 
             // Update base to first bit set
-            do
-            {
-                ++base;
-            } while (!unsent_fragments_.is_set(base));
+            base = unsent_fragments_.min();
             unsent_fragments_.base_update(base);
 
             // Add all possible fragments
