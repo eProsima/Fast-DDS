@@ -93,11 +93,21 @@ public:
             rtps::WriteParams& wparams);
 
     /*!
-     * @param sample
+     * @param key
      * @return
      */
     rtps::InstanceHandle_t register_instance(
-            void* sample);
+            void* instance);
+
+    /*!
+     * @param key
+     * @param instance_handle
+     * @param dispose
+     * @return
+     */
+    bool unregister_instance(
+            void* instance,
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * Removes the cache change with the minimum sequence number

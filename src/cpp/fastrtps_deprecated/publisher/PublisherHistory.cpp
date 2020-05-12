@@ -62,8 +62,8 @@ PublisherHistory::~PublisherHistory()
 
 bool PublisherHistory::register_instance(
         const InstanceHandle_t& instance_handle,
-        std::unique_lock<RecursiveTimedMutex>& lock,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        std::unique_lock<RecursiveTimedMutex>&,
+        const std::chrono::time_point<std::chrono::steady_clock>&)
 {
     bool returned_value = false;
 
@@ -86,7 +86,7 @@ bool PublisherHistory::add_pub_change(
         CacheChange_t* change,
         WriteParams& wparams,
         std::unique_lock<RecursiveTimedMutex>& lock,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     if (m_isHistoryFull)
     {
@@ -298,6 +298,42 @@ bool PublisherHistory::remove_change_g(
         CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
+}
+
+bool PublisherHistory::remove_instance_changes(
+        const rtps::InstanceHandle_t& handle)
+{
+    if (mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        return false;
+    }
+
+    if (topic_att_.getTopicKind() == NO_KEY)
+    {
+        logError(RTPS_HISTORY, "Cannot be removed instance changes of a NO_KEY DataType");
+        return false;
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
+    t_m_Inst_Caches::iterator vit;
+    if (!this->find_key(handle, &vit))
+    {
+        return false;
+    }
+
+    for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
+    {
+        if (remove_change(*chit))
+        {
+            m_isHistoryFull = false;
+        }
+    }
+
+    vit->second.cache_changes.clear();
+    keyed_changes_.erase(vit);
+
+    return true;
 }
 
 bool PublisherHistory::set_next_deadline(

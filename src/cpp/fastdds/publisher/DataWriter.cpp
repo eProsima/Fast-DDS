@@ -69,9 +69,16 @@ ReturnCode_t DataWriter::write(
 }
 
 fastrtps::rtps::InstanceHandle_t DataWriter::register_instance(
-        void* key)
+        void* instance)
 {
-    return impl_->register_instance(key);
+    return impl_->register_instance(instance);
+}
+
+ReturnCode_t DataWriter::unregister_instance(
+        void* instance,
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->unregister_instance(instance, handle);
 }
 
 ReturnCode_t DataWriter::dispose(

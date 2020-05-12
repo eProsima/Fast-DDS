@@ -17,6 +17,23 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+TEST(KeyedTopic, RegistrationNonKeyedFail)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_helloworld_data_generator(2);
+
+    for (auto data_sample : data)
+    {
+        // Register instances
+        EXPECT_EQ(writer.register_instance(data_sample), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
+    }
+}
+
 TEST(KeyedTopic, RegistrationSuccess)
 {
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
@@ -49,4 +66,25 @@ TEST(KeyedTopic, RegistrationFail)
     // Register instances.
     EXPECT_NE(writer.register_instance(data.front()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
     EXPECT_EQ(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
+}
+
+TEST(KeyedTopic, RegistrationAfterUnregistration)
+{
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.
+    resource_limits_max_instances(1).
+    init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_keyedhelloworld_data_generator(2);
+
+    // Register instances.
+    auto instance_handle_1 = writer.register_instance(data.front());
+    EXPECT_NE(instance_handle_1, eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
+    EXPECT_EQ(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
+
+    ASSERT_TRUE(writer.unregister_instance(data.front(), instance_handle_1));
+    EXPECT_NE(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 }

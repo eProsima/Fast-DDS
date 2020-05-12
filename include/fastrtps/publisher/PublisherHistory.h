@@ -63,7 +63,7 @@ public:
     bool register_instance(
             const rtps::InstanceHandle_t& instance_handle,
             std::unique_lock<RecursiveTimedMutex>& lock,
-            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
      * Add a change comming from the Publisher.
@@ -77,7 +77,7 @@ public:
             rtps::CacheChange_t* change,
             rtps::WriteParams& wparams,
             std::unique_lock<RecursiveTimedMutex>& lock,
-            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
      * Remove all change from the associated history.
@@ -103,6 +103,9 @@ public:
 
     virtual bool remove_change_g(
             rtps::CacheChange_t* a_change);
+
+    bool remove_instance_changes(
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * @brief Sets the next deadline for the given instance

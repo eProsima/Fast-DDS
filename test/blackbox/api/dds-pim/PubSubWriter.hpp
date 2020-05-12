@@ -380,6 +380,13 @@ public:
         return datawriter_->register_instance((void*)&msg);
     }
 
+    bool unregister_instance(
+            type& msg,
+            eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
+    {
+        return ReturnCode_t::RETCODE_OK == datawriter_->unregister_instance((void*)&msg, instance_handle);
+    }
+
     bool send_sample(
             type& msg)
     {

@@ -246,10 +246,10 @@ bool PublisherImpl::create_new_change_with_params(
 }
 
 InstanceHandle_t PublisherImpl::register_instance(
-        void* sample)
+        void* instance)
 {
     /// Preconditions
-    if (sample == nullptr)
+    if (instance == nullptr)
     {
         logError(PUBLISHER, "Data pointer not valid");
         return c_InstanceHandle_Unknown;
@@ -266,7 +266,7 @@ InstanceHandle_t PublisherImpl::register_instance(
 #if HAVE_SECURITY
     is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
 #endif
-    mp_type->getKey(sample, &instance_handle, is_key_protected);
+    mp_type->getKey(instance, &instance_handle, is_key_protected);
 
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
@@ -286,6 +286,65 @@ InstanceHandle_t PublisherImpl::register_instance(
     }
 
     return c_InstanceHandle_Unknown;
+}
+
+bool PublisherImpl::unregister_instance(
+        void* instance,
+        const InstanceHandle_t& handle)
+{
+    /// Preconditions
+    if (instance == nullptr)
+    {
+        logError(PUBLISHER, "Data pointer not valid");
+        return false;
+    }
+
+    if (m_att.topic.topicKind == NO_KEY)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return false;
+    }
+
+    bool returned_value = false;
+    InstanceHandle_t ih = handle;
+
+    if (c_InstanceHandle_Unknown == ih)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
+#endif
+        mp_type->getKey(instance, &ih, is_key_protected);
+    }
+
+    // Block lowlevel writer
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
+    if (lock.try_lock_until(max_blocking_time))
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
+#endif
+    {
+        ChangeKind_t change_kind = NOT_ALIVE_UNREGISTERED;
+        CacheChange_t* ch = mp_writer->new_change(
+            mp_type->getSerializedSizeProvider(instance),
+            change_kind,
+            ih);
+
+        if (nullptr != ch)
+        {
+            WriteParams wparams;
+            if (!(returned_value = this->m_history.add_pub_change(ch, wparams, lock, max_blocking_time)))
+            {
+                m_history.release_Cache(ch);
+            }
+        }
+    }
+
+    return returned_value;
 }
 
 bool PublisherImpl::removeMinSeqChange()
@@ -431,7 +490,12 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
-    if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+    if (mp_publisherImpl->m_att.topic.topicKind == WITH_KEY &&
+            (ch->kind == NOT_ALIVE_UNREGISTERED || ch->kind == NOT_ALIVE_DISPOSED_UNREGISTERED))
+    {
+        mp_publisherImpl->m_history.remove_instance_changes(ch->instanceHandle);
+    }
+    else if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
     {
         mp_publisherImpl->m_history.remove_change_g(ch);
     }

@@ -159,8 +159,8 @@ struct RTPS_DllAPI CacheChange_t
      * @return size of fragment (0 means change is not fragmented).
      */
     uint16_t getFragmentSize() const
-    { 
-        return fragment_size_; 
+    {
+        return fragment_size_;
     }
 
     /*!
@@ -554,10 +554,10 @@ public:
         }
         unsentFragments.for_each(
             [this](
-                    FragmentNumber_t element)
-            {
-                unsent_fragments_.add(element);
-            });
+                FragmentNumber_t element)
+                    {
+                        unsent_fragments_.add(element);
+                    });
     }
 
 private:

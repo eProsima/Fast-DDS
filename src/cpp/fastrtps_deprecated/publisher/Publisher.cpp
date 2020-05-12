@@ -63,23 +63,15 @@ bool Publisher::dispose(
         void* Data)
 {
     logInfo(PUBLISHER, "Disposing of Data");
-    return mp_impl->create_new_change(NOT_ALIVE_DISPOSED, Data);
+    return false; //mp_impl->unregister_instance(Data, true);
 }
 
-bool Publisher::unregister(
-        void* Data)
+bool Publisher::unregister_instance(
+        void* instance,
+        const rtps::InstanceHandle_t& handle)
 {
     //Convert data to serialized Payload
-    logInfo(PUBLISHER, "Unregistering of Data");
-    return mp_impl->create_new_change(NOT_ALIVE_UNREGISTERED, Data);
-}
-
-bool Publisher::dispose_and_unregister(
-        void* Data)
-{
-    //Convert data to serialized Payload
-    logInfo(PUBLISHER, "Disposing and Unregistering Data");
-    return mp_impl->create_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, Data);
+    return mp_impl->unregister_instance(instance, handle);
 }
 
 bool Publisher::removeAllChange(

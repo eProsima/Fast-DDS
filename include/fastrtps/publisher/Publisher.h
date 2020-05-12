@@ -89,7 +89,7 @@ public:
      * @param sample Pointer to the sample used to retrieve the instance.
      */
     fastrtps::rtps::InstanceHandle_t register_instance(
-            void* sample);
+            void* instance);
 
     /**
      * Dispose of a previously written data.
@@ -103,15 +103,9 @@ public:
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool unregister(
-            void* Data);
-    /**
-     * Dispose and unregister a previously written data.
-     * @param Data Pointer to the data.
-     * @return True if correct.
-     */
-    bool dispose_and_unregister(
-            void* Data);
+    bool unregister_instance(
+            void* instance,
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * Remove all the Changes in the associated RTPSWriter.

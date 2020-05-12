@@ -126,8 +126,12 @@ public:
      * @param[out] instance_handle
      * @return
      */
-    fastrtps::rtps::InstanceHandle_t register_instance(
-            void* key);
+    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t register_instance(
+            void* instance);
+
+    RTPS_DllAPI ReturnCode_t unregister_instance(
+            void* instance,
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
      * Returns the DataWriter's GUID

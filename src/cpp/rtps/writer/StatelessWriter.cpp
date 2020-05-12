@@ -363,7 +363,7 @@ bool StatelessWriter::is_acked_by_all(
 }
 
 bool StatelessWriter::try_remove_change(
-        std::chrono::steady_clock::time_point&,
+        const std::chrono::steady_clock::time_point&,
         std::unique_lock<RecursiveTimedMutex>&)
 {
     return mp_history->remove_min_change();

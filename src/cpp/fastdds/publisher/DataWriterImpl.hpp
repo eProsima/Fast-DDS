@@ -123,7 +123,11 @@ public:
      * @return
      */
     fastrtps::rtps::InstanceHandle_t register_instance(
-            void* key);
+            void* instance);
+
+    ReturnCode_t unregister_instance(
+            void* instance,
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
      *
