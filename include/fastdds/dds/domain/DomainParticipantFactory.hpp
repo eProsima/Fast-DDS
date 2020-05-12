@@ -130,6 +130,11 @@ public:
      *
      * This operation will check that the resulting policies are self consistent; if they are not, the operation
      * will have no effect and return INCONSISTENT_POLICY.
+     *
+     * The special value PARTICIPANT_QOS_DEFAULT may be passed to this operation to indicate that the default
+     * QoS should be reset back to the initial values the factory would use, that is the values that would be
+     * used if the set_default_participant_qos operation had never been called.
+     *
      * @param qos DomainParticipantQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
