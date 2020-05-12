@@ -443,7 +443,7 @@ void DomainParticipantFactory::participant_has_been_deleted(
         {
             if ((*pit) == part || (*pit)->guid() == part->guid())
             {
-                it->second.erase(pit);
+                pit = it->second.erase(pit);
             }
             else
             {
