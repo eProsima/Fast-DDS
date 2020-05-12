@@ -952,16 +952,45 @@ public:                                                                         
                                                                                        \
     };
 
+//Variable used to generate the doxygen documentation for this QoS Policies
 #ifdef DOXYGEN_DOCUMENTATION
-/// @copydoc GenericDataQosPolicy
+/**
+ * @brief Class derived from GenericDataQosPolicy
+ *
+ * The purpose of this QoS is to allow the application to attach additional information to the created
+ * Entity objects such that when a remote application discovers their existence it can access that information and
+ * use it for its own purposes.
+ *
+ * One possible use of this QoS is to attach security credentials or some other information that can be used by the
+ * remote application to authenticate the source.
+ */
 class UserDataQosPolicy
 {
 };
-/// @copydoc GenericDataQosPolicy
+/**
+ * @brief Class derived from GenericDataQosPolicy
+ *
+ * The purpose of this QoS is to allow the application to attach additional information to the created Topic
+ * such that when a remote application discovers their existence it can examine the information and use it in an
+ * application-defined way.
+ *
+ * In combination with the listeners on the DataReader and DataWriter as well as by means of operations such as
+ * ignore_topic,these QoS can assist an application to extend the provided QoS.
+ */
 class TopicDataQosPolicy
 {
 };
-/// @copydoc GenericDataQosPolicy
+/**
+ * @brief Class derived from GenericDataQosPolicy
+ *
+ * The purpose of this QoS is to allow the application to attach additional information to the created
+ * Publisher or Subscriber. The value of the GROUP_DATA is available to the application on the DataReader and
+ * DataWriter entities and is propagated by means of the built-in topics.
+ *
+ * This QoS can be used by an application combination with the DataReaderListener and DataWriterListener to
+ * implement matching policies similar to those of the PARTITION QoS except the decision can be made based on an
+ * application-defined policy.
+ */
 class GroupDataQosPolicy
 {
 };
