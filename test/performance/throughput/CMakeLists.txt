@@ -39,8 +39,8 @@ set(
     THROUGHPUT_TEST_LIST
     interprocess_best_effort
     interprocess_reliable
-    interprocess_best_effort_tcp
-    interprocess_reliable_tcp
+#    interprocess_best_effort_tcp
+#    interprocess_reliable_tcp
     interprocess_best_effort_shm
     interprocess_reliable_shm
 )
