@@ -382,9 +382,16 @@ public:
 
     bool unregister_instance(
             type& msg,
-            eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
+            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
     {
         return ReturnCode_t::RETCODE_OK == datawriter_->unregister_instance((void*)&msg, instance_handle);
+    }
+
+    bool dispose(
+            type& msg,
+            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
+    {
+        return ReturnCode_t::RETCODE_OK == datawriter_->dispose((void*)&msg, instance_handle);
     }
 
     bool send_sample(

@@ -234,26 +234,6 @@ public:
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
-    /**
-     * @brief This operation requests the middleware to delete the data (the actual deletion is postponed until there is no
-     * more use for that data in the whole system). In general, applications are made aware of the deletion by means of
-     * operations on the DataReader objects that already knew that instance. This operation does not modify the value of
-     * the instance. The instance parameter is passed just for the purposes of identifying the instance.
-     * When this operation is used, the Service will automatically supply the value of the source_timestamp that is made
-     * available to DataReader objects by means of the source_timestamp attribute inside the SampleInfo. The constraints
-     * on the values of the handle parameter and the corresponding error behavior are the same specified for the
-     * unregister_instance operation.
-     * @param data Pointer to data.
-     * @return true if disposed, false if not.
-     */
-    RTPS_DllAPI bool dispose(
-            void* data);
-
-    /**
-     * @brief Returns the liveliness lost status
-     * @param status Liveliness lost status struct
-     * @return RETCODE_OK
-     */
     RTPS_DllAPI ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
 

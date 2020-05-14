@@ -92,6 +92,12 @@ public:
             void* Data,
             rtps::WriteParams& wparams);
 
+    bool create_new_change_with_params(
+            rtps::ChangeKind_t kind,
+            void* Data,
+            rtps::WriteParams& wparams,
+            const rtps::InstanceHandle_t& handle);
+
     /*!
      * @param key
      * @return
@@ -107,7 +113,8 @@ public:
      */
     bool unregister_instance(
             void* instance,
-            const rtps::InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle,
+            bool dispose = false);
 
     /**
      * Removes the cache change with the minimum sequence number

@@ -401,3 +401,17 @@ bool PublisherHistory::get_next_deadline(
 
     return false;
 }
+
+bool PublisherHistory::key_is_registered(
+        const InstanceHandle_t& handle)
+{
+    if (mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        return false;
+    }
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
+    t_m_Inst_Caches::iterator vit;
+    vit = keyed_changes_.find(handle);
+    return (vit != keyed_changes_.end());
+}

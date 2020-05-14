@@ -97,7 +97,8 @@ public:
      * @return True if correct.
      */
     bool dispose(
-            void* Data);
+            void* data,
+            const rtps::InstanceHandle_t& handle);
     /**
      * Unregister a previously written data.
      * @param Data Pointer to the data.

@@ -85,13 +85,7 @@ ReturnCode_t DataWriter::dispose(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
-    return impl_->dispose(data, handle);
-}
-
-bool DataWriter::dispose(
-        void* data)
-{
-    return impl_->dispose(data);
+    return impl_->unregister_instance(data, handle, true);
 }
 
 const fastrtps::rtps::GUID_t& DataWriter::guid()

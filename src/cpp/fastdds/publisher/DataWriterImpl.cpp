@@ -271,7 +271,8 @@ fastrtps::rtps::InstanceHandle_t DataWriterImpl::register_instance(
 
 ReturnCode_t DataWriterImpl::unregister_instance(
         void* instance,
-        const InstanceHandle_t& handle)
+        const InstanceHandle_t& handle,
+        bool dispose)
 {
     /// Preconditions
     if (instance == nullptr)
@@ -298,63 +299,17 @@ ReturnCode_t DataWriterImpl::unregister_instance(
         type_->getKey(instance, &ih, is_key_protected);
     }
 
-    // Block lowlevel writer
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-
-#if HAVE_STRICT_REALTIME
-    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
-    if (lock.try_lock_until(max_blocking_time))
-#else
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
-#endif
+    if (history_.key_is_registered(ih))
     {
-        ChangeKind_t change_kind = NOT_ALIVE_UNREGISTERED;
-        CacheChange_t* ch = writer_->new_change(
-            type_->getSerializedSizeProvider(instance),
-            change_kind,
-            ih);
-
-        if (nullptr != ch)
+        WriteParams wparams;
+        ChangeKind_t change_kind = dispose ? NOT_ALIVE_DISPOSED : NOT_ALIVE_UNREGISTERED;
+        if (create_new_change_with_params(change_kind, instance, wparams, ih))
         {
-            WriteParams wparams;
-            if (this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
-            {
-                returned_value = ReturnCode_t::RETCODE_OK;
-            }
-            else
-            {
-                history_.release_Cache(ch);
-            }
+            returned_value = ReturnCode_t::RETCODE_OK;
         }
     }
 
     return returned_value;
-}
-
-ReturnCode_t DataWriterImpl::dispose(
-        void* data,
-        const fastrtps::rtps::InstanceHandle_t& handle)
-{
-    if (!handle.isDefined())
-    {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-    logInfo(DATA_WRITER, "Disposing of data");
-    WriteParams wparams;
-    if (create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
-}
-
-bool DataWriterImpl::dispose(
-        void* data)
-{
-    logInfo(DATA_WRITER, "Disposing of data");
-    WriteParams wparams;
-    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams);
 }
 
 bool DataWriterImpl::create_new_change(
@@ -675,7 +630,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
         CacheChange_t* ch)
 {
     if (data_writer_->type_->m_isGetKeyDefined &&
-            (ch->kind == NOT_ALIVE_UNREGISTERED || ch->kind == NOT_ALIVE_DISPOSED_UNREGISTERED))
+            ch->kind != ALIVE)
     {
         data_writer_->history_.remove_instance_changes(ch->instanceHandle);
     }

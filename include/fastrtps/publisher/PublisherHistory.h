@@ -127,6 +127,9 @@ public:
             rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
 
+    bool key_is_registered(
+            const rtps::InstanceHandle_t& handle);
+
 private:
 
     typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;

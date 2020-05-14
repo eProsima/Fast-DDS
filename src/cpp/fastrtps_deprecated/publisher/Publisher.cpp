@@ -60,10 +60,11 @@ rtps::InstanceHandle_t Publisher::register_instance(
 }
 
 bool Publisher::dispose(
-        void* Data)
+        void* data,
+        const rtps::InstanceHandle_t& handle)
 {
     logInfo(PUBLISHER, "Disposing of Data");
-    return false; //mp_impl->unregister_instance(Data, true);
+    return mp_impl->unregister_instance(data, handle, true);
 }
 
 bool Publisher::unregister_instance(
