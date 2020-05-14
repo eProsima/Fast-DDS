@@ -318,7 +318,9 @@ bool PublisherImpl::unregister_instance(
     bool returned_value = false;
     InstanceHandle_t ih = handle;
 
+#if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown == ih)
+#endif
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -326,6 +328,14 @@ bool PublisherImpl::unregister_instance(
 #endif
         mp_type->getKey(instance, &ih, is_key_protected);
     }
+
+#if !defined(NDEBUG)
+    if (c_InstanceHandle_Unknown != handle && ih != handle)
+    {
+        logError(PUBLISHER, "handle differs from data's key.");
+        return false;
+    }
+#endif
 
     if (m_history.key_is_registered(ih))
     {
@@ -481,7 +491,8 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
         CacheChange_t* ch)
 {
     if (mp_publisherImpl->m_att.topic.topicKind == WITH_KEY &&
-            ch->kind != ALIVE)
+            (NOT_ALIVE_UNREGISTERED == ch->kind ||
+            NOT_ALIVE_DISPOSED_UNREGISTERED == ch->kind))
     {
         mp_publisherImpl->m_history.remove_instance_changes(ch->instanceHandle);
     }

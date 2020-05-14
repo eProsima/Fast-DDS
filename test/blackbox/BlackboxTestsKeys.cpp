@@ -147,11 +147,10 @@ TEST(KeyedTopic, RegistrationAfterDispose)
     EXPECT_EQ(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 
     ASSERT_TRUE(writer.dispose(data.front(), instance_handle_1));
-    EXPECT_NE(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
-    EXPECT_EQ(writer.register_instance(data.front()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
+    EXPECT_EQ(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 
-    ASSERT_TRUE(writer.dispose(data.back(), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown));
-    EXPECT_NE(writer.register_instance(data.front()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
+    ASSERT_TRUE(writer.unregister_instance(data.front(), instance_handle_1));
+    EXPECT_NE(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 }
 
 TEST(KeyedTopic, WriteSamplesBestEffort)
