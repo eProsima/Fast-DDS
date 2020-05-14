@@ -448,7 +448,8 @@ private:
     /**
      * @brief Find a change with the specified sequence number.
      * @param seq_num Sequence number to find.
-     * @param exact
+     * @param exact When false, the first change with a sequence number not less than seq_num will be returned.
+     * When true, the change with a sequence number value of seq_num will be returned.
      * @return Iterator pointing to the change, changes_for_reader_.end() if not found.
      */
     ChangeIterator find_change(

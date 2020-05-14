@@ -110,7 +110,7 @@ public:
     /**
      * Allows modifying the Topic Qos.
      * The given Qos must be supported by the Topic.
-     * @param qos TopicQos where the qos is returned
+     * @param qos new TopicQos value to set for the Topic.
      * @retval RETCODE_IMMUTABLE_POLICY if a change was not allowed.
      * @retval RETCODE_INCONSISTENT_POLICY if new qos has inconsistent values.
      * @retval RETCODE_OK if qos was updated.
@@ -127,7 +127,7 @@ public:
     /**
      * Modifies the TopicListener.
      * @param listener new value for the TopicListener
-     * @param mask StatusMask
+     * @param mask StatusMask (default: all)
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(

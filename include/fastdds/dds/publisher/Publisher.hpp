@@ -159,7 +159,7 @@ public:
      * Depending on the settings of the WRITER_DATA_LIFECYCLE QosPolicy, the deletion of the DataWriter
      * may also dispose all instances.
      * @param writer DataWriter to delete
-     * @return RETCODE_PRECONDITION_NOT_MET if it not belongs to this Publisher, RETCODE_OK if it is correctly deleted and
+     * @return RETCODE_PRECONDITION_NOT_MET if it does not belong to this Publisher, RETCODE_OK if it is correctly deleted and
      * RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_datawriter(

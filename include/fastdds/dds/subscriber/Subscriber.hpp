@@ -68,7 +68,7 @@ class Subscriber : public DomainEntity
     /**
      * Constructor from a SubscriberImpl pointer
      * @param pimpl Actual implementation of the subscriber
-     * @param mask StatusMask
+     * @param mask StatusMask (default: all)
      */
     RTPS_DllAPI Subscriber(
             SubscriberImpl* pimpl,
@@ -162,7 +162,7 @@ public:
      * If delete_datareader is called on a different Subscriber, the operation will have no effect and it will
      * return an error.
      * @param reader DataReader to delete
-     * @return RETCODE_PRECONDITION_NOT_MET if the datareader not belong to this subscriber, RETCODE_OK if it is correctly
+     * @return RETCODE_PRECONDITION_NOT_MET if the datareader does not belong to this subscriber, RETCODE_OK if it is correctly
      * deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_datareader(

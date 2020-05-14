@@ -36,7 +36,7 @@ enum SampleRejectedStatusKind
     //! Exceeds the max_samples limit
     REJECTED_BY_SAMPLES_LIMIT,
     //! Exceeds the max_samples_per_instance limit
-    REJECTED_BY_SAMPELS_PER_INSTANCE_LIMIT
+    REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT
 };
 
 //! @brief A struct storing the sample lost status

@@ -107,6 +107,10 @@ public:
 
     /**
      * Write data with handle.
+     *
+     * The special value HANDLE_NIL can be used for the parameter handle.This indicates that the identity of the
+     * instance should be automatically deduced from the instance_data (by means of the key).
+     *
      * @param data Pointer to the data
      * @param handle InstanceHandle_t.
      * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,

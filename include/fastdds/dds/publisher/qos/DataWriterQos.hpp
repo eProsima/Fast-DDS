@@ -33,7 +33,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-//! Qos Policy to configure the DisablePositiveACKsQos and the writer attributes
+//! Qos Policy to configure the DisablePositiveACKsQos and the writer timing attributes
 class RTPSReliableWriterQos
 {
 public:
@@ -57,7 +57,7 @@ public:
                (this->disable_positive_acks == b.disable_positive_acks);
     }
 
-    //!Writer Attributes
+    //!Writer Timing Attributes
     fastrtps::rtps::WriterTimes times;
 
     //!Disable positive acks QoS, implemented in the library.
@@ -112,12 +112,6 @@ public:
                (this->throughput_controller_ == b.throughput_controller());
     }
 
-    /**
-     * @brief Change from DataWriterQos to WriterQos
-     * @param pqos PublisherQos
-     * @param tqos TopicQos
-     * @return WriterQos generated
-     */
     RTPS_DllAPI WriterQos get_writerqos(
             const PublisherQos& pqos,
             const TopicQos& tqos) const;

@@ -375,7 +375,7 @@ public:
 
 public:
 
-    //!Maximum acceptable delay from the time is written until it is received. <br> By default, c_TimeZero.
+    //!Maximum acceptable delay from the time data is written until it is received. <br> By default, c_TimeZero.
     fastrtps::Duration_t duration;
 };
 
@@ -403,15 +403,14 @@ typedef enum LivelinessQosPolicyKind : fastrtps::rtps::octet
 /**
  * Determines the mechanism and parameters used by the application to determine whether an Entity is “active” (alive).
  * The “liveliness” status of an Entity is used to maintain instance ownership in combination with the setting of the
- * OwnershipQosPolicy. The application is also informed via listener when an Entity is no longer alive.The DataReader
- * requests that liveliness of the writers is maintained by the requested means and loss of liveliness is detected with delay
- * not to exceed the lease_duration. The DataWriter commits to signaling its liveliness using the stated means at intervals
- * not to exceed the lease_duration.Listeners are used to notify the DataReaderof loss of liveliness and DataWriter of
- * violations to the liveliness contract.
- * @warning This QosPolicy can be defined for the DataReaders and is transmitted but only the Writer Liveliness protocol is implemented.
- * The user should set the lease_duration and the announcement_period with values that differ in at least 30%.
- * Values too close to each other may cause the failure of the writer liveliness assertion in networks
- * with high latency or with lots of communication errors.
+ * OwnershipQosPolicy.
+ * The application is also informed via listener when an Entity is no longer alive.
+ *
+ * The DataReader requests that liveliness of the writers is maintained by the requested means and loss of liveliness is
+ * detected with delay not to exceed the lease_duration.
+ *
+ * The DataWriter commits to signaling its liveliness using the stated means at intervals not to exceed the lease_duration.
+ * Listeners are used to notify the DataReaderof loss of liveliness and DataWriter of violations to the liveliness contract.
  */
 class LivelinessQosPolicy : public Parameter_t, public QosPolicy
 {
@@ -476,7 +475,7 @@ typedef enum ReliabilityQosPolicyKind : fastrtps::rtps::octet
     /**
      * Specifies the Service will attempt to deliver all samples in its history. Missed samples may be retried.
      * In steady-state (no modifications communicated via the DataWriter) the middleware guarantees that all samples
-     * in the DataWriter history will eventually be delivered to all the DataReader1objects. Outside steady state the
+     * in the DataWriter history will eventually be delivered to all the DataReader objects. Outside steady state the
      * HistoryQosPolicy and ResourceLimitsQosPolicy will determine how samples become part of the history and whether
      * samples can be discarded from it.
      */
@@ -525,7 +524,7 @@ public:
 public:
 
     /*!
-     * @brief Defined the reliability kind of the endpoint. <br>
+     * @brief Defines the reliability kind of the endpoint. <br>
      * By default, BEST_EFFORT_RELIABILITY_QOS for DataReaders and RELIABLE_RELIABILITY_QOS for DataWriters.
      */
     ReliabilityQosPolicyKind kind;
@@ -534,9 +533,9 @@ public:
      * @brief Defines the maximum period of time certain methods will be blocked.
      *
      * Methods affected by this property are:
-     * - Publisher::write
-     * - Subscriber::takeNextData
-     * - Subscriber::readNextData
+     * - DataWriter::write
+     * - DataReader::takeNextData
+     * - DataReader::readNextData
      * <br>
      * By default, 100 ms.
      */
@@ -964,7 +963,7 @@ public:                                                                         
  * One possible use of this QoS is to attach security credentials or some other information that can be used by the
  * remote application to authenticate the source.
  */
-class UserDataQosPolicy
+class UserDataQosPolicy : public GenericDataQosPolicy
 {
 };
 /**
@@ -977,7 +976,7 @@ class UserDataQosPolicy
  * In combination with the listeners on the DataReader and DataWriter as well as by means of operations such as
  * ignore_topic,these QoS can assist an application to extend the provided QoS.
  */
-class TopicDataQosPolicy
+class TopicDataQosPolicy : public GenericDataQosPolicy
 {
 };
 /**
@@ -991,7 +990,7 @@ class TopicDataQosPolicy
  * implement matching policies similar to those of the PARTITION QoS except the decision can be made based on an
  * application-defined policy.
  */
-class GroupDataQosPolicy
+class GroupDataQosPolicy : public GenericDataQosPolicy
 {
 };
 #endif
@@ -1367,7 +1366,7 @@ public:
     }
 
     /**
-     * @brief Getter for the first position of the ParameterPropertyList
+     * @brief Getter for the first position of the partition list
      * @return const_iterator
      */
     const_iterator begin() const
@@ -1376,7 +1375,7 @@ public:
     }
 
     /**
-     * @brief Getter for the end of the ParameterPropertyList
+     * @brief Getter for the end of the partition list
      * @return const_iterator
      */
     const_iterator end() const

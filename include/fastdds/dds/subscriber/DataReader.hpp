@@ -251,7 +251,8 @@ public:
 
     /**
      * @brief Get the liveliness changed status
-     * @return The liveliness changed status
+     * @param status LivelinessChangedStatus object where the status is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_liveliness_changed_status(
             LivelinessChangedStatus& status) const;

@@ -192,11 +192,6 @@ public:
                (reader_resource_limits_ == b.reader_resource_limits());
     }
 
-    /**
-     * @brief Change from DataReaderQos to ReaderQos
-     * @param sqos SubscriberQos
-     * @return ReaderQos generated
-     */
     RTPS_DllAPI ReaderQos get_readerqos(
             const SubscriberQos& sqos) const;
 

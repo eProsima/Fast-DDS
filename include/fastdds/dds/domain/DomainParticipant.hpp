@@ -149,7 +149,7 @@ public:
     /**
      * Deletes an existing Publisher.
      * @param publisher to be deleted.
-     * @return RETCODE_PRECONDITION_NOT_MET if the publisher not belong to this participant or if it has active DataWriters,
+     * @return RETCODE_PRECONDITION_NOT_MET if the publisher does not belong to this participant or if it has active DataWriters,
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_publisher(
@@ -182,7 +182,7 @@ public:
     /**
      * Deletes an existing Subscriber.
      * @param subscriber to be deleted.
-     * @return RETCODE_PRECONDITION_NOT_MET if the subscriber not belong to this participant or if it has active DataReaders,
+     * @return RETCODE_PRECONDITION_NOT_MET if the subscriber does not belong to this participant or if it has active DataReaders,
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_subscriber(
@@ -252,7 +252,7 @@ public:
     /**
      * Deletes an existing Topic.
      * @param topic to be deleted.
-     * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic not belongs to
+     * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic does not belong to
      * this participant or if it is referenced by any entity and ETCODE_OK if the Topic was deleted.
      */
     RTPS_DllAPI ReturnCode_t delete_topic(
