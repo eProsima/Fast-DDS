@@ -81,41 +81,57 @@ public:
             boost::interprocess::create_only_t,
             const std::string& name,
             size_t size)
-        : segment_(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size + EXTRA_SEGMENT_SIZE))
-        , name_(name)
+        : name_(name)
     {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), 
+                static_cast<Offset>(size + EXTRA_SEGMENT_SIZE)));
     }
 
     SharedMemSegment(
             boost::interprocess::open_only_t,
             const std::string& name)
-        : segment_(boost::interprocess::open_only, name.c_str())
-        , name_(name)
+        : name_(name)
     {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::open_only, name.c_str()));
     }
 
     SharedMemSegment(
             boost::interprocess::open_or_create_t,
             const std::string& name,
             size_t size)
-        : segment_(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size))
-        , name_(name)
+        : name_(name)
     {
+        segment_ = std::unique_ptr<managed_shared_memory_type>(
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size)));
+    }
+
+    ~SharedMemSegment()
+    {
+        try
+        {
+            segment_.reset();
+        }
+        catch(const std::exception& e)
+        {
+            logWarning(RTPS_TRANSPORT_SHM, e.what());
+        }
     }
 
     void* get_address_from_offset(
             SharedMemSegment::Offset offset) const
     {
-        return segment_.get_address_from_handle(offset);
+        return segment_->get_address_from_handle(offset);
     }
 
     SharedMemSegment::Offset get_offset_from_address(
             void* address) const
     {
-        return segment_.get_handle_from_address(address);
+        return segment_->get_handle_from_address(address);
     }
 
-    managed_shared_memory_type& get() { return segment_;}
+    managed_shared_memory_type& get() { return *segment_;}
 
     static void remove(
             const std::string& name)
@@ -132,7 +148,8 @@ public:
      * Estimates the extra segment space required for an allocation
      */
     static uint32_t compute_per_allocation_extra_size(
-            size_t allocation_alignment)
+            size_t allocation_alignment,
+            const std::string& domain_name)
     {
         Id uuid;
 
@@ -144,11 +161,13 @@ public:
             {
                 uuid.generate();
 
+                auto name = domain_name + "_" + uuid.to_string();
+
                 SharedMemEnvironment::get().init();
 
                 {
                     boost::interprocess::managed_shared_memory
-                            test_segment(boost::interprocess::create_only, uuid.to_string().c_str(),
+                            test_segment(boost::interprocess::create_only, name.c_str(),
                                 (std::max)((size_t)1024, allocation_alignment* 4));
 
                     auto m1 = test_segment.get_free_memory();
@@ -157,7 +176,7 @@ public:
                     extra_size = static_cast<uint32_t>(m1 - m2);
                 }
 
-                boost::interprocess::shared_memory_object::remove(uuid.to_string().c_str());
+                boost::interprocess::shared_memory_object::remove(name.c_str());
             }
 
             return extra_size;
@@ -176,8 +195,6 @@ public:
             const std::string& mutex_name)
     {
         std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
-
-        // Todo(Adolfo) : Dataraces could occur, this algorithm has to be improved
 
         named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
             new SharedMemSegment::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()));
@@ -203,6 +220,25 @@ public:
         return named_mutex;
     }
 
+    static std::unique_ptr<SharedMemSegment::named_mutex> try_open_and_lock_named_mutex(
+            const std::string& mutex_name)
+    {
+        std::unique_ptr<SharedMemSegment::named_mutex> named_mutex;
+
+        named_mutex = std::unique_ptr<SharedMemSegment::named_mutex>(
+            new SharedMemSegment::named_mutex(boost::interprocess::open_only, mutex_name.c_str()));
+
+        boost::posix_time::ptime wait_time
+            = boost::posix_time::microsec_clock::universal_time()
+                + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS*2);
+        if (!named_mutex->timed_lock(wait_time))
+        {
+            throw std::runtime_error("Couldn't lock name_mutex: " + mutex_name);
+        }
+
+        return named_mutex;
+    }
+
     static std::unique_ptr<SharedMemSegment::named_mutex> open_named_mutex(
             const std::string& mutex_name)
     {
@@ -217,13 +253,22 @@ public:
     }
 
     /**
+     * Check the allocator internal structures
+     * @return true if structures are ok, false otherwise
+     */
+    bool check_sanity()
+    {
+        return segment_->check_sanity();
+    }
+
+    /**
      * Unique ID of the memory segment
      */
     class Id
     {
     public:
 
-        typedef UUID<16> type;
+        typedef UUID<8> type;
 
         Id()
         {
@@ -274,7 +319,7 @@ public:
             return Id(type(type::null_t()));
         }
 
-private:
+    private:
 
         type uuid_;
 
@@ -292,7 +337,7 @@ private:
         }
     } shared_mem_environment_initializer_;
 
-    managed_shared_memory_type segment_;
+    std::unique_ptr<managed_shared_memory_type> segment_;
 
     std::string name_;
 };

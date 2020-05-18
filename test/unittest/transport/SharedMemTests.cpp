@@ -560,10 +560,130 @@ TEST_F(SHMCondition, robust_condition_fix_glibc_deadlock)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-        }                
-    }    
+        }
+    }
 }
 #endif
+
+TEST_F(SHMCondition, max_listeners)
+{
+    SharedMemSegment::condition_variable cv;
+    SharedMemSegment::mutex mutex;
+    bool condition = false;
+
+    std::cout << "sizeof(SharedMemSegment::condition_variable) = "
+              << sizeof(SharedMemSegment::condition_variable)
+              << std::endl;
+
+    static constexpr uint32_t max_test_listeners = 1024;
+    std::vector<std::thread> threads;
+
+    std::atomic<uint32_t> waiting_threads(0);
+    std::atomic<uint32_t> wait_exception(0);
+    std::atomic<uint32_t> wait_ok(0);
+
+    for (uint32_t i=0; i<max_test_listeners; i++)
+    {
+        threads.emplace_back([&]
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+            waiting_threads.fetch_add(1);
+            try
+            {
+                cv.wait(lock, [&]
+                {
+                    return condition;
+                });
+
+                wait_ok.fetch_add(1);
+            }
+            catch (const std::exception&)
+            {
+                wait_exception.fetch_add(1);
+            }
+        });
+    }
+
+    std::cout << threads.size() << " listeners spawned." << std::endl;
+
+    do
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    } while (waiting_threads.load() + wait_exception.load() < threads.size());
+
+    std::cout << waiting_threads.load() << " waiting. " << wait_exception.load() << " failed." << std::endl;
+
+    {
+        std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+        condition = true;
+    }
+    cv.notify_all();
+
+    std::cout << "all notified" << std::endl;
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    std::cout << "all joined!" << std::endl;
+
+    ASSERT_EQ(wait_ok.load(), waiting_threads.load() - wait_exception.load());
+    ASSERT_GT(wait_exception.load(), 0u);
+}
+
+TEST_F(SHMCondition, fifo_policy)
+{
+    SharedMemSegment::condition_variable cv;
+    SharedMemSegment::mutex mutex;
+    bool condition = false;
+
+    std::vector<std::thread> threads;
+    std::vector<uint32_t> exit_order;
+
+    auto wait_lambda = [&](uint32_t id, const boost::posix_time::ptime& end_time_point)
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+            ASSERT_NO_THROW(cv.timed_wait(lock, end_time_point, [&] { return condition; }));
+            exit_order.push_back(id);
+        };
+
+    // Check notify is FIFO
+    // Three elements remove the intermediate
+    auto now = boost::posix_time::microsec_clock::universal_time();
+    threads.emplace_back(std::thread(wait_lambda, 0, now + boost::posix_time::seconds(3600)));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    threads.emplace_back(std::thread(wait_lambda, 1, now + boost::posix_time::seconds(3600)));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    threads.emplace_back(std::thread(wait_lambda, 2, now + boost::posix_time::seconds(3600)));
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    {
+        std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+        condition = true;
+    }
+
+    
+    ASSERT_EQ(exit_order.size(), 0u);
+    cv.notify_one();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    ASSERT_EQ(exit_order.size(), 1u);
+    cv.notify_one();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    ASSERT_EQ(exit_order.size(), 2u);
+    cv.notify_one();
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    ASSERT_EQ(exit_order, std::vector<uint32_t>({0,1,2}));
+    threads.clear();
+    exit_order.clear();
+}
+
 
 TEST_F(SHMTransportTests, opening_and_closing_input_channel)
 {
@@ -861,6 +981,125 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
     thread_locker.join();
 }
 
+TEST_F(SHMTransportTests, port_lock_read_exclusive)
+{
+    const std::string domain_name("SHMTests");
+
+    SharedMemManager shared_mem_manager(domain_name);
+
+    shared_mem_manager.remove_port(0);
+
+    auto port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    ASSERT_THROW(shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive),
+        std::exception);
+
+    port.reset();
+    port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+}
+
+TEST_F(SHMTransportTests, robust_exclusive_lock)
+{
+    const std::string lock_name = "robust_exclusive_lock_test1_el";
+
+    RobustExclusiveLock::remove(lock_name.c_str());
+
+    // Lock
+    auto el1 = std::make_shared<RobustExclusiveLock>(lock_name);
+
+    // A second lock fail
+    ASSERT_THROW(std::make_shared<RobustExclusiveLock>(lock_name), std::exception);
+
+    // Remove lock
+    el1.reset();
+
+    bool was_created;
+    el1 = std::make_shared<RobustExclusiveLock>(lock_name, &was_created);
+    // The resource did not exits
+    ASSERT_TRUE(was_created);
+
+    el1.reset();
+    // Has been already deleted
+    ASSERT_FALSE(RobustExclusiveLock::remove(lock_name.c_str()));
+
+    // Create a fake file
+    FILE* f = fopen(RobustLock::get_file_path(lock_name).c_str(), "w+");
+    ASSERT_TRUE(f != nullptr);
+    fclose(f);
+
+    el1 = std::make_shared<RobustExclusiveLock>(lock_name, &was_created);
+    ASSERT_FALSE(was_created);
+}
+
+TEST_F(SHMTransportTests, robust_shared_lock)
+{
+    const std::string lock_name = "robust_shared_lock_test1_sl";
+
+    RobustSharedLock::remove(lock_name.c_str());
+
+    ASSERT_FALSE(RobustSharedLock::is_locked(lock_name));
+
+    auto sl1 = std::make_shared<RobustSharedLock>(lock_name);
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    auto sl2 = std::make_shared<RobustSharedLock>(lock_name);
+
+    sl1.reset();
+    // sl2 holds the lock
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    bool was_lock_created;
+    bool was_lock_released;
+    auto new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
+    // sl2 holds the lock so the object exists
+    ASSERT_FALSE(was_lock_created);
+    ASSERT_FALSE(was_lock_released);
+
+    sl2.reset();
+    // still locked by new_lock
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    new_lock.reset();
+    // not locked
+    ASSERT_FALSE(RobustSharedLock::is_locked(lock_name));
+
+    // and has been removed
+    ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
+
+    new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
+    // A new object was been created
+    ASSERT_TRUE(was_lock_created);
+    ASSERT_TRUE(was_lock_released);
+
+    sl1 = std::make_shared<RobustSharedLock>(lock_name);
+    ASSERT_TRUE(RobustSharedLock::is_locked(lock_name));
+
+    new_lock.reset();
+    new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
+    // sl1 holds the lock
+    ASSERT_FALSE(was_lock_created);
+    ASSERT_FALSE(was_lock_released);
+
+    sl1.reset();
+    new_lock.reset();
+    
+    // The resource has been removed
+    ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
+
+    // Create a fake file
+    FILE* f = fopen(RobustLock::get_file_path(lock_name).c_str(), "w+");
+    ASSERT_TRUE(f != nullptr);
+    fclose(f);
+
+    new_lock = std::make_shared<RobustSharedLock>(lock_name, &was_lock_created, &was_lock_released);
+    // sl1 holds the lock
+    ASSERT_FALSE(was_lock_created);
+    ASSERT_TRUE(was_lock_released);
+
+    new_lock.reset();
+    // The resource has been removed
+    ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
+}
+
 TEST_F(SHMTransportTests, port_listener_dead_recover)
 {
     const std::string domain_name("SHMTests");
@@ -948,94 +1187,6 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
     thread_listener1.join();
 }
 
-TEST_F(SHMTransportTests, on_port_failure_free_enqueued_descriptors)
-{
-    const std::string domain_name("SHMTests");
-
-    SharedMemManager shared_mem_manager(domain_name);
-    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
-
-    uint32_t listener1_index;
-    auto port1 = shared_mem_global->open_port(0, 4, 1000);
-    auto listener1 = port1->create_listener(&listener1_index);
-
-    auto listener2 = shared_mem_manager.open_port(0, 1, 1000)->create_listener();
-
-    auto segment = shared_mem_manager.create_segment(16, 4);
-    std::vector<std::shared_ptr<SharedMemManager::Buffer> > buffers;
-
-    // Alloc 4 buffers x 4 bytes
-    for (int i=0; i<4; i++)
-    {
-        buffers.push_back(segment->alloc_buffer(4, std::chrono::steady_clock::time_point()));
-        ASSERT_FALSE(nullptr == buffers.back());
-        memset(buffers.back()->data(), 0, buffers.back()->size());
-        *static_cast<uint8_t*>(buffers.back()->data()) = static_cast<uint8_t>(i+1);
-    }
-
-    auto port_sender = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
-
-    // Enqueued all buffers in the port
-    for (auto& buffer : buffers)
-    {
-        ASSERT_TRUE(port_sender->try_push(buffer));
-    }
-
-    buffers.clear();
-
-    std::atomic<uint32_t> thread_listener2_state(0);
-    std::thread thread_listener2([&]
-        {
-            // Read all the buffers
-            for (int i = 0; i < 4; i++)
-            {
-                // Pops the first buffer
-                auto buf = listener2->pop();
-                ASSERT_TRUE(*static_cast<uint8_t*>(buf->data()) == static_cast<uint8_t>(i+1));
-            }
-
-            thread_listener2_state = 1;
-
-            // The pop is broken by port regeneration
-            auto buf_null = listener2->pop();
-            ASSERT_TRUE(buf_null == nullptr);
-        }
-            );
-
-    // Wait until messages are popped
-    while (thread_listener2_state.load() < 1u)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-
-    MockPortSharedMemGlobal port_mocker;
-    std::atomic_bool is_listener1_closed(false);
-    std::thread thread_listener1([&]
-        {
-            // Deadlock the listener.
-            port_mocker.wait_pop_deadlock(*port1, *listener1, is_listener1_closed, listener1_index);
-        });
-
-    // Wait until port is regenerated
-    thread_listener2.join();
-
-    // Port regeneration must have freed enqueued descriptors
-    // so allocation now should be possible again
-    // Alloc 4 buffers x 4 bytes
-    for (int i=0; i<4; i++)
-    {
-        buffers.push_back(segment->alloc_buffer(4, std::chrono::steady_clock::time_point()));
-        ASSERT_FALSE(nullptr == buffers.back());
-        memset(buffers.back()->data(), 0, buffers.back()->size());
-        *static_cast<uint8_t*>(buffers.back()->data()) = static_cast<uint8_t>(i+1);
-    }
-
-    // Unblocks thread_listener1
-    port_mocker.unblock_wait_pop(*port1, is_listener1_closed);
-
-    thread_listener1.join();
-}
-
 TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
 {
     const std::string domain_name("SHMTests");
@@ -1074,13 +1225,14 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
     thread_locker.join();
 }
 
-TEST_F(SHMTransportTests, dead_listener_port_recover)
+TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 {
     const std::string domain_name("SHMTests");
 
     SharedMemManager shared_mem_manager(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
     
+    shared_mem_global->remove_port(0);
     auto deadlocked_port = shared_mem_global->open_port(0, 1, 1000);
     uint32_t listener_index;
     auto deadlocked_listener = deadlocked_port->create_listener(&listener_index);
@@ -1113,6 +1265,53 @@ TEST_F(SHMTransportTests, dead_listener_port_recover)
 
     deadlocked_port->close_listener(&is_listener_closed);
     thread_wait_deadlock.join();
+}
+
+TEST_F(SHMTransportTests, port_not_ok_listener_recover)
+{
+    const std::string domain_name("SHMTests");
+
+    SharedMemManager shared_mem_manager(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
+
+    shared_mem_global->remove_port(0);
+    auto read_port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    auto listener = read_port->create_listener();
+
+    std::atomic<uint32_t> stage(0u);
+
+    // Simulates a deadlocked wait_pop
+    std::thread thread_listener([&]
+        {
+            auto buff = listener->pop();
+            // The pop is broken by port regeneration
+            ASSERT_TRUE(buff == nullptr);
+            stage.exchange(1u);
+            buff = listener->pop();
+            ASSERT_TRUE(*static_cast<uint8_t*>(buff->data()) == 6);
+        });
+
+    // Open the deadlocked port
+    auto port = shared_mem_global->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
+    auto managed_port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
+    auto data_segment = shared_mem_manager.create_segment(1, 1);
+    
+    MockPortSharedMemGlobal port_mocker;
+    port_mocker.set_port_not_ok(*port);
+    (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
+
+    while(stage.load() != 1u)
+    { 
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    auto buffer = data_segment->alloc_buffer(1, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+    *static_cast<uint8_t*>(buffer->data()) = 6;
+    // Fail because port regeneration
+    ASSERT_FALSE(managed_port->try_push(buffer));
+    ASSERT_TRUE(managed_port->try_push(buffer));
+
+    thread_listener.join();
 }
 
 TEST_F(SHMTransportTests, buffer_recover)
@@ -1244,9 +1443,8 @@ TEST_F(SHMTransportTests, buffer_recover)
         << std::endl;
 
     ASSERT_GT(port_overflows1, 0u);
-    ASSERT_GT(port_overflows2, 0u);
-    ASSERT_LT(port_overflows2*4u, port_overflows1);
-    ASSERT_LT(listener1_recv_count.load()*4u, listener2_recv_count.load());
+    ASSERT_LT(port_overflows2, port_overflows1);
+    ASSERT_LT(listener1_recv_count.load(), listener2_recv_count.load());
     ASSERT_GT(send_counter, listener2_recv_count.load());
     
     exit_listeners = true;

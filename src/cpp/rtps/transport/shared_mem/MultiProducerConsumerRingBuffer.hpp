@@ -148,19 +148,12 @@ public:
         uint32_t free_cells;
     };
 
-    struct RegisterPushLock
-    {
-        uint32_t pushing_count;
-        uint32_t registering_flag;
-    };
-
     struct Node
     {
-        std::atomic<Pointer> pointer_;
+        alignas(8) std::atomic<Pointer> pointer_;
         uint32_t total_cells_;
 
         uint32_t registered_listeners_;
-        std::atomic<RegisterPushLock> register_push_lock_;
     };
 
     MultiProducerConsumerRingBuffer(
@@ -209,12 +202,9 @@ public:
     bool push(
             const T& data)
     {
-        lock_registering();
-
         // If no listeners the buffer is dropped
         if (node_->registered_listeners_ == 0)
         {
-            unlock_registering();
             return false;
         }
 
@@ -228,12 +218,8 @@ public:
         {
         }
 
-        unlock_registering();
-
-
         if (pointer.free_cells == 0)
         {
-            unlock_registering();
             throw std::runtime_error("Buffer full");
         }
 
@@ -241,8 +227,6 @@ public:
 
         cell.data(data);
         cell.ref_counter_.store(node_->registered_listeners_, std::memory_order_release);
-
-        unlock_registering();
 
         return true;
     }
@@ -260,19 +244,19 @@ public:
     /**
      * Register a new listener (consumer)
      * The new listener's read pointer is equal to the ring-buffer write pointer at the registering moment.
-     * @return A shared_ptr to the listener.
-     * The listener will be unregistered when shared_ptr is destroyed.
+     * @return A unique_ptr to the listener.
+     * @remarks This operation is not lock-free with push() / pop() operations, so the upper layer is responsible
+     * for the mutual exclusion handling.
+     * The listener will be unregistered when the unique_ptr is destroyed.
      */
-    std::shared_ptr<Listener> register_listener()
+    std::unique_ptr<Listener> register_listener()
     {
-        lock_pushing();
-
         // The new listener's read pointer is the current write pointer
-        auto listener = std::make_shared<Listener>(*this, node_->pointer_.load(std::memory_order_relaxed).write_p);
+        auto listener = std::unique_ptr<Listener>(
+            new Listener(
+                *this, node_->pointer_.load(std::memory_order_relaxed).write_p));
 
         node_->registered_listeners_++;
-
-        unlock_pushing();
 
         return listener;
     }
@@ -288,7 +272,6 @@ public:
 
         node->total_cells_ = total_cells;
         node->registered_listeners_ = 0;
-        node->register_push_lock_.store({0, false});
         node->pointer_.store({0,total_cells}, std::memory_order_relaxed);
     }
 
@@ -374,59 +357,13 @@ private:
     }
 
     /**
-     * Called by the writters to lock listener's registering while writer pushes
+     * Unregister a listener.
+     * @param listener Reference to the listener to unregister.
+     * @remarks This operation is not lock-free with push() / pop() operations, so the upper layer is responsible.
      */
-    void lock_registering()
-    {
-        auto register_push = node_->register_push_lock_.load(std::memory_order_relaxed);
-        // Increase the pushing_count (only possible if registering_flag == false)
-        while (!node_->register_push_lock_.compare_exchange_weak(register_push, {register_push.pushing_count+1, false},
-                std::memory_order_acquire,
-                std::memory_order_relaxed));
-    }
-
-    /**
-     * Called by the writters to unlock listener's registering
-     */
-    void unlock_registering()
-    {
-        auto register_push = node_->register_push_lock_.load(std::memory_order_relaxed);
-        assert(!register_push.registering_flag); // Opssss.
-        // Decrease the pushing_count
-        while (!node_->register_push_lock_.compare_exchange_weak(register_push, {register_push.pushing_count-1, false},
-                std::memory_order_release,
-                std::memory_order_relaxed));
-    }
-
-    /**
-     * Called by a listener when registering to lock writters pushing
-     */
-    void lock_pushing()
-    {
-        RegisterPushLock register_push = {0, false};
-        // Registering a listener... pushing_count must be 0
-        while (!node_->register_push_lock_.compare_exchange_weak(register_push, {0, true},
-                std::memory_order_acquire,
-                std::memory_order_relaxed));
-    }
-
-    /**
-     * Called by a listener when registering finish to unlock writters pushing
-     */
-    void unlock_pushing()
-    {
-        RegisterPushLock register_push = {0, true};
-        // Registering a listener... pushing_count must be 0
-        while (!node_->register_push_lock_.compare_exchange_weak(register_push, {0, false},
-                std::memory_order_release,
-                std::memory_order_relaxed));
-    }
-
     void unregister_listener(
             Listener& listener)
     {
-        lock_pushing();
-
         try
         {
             // Forces to decrement the ref_counters for cells available to the listener.
@@ -442,8 +379,6 @@ private:
         }
 
         node_->registered_listeners_--;
-
-        unlock_pushing();
     }
 };
 

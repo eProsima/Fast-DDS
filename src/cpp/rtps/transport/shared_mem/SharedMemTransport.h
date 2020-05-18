@@ -45,7 +45,7 @@ public:
 
     RTPS_DllAPI SharedMemTransport(
             const SharedMemTransportDescriptor&);
-    void clean();
+
     const SharedMemTransportDescriptor* configuration() const;
 
     bool init() override;
@@ -202,7 +202,9 @@ protected:
 
 private:
 
-    std::map<uint32_t, std::shared_ptr<SharedMemManager::Port> > opened_ports_;
+    void clean_up();
+
+    std::map<uint32_t, std::shared_ptr<SharedMemManager::Port>> opened_ports_;
 
     mutable std::recursive_mutex input_channels_mutex_;
 
@@ -244,6 +246,8 @@ private:
     bool push_discard(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
             const fastrtps::rtps::Locator_t& remote_locator);
+
+    void delete_input_channel(SharedMemChannelResource* channel);
 };
 
 } // namespace rtps
