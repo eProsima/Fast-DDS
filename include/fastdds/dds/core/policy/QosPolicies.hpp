@@ -451,14 +451,18 @@ public:
 
 public:
 
-    //!Liveliness kind <br> By default, AUTOMATIC_LIVELINESS.
+    //! Liveliness kind <br> By default, AUTOMATIC_LIVELINESS.
     LivelinessQosPolicyKind kind;
-    //! Indicates for how much time should a remote participant consider the local participant to be alive. <br>
+    //! Period within which liveliness should be asserted.
+    //! On a DataWriter it represents the period it commits to signal its liveliness.
+    //! On a DataReader it represents the period without assertion after which a DataWriter is considered
+    //! inactive.
     //! By default, c_TimeInfinite.
     fastrtps::Duration_t lease_duration;
-    //! The period for the participant to send PDP announcements.
+    //! The period for automatic assertion of liveliness.
+    //! Only used for DataWriters with AUTOMATIC liveliness.
     //! By default, c_TimeInfinite.
-    //! @warning Must be < lease_duration.
+    //! @warning When not infinite, must be < lease_duration, and it is advisable to be less than 0.7*lease_duration.
     fastrtps::Duration_t announcement_period;
 };
 
