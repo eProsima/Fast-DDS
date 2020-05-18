@@ -54,10 +54,10 @@ public:
     virtual ~PublisherHistory();
 
     /*!
-     * @brief Try to reserve resources for the new instance.
-     * @param instance_handle
-     * @param lock
-     * @param max_blocking_time
+     * @brief Tries to reserve resources for the new instance.
+     * @param instance_handle Instance's key.
+     * @param lock Lock which should be unlock in case the operation has to wait.
+     * @param max_blocking_time Maximum time the operation should be waiting.
      * @return True if resources was reserved successfully.
      */
     bool register_instance(
@@ -127,6 +127,11 @@ public:
             rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
 
+    /*!
+     * @brief Checks if the instance's key is registered.
+     * @param[in] Instance's key.
+     * return `true` if instance's key is registered in the history.
+     */
     bool key_is_registered(
             const rtps::InstanceHandle_t& handle);
 

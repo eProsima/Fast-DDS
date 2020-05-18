@@ -84,25 +84,35 @@ public:
             rtps::WriteParams& wparams);
 
     /*!
-     * @brief Registers an instance.
-     * Informs the publisher will start writing samples of this instance.
-     * @param sample Pointer to the sample used to retrieve the instance.
+     * @brief Informs that the application will be modifying a particular instance.
+     * It gives and opportunity to the middleware to pre-configure itself to improve performance.
+     * @param[in] instance Sample used to get the instance's key.
+     * @return Handle containing the instance's key.
+     * This handle could be used in successive `write` or `dispose` operations.
+     * In case of error, HANDLE_NIL will be returned.
      */
     fastrtps::rtps::InstanceHandle_t register_instance(
             void* instance);
 
-    /**
-     * Dispose of a previously written data.
-     * @param Data Pointer to the data.
-     * @return True if correct.
+    /*!
+     * @brief Requests the middleware to delete the instance.
+     * Applications are made aware of the deletion through the DataReader objects.
+     * @param[in] data Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, `true` is returned.
      */
     bool dispose(
             void* data,
             const rtps::InstanceHandle_t& handle);
-    /**
-     * Unregister a previously written data.
-     * @param Data Pointer to the data.
-     * @return True if correct.
+    /*!
+     * @brief This operation reserves the action of `register_instance`.
+     * Informs the middleware that the DataWriter is not intending to modify any more of that data instance.
+     * Also indicates that the middleware can locally remove all information regarding that instance.
+     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, `true` is returned.
      */
     bool unregister_instance(
             void* instance,

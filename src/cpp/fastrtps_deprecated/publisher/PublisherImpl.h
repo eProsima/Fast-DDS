@@ -99,17 +99,26 @@ public:
             const rtps::InstanceHandle_t& handle);
 
     /*!
-     * @param key
-     * @return
+     * @brief Implementation of the DDS `register_instance` operation.
+     * It deduces the instance's key and tries to get resources in the PublisherHistory.
+     * @param[in] instance Sample used to get the instance's key.
+     * @return Handle containing the instance's key.
+     * This handle could be used in successive `write` or `dispose` operations.
+     * In case of error, HANDLE_NIL will be returned.
      */
     rtps::InstanceHandle_t register_instance(
             void* instance);
 
     /*!
-     * @param key
-     * @param instance_handle
-     * @param dispose
-     * @return
+     * @brief Implementation of the DDS `register_instance` and `dispose` operations.
+     * It sends a CacheChange_t  with the king to NOT_ALIVE_UNREGISTERED or NOT_ALIVE_DISPOSED,
+     * depending on the `dispose` parameter.
+     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered or disposed.
+     * @param[in] dispose If it is `false`, a CacheChange_t with kind to NOT_ALIVE_UNREGISTERED is sent.
+     * If it is `true`, a CacheChange_t with kind to NOT_ALIVE_DISPOSED is sent.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, `true` is returned.
      */
     bool unregister_instance(
             void* instance,
