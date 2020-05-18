@@ -153,8 +153,9 @@ TEST(KeyedTopic, RegistrationAfterDispose)
     EXPECT_NE(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 }
 
-TEST(KeyedTopic, WriteSamplesBestEffort)
-{
+/* Uncomment when DDS API supports NO_WRITERS_ALIVE
+   TEST(KeyedTopic, WriteSamplesBestEffort)
+   {
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
 
@@ -202,10 +203,10 @@ TEST(KeyedTopic, WriteSamplesBestEffort)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(1);
-}
+   }
 
-TEST(KeyedTopic, WriteSamplesReliable)
-{
+   TEST(KeyedTopic, WriteSamplesReliable)
+   {
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
 
@@ -258,4 +259,5 @@ TEST(KeyedTopic, WriteSamplesReliable)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(1);
-}
+   }
+ */
