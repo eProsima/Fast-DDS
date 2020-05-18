@@ -34,24 +34,35 @@ class Topic;
  */
 class RTPS_DllAPI TopicListener
 {
-    public:
+public:
 
-        TopicListener(){}
+    /**
+     * @brief Constructor
+     */
+    TopicListener()
+    {
+    }
 
-        virtual ~TopicListener(){}
+    /**
+     * @brief Destructor
+     */
+    virtual ~TopicListener()
+    {
+    }
 
-        /**
-         * Virtual function to be implemented by the user containing the actions to be performed when
-         * another topic exists with the same name but different characteristics.
-         * @param sub Subscriber
-         */
-        virtual void on_inconsistent_topic(
-                Topic* topic,
-                InconsistentTopicStatus status)
-        {
-            (void)topic;
-            (void)status;
-        }
+    /**
+     * Virtual function to be implemented by the user containing the actions to be performed when
+     * another topic exists with the same name but different characteristics.
+     * @param topic Topic
+     * @param status The inconsistent topic status
+     */
+    virtual void on_inconsistent_topic(
+            Topic* topic,
+            InconsistentTopicStatus status)
+    {
+        (void)topic;
+        (void)status;
+    }
 
 };
 

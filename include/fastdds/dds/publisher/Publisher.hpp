@@ -78,16 +78,20 @@ class Publisher : public DomainEntity
 
 public:
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~Publisher();
 
     /**
      * Allows accessing the Publisher Qos.
+     * @return PublisherQos reference
      */
     RTPS_DllAPI const PublisherQos& get_qos() const;
 
     /**
      * Retrieves the Publisher Qos.
-     * @return ReturnCode OK
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_qos(
             PublisherQos& qos) const;
@@ -95,21 +99,23 @@ public:
     /**
      * Allows modifying the Publisher Qos.
      * The given Qos must be supported by the PublisherQos.
-     * @param qos
-     * @return IMMUTABLE_POLICY cannot be updated. OK if updated.
+     * @param qos PublisherQos to be set
+     * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
+     * self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const PublisherQos& qos);
 
     /**
      * Retrieves the attached PublisherListener.
+     * @return PublisherListener pointer
      */
     RTPS_DllAPI const PublisherListener* get_listener() const;
 
     /**
      * Modifies the PublisherListener.
-     * @param listener
-     * @return true
+     * @param listener PublisherListener pointer
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             PublisherListener* listener);
@@ -118,8 +124,8 @@ public:
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
      * @param topic Topic the DataWriter will be listening
      * @param qos QoS of the DataWriter.
-     * @param listener Pointer to the listener.
-     * @param mask StatusMask.
+     * @param listener Pointer to the listener (default: nullptr).
+     * @param mask StatusMask (default: all).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter(
@@ -131,9 +137,9 @@ public:
     /**
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
      * @param topic Topic the DataWriter will be listening
-     * @param profile DataWriter profile name.
-     * @param listener Pointer to the listener.
-     * @param mask StatusMask.
+     * @param profile_name DataWriter profile name.
+     * @param listener Pointer to the listener (default: nullptr).
+     * @param mask StatusMask (default: all).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter_with_profile(
@@ -152,7 +158,9 @@ public:
      * The deletion of the DataWriter will automatically unregister all instances.
      * Depending on the settings of the WRITER_DATA_LIFECYCLE QosPolicy, the deletion of the DataWriter
      * may also dispose all instances.
-     * @param writer
+     * @param writer DataWriter to delete
+     * @return RETCODE_PRECONDITION_NOT_MET if it does not belong to this Publisher, RETCODE_OK if it is correctly deleted and
+     * RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_datawriter(
             DataWriter* writer);
@@ -163,14 +171,15 @@ public:
      *
      * If multiple DataWriter attached to the Publisher satisfy this condition, then the operation will return
      * one of them. It is not specified which one.
-     * @param topic_name
+     * @param topic_name Name of the Topic
+     * @return Pointer to a previously created DataWriter associated to a Topic with the requested topic_name
      */
     RTPS_DllAPI DataWriter* lookup_datawriter(
             const std::string& topic_name) const;
 
     /**
      * Fills the given vector with all the datawriters of this publisher.
-     * @param writers
+     * @param writers Vector where the DataWriters are returned
      * @return true
      */
     RTPS_DllAPI bool get_datawriters(
@@ -178,7 +187,7 @@ public:
 
     /**
      * This operation checks if the publisher has DataWriters
-     * @return true if the publisher has one or several DataWriters, false in other case
+     * @return true if the publisher has one or several DataWriters, false otherwise
      */
     RTPS_DllAPI bool has_datawriters() const;
 
@@ -204,14 +213,16 @@ public:
      * parameter elapses, whichever happens first. A return value of true indicates that all the samples written
      * have been acknowledged by all reliable matched data readers; a return value of false indicates that max_wait
      * elapsed before all the data was acknowledged.
-     * @param max_wait
-     * @return False if timedout. True otherwise.
+     * @param max_wait Maximum blocking time for this operation
+     * @return RETCODE_TIMEOUT if the function takes more than the maximum blocking time established, RETCODE_OK if the
+     * Publisher receives the acknowledgments and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
      * This operation returns the DomainParticipant to which the Publisher belongs.
+     * @return Pointer to the DomainParticipant
      */
     RTPS_DllAPI const DomainParticipant* get_participant() const;
 
@@ -229,7 +240,8 @@ public:
      * The special value DATAWRITER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_datawriter_qos operation had never been called.
-     * @param qos
+     * @param qos DataWriterQos to be set
+     * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_default_datawriter_qos(
             const DataWriterQos& qos);
@@ -252,8 +264,8 @@ public:
      *
      * The values retrieved by get_default_datawriter_qos will match the set of values specified on the last
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
-     * @param qos Copy of the current default WriterQos.
-     * @return Always true.
+     * @param qos Reference to the current default WriterQos.
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_default_datawriter_qos(
             DataWriterQos& qos) const;

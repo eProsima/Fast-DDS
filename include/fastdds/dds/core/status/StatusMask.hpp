@@ -24,6 +24,7 @@
 #include <bitset>
 #include <sstream>
 
+//!Alias of size_t(16)
 #define FASTDDS_STATUS_COUNT size_t(16)
 
 namespace eprosima {
@@ -38,8 +39,6 @@ namespace dds {
  * - determine which listener functions to call
  * - set conditions in dds::core::cond::StatusCondition
  * - indicate status changes when calling dds::core::Entity::status_changes
- *
- * @see @ref DCPS_Modules_Infrastructure_Status  "Status concept"
  */
 class StatusMask : public std::bitset<FASTDDS_STATUS_COUNT>
 {
@@ -233,6 +232,11 @@ public:
         return StatusMask(0x00000001 << 14u);
     }
 
+    /**
+     * @brief Checks if the status passed as parameter is 1 in the actual StatusMask
+     * @param status Status that need to be checked
+     * @return true if the status is active and false if not
+     */
     bool is_active(
             StatusMask status) const
     {

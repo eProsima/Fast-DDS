@@ -40,6 +40,9 @@ class TopicQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TopicQos();
 
     bool operator ==(
@@ -80,7 +83,7 @@ public:
 
     /**
      * Setter for TopicDataQosPolicy
-     * @param value
+     * @param value new value for the TopicDataQosPolicy
      */
     void topic_data(
             const TopicDataQosPolicy& value)
@@ -108,7 +111,7 @@ public:
 
     /**
      * Setter for DurabilityQosPolicy
-     * @param durability
+     * @param durability new value for the DurabilityQosPolicy
      */
     void durability(
             const DurabilityQosPolicy& durability)
@@ -136,7 +139,7 @@ public:
 
     /**
      * Setter for DurabilityServiceQosPolicy
-     * @param durability_service
+     * @param durability_service new value for the DurabilityServiceQosPolicy
      */
     void durability_service(
             const DurabilityServiceQosPolicy& durability_service)
@@ -164,7 +167,7 @@ public:
 
     /**
      * Setter for DeadlineQosPolicy
-     * @param deadline
+     * @param deadline new value for the DeadlineQosPolicy
      */
     void deadline(
             const DeadlineQosPolicy& deadline)
@@ -192,7 +195,7 @@ public:
 
     /**
      * Setter for LatencyBudgetQosPolicy
-     * @param latency_budget
+     * @param latency_budget new value for the LatencyBudgetQosPolicy
      */
     void latency_budget(
             const LatencyBudgetQosPolicy& latency_budget)
@@ -220,7 +223,7 @@ public:
 
     /**
      * Setter for LivelinessQosPolicy
-     * @param liveliness
+     * @param liveliness new value for the LivelinessQosPolicy
      */
     void liveliness(
             const LivelinessQosPolicy& liveliness)
@@ -248,7 +251,7 @@ public:
 
     /**
      * Setter for ReliabilityQosPolicy
-     * @param reliability
+     * @param reliability new value for the ReliabilityQosPolicy
      */
     void reliability(
             const ReliabilityQosPolicy& reliability)
@@ -276,7 +279,7 @@ public:
 
     /**
      * Setter for DestinationOrderQosPolicy
-     * @param destination_order
+     * @param destination_order new value for the DestinationOrderQosPolicy
      */
     void destination_order(
             const DestinationOrderQosPolicy& destination_order)
@@ -304,7 +307,7 @@ public:
 
     /**
      * Setter for HistoryQosPolicy
-     * @param history
+     * @param history new value for the HistoryQosPolicy
      */
     void history(
             const HistoryQosPolicy& history)
@@ -332,7 +335,7 @@ public:
 
     /**
      * Setter for ResourceLimitsQosPolicy
-     * @param resource_limits
+     * @param resource_limits new value for the ResourceLimitsQosPolicy
      */
     void resource_limits(
             const ResourceLimitsQosPolicy& resource_limits)
@@ -360,7 +363,7 @@ public:
 
     /**
      * Setter for TransportPriorityQosPolicy
-     * @param transport_priority
+     * @param transport_priority new value for the TransportPriorityQosPolicy
      */
     void transport_priority(
             const TransportPriorityQosPolicy& transport_priority)
@@ -388,7 +391,7 @@ public:
 
     /**
      * Setter for LifespanQosPolicy
-     * @param lifespan
+     * @param lifespan new value for the LifespanQosPolicy
      */
     void lifespan(
             const LifespanQosPolicy& lifespan)
@@ -416,7 +419,7 @@ public:
 
     /**
      * Setter for OwnershipQosPolicy
-     * @param ownership
+     * @param ownership new value for the OwnershipQosPolicy
      */
     void ownership(
             const OwnershipQosPolicy& ownership)
@@ -444,7 +447,7 @@ public:
 
     /**
      * Setter for DataRepresentationQosPolicy
-     * @param representation
+     * @param representation new value for the DataRepresentationQosPolicy
      */
     void representation(
             const DataRepresentationQosPolicy& representation)

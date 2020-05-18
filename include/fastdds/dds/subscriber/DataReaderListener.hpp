@@ -41,9 +41,19 @@ class DataReaderListener
 {
 public:
 
-    RTPS_DllAPI DataReaderListener(){}
+    /**
+     * @brief Constructor
+     */
+    RTPS_DllAPI DataReaderListener()
+    {
+    }
 
-    RTPS_DllAPI virtual ~DataReaderListener(){}
+    /**
+     * @brief Destructor
+     */
+    RTPS_DllAPI virtual ~DataReaderListener()
+    {
+    }
 
     /**
      * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
@@ -58,7 +68,7 @@ public:
     /**
      * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
      * @param reader DataReader
-     * @param info Matching information
+     * @param info The subscription matched status
      */
     RTPS_DllAPI virtual void on_subscription_matched(
             DataReader* reader,
@@ -110,7 +120,7 @@ public:
     /**
      * @brief Method called an incompatible QoS was requested.
      * @param reader The DataReader
-     * @param status The RequestedIncompatibleQos status
+     * @param status The requested incompatible QoS status
      */
     RTPS_DllAPI virtual void on_requested_incompatible_qos(
             DataReader* reader,
@@ -123,7 +133,7 @@ public:
     /**
      * @brief Method called when a sample was lost.
      * @param reader The DataReader
-     * @param status The SampleLost status
+     * @param status The sample lost status
      */
     RTPS_DllAPI virtual void on_sample_lost(
             DataReader* reader,
@@ -132,6 +142,7 @@ public:
         (void)reader;
         (void)status;
     }
+
 };
 
 } /* namespace dds */

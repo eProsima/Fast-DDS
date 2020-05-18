@@ -65,7 +65,6 @@ public:
 
     /**
      * @brief Create a RTPSParticipant.
-     * @snippet fastrtps_example.cpp ex_RTPSParticipantCreation
      * @param domain_id DomainId to be used by the RTPSParticipant (80 by default).
      * @param attrs RTPSParticipant Attributes.
      * @param plisten Pointer to the ParticipantListener.
@@ -78,7 +77,6 @@ public:
 
     /**
      * @brief Create a RTPSParticipant.
-     * @snippet fastrtps_example.cpp ex_RTPSParticipantCreation
      * @param domain_id DomainId to be used by the RTPSParticipant (80 by default).
      * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
      * @param attrs RTPSParticipant Attributes.
@@ -157,7 +155,7 @@ public:
      * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
      * @param domain_id DDS domain associated
      * @param attrs RTPSParticipant Attributes.
-     * @param plisten Pointer to the ParticipantListener.
+     * @param listen Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
      */
     static RTPSParticipant* clientServerEnvironmentCreationOverride(

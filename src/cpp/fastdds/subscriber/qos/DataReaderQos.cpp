@@ -14,7 +14,7 @@
 
 /**
  * @file DataReaderQos.cpp
-*
+ *
  */
 
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -27,7 +27,7 @@ namespace dds {
 const DataReaderQos DATAREADER_QOS_DEFAULT;
 
 ReaderQos DataReaderQos::get_readerqos(
-        const SubscriberQos& pqos) const
+        const SubscriberQos& sqos) const
 {
     ReaderQos qos;
     qos.m_durability = durability();
@@ -36,9 +36,9 @@ ReaderQos DataReaderQos::get_readerqos(
     qos.m_liveliness = liveliness();
     qos.m_reliability = reliability();
     qos.m_destinationOrder = destination_order();
-    qos.m_presentation = pqos.presentation();
-    qos.m_partition = pqos.partition();
-    qos.m_groupData = pqos.group_data();
+    qos.m_presentation = sqos.presentation();
+    qos.m_partition = sqos.partition();
+    qos.m_groupData = sqos.group_data();
     qos.m_userData = user_data();
     qos.m_ownership = ownership();
     qos.m_timeBasedFilter = time_based_filter();

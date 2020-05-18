@@ -54,6 +54,7 @@ public:
     /**
      * @brief set_log_options
      * @param log_options
+     * @param exception
      * @return TRUE if successful
      */
     bool set_log_options(
@@ -79,6 +80,7 @@ public:
     /**
      * @brief set_listener
      * @param listener
+     * @param exception
      * @return
      */
     bool set_listener(
@@ -90,6 +92,7 @@ public:
      * @param log_level
      * @param message
      * @param category
+     * @param exception
      */
     void log(
             const LoggingLevel log_level,
@@ -146,7 +149,11 @@ protected:
 
     /**
      * @brief convert
-     * @param msg
+     * @param log_level
+     * @param message
+     * @param category
+     * @param builtin_msg
+     * @param exception
      * @return
      */
     virtual bool convert(
@@ -165,7 +172,6 @@ protected:
     /**
      * @brief log_impl
      * @param message
-     * @param category
      * @param exception
      */
     virtual void log_impl(
@@ -203,7 +209,7 @@ bool Logging::compose_header(
     std::string severity;
     if (!LogLevel_to_string(builtin_msg.severity, severity, exception))
     {
-      return false;
+        return false;
     }
 
     // header format is:

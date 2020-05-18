@@ -39,10 +39,16 @@ class PublisherQos
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI PublisherQos()
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~PublisherQos() = default;
 
     bool operator ==(
@@ -74,7 +80,7 @@ public:
 
     /**
      * Setter for PresentationQosPolicy
-     * @param presentation
+     * @param presentation PresentationQosPolicy
      */
     void presentation(
             const PresentationQosPolicy& presentation)
@@ -102,7 +108,7 @@ public:
 
     /**
      * Setter for PartitionQosPolicy
-     * @param partition
+     * @param partition PartitionQosPolicy
      */
     void partition(
             const PartitionQosPolicy& partition)
@@ -130,7 +136,7 @@ public:
 
     /**
      * Setter for GroupDataQosPolicy
-     * @param group_data
+     * @param group_data GroupDataQosPolicy
      */
     void group_data(
             const GroupDataQosPolicy& group_data)
@@ -158,7 +164,7 @@ public:
 
     /**
      * Setter for EntityFactoryQosPolicy
-     * @param entity_factory
+     * @param entity_factory EntityFactoryQosPolicy
      */
     void entity_factory(
             const EntityFactoryQosPolicy& entity_factory)
@@ -174,7 +180,7 @@ private:
     //!Partition Qos, implemented in the library.
     PartitionQosPolicy partition_;
 
-    //!Group Data Qos, NOT implemented in the library.
+    //!Group Data Qos, implemented in the library.
     GroupDataQosPolicy group_data_;
 
     //!Entity Factory Qos, implemented in the library

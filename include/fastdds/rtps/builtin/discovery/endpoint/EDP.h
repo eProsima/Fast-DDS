@@ -84,11 +84,17 @@ public:
      * @param pdata Pointer to the ParticipantProxyData to remove
      */
     virtual void removeRemoteEndpoints(
-            ParticipantProxyData* pdata){(void) pdata;};
+            ParticipantProxyData* pdata)
+    {
+        (void) pdata;
+    }
 
     //! Verify if the given participant EDP enpoints are matched with us
     virtual bool areRemoteEndpointsMatched(
-            const ParticipantProxyData* ) { return false; };
+            const ParticipantProxyData* )
+    {
+        return false;
+    }
 
     /**
      * Abstract method that removes a local Reader from the discovery method
@@ -251,11 +257,18 @@ public:
 
     virtual bool pairing_remote_writer_with_local_builtin_reader_after_security(
             const GUID_t& /*local_reader*/,
-            const WriterProxyData& /*remote_writer_data*/) { return false; }
+            const WriterProxyData& /*remote_writer_data*/)
+    {
+        return false;
+    }
 
     virtual bool pairing_remote_reader_with_local_builtin_writer_after_security(
             const GUID_t& /*local_writer*/,
-            const ReaderProxyData& /*remote_reader_data*/) { return false; }
+            const ReaderProxyData& /*remote_reader_data*/)
+    {
+        return false;
+    }
+
 #endif
     const fastdds::dds::SubscriptionMatchedStatus& update_subscription_matched_status(
             const GUID_t& reader_guid,
@@ -277,15 +290,19 @@ private:
     /**
      * Try to pair/unpair a local Reader against all possible writerProxy Data.
      * @param R Pointer to the Reader
+     * @param participant_guid
+     * @param rdata
      * @return True
      */
     bool pairingReader(
             RTPSReader* R,
             const GUID_t& participant_guid,
             const ReaderProxyData& rdata);
-    /**l
+    /**
      * Try to pair/unpair a local Writer against all possible readerProxy Data.
      * @param W Pointer to the Writer
+     * @param participant_guid
+     * @param wdata
      * @return True
      */
     bool pairingWriter(

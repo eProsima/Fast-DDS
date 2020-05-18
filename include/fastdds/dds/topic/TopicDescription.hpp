@@ -36,10 +36,11 @@ class TopicDescriptionImpl;
 class TopicDescription
 {
 public:
+
     /**
      * Get the DomainParticipant to which the TopicDescription belongs.
      * @return The DomainParticipant to which the TopicDescription belongs.
-    */
+     */
     virtual DomainParticipant* get_participant() const = 0;
 
     /**
@@ -60,10 +61,19 @@ public:
         return type_name_;
     }
 
+    /**
+     * Get the TopicDescriptionImpl
+     * @return pointer to TopicDescriptionImpl
+     */
     virtual TopicDescriptionImpl* get_impl() const = 0;
 
 protected:
 
+    /**
+     * @brief Constructor using topic name and data type name
+     * @param name Name for the topic
+     * @param type_name Data type name
+     */
     TopicDescription(
             const std::string& name,
             const std::string& type_name)
@@ -72,6 +82,9 @@ protected:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual ~TopicDescription()
     {
     }

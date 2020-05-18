@@ -38,8 +38,20 @@ class DataWriter;
 class RTPS_DllAPI DataWriterListener
 {
 public:
-    DataWriterListener(){}
-    virtual ~DataWriterListener(){}
+
+    /**
+     * @brief Constructor
+     */
+    DataWriterListener()
+    {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~DataWriterListener()
+    {
+    }
 
     /**
      * This method is called when the Publisher is matched (or unmatched) against an endpoint.
@@ -92,6 +104,7 @@ public:
         (void)writer;
         (void)status;
     }
+
 };
 
 } /* namespace dds */

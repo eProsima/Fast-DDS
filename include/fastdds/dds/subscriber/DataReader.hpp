@@ -91,10 +91,15 @@ class DataReader : public DomainEntity
 
 public:
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~DataReader();
 
     /**
      * Method to block the current thread until an unread message is available
+     * @param timeout Max blocking time for this operation
+     * @return true if there is new unread message, false if timeout
      */
     RTPS_DllAPI bool wait_for_unread_message(
             const fastrtps::Duration_t& timeout);
@@ -113,6 +118,22 @@ public:
             uint32_t max_samples);
      */
 
+    /**
+     * @brief This operation copies the next, non-previously accessed Data value from the DataReader; the operation also
+     * copies the corresponding SampleInfo. The implied order among the samples stored in the DataReader is the same as for
+     * the read operation.
+     *
+     * The read_next_sample operation is semantically equivalent to the read operation where the input Data sequence has
+     * max_length=1, the sample_states=NOT_READ, the view_states=ANY_VIEW_STATE, and the instance_states=ANY_INSTANCE_STATE.
+     *
+     * The read_next_sample operation provides a simplified API to ‘read’ samples avoiding the need for the application to
+     * manage sequences and specify states.
+     *
+     * If there is no unread data in the DataReader, the operation will return NO_DATA and nothing is copied
+     * @param data Data pointer to store the sample
+     * @param info SampleInfo pointer to store the sample information
+     * @return RETCODE_NO_DATA if the history is empty, RETCODE_OK if the next sample is returned and RETCODE_ERROR otherwise
+     */
     RTPS_DllAPI ReturnCode_t read_next_sample(
             void* data,
             SampleInfo* info);
@@ -124,6 +145,22 @@ public:
             uint32_t max_samples);
      */
 
+    /**
+     * @brief This operation copies the next, non-previously accessed Data value from the DataReader and ‘removes’ it from
+     * the DataReader so it is no longer accessible. The operation also copies the corresponding SampleInfo. This operation
+     * is analogous to the read_next_sample except for the fact that the sample is ‘removed’ from the DataReader.
+     *
+     * The take_next_sample operation is semantically equivalent to the take operation where the input sequence has
+     * max_length=1, the sample_states=NOT_READ, the view_states=ANY_VIEW_STATE, and the instance_states=ANY_INSTANCE_STATE.
+     *
+     * This operation provides a simplified API to ’take’ samples avoiding the need for the application to manage sequences
+     * and specify states.
+     *
+     * If there is no unread data in the DataReader, the operation will return NO_DATA and nothing is copied.
+     * @param data Data pointer to store the sample
+     * @param info SampleInfo pointer to store the sample information
+     * @return RETCODE_NO_DATA if the history is empty, RETCODE_OK if the next sample is returned and RETCODE_ERROR otherwise
+     */
     RTPS_DllAPI ReturnCode_t take_next_sample(
             void* data,
             SampleInfo* info);
@@ -144,17 +181,21 @@ public:
      */
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
 
+    /**
+     * @brief Getter for the associated InstanceHandle
+     * @return Copy of the InstanceHandle
+     */
     RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
-     * Get topic data type
-     * @return Topic data type
+     * Getter for the data type
+     * @return TypeSupport associated to the DataReader
      */
     TypeSupport type();
 
     /**
      * Get TopicDescription
-     * @return TopicDescription
+     * @return TopicDescription pointer
      */
     const TopicDescription* get_topicdescription() const;
 
@@ -165,17 +206,41 @@ public:
     RTPS_DllAPI ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
+    /**
+     * @brief Setter for the DataReaderQos
+     * @param qos new value for the DataReaderQos
+     * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
+     * self consistent and RETCODE_OK if the qos is changed correctly.
+     */
     RTPS_DllAPI ReturnCode_t set_qos(
             const DataReaderQos& qos);
 
+    /**
+     * @brief Getter for the DataReaderQos
+     * @return Pointer to the DataReaderQos
+     */
     RTPS_DllAPI const DataReaderQos& get_qos() const;
 
+    /**
+     * @brief Getter for the DataReaderQos
+     * @param qos DataReaderQos where the qos is returned
+     * @return RETCODE_OK
+     */
     RTPS_DllAPI ReturnCode_t get_qos(
             DataReaderQos& qos) const;
 
+    /**
+     * @brief Setter for the DataReaderListener
+     * @param listener new value for the DataReaderListener
+     * @return RETCODE_OK
+     */
     RTPS_DllAPI ReturnCode_t set_listener(
             DataReaderListener* listener);
 
+    /**
+     * @brief Getter for the DataReaderListener
+     * @return Pointer to the DataReaderListener
+     */
     RTPS_DllAPI const DataReaderListener* get_listener() const;
 
     /* TODO
@@ -184,6 +249,11 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
      */
 
+    /**
+     * @brief Get the liveliness changed status
+     * @param status LivelinessChangedStatus object where the status is returned
+     * @return RETCODE_OK
+     */
     RTPS_DllAPI ReturnCode_t get_liveliness_changed_status(
             LivelinessChangedStatus& status) const;
 
@@ -202,6 +272,10 @@ public:
             fastrtps::SampleRejectedStatus& status) const;
      */
 
+    /**
+     * @brief Getter for the Subscriber
+     * @return Subscriber pointer
+     */
     RTPS_DllAPI const Subscriber* get_subscriber() const;
 
     /* TODO

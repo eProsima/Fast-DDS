@@ -34,11 +34,13 @@ struct DeadlineMissedStatus
         : total_count()
         , total_count_change()
         , last_instance_handle()
-    {}
+    {
+    }
 
     //! @brief Destructor
     ~DeadlineMissedStatus()
-    {}
+    {
+    }
 
     //! @brief Total cumulative number of offered deadline periods epased during which a writer failed to provide data
     //! @details Missed deadlines accumulate, that is, each deadline period the total_count will be incremented by 1
@@ -51,7 +53,9 @@ struct DeadlineMissedStatus
     fastrtps::rtps::InstanceHandle_t last_instance_handle;
 };
 
+//! Typedef of DeadlineMissedStatus
 typedef DeadlineMissedStatus OfferedDeadlineMissedStatus;
+//! Typedef of DeadlineMissedStatus
 typedef DeadlineMissedStatus RequestedDeadlineMissedStatus;
 
 } //namespace dds

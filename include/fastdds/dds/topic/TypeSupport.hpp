@@ -34,8 +34,8 @@ namespace dds {
 class DomainParticipant;
 
 /**
- * NOTE: This class inherits from std::shared_ptr<TopicDataType>.
- * Class TypeSupport used to provide the DomainRTPSParticipant with the methods to serialize,
+ * @note This class inherits from std::shared_ptr<TopicDataType>.
+ * @brief Class TypeSupport used to provide the DomainRTPSParticipant with the methods to serialize,
  * deserialize and get the key of a specific data type.
  * The user should created a class that inherits from this one,
  * where Serialize and deserialize methods MUST be implemented.
@@ -53,11 +53,18 @@ public:
     using Base::operator bool;
     using Base::operator =;
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TypeSupport()
         : std::shared_ptr<fastdds::dds::TopicDataType>(nullptr)
     {
     }
 
+    /**
+     * @brief Copy Constructor
+     * @param type Another instance of TypeSupport
+     */
     RTPS_DllAPI TypeSupport(
             const TypeSupport& type)
         : std::shared_ptr<fastdds::dds::TopicDataType>(type)
@@ -88,18 +95,41 @@ public:
     {
     }
 
+    /**
+     * @brief Registers the type on a participant
+     * @param participant DomainParticipant where the type is going to be registered
+     * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
+     * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
+     */
     RTPS_DllAPI virtual ReturnCode_t register_type(
             DomainParticipant* participant) const;
 
+    /**
+     * @brief Registers the type on a participant
+     * @param participant DomainParticipant where the type is going to be registered
+     * @param type_name Name of the type to register
+     * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
+     * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
+     */
     RTPS_DllAPI virtual ReturnCode_t register_type(
             DomainParticipant* participant,
             std::string type_name) const;
 
+    /**
+     * @brief Getter for the type name
+     * @return name of the data type
+     */
     RTPS_DllAPI virtual const std::string& get_type_name() const
     {
         return get()->m_topicDataTypeName;
     }
 
+    /**
+     * @brief Serializes the data
+     * @param data Pointer to data
+     * @param payload Pointer to payload
+     * @return true if it is serialized correctly, false if not
+     */
     RTPS_DllAPI virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload)
@@ -107,6 +137,12 @@ public:
         return get()->serialize(data, payload);
     }
 
+    /**
+     * @brief Deserializes the data
+     * @param payload Pointer to payload
+     * @param data Pointer to data
+     * @return true if it is deserialized correctly, false if not
+     */
     RTPS_DllAPI virtual bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data)
@@ -114,23 +150,43 @@ public:
         return get()->deserialize(payload, data);
     }
 
+    /**
+     * @brief Getter for the SerializedSizeProvider
+     * @param data Pointer to data
+     * @return function
+     */
     RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
             void* data)
     {
         return get()->getSerializedSizeProvider(data);
     }
 
+    /**
+     * @brief Creates new data
+     * @return Pointer to the data
+     */
     RTPS_DllAPI virtual void* create_data()
     {
         return get()->createData();
     }
 
+    /**
+     * @brief Deletes data
+     * @param data Pointer to the data to delete
+     */
     RTPS_DllAPI virtual void delete_data(
             void* data)
     {
         return get()->deleteData(data);
     }
 
+    /**
+     * @brief Getter for the data key
+     * @param data Pointer to data
+     * @param i_handle InstanceHandle pointer to store the key
+     * @param force_md5 boolean to force md5 (default: false)
+     * @return true if the key is returned, false if not
+     */
     RTPS_DllAPI virtual bool get_key(
             void* data,
             fastrtps::rtps::InstanceHandle_t* i_handle,
@@ -150,6 +206,10 @@ public:
                && get()->type_object() == type_support->type_object();
     }
 
+    /**
+     * @brief Check if the TypeSupport is empty
+     * @return true if empty, false if not
+     */
     RTPS_DllAPI bool empty() const
     {
         return get() == nullptr;

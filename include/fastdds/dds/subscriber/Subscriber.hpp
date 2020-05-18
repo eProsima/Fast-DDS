@@ -68,6 +68,7 @@ class Subscriber : public DomainEntity
     /**
      * Constructor from a SubscriberImpl pointer
      * @param pimpl Actual implementation of the subscriber
+     * @param mask StatusMask (default: all)
      */
     RTPS_DllAPI Subscriber(
             SubscriberImpl* pimpl,
@@ -81,18 +82,23 @@ class Subscriber : public DomainEntity
 
 public:
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~Subscriber()
     {
     }
 
     /**
      * Allows accessing the Subscriber Qos.
+     * @return SubscriberQos reference
      */
     RTPS_DllAPI const SubscriberQos& get_qos() const;
 
     /**
      * Retrieves the Subscriber Qos.
-     * @return true
+     * @param qos SubscriberQos where the qos is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_qos(
             SubscriberQos& qos) const;
@@ -100,21 +106,23 @@ public:
     /**
      * Allows modifying the Subscriber Qos.
      * The given Qos must be supported by the SubscriberQos.
-     * @param qos
-     * @return False if IMMUTABLE_POLICY or INCONSISTENT_POLICY occurs. True if updated.
+     * @param qos new value for SubscriberQos
+     * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
+     * self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const SubscriberQos& qos);
 
     /**
      * Retrieves the attached SubscriberListener.
+     * @return Pointer to the SubscriberListener
      */
     RTPS_DllAPI const SubscriberListener* get_listener() const;
 
     /**
      * Modifies the SubscriberListener.
-     * @param listener
-     * @return if successfully set.
+     * @param listener new value for SubscriberListener
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             SubscriberListener* listener);
@@ -123,8 +131,8 @@ public:
      * This operation creates a DataReader. The returned DataReader will be attached and belong to the Subscriber.
      * @param topic Topic the DataReader will be listening.
      * @param reader_qos QoS of the DataReader.
-     * @param listener Pointer to the listener.
-     * @param mask StatusMask.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask (default: all)
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     RTPS_DllAPI DataReader* create_datareader(
@@ -136,9 +144,9 @@ public:
     /**
      * This operation creates a DataReader. The returned DataReader will be attached and belongs to the Subscriber.
      * @param topic Topic the DataReader will be listening.
-     * @param profile DataReader profile name.
-     * @param listener Pointer to the listener.
-     * @param mask StatusMask.
+     * @param profile_name DataReader profile name.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask (default: all)
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     RTPS_DllAPI DataReader* create_datareader_with_profile(
@@ -152,8 +160,10 @@ public:
      *
      * The delete_datareader operation must be called on the same Subscriber object used to create the DataReader.
      * If delete_datareader is called on a different Subscriber, the operation will have no effect and it will
-     * return false.
-     * @param reader
+     * return an error.
+     * @param reader DataReader to delete
+     * @return RETCODE_PRECONDITION_NOT_MET if the datareader does not belong to this subscriber, RETCODE_OK if it is correctly
+     * deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_datareader(
             DataReader* reader);
@@ -164,15 +174,16 @@ public:
      *
      * If multiple DataReaders attached to the Subscriber satisfy this condition, then the operation will return
      * one of them. It is not specified which one.
-     * @param topic_name
+     * @param topic_name Name of the topic associated to the DataReader
+     * @return Pointer to a previously created DataReader created on a Topic with that topic_name
      */
     RTPS_DllAPI DataReader* lookup_datareader(
             const std::string& topic_name) const;
 
     /**
      * This operation allows the application to access the DataReader objects.
-     * @param readers
-     * @return true
+     * @param readers Vector of DataReader where the list of existing readers is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_datareaders(
             std::vector<DataReader*>& readers) const;
@@ -197,7 +208,7 @@ public:
      *
      * This operation is typically invoked from the on_data_on_readers operation in the SubscriberListener.
      * That way the SubscriberListener can delegate to the DataReaderListener objects the handling of the data.
-     * @return
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t notify_datareaders() const;
 
@@ -215,7 +226,8 @@ public:
      * The special value DATAREADER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_datareader_qos operation had never been called.
-     * @param qos
+     * @param qos new value for DataReaderQos to set as default
+     * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_default_datareader_qos(
             const DataReaderQos& qos);
@@ -250,8 +262,8 @@ public:
      *
      * The values retrieved get_default_datareader_qos will match the set of values specified on the last successful
      * call to get_default_datareader_qos, or else, if the call was never made, the default values.
-     * @param qos Current default DataReaderQos.
-     * @return Always true.
+     * @param qos DataReaderQos where the default_qos is returned
+     * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_default_datareader_qos(
             DataReaderQos& qos) const;
@@ -264,6 +276,7 @@ public:
 
     /**
      * This operation returns the DomainParticipant to which the Subscriber belongs.
+     * @return DomainParticipant Pointer
      */
     RTPS_DllAPI const DomainParticipant* get_participant() const;
 

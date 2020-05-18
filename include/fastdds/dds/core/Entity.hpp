@@ -37,6 +37,10 @@ class Entity
 {
 public:
 
+    /**
+     * @brief Constructor
+     * @param mask StatusMask (default: all)
+     */
     RTPS_DllAPI Entity(
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
@@ -45,8 +49,8 @@ public:
     }
 
     /**
-     * @brief enable This operation enables the Entity
-     * @return true
+     * @brief This operation enables the Entity
+     * @return RETCODE_OK
      */
     virtual fastrtps::types::ReturnCode_t enable()
     {
@@ -54,13 +58,16 @@ public:
         return fastrtps::types::ReturnCode_t::RETCODE_OK;
     }
 
+    /**
+     * @brief This operation disables the Entity before closing it
+     */
     void close()
     {
         enable_ = false;
     }
 
     /**
-     * @brief get_status_mask Retrieves the set of relevant statuses for the Entity
+     * @brief Retrieves the set of relevant statuses for the Entity
      * @return Reference to the StatusMask with the relevant statuses set to 1
      */
     RTPS_DllAPI const StatusMask& get_status_mask() const
@@ -69,7 +76,7 @@ public:
     }
 
     /**
-     * @brief get_instance_handle Retrieves the instance handler that represents the Entity
+     * @brief Retrieves the instance handler that represents the Entity
      * @return Reference to the InstanceHandle
      */
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
@@ -78,7 +85,7 @@ public:
     }
 
     /**
-     * @brief is_enabled Checks if the Entity is enabled
+     * @brief Checks if the Entity is enabled
      * @return true if enabled, false if not
      */
     RTPS_DllAPI bool is_enabled() const
@@ -94,28 +101,39 @@ public:
 
 protected:
 
+    /**
+     * @brief Setter for the Instance Handle
+     * @param handle Instance Handle
+     */
     RTPS_DllAPI void set_instance_handle(
             const fastrtps::rtps::InstanceHandle_t& handle)
     {
         instance_handle_ = handle;
     }
 
+    //! StatusMask with relevant statuses set to 1
     StatusMask status_mask_;
 
+    //! InstanceHandle associated to the Entity
     fastrtps::rtps::InstanceHandle_t instance_handle_;
 
+    //! Boolean that states if the Entity is enabled or disabled
     bool enable_;
 
 };
 
 /**
- * @brief The DomainEntity class Subclass of Entity created in order to differentiate between DomainParticipants
+ * @brief The DomainEntity class is a subclass of Entity created in order to differentiate between DomainParticipants
  * and the rest of Entities
  */
 class DomainEntity : public Entity
 {
 public:
 
+    /**
+     * @brief Constructor
+     * @param mask StatusMask (default: all)
+     */
     RTPS_DllAPI DomainEntity(
             const StatusMask& mask = StatusMask::all())
         : Entity(mask)

@@ -44,12 +44,14 @@ class TypeSupport;
  * Class TopicDataType used to provide the DomainRTPSParticipant with the methods to serialize, deserialize and get the key of a specific data type.
  * The user should created a class that inherits from this one, where Serialize and deserialize methods MUST be implemented.
  * @ingroup FASTRTPS_MODULE, FASTDDS_MODULE
- * @snippet fastrtps_example.cpp ex_TopicDataType
  */
 class TopicDataType
 {
 public:
 
+    /**
+     * @brief Constructor
+     */
     RTPS_DllAPI TopicDataType()
         : m_typeSize(0)
         , m_isGetKeyDefined(false)
@@ -58,13 +60,16 @@ public:
     {
     }
 
+    /**
+     * @brief Destructor
+     */
     RTPS_DllAPI virtual ~TopicDataType()
     {
     }
 
     /**
      * Serialize method, it should be implemented by the user, since it is abstract.
-     * It is VERY IMPORTANT that the user sets the serializedPaylaod length correctly.
+     * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
      * @param[in] data Pointer to the data
      * @param[out] payload Pointer to the payload
      * @return True if correct.
@@ -83,6 +88,11 @@ public:
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data) = 0;
 
+    /**
+     * @brief Gets the SerializedSizeProvider function
+     * @param data Pointer
+     * @return function
+     */
     RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(
             void* data) = 0;
 
@@ -140,6 +150,7 @@ public:
 
     /**
      * Set the type object auto-fill configuration
+     * @param auto_fill_type_object new value to set
      */
     RTPS_DllAPI inline void auto_fill_type_object(
             bool auto_fill_type_object)
@@ -158,6 +169,7 @@ public:
 
     /**
      * Set type information auto-fill configuration
+     * @param auto_fill_type_information new value to set
      */
     RTPS_DllAPI inline void auto_fill_type_information(
             bool auto_fill_type_information)
@@ -176,6 +188,7 @@ public:
 
     /**
      * Set type identifier
+     * @param id new value for TypeIdV1
      */
     RTPS_DllAPI inline void type_identifier(
             const TypeIdV1& id)
@@ -185,6 +198,7 @@ public:
 
     /**
      * Set type identifier
+     * @param id shared pointer to TypeIdV1
      */
     RTPS_DllAPI inline void type_identifier(
             const std::shared_ptr<TypeIdV1> id)
@@ -203,6 +217,7 @@ public:
 
     /**
      * Set type object
+     * @param object new value for TypeObjectV1
      */
     RTPS_DllAPI inline void type_object(
             const TypeObjectV1& object)
@@ -212,6 +227,7 @@ public:
 
     /**
      * Set type object
+     * @param object shared pointer to TypeObjectV1
      */
     RTPS_DllAPI inline void type_object(
             std::shared_ptr<TypeObjectV1> object)
@@ -230,6 +246,7 @@ public:
 
     /**
      * Set type information
+     * @param info new value for TypeInformation
      */
     RTPS_DllAPI inline void type_information(
             const xtypes::TypeInformation& info)
@@ -239,6 +256,7 @@ public:
 
     /**
      * Set type information
+     * @param info shared pointer to TypeInformation
      */
     RTPS_DllAPI inline void type_information(
             std::shared_ptr<xtypes::TypeInformation> info)
