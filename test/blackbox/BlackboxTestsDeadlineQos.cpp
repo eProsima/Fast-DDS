@@ -178,7 +178,7 @@ TEST_P(DeadlineQos, KeyedTopicLongDeadline)
     for (auto data_sample : data)
     {
         // Send data
-        data_sample.key(count % 2);
+        data_sample.key(count % 2 + 1);
         writer.send_sample(data_sample);
         ++count;
         reader.block_for_at_least(count);
@@ -223,7 +223,7 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
     for (auto data_sample : data)
     {
         // Send data
-        data_sample.key(count % 2);
+        data_sample.key(count % 2 + 1);
         writer.send_sample(data_sample);
         ++count;
         reader.block_for_at_least(count);
