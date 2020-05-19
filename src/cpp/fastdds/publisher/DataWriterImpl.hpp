@@ -128,7 +128,7 @@ public:
             void* instance);
 
     /*!
-     * @brief Implementation of the DDS `register_instance` and `dispose` operations.
+     * @brief Implementation of the DDS `unregister_instance` and `dispose` operations.
      * It sends a CacheChange_t  with the king to NOT_ALIVE_UNREGISTERED or NOT_ALIVE_DISPOSED,
      * depending on the `dispose` parameter.
      * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.

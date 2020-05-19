@@ -74,12 +74,7 @@ bool PublisherHistory::register_instance(
     }
 
     t_m_Inst_Caches::iterator vit;
-    if (find_key(instance_handle, &vit))
-    {
-        returned_value = true;
-    }
-
-    return returned_value;
+    return find_key(instance_handle, &vit);
 }
 
 bool PublisherHistory::add_pub_change(

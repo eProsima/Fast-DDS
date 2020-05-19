@@ -318,6 +318,10 @@ ReturnCode_t DataWriterImpl::unregister_instance(
             returned_value = ReturnCode_t::RETCODE_OK;
         }
     }
+    else
+    {
+        returned_value = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
 
     return returned_value;
 }

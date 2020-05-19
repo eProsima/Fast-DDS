@@ -129,7 +129,7 @@ public:
 
     /*!
      * @brief Checks if the instance's key is registered.
-     * @param[in] Instance's key.
+     * @param[in] handle Instance's key.
      * return `true` if instance's key is registered in the history.
      */
     bool key_is_registered(

@@ -112,16 +112,9 @@ public:
      * instance should be automatically deduced from the instance_data (by means of the key).
      *
      * @param data Pointer to the data
-<<<<<<< HEAD
      * @param handle InstanceHandle_t.
      * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,
      * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
-=======
-     * @param[in] handle InstanceHandle_t.
-     * @return True if correct
-     * @par Calling example:
-     * @snippet fastrtps_example.cpp ex_PublisherWrite
->>>>>>> 6977ade15... Refs #7297. Added doxygen documentation.
      */
     RTPS_DllAPI ReturnCode_t write(
             void* data,
@@ -129,7 +122,7 @@ public:
 
     /*!
      * @brief Informs that the application will be modifying a particular instance.
-     * It gives and opportunity to the middleware to pre-configure itself to improve performance.
+     * It gives an opportunity to the middleware to pre-configure itself to improve performance.
      * @param[in] instance Sample used to get the instance's key.
      * @return Handle containing the instance's key.
      * This handle could be used in successive `write` or `dispose` operations.
@@ -139,7 +132,8 @@ public:
             void* instance);
 
     /*!
-     * @brief This operation reserves the action of `register_instance`.
+     * @brief This operation reverses the action of `register_instance`.
+     * It should only be called on an instance that is currently registered.
      * Informs the middleware that the DataWriter is not intending to modify any more of that data instance.
      * Also indicates that the middleware can locally remove all information regarding that instance.
      * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
