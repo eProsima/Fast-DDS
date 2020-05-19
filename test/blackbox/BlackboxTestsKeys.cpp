@@ -56,8 +56,8 @@ TEST(KeyedTopic, RegistrationFail)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+        resource_limits_max_instances(1).
+        init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -73,8 +73,8 @@ TEST(KeyedTopic, UnregistrationFail)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+        resource_limits_max_instances(1).
+        init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -91,8 +91,8 @@ TEST(KeyedTopic, DisposeFail)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+        resource_limits_max_instances(1).
+        init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -109,8 +109,8 @@ TEST(KeyedTopic, RegistrationAfterUnregistration)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+        resource_limits_max_instances(1).
+        init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -122,10 +122,12 @@ TEST(KeyedTopic, RegistrationAfterUnregistration)
     EXPECT_EQ(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 
     ASSERT_TRUE(writer.unregister_instance(data.front(), instance_handle_1));
+    ASSERT_FALSE(writer.unregister_instance(data.front(), instance_handle_1));
     EXPECT_NE(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
     EXPECT_EQ(writer.register_instance(data.front()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 
     ASSERT_TRUE(writer.unregister_instance(data.back(), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown));
+    ASSERT_FALSE(writer.unregister_instance(data.back(), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown));
     EXPECT_NE(writer.register_instance(data.front()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
 }
 
@@ -134,8 +136,8 @@ TEST(KeyedTopic, RegistrationAfterDispose)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-    resource_limits_max_instances(1).
-    init();
+        resource_limits_max_instances(1).
+        init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -151,6 +153,32 @@ TEST(KeyedTopic, RegistrationAfterDispose)
 
     ASSERT_TRUE(writer.unregister_instance(data.front(), instance_handle_1));
     EXPECT_NE(writer.register_instance(data.back()), eprosima::fastrtps::rtps::c_InstanceHandle_Unknown);
+}
+
+TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
+{
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.
+        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_keyedhelloworld_data_generator();
+
+    // Register instances.
+    auto instance_handle_1 = writer.register_instance(data.front());
+    auto instance_handle_2 = writer.register_instance(*(++data.begin()));
+
+    writer.send(data);
+    // In this test all data should be sent.
+    EXPECT_EQ(data.size(), static_cast<size_t>(0));
+
+    data = default_keyedhelloworld_data_generator(2);
+
+    ASSERT_TRUE(writer.unregister_instance(data.front(), instance_handle_1));
+    ASSERT_TRUE(writer.unregister_instance(data.back(), instance_handle_2));
 }
 
 /* Uncomment when DDS API supports NO_WRITERS_ALIVE

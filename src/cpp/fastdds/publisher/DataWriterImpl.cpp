@@ -652,7 +652,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
             (NOT_ALIVE_UNREGISTERED == ch->kind ||
             NOT_ALIVE_DISPOSED_UNREGISTERED == ch->kind))
     {
-        data_writer_->history_.remove_instance_changes(ch->instanceHandle);
+        data_writer_->history_.remove_instance_changes(ch->instanceHandle, ch->sequenceNumber);
     }
     else if (data_writer_->qos_.durability().kind == VOLATILE_DURABILITY_QOS)
     {

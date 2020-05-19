@@ -494,7 +494,7 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
             (NOT_ALIVE_UNREGISTERED == ch->kind ||
             NOT_ALIVE_DISPOSED_UNREGISTERED == ch->kind))
     {
-        mp_publisherImpl->m_history.remove_instance_changes(ch->instanceHandle);
+        mp_publisherImpl->m_history.remove_instance_changes(ch->instanceHandle, ch->sequenceNumber);
     }
     else if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
     {

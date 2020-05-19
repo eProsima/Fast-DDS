@@ -65,8 +65,6 @@ bool PublisherHistory::register_instance(
         std::unique_lock<RecursiveTimedMutex>&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
 {
-    bool returned_value = false;
-
     /// Preconditions
     if (topic_att_.getTopicKind() == NO_KEY)
     {
@@ -296,7 +294,8 @@ bool PublisherHistory::remove_change_g(
 }
 
 bool PublisherHistory::remove_instance_changes(
-        const rtps::InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle,
+        const rtps::SequenceNumber_t& seq_up_to)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -317,7 +316,9 @@ bool PublisherHistory::remove_instance_changes(
         return false;
     }
 
-    for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
+    auto chit = vit->second.cache_changes.begin();
+
+    for (; chit != vit->second.cache_changes.end() && (*chit)->sequenceNumber <= seq_up_to; ++chit)
     {
         if (remove_change(*chit))
         {
@@ -325,8 +326,12 @@ bool PublisherHistory::remove_instance_changes(
         }
     }
 
-    vit->second.cache_changes.clear();
-    keyed_changes_.erase(vit);
+    vit->second.cache_changes.erase(vit->second.cache_changes.begin(), chit);
+
+    if(vit->second.cache_changes.empty())
+    {
+        keyed_changes_.erase(vit);
+    }
 
     return true;
 }
@@ -408,5 +413,11 @@ bool PublisherHistory::is_key_registered(
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(handle);
-    return (vit != keyed_changes_.end());
+    return (vit != keyed_changes_.end() &&
+            (vit->second.cache_changes.empty() ||
+                (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
+                NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
+                )
+            )
+           );
 }

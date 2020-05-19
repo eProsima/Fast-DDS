@@ -105,7 +105,8 @@ public:
             rtps::CacheChange_t* a_change);
 
     bool remove_instance_changes(
-            const rtps::InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle,
+            const rtps::SequenceNumber_t& seq_up_to);
 
     /**
      * @brief Sets the next deadline for the given instance
