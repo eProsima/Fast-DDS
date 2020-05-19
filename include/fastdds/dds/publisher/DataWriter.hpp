@@ -246,6 +246,11 @@ public:
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
+    /**
+     * @brief Returns the liveliness lost status
+     * @param status Liveliness lost status struct
+     * @return RETCODE_OK
+     */
     RTPS_DllAPI ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
 

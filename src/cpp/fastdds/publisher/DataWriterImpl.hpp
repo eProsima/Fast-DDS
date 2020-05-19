@@ -133,8 +133,10 @@ public:
      * depending on the `dispose` parameter.
      * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param[in] handle Instance's key to be unregistered or disposed.
-     * @param[in] dispose If it is `false`, a CacheChange_t with kind to NOT_ALIVE_UNREGISTERED is sent.
-     * If it is `true`, a CacheChange_t with kind to NOT_ALIVE_DISPOSED is sent.
+     * @param[in] dispose If it is `false`, a CacheChange_t with kind to NOT_ALIVE_UNREGISTERED is sent, or if
+     * `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent with kind to
+     * NOT_ALIVE_DISPOSED_UNREGISTERED.
+     * If `dispose` is `true`, a CacheChange_t with kind to NOT_ALIVE_DISPOSED is sent.
      * @return Returns the operation's result.
      * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
      */

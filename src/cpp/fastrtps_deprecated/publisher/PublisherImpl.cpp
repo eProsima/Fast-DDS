@@ -337,7 +337,7 @@ bool PublisherImpl::unregister_instance(
     }
 #endif
 
-    if (m_history.key_is_registered(ih))
+    if (m_history.is_key_registered(ih))
     {
         WriteParams wparams;
         ChangeKind_t change_kind = dispose ? NOT_ALIVE_DISPOSED : NOT_ALIVE_UNREGISTERED;

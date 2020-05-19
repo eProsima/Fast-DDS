@@ -39,17 +39,17 @@ PublisherHistory::PublisherHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.allocated_samples :
-            topic_att.getTopicKind() == NO_KEY ?
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-            * topic_att.resourceLimitsQos.max_instances),
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.max_samples :
-            topic_att.getTopicKind() == NO_KEY ?
-            topic_att.historyQos.depth :
-            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.allocated_samples :
+                        topic_att.getTopicKind() == NO_KEY ?
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
+                                     * topic_att.resourceLimitsQos.max_instances),
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.max_samples :
+                        topic_att.getTopicKind() == NO_KEY ?
+                            topic_att.historyQos.depth :
+                            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
@@ -74,7 +74,7 @@ bool PublisherHistory::register_instance(
     }
 
     t_m_Inst_Caches::iterator vit;
-    return find_key(instance_handle, &vit);
+    return find_or_add_key(instance_handle, &vit);
 }
 
 bool PublisherHistory::add_pub_change(
@@ -123,7 +123,7 @@ bool PublisherHistory::add_pub_change(
     else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         t_m_Inst_Caches::iterator vit;
-        if (find_key(change->instanceHandle, &vit))
+        if (find_or_add_key(change->instanceHandle, &vit))
         {
             logInfo(RTPS_HISTORY, "Found key: " << vit->first);
             bool add = false;
@@ -177,7 +177,7 @@ bool PublisherHistory::add_pub_change(
     return returnedValue;
 }
 
-bool PublisherHistory::find_key(
+bool PublisherHistory::find_or_add_key(
         const InstanceHandle_t& instance_handle,
         t_m_Inst_Caches::iterator* vit_out)
 {
@@ -267,7 +267,7 @@ bool PublisherHistory::remove_change_pub(
     else
     {
         t_m_Inst_Caches::iterator vit;
-        if (!this->find_key(change->instanceHandle, &vit))
+        if (!this->find_or_add_key(change->instanceHandle, &vit))
         {
             return false;
         }
@@ -312,7 +312,7 @@ bool PublisherHistory::remove_instance_changes(
 
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     t_m_Inst_Caches::iterator vit;
-    if (!this->find_key(handle, &vit))
+    if (!this->find_or_add_key(handle, &vit))
     {
         return false;
     }
@@ -397,7 +397,7 @@ bool PublisherHistory::get_next_deadline(
     return false;
 }
 
-bool PublisherHistory::key_is_registered(
+bool PublisherHistory::is_key_registered(
         const InstanceHandle_t& handle)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)

@@ -132,7 +132,7 @@ public:
      * @param[in] handle Instance's key.
      * return `true` if instance's key is registered in the history.
      */
-    bool key_is_registered(
+    bool is_key_registered(
             const rtps::InstanceHandle_t& handle);
 
 private:
@@ -156,7 +156,7 @@ private:
      * @param map_it A map iterator to the given key
      * @return True if the key was found or could be added to the map
      */
-    bool find_key(
+    bool find_or_add_key(
             const rtps::InstanceHandle_t& instance_handle,
             t_m_Inst_Caches::iterator* map_it);
 };

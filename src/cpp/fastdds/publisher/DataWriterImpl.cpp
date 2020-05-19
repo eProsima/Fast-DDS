@@ -309,10 +309,15 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     }
 #endif
 
-    if (history_.key_is_registered(ih))
+    if (history_.is_key_registered(ih))
     {
         WriteParams wparams;
-        ChangeKind_t change_kind = dispose ? NOT_ALIVE_DISPOSED : NOT_ALIVE_UNREGISTERED;
+        ChangeKind_t change_kind = 
+            dispose ?  NOT_ALIVE_DISPOSED : (
+                qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
+                NOT_ALIVE_DISPOSED_UNREGISTERED :
+                NOT_ALIVE_UNREGISTERED
+                );
         if (create_new_change_with_params(change_kind, instance, wparams, ih))
         {
             returned_value = ReturnCode_t::RETCODE_OK;
