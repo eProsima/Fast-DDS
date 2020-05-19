@@ -54,6 +54,11 @@ DomainParticipant::~DomainParticipant()
 
 ReturnCode_t DomainParticipant::enable()
 {
+    if (enable_)
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     Entity::enable();
     return impl_->enable();
 }

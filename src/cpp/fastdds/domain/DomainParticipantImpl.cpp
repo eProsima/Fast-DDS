@@ -214,6 +214,39 @@ DomainParticipantImpl::~DomainParticipantImpl()
 ReturnCode_t DomainParticipantImpl::enable()
 {
     rtps_participant_->enable();
+
+    if (qos_.entity_factory().autoenable_created_entities)
+    {
+        // Enable topics first
+        {
+            std::lock_guard<std::mutex> lock(mtx_topics_);
+
+            for (auto topic : topics_)
+            {
+                topic.second->user_topic_->enable();
+            }
+        }
+
+        // Enable publishers
+        {
+            std::lock_guard<std::mutex> lock(mtx_pubs_);
+            for (auto pub : publishers_)
+            {
+                pub.second->user_publisher_->enable();
+            }
+        }
+
+        // Enable subscribers
+        {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
+
+            for (auto sub : subscribers_)
+            {
+                sub.second->user_subscriber_->enable();
+            }
+        }
+    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
