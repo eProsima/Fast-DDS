@@ -554,10 +554,10 @@ public:
         }
         unsentFragments.for_each(
             [this](
-                FragmentNumber_t element)
-                    {
-                        unsent_fragments_.add(element);
-                    });
+                    FragmentNumber_t element)
+            {
+                unsent_fragments_.add(element);
+            });
     }
 
 private:

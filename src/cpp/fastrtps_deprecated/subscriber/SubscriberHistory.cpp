@@ -57,17 +57,17 @@ SubscriberHistory::SubscriberHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.allocated_samples :
-            topic_att.getTopicKind() == NO_KEY ?
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-            * topic_att.resourceLimitsQos.max_instances),
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.max_samples :
-            topic_att.getTopicKind() == NO_KEY ?
-            topic_att.historyQos.depth :
-            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.allocated_samples :
+                        topic_att.getTopicKind() == NO_KEY ?
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
+                                     * topic_att.resourceLimitsQos.max_instances),
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.max_samples :
+                        topic_att.getTopicKind() == NO_KEY ?
+                            topic_att.historyQos.depth :
+                            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
@@ -314,8 +314,8 @@ bool SubscriberHistory::deserialize_change(
     if (info != nullptr)
     {
         if (topic_att_.topicKind == WITH_KEY &&
-                change->instanceHandle == c_InstanceHandle_Unknown &&
-                change->kind == ALIVE)
+            change->instanceHandle == c_InstanceHandle_Unknown &&
+            change->kind == ALIVE)
         {
             bool is_key_protected = false;
 #if HAVE_SECURITY
