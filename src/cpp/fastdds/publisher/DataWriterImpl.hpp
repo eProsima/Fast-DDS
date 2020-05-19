@@ -129,14 +129,14 @@ public:
 
     /*!
      * @brief Implementation of the DDS `unregister_instance` and `dispose` operations.
-     * It sends a CacheChange_t  with the king to NOT_ALIVE_UNREGISTERED or NOT_ALIVE_DISPOSED,
-     * depending on the `dispose` parameter.
+     * It sends a CacheChange_t with a kind that depends on the `dispose` parameter and
+     * `writer_data_lifecycle` QoS.
      * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param[in] handle Instance's key to be unregistered or disposed.
-     * @param[in] dispose If it is `false`, a CacheChange_t with kind to NOT_ALIVE_UNREGISTERED is sent, or if
-     * `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent with kind to
+     * @param[in] dispose If it is `false`, a CacheChange_t with kind set to NOT_ALIVE_UNREGISTERED is sent, or if
+     * `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent with kind set to
      * NOT_ALIVE_DISPOSED_UNREGISTERED.
-     * If `dispose` is `true`, a CacheChange_t with kind to NOT_ALIVE_DISPOSED is sent.
+     * If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
      * @return Returns the operation's result.
      * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
      */

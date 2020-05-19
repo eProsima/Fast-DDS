@@ -311,7 +311,8 @@ bool PublisherHistory::remove_instance_changes(
 
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     t_m_Inst_Caches::iterator vit;
-    if (!this->find_or_add_key(handle, &vit))
+    vit = keyed_changes_.find(handle);
+    if (vit == keyed_changes_.end())
     {
         return false;
     }
