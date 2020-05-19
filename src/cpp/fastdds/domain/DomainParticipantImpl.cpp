@@ -378,6 +378,12 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
 
+    // Enable publisher if appropriate
+    if (participant_->enable_ && qos_.entity_factory().autoenable_created_entities)
+    {
+        pub->enable();
+    }
+
     return pub;
 }
 
@@ -718,6 +724,12 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_by_handle_[sub_handle] = sub;
     subscribers_[sub] = subimpl;
 
+    // Enable subscriber if appropriate
+    if (participant_->enable_ && qos_.entity_factory().autoenable_created_entities)
+    {
+        sub->enable();
+    }
+
     return sub;
 }
 
@@ -786,6 +798,11 @@ Topic* DomainParticipantImpl::create_topic(
     topics_by_handle_[topic_handle] = topic;
     topics_[topic_name] = topic_impl;
 
+    // Enable topic if appropriate
+    if (participant_->enable_ && qos_.entity_factory().autoenable_created_entities)
+    {
+        topic->enable();
+    }
     return topic;
 }
 
