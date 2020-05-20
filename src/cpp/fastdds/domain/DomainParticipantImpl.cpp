@@ -79,6 +79,27 @@ using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
+static void set_attributes_from_qos(
+    fastrtps::rtps::RTPSParticipantAttributes& attr,
+    const DomainParticipantQos& qos)
+{
+    attr.allocation = qos.allocation();
+    attr.properties = qos.properties();
+    attr.setName(qos.name());
+    attr.prefix = qos.wire_protocol().prefix;
+    attr.participantID = qos.wire_protocol().participant_id;
+    attr.builtin = qos.wire_protocol().builtin;
+    attr.port = qos.wire_protocol().port;
+    attr.throughputController = qos.wire_protocol().throughput_controller;
+    attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
+    attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
+    attr.userTransports = qos.transport().user_transports;
+    attr.useBuiltinTransports = qos.transport().use_builtin_transports;
+    attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
+    attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
+    attr.userData = qos.user_data().data_vec();
+}
+
 static void set_qos_from_attributes(
         TopicQos& qos,
         const TopicAttributes& attr)
@@ -107,9 +128,11 @@ static void set_qos_from_attributes(
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
+        DomainId_t did,
         const DomainParticipantQos& qos,
         DomainParticipantListener* listen)
-    : qos_(qos)
+    : domain_id_(did)
+    , qos_(qos)
     , rtps_participant_(nullptr)
     , participant_(dp)
     , listener_(listen)
@@ -141,20 +164,24 @@ void DomainParticipantImpl::disable()
         participant_->set_listener(nullptr);
     }
     rtps_listener_.participant_ = nullptr;
-    rtps_participant_->set_listener(nullptr);
-    {
-        std::lock_guard<std::mutex> lock(mtx_pubs_);
-        for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
-        {
-            pub_it->second->disable();
-        }
-    }
 
+    if (rtps_participant_ != nullptr)
     {
-        std::lock_guard<std::mutex> lock(mtx_subs_);
-        for (auto sub_it = subscribers_.begin(); sub_it != subscribers_.end(); ++sub_it)
+        rtps_participant_->set_listener(nullptr);
         {
-            sub_it->second->disable();
+            std::lock_guard<std::mutex> lock(mtx_pubs_);
+            for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
+            {
+                pub_it->second->disable();
+            }
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
+            for (auto sub_it = subscribers_.begin(); sub_it != subscribers_.end(); ++sub_it)
+            {
+                sub_it->second->disable();
+            }
         }
     }
 }
@@ -213,7 +240,27 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
 ReturnCode_t DomainParticipantImpl::enable()
 {
+    // Should not have been previously enabled
+    assert(rtps_participant_ == nullptr);
+
+    fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
+    set_attributes_from_qos(rtps_attr, qos_);
+    RTPSParticipant* part = RTPSDomain::createParticipant(domain_id_, false, rtps_attr, &rtps_listener_);
+
+    if (part == nullptr)
+    {
+        logError(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    rtps_participant_ = part;
     rtps_participant_->enable();
+
+    rtps_participant_->set_check_type_function(
+        [this](const std::string& type_name) -> bool
+        {
+            return find_type(type_name).get() != nullptr;
+        });
 
     if (qos_.entity_factory().autoenable_created_entities)
     {
@@ -487,11 +534,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
 
 DomainId_t DomainParticipantImpl::get_domain_id() const
 {
-    if (rtps_participant())
-    {
-        return rtps_participant_->get_domain_id();
-    }
-    return (DomainId_t) -1;
+    return domain_id_;
 }
 
 /* TODO

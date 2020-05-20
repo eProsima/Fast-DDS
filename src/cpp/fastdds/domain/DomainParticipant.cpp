@@ -59,8 +59,10 @@ ReturnCode_t DomainParticipant::enable()
         return ReturnCode_t::RETCODE_OK;
     }
 
-    Entity::enable();
-    return impl_->enable();
+    enable_ = true;
+    ReturnCode_t ret_code = impl_->enable();
+    enable_ = !!ret_code;
+    return ret_code;
 }
 
 ReturnCode_t DomainParticipant::set_qos(

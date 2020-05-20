@@ -77,6 +77,7 @@ private:
 
     DomainParticipantImpl(
             DomainParticipant* dp,
+            DomainId_t did,
             const DomainParticipantQos& qos,
             DomainParticipantListener* listen = nullptr);
 
@@ -370,6 +371,9 @@ public:
     bool has_active_entities();
 
 private:
+
+    //!Domain id
+    DomainId_t domain_id_;
 
     //!Participant Qos
     DomainParticipantQos qos_;
