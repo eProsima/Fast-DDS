@@ -300,28 +300,24 @@ ReturnCode_t DomainParticipantImpl::enable()
 ReturnCode_t DomainParticipantImpl::set_qos(
         const DomainParticipantQos& qos)
 {
-    if (&qos == &PARTICIPANT_QOS_DEFAULT)
+    bool enabled = (rtps_participant_ != nullptr);
+    const DomainParticipantQos& qos_to_set = (&qos == &PARTICIPANT_QOS_DEFAULT) ?
+        DomainParticipantFactory::get_instance()->get_default_participant_qos() : qos;
+
+    if (&qos != &PARTICIPANT_QOS_DEFAULT)
     {
-        const DomainParticipantQos& default_qos =
-                DomainParticipantFactory::get_instance()->get_default_participant_qos();
-        if (!can_qos_be_updated(qos_, qos))
+        ReturnCode_t ret_val = check_qos(qos_to_set);
+        if (!ret_val)
         {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+            return ret_val;
         }
-        set_qos(qos_, default_qos, false);
-        return ReturnCode_t::RETCODE_OK;
     }
 
-    ReturnCode_t ret_val = check_qos(qos);
-    if (!ret_val)
-    {
-        return ret_val;
-    }
-    if (!can_qos_be_updated(qos_, qos))
+    if (enabled && !can_qos_be_updated(qos_, qos_to_set))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    set_qos(qos_, qos, false);
+    set_qos(qos_, qos_to_set, !enabled);
     return ReturnCode_t::RETCODE_OK;
 }
 
