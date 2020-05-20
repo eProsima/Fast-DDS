@@ -116,6 +116,35 @@ public:
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
+    /*!
+     * @brief Implementation of the DDS `register_instance` operation.
+     * It deduces the instance's key and tries to get resources in the PublisherHistory.
+     * @param[in] instance Sample used to get the instance's key.
+     * @return Handle containing the instance's key.
+     * This handle could be used in successive `write` or `dispose` operations.
+     * In case of error, HANDLE_NIL will be returned.
+     */
+    fastrtps::rtps::InstanceHandle_t register_instance(
+            void* instance);
+
+    /*!
+     * @brief Implementation of the DDS `unregister_instance` and `dispose` operations.
+     * It sends a CacheChange_t with a kind that depends on the `dispose` parameter and
+     * `writer_data_lifecycle` QoS.
+     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered or disposed.
+     * @param[in] dispose If it is `false`, a CacheChange_t with kind set to NOT_ALIVE_UNREGISTERED is sent, or if
+     * `writer_data_lifecycle.autodispose_unregistered_instances` is `true` then it is sent with kind set to
+     * NOT_ALIVE_DISPOSED_UNREGISTERED.
+     * If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     */
+    ReturnCode_t unregister_instance(
+            void* instance,
+            const fastrtps::rtps::InstanceHandle_t& handle,
+            bool dispose = false);
+
     /**
      *
      * @return
@@ -160,13 +189,6 @@ public:
             void* key_holder,
             const fastrtps::rtps::InstanceHandle_t& handle);
      */
-
-    ReturnCode_t dispose(
-            void* data,
-            const fastrtps::rtps::InstanceHandle_t& handle);
-
-    bool dispose(
-            void* data);
 
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);

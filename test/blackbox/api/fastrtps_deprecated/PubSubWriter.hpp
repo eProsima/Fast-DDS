@@ -351,6 +351,26 @@ public:
         }
     }
 
+    eprosima::fastrtps::rtps::InstanceHandle_t register_instance(
+            type& msg)
+    {
+        return publisher_->register_instance((void*)&msg);
+    }
+
+    bool unregister_instance(
+            type& msg,
+            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
+    {
+        return publisher_->unregister_instance((void*)&msg, instance_handle);
+    }
+
+    bool dispose(
+            type& msg,
+            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
+    {
+        return publisher_->dispose((void*)&msg, instance_handle);
+    }
+
     bool send_sample(
             type& msg)
     {

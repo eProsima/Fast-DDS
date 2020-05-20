@@ -60,11 +60,26 @@ PublisherHistory::~PublisherHistory()
 {
 }
 
+bool PublisherHistory::register_instance(
+        const InstanceHandle_t& instance_handle,
+        std::unique_lock<RecursiveTimedMutex>&,
+        const std::chrono::time_point<std::chrono::steady_clock>&)
+{
+    /// Preconditions
+    if (topic_att_.getTopicKind() == NO_KEY)
+    {
+        return false;
+    }
+
+    t_m_Inst_Caches::iterator vit;
+    return find_or_add_key(instance_handle, &vit);
+}
+
 bool PublisherHistory::add_pub_change(
         CacheChange_t* change,
         WriteParams& wparams,
         std::unique_lock<RecursiveTimedMutex>& lock,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     if (m_isHistoryFull)
     {
@@ -106,7 +121,7 @@ bool PublisherHistory::add_pub_change(
     else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         t_m_Inst_Caches::iterator vit;
-        if (find_key(change, &vit))
+        if (find_or_add_key(change->instanceHandle, &vit))
         {
             logInfo(RTPS_HISTORY, "Found key: " << vit->first);
             bool add = false;
@@ -147,7 +162,7 @@ bool PublisherHistory::add_pub_change(
 #endif
                 {
                     logInfo(RTPS_HISTORY,
-                            topic_att_.getTopicDataType() 
+                            topic_att_.getTopicDataType()
                             << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
                             << " and " << change->serializedPayload.length << " bytes");
                     returnedValue =  true;
@@ -160,12 +175,12 @@ bool PublisherHistory::add_pub_change(
     return returnedValue;
 }
 
-bool PublisherHistory::find_key(
-        CacheChange_t* a_change,
+bool PublisherHistory::find_or_add_key(
+        const InstanceHandle_t& instance_handle,
         t_m_Inst_Caches::iterator* vit_out)
 {
     t_m_Inst_Caches::iterator vit;
-    vit = keyed_changes_.find(a_change->instanceHandle);
+    vit = keyed_changes_.find(instance_handle);
     if (vit != keyed_changes_.end())
     {
         *vit_out = vit;
@@ -174,22 +189,10 @@ bool PublisherHistory::find_key(
 
     if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
-        *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+        *vit_out = keyed_changes_.insert(std::make_pair(instance_handle, KeyedChanges())).first;
         return true;
     }
-    else
-    {
-        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
-        {
-            if (vit->second.cache_changes.size() == 0)
-            {
-                keyed_changes_.erase(vit);
-                *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
-                return true;
-            }
-        }
-        logWarning(PUBLISHER, "History has reached the maximum number of instances");
-    }
+
     return false;
 }
 
@@ -262,7 +265,7 @@ bool PublisherHistory::remove_change_pub(
     else
     {
         t_m_Inst_Caches::iterator vit;
-        if (!this->find_key(change, &vit))
+        if (!this->find_or_add_key(change->instanceHandle, &vit))
         {
             return false;
         }
@@ -288,6 +291,50 @@ bool PublisherHistory::remove_change_g(
         CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
+}
+
+bool PublisherHistory::remove_instance_changes(
+        const rtps::InstanceHandle_t& handle,
+        const rtps::SequenceNumber_t& seq_up_to)
+{
+    if (mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        return false;
+    }
+
+    if (topic_att_.getTopicKind() == NO_KEY)
+    {
+        logError(RTPS_HISTORY, "Cannot be removed instance changes of a NO_KEY DataType");
+        return false;
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
+    t_m_Inst_Caches::iterator vit;
+    vit = keyed_changes_.find(handle);
+    if (vit == keyed_changes_.end())
+    {
+        return false;
+    }
+
+    auto chit = vit->second.cache_changes.begin();
+
+    for (; chit != vit->second.cache_changes.end() && (*chit)->sequenceNumber <= seq_up_to; ++chit)
+    {
+        if (remove_change(*chit))
+        {
+            m_isHistoryFull = false;
+        }
+    }
+
+    vit->second.cache_changes.erase(vit->second.cache_changes.begin(), chit);
+
+    if(vit->second.cache_changes.empty())
+    {
+        keyed_changes_.erase(vit);
+    }
+
+    return true;
 }
 
 bool PublisherHistory::set_next_deadline(
@@ -337,11 +384,11 @@ bool PublisherHistory::get_next_deadline(
             keyed_changes_.begin(),
             keyed_changes_.end(),
             [](
-                    const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
-                    const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
-            {
-                return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-            });
+                const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+        {
+            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+        });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
@@ -354,4 +401,24 @@ bool PublisherHistory::get_next_deadline(
     }
 
     return false;
+}
+
+bool PublisherHistory::is_key_registered(
+        const InstanceHandle_t& handle)
+{
+    if (mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
+        return false;
+    }
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
+    t_m_Inst_Caches::iterator vit;
+    vit = keyed_changes_.find(handle);
+    return (vit != keyed_changes_.end() &&
+            (vit->second.cache_changes.empty() ||
+                (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
+                NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
+                )
+            )
+           );
 }

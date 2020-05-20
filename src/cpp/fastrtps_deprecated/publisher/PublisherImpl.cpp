@@ -73,18 +73,18 @@ PublisherImpl::PublisherImpl(
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-            [&]() -> bool
-            {
-                return deadline_missed();
-            },
-            att.qos.m_deadline.period.to_ns() * 1e-6);
+                    [&]() -> bool
+    {
+        return deadline_missed();
+    },
+                    att.qos.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
-            [&]() -> bool
-            {
-                return lifespan_expired();
-            },
-            m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+                    [&]() -> bool
+    {
+        return lifespan_expired();
+    },
+                    m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }
 
 PublisherImpl::~PublisherImpl()
@@ -114,7 +114,25 @@ bool PublisherImpl::create_new_change_with_params(
         void* data,
         WriteParams& wparams)
 {
+    InstanceHandle_t handle;
+    if (m_att.topic.topicKind == WITH_KEY)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
+#endif
+        mp_type->getKey(data, &handle, is_key_protected);
+    }
 
+    return create_new_change_with_params(changeKind, data, wparams, handle);
+}
+
+bool PublisherImpl::create_new_change_with_params(
+        ChangeKind_t changeKind,
+        void* data,
+        WriteParams& wparams,
+        const InstanceHandle_t& handle)
+{
     /// Preconditions
     if (data == nullptr)
     {
@@ -130,16 +148,6 @@ bool PublisherImpl::create_new_change_with_params(
             logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
             return false;
         }
-    }
-
-    InstanceHandle_t handle;
-    if (m_att.topic.topicKind == WITH_KEY)
-    {
-        bool is_key_protected = false;
-#if HAVE_SECURITY
-        is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
-#endif
-        mp_type->getKey(data, &handle, is_key_protected);
     }
 
     // Block lowlevel writer
@@ -200,7 +208,7 @@ bool PublisherImpl::create_new_change_with_params(
                 // Fragment the data.
                 // Set the fragment size to the cachechange.
                 ch->setFragmentSize(static_cast<uint16_t>(
-                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
+                            (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
             }
 
             InstanceHandle_t change_handle = ch->instanceHandle;
@@ -244,6 +252,99 @@ bool PublisherImpl::create_new_change_with_params(
     }
 
     return false;
+}
+
+InstanceHandle_t PublisherImpl::register_instance(
+        void* instance)
+{
+    /// Preconditions
+    if (instance == nullptr)
+    {
+        logError(PUBLISHER, "Data pointer not valid");
+        return c_InstanceHandle_Unknown;
+    }
+
+    if (m_att.topic.topicKind == NO_KEY)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return c_InstanceHandle_Unknown;
+    }
+
+    InstanceHandle_t instance_handle = c_InstanceHandle_Unknown;
+    bool is_key_protected = false;
+#if HAVE_SECURITY
+    is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
+#endif
+    mp_type->getKey(instance, &instance_handle, is_key_protected);
+
+    // Block lowlevel writer
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
+    if (lock.try_lock_until(max_blocking_time))
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
+#endif
+    {
+        if (m_history.register_instance(instance_handle, lock, max_blocking_time))
+        {
+            return instance_handle;
+        }
+    }
+
+    return c_InstanceHandle_Unknown;
+}
+
+bool PublisherImpl::unregister_instance(
+        void* instance,
+        const InstanceHandle_t& handle,
+        bool dispose)
+{
+    /// Preconditions
+    if (instance == nullptr)
+    {
+        logError(PUBLISHER, "Data pointer not valid");
+        return false;
+    }
+
+    if (m_att.topic.topicKind == NO_KEY)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return false;
+    }
+
+    bool returned_value = false;
+    InstanceHandle_t ih = handle;
+
+#if !defined(NDEBUG)
+    if (c_InstanceHandle_Unknown == ih)
+#endif
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
+#endif
+        mp_type->getKey(instance, &ih, is_key_protected);
+    }
+
+#if !defined(NDEBUG)
+    if (c_InstanceHandle_Unknown != handle && ih != handle)
+    {
+        logError(PUBLISHER, "handle differs from data's key.");
+        return false;
+    }
+#endif
+
+    if (m_history.is_key_registered(ih))
+    {
+        WriteParams wparams;
+        ChangeKind_t change_kind = dispose ? NOT_ALIVE_DISPOSED : NOT_ALIVE_UNREGISTERED;
+        returned_value = create_new_change_with_params(change_kind, instance, wparams, ih);
+    }
+
+    return returned_value;
 }
 
 bool PublisherImpl::removeMinSeqChange()
@@ -389,7 +490,13 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
-    if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+    if (mp_publisherImpl->m_att.topic.topicKind == WITH_KEY &&
+            (NOT_ALIVE_UNREGISTERED == ch->kind ||
+            NOT_ALIVE_DISPOSED_UNREGISTERED == ch->kind))
+    {
+        mp_publisherImpl->m_history.remove_instance_changes(ch->instanceHandle, ch->sequenceNumber);
+    }
+    else if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
     {
         mp_publisherImpl->m_history.remove_change_g(ch);
     }

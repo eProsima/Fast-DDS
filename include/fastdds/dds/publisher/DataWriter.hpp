@@ -120,6 +120,31 @@ public:
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
+    /*!
+     * @brief Informs that the application will be modifying a particular instance.
+     * It gives an opportunity to the middleware to pre-configure itself to improve performance.
+     * @param[in] instance Sample used to get the instance's key.
+     * @return Handle containing the instance's key.
+     * This handle could be used in successive `write` or `dispose` operations.
+     * In case of error, HANDLE_NIL will be returned.
+     */
+    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t register_instance(
+            void* instance);
+
+    /*!
+     * @brief This operation reverses the action of `register_instance`.
+     * It should only be called on an instance that is currently registered.
+     * Informs the middleware that the DataWriter is not intending to modify any more of that data instance.
+     * Also indicates that the middleware can locally remove all information regarding that instance.
+     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     */
+    RTPS_DllAPI ReturnCode_t unregister_instance(
+            void* instance,
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
     /**
      * Returns the DataWriter's GUID
      * @return Reference to the DataWriter GUID
@@ -212,29 +237,14 @@ public:
      * available to DataReader objects by means of the source_timestamp attribute inside the SampleInfo. The constraints
      * on the values of the handle parameter and the corresponding error behavior are the same specified for the
      * unregister_instance operation.
-     * @param data Pointer to data
-     * @param handle InstanceHandle of the data
+     * @param[in] data Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle InstanceHandle of the data
      * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,
      * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t dispose(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
-
-    /**
-     * @brief This operation requests the middleware to delete the data (the actual deletion is postponed until there is no
-     * more use for that data in the whole system). In general, applications are made aware of the deletion by means of
-     * operations on the DataReader objects that already knew that instance. This operation does not modify the value of
-     * the instance. The instance parameter is passed just for the purposes of identifying the instance.
-     * When this operation is used, the Service will automatically supply the value of the source_timestamp that is made
-     * available to DataReader objects by means of the source_timestamp attribute inside the SampleInfo. The constraints
-     * on the values of the handle parameter and the corresponding error behavior are the same specified for the
-     * unregister_instance operation.
-     * @param data Pointer to data.
-     * @return true if disposed, false if not.
-     */
-    RTPS_DllAPI bool dispose(
-            void* data);
 
     /**
      * @brief Returns the liveliness lost status

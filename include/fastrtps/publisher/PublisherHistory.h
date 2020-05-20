@@ -39,6 +39,7 @@ namespace fastrtps {
 class PublisherHistory : public rtps::WriterHistory
 {
 public:
+
     /**
      * Constructor of the PublisherHistory.
      * @param topic_att TopicAttributed
@@ -52,6 +53,18 @@ public:
 
     virtual ~PublisherHistory();
 
+    /*!
+     * @brief Tries to reserve resources for the new instance.
+     * @param instance_handle Instance's key.
+     * @param lock Lock which should be unlock in case the operation has to wait.
+     * @param max_blocking_time Maximum time the operation should be waiting.
+     * @return True if resources was reserved successfully.
+     */
+    bool register_instance(
+            const rtps::InstanceHandle_t& instance_handle,
+            std::unique_lock<RecursiveTimedMutex>& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
     /**
      * Add a change comming from the Publisher.
      * @param change Pointer to the change
@@ -62,16 +75,17 @@ public:
      */
     bool add_pub_change(
             rtps::CacheChange_t* change,
-            rtps::WriteParams &wparams,
+            rtps::WriteParams& wparams,
             std::unique_lock<RecursiveTimedMutex>& lock,
-            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
      * Remove all change from the associated history.
      * @param removed Number of elements removed.
      * @return True if all elements were removed.
      */
-    bool removeAllChange(size_t* removed);
+    bool removeAllChange(
+            size_t* removed);
 
     /**
      * Remove the change with the minimum sequence Number.
@@ -84,9 +98,15 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return True if removed.
      */
-    bool remove_change_pub(rtps::CacheChange_t* change);
+    bool remove_change_pub(
+            rtps::CacheChange_t* change);
 
-    virtual bool remove_change_g(rtps::CacheChange_t* a_change);
+    virtual bool remove_change_g(
+            rtps::CacheChange_t* a_change);
+
+    bool remove_instance_changes(
+            const rtps::InstanceHandle_t& handle,
+            const rtps::SequenceNumber_t& seq_up_to);
 
     /**
      * @brief Sets the next deadline for the given instance
@@ -108,6 +128,14 @@ public:
             rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
 
+    /*!
+     * @brief Checks if the instance's key is registered.
+     * @param[in] handle Instance's key.
+     * return `true` if instance's key is registered in the history.
+     */
+    bool is_key_registered(
+            const rtps::InstanceHandle_t& handle);
+
 private:
 
     typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
@@ -125,12 +153,12 @@ private:
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
-     * @param a_change The change to get the key from
+     * @param instance_handle Instance of the key.
      * @param map_it A map iterator to the given key
      * @return True if the key was found or could be added to the map
      */
-    bool find_key(
-            rtps::CacheChange_t* a_change,
+    bool find_or_add_key(
+            const rtps::InstanceHandle_t& instance_handle,
             t_m_Inst_Caches::iterator* map_it);
 };
 

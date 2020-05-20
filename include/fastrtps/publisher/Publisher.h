@@ -30,11 +30,10 @@
 namespace eprosima {
 namespace fastrtps {
 
-namespace rtps
-{
-    struct GUID_t;
-    class WriteParams;
-    class RTPSParticipant;
+namespace rtps {
+struct GUID_t;
+class WriteParams;
+class RTPSParticipant;
 }
 
 class Participant;
@@ -55,7 +54,8 @@ public:
      * Constructor from a PublisherImpl pointer
      * @param pimpl Actual implementation of the publisher
      */
-    Publisher(PublisherImpl* pimpl);
+    Publisher(
+            PublisherImpl* pimpl);
 
     /*!
      * @brief Writes a sample of the topic.
@@ -66,7 +66,8 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(void* sample);
+    bool write(
+            void* sample);
 
     /*!
      * @brief Writes a sample of the topic with additional options.
@@ -82,38 +83,56 @@ public:
             void* sample,
             rtps::WriteParams& wparams);
 
-    /**
-     * Dispose of a previously written data.
-     * @param Data Pointer to the data.
-     * @return True if correct.
+    /*!
+     * @brief Informs that the application will be modifying a particular instance.
+     * It gives and opportunity to the middleware to pre-configure itself to improve performance.
+     * @param[in] instance Sample used to get the instance's key.
+     * @return Handle containing the instance's key.
+     * This handle could be used in successive `write` or `dispose` operations.
+     * In case of error, HANDLE_NIL will be returned.
      */
-    bool dispose(void* Data);
-    /**
-     * Unregister a previously written data.
-     * @param Data Pointer to the data.
-     * @return True if correct.
+    fastrtps::rtps::InstanceHandle_t register_instance(
+            void* instance);
+
+    /*!
+     * @brief Requests the middleware to delete the instance.
+     * Applications are made aware of the deletion through the DataReader objects.
+     * @param[in] data Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, `true` is returned.
      */
-    bool unregister(void* Data);
-    /**
-     * Dispose and unregister a previously written data.
-     * @param Data Pointer to the data.
-     * @return True if correct.
+    bool dispose(
+            void* data,
+            const rtps::InstanceHandle_t& handle);
+    /*!
+     * @brief This operation reserves the action of `register_instance`.
+     * Informs the middleware that the DataWriter is not intending to modify any more of that data instance.
+     * Also indicates that the middleware can locally remove all information regarding that instance.
+     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param[in] handle Instance's key to be unregistered.
+     * @return Returns the operation's result.
+     * If the operation finishes successfully, `true` is returned.
      */
-    bool dispose_and_unregister(void* Data);
+    bool unregister_instance(
+            void* instance,
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * Remove all the Changes in the associated RTPSWriter.
      * @param[out] removed Number of elements removed
      * @return True if all elements were removed.
      */
-    bool removeAllChange(size_t* removed = nullptr);
+    bool removeAllChange(
+            size_t* removed = nullptr);
 
     /**
-    * Waits until all changes were acknowledged or max_wait.
-    * @param max_wait Maximum time to wait until all changes are acknowledged.
-    * @return True if all were acknowledged.
-    */
-    bool wait_for_all_acked(const Duration_t& max_wait);
+     * Waits until all changes were acknowledged or max_wait.
+     * @param max_wait Maximum time to wait until all changes are acknowledged.
+     * @return True if all were acknowledged.
+     */
+    bool wait_for_all_acked(
+            const Duration_t& max_wait);
 
     /**
      * Get the GUID_t of the associated RTPSWriter.
@@ -132,13 +151,15 @@ public:
      * @param att Reference to a PublisherAttributes object to update the parameters.
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
      */
-    bool updateAttributes(const PublisherAttributes& att);
+    bool updateAttributes(
+            const PublisherAttributes& att);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param status missed status struct
      */
-    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
+    void get_offered_deadline_missed_status(
+            OfferedDeadlineMissedStatus& status);
 
     /**
      * @brief Asserts liveliness
@@ -149,7 +170,8 @@ public:
      * @brief Returns the liveliness lost status
      * @param status Liveliness lost status
      */
-    void get_liveliness_lost_status(LivelinessLostStatus& status);
+    void get_liveliness_lost_status(
+            LivelinessLostStatus& status);
 
 private:
 

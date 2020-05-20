@@ -22,9 +22,6 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 
 namespace eprosima {
-
-using namespace fastrtps;
-
 namespace fastdds {
 namespace dds {
 
@@ -71,17 +68,24 @@ ReturnCode_t DataWriter::write(
     return impl_->write(data, handle);
 }
 
+fastrtps::rtps::InstanceHandle_t DataWriter::register_instance(
+        void* instance)
+{
+    return impl_->register_instance(instance);
+}
+
+ReturnCode_t DataWriter::unregister_instance(
+        void* instance,
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->unregister_instance(instance, handle);
+}
+
 ReturnCode_t DataWriter::dispose(
         void* data,
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
-    return impl_->dispose(data, handle);
-}
-
-bool DataWriter::dispose(
-        void* data)
-{
-    return impl_->dispose(data);
+    return impl_->unregister_instance(data, handle, true);
 }
 
 const fastrtps::rtps::GUID_t& DataWriter::guid()
@@ -134,7 +138,7 @@ const Publisher* DataWriter::get_publisher() const
 }
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
-        const Duration_t& max_wait)
+        const fastrtps::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }

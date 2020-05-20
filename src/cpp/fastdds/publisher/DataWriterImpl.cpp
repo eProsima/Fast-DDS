@@ -226,29 +226,109 @@ ReturnCode_t DataWriterImpl::write(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
-ReturnCode_t DataWriterImpl::dispose(
-        void* data,
-        const fastrtps::rtps::InstanceHandle_t& handle)
+fastrtps::rtps::InstanceHandle_t DataWriterImpl::register_instance(
+        void* key)
 {
-    if (!handle.isDefined())
+    /// Preconditions
+    if (key == nullptr)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        logError(PUBLISHER, "Data pointer not valid");
+        return c_InstanceHandle_Unknown;
     }
-    logInfo(DATA_WRITER, "Disposing of data");
-    WriteParams wparams;
-    if (create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
+
+    if (!type_->m_isGetKeyDefined)
     {
-        return ReturnCode_t::RETCODE_OK;
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return c_InstanceHandle_Unknown;
     }
-    return ReturnCode_t::RETCODE_ERROR;
+
+    InstanceHandle_t instance_handle = c_InstanceHandle_Unknown;
+    bool is_key_protected = false;
+#if HAVE_SECURITY
+    is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+    type_->getKey(key, &instance_handle, is_key_protected);
+
+    // Block lowlevel writer
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
+    if (lock.try_lock_until(max_blocking_time))
+#else
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+#endif
+    {
+        if (history_.register_instance(instance_handle, lock, max_blocking_time))
+        {
+            return instance_handle;
+        }
+    }
+
+    return c_InstanceHandle_Unknown;
 }
 
-bool DataWriterImpl::dispose(
-        void* data)
+ReturnCode_t DataWriterImpl::unregister_instance(
+        void* instance,
+        const InstanceHandle_t& handle,
+        bool dispose)
 {
-    logInfo(DATA_WRITER, "Disposing of data");
-    WriteParams wparams;
-    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams);
+    /// Preconditions
+    if (instance == nullptr)
+    {
+        logError(PUBLISHER, "Data pointer not valid");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (!type_->m_isGetKeyDefined)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    ReturnCode_t returned_value = ReturnCode_t::RETCODE_ERROR;
+    InstanceHandle_t ih = handle;
+
+#if !defined(NDEBUG)
+    if (c_InstanceHandle_Unknown == ih)
+#endif
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_->getKey(instance, &ih, is_key_protected);
+    }
+
+#if !defined(NDEBUG)
+    if (c_InstanceHandle_Unknown != handle && ih != handle)
+    {
+        logError(PUBLISHER, "handle differs from data's key.");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+#endif
+
+    if (history_.is_key_registered(ih))
+    {
+        WriteParams wparams;
+        ChangeKind_t change_kind = 
+            dispose ?  NOT_ALIVE_DISPOSED : (
+                qos_.writer_data_lifecycle().autodispose_unregistered_instances ?
+                NOT_ALIVE_DISPOSED_UNREGISTERED :
+                NOT_ALIVE_UNREGISTERED
+                );
+        if (create_new_change_with_params(change_kind, instance, wparams, ih))
+        {
+            returned_value = ReturnCode_t::RETCODE_OK;
+        }
+    }
+    else
+    {
+        returned_value = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return returned_value;
 }
 
 bool DataWriterImpl::create_new_change(
@@ -568,7 +648,13 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
-    if (data_writer_->qos_.durability().kind == VOLATILE_DURABILITY_QOS)
+    if (data_writer_->type_->m_isGetKeyDefined &&
+            (NOT_ALIVE_UNREGISTERED == ch->kind ||
+            NOT_ALIVE_DISPOSED_UNREGISTERED == ch->kind))
+    {
+        data_writer_->history_.remove_instance_changes(ch->instanceHandle, ch->sequenceNumber);
+    }
+    else if (data_writer_->qos_.durability().kind == VOLATILE_DURABILITY_QOS)
     {
         data_writer_->history_.remove_change_g(ch);
     }

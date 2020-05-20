@@ -26,53 +26,66 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-Publisher::Publisher(PublisherImpl* pimpl) : mp_impl(pimpl)
+Publisher::Publisher(
+        PublisherImpl* pimpl)
+    : mp_impl(pimpl)
 {
     // TODO Auto-generated constructor stub
 }
 
-Publisher::~Publisher() {
+Publisher::~Publisher()
+{
     // TODO Auto-generated destructor stub
 }
 
-bool Publisher::write(void* Data) {
-    logInfo(PUBLISHER,"Writing new data");
-    return mp_impl->create_new_change(ALIVE,Data);
+bool Publisher::write(
+        void* Data)
+{
+    logInfo(PUBLISHER, "Writing new data");
+    return mp_impl->create_new_change(ALIVE, Data);
 }
 
-bool Publisher::write(void* Data, WriteParams &wparams) {
-    logInfo(PUBLISHER,"Writing new data with WriteParams");
+bool Publisher::write(
+        void* Data,
+        WriteParams& wparams)
+{
+    logInfo(PUBLISHER, "Writing new data with WriteParams");
     return mp_impl->create_new_change_with_params(ALIVE, Data, wparams);
 }
 
-bool Publisher::dispose(void* Data)
+rtps::InstanceHandle_t Publisher::register_instance(
+        void* sample)
 {
-    logInfo(PUBLISHER,"Disposing of Data");
-    return mp_impl->create_new_change(NOT_ALIVE_DISPOSED,Data);
+    return mp_impl->register_instance(sample);
 }
 
-
-bool Publisher::unregister(void* Data) {
-    //Convert data to serialized Payload
-    logInfo(PUBLISHER,"Unregistering of Data");
-    return mp_impl->create_new_change(NOT_ALIVE_UNREGISTERED,Data);
-}
-
-bool Publisher::dispose_and_unregister(void* Data) {
-    //Convert data to serialized Payload
-    logInfo(PUBLISHER,"Disposing and Unregistering Data");
-    return mp_impl->create_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
-}
-
-bool Publisher::removeAllChange(size_t* removed )
+bool Publisher::dispose(
+        void* data,
+        const rtps::InstanceHandle_t& handle)
 {
-    logInfo(PUBLISHER,"Removing all data from history");
+    logInfo(PUBLISHER, "Disposing of Data");
+    return mp_impl->unregister_instance(data, handle, true);
+}
+
+bool Publisher::unregister_instance(
+        void* instance,
+        const rtps::InstanceHandle_t& handle)
+{
+    //Convert data to serialized Payload
+    return mp_impl->unregister_instance(instance, handle);
+}
+
+bool Publisher::removeAllChange(
+        size_t* removed )
+{
+    logInfo(PUBLISHER, "Removing all data from history");
     return mp_impl->removeAllChange(removed);
 }
 
-bool Publisher::wait_for_all_acked(const eprosima::fastrtps::Duration_t& max_wait)
+bool Publisher::wait_for_all_acked(
+        const eprosima::fastrtps::Duration_t& max_wait)
 {
-    logInfo(PUBLISHER,"Waiting for all samples acknowledged");
+    logInfo(PUBLISHER, "Waiting for all samples acknowledged");
     return mp_impl->wait_for_all_acked(max_wait);
 }
 
@@ -86,17 +99,20 @@ const PublisherAttributes& Publisher::getAttributes() const
     return mp_impl->getAttributes();
 }
 
-bool Publisher::updateAttributes(const PublisherAttributes& att)
+bool Publisher::updateAttributes(
+        const PublisherAttributes& att)
 {
     return mp_impl->updateAttributes(att);
 }
 
-void Publisher::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+void Publisher::get_offered_deadline_missed_status(
+        OfferedDeadlineMissedStatus& status)
 {
     mp_impl->get_offered_deadline_missed_status(status);
 }
 
-void Publisher::get_liveliness_lost_status(LivelinessLostStatus &status)
+void Publisher::get_liveliness_lost_status(
+        LivelinessLostStatus& status)
 {
     mp_impl->get_liveliness_lost_status(status);
 }

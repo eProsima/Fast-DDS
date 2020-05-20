@@ -265,6 +265,13 @@ void keys()
         return pubListener.n_matched > 0;
     });
 
+    // Registering 5 instances.
+    for (uint8_t i = 0; i < 5; i++)
+    {
+        my_sample.key_value(i + 1);
+        myPub->register_instance(&my_sample);
+    }
+
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
     for (uint8_t i = 0; i < 5; i++)
@@ -329,6 +336,13 @@ void publisherKeys()
     {
         return pubListener.n_matched > 0;
     });
+
+    // Registering 5 instances.
+    for (uint8_t i = 0; i < 5; i++)
+    {
+        my_sample.key_value(i + 1);
+        myPub->register_instance(&my_sample);
+    }
 
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;

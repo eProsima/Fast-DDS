@@ -211,7 +211,7 @@ public:
      * @return at least one change has been removed
      */
     virtual bool try_remove_change(
-            std::chrono::steady_clock::time_point& max_blocking_time_point,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
     /*
