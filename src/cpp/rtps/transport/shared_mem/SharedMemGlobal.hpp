@@ -298,24 +298,33 @@ public:
 
                     auto now = std::chrono::high_resolution_clock::now();
 
+                    auto timeout_elapsed = [](
+                            std::chrono::high_resolution_clock::time_point& now, 
+                            const PortContext& port_context)
+                        {
+                            return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
+                                - port_context.node->last_listeners_status_check_time_ms.load()
+                                    > port_context.node->healthy_check_timeout_ms;
+                        };
+
                     std::lock_guard<std::mutex> lock(watched_ports_mutex_);
 
                     auto port_it =  watched_ports_.begin();
                     while (port_it != watched_ports_.end())
                     {
-                        // If more than 'healthy_check_timeout_ms' milliseconds elapsed since last check
-                        if (std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
-                                - (*port_it)->node->last_listeners_status_check_time_ms.load()
-                                > (*port_it)->node->healthy_check_timeout_ms)
+                        // If more than 'healthy_check_timeout_ms' milliseconds elapsed since last check.
+                        // Most probably has not, so the check is done without locking empty_cv_mutex.
+                        if (timeout_elapsed(now, *(*port_it)))
                         {
                             std::vector<const BufferDescriptor*> descriptors_enqueued;
 
                             try
                             {
                                 std::unique_lock<SharedMemSegment::mutex> lock_port((*port_it)->node->empty_cv_mutex);
-                                if (!update_status_all_listeners((*port_it)->node))
+                                // Check again, there can be races before locking the mutex.
+                                if (timeout_elapsed(now, *(*port_it)))
                                 {
-                                    if ((*port_it)->node->is_port_ok)
+                                    if (!update_status_all_listeners((*port_it)->node))
                                     {
                                         (*port_it)->node->is_port_ok = false;
                                     }
