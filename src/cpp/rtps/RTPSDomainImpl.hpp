@@ -33,6 +33,16 @@ class RTPSDomainImpl
 public:
 
     /**
+     * Creates the guid of a participant given its identifier.
+     * @param [in, out] participant_id   Participant identifier for which to generate the GUID.
+     *                                   When negative, it will be modified to the first non-existent participant id.
+     * @param [out]     guid             GUID corresponding to participant_id
+     */
+    static void create_participant_guid(
+            int32_t& participant_id,
+            GUID_t& guid);
+
+    /**
      * Apply a predicate to every local participant.
      *
      * Will apply the predicate to all the participants registered by a call to RTPSDomain::createParticipant.

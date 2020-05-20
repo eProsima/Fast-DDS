@@ -50,6 +50,30 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+static void guid_prefix_create(
+        uint32_t ID,
+        GuidPrefix_t& guidP)
+{
+    // Make a new participant GuidPrefix_t up
+    int pid = System::GetPID();
+
+    guidP.value[0] = c_VendorId_eProsima[0];
+    guidP.value[1] = c_VendorId_eProsima[1];
+
+    uint16_t host_id = Host::get().id();
+    guidP.value[2] = octet(host_id);
+    guidP.value[3] = octet(host_id >> 8);
+
+    guidP.value[4] = octet(pid);
+    guidP.value[5] = octet(pid >> 8);
+    guidP.value[6] = octet(pid >> 16);
+    guidP.value[7] = octet(pid >> 24);
+    guidP.value[8] = octet(ID);
+    guidP.value[9] = octet(ID >> 8);
+    guidP.value[10] = octet(ID >> 16);
+    guidP.value[11] = octet(ID >> 24);
+}
+
 // environment variables that forces server-client discovery
 // it must contain an IPv4 address
 const char* DEFAULT_ROS2_MASTER_URI = "ROS2_AUTO_CLIENT_SERVER";
@@ -111,6 +135,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
                 "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
     }
+
     uint32_t ID;
     {
         std::lock_guard<std::mutex> guard(m_mutex);
@@ -158,26 +183,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     // Generate a new GuidPrefix_t
     GuidPrefix_t guidP;
-    {
-        // Make a new participant GuidPrefix_t up
-        int pid = System::GetPID();
-
-        guidP.value[0] = c_VendorId_eProsima[0];
-        guidP.value[1] = c_VendorId_eProsima[1];
-
-        uint16_t host_id = Host::get().id();
-        guidP.value[2] = octet(host_id);
-        guidP.value[3] = octet(host_id >> 8);
-
-        guidP.value[4] = octet(pid);
-        guidP.value[5] = octet(pid >> 8);
-        guidP.value[6] = octet(pid >> 16);
-        guidP.value[7] = octet(pid >> 24);
-        guidP.value[8] = octet(ID);
-        guidP.value[9] = octet(ID >> 8);
-        guidP.value[10] = octet(ID >> 16);
-        guidP.value[11] = octet(ID >> 24);
-    }
+    guid_prefix_create(ID, guidP);
 
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = nullptr;
@@ -499,6 +505,23 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     // unable to create auto client server default participants
     logError(DOMAIN, "Auto default client-server setup. Unable to create either server or client.");
     return nullptr;
+}
+
+void RTPSDomainImpl::create_participant_guid(
+        int32_t& participant_id,
+        GUID_t& guid)
+{
+    if (participant_id < 0)
+    {
+        std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
+        do
+        {
+            participant_id = RTPSDomain::getNewId();
+        } while (RTPSDomain::m_RTPSParticipantIDs.find(participant_id) != RTPSDomain::m_RTPSParticipantIDs.end());
+    }
+
+    guid_prefix_create(participant_id, guid.guidPrefix);
+    guid.entityId = c_EntityId_RTPSParticipant;
 }
 
 RTPSReader* RTPSDomainImpl::find_local_reader(

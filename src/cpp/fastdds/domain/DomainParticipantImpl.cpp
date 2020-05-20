@@ -51,6 +51,8 @@
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 
+#include <rtps/RTPSDomainImpl.hpp>
+
 #include <chrono>
 
 namespace eprosima {
@@ -132,6 +134,7 @@ DomainParticipantImpl::DomainParticipantImpl(
         const DomainParticipantQos& qos,
         DomainParticipantListener* listen)
     : domain_id_(did)
+    , next_instance_id_(0)
     , qos_(qos)
     , rtps_participant_(nullptr)
     , participant_(dp)
@@ -155,6 +158,9 @@ DomainParticipantImpl::DomainParticipantImpl(
     TopicAttributes top_attr;
     XMLProfileManager::getDefaultTopicAttributes(top_attr);
     set_qos_from_attributes(default_topic_qos_, top_attr);
+
+    // Pre calculate participant id and generated guid
+    eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(qos_.wire_protocol().participant_id, guid_);
 }
 
 void DomainParticipantImpl::disable()
@@ -165,9 +171,11 @@ void DomainParticipantImpl::disable()
     }
     rtps_listener_.participant_ = nullptr;
 
+    // We only need to disable lower entities if we have been previously enabled
     if (rtps_participant_ != nullptr)
     {
         rtps_participant_->set_listener(nullptr);
+
         {
             std::lock_guard<std::mutex> lock(mtx_pubs_);
             for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
@@ -279,6 +287,7 @@ ReturnCode_t DomainParticipantImpl::enable()
             std::lock_guard<std::mutex> lock(mtx_pubs_);
             for (auto pub : publishers_)
             {
+                pub.second->rtps_participant_ = rtps_participant_;
                 pub.second->user_publisher_->enable();
             }
         }
@@ -289,6 +298,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
             for (auto sub : subscribers_)
             {
+                sub.second->rtps_participant_ = rtps_participant_;
                 sub.second->user_subscriber_->enable();
             }
         }
@@ -419,12 +429,12 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
 {
-    return static_cast<const InstanceHandle_t&>(rtps_participant_->getGuid());
+    return static_cast<const InstanceHandle_t&>(guid_);
 }
 
 const GUID_t& DomainParticipantImpl::guid() const
 {
-    return rtps_participant_->getGuid();
+    return guid_;
 }
 
 Publisher* DomainParticipantImpl::create_publisher(
@@ -432,22 +442,24 @@ Publisher* DomainParticipantImpl::create_publisher(
         PublisherListener* listener,
         const StatusMask& mask)
 {
+    if (!PublisherImpl::check_qos(qos))
+    {
+        logError(PARTICIPANT, "PublisherQos inconsistent or not supported");
+        return nullptr;
+    }
+
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     PublisherImpl* pubimpl = new PublisherImpl(this, qos, listener);
     Publisher* pub = new Publisher(pubimpl, mask);
     pubimpl->user_publisher_ = pub;
     pubimpl->rtps_participant_ = rtps_participant_;
 
-    // Create InstanceHandle for the new publisher
-    GUID_t pub_guid = guid();
-    do
-    {
-        pub_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
-        rtps_participant_->get_new_entity_id(pub_guid.entityId);
-    } while (exists_entity_id(pub_guid.entityId));
+    bool enabled = rtps_participant_ != nullptr;
 
-    InstanceHandle_t pub_handle(pub_guid);
-    pubimpl->handle_ = pub_handle;
+    // Create InstanceHandle for the new publisher
+    InstanceHandle_t pub_handle;
+    create_instance_handle(pub_handle);
+    pubimpl->handle_ = pub_handle; 
 
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_pubs_);
@@ -455,7 +467,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_[pub] = pubimpl;
 
     // Enable publisher if appropriate
-    if (participant_->enable_ && qos_.entity_factory().autoenable_created_entities)
+    if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         pub->enable();
     }
@@ -543,6 +555,11 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
+    if (rtps_participant_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     if (rtps_participant_->wlp() != nullptr)
     {
         if (rtps_participant_->wlp()->assert_liveliness_manual_by_participant())
@@ -761,7 +778,9 @@ DomainParticipant* DomainParticipantImpl::get_participant()
 
 std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 {
-    return rtps_participant_->getParticipantNames();
+    return rtps_participant_ == nullptr ?
+        std::vector<std::string> {} :
+        rtps_participant_->getParticipantNames();
 }
 
 Subscriber* DomainParticipantImpl::create_subscriber(
@@ -771,6 +790,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 {
     if (!SubscriberImpl::check_qos(qos))
     {
+        logError(PARTICIPANT, "SubscriberQos inconsistent or not supported");
         return nullptr;
     }
 
@@ -781,14 +801,11 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subimpl->rtps_participant_ = this->rtps_participant_;
 
     // Create InstanceHandle for the new subscriber
-    GUID_t sub_guid = guid();
-    do
-    {
-        sub_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
-        rtps_participant_->get_new_entity_id(sub_guid.entityId);
-    } while (exists_entity_id(sub_guid.entityId));
+    InstanceHandle_t sub_handle;
+    bool enabled = rtps_participant_ != nullptr;
 
-    InstanceHandle_t sub_handle(sub_guid);
+    // Create InstanceHandle for the new subscriber
+    create_instance_handle(sub_handle);
     subimpl->handle_ = sub_handle;
 
     //SAVE THE PUBLISHER INTO MAPS
@@ -797,7 +814,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_[sub] = subimpl;
 
     // Enable subscriber if appropriate
-    if (participant_->enable_ && qos_.entity_factory().autoenable_created_entities)
+    if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         sub->enable();
     }
@@ -843,13 +860,7 @@ Topic* DomainParticipantImpl::create_topic(
         return nullptr;
     }
 
-    GUID_t topic_guid = guid();
-    do
-    {
-        topic_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
-        rtps_participant_->get_new_entity_id(topic_guid.entityId);
-    } while (exists_entity_id(topic_guid.entityId));
-    InstanceHandle_t topic_handle(topic_guid);
+    bool enabled = rtps_participant_ != nullptr;
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
 
@@ -859,6 +870,9 @@ Topic* DomainParticipantImpl::create_topic(
         logError(PARTICIPANT, "Topic with name : " << topic_name << " already exists");
         return nullptr;
     }
+
+    InstanceHandle_t topic_handle;
+    create_instance_handle(topic_handle);
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     TopicImpl* topic_impl = new TopicImpl(this, type_support, qos, listener);
@@ -871,7 +885,7 @@ Topic* DomainParticipantImpl::create_topic(
     topics_[topic_name] = topic_impl;
 
     // Enable topic if appropriate
-    if (participant_->enable_ && qos_.entity_factory().autoenable_created_entities)
+    if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         topic->enable();
     }
@@ -1154,14 +1168,19 @@ bool DomainParticipantImpl::new_remote_endpoint_discovered(
         uint16_t endpointId,
         EndpointKind_t kind)
 {
-    if (kind == fastrtps::rtps::WRITER)
+    if (rtps_participant_ != nullptr)
     {
-        return rtps_participant_->newRemoteWriterDiscovered(partguid, static_cast<int16_t>(endpointId));
+        if (kind == fastrtps::rtps::WRITER)
+        {
+            return rtps_participant_->newRemoteWriterDiscovered(partguid, static_cast<int16_t>(endpointId));
+        }
+        else
+        {
+            return rtps_participant_->newRemoteReaderDiscovered(partguid, static_cast<int16_t>(endpointId));
+        }
     }
-    else
-    {
-        return rtps_participant_->newRemoteReaderDiscovered(partguid, static_cast<int16_t>(endpointId));
-    }
+
+    return false;
 }
 
 ResourceEvent& DomainParticipantImpl::get_resource_event() const
@@ -1197,6 +1216,12 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
 {
     using namespace fastrtps::types;
+
+    if (rtps_participant_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     TypeObjectFactory* factory = TypeObjectFactory::get_instance();
     // Check if plain
     if (type_information.complete().typeid_with_size().type_id()._d() < EK_MINIMAL)
@@ -1676,29 +1701,42 @@ bool DomainParticipantImpl::can_qos_be_updated(
     if (!(to.allocation() == from.allocation()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "ParticipantResourceLimitsQos cannot be changed after the participant creation");
+        logWarning(RTPS_QOS_CHECK, "ParticipantResourceLimitsQos cannot be changed after the participant is enabled");
     }
     if (!(to.properties() == from.properties()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant creation");
+        logWarning(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant is enabled");
     }
     if (!(to.wire_protocol() == from.wire_protocol()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant creation");
+        logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant is enabled");
     }
     if (!(to.transport() == from.transport()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "TransportConfigQos cannot be changed after the participant creation");
+        logWarning(RTPS_QOS_CHECK, "TransportConfigQos cannot be changed after the participant is enabled");
     }
     if (!(to.name() == from.name()))
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant creation");
+        logWarning(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant is enabled");
     }
     return updatable;
+}
+
+void DomainParticipantImpl::create_instance_handle(
+        fastrtps::rtps::InstanceHandle_t& handle)
+{
+    using eprosima::fastrtps::rtps::octet;
+
+    ++next_instance_id_;
+    handle = guid_;
+    handle.value[15] = 0x01; // Vendor specific;
+    handle.value[14] = static_cast<octet>(next_instance_id_ & 0xFF);
+    handle.value[13] = static_cast<octet>( (next_instance_id_ >> 8) & 0xFF);
+    handle.value[12] = static_cast<octet>((next_instance_id_ >> 8) & 0xFF);;
 }
 
 }  // namespace dds
