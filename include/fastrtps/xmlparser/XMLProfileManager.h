@@ -64,7 +64,7 @@ public:
     /**
      * Load a profiles XML file.
      * @param filename Name for the file to be loaded.
-     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK some are a some are not,
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
      *         XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLFile(
@@ -73,7 +73,7 @@ public:
     /**
      * Load a profiles XML node.
      * @param doc Node to be loaded.
-     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK some are a some are not,
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
      *         XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLNode(
@@ -82,7 +82,7 @@ public:
     /**
      * Load a profiles XML node.
      * @param profiles Node to be loaded.
-     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK some are a some are not,
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
      *         XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLProfiles(
