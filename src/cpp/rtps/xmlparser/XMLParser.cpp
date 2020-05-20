@@ -712,7 +712,7 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
                 <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="segment_size" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>                
+                <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 </xs:all>
@@ -2614,6 +2614,7 @@ XMLP_ret XMLParser::parseProfiles(
     tinyxml2::XMLElement* p_profile = p_root->FirstChildElement();
     const char* tag = nullptr;
     bool parseOk = true;
+    XMLP_ret ret = XMLP_ret::XML_OK;
     while (nullptr != p_profile)
     {
         if (nullptr != (tag = p_profile->Value()))
@@ -2677,11 +2678,11 @@ XMLP_ret XMLParser::parseProfiles(
         if (!parseOk)
         {
             logError(XMLPARSER, "Error parsing profile's tag " << tag);
-            return XMLP_ret::XML_ERROR;
+            ret = XMLP_ret::XML_ERROR;
         }
         p_profile = p_profile->NextSiblingElement();
     }
-    return XMLP_ret::XML_OK;
+    return ret;
 }
 
 XMLP_ret XMLParser::parseDynamicTypes(

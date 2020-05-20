@@ -19,6 +19,7 @@
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <tinyxml2.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
@@ -789,6 +790,88 @@ TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
     ASSERT_EQ(descriptor->rtps_dump_file(), "test_file.dump");
     ASSERT_EQ(descriptor->maxMessageSize, 128000u);
     ASSERT_EQ(descriptor->max_message_size(), 128000u);
+}
+
+//! Tests whether the extraction of XML profiles succeeds when all profiles are correct.
+//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
+//! The expected return value is XMLP_ret::XML_OK.
+TEST_F(XMLProfileParserTests, extract_profiles_ok)
+{
+    const char* xml = "                                                                                                \
+        <profiles>                                                                                                     \
+            <participant profile_name=\"participant_prof\">                                                            \
+                <rtps></rtps>                                                                                          \
+            </participant>                                                                                             \
+            <publisher profile_name=\"publisher_prof\"></publisher>                                                    \
+            <subscriber profile_name=\"subscriber_prof\"></subscriber>                                                 \
+            <topic profile_name=\"topic_prof\"></topic>                                                                \
+            <requester profile_name=\"req_prof\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">      \
+            </requester>                                                                                               \
+            <replier profile_name=\"replier_prof\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">    \
+            </replier>                                                                                                 \
+        </profiles>                                                                                                    \
+    ";
+
+    tinyxml2::XMLDocument xml_doc;
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+}
+
+//! Tests whether the extraction of XML profiles succeeds when some profiles are correct and some are not.
+//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
+//! The expected return value is XMLP_ret::XML_NOK.
+TEST_F(XMLProfileParserTests, extract_profiles_nok)
+{
+    const char* xml = "                                                                                                \
+        <profiles>                                                                                                     \
+            <!-- OK PROFILE -->                                                                                        \
+            <participant profile_name=\"participant_prof\">                                                            \
+                <rtps></rtps>                                                                                          \
+            </participant>                                                                                             \
+                                                                                                                       \
+            <!-- NOK PROFILE -->                                                                                       \
+            <publisher></publisher>                                                                                    \
+                                                                                                                       \
+            <!-- NOK PROFILE -->                                                                                       \
+            <subscriber></subscriber>                                                                                  \
+                                                                                                                       \
+            <!-- OK PROFILE -->                                                                                        \
+            <topic profile_name=\"topic_prof\"></topic>                                                                \
+                                                                                                                       \
+            <!-- NOK PROFILE -->                                                                                       \
+            <requester profile_name=\"req_prof\"></requester>                                                          \
+                                                                                                                       \
+            <!-- NOK PROFILE -->                                                                                       \
+            <replier profile_name=\"replier_prof\"></replier>                                                          \
+        </profiles>                                                                                                    \
+    ";
+
+    tinyxml2::XMLDocument xml_doc;
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_NOK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+}
+
+//! Tests whether the extraction of XML profiles succeeds when all profiles are wrong.
+//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
+//! The expected return value is XMLP_ret::XML_ERROR.
+TEST_F(XMLProfileParserTests, extract_profiles_error)
+{
+
+    const char* xml = "                                                                                                \
+        <profiles>                                                                                                     \
+            <participant>                                                                                              \
+            </participant>                                                                                             \
+            <publisher></publisher>                                                                                    \
+            <subscriber></subscriber>                                                                                  \
+            <topic></topic>                                                                                            \
+            <requester></requester>                                                                                    \
+            <replier></replier>                                                                                        \
+        </profiles>                                                                                                    \
+    ";
+
+    tinyxml2::XMLDocument xml_doc;
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 }
 
 int main(
