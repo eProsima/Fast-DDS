@@ -261,6 +261,7 @@ ReturnCode_t DomainParticipantImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
+    guid_ = part->getGuid();
     rtps_participant_ = part;
     rtps_participant_->enable();
 
