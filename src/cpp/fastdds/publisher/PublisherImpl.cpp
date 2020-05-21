@@ -154,15 +154,28 @@ const PublisherQos& PublisherImpl::get_qos() const
 ReturnCode_t PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
-    if (&qos == &PUBLISHER_QOS_DEFAULT)
-    {
-        const PublisherQos& default_qos = participant_->get_default_publisher_qos();
-        if (!can_qos_be_updated(qos_, default_qos))
-        {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-        }
-        set_qos(qos_, default_qos, false);
+    bool enabled = user_publisher_->is_enabled();
 
+    const PublisherQos& qos_to_set = (&qos == &PUBLISHER_QOS_DEFAULT) ?
+        participant_->get_default_publisher_qos() : qos;
+
+    if (&qos != &PUBLISHER_QOS_DEFAULT)
+    {
+        ReturnCode_t ret_val = check_qos(qos_to_set);
+        if (!ret_val)
+        {
+            return ret_val;
+        }
+    }
+
+    if (enabled && !can_qos_be_updated(qos_, qos_to_set))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    set_qos(qos_, qos_to_set, !enabled);
+
+    if (enabled)
+    {
         std::lock_guard<std::mutex> lock(mtx_writers_);
         for (auto topic_writers : writers_)
         {
@@ -170,28 +183,6 @@ ReturnCode_t PublisherImpl::set_qos(
             {
                 writer->publisher_qos_updated();
             }
-        }
-
-        return ReturnCode_t::RETCODE_OK;
-    }
-
-    ReturnCode_t ret_val = check_qos(qos);
-    if (!ret_val)
-    {
-        return ret_val;
-    }
-    if (!can_qos_be_updated(qos_, qos))
-    {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-    }
-    set_qos(qos_, qos, false);
-
-    std::lock_guard<std::mutex> lock(mtx_writers_);
-    for (auto topic_writers : writers_)
-    {
-        for (auto writer : topic_writers.second)
-        {
-            writer->publisher_qos_updated();
         }
     }
 
