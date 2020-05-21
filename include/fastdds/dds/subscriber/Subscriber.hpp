@@ -90,6 +90,13 @@ public:
     }
 
     /**
+     * @brief This operation enables the Subscriber
+     * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the participant creating this
+     *         Subscriber is not enabled.
+     */
+    RTPS_DllAPI ReturnCode_t enable() override;
+
+    /**
      * Allows accessing the Subscriber Qos.
      * @return SubscriberQos reference
      */
