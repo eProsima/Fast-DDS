@@ -263,25 +263,17 @@ DataWriter* PublisherImpl::create_datawriter(
         qos,
         listener);
 
-    if (impl->writer_ == nullptr)
-    {
-        logError(PUBLISHER, "Problem creating associated Writer");
-        delete impl;
-        topic->get_impl()->dereference();
-        return nullptr;
-    }
-
     DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
-
-    //REGISTER THE WRITER
-    WriterQos wqos = qos.get_writerqos(qos_, topic->get_qos());
-    fastrtps::TopicAttributes topic_att = DataWriterImpl::get_topic_attributes(qos, *topic, type_support);
-    rtps_participant_->registerWriter(impl->writer_, topic_att, wqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
         writers_[topic->get_name()].push_back(impl);
+    }
+
+    if (user_publisher_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
+    {
+        writer->enable();
     }
 
     return writer;

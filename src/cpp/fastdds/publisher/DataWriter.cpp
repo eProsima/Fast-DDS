@@ -48,6 +48,24 @@ DataWriter::~DataWriter()
 {
 }
 
+ReturnCode_t DataWriter::enable()
+{
+    if (enable_)
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    if (false == impl_->get_publisher()->is_enabled())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    enable_ = true;
+    ReturnCode_t ret_code = impl_->enable();
+    enable_ = ReturnCode_t::RETCODE_OK == ret_code;
+    return ret_code;
+}
+
 bool DataWriter::write(
         void* data)
 {
