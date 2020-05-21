@@ -160,7 +160,8 @@ DomainParticipantImpl::DomainParticipantImpl(
     set_qos_from_attributes(default_topic_qos_, top_attr);
 
     // Pre calculate participant id and generated guid
-    eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(qos_.wire_protocol().participant_id, guid_);
+    participant_id_ = qos_.wire_protocol().participant_id;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_);
 }
 
 void DomainParticipantImpl::disable()
@@ -253,6 +254,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     set_attributes_from_qos(rtps_attr, qos_);
+    rtps_attr.participantID = participant_id_;
     RTPSParticipant* part = RTPSDomain::createParticipant(domain_id_, false, rtps_attr, &rtps_listener_);
 
     if (part == nullptr)

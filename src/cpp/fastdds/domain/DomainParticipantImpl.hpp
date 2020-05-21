@@ -375,6 +375,9 @@ private:
     //!Domain id
     DomainId_t domain_id_;
 
+    //!Participant id
+    int32_t participant_id_ = -1;
+
     //!Pre-calculated guid
     fastrtps::rtps::GUID_t guid_;
 
