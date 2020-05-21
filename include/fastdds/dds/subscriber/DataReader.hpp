@@ -97,6 +97,13 @@ public:
     RTPS_DllAPI virtual ~DataReader();
 
     /**
+     * @brief This operation enables the DataReader
+     * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the Subscriber creating this
+     *         DataReader is not enabled.
+     */
+    RTPS_DllAPI ReturnCode_t enable() override;
+
+    /**
      * Method to block the current thread until an unread message is available
      * @param timeout Max blocking time for this operation
      * @return true if there is new unread message, false if timeout

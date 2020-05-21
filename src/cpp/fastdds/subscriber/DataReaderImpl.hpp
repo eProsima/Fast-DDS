@@ -77,6 +77,8 @@ public:
 
     virtual ~DataReaderImpl();
 
+    ReturnCode_t enable();
+
     /**
      * Method to block the current thread until an unread message is available
      */
@@ -126,7 +128,7 @@ public:
     * Get associated GUID
     * @return Associated GUID
     */
-    const fastrtps::rtps::GUID_t& guid();
+    const fastrtps::rtps::GUID_t& guid() const;
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
@@ -218,19 +220,18 @@ public:
             const DataReaderQos& from,
             bool first_time);
 
-
 private:
 
     //!Subscriber
-    SubscriberImpl* subscriber_;
+    SubscriberImpl* subscriber_ = nullptr;
 
     //!Pointer to associated RTPSReader
-    fastrtps::rtps::RTPSReader* reader_;
+    fastrtps::rtps::RTPSReader* reader_ = nullptr;
 
     //! Pointer to the TopicDataType object.
     TypeSupport type_;
 
-    TopicDescription* topic_;
+    TopicDescription* topic_ = nullptr;
 
     DataReaderQos qos_;
 
@@ -238,7 +239,7 @@ private:
     fastrtps::SubscriberHistory history_;
 
     //!Listener
-    DataReaderListener* listener_;
+    DataReaderListener* listener_ = nullptr;
 
     class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
     {
@@ -270,7 +271,7 @@ public:
     } reader_listener_;
 
     //! A timer used to check for deadlines
-    fastrtps::rtps::TimedEvent* deadline_timer_;
+    fastrtps::rtps::TimedEvent* deadline_timer_ = nullptr;
 
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
@@ -282,12 +283,12 @@ public:
     fastrtps::RequestedDeadlineMissedStatus deadline_missed_status_;
 
     //! A timed callback to remove expired samples
-    fastrtps::rtps::TimedEvent* lifespan_timer_;
+    fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
 
     //! The lifespan duration
     std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
-    DataReader* user_datareader_;
+    DataReader* user_datareader_ = nullptr;
 
     /**
      * @brief A method called when a new cache change is added

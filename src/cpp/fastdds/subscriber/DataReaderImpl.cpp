@@ -84,7 +84,6 @@ DataReaderImpl::DataReaderImpl(
         const DataReaderQos& qos,
         DataReaderListener* listener)
     : subscriber_(s)
-    , reader_(nullptr)
     , type_(type)
     , topic_(topic)
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
@@ -97,23 +96,13 @@ DataReaderImpl::DataReaderImpl(
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
-    , deadline_missed_status_()
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
-    , user_datareader_(nullptr)
 {
-    deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-                    [&]() -> bool
-                {
-                    return deadline_missed();
-                },
-                    qos_.deadline().period.to_ns() * 1e-6);
+}
 
-    lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-                    [&]() -> bool
-                {
-                    return lifespan_expired();
-                },
-                    qos_.lifespan().duration.to_ns() * 1e-6);
+ReturnCode_t DataReaderImpl::enable()
+{
+    assert(reader_ == nullptr);
 
     fastrtps::rtps::ReaderAttributes att;
 
@@ -121,7 +110,7 @@ DataReaderImpl::DataReaderImpl(
     att.endpoint.endpointKind = READER;
     att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
     att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    att.endpoint.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    att.endpoint.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
     att.endpoint.properties = qos_.properties();
@@ -148,13 +137,13 @@ DataReaderImpl::DataReaderImpl(
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(topic->get_name().c_str());
+    property.value(topic_->get_name().c_str());
     att.endpoint.properties.properties().push_back(std::move(property));
-    if (s->get_qos().partition().names().size() > 0)
+    if (subscriber_->get_qos().partition().names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for (auto partition : s->get_qos().partition().names())
+        for (auto partition : subscriber_->get_qos().partition().names())
         {
             partitions += partition + ";";
         }
@@ -171,9 +160,30 @@ DataReaderImpl::DataReaderImpl(
     if (reader == nullptr)
     {
         logError(DATA_READER, "Problem creating associated Reader");
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     reader_ = reader;
+
+    deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+        [&]() -> bool
+        {
+            return deadline_missed();
+        },
+        qos_.deadline().period.to_ns() * 1e-6);
+
+    lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+        [&]() -> bool
+        {
+            return lifespan_expired();
+        },
+        qos_.lifespan().duration.to_ns() * 1e-6);
+
+    // Register the reader
+    ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
+    subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 void DataReaderImpl::disable()
@@ -193,22 +203,27 @@ DataReaderImpl::~DataReaderImpl()
     if (reader_ != nullptr)
     {
         logInfo(DATA_READER, guid().entityId << " in topic: " << topic_->get_name());
+        RTPSDomain::removeRTPSReader(reader_);
     }
 
-    RTPSDomain::removeRTPSReader(reader_);
     delete user_datareader_;
 }
 
 bool DataReaderImpl::wait_for_unread_message(
         const fastrtps::Duration_t& timeout)
 {
-    return reader_->wait_for_unread_cache(timeout);
+    return reader_ ? reader_->wait_for_unread_cache(timeout) : false;
 }
 
 ReturnCode_t DataReaderImpl::read_next_sample(
         void* data,
         SampleInfo* info)
 {
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     if (history_.getHistorySize() == 0)
     {
         return ReturnCode_t::RETCODE_NO_DATA;
@@ -233,6 +248,11 @@ ReturnCode_t DataReaderImpl::take_next_sample(
         void* data,
         SampleInfo* info)
 {
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     if (history_.getHistorySize() == 0)
     {
         return ReturnCode_t::RETCODE_NO_DATA;
@@ -257,6 +277,11 @@ ReturnCode_t DataReaderImpl::take_next_sample(
 ReturnCode_t DataReaderImpl::get_first_untaken_info(
         SampleInfo* info)
 {
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     SampleInfo_t rtps_info;
     if (history_.get_first_untaken_info(&rtps_info))
     {
@@ -266,85 +291,86 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
     return ReturnCode_t::RETCODE_NO_DATA;
 }
 
-const GUID_t& DataReaderImpl::guid()
+const GUID_t& DataReaderImpl::guid() const
 {
-    return reader_->getGuid();
+    return reader_ ? reader_->getGuid() : c_Guid_Unknown;
 }
 
 InstanceHandle_t DataReaderImpl::get_instance_handle() const
 {
-    InstanceHandle_t handle;
-    handle = reader_->getGuid();
-    return handle;
+    return guid();
 }
 
 void DataReaderImpl::subscriber_qos_updated()
 {
-    //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
-    subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+    if (reader_)
+    {
+        //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+        ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
+        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+    }
 }
 
 ReturnCode_t DataReaderImpl::set_qos(
         const DataReaderQos& qos)
 {
-    if (&qos == &DATAREADER_QOS_DEFAULT)
+    bool enabled = reader_ != nullptr;
+    const DataReaderQos& qos_to_set = (&qos == &DATAREADER_QOS_DEFAULT) ?
+        subscriber_->get_default_datareader_qos() : qos;
+
+    // Default qos is always considered consistent
+    if (&qos != &DATAREADER_QOS_DEFAULT)
     {
-        const DataReaderQos& default_qos = subscriber_->get_default_datareader_qos();
-        if (!can_qos_be_updated(qos_, default_qos))
+        if (subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data != 0 &&
+            subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data <
+            qos_to_set.user_data().getValue().size())
         {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
 
-        set_qos(qos_, default_qos, false);
-        return ReturnCode_t::RETCODE_OK;
+        ReturnCode_t check_result = check_qos(qos_to_set);
+        if (!check_result)
+        {
+            return check_result;
+        }
     }
 
-    if (subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data != 0 &&
-            subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data <
-            qos.user_data().getValue().size())
-    {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
-    }
-
-    ReturnCode_t check_result = check_qos(qos);
-    if (!check_result)
-    {
-        return check_result;
-    }
-    else if (!can_qos_be_updated(qos_, qos))
+    if (enabled && !can_qos_be_updated(qos_, qos_to_set))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    set_qos(qos_, qos, false);
+    set_qos(qos_, qos_to_set, !enabled);
 
-    //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    ReaderQos rqos = qos.get_readerqos(get_subscriber()->get_qos());
-    subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
-
-    // Deadline
-    if (qos_.deadline().period != c_TimeInfinite)
+    if (enabled)
     {
-        deadline_duration_us_ =
+        //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+        ReaderQos rqos = qos.get_readerqos(get_subscriber()->get_qos());
+        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos);
+
+        // Deadline
+        if (qos_.deadline().period != c_TimeInfinite)
+        {
+            deadline_duration_us_ =
                 duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
-        deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
-    }
-    else
-    {
-        deadline_timer_->cancel_timer();
-    }
+            deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
+        }
+        else
+        {
+            deadline_timer_->cancel_timer();
+        }
 
-    // Lifespan
-    if (qos_.lifespan().duration != c_TimeInfinite)
-    {
-        lifespan_duration_us_ =
+        // Lifespan
+        if (qos_.lifespan().duration != c_TimeInfinite)
+        {
+            lifespan_duration_us_ =
                 std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
-        lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
-    }
-    else
-    {
-        lifespan_timer_->cancel_timer();
+            lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
+        }
+        else
+        {
+            lifespan_timer_->cancel_timer();
+        }
     }
 
     return ReturnCode_t::RETCODE_OK;
@@ -504,6 +530,11 @@ bool DataReaderImpl::deadline_missed()
 ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
         RequestedDeadlineMissedStatus& status)
 {
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     status = deadline_missed_status_;
@@ -606,6 +637,11 @@ const DataReaderListener* DataReaderImpl::get_listener() const
 ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
         LivelinessChangedStatus& status) const
 {
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     status = reader_->liveliness_changed_status_;

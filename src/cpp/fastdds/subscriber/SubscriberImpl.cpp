@@ -229,23 +229,17 @@ DataReader* SubscriberImpl::create_datareader(
         qos,
         listener);
 
-    if (impl->reader_ == nullptr)
-    {
-        logError(SUBSCRIBER, "Problem creating associated Reader");
-        delete impl;
-        topic->get_impl()->dereference();
-        return nullptr;
-    }
-
     DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
-
-    ReaderQos rqos = qos.get_readerqos(qos_);
-    rtps_participant_->registerReader(impl->reader_, impl->topic_attributes(), rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
         readers_[topic->get_name()].push_back(impl);
+    }
+
+    if (user_subscriber_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
+    {
+        reader->enable();
     }
 
     return reader;
