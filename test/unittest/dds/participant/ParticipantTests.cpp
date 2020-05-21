@@ -317,6 +317,85 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
 
 }
 
+TEST(ParticipantTests, EntityFactoryBehavior)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    {
+        DomainParticipantFactoryQos qos;
+        qos.entity_factory().autoenable_created_entities = false;
+
+        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK); 
+    }
+
+    // Ensure that participant is created disabled.
+    DomainParticipant* participant = factory->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    ASSERT_FALSE(participant->is_enabled());
+
+    // Participant is disabled. This means we can change an inmutable qos.
+    DomainParticipantQos qos = PARTICIPANT_QOS_DEFAULT;
+    qos.wire_protocol().builtin.avoid_builtin_multicast = !qos.wire_protocol().builtin.avoid_builtin_multicast;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(qos));
+
+    // Creating lower entities should create them disabled
+    Publisher* pub = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, pub);
+    EXPECT_FALSE(pub->is_enabled());
+
+    Subscriber* sub = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, sub);
+    EXPECT_FALSE(sub->is_enabled());
+
+    // Enabling should fail on lower entities until participant is enabled
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, pub->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, sub->enable());
+
+    // Enable participant and check idempotency of enable
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+
+    // As the participant was created with the default value for ENTITY_FACTORY,
+    // lower entities should have been automatically enabled.
+    EXPECT_TRUE(pub->is_enabled());
+    EXPECT_TRUE(sub->is_enabled());
+
+    // Now that participant is enabled, we should not be able change an inmutable qos.
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, participant->set_qos(PARTICIPANT_QOS_DEFAULT));
+
+    // Created entities should now be automatically enabled
+    Subscriber* sub2 = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, sub2);
+    EXPECT_TRUE(sub2->is_enabled());
+
+    // We can change ENTITY_FACTORY on the participant
+    qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(qos));
+
+    // Lower entities should now be created disabled
+    Publisher* pub2 = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, pub2);
+    EXPECT_FALSE(pub2->is_enabled());
+
+    // But could be enabled afterwards
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, pub2->enable());
+    EXPECT_TRUE(pub2->is_enabled());
+
+    // Check idempotency of enable on entities
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, pub->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, pub2->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, sub->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, sub2->enable());
+
+    // Delete lower entities
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(sub2));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub2));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(sub));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
 TEST(ParticipantTests, CreatePublisher)
 {
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
