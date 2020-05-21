@@ -58,14 +58,14 @@ public:
 
     /**
      * Load the default profiles XML file.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static void loadDefaultXMLFile();
 
     /**
      * Load a profiles XML file.
      * @param filename Name for the file to be loaded.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
+     *         XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLFile(
             const std::string& filename);
@@ -73,7 +73,8 @@ public:
     /**
      * Load a profiles XML node.
      * @param doc Node to be loaded.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
+     *         XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLNode(
             tinyxml2::XMLDocument& doc);
@@ -81,7 +82,8 @@ public:
     /**
      * Load a profiles XML node.
      * @param profiles Node to be loaded.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
+     *         XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLProfiles(
             tinyxml2::XMLElement& profiles);

@@ -360,6 +360,7 @@ XMLP_ret XMLProfileManager::extractProfiles(
 
     unsigned int profile_count = 0u;
 
+    XMLP_ret ret = XMLP_ret::XML_OK;
     for (auto&& profile: profiles->getChildren())
     {
         if (NodeType::PARTICIPANT == profile->getType())
@@ -368,12 +369,20 @@ XMLP_ret XMLProfileManager::extractProfiles(
             {
                 ++profile_count;
             }
+            else
+            {
+                ret = XMLP_ret::XML_NOK;
+            }
         }
         else if (NodeType::PUBLISHER == profile.get()->getType())
         {
             if (XMLP_ret::XML_OK == extractPublisherProfile(profile, filename))
             {
                 ++profile_count;
+            }
+            else
+            {
+                ret = XMLP_ret::XML_NOK;
             }
         }
         else if (NodeType::SUBSCRIBER == profile.get()->getType())
@@ -382,12 +391,20 @@ XMLP_ret XMLProfileManager::extractProfiles(
             {
                 ++profile_count;
             }
+            else
+            {
+                ret = XMLP_ret::XML_NOK;
+            }
         }
         else if (NodeType::TOPIC == profile.get()->getType())
         {
             if (XMLP_ret::XML_OK == extractTopicProfile(profile, filename))
             {
                 ++profile_count;
+            }
+            else
+            {
+                ret = XMLP_ret::XML_NOK;
             }
         }
         else if (NodeType::REQUESTER == profile.get()->getType())
@@ -396,12 +413,20 @@ XMLP_ret XMLProfileManager::extractProfiles(
             {
                 ++profile_count;
             }
+            else
+            {
+                ret = XMLP_ret::XML_NOK;
+            }
         }
         else if (NodeType::REPLIER == profile.get()->getType())
         {
             if (XMLP_ret::XML_OK == extractReplierProfile(profile, filename))
             {
                 ++profile_count;
+            }
+            else
+            {
+                ret = XMLP_ret::XML_NOK;
             }
         }
         else
@@ -412,9 +437,15 @@ XMLP_ret XMLProfileManager::extractProfiles(
 
     profile_count += static_cast<unsigned int>(transport_profiles_.size()); // Count transport profiles
 
-    xml_files_.emplace(filename, XMLP_ret::XML_OK);
+    if (ret != XMLP_ret::XML_OK && profile_count == 0)
+    {
+        // Could not extract any profile
+        ret = XMLP_ret::XML_ERROR;
+    }
 
-    return XMLP_ret::XML_OK;
+    xml_files_.emplace(filename, ret);
+
+    return ret;
 }
 
 XMLP_ret XMLProfileManager::extractParticipantProfile(
