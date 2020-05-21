@@ -78,6 +78,8 @@ public:
 
     virtual ~SubscriberImpl();
 
+    ReturnCode_t enable();
+
     const SubscriberQos& get_qos() const;
 
     ReturnCode_t set_qos(

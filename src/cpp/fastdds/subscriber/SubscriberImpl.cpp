@@ -93,6 +93,23 @@ SubscriberImpl::SubscriberImpl(
     set_qos_from_attributes(default_datareader_qos_, sub_attr);
 }
 
+ReturnCode_t SubscriberImpl::enable()
+{
+    if (qos_.entity_factory().autoenable_created_entities)
+    {
+        std::lock_guard<std::mutex> lock(mtx_readers_);
+        for (auto topic_readers : readers_)
+        {
+            for (DataReaderImpl* dr : topic_readers.second)
+            {
+                dr->user_datareader_->enable();
+            }
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 void SubscriberImpl::disable()
 {
     set_listener(nullptr);

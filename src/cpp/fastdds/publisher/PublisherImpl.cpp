@@ -96,6 +96,23 @@ PublisherImpl::PublisherImpl(
     set_qos_from_attributes(default_datawriter_qos_, pub_attr);
 }
 
+ReturnCode_t PublisherImpl::enable()
+{
+    if (qos_.entity_factory().autoenable_created_entities)
+    {
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        for (auto topic_writers : writers_)
+        {
+            for (DataWriterImpl* dw : topic_writers.second)
+            {
+                dw->user_datawriter_->enable();
+            }
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 void PublisherImpl::disable()
 {
     set_listener(nullptr);

@@ -55,7 +55,9 @@ ReturnCode_t Subscriber::enable()
     }
 
     enable_ = true;
-    return ReturnCode_t::RETCODE_OK;
+    ReturnCode_t ret_code = impl_->enable();
+    enable_ = ReturnCode_t::RETCODE_OK == ret_code;
+    return ret_code;
 }
 
 const SubscriberQos& Subscriber::get_qos() const

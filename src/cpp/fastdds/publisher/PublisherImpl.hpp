@@ -81,6 +81,8 @@ public:
 
     virtual ~PublisherImpl();
 
+    ReturnCode_t enable();
+
     const PublisherQos& get_qos() const;
 
     ReturnCode_t set_qos(
