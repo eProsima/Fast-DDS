@@ -297,7 +297,7 @@ public:
                 {
                     std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
                         topic_name_ << std::endl;
-                    initialized_ = true;
+                    initialized_ = datawriter_->is_enabled();
                     return;
                 }
             }
