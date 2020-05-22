@@ -239,7 +239,11 @@ DataReader* SubscriberImpl::create_datareader(
 
     if (user_subscriber_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
     {
-        reader->enable();
+        if (ReturnCode_t::RETCODE_OK != reader->enable())
+        {
+            delete_datareader(reader);
+            return nullptr;
+        }
     }
 
     return reader;

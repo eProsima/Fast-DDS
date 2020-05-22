@@ -273,7 +273,11 @@ DataWriter* PublisherImpl::create_datawriter(
 
     if (user_publisher_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
     {
-        writer->enable();
+        if (ReturnCode_t::RETCODE_OK != writer->enable())
+        {
+            delete_datawriter(writer);
+            return nullptr;
+        }
     }
 
     return writer;

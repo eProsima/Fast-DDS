@@ -472,7 +472,11 @@ Publisher* DomainParticipantImpl::create_publisher(
     // Enable publisher if appropriate
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
-        pub->enable();
+        if (ReturnCode_t::RETCODE_OK != pub->enable())
+        {
+            delete_publisher(pub);
+            return nullptr;
+        }
     }
 
     return pub;
@@ -819,7 +823,11 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     // Enable subscriber if appropriate
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
-        sub->enable();
+        if (ReturnCode_t::RETCODE_OK != sub->enable())
+        {
+            delete_subscriber(sub);
+            return nullptr;
+        }
     }
 
     return sub;
@@ -890,8 +898,13 @@ Topic* DomainParticipantImpl::create_topic(
     // Enable topic if appropriate
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
-        topic->enable();
+        if (ReturnCode_t::RETCODE_OK != topic->enable())
+        {
+            delete_topic(topic);
+            return nullptr;
+        }
     }
+
     return topic;
 }
 
