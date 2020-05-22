@@ -268,6 +268,7 @@ public:
             participant_qos_,
             &participant_listener_);
         ASSERT_NE(participant_, nullptr);
+        ASSERT_TRUE(participant_->is_enabled());
 
         participant_guid_ = participant_->guid();
 
@@ -279,13 +280,16 @@ public:
         // Create subscriber
         subscriber_ = participant_->create_subscriber(subscriber_qos_);
         ASSERT_NE(subscriber_, nullptr);
+        ASSERT_TRUE(subscriber_->is_enabled());
 
         // Create topic
         topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         ASSERT_NE(topic_, nullptr);
+        ASSERT_TRUE(topic_->is_enabled());
 
         datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_);
         ASSERT_NE(datareader_, nullptr);
+        ASSERT_TRUE(datareader_->is_enabled());
 
         std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
             topic_name_ << std::endl;

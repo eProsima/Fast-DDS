@@ -96,6 +96,23 @@ PublisherImpl::PublisherImpl(
     set_qos_from_attributes(default_datawriter_qos_, pub_attr);
 }
 
+ReturnCode_t PublisherImpl::enable()
+{
+    if (qos_.entity_factory().autoenable_created_entities)
+    {
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        for (auto topic_writers : writers_)
+        {
+            for (DataWriterImpl* dw : topic_writers.second)
+            {
+                dw->user_datawriter_->enable();
+            }
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 void PublisherImpl::disable()
 {
     set_listener(nullptr);
@@ -137,15 +154,28 @@ const PublisherQos& PublisherImpl::get_qos() const
 ReturnCode_t PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
-    if (&qos == &PUBLISHER_QOS_DEFAULT)
-    {
-        const PublisherQos& default_qos = participant_->get_default_publisher_qos();
-        if (!can_qos_be_updated(qos_, default_qos))
-        {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-        }
-        set_qos(qos_, default_qos, false);
+    bool enabled = user_publisher_->is_enabled();
 
+    const PublisherQos& qos_to_set = (&qos == &PUBLISHER_QOS_DEFAULT) ?
+        participant_->get_default_publisher_qos() : qos;
+
+    if (&qos != &PUBLISHER_QOS_DEFAULT)
+    {
+        ReturnCode_t ret_val = check_qos(qos_to_set);
+        if (!ret_val)
+        {
+            return ret_val;
+        }
+    }
+
+    if (enabled && !can_qos_be_updated(qos_, qos_to_set))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    set_qos(qos_, qos_to_set, !enabled);
+
+    if (enabled)
+    {
         std::lock_guard<std::mutex> lock(mtx_writers_);
         for (auto topic_writers : writers_)
         {
@@ -153,28 +183,6 @@ ReturnCode_t PublisherImpl::set_qos(
             {
                 writer->publisher_qos_updated();
             }
-        }
-
-        return ReturnCode_t::RETCODE_OK;
-    }
-
-    ReturnCode_t ret_val = check_qos(qos);
-    if (!ret_val)
-    {
-        return ret_val;
-    }
-    if (!can_qos_be_updated(qos_, qos))
-    {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-    }
-    set_qos(qos_, qos, false);
-
-    std::lock_guard<std::mutex> lock(mtx_writers_);
-    for (auto topic_writers : writers_)
-    {
-        for (auto writer : topic_writers.second)
-        {
-            writer->publisher_qos_updated();
         }
     }
 
@@ -255,25 +263,21 @@ DataWriter* PublisherImpl::create_datawriter(
         qos,
         listener);
 
-    if (impl->writer_ == nullptr)
-    {
-        logError(PUBLISHER, "Problem creating associated Writer");
-        delete impl;
-        topic->get_impl()->dereference();
-        return nullptr;
-    }
-
     DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
-
-    //REGISTER THE WRITER
-    WriterQos wqos = qos.get_writerqos(qos_, topic->get_qos());
-    fastrtps::TopicAttributes topic_att = DataWriterImpl::get_topic_attributes(qos, *topic, type_support);
-    rtps_participant_->registerWriter(impl->writer_, topic_att, wqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
         writers_[topic->get_name()].push_back(impl);
+    }
+
+    if (user_publisher_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
+    {
+        if (ReturnCode_t::RETCODE_OK != writer->enable())
+        {
+            delete_datawriter(writer);
+            return nullptr;
+        }
     }
 
     return writer;

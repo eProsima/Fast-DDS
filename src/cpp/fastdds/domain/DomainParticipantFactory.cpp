@@ -65,27 +65,6 @@ static void set_qos_from_attributes(
     qos.name() = attr.getName();
 }
 
-static void set_attributes_from_qos(
-        fastrtps::rtps::RTPSParticipantAttributes& attr,
-        const DomainParticipantQos& qos)
-{
-    attr.allocation = qos.allocation();
-    attr.properties = qos.properties();
-    attr.setName(qos.name());
-    attr.prefix = qos.wire_protocol().prefix;
-    attr.participantID = qos.wire_protocol().participant_id;
-    attr.builtin = qos.wire_protocol().builtin;
-    attr.port = qos.wire_protocol().port;
-    attr.throughputController = qos.wire_protocol().throughput_controller;
-    attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
-    attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
-    attr.userTransports = qos.transport().user_transports;
-    attr.useBuiltinTransports = qos.transport().use_builtin_transports;
-    attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
-    attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
-    attr.userData = qos.user_data().data_vec();
-}
-    
 class DomainParticipantFactoryReleaser
 {
 public:
@@ -214,20 +193,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
     DomainParticipant* dom_part = new DomainParticipant(mask);
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, pqos, listen);
-
-    fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
-    set_attributes_from_qos(rtps_attr, pqos);
-    RTPSParticipant* part = RTPSDomain::createParticipant(did, false, rtps_attr, &dom_part_impl->rtps_listener_);
-
-    if (part == nullptr)
-    {
-        logError(DOMAIN_PARTICIPANT_FACTORY, "Problem creating RTPSParticipant");
-        delete dom_part_impl;
-        return nullptr;
-    }
-
-    dom_part_impl->rtps_participant_ = part;
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
@@ -247,14 +213,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     if (factory_qos_.entity_factory().autoenable_created_entities)
     {
-        dom_part->enable();
+        if (ReturnCode_t::RETCODE_OK != dom_part->enable())
+        {
+            delete_participant(dom_part);
+            return nullptr;
+        }
     }
-
-    part->set_check_type_function(
-        [dom_part](const std::string& type_name) -> bool
-                {
-                    return dom_part->find_type(type_name).get() != nullptr;
-                });
 
     return dom_part;
 }

@@ -252,7 +252,7 @@ public:
             if (publisher)
             {
                 auto datawriter = publisher->create_datawriter(topic, datawriter_qos_, &pub_listener_);
-                if (datawriter)
+                if (datawriter && datawriter->is_enabled())
                 {
                     publishers_[index] = {topic, publisher, datawriter};
                     return true;
@@ -289,7 +289,7 @@ public:
             if (subscriber)
             {
                 auto datareader = subscriber->create_datareader(topic, datareader_qos_, &sub_listener_);
-                if (datareader)
+                if (datareader && datareader->is_enabled())
                 {
                     subscribers_[index] = {topic, subscriber, datareader};
                     return true;

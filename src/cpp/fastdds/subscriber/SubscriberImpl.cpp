@@ -93,6 +93,23 @@ SubscriberImpl::SubscriberImpl(
     set_qos_from_attributes(default_datareader_qos_, sub_attr);
 }
 
+ReturnCode_t SubscriberImpl::enable()
+{
+    if (qos_.entity_factory().autoenable_created_entities)
+    {
+        std::lock_guard<std::mutex> lock(mtx_readers_);
+        for (auto topic_readers : readers_)
+        {
+            for (DataReaderImpl* dr : topic_readers.second)
+            {
+                dr->user_datareader_->enable();
+            }
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 void SubscriberImpl::disable()
 {
     set_listener(nullptr);
@@ -134,16 +151,27 @@ const SubscriberQos& SubscriberImpl::get_qos() const
 ReturnCode_t SubscriberImpl::set_qos(
         const SubscriberQos& qos)
 {
-    if (&qos == &SUBSCRIBER_QOS_DEFAULT)
+    bool enabled = user_subscriber_->is_enabled();
+    const SubscriberQos& qos_to_set = (&qos == &SUBSCRIBER_QOS_DEFAULT) ?
+        participant_->get_default_subscriber_qos() : qos;
+
+    if (&qos != &SUBSCRIBER_QOS_DEFAULT)
     {
-        const SubscriberQos& default_qos = participant_->get_default_subscriber_qos();
-        if (!can_qos_be_updated(qos_, default_qos))
+        ReturnCode_t check_result = check_qos(qos_to_set);
+        if (!check_result)
         {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+            return check_result;
         }
+    }
 
-        set_qos(qos_, default_qos, false);
+    if (enabled && !can_qos_be_updated(qos_, qos_to_set))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    }
+    set_qos(qos_, qos_to_set, !enabled);
 
+    if (enabled)
+    {
         std::lock_guard<std::mutex> lock(mtx_readers_);
         for (auto topic_readers : readers_)
         {
@@ -151,28 +179,6 @@ ReturnCode_t SubscriberImpl::set_qos(
             {
                 reader->subscriber_qos_updated();
             }
-        }
-
-        return ReturnCode_t::RETCODE_OK;
-    }
-
-    ReturnCode_t check_result = check_qos(qos);
-    if (!check_result)
-    {
-        return check_result;
-    }
-    if (!can_qos_be_updated(qos_, qos))
-    {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
-    }
-    set_qos(qos_, qos, false);
-
-    std::lock_guard<std::mutex> lock(mtx_readers_);
-    for (auto topic_readers : readers_)
-    {
-        for (auto reader : topic_readers.second)
-        {
-            reader->subscriber_qos_updated();
         }
     }
 
@@ -223,23 +229,21 @@ DataReader* SubscriberImpl::create_datareader(
         qos,
         listener);
 
-    if (impl->reader_ == nullptr)
-    {
-        logError(SUBSCRIBER, "Problem creating associated Reader");
-        delete impl;
-        topic->get_impl()->dereference();
-        return nullptr;
-    }
-
     DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
-
-    ReaderQos rqos = qos.get_readerqos(qos_);
-    rtps_participant_->registerReader(impl->reader_, impl->topic_attributes(), rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
         readers_[topic->get_name()].push_back(impl);
+    }
+
+    if (user_subscriber_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
+    {
+        if (ReturnCode_t::RETCODE_OK != reader->enable())
+        {
+            delete_datareader(reader);
+            return nullptr;
+        }
     }
 
     return reader;

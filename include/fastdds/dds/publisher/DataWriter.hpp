@@ -88,6 +88,13 @@ public:
     RTPS_DllAPI virtual ~DataWriter();
 
     /**
+     * @brief This operation enables the DataWriter
+     * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the Publisher creating this
+     *         DataWriter is not enabled.
+     */
+    RTPS_DllAPI ReturnCode_t enable() override;
+
+    /**
      * Write data to the topic.
      * @param data Pointer to the data
      * @return True if correct, false otherwise

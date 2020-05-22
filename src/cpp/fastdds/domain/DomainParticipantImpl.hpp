@@ -77,6 +77,7 @@ private:
 
     DomainParticipantImpl(
             DomainParticipant* dp,
+            DomainId_t did,
             const DomainParticipantQos& qos,
             DomainParticipantListener* listen = nullptr);
 
@@ -371,6 +372,18 @@ public:
 
 private:
 
+    //!Domain id
+    DomainId_t domain_id_;
+
+    //!Participant id
+    int32_t participant_id_ = -1;
+
+    //!Pre-calculated guid
+    fastrtps::rtps::GUID_t guid_;
+
+    //!For instance handle creation
+    uint32_t next_instance_id_;
+
     //!Participant Qos
     DomainParticipantQos qos_;
 
@@ -478,7 +491,9 @@ public:
 
     } rtps_listener_;
 
-
+    void create_instance_handle(
+            fastrtps::rtps::InstanceHandle_t& handle);
+    
     bool exists_entity_id(
             const fastrtps::rtps::EntityId_t& entity_id) const;
 

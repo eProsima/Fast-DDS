@@ -82,6 +82,8 @@ public:
 
     virtual ~DataWriterImpl();
 
+    ReturnCode_t enable();
+
     /**
      * Write data to the topic.
      * @param data Pointer to the data
@@ -149,7 +151,7 @@ public:
      *
      * @return
      */
-    const fastrtps::rtps::GUID_t& guid();
+    const fastrtps::rtps::GUID_t& guid() const;
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
@@ -220,15 +222,15 @@ public:
 
 private:
 
-    PublisherImpl* publisher_;
+    PublisherImpl* publisher_ = nullptr;
 
     //! Pointer to the associated Data Writer.
-    fastrtps::rtps::RTPSWriter* writer_;
+    fastrtps::rtps::RTPSWriter* writer_ = nullptr;
 
     //! Pointer to the TopicDataType object.
     TypeSupport type_;
 
-    Topic* topic_;
+    Topic* topic_ = nullptr;
 
     DataWriterQos qos_;
 
@@ -236,7 +238,7 @@ private:
     fastrtps::PublisherHistory history_;
 
     //! DataWriterListener
-    DataWriterListener* listener_;
+    DataWriterListener* listener_ = nullptr;
 
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener
@@ -271,7 +273,7 @@ public:
     uint32_t high_mark_for_frag_;
 
     //! A timer used to check for deadlines
-    fastrtps::rtps::TimedEvent* deadline_timer_;
+    fastrtps::rtps::TimedEvent* deadline_timer_ = nullptr;
 
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
@@ -283,12 +285,12 @@ public:
     fastrtps::OfferedDeadlineMissedStatus deadline_missed_status_;
 
     //! A timed callback to remove expired samples for lifespan QoS
-    fastrtps::rtps::TimedEvent* lifespan_timer_;
+    fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
 
     //! The lifespan duration, in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
-    DataWriter* user_datawriter_;
+    DataWriter* user_datawriter_ = nullptr;
 
     /**
      *

@@ -167,12 +167,12 @@ private:
 
     typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
 
-    RTPSDomain();
+    RTPSDomain() = delete;
 
     /**
      * DomainRTPSParticipant destructor
      */
-    ~RTPSDomain();
+    ~RTPSDomain() = delete;
 
     /**
      * @brief Get Id to create a RTPSParticipant.

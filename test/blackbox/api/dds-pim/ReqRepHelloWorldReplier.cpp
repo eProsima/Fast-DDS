@@ -89,6 +89,7 @@ void ReqRepHelloWorldReplier::init()
         (uint32_t)GET_PID() % 230,
         eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant_, nullptr);
+    ASSERT_TRUE(participant_->is_enabled());
 
     // Register type
     type_.reset(new HelloWorldType());
@@ -98,26 +99,32 @@ void ReqRepHelloWorldReplier::init()
     request_topic_ = participant_->create_topic(datareader_topicname_,
                     type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(request_topic_, nullptr);
+    ASSERT_TRUE(request_topic_->is_enabled());
 
     configDatawriter("Reply");
     reply_topic_ = participant_->create_topic(datawriter_topicname_,
                     type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(reply_topic_, nullptr);
+    ASSERT_TRUE(reply_topic_->is_enabled());
 
     request_subscriber_ = participant_->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(request_subscriber_, nullptr);
+    ASSERT_TRUE(request_subscriber_->is_enabled());
 
     reply_publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(reply_publisher_, nullptr);
+    ASSERT_TRUE(reply_publisher_->is_enabled());
 
     //Create datareader
     request_datareader_ = request_subscriber_->create_datareader(request_topic_, datareader_qos_,
                     &request_listener_);
     ASSERT_NE(request_datareader_, nullptr);
+    ASSERT_TRUE(request_datareader_->is_enabled());
 
     //Create datawriter
     reply_datawriter_ = reply_publisher_->create_datawriter(reply_topic_, datawriter_qos_, &reply_listener_);
     ASSERT_NE(reply_datawriter_, nullptr);
+    ASSERT_TRUE(reply_datawriter_->is_enabled());
 
     initialized_ = true;
 }

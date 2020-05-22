@@ -84,6 +84,13 @@ public:
     RTPS_DllAPI virtual ~Publisher();
 
     /**
+     * @brief This operation enables the Publisher
+     * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the participant creating this
+     *         Publisher is not enabled.
+     */
+    RTPS_DllAPI ReturnCode_t enable() override;
+
+    /**
      * Allows accessing the Publisher Qos.
      * @return PublisherQos reference
      */
