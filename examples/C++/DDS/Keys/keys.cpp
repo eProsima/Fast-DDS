@@ -64,7 +64,7 @@ public:
 
     void on_publication_matched(
             eprosima::fastdds::dds::DataWriter*,
-            const eprosima::fastdds::dds::PublicationMatchedStatus& info)
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override
     {
         if (info.current_count_change == 1)
         {
@@ -105,7 +105,7 @@ public:
 
     void on_subscription_matched(
             DataReader*,
-            const SubscriptionMatchedStatus& info)
+            const SubscriptionMatchedStatus& info) override
     {
         if (info.current_count_change == 1)
         {
@@ -124,7 +124,7 @@ public:
     }
 
     void on_data_available(
-            DataReader* reader)
+            DataReader* reader) override
     {
         SampleInfo info;
         if (reader->take_next_sample(&m_sample, &info) == ReturnCode_t::RETCODE_OK)
