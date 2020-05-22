@@ -1738,8 +1738,8 @@ void DomainParticipantImpl::create_instance_handle(
     handle = guid_;
     handle.value[15] = 0x01; // Vendor specific;
     handle.value[14] = static_cast<octet>(next_instance_id_ & 0xFF);
-    handle.value[13] = static_cast<octet>( (next_instance_id_ >> 8) & 0xFF);
-    handle.value[12] = static_cast<octet>((next_instance_id_ >> 8) & 0xFF);;
+    handle.value[13] = static_cast<octet>((next_instance_id_ >> 8) & 0xFF);
+    handle.value[12] = static_cast<octet>((next_instance_id_ >> 16) & 0xFF);;
 }
 
 }  // namespace dds
