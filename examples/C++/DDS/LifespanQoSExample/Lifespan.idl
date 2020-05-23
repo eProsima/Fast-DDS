@@ -1,0 +1,5 @@
+struct Lifespan
+{
+	unsigned long index;
+	string message;
+};
