@@ -26,7 +26,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             StringMatchingTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/StringMatching.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp)
 
         set(FIXEDSIZESTRINGTESTS_SOURCE
             FixedSizeStringTests.cpp)

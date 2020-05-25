@@ -68,8 +68,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/AnnotationDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicData.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicDataFactory.cpp
@@ -92,7 +92,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeNamesGenerator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypesBase.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/BuiltinAnnotationsTypeObject.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             )
 
@@ -140,8 +140,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
 
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/AnnotationDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicData.cpp
@@ -165,7 +165,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeNamesGenerator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypesBase.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/BuiltinAnnotationsTypeObject.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         )
 

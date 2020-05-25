@@ -36,11 +36,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/log/Log.cpp
     fastdds/log/StdoutConsumer.cpp
     fastdds/log/FileConsumer.cpp
-    fastrtps_deprecated/utils/IPFinder.cpp
-    fastrtps_deprecated/utils/md5.cpp
-    fastrtps_deprecated/utils/StringMatching.cpp
-    fastrtps_deprecated/utils/IPLocator.cpp
-    fastrtps_deprecated/utils/System.cpp
+
     rtps/common/Time_t.cpp
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
@@ -197,7 +193,13 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatelessPersistentReader.cpp
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
-    fastrtps_deprecated/utils/TimedConditionVariable.cpp
+    
+    utils/IPFinder.cpp
+    utils/md5.cpp
+    utils/StringMatching.cpp
+    utils/IPLocator.cpp
+    utils/System.cpp
+    utils/TimedConditionVariable.cpp
 
     dds/core/types.cpp
     dds/core/Exception.cpp
@@ -237,21 +239,21 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/logging/Logging.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
-    fastrtps_deprecated/security/OpenSSLInit.cpp
-    fastrtps_deprecated/security/authentication/PKIDH.cpp
-    fastrtps_deprecated/security/accesscontrol/Permissions.cpp
-    fastrtps_deprecated/security/cryptography/AESGCMGMAC.cpp
-    fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyExchange.cpp
-    fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyFactory.cpp
-    fastrtps_deprecated/security/cryptography/AESGCMGMAC_Transform.cpp
-    fastrtps_deprecated/security/cryptography/AESGCMGMAC_Types.cpp
-    fastrtps_deprecated/security/authentication/PKIIdentityHandle.cpp
-    fastrtps_deprecated/security/authentication/PKIHandshakeHandle.cpp
-    fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.cpp
-    fastrtps_deprecated/security/accesscontrol/CommonParser.cpp
-    fastrtps_deprecated/security/accesscontrol/GovernanceParser.cpp
-    fastrtps_deprecated/security/accesscontrol/PermissionsParser.cpp
-    fastrtps_deprecated/security/logging/LogTopic.cpp
+    security/OpenSSLInit.cpp
+    security/authentication/PKIDH.cpp
+    security/accesscontrol/Permissions.cpp
+    security/cryptography/AESGCMGMAC.cpp
+    security/cryptography/AESGCMGMAC_KeyExchange.cpp
+    security/cryptography/AESGCMGMAC_KeyFactory.cpp
+    security/cryptography/AESGCMGMAC_Transform.cpp
+    security/cryptography/AESGCMGMAC_Types.cpp
+    security/authentication/PKIIdentityHandle.cpp
+    security/authentication/PKIHandshakeHandle.cpp
+    security/accesscontrol/AccessPermissionsHandle.cpp
+    security/accesscontrol/CommonParser.cpp
+    security/accesscontrol/GovernanceParser.cpp
+    security/accesscontrol/PermissionsParser.cpp
+    security/logging/LogTopic.cpp
     )
 
 # Add sources to Makefile.am

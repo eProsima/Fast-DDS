@@ -41,18 +41,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/common/SharedSecretHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/TimedConditionVariable.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp//utils/TimedConditionVariable.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
             )
 
         add_executable(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/authentication/PKIDH.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/authentication/PKIIdentityHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/authentication/PKIHandshakeHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/OpenSSLInit.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
         target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(BuiltinPKIDH PRIVATE
