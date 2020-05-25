@@ -142,7 +142,7 @@ TEST_F(LoggingPluginTest, AsyncFileLogging)
   while (std::getline(ifs, line))
   {
       // check stamp
-      std::regex regex("[[0-9]+.[0-9]+]");
+      std::regex regex("\\[[0-9]+.[0-9]+\\]");
       EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
       // check verbosity

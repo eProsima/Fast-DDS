@@ -67,13 +67,13 @@ private:
         stop_ = true;
     }
 
-    std::atomic_bool stop_;
-
-    std::thread thread_;
-
     std::ofstream file_stream_;
 
     mutable ConcurrentQueue<BuiltinLoggingTypePtr> queue_;
+
+    std::atomic_bool stop_;
+
+    std::thread thread_;
 };
 
 } //namespace security
