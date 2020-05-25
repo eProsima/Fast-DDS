@@ -19,14 +19,13 @@
 
 #include "HelloWorldPublisher.h"
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <thread>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)

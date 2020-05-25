@@ -23,13 +23,16 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 
 #include <fastrtps/Domain.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
+
+using Locator_t = eprosima::fastrtps::rtps::Locator_t;
+using IPLocator = eprosima::fastrtps::rtps::IPLocator;
 
 BenchMarkSubscriber::BenchMarkSubscriber()
     : mp_participant(nullptr)
