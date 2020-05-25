@@ -259,27 +259,12 @@ bool PDPSimple::createPDPEndpoints()
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
     ratt.matched_writers_allocation = allocation.participants;
     mp_listener = new PDPListener(this);
-    StatelessReader* rout;
     if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader,
             true, false))
     {
-        rout = dynamic_cast<StatelessReader*>(mp_PDPReader);
-
 #if HAVE_SECURITY
-        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
+        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(mp_PDPReader, false);
 #endif
-
-        if (rout != nullptr)
-        {
-            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-            temp_writer_data_.clear();
-            temp_writer_data_.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
-            temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
-            temp_writer_data_.topicKind(WITH_KEY);
-            temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-            temp_writer_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-            rout->matched_writer_add(temp_writer_data_);
-        }
     }
     else
     {
@@ -320,32 +305,17 @@ bool PDPSimple::createPDPEndpoints()
         mp_PDPWriter = wout;
         if (mp_PDPWriter != nullptr)
         {
-            dynamic_cast<StatelessWriter*>(wout)->set_fixed_locators(mp_builtin->m_initialPeersList);
-
             const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+            LocatorList_t fixed_locators;
             Locator_t local_locator;
-            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-            temp_reader_data_.clear();
-            temp_reader_data_.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
-            temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
-            for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)
+            for (const Locator_t& loc : mp_builtin->m_initialPeersList)
             {
-                if (network.transform_remote_locator(*it, local_locator))
+                if (network.transform_remote_locator(loc, local_locator))
                 {
-                    if (IPLocator::isMulticast(local_locator))
-                    {
-                        temp_reader_data_.add_multicast_locator(local_locator);
-                    }
-                    else
-                    {
-                        temp_reader_data_.add_unicast_locator(local_locator);
-                    }
+                    fixed_locators.push_back(local_locator);
                 }
             }
-            temp_reader_data_.topicKind(WITH_KEY);
-            temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-            temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-            wout->matched_reader_add(temp_reader_data_);
+            dynamic_cast<StatelessWriter*>(wout)->set_fixed_locators(fixed_locators);
         }
     }
     else
