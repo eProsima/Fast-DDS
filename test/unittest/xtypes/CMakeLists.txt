@@ -27,28 +27,28 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${ASIO_INCLUDE_DIR})
 
         set(XTYPES_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/AnnotationDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicData.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicDataFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicType.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicPubSubType.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicTypePtr.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicDataPtr.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicTypeBuilder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicTypeBuilderPtr.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicTypeBuilderFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/DynamicTypeMember.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/MemberDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/AnnotationParameterValue.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeIdentifier.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeIdentifierTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeObject.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeObjectFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeObjectHashId.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypeNamesGenerator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/TypesBase.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/types/BuiltinAnnotationsTypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypePtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataPtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderPtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeMember.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp

@@ -126,29 +126,29 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/tcp/TCPControlMessage.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp
 
-    fastrtps_deprecated/types/AnnotationDescriptor.cpp
-    fastrtps_deprecated/types/AnnotationParameterValue.cpp
-    fastrtps_deprecated/types/DynamicData.cpp
-    fastrtps_deprecated/types/DynamicDataFactory.cpp
-    fastrtps_deprecated/types/DynamicType.cpp
-    fastrtps_deprecated/types/DynamicPubSubType.cpp
-    fastrtps_deprecated/types/DynamicTypePtr.cpp
-    fastrtps_deprecated/types/DynamicDataPtr.cpp
-    fastrtps_deprecated/types/DynamicTypeBuilder.cpp
-    fastrtps_deprecated/types/DynamicTypeBuilderPtr.cpp
-    fastrtps_deprecated/types/DynamicTypeBuilderFactory.cpp
-    fastrtps_deprecated/types/DynamicTypeMember.cpp
-    fastrtps_deprecated/types/MemberDescriptor.cpp
-    fastrtps_deprecated/types/TypeDescriptor.cpp
-    fastrtps_deprecated/types/TypeIdentifier.cpp
-    fastrtps_deprecated/types/TypeIdentifierTypes.cpp
-    fastrtps_deprecated/types/TypeObject.cpp
-    fastrtps_deprecated/types/TypeObjectHashId.cpp
-    fastrtps_deprecated/types/TypeObjectFactory.cpp
-    fastrtps_deprecated/types/TypeNamesGenerator.cpp
-    fastrtps_deprecated/types/TypesBase.cpp
-    fastrtps_deprecated/types/BuiltinAnnotationsTypeObject.cpp
-    fastrtps_deprecated/types/DynamicDataHelper.cpp
+    dynamic-types/AnnotationDescriptor.cpp
+    dynamic-types/AnnotationParameterValue.cpp
+    dynamic-types/DynamicData.cpp
+    dynamic-types/DynamicDataFactory.cpp
+    dynamic-types/DynamicType.cpp
+    dynamic-types/DynamicPubSubType.cpp
+    dynamic-types/DynamicTypePtr.cpp
+    dynamic-types/DynamicDataPtr.cpp
+    dynamic-types/DynamicTypeBuilder.cpp
+    dynamic-types/DynamicTypeBuilderPtr.cpp
+    dynamic-types/DynamicTypeBuilderFactory.cpp
+    dynamic-types/DynamicTypeMember.cpp
+    dynamic-types/MemberDescriptor.cpp
+    dynamic-types/TypeDescriptor.cpp
+    dynamic-types/TypeIdentifier.cpp
+    dynamic-types/TypeIdentifierTypes.cpp
+    dynamic-types/TypeObject.cpp
+    dynamic-types/TypeObjectHashId.cpp
+    dynamic-types/TypeObjectFactory.cpp
+    dynamic-types/TypeNamesGenerator.cpp
+    dynamic-types/TypesBase.cpp
+    dynamic-types/BuiltinAnnotationsTypeObject.cpp
+    dynamic-types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
     fastdds/core/policy/ParameterList.cpp
