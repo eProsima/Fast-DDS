@@ -14,8 +14,8 @@
 
 #include "AuthenticationPluginTests.hpp"
 
-#include "../../../../src/cpp/fastrtps_deprecated/security/authentication/PKIIdentityHandle.h"
-#include "../../../../src/cpp/fastrtps_deprecated/security/authentication/PKIHandshakeHandle.h"
+#include <security/authentication/PKIIdentityHandle.h>
+#include <security/authentication/PKIHandshakeHandle.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <openssl/opensslv.h>

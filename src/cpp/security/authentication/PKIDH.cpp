@@ -25,7 +25,7 @@
 
 #include <openssl/opensslv.h>
 
-#include "../../../fastdds/core/policy/ParameterList.hpp"
+#include <fastdds/core/policy/ParameterList.hpp>
 
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 #define IS_OPENSSL_1_1 1

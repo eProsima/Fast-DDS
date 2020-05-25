@@ -15,7 +15,7 @@
 #ifndef _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
 
-#include "../../../../src/cpp/fastrtps_deprecated/security/authentication/PKIDH.h"
+#include <security/authentication/PKIDH.h>
 
 // Include first necessary mocks
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
