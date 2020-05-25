@@ -20,12 +20,14 @@
 #include "HelloWorldSubscriber.h"
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
+
+using Locator_t = eprosima::fastrtps::rtps::Locator_t;
+using IPLocator = eprosima::fastrtps::rtps::IPLocator;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -70,7 +72,7 @@ bool HelloWorldSubscriber::init(
     initial_peer_locator.port = port;
     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
     pqos.name("Participant_sub");
 

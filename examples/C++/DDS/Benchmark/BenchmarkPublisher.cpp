@@ -22,10 +22,10 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <thread>
