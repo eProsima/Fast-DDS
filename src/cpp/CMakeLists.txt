@@ -36,7 +36,6 @@ set(${PROJECT_NAME}_source_files
     fastdds/log/Log.cpp
     fastdds/log/StdoutConsumer.cpp
     fastdds/log/FileConsumer.cpp
-    fastrtps_deprecated/utils/eClock.cpp
     fastrtps_deprecated/utils/IPFinder.cpp
     fastrtps_deprecated/utils/md5.cpp
     fastrtps_deprecated/utils/StringMatching.cpp
