@@ -20,7 +20,8 @@
 
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/rtps/security/logging/BuiltinLoggingType.h>
-#include <fastrtps/utils/concurrent_queue.h>
+
+#include <utils/collections/concurrent_queue.h>
 
 #include <atomic>
 #include <fstream>
