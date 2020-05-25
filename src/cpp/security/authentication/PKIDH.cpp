@@ -16,8 +16,8 @@
  * @file PKIDH.cpp
  */
 
-#include <fastrtps_deprecated/security/authentication/PKIDH.h>
-#include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
+#include <security/authentication/PKIDH.h>
+#include <security/authentication/PKIIdentityHandle.h>
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>

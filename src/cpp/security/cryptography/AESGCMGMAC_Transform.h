@@ -24,7 +24,7 @@
 #include <fastcdr/Cdr.h>
 
 #include <map>
-#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_Types.h>
+#include <security/cryptography/AESGCMGMAC_Types.h>
 
 namespace eprosima {
 namespace fastrtps {

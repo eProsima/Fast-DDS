@@ -16,7 +16,7 @@
  * @file AESGCMGMAC_Transform.cpp
  */
 
-#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_Transform.h>
+#include <security/cryptography/AESGCMGMAC_Transform.h>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>

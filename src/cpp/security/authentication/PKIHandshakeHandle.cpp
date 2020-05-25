@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,23 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef __SECURITY_ACCESSCONTROL_COMMON_H__
-#define __SECURITY_ACCESSCONTROL_COMMON_H__
+/*!
+ * @file PKIHandshakeHandle.cpp
+ */
 
-#include <fastrtps_deprecated/security/accesscontrol/PermissionsTypes.h>
+#include <security/authentication/PKIHandshakeHandle.h>
 
-#include <tinyxml2.h>
+using namespace eprosima::fastrtps::rtps::security;
 
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-namespace security {
-
-bool parse_domain_id_set(tinyxml2::XMLElement* root, Domains& domains);
-
-}
-}
-}
-}
-
-#endif // __SECURITY_ACCESSCONTROL_COMMON_H__
+const char* const PKIHandshake::class_id_ = "PKIHandshakeHandle";

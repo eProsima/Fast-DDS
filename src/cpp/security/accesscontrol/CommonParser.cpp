@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps_deprecated/security/accesscontrol/CommonParser.h>
+#include <security/accesscontrol/CommonParser.h>
 
 #include <fastdds/dds/log/Log.hpp>
 

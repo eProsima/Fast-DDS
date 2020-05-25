@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /*!
- * @file PKIHandshakeHandle.cpp
+ * @file PKIIdentityHandle.cpp
  */
 
-#include <fastrtps_deprecated/security/authentication/PKIHandshakeHandle.h>
+#include <security/authentication/PKIIdentityHandle.h>
 
 using namespace eprosima::fastrtps::rtps::security;
 
-const char* const PKIHandshake::class_id_ = "PKIHandshakeHandle";
+const char* const PKIIdentity::class_id_ = "PKIIdentityHandle";

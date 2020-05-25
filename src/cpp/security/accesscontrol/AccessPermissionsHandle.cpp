@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /*!
- * @file PKIIdentityHandle.cpp
+ * @file AccessPermissionsHandle.cpp
  */
 
-#include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
+#include <security/accesscontrol/AccessPermissionsHandle.h>
 
 using namespace eprosima::fastrtps::rtps::security;
 
-const char* const PKIIdentity::class_id_ = "PKIIdentityHandle";
+const char* const AccessPermissions::class_id_ = "AccessPermissionsHandle";

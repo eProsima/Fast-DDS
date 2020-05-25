@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastrtps_deprecated/security/authentication/PKIHandshakeHandle.h>
+#include <security/authentication/PKIHandshakeHandle.h>
 
 namespace eprosima {
 namespace fastrtps {

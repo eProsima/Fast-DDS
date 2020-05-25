@@ -15,7 +15,7 @@
 #ifndef __SECURITY_ACCESSCONTROL_PERMISSIONSPARSER_H__
 #define __SECURITY_ACCESSCONTROL_PERMISSIONSPARSER_H__
 
-#include <fastrtps_deprecated/security/accesscontrol/CommonParser.h>
+#include <security/accesscontrol/CommonParser.h>
 
 #include <tinyxml2.h>
 

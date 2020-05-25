@@ -16,12 +16,12 @@
  * @file Permissions.cpp
  */
 
-#include <fastrtps_deprecated/security/accesscontrol/Permissions.h>
-#include <fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.h>
-#include <fastrtps_deprecated/security/accesscontrol/GovernanceParser.h>
-#include <fastrtps_deprecated/security/accesscontrol/PermissionsParser.h>
-#include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
-#include <fastrtps_deprecated/security/logging/LogTopic.h>
+#include <security/accesscontrol/Permissions.h>
+#include <security/accesscontrol/AccessPermissionsHandle.h>
+#include <security/accesscontrol/GovernanceParser.h>
+#include <security/accesscontrol/PermissionsParser.h>
+#include <security/authentication/PKIIdentityHandle.h>
+#include <security/logging/LogTopic.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/security/exceptions/SecurityException.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
