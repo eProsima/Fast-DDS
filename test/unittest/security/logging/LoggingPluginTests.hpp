@@ -15,8 +15,8 @@
 #ifndef _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_
 
-#include "../../../../src/cpp/fastrtps_deprecated/security/logging/LogTopic.h"
-#include "../../../../include/fastdds/rtps/attributes/PropertyPolicy.h"
+#include <security/logging/LogTopic.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 #include <gtest/gtest.h>
 
@@ -142,7 +142,7 @@ TEST_F(LoggingPluginTest, AsyncFileLogging)
   while (std::getline(ifs, line))
   {
       // check stamp
-      std::regex regex("[[0-9]+.[0-9]+]");
+      std::regex regex("\\[[0-9]+.[0-9]+\\]");
       EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
       // check verbosity

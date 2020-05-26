@@ -33,7 +33,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(BuiltinLogging ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/logging/LogTopic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/logging/LogTopic.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)
 
         target_compile_definitions(BuiltinLogging PRIVATE FASTRTPS_NO_LIB)
@@ -44,6 +44,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_link_libraries(BuiltinLogging fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
         add_gtest(BuiltinLogging SOURCES ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/LoggingPluginTests.hpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)
     endif()
 endif()

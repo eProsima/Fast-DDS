@@ -15,9 +15,9 @@
 #ifndef _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_
 
-#include "../../../../src/cpp/fastrtps_deprecated/security/cryptography/AESGCMGMAC.h"
-#include "../../../../src/cpp/fastrtps_deprecated/security/authentication/PKIIdentityHandle.h"
-#include "../../../../src/cpp/fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.h"
+#include <security/cryptography/AESGCMGMAC.h>
+#include <security/authentication/PKIIdentityHandle.h>
+#include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 
 #include <gtest/gtest.h>

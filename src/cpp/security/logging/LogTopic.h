@@ -20,7 +20,8 @@
 
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/rtps/security/logging/BuiltinLoggingType.h>
-#include <fastrtps/utils/concurrent_queue.h>
+
+#include <utils/collections/concurrent_queue.h>
 
 #include <atomic>
 #include <fstream>
@@ -66,13 +67,13 @@ private:
         stop_ = true;
     }
 
-    std::atomic_bool stop_;
-
-    std::thread thread_;
-
     std::ofstream file_stream_;
 
     mutable ConcurrentQueue<BuiltinLoggingTypePtr> queue_;
+
+    std::atomic_bool stop_;
+
+    std::thread thread_;
 };
 
 } //namespace security

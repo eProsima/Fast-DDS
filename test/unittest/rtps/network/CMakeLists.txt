@@ -54,14 +54,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/TimedConditionVariable.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
 
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
 
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/System.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
         )
 
         if(TLS_FOUND)
@@ -69,7 +69,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${NETWORKFACTORYTESTS_SOURCE}
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/OpenSSLInit.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
             )
         endif()
 

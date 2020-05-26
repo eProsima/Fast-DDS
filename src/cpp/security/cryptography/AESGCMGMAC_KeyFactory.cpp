@@ -32,7 +32,7 @@
 
 #include <string.h>
 
-#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyFactory.h>
+#include <security/cryptography/AESGCMGMAC_KeyFactory.h>
 
 // Solve error with Win32 macro
 #ifdef WIN32

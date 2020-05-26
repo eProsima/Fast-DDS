@@ -1,4 +1,4 @@
-#include <fastrtps_deprecated/security/logging/LogTopic.h>
+#include <security/logging/LogTopic.h>
 
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/log/Log.h>

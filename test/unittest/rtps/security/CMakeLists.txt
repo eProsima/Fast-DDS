@@ -40,7 +40,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/TimedConditionVariable.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/rtps/security/SecurityPluginFactory.cpp
             )
 

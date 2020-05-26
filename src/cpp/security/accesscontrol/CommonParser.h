@@ -12,12 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
- * @file AccessPermissionsHandle.cpp
- */
+#ifndef __SECURITY_ACCESSCONTROL_COMMON_H__
+#define __SECURITY_ACCESSCONTROL_COMMON_H__
 
-#include <fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.h>
+#include <security/accesscontrol/PermissionsTypes.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+#include <tinyxml2.h>
 
-const char* const AccessPermissions::class_id_ = "AccessPermissionsHandle";
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+namespace security {
+
+bool parse_domain_id_set(tinyxml2::XMLElement* root, Domains& domains);
+
+}
+}
+}
+}
+
+#endif // __SECURITY_ACCESSCONTROL_COMMON_H__

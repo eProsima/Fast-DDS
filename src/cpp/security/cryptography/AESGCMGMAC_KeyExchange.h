@@ -22,7 +22,7 @@
 #include <fastdds/rtps/security/cryptography/CryptoKeyExchange.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 
-#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_Types.h>
+#include <security/cryptography/AESGCMGMAC_Types.h>
 
 namespace eprosima {
 namespace fastrtps {
