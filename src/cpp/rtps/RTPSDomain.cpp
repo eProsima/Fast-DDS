@@ -76,14 +76,14 @@ static void guid_prefix_create(
 
 // environment variables that forces server-client discovery
 // it must contain an IPv4 address
-const char* DEFAULT_ROS2_MASTER_URI = "ROS2_AUTO_CLIENT_SERVER";
-const char* DEFAULT_FASTDDS_MASTER_URI = "FASTDDS_AUTO_CLIENT_SERVER";
+const char* DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
+const char* DEFAULT_FASTDDS_MASTER_URI = "FASTDDS_DISCOVERY_SERVER";
 // ros environment variable pattern, example: 192.168.2.23:24353 where the port is optional
 const std::regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
 // port use if the ros environment variable doesn't specified one
-const int DEFAULT_ROS2_SERVER_PORT = 11311;
+const int DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server guidPrefix
-const char* DEFAULT_AUTO_SERVER_GUIDPREFIX = "41.55.54.4F.5F.43.4C.54.5F.53.56.52";
+const char* DEFAULT_AUTO_SERVER_GUIDPREFIX = "44.49.53.43.53.45.52.56.45.52.5F.30";
 
 std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
@@ -412,6 +412,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
 
     logInfo(DOMAIN, "Detected auto client-server environment variable. Trying to setup client-server default setup.");
 
+    // TODO: extend to parser multiple locators
     // Parse the IPv4Address and port.
     std::smatch mr;
     std::string ip_address;
@@ -440,41 +441,41 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     Locator_t server_address(port);
     IPLocator::setIPv4(server_address, ip_address);
 
-    IPFinder::getIP4Address(&locals);
-    if( IPLocator::isAny(server_address)
-        || IPLocator::isLocal(server_address)
-        || (locals.end() != std::find_if(locals.begin(), locals.end(),
-            [&server_address](const Locator_t & loc) -> bool
-            {
-                return IPLocator::compareAddress(server_address, loc);
-            })))
-    {
-        Locator_t listening_locator(server_address);
-
-        // indulge the people that thinks 127.0.0.1 means actually 0.0.0.0
-        if(IPLocator::isLocal(listening_locator))
-        {
-            // by doing this using 127.0.0.1 allows over network not only interprocess (the expected result)
-            IPLocator::setIPv4(listening_locator, "0.0.0.0");
-        }
-
-        RTPSParticipantAttributes server_attr = att;
-        server_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
-        server_attr.ReadguidPrefix(DEFAULT_AUTO_SERVER_GUIDPREFIX);
-        server_attr.builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
-
-        part = RTPSDomain::createParticipant(domain_id, server_attr, listen);
-        if(nullptr != part)
-        {
-            // There wasn't any previous default server, now there is one
-            logInfo(DOMAIN, "Auto default client-server setup. Default server created.");
-            return part;
-        }
-    }
-
-    // Try to create a Server. If it's already a default one the creation process would fail and we will create
-    // a client instead
-    logInfo(DOMAIN, "Auto default client-server setup. Server already present trying to create client.");
+//  IPFinder::getIP4Address(&locals);
+//  if( IPLocator::isAny(server_address)
+//      || IPLocator::isLocal(server_address)
+//      || (locals.end() != std::find_if(locals.begin(), locals.end(),
+//          [&server_address](const Locator_t & loc) -> bool
+//          {
+//              return IPLocator::compareAddress(server_address, loc);
+//          })))
+//  {
+//      Locator_t listening_locator(server_address);
+//
+//      // indulge the people that thinks 127.0.0.1 means actually 0.0.0.0
+//      if(IPLocator::isLocal(listening_locator))
+//      {
+//          // by doing this using 127.0.0.1 allows over network not only interprocess (the expected result)
+//          IPLocator::setIPv4(listening_locator, "0.0.0.0");
+//      }
+//
+//      RTPSParticipantAttributes server_attr = att;
+//      server_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+//      server_attr.ReadguidPrefix(DEFAULT_AUTO_SERVER_GUIDPREFIX);
+//      server_attr.builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
+//
+//      part = RTPSDomain::createParticipant(domain_id, server_attr, listen);
+//      if(nullptr != part)
+//      {
+//          // There wasn't any previous default server, now there is one
+//          logInfo(DOMAIN, "Auto default client-server setup. Default server created.");
+//          return part;
+//      }
+//  }
+//
+//  // Try to create a Server. If it's already a default one the creation process would fail and we will create
+//  // a client instead
+//  logInfo(DOMAIN, "Auto default client-server setup. Server already present trying to create client.");
 
     // There was a server already or server IP doesn't match this machine. Let's create a client
     {
