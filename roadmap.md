@@ -15,7 +15,7 @@ at any time.
 
 Disclaimer:
 
-* This section has been last updated in May 2019.
+* This section has been last updated in May 2020.
   Please take into account its content could be obsolete.
 
 ## Short term
@@ -23,17 +23,14 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the coming
 release(s) of the product:
 
-* Discovery server
-* Liveliness QoS
+* Full compliance with DDS minimum-profile
 
 ## Medium term
 
 The following list of features are planned to be addressed in the medium term, typically within the subsequent
 release(s) generated in the next **9 months** after next planned release:
 
-* Realtime support: Allocations QoS. See #344
-* Realtime support: Non-blocking calls. See #345
-* Transport priority QoS
+* Localhost zero-copy delivery
 * DDS x-types 1.2
 
 ## Long term
@@ -43,8 +40,6 @@ of these features has not yet been scheduled for a release in the near future.
 Please feel free to contact us if you wish to get involved in the implementation or influence the roadmap.
 
 * Full DDS API compliance
-* Shared memory transport
-* Intra-process zero-copy transport
-* Waitsets
+* Compliance with DDS-XML
 * Low bandwidth transports
 * ISO 26262 compliance
