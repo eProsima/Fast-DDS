@@ -783,6 +783,54 @@ TEST_P(Discovery, RepeatPubGuid)
     reader.block_for_all();
 }
 
+//! Regression test for bug 8547: intraprocess segfaults
+TEST_P(Discovery, EndpointCreationMultithreaded)
+{
+    constexpr std::chrono::milliseconds creation_sleep = std::chrono::milliseconds(10);
+
+    std::atomic_bool stop = false;
+    PubSubWriterReader<HelloWorldType> participant_1(TEST_TOPIC_NAME);
+
+    // First participant is initialized
+    participant_1.init();
+
+    auto endpoint_creation_process = [&creation_sleep, &stop, &participant_1]()
+    {
+        while (!stop)
+        {
+            std::this_thread::sleep_for(creation_sleep);
+            EXPECT_NO_THROW(participant_1.create_additional_topics(1));
+        }
+    };
+
+    // Start thread creating endpoints every 250ms
+    std::thread endpoint_thr(endpoint_creation_process);
+
+    // Create another participant that will receive endpoint creation messages.
+    // When this participant is removed, the first one should stop sending
+    // intraprocess delivery messages to the builtin endpoints of the second one.
+    auto second_participant_process = [&participant_1]()
+    {
+        {
+            PubSubWriterReader<HelloWorldType> participant_2(TEST_TOPIC_NAME);
+            participant_2.init();
+
+            // Ensure first participant has discovered the second one
+            participant_1.wait_discovery();
+        }
+
+        // Additional endpoints created just after the second participant.
+        // This gives the first participant very few time to receive the undiscovery,
+        // and makes the intraprocess delivery on a deleted builtin reader.
+        participant_1.create_additional_topics(1);
+    };
+    EXPECT_NO_THROW(second_participant_process());
+
+    // Stop endpoint creation thread
+    stop = true;
+    endpoint_thr.join();
+}
+
 INSTANTIATE_TEST_CASE_P(Discovery,
         Discovery,
         testing::Values(false, true),
