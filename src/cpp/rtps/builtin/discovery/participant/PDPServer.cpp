@@ -1067,6 +1067,22 @@ bool PDPServer::remove_remote_participant(
     return res;
 }
 
+bool PDPServer::received_participant_dispose(
+        const GUID_t& participant_guid)
+{
+    InstanceHandle_t key;
+
+    if (!lookup_participant_key(participant_guid, key))
+    {
+        logWarning(RTPS_PDP, "PDPServerListener received DATA(p) NOT_ALIVE_DISPOSED from unknown participant");
+        return false;
+    }
+
+    std::unique_ptr<PDPServer::InPDPCallback> guard = signalCallback();
+
+    return remove_remote_participant(participant_guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT);
+}
+
 bool PDPServer::pendingHistoryCleaning()
 {
     std::lock_guard<std::recursive_mutex> guardP(*getMutex());

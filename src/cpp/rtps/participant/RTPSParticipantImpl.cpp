@@ -18,6 +18,7 @@
  */
 
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
 
 #include <rtps/flowcontrol/ThroughputController.h>
 #include <rtps/persistence/PersistenceService.h>
@@ -383,6 +384,12 @@ void RTPSParticipantImpl::enable()
 
 void RTPSParticipantImpl::disable()
 {
+    // Ensure that other participants will not accidentally discover this one
+    if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
+    {
+        mp_builtinProtocols->stopRTPSParticipantAnnouncement();
+    }
+
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
 
@@ -402,6 +409,25 @@ void RTPSParticipantImpl::disable()
     {
         deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
     }
+
+    // Inform all local process participants that this one is leaving
+    RTPSDomainImpl::for_each_participant(
+        [this](const std::pair<RTPSParticipant*, RTPSParticipantImpl*>& p) -> bool
+        {
+            if (p.second != this)
+            {
+                if (p.second->mp_builtinProtocols)
+                {
+                    PDP* pdp = p.second->mp_builtinProtocols->mp_PDP;
+                    if (pdp)
+                    {
+                        pdp->received_participant_dispose(m_guid);
+                    }
+                }
+            }
+
+            return true;
+        });
 
     delete(mp_builtinProtocols);
     mp_builtinProtocols = nullptr;

@@ -984,6 +984,14 @@ bool PDP::remove_remote_participant(
     return false;
 }
 
+bool PDP::received_participant_dispose(
+        const GUID_t& participant_guid)
+{
+    return remove_remote_participant(
+        participant_guid,
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT);
+}
+
 const BuiltinAttributes& PDP::builtin_attributes() const
 {
     return mp_builtin->m_att;
