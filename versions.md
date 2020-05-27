@@ -5,7 +5,7 @@ This release has the following **API breaks**:
 
 * eClock API, which was deprecated on v1.9.1, has been removed
 * `eprosima::fastrtps::rtps::RTPSDomain::createParticipant` methods now have an additional first argument `domain_id`
-* Field `domainId` has been removed from `eprosima::fastrtps::rtps::RTPSParticipantAttributes` and added to
+* Data member `domainId` has been removed from `eprosima::fastrtps::rtps::RTPSParticipantAttributes` and added to
   `eprosima::fastrtps::ParticipantAttributes`
 
 Users should also be aware of the following **deprecation announcement**:
@@ -18,8 +18,8 @@ Users should also be aware of the following **deprecation announcement**:
 This release adds the following **features**:
 
 * Added support for register/unregister/dispose instance
-* All the functionality offered by the classes in the Fast RTPS API can now be performed
-  by equivalent DDS compliant APIs
+* Added DDS compliant API. This new API exposes all the functionality of the Publisher-Subscriber Fast RTPS API
+  adhering to the `Data Distribution Service (DDS) version 1.4 specification <https://www.omg.org/spec/DDS/1.4>`_
 * Added Security Logging Plugin (contributed by Cannonical Ltd.)
 * Bump to FastCDR v1.0.14
 
@@ -30,13 +30,9 @@ It also includes the following bug fixes and improvements:
 * Support for FreeBSD
 * Fault tolerance improvements to Shared Memory transport
 * Fixed segfault when no network interfaces are detected
-* Correctly ignoring length of PID_SENTINEL on parameter list
+* Correctly ignoring length of `PID_SENTINEL` on parameter list
 * Improved traffic on PDP simple mode
 * Reduced CPU and memory usage
-
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
-If you are upgrading from a version older than 1.10.0, regenerating the code is *recommended*.
 
 Version 1.10.0
 --------------
@@ -79,10 +75,6 @@ Several bug fixes on discovery server:
 * Fixed backup server operation.
 * Fixed timing issues.
 
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
-If you are upgrading from a version older than 1.10.0, regenerating the code is *recommended*.
-
 Version 1.9.4
 -------------
 
@@ -105,9 +97,6 @@ It also includes the following bug fixes and improvements:
 * Reducing dynamic allocations and memory footprint.
 * Improvements and fixes on performance tests.
 * Other minor bug fixes and improvements.
-
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
 
 Version 1.9.3
 -------------
@@ -133,9 +122,6 @@ It also includes the following bug fixes and improvements:
 * Allow XMLProfileManager methods to not show error log messages if a profile is not found.
 
 
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
-
 Version 1.9.2
 -------------
 
@@ -148,9 +134,6 @@ It also adds the following bug fixes and improvements:
 
 * Bump to Fast-RTPS-Gen v1.0.1.
 * Bump to IDL-Parser v1.0.1.
-
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
 
 Version 1.9.1
 -------------
@@ -180,9 +163,6 @@ It also adds the following bug fixes and improvements:
 * SubscriberHistory improvements.
 * Assertion of participant liveliness by receiving RTPS messages from the remote participant.
 * Fixed error while setting next deadline event in *create_new_change_with_params*.
-
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
 
 Version 1.9.0
 -------------
@@ -214,18 +194,17 @@ It also adds the following bug fixes and improvements:
 * Change CMake configuration directory if INSTALLER_PLATFORM is set.
 * IDL sub-module updated to current version.
 
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
-
 Version 1.8.4
 -------------
 
 This release adds the following **feature**:
+
 * XML profiles for `requester` and `replier`
 
-It also have the following **important bug fixes**:
+It also has the following **important bug fixes**:
+
 * Solved an issue when recreating a publishing participant with the same GUID (either on purpose or by chance)
-* Solved issue #1042, where a publisher could block on `write` for a long time when, after a large number of samples
+* Solved an issue where a publisher could block on `write` for a long time when, after a large number of samples
   have been sent, a new subscriber is matched.
 
 Version 1.8.3
@@ -236,9 +215,6 @@ This release adds the following bug fixes and improvements:
 * Fix serialization of TypeConsistencyEnforcementQosPolicy.
 * Bump to Fast-RTPS-Gen v1.0.2.
 * Bump to IDL-Parser v1.0.1.
-
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*
 
 Version 1.8.2
 -------------
@@ -268,9 +244,6 @@ It also adds the following bug fixes and improvements:
 * Removed use of *acceptMsgDirectTo*.
 * *WLP* improvements.
 
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*
-
 Version 1.8.1
 -------------
 
@@ -287,9 +260,6 @@ It also adds the following bug fixes and improvements:
 * Fix for lroundl error on Windows in Time_t.
 * CDR & IDL submodules update.
 * Use of java 1.8 or greater for fastrtpsgen.jar generation.
-
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
 
 Version 1.8.0
 -------------
@@ -323,9 +293,6 @@ It also adds the following improvements and bug fixes:
 
 * When using TPC transport, sometimes callbacks are not invoked when removing a participant due to a bug in ASIO.
 
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
-
 Version 1.7.2
 -------------
 
@@ -340,9 +307,6 @@ It also has the following improvements:
 * Fixed format of gradle file.
 
 Some other minor bugs and performance improvements.
-
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
 
 Version 1.7.1
 -------------
@@ -367,9 +331,6 @@ Some other minor bugs and performance improvements.
 * Allocation limits on subscribers with a KEEP_LAST QoS is taken from resource limits configuration
   and doesn't take history depth into account.
 
-**Note:** If you are upgrading from a version older than 1.7.0, it is **required** to regenerate generated source
-from IDL files using *fastrtpsgen*.
-
 Version 1.7.0
 -------------
 
@@ -381,9 +342,6 @@ This release included the following features:
 
 Also bug fixing, allocation and performance improvements.
 
-**Note:** If you are upgrading from an older version, it is **required** to regenerate generated source from IDL files
-using *fastrtpsgen*.
-
 Version 1.6.0
 -------------
 
@@ -393,9 +351,6 @@ This release included the following features:
 * Security access control plugin API and builtin :ref:`access-permissions` plugin.
 
 Also bug fixing.
-
-**Note:** If you are upgrading from an older version than 1.4.0, it is advisable to regenerate generated source from IDL
-files using *fastrtpsgen*.
 
 Version 1.5.0
 -------------
@@ -407,9 +362,6 @@ This release included the following features:
 
 Also bug fixing.
 
-**Note:** If you are upgrading from an older version than 1.4.0, it is advisable to regenerate generated source from IDL
-files using *fastrtpsgen*.
-
 Version 1.4.0
 -------------
 
@@ -419,9 +371,6 @@ This release included the following:
 * Removed all Boost dependencies. Fast RTPS is not using Boost libraries anymore.
 * Added compatibility with Android.
 * Bug fixing.
-
-**Note:** After upgrading to this release, it is advisable to regenerate generated source from IDL files using
-*fastrtpsgen*.
 
 Version 1.3.1
 -------------
