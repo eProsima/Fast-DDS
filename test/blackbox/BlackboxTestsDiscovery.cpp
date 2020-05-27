@@ -788,7 +788,7 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
 {
     constexpr std::chrono::milliseconds creation_sleep = std::chrono::milliseconds(10);
 
-    std::atomic_bool stop = false;
+    std::atomic_bool stop(false);
     PubSubWriterReader<HelloWorldType> participant_1(TEST_TOPIC_NAME);
 
     // First participant is initialized
