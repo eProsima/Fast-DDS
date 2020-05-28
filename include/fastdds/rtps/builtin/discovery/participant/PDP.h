@@ -246,14 +246,6 @@ public:
             ParticipantDiscoveryInfo::DISCOVERY_STATUS reason);
 
     /**
-     * This method is called whenever we are informed that a remote participant has been closed.
-     * @param participant_guid GUID_t of the remote RTPSParticipant.
-     * @return true if the participant was known and has been removed from the local database.
-     */
-    virtual bool received_participant_dispose(
-            const GUID_t& participant_guid);
-
-    /**
      * This method returns the BuiltinAttributes of the local participant.
      * @return const reference to the BuiltinAttributes of the local participant.
      */

@@ -94,7 +94,7 @@ void PDPServerListener::onNewCacheChangeAdded(
 
         // Load information on local_data
         CDRMessage_t msg(change->serializedPayload);
-        if(local_data.readFromCDRMessage(&msg, true,
+        if(local_data.readFromCDRMessage(&msg, true, 
             parent_pdp_->getRTPSParticipant()->network_factory(),
             parent_pdp_->getRTPSParticipant()->has_shm_transport()))
         {
@@ -175,10 +175,18 @@ void PDPServerListener::onNewCacheChangeAdded(
     }
     else
     {
-        // We signal out it's a callback to prevent PDPReader mutex deadlock
+        InstanceHandle_t key;
+
+        if (!parent_pdp_->lookup_participant_key(guid, key))
+        {
+            logWarning(RTPS_PDP, "PDPServerListener received DATA(p) NOT_ALIVE_DISPOSED from unknown participant");
+            parent_pdp_->mp_PDPReaderHistory->remove_change(change);
+            return;
+        }
+
         std::unique_ptr<PDPServer::InPDPCallback> guard = parent_server_pdp_->signalCallback();
 
-        if (parent_server_pdp_->received_participant_dispose(guid))
+        if(parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
             return; // all changes related with this participant have been removed from history by removeRemoteParticipant
         }
