@@ -1078,8 +1078,6 @@ bool PDPServer::received_participant_dispose(
         return false;
     }
 
-    std::unique_ptr<PDPServer::InPDPCallback> guard = signalCallback();
-
     return remove_remote_participant(participant_guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT);
 }
 
