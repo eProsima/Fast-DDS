@@ -398,6 +398,11 @@ public:
         {
             std::string topic_name = topic_name_;
 
+            for (size_t i = 0; i < entities_extra_.size(); i++)
+            {
+                topic_name += "/";
+            }
+
             for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
                 topic_name += "/";

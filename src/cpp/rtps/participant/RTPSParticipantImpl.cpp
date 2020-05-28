@@ -383,6 +383,12 @@ void RTPSParticipantImpl::enable()
 
 void RTPSParticipantImpl::disable()
 {
+    // Ensure that other participants will not accidentally discover this one
+    if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
+    {
+        mp_builtinProtocols->stopRTPSParticipantAnnouncement();
+    }
+
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
 
