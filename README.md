@@ -1,10 +1,15 @@
 # eProsima Fast RTPS
 
+[![FIWARE Robotics](https://nexus.lab.fiware.org/static/badges/chapters/robotics.svg)](https://www.fiware.org/developers/catalogue/)
+[![License](https://img.shields.io/github/license/eProsima/Fast-RTPS.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Releases](https://img.shields.io/github/release/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/releases)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Issues](https://img.shields.io/github/issues/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/issues)
 [![Forks](https://img.shields.io/github/forks/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/network/members)
 [![Stars](https://img.shields.io/github/stars/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/stargazers)
+<br/>
+[![Documentation badge](https://img.shields.io/readthedocs/eprosima-fast-rtps.svg)](https://eprosima-fast-rtps.readthedocs.io)
+![Status](https://nexus.lab.fiware.org/static/badges/statuses/incubating.svg)
+
 
 <a href="http://www.eprosima.com"><img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ" align="left" hspace="8" vspace="2" width="100" height="100" ></a>
 
@@ -29,6 +34,9 @@ system input/output channel combination for each deployment.
 
 * Robotics: ROS (Robotic Operating System) as their default middleware for ROS2.
 * EU R&D: FIWARE Incubated GE.
+
+This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for
+[Robotics](https://github.com/Fiware/catalogue/tree/master/robotics).
 
 <br/>
 
