@@ -54,6 +54,8 @@ target_include_directories(SecureHelloWorldExample PRIVATE)
 target_link_libraries(SecureHelloWorldExample fastrtps fastcdr foonathan_memory)
 install(TARGETS SecureHelloWorldExample
     RUNTIME DESTINATION examples/C++/SecureHelloWorldExample/${BIN_INSTALL_DIR})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/certs
+    DESTINATION examples/C++/SecureHelloWorldExample/${BIN_INSTALL_DIR}/certs)
 
 add_custom_command(TARGET SecureHelloWorldExample POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
