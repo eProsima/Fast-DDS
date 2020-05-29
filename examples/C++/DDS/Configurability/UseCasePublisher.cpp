@@ -31,10 +31,10 @@ typedef struct
     Reliability_type reliability;
     Durability_type durability;
     HistoryKind_type historykind;
-    uint16_t history_size;
-    uint8_t depth;
-    uint8_t no_keys;
-    uint16_t max_samples_per_key;
+    uint16_t history_size = 1;
+    uint8_t depth = 1;
+    uint8_t no_keys = 1;
+    uint16_t max_samples_per_key = 1;
 } example_configuration;
 
 int main()
@@ -304,7 +304,8 @@ int main()
     wqos.history().depth = user_configuration.depth;
     wqos.resource_limits().max_samples = user_configuration.history_size;
     wqos.resource_limits().max_instances = user_configuration.no_keys;
-    wqos.resource_limits().max_samples_per_instance = user_configuration.max_samples_per_key;
+    wqos.resource_limits().max_samples_per_instance = user_configuration.no_keys > 1 ?
+        user_configuration.max_samples_per_key : user_configuration.history_size;
 
     DataWriter* myWriter = myPub->create_datawriter(PubTopic, wqos);
 
