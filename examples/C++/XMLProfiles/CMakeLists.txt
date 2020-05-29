@@ -56,3 +56,5 @@ add_executable(XMLProfiles ${XMLPROFILESEXAMPLE_SOURCES_CXX} ${XMLPROFILESEXAMPL
 target_link_libraries(XMLProfiles fastrtps fastcdr foonathan_memory)
 install(TARGETS XMLProfiles
     RUNTIME DESTINATION examples/C++/XMLProfilesExample/${BIN_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/XMLProfilesExample.xml
+    DESTINATION examples/C++/XMLProfilesExample/${BIN_INSTALL_DIR})
