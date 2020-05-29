@@ -84,7 +84,11 @@ bool UDPChannelResource::Receive(
     {
         asio::ip::udp::endpoint senderEndpoint;
 
-        size_t bytes = socket()->receive_from(asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint);
+        size_t bytes;
+        {
+            std::lock_guard<std::mutex> lock(socket_mutex_);
+            bytes = socket()->receive_from(asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint);
+        }
         receive_buffer_size = static_cast<uint32_t>(bytes);
         if (receive_buffer_size > 0)
         {
@@ -117,6 +121,7 @@ void UDPChannelResource::release()
     asio::error_code ec;
     socket()->shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
     // On OSX shutdown does not unblock the listening thread, but close does.
+    std::lock_guard<std::mutex> lock(socket_mutex_);
     socket()->close();
 }
 

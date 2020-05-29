@@ -169,6 +169,7 @@ protected:
 private:
 
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
+    std::mutex socket_mutex_;
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
     std::string interface_;
