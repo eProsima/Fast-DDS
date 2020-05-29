@@ -44,7 +44,13 @@ TypeLookupPublisher::TypeLookupPublisher()
 
 bool TypeLookupPublisher::init()
 {
-    xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
+    if (xmlparser::XMLP_ret::XML_OK !=
+        xmlparser::XMLProfileManager::loadXMLFile("example_type.xml"))
+    {
+        std::cout << "Cannot open XML file \"example_type.xml\". Please, run the publisher from the folder "
+                  << "that contatins this XML file." << std::endl;
+        return false;
+    }
 
     types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
     TypeSupport m_type(new types::DynamicPubSubType(dyn_type));
