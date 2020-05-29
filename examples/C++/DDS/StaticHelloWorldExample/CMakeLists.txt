@@ -58,3 +58,5 @@ add_executable(DDSStaticHelloWorldExample ${DDS_STATIC_HELLOWORLD_EXAMPLE_SOURCE
 target_link_libraries(DDSStaticHelloWorldExample fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSStaticHelloWorldExample
     RUNTIME DESTINATION examples/C++/DDS/StaticHelloWorldExample/${BIN_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldPublisher.xml
+    DESTINATION examples/C++/DDS/StaticHelloWorldExample/${BIN_INSTALL_DIR})

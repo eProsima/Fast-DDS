@@ -50,5 +50,7 @@ add_executable(DDSDynamicHelloWorldExample
 target_link_libraries(DDSDynamicHelloWorldExample fastrtps fastcdr)
 install(TARGETS DDSDynamicHelloWorldExample
     RUNTIME DESTINATION examples/C++/DDS/DynamicHelloWorldExample/${BIN_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/example_type.xml
+    DESTINATION examples/C++/DDS/DynamicHelloWorldExample/${BIN_INSTALL_DIR})
 
 file(COPY example_type.xml DESTINATION ${PROJECT_BINARY_DIR})

@@ -50,5 +50,7 @@ add_executable(TypeLookupExample
 target_link_libraries(TypeLookupExample fastrtps fastcdr)
 install(TARGETS TypeLookupExample
     RUNTIME DESTINATION examples/C++/DDS/TypeLookupService/${BIN_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/example_type.xml
+    DESTINATION examples/C++/DDS/TypeLookupService/${BIN_INSTALL_DIR})
 
 file(COPY example_type.xml DESTINATION ${PROJECT_BINARY_DIR})
