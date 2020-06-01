@@ -98,7 +98,7 @@ pip install -U colcon-common-extensions vcstool
 Download the repos file that will be used to download Fast RTPS and its dependencies:
 
 ```bash
-$ wget https://raw.githubusercontent.com/eProsima/Fast-RTPS/master/fastrtps.repos
+$ wget https://raw.githubusercontent.com/eProsima/Fast-DDS/master/fastrtps.repos
 $ mkdir src
 $ vcs import src < fastrtps.repos
 ```
@@ -136,8 +136,8 @@ Before compiling manually Fast DDS you need to clone the following dependencies 
 Once all dependencies are installed, you will be able to compile and install Fast DDS.
 
 ```bash
-$ git clone https://github.com/eProsima/Fast-RTPS.git
-$ mkdir Fast-RTPS/build && cd Fast-RTPS/build
+$ git clone https://github.com/eProsima/Fast-DDS.git
+$ mkdir Fast-DDS/build && cd Fast-DDS/build
 $ cmake ..
 $ cmake --build . --target install
 ```
