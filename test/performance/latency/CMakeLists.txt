@@ -76,6 +76,7 @@ if(PYTHONINTERP_FOUND)
             ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
             ${LATENCY_TEST_BIN}
             --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+            --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
             ${interproces_flag}
         )
 
@@ -114,6 +115,7 @@ if(PYTHONINTERP_FOUND)
                 ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                 ${LATENCY_TEST_BIN}
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --security
                 ${interproces_flag}
             )
