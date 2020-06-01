@@ -13,10 +13,9 @@
 
 <a href="http://www.eprosima.com"><img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ" align="left" hspace="8" vspace="2" width="100" height="100" ></a>
 
-*eprosima Fast RTPS* is a C++ implementation of the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP,
+*eprosima Fast DDS* (formerly Fast RTPS) is a C++ implementation of the DDS (Data Distribution Service) standard of the OMG (Object Management Group). eProsima Fast DDS implements the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP,
 as defined and maintained by the Object Management Group (OMG) consortium. RTPS is also the wire interoperability protocol defined for the Data Distribution
-Service (DDS) standard, again by the OMG. *eProsima Fast RTPS* holds the benefit of being standalone and up-to-date, as most vendor solutions either implement RTPS as a tool to implement
-DDS or use past versions of the specification.
+Service (DDS) standard. *eProsima Fast DDS* expose an API to access directly the RTPS protocol, giving the user full access to the protocol internals.
 
 Some of the main features of this library are:
 
@@ -28,9 +27,9 @@ members of the network.
 network.
 * Configurable network behavior and interchangeable transport layer: Choose the best protocol and
 system input/output channel combination for each deployment.
-* Two API Layers: a high-level Publisher-Subscriber one focused on usability and a lower-level Writer-Reader one that provides finer access to the inner workings of the RTPS protocol.
+* Two API Layers: a high-level Publisher-Subscriber one focused on usability (DDS) and a lower-level Writer-Reader one that provides finer access to the inner workings of the RTPS protocol.
 
-*eProsima Fast RTPS* has been adopted by multiple organizations in many sectors including these important cases:
+*eProsima Fast DDS* has been adopted by multiple organizations in many sectors including these important cases:
 
 * Robotics: ROS (Robotic Operating System) as their default middleware for ROS2.
 * EU R&D: FIWARE Incubated GE.
@@ -53,10 +52,10 @@ We are curious to get to know your use case!**
 * Mac [![Mac Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac)
 
 ## Installation Guide
-You can get either a binary distribution of *eprosima Fast RTPS* or compile the library yourself from source.
+You can get either a binary distribution of *eprosima Fast DDS* or compile the library yourself from source.
 
 ### Installation from binaries
-The latest, up to date binary release of *eprosima Fast RTPS* can be obtained from the <a href='http://www.eprosima.com'>company website</a>.
+The latest, up to date binary release of *eprosima Fast DDS* can be obtained from the <a href='http://www.eprosima.com'>company website</a>.
 
 ### Installation from Source
 
@@ -112,7 +111,7 @@ $ colcon build
 
 #### Manual installation
 *******************
-Before compiling manually Fast RTPS you need to clone the following dependencies and compile them using
+Before compiling manually Fast DDS you need to clone the following dependencies and compile them using
 [CMake](https://cmake.org).
 
 * [Fast CDR](https://github.com/eProsima/Fast-CDR.git)
@@ -134,7 +133,7 @@ Before compiling manually Fast RTPS you need to clone the following dependencies
     $ cmake --build . --target install
     ```
 
-Once all dependencies are installed, you will be able to compile and install Fast RTPS.
+Once all dependencies are installed, you will be able to compile and install Fast DDS.
 
 ```bash
 $ git clone https://github.com/eProsima/Fast-RTPS.git
@@ -146,17 +145,17 @@ $ cmake --build . --target install
 
 ## Documentation
 
-You can access the documentation online, which is hosted on [Read the Docs](http://eprosima-fast-rtps.readthedocs.io).
+You can access the documentation online, which is hosted on [Read the Docs](https://fast-dds.docs.eprosima.com).
 
-* [Start Page](http://eprosima-fast-rtps.readthedocs.io)
-* [Installation manual](http://eprosima-fast-rtps.readthedocs.io/en/latest/requirements.html)
-* [User manual](http://eprosima-fast-rtps.readthedocs.io/en/latest/introduction.html)
-* [FastRTPSGen manual](http://eprosima-fast-rtps.readthedocs.io/en/latest/geninfo.html)
-* [Release notes](http://eprosima-fast-rtps.readthedocs.io/en/latest/notes.html)
+* [Start Page](https://fast-dds.docs.eprosima.com)
+* [Installation manual](https://fast-dds.docs.eprosima.com/en/latest/requirements.html)
+* [User manual](https://fast-dds.docs.eprosima.com/en/latest/introduction.html)
+* [FastRTPSGen manual](https://fast-dds.docs.eprosima.com/en/latest/geninfo.html)
+* [Release notes](https://fast-dds.docs.eprosima.com/en/latest/notes.html)
 
 ## Quick Demo
 
-For those who want to try a quick demonstration of Fast-RTPS libraries on Ubuntu, here is a way to launch an example application.
+For those who want to try a quick demonstration of Fast-DDS libraries on Ubuntu, here is a way to launch an example application.
 
 First, download and install **docker** application. Open a terminal and type the following command
 
