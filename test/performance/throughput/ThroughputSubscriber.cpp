@@ -161,7 +161,7 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(
     }
     else
     {
-        std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
+        std::cout << C_RED << "Sub: COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
         --throughput_subscriber_.command_discovery_count_;
     }
 
@@ -199,7 +199,7 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
     }
     else
     {
-        std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
+        std::cout << C_RED << "Sub: COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
         --throughput_subscriber_.command_discovery_count_;
     }
     lock.unlock();
