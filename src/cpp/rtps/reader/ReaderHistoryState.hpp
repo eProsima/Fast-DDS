@@ -47,9 +47,10 @@ constexpr size_t history_record_node_size =
 struct ReaderHistoryState
 {
     using pool_allocator_t =
-        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+            foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
-    ReaderHistoryState(size_t initial_writers_allocation)
+    ReaderHistoryState(
+            size_t initial_writers_allocation)
         : persistence_guid_map_allocator(
             guid_map_node_size,
             memory_pool_block_size<pool_allocator_t>(guid_map_node_size, initial_writers_allocation))
