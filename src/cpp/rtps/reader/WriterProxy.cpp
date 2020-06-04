@@ -31,9 +31,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include "rtps/RTPSDomainImpl.hpp"
-
-#include <foonathan/memory/namespace_alias.hpp>
-#include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
+#include "utils/collections/node_size_helpers.hpp"
 
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
 #define SHOULD_DEBUG_LINUX
@@ -57,7 +55,7 @@ WriterProxy::~WriterProxy()
     delete(heartbeat_response_);
 }
 
-constexpr size_t changes_node_size = memory::set_node_size<std::pair<size_t, SequenceNumber_t> >::value;
+using set_helper = utilities::collections::set_size_helper<SequenceNumber_t>;
 
 WriterProxy::WriterProxy(
         StatefulReader* reader,
@@ -70,8 +68,8 @@ WriterProxy::WriterProxy(
     , heartbeat_final_flag_(false)
     , is_alive_(false)
     , changes_pool_(
-        changes_node_size,
-        memory_pool_block_size<pool_allocator_t>(changes_node_size, changes_allocation))
+        set_helper::node_size,
+        set_helper::min_pool_size<pool_allocator_t>(changes_allocation.initial))
     , changes_received_(changes_pool_)
     , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
