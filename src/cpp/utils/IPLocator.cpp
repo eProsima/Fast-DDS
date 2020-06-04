@@ -92,13 +92,19 @@ bool IPLocator::setIPv4(
     std::stringstream ss(ipv4);
     int a, b, c, d; //to store the 4 ints
     char ch; //to temporarily store the '.'
-    ss >> a >> ch >> b >> ch >> c >> ch >> d;
-    LOCATOR_ADDRESS_INVALID(locator.address);
-    locator.address[12] = (octet)a;
-    locator.address[13] = (octet)b;
-    locator.address[14] = (octet)c;
-    locator.address[15] = (octet)d;
-    return true;
+
+    if (ss >> a >> ch >> b >> ch >> c >> ch >> d)
+    {
+        LOCATOR_ADDRESS_INVALID(locator.address);
+        locator.address[12] = (octet)a;
+        locator.address[13] = (octet)b;
+        locator.address[14] = (octet)c;
+        locator.address[15] = (octet)d;
+
+        return true;
+    }
+
+    return false;
 }
 
 bool IPLocator::setIPv4(
