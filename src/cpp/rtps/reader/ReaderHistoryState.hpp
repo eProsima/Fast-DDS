@@ -25,7 +25,7 @@
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
 
-#include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
+#include "utils/collections/node_size_helpers.hpp"
 
 #include <map>
 
@@ -33,12 +33,9 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-constexpr size_t guid_map_node_size =
-    foonathan::memory::map_node_size<std::pair<size_t, std::pair<GUID_t, GUID_t>>>::value;
-constexpr size_t guid_count_node_size =
-    foonathan::memory::map_node_size<std::pair<size_t, std::pair<GUID_t, uint16_t>>>::value;
-constexpr size_t history_record_node_size =
-    foonathan::memory::map_node_size<std::pair<size_t, std::pair<GUID_t, SequenceNumber_t>>>::value;
+using guid_map_helper = utilities::collections::map_size_helper<GUID_t, GUID_t>;
+using guid_count_helper = utilities::collections::map_size_helper<GUID_t, uint16_t>;
+using history_record_helper = utilities::collections::map_size_helper<GUID_t, SequenceNumber_t>;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
@@ -49,17 +46,17 @@ struct ReaderHistoryState
     using pool_allocator_t =
             foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
-    ReaderHistoryState(
+    explicit ReaderHistoryState(
             size_t initial_writers_allocation)
         : persistence_guid_map_allocator(
-            guid_map_node_size,
-            memory_pool_block_size<pool_allocator_t>(guid_map_node_size, initial_writers_allocation))
+            guid_map_helper::node_size,
+            guid_map_helper::min_pool_size<pool_allocator_t>(initial_writers_allocation))
         , persistence_guid_count_allocator(
-            guid_count_node_size,
-            memory_pool_block_size<pool_allocator_t>(guid_count_node_size, initial_writers_allocation))
+            guid_count_helper::node_size,
+            guid_count_helper::min_pool_size<pool_allocator_t>(initial_writers_allocation))
         , history_record_allocator(
-            history_record_node_size,
-            memory_pool_block_size<pool_allocator_t>(history_record_node_size, initial_writers_allocation))
+            history_record_helper::node_size,
+            history_record_helper::min_pool_size<pool_allocator_t>(initial_writers_allocation))
         , persistence_guid_map(persistence_guid_map_allocator)
         , persistence_guid_count(persistence_guid_count_allocator)
         , history_record(history_record_allocator)
