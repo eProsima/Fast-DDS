@@ -71,6 +71,8 @@ struct PayloadCompressionOptions
 #define COMPRESSION_OPTIONS_DEFAULT {COMPRESSION_LEVEL_DEFAULT, COMPRESSION_LEVEL_DEFAULT, COMPRESSION_LEVEL_DEFAULT, \
                                      COMPRESS_LOW_MARK_DEFAULT, COMPRESS_HIGH_MARK_DEFAULT}
 
+void PayloadCompression_init();
+
 uint32_t PayloadCompression_buffer_alloc(
         fastrtps::rtps::octet*& buffer,
         uint32_t data_len,

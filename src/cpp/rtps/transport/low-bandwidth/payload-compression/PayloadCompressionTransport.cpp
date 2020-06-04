@@ -82,6 +82,7 @@ PayloadCompressionTransport::PayloadCompressionTransport(
     , compress_buffer_len_(0)
     , configuration_(descriptor)
 {
+    PayloadCompression_init();
 }
 
 PayloadCompressionTransport::~PayloadCompressionTransport()
