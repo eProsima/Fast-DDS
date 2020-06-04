@@ -861,14 +861,25 @@ public:
             uint32_t size,
             uint32_t max_allocations)
     {
+        return std::make_shared<Segment>(size + segment_allocation_extra_size(max_allocations), size, max_allocations, 
+            global_segment_.domain_name());
+    }
+
+    /**
+     * Computes the segment's extra size needed to store allocator internal structures
+     * @param in max_allocations The maximum buffer allocations supported.
+     * @return the extra size in bytes.
+     */
+    uint32_t segment_allocation_extra_size(uint32_t max_allocations) const
+    {
         // Every buffer allocation of 'n-bytes', consumes an extra 'per_allocation_extra_size_' bytes.
         // This is due to the allocator internal structures (also residing in the shared-memory segment)
         // used to manage the allocation algorithm. 
         // So with an estimation of 'max_allocations' user buffers, the total segment extra size is computed.
         uint32_t allocation_extra_size = (max_allocations * sizeof(BufferNode)) + per_allocation_extra_size_ +
-            max_allocations * per_allocation_extra_size_;
+                max_allocations * per_allocation_extra_size_;
 
-        return std::make_shared<Segment>(size + allocation_extra_size, size, max_allocations, global_segment_.domain_name());
+        return allocation_extra_size;
     }
 
     std::shared_ptr<Port> open_port(
@@ -959,7 +970,7 @@ private:
 
         std::shared_ptr<SharedMemSegment> segment;
 
-        // TODO (Adolfo): Garbage collector for opened but unused segments????
+        // TODO(Adolfo): Garbage collector for opened but unused segments????
 
         try
         {

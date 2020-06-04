@@ -38,6 +38,7 @@ using namespace eprosima::fastdds::rtps;
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
+#include <sys/statvfs.h>
 #endif
 
 static uint16_t g_default_port = 0;
@@ -1098,6 +1099,137 @@ TEST_F(SHMTransportTests, robust_shared_lock)
     new_lock.reset();
     // The resource has been removed
     ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
+}
+
+// This regression test asserts that shared-memory mapped files cannot exceed file-system bounds.
+// The original implementation in boost::interprocess, for posix systems, use ftruncate() to set the
+// file size. ftruncate() do not check available size in the file system, so SIGBUS error can occur
+// when reading / writing in the mapped mem.
+TEST_F(SHMTransportTests, memory_bounds)
+{
+    const std::string domain_name("SHMTests");
+    SharedMemManager shared_mem_manager(domain_name);
+    auto shm_path = RobustLock::get_file_path("");
+
+    uint64_t max_file_system_free_size;
+    uint64_t physical_mem_size;
+
+#ifndef _MSC_VER // Posix is assumed
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    physical_mem_size = pages * page_size;
+
+    struct statvfs stat_info;
+    ASSERT_TRUE(statvfs(shm_path.c_str(), &stat_info) == 0);
+    max_file_system_free_size = stat_info.f_bavail * stat_info.f_bsize;
+
+#else // Windows
+
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    physical_mem_size = status.ullTotalPhys;
+
+    ULARGE_INTEGER FreeBytesAvailableToCaller;
+    ULARGE_INTEGER TotalNumberOfBytes;
+    ULARGE_INTEGER TotalNumberOfFreeBytes;
+
+    ASSERT_TRUE(GetDiskFreeSpaceEx(shm_path.c_str(), &FreeBytesAvailableToCaller, &TotalNumberOfBytes,
+            &TotalNumberOfFreeBytes));
+
+    max_file_system_free_size = FreeBytesAvailableToCaller.QuadPart;
+
+#endif // ifndef _MSC_VER
+
+    uint64_t mem_size = (std::min)(max_file_system_free_size, physical_mem_size);
+
+    uint32_t allocations;
+    uint32_t allocation_size;
+    uint64_t free_size60 = static_cast<uint64_t>(mem_size * 0.6);
+    uint32_t extra_allocation = 0u;
+
+    if (free_size60 > (std::numeric_limits<uint32_t>::max)())
+    {
+        allocations = static_cast<uint32_t>(free_size60 / (std::numeric_limits<uint32_t>::max)());
+        allocation_size = static_cast<uint32_t>(free_size60 / allocations);
+        extra_allocation = free_size60 % (std::numeric_limits<uint32_t>::max)();
+    }
+    else
+    {
+        allocation_size = static_cast<uint32_t>(free_size60);
+        allocations = 1u;
+    }
+
+    std::vector<std::shared_ptr<SharedMemManager::Segment> > segments;
+
+    auto zero_mem = [&]()
+            {
+                auto buf = segments.back()->alloc_buffer(allocation_size,
+                                std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+                ASSERT_TRUE(buf != nullptr);
+                memset(buf->data(), 0, buf->size());
+                buf.reset();
+            };
+
+    // Fist allocation must succeed
+    for (uint32_t i = 0; i < allocations; i++)
+    {
+        segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+        zero_mem();
+    }
+    if (extra_allocation)
+    {
+        segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+        zero_mem();
+    }
+
+    // The /dev/shm file system is < physical memory => cannot support allocation beyond 100%
+    // Is the default configuration in Linux systems
+    if ( max_file_system_free_size < physical_mem_size )
+    {
+        // Send allocation must fail
+        ASSERT_THROW(
+            for (uint32_t i = 0; i < allocations; i++)
+        {
+            segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+            zero_mem();
+        }
+            if (extra_allocation)
+        {
+            segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+            zero_mem();
+        }
+            , std::exception);
+    }
+    else // Allocation beyond 100% physical mem may or may not be supported by virtual-mem and page file
+    {
+        try
+        {
+            for (uint32_t i = 0; i < allocations; i++)
+            {
+                segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+                zero_mem();
+            }
+            if (extra_allocation)
+            {
+                segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+                zero_mem();
+            }
+        }
+        catch (const std::exception&)
+        {
+            for (uint32_t i = 0; i < allocations; i++)
+            {
+                segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+                zero_mem();
+            }
+            if (extra_allocation)
+            {
+                segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+                zero_mem();
+            }
+        }
+    }
 }
 
 TEST_F(SHMTransportTests, port_listener_dead_recover)
