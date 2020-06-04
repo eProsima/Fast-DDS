@@ -23,20 +23,20 @@
 template<typename T>
 struct my_tree_node_type
 {
-	// There is an enum rb_tree_colo {false, true} here on libstdc++, it has been included below on other_info
+    // There is an enum rb_tree_colo {false, true} here on libstdc++, it has been included below on other_info
 
-	// Three pointers on MSVC and libstdc++, two on libc++
-	my_tree_node_type* parent;
-	my_tree_node_type* left;
-	my_tree_node_type* right;
+    // Three pointers on MSVC and libstdc++, two on libc++
+    my_tree_node_type* parent;
+    my_tree_node_type* left;
+    my_tree_node_type* right;
 
-	// There is a bool here on libc++, and two chars on MSVC.
-	// We make room for 32 bits in order to be safe with alignments, even though we may consume more
-	// memory than strictly required.
-	uint32_t other_info;
+    // There is a bool here on libc++, and two chars on MSVC.
+    // We make room for 32 bits in order to be safe with alignments, even though we may consume more
+    // memory than strictly required.
+    uint32_t other_info;
 
-	// All implementations have the node value at the end.
-	T value;
+    // All implementations have the node value at the end.
+    T value;
 };
 
 template<typename T>

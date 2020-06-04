@@ -20,7 +20,7 @@
 #define SRC_CPP_UTILS_COLLECTIONS_IMPL_FOONATHAN_SET_NODE_SIZE_IMPL_HPP_
 
 template <typename K>
-struct set_node_size : foonathan::memory::set_node_size<std::pair<size_t, typename std::set<K>::value_type>>
+struct set_node_size : foonathan::memory::set_node_size<std::pair<size_t, typename std::set<K>::value_type> >
 {
 };
 

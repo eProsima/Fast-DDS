@@ -20,7 +20,7 @@
 #define SRC_CPP_UTILS_COLLECTIONS_IMPL_FOONATHAN_MAP_NODE_SIZE_IMPL_HPP_
 
 template <typename K, typename V>
-struct map_node_size : foonathan::memory::map_node_size<std::pair<size_t, typename std::map<K, V>::value_type>>
+struct map_node_size : foonathan::memory::map_node_size<std::pair<size_t, typename std::map<K, V>::value_type> >
 {
 };
 

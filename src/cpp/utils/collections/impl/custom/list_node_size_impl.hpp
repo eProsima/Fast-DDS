@@ -24,9 +24,9 @@
 template<typename T>
 struct my_list_node_type
 {
-	my_list_node_type* prev;
-	my_list_node_type* next;
-	T value;
+    my_list_node_type* prev;
+    my_list_node_type* next;
+    T value;
 };
 
 template<typename T>
