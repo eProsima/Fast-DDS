@@ -51,7 +51,7 @@ public:
     node_segregator(
             std::size_t nodes_to_allocate,
             const bool& flag)
-        : block_size_(size_helper::min_pool_size<allocator_type>(nodes_to_allocate))
+        : block_size_(size_helper::template min_pool_size<allocator_type>(nodes_to_allocate))
         , node_allocator_(new allocator_type(node_size, block_size_))
         , initialization_is_done_(flag)
     {
