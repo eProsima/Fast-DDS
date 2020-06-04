@@ -23,6 +23,7 @@
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
 #include <rtps/transport/shared_mem/RobustExclusiveLock.hpp>
 #include <rtps/transport/shared_mem/RobustSharedLock.hpp>
+#include <rtps/transport/shared_mem/SharedMemWatchdog.hpp>
 
 #define THREADID "(ID:" << std::this_thread::get_id() <<") "
 
@@ -148,10 +149,10 @@ public:
         }
 
         /**
-         * Singleton with a thread that periodically checks all opened ports
+         * Singleton task, for SharedMemWatchdog, that periodically checks all opened ports
          * to verify if some listener is dead.
          */
-        class Watchdog
+        class WatchTask : public SharedMemWatchdog::Task
         {
         public:
 
@@ -162,16 +163,16 @@ public:
                 MultiProducerConsumerRingBuffer<BufferDescriptor>* buffer;
             };
 
-            static Watchdog& get()
+            static WatchTask& get()
             {
-                static Watchdog watch_dog;
-                return watch_dog;
+                static WatchTask watch_task;
+                return watch_task;
             }
 
             /**
              * Called by the Port constructor, adds a port to the watching list.
              */
-            void add_port_to_watch(
+            void add_port(
                     std::shared_ptr<PortContext>&& port)
             {
                 std::lock_guard<std::mutex> lock(watched_ports_mutex_);
@@ -181,7 +182,7 @@ public:
             /**
              * Called by the Port destructor, removes a port from the watching list.
              */
-            void remove_port_from_watch(
+            void remove_port(
                     PortNode* port_node)
             {
                 std::lock_guard<std::mutex> lock(watched_ports_mutex_);
@@ -201,43 +202,19 @@ public:
 
             }
 
-            /**
-             * Forces Wake-up of the checking thread
-             */
-            void wake_up()
-            {
-                {
-                    std::lock_guard<std::mutex> lock(wake_run_mutex_);
-                    wake_run_ = true;
-                }
-
-                wake_run_cv_.notify_one();
-            }
-
         private:
 
-            std::vector<std::shared_ptr<PortContext> > watched_ports_;
-            std::thread thread_run_;
+            std::vector<std::shared_ptr<PortContext>> watched_ports_;
             std::mutex watched_ports_mutex_;
 
-            std::condition_variable wake_run_cv_;
-            std::mutex wake_run_mutex_;
-            bool wake_run_;
-
-            bool exit_thread_;
-
-            Watchdog()
-                : wake_run_(false)
-                , exit_thread_(false)
+            WatchTask()
             {
-                thread_run_ = std::thread(&Watchdog::run, this);
+                SharedMemWatchdog::get().add_task(this);
             }
 
-            ~Watchdog()
+            ~WatchTask()
             {
-                exit_thread_ = true;
-                wake_up();
-                thread_run_.join();
+                SharedMemWatchdog::get().remove_task(this);
             }
 
             bool update_status_all_listeners(
@@ -281,72 +258,56 @@ public:
 
             void run()
             {
-                while (!exit_thread_)
+                auto now = std::chrono::high_resolution_clock::now();
+
+                auto timeout_elapsed = [](
+                        std::chrono::high_resolution_clock::time_point& now, 
+                        const PortContext& port_context)
+                    {
+                        return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
+                            - port_context.node->last_listeners_status_check_time_ms.load()
+                                > port_context.node->healthy_check_timeout_ms;
+                    };
+
+                std::lock_guard<std::mutex> lock(watched_ports_mutex_);
+
+                auto port_it =  watched_ports_.begin();
+                while (port_it != watched_ports_.end())
                 {
+                    // If more than 'healthy_check_timeout_ms' milliseconds elapsed since last check.
+                    // Most probably has not, so the check is done without locking empty_cv_mutex.
+                    if (timeout_elapsed(now, *(*port_it)))
                     {
-                        std::unique_lock<std::mutex> lock(wake_run_mutex_);
+                        std::vector<const BufferDescriptor*> descriptors_enqueued;
 
-                        wake_run_cv_.wait_for(
-                            lock,
-                            std::chrono::seconds(1),
-                            [&] {
-                            return wake_run_;
-                        });
-
-                        wake_run_ = false;
-                    }
-
-                    auto now = std::chrono::high_resolution_clock::now();
-
-                    auto timeout_elapsed = [](
-                            std::chrono::high_resolution_clock::time_point& now, 
-                            const PortContext& port_context)
+                        try
                         {
-                            return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
-                                - port_context.node->last_listeners_status_check_time_ms.load()
-                                    > port_context.node->healthy_check_timeout_ms;
-                        };
-
-                    std::lock_guard<std::mutex> lock(watched_ports_mutex_);
-
-                    auto port_it =  watched_ports_.begin();
-                    while (port_it != watched_ports_.end())
-                    {
-                        // If more than 'healthy_check_timeout_ms' milliseconds elapsed since last check.
-                        // Most probably has not, so the check is done without locking empty_cv_mutex.
-                        if (timeout_elapsed(now, *(*port_it)))
-                        {
-                            std::vector<const BufferDescriptor*> descriptors_enqueued;
-
-                            try
+                            std::unique_lock<SharedMemSegment::mutex> lock_port((*port_it)->node->empty_cv_mutex);
+                            // Check again, there can be races before locking the mutex.
+                            if (timeout_elapsed(now, *(*port_it)))
                             {
-                                std::unique_lock<SharedMemSegment::mutex> lock_port((*port_it)->node->empty_cv_mutex);
-                                // Check again, there can be races before locking the mutex.
-                                if (timeout_elapsed(now, *(*port_it)))
+                                if (!update_status_all_listeners((*port_it)->node))
                                 {
-                                    if (!update_status_all_listeners((*port_it)->node))
-                                    {
-                                        (*port_it)->node->is_port_ok = false;
-                                    }
+                                    (*port_it)->node->is_port_ok = false;
                                 }
-
-                                ++port_it;
                             }
-                            catch (std::exception& e)
-                            {
-                                (*port_it)->node->is_port_ok = false;
 
-                                logWarning(RTPS_TRANSPORT_SHM, "Port " << (*port_it)->node->port_id
-                                    << ": " << e.what());
-
-                                // Remove the port from watch
-                                port_it = watched_ports_.erase(port_it);
-                            }
-                        }
-                        else
-                        {
                             ++port_it;
                         }
+                        catch (std::exception& e)
+                        {
+                            (*port_it)->node->is_port_ok = false;
+
+                            logWarning(RTPS_TRANSPORT_SHM, "Port " << (*port_it)->node->port_id
+                                << ": " << e.what());
+
+                            // Remove the port from watch
+                            port_it = watched_ports_.erase(port_it);
+                        }
+                    }
+                    else
+                    {
+                        ++port_it;
                     }
                 }
             }
@@ -428,14 +389,14 @@ public:
 
             node_->ref_counter.fetch_add(1);
 
-            auto port_context = std::make_shared<Watchdog::PortContext>();
+            auto port_context = std::make_shared<Port::WatchTask::PortContext>();
             *port_context = {port_segment_, node_, buffer_.get()};
-            Watchdog::get().add_port_to_watch(std::move(port_context));
+            Port::WatchTask::get().add_port(std::move(port_context));
         }
 
         ~Port()
         {
-            Watchdog::get().remove_port_from_watch(node_);
+            Port::WatchTask::get().remove_port(node_);
 
             if (node_->ref_counter.fetch_sub(1) == 1)
             {
