@@ -41,9 +41,9 @@ namespace fm = foonathan::memory;
 #define USE_CUSTOM_NODE_SIZES
 
 // Include implementations for node size helpers
-#include "impl/map_node_size_impl.hpp"
-#include "impl/set_node_size_impl.hpp"
-#include "impl/unordered_map_node_size_impl.hpp"
+#include "impl/node-sizes/map_node_size_impl.hpp"
+#include "impl/node-sizes/set_node_size_impl.hpp"
+#include "impl/node-sizes/unordered_map_node_size_impl.hpp"
 
 /**
  * @brief Common base for all size helpers.
