@@ -1007,7 +1007,7 @@ TEST_F(SHMTransportTests, port_lock_read_exclusive)
 
     auto port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
     ASSERT_THROW(shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive),
-        std::exception);
+            std::exception);
 
     port.reset();
     port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
@@ -1378,7 +1378,7 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
-    
+
     shared_mem_global->remove_port(0);
     auto deadlocked_port = shared_mem_global->open_port(0, 1, 1000);
     uint32_t listener_index;
@@ -1442,7 +1442,7 @@ TEST_F(SHMTransportTests, port_not_ok_listener_recover)
     auto port = shared_mem_global->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
     auto managed_port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
     auto data_segment = shared_mem_manager->create_segment(1, 1);
-    
+
     MockPortSharedMemGlobal port_mocker;
     port_mocker.set_port_not_ok(*port);
     (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
@@ -1466,19 +1466,19 @@ TEST_F(SHMTransportTests, buffer_recover)
     const std::string domain_name("SHMTests");
 
     auto shared_mem_manager = SharedMemManager::create(domain_name);
-    
-    auto segment = shared_mem_manager->create_segment(3,3);
+
+    auto segment = shared_mem_manager->create_segment(3, 3);
 
     shared_mem_manager->remove_port(1);
     auto pub_sub1_write = shared_mem_manager->open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
 
     shared_mem_manager->remove_port(2);
-    auto pub_sub2_write = shared_mem_manager->open_port(2, 8, 1000,SharedMemGlobal::Port::OpenMode::Write);
+    auto pub_sub2_write = shared_mem_manager->open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
 
     auto sub1_read = shared_mem_manager->open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
 
     auto sub2_read = shared_mem_manager->open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
-    
+
     bool exit_listeners = false;
 
     uint32_t listener1_sleep_ms = 400u;

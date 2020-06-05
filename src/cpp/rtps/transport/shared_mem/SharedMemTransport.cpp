@@ -80,7 +80,7 @@ bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
         uint32_t metatraffic_multicast_port) const
 {
     locators.push_back(SHMLocator::create_locator(metatraffic_multicast_port, SHMLocator::Type::MULTICAST));
-    
+
     return true;
 }
 
@@ -173,7 +173,8 @@ bool SharedMemTransport::is_local_locator(
     return true;
 }
 
-void SharedMemTransport::delete_input_channel(SharedMemChannelResource* channel)
+void SharedMemTransport::delete_input_channel(
+        SharedMemChannelResource* channel)
 {
     channel->disable();
     channel->release();
@@ -190,7 +191,7 @@ bool SharedMemTransport::CloseInputChannel(
     {
         if ( (*it)->locator() == locator)
         {
-            delete_input_channel((*it));            
+            delete_input_channel((*it));
             input_channels_.erase(it);
 
             return true;
@@ -206,7 +207,7 @@ void SharedMemTransport::clean_up()
     {
         // Delete send ports
         opened_ports_.clear();
-        
+
         // Delete input channels
         {
             std::lock_guard<std::recursive_mutex> lock(input_channels_mutex_);
@@ -221,7 +222,7 @@ void SharedMemTransport::clean_up()
 
         shared_mem_segment_.reset();
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         logWarning(RTPS_MSG_OUT, e.what());
     }
@@ -239,12 +240,12 @@ bool SharedMemTransport::init()
     // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
     static constexpr uint32_t shm_default_segment_size = 512 * 1024;
 
-    if(configuration_.segment_size() == 0)
+    if (configuration_.segment_size() == 0)
     {
         configuration_.segment_size(shm_default_segment_size);
     }
 
-    if(configuration_.segment_size() < configuration_.max_message_size())
+    if (configuration_.segment_size() < configuration_.max_message_size())
     {
         logError(RTPS_MSG_OUT, "max_message_size cannot be greater than segment_size");
         return false;
@@ -258,7 +259,7 @@ bool SharedMemTransport::init()
 
         // Memset the whole segment to zero in order to force physical map of the buffer
         auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),
-                        (std::chrono::steady_clock::now()+std::chrono::milliseconds(100)));
+                        (std::chrono::steady_clock::now() + std::chrono::milliseconds(100)));
         memset(buffer->data(), 0, configuration_.segment_size());
         buffer.reset();
 
@@ -287,9 +288,10 @@ bool SharedMemTransport::IsInputChannelOpen(
 
     return IsLocatorSupported(locator) && (std::find_if(
                input_channels_.begin(), input_channels_.end(),
-               [&](const SharedMemChannelResource* resource) {
-        return locator == resource->locator();
-    }) != input_channels_.end());
+               [&](const SharedMemChannelResource* resource)
+               {
+                   return locator == resource->locator();
+               }) != input_channels_.end());
 }
 
 bool SharedMemTransport::IsLocatorSupported(
@@ -505,7 +507,7 @@ bool SharedMemTransport::send(
     }
 
     logInfo(RTPS_MSG_OUT,
-            "(ID:" << std::this_thread::get_id() <<") " << "SharedMemTransport: " << buffer->size() << " bytes to port " <<
+            "(ID:" << std::this_thread::get_id() << ") " << "SharedMemTransport: " << buffer->size() << " bytes to port " <<
             remote_locator.port);
 
     return true;

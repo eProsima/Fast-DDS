@@ -19,7 +19,7 @@
 #include <io.h>
 #else
 #include <sys/file.h>
-#endif
+#endif // ifdef  _MSC_VER
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -42,7 +42,7 @@ public:
     /**
      * Open or create and acquire the interprocess lock.
      * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
-     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created 
+     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created
      * or it already exist.
      * @throw std::exception if lock coulnd't be acquired
      */
@@ -78,13 +78,14 @@ public:
      * Checks whether the file is locked.
      * @param in name Is the object interprocess global name, visible for all processes in the same machine.
      */
-    static bool is_locked(const std::string& name)
+    static bool is_locked(
+            const std::string& name)
     {
         try
         {
             RobustExclusiveLock locked_test(name);
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
             return true;
         }
@@ -199,7 +200,7 @@ private:
         }
     }
 
-#endif
+#endif // ifdef _MSC_VER
 
 };
 

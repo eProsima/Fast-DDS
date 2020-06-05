@@ -35,7 +35,7 @@ using Log = fastdds::dds::Log;
  *  Open shared-memory ports.
  *  Create shared memory segments.
  */
-class SharedMemManager : 
+class SharedMemManager :
     public std::enable_shared_from_this<SharedMemManager>
 {
 private:
@@ -222,6 +222,7 @@ private:
 
             return (listener_validity_id == s.validity_id);
         }
+
     };
 
     SharedMemManager(
@@ -244,9 +245,10 @@ private:
                         domain_name);
     }
 
-public:
+public: // SharedMemManager
 
-    static std::shared_ptr<SharedMemManager> create(const std::string& domain_name)
+    static std::shared_ptr<SharedMemManager> create(
+            const std::string& domain_name)
     {
         return std::shared_ptr<SharedMemManager>(new SharedMemManager(domain_name));
     }
@@ -258,11 +260,11 @@ public:
 
     class Buffer
     {
-    protected:
+    protected: // SharedMemManager::Buffer
 
         virtual ~Buffer() = default;
 
-    public:
+    public: // SharedMemManager::Buffer
 
         virtual void* data() = 0;
         virtual uint32_t size() = 0;
@@ -270,7 +272,7 @@ public:
 
     class SharedMemBuffer : public Buffer
     {
-    public:
+    public: // SharedMemManager::SharedMemBuff
 
         SharedMemBuffer(
                 std::shared_ptr<SharedMemSegment>& segment,
@@ -327,7 +329,7 @@ public:
             buffer_node_->dec_enqueued_count(validity_id);
         }
 
-    private:
+    private: // SharedMemManager::SharedMemBuff
 
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
@@ -342,7 +344,7 @@ public:
      */
     class Segment
     {
-    public:
+    public: // SharedMemManager::Segment
 
         Segment(
                 uint32_t size,
@@ -474,7 +476,7 @@ public:
             return new_buffer;
         }
 
-    private:
+    private: // SharedMemManager::Segment
 
         std::string segment_name_;
 
@@ -601,7 +603,7 @@ public:
      */
     class Listener
     {
-    public:
+    public: // SharedMemManager::Listener
 
         Listener(
                 SharedMemManager* shared_mem_manager,
@@ -755,7 +757,7 @@ public:
             global_port_->close_listener(&is_closed_);
         }
 
-    private:
+    private: // SharedMemManager::Listener
 
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
 
@@ -773,7 +775,7 @@ public:
      */
     class Port
     {
-    public:
+    public: // SharedMemManager::Port
 
         Port(
                 SharedMemManager* shared_mem_manager,
@@ -850,7 +852,7 @@ public:
             return std::make_shared<Listener>(shared_mem_manager_, global_port_);
         }
 
-    private:
+    private: // SharedMemManager::Port
 
         void regenerate_port()
         {
@@ -928,7 +930,7 @@ public:
         return &global_segment_;
     }
 
-private:
+private: // SharedMemManager
 
     std::shared_ptr<Port> regenerate_port(
             std::shared_ptr<SharedMemGlobal::Port> port,
@@ -942,7 +944,7 @@ private:
      */
     class SegmentWrapper
     {
-    public:
+    public: // SharedMemManager::SegmentWrapper
 
         SegmentWrapper()
         {
@@ -961,7 +963,10 @@ private:
             lock_file_name_ = segment_name + "_el";
         }
 
-        std::shared_ptr<SharedMemSegment> segment() { return segment_; }
+        std::shared_ptr<SharedMemSegment> segment()
+        {
+            return segment_;
+        }
 
         /**
          * Singleton task, for SharedMemWatchdog, that periodically checks opened segments
@@ -969,7 +974,7 @@ private:
          */
         class WatchTask : public SharedMemWatchdog::Task
         {
-        public:
+        public: // SharedMemManager::SegmentWrapper::WatchTask
 
             static WatchTask& get()
             {
@@ -977,7 +982,8 @@ private:
                 return watch_task;
             }
 
-            void add_segment(std::shared_ptr<SegmentWrapper> segment)
+            void add_segment(
+                    std::shared_ptr<SegmentWrapper> segment)
             {
                 // Add added segments to the watched set
                 std::lock_guard<std::mutex> lock(to_add_remove_mutex_);
@@ -985,7 +991,8 @@ private:
                 to_add_.push_back(segment);
             }
 
-            void remove_segment(std::shared_ptr<SegmentWrapper> segment)
+            void remove_segment(
+                    std::shared_ptr<SegmentWrapper> segment)
             {
                 // Add added segments to the watched set
                 std::lock_guard<std::mutex> lock(to_add_remove_mutex_);
@@ -993,13 +1000,13 @@ private:
                 to_remove_.push_back(segment);
             }
 
-        private:
+        private: // SharedMemManager::SegmentWrapper::WatchTask
 
             std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t> watched_segments_;
-            
+
             std::mutex to_add_remove_mutex_;
-            std::vector<std::shared_ptr<SegmentWrapper>> to_add_;
-            std::vector<std::shared_ptr<SegmentWrapper>> to_remove_;
+            std::vector<std::shared_ptr<SegmentWrapper> > to_add_;
+            std::vector<std::shared_ptr<SegmentWrapper> > to_remove_;
 
             WatchTask()
             {
@@ -1055,7 +1062,7 @@ private:
 
                 // Watch every segment
                 auto segment_it =  watched_segments_.begin();
-                while(segment_it != watched_segments_.end())
+                while (segment_it != watched_segments_.end())
                 {
                     if (!(*segment_it).first->check_alive())
                     {
@@ -1067,9 +1074,10 @@ private:
                     }
                 }
             }
+
         };
 
-    private:
+    private: // SharedMemManager::SegmentWrapper
 
         std::weak_ptr<SharedMemManager> shared_mem_manager_;
         std::shared_ptr<SharedMemSegment> segment_;
@@ -1100,6 +1108,7 @@ private:
                 shared_mem_manager->release_segment(segment_id_);
             }
         }
+
     };
 
     uint32_t per_allocation_extra_size_;
@@ -1134,7 +1143,7 @@ private:
 
             SegmentWrapper::WatchTask::get().add_segment(segment_wrapper);
         }
-        
+
         return segment;
     }
 
@@ -1165,7 +1174,7 @@ private:
             SegmentWrapper::WatchTask::get().remove_segment(segment.second);
         }
     }
-    
+
 };
 
 } // namespace rtps
