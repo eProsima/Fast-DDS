@@ -34,12 +34,6 @@ namespace detail {
 
 namespace fm = foonathan::memory;
 
-// TODO(Miguel C): In the future we should have CMake automatically define these.
-// Right now using foonathan debug helper and falling back to custom one if
-// FOONATHAN_MEMORY_NO_NODE_SIZE is defined.
-#define USE_FOONATHAN_NODE_SIZES
-#define USE_CUSTOM_NODE_SIZES
-
 // Include implementations for node size helpers
 #include "impl/node-sizes/map_node_size_impl.hpp"
 #include "impl/node-sizes/set_node_size_impl.hpp"

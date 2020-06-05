@@ -19,7 +19,9 @@
 #ifndef SRC_CPP_UTILS_COLLECTIONS_IMPL_SET_NODE_SIZE_IMPL_HPP_
 #define SRC_CPP_UTILS_COLLECTIONS_IMPL_SET_NODE_SIZE_IMPL_HPP_
 
-#if defined(USE_FOONATHAN_NODE_SIZES) && !defined(FOONATHAN_MEMORY_NO_NODE_SIZE)
+#include "./config.hpp"
+
+#if defined(USE_FOONATHAN_NODE_SIZES)
 #include "foonathan/set_node_size_impl.hpp"
 #elif defined(USE_STD_NODE_SIZES)
 #include "std/set_node_size_impl.hpp"
