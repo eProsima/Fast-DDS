@@ -67,8 +67,8 @@
 
 // Check only one option has been selected
 #  if (defined(USE_FOONATHAN_NODE_SIZES) && defined(USE_STD_NODE_SIZES)) || \
-      (defined(USE_FOONATHAN_NODE_SIZES) && defined(USE_CUSTOM_NODE_SIZES)) || \
-      (defined(USE_CUSTOM_NODE_SIZES) && defined(USE_STD_NODE_SIZES))
+    (defined(USE_FOONATHAN_NODE_SIZES) && defined(USE_CUSTOM_NODE_SIZES)) || \
+    (defined(USE_CUSTOM_NODE_SIZES) && defined(USE_STD_NODE_SIZES))
 #    error "USE_STD_NODE_SIZES, USE_FOONATHAN_NODE_SIZES and USE_CUSTOM_NODE_SIZES are mutually exclusive"
 // Check foonathan is available when selected
 #  elif defined(USE_FOONATHAN_NODE_SIZES) && defined(FOONATHAN_MEMORY_NO_NODE_SIZE)
