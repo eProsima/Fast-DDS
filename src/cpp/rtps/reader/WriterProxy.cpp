@@ -31,17 +31,19 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include "rtps/RTPSDomainImpl.hpp"
-
-#include <foonathan/memory/namespace_alias.hpp>
-#include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
+#include "utils/collections/node_size_helpers.hpp"
 
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#define SHOULD_DEBUG_LINUX
+#endif // SHOULD_DEBUG_LINUX
+
+#ifdef SHOULD_DEBUG_LINUX
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <cassert>
 #include <mutex>
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
 namespace eprosima {
 namespace fastrtps {
@@ -53,7 +55,7 @@ WriterProxy::~WriterProxy()
     delete(heartbeat_response_);
 }
 
-constexpr size_t changes_node_size = memory::set_node_size<std::pair<size_t, SequenceNumber_t> >::value;
+using set_helper = utilities::collections::set_size_helper<SequenceNumber_t>;
 
 WriterProxy::WriterProxy(
         StatefulReader* reader,
@@ -66,8 +68,8 @@ WriterProxy::WriterProxy(
     , heartbeat_final_flag_(false)
     , is_alive_(false)
     , changes_pool_(
-        changes_node_size,
-        memory_pool_block_size<pool_allocator_t>(changes_node_size, changes_allocation))
+        set_helper::node_size,
+        set_helper::min_pool_size<pool_allocator_t>(changes_allocation.initial))
     , changes_received_(changes_pool_)
     , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
@@ -77,19 +79,20 @@ WriterProxy::WriterProxy(
     , locators_entry_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
 {
     //Create Events
-    heartbeat_response_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
-            [&]() -> bool
+    ResourceEvent& event_manager = reader_->getRTPSParticipant()->getEventResource();
+    auto heartbeat_lambda = [this]() -> bool
             {
                 perform_heartbeat_response();
                 return false;
-            }, 0);
-
-    initial_acknack_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
-            [&]() -> bool
+            };
+    auto acknack_lambda = [this]() -> bool
             {
                 perform_initial_ack_nack();
                 return false;
-            }, 0 );
+            };
+
+    heartbeat_response_ = new TimedEvent(event_manager, heartbeat_lambda, 0);
+    initial_acknack_ = new TimedEvent(event_manager, acknack_lambda, 0);
 
     clear();
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
@@ -99,9 +102,9 @@ void WriterProxy::start(
         const WriterProxyData& attributes,
         const SequenceNumber_t& initial_sequence)
 {
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     heartbeat_response_->update_interval(reader_->getTimes().heartbeatResponseDelay);
     initial_acknack_->update_interval(reader_->getTimes().initialAcknackDelay);
@@ -124,9 +127,9 @@ void WriterProxy::start(
 void WriterProxy::update(
         const WriterProxyData& attributes)
 {
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     assert(is_alive_);
     ownership_strength_ = attributes.m_qos.m_ownershipStrength.value;
@@ -168,9 +171,9 @@ void WriterProxy::loaded_from_storage(
 void WriterProxy::missing_changes_update(
         const SequenceNumber_t& seq_num)
 {
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     logInfo(RTPS_READER, guid().entityId << ": changes up to seq_num: " << seq_num << " missing.");
 
@@ -187,9 +190,9 @@ void WriterProxy::missing_changes_update(
 void WriterProxy::lost_changes_update(
         const SequenceNumber_t& seq_num)
 {
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     logInfo(RTPS_READER, guid().entityId << ": up to seq_num: " << seq_num);
 
@@ -229,9 +232,9 @@ bool WriterProxy::received_change_set(
         const SequenceNumber_t& seq_num,
         bool /* is_relevance */ )
 {
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
     if (seq_num <= changes_from_writer_low_mark_)
@@ -280,9 +283,9 @@ bool WriterProxy::received_change_set(
 
 SequenceNumberSet_t WriterProxy::missing_changes() const
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     SequenceNumber_t first_missing = changes_from_writer_low_mark_ + 1;
     SequenceNumber_t max_missing = std::min(first_missing + 256UL, max_sequence_number_ + 1);
@@ -310,9 +313,9 @@ SequenceNumberSet_t WriterProxy::missing_changes() const
 bool WriterProxy::change_was_received(
         const SequenceNumber_t& seq_num) const
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     if (seq_num <= changes_from_writer_low_mark_)
     {
@@ -325,9 +328,9 @@ bool WriterProxy::change_was_received(
 
 const SequenceNumber_t WriterProxy::available_changes_max() const
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     return changes_from_writer_low_mark_;
 }
@@ -335,9 +338,9 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
 void WriterProxy::change_removed_from_history(
         const SequenceNumber_t& seq_num)
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     // Check sequence number is in the container, because it was not clean up.
     if (seq_num <= changes_from_writer_low_mark_)
@@ -389,9 +392,9 @@ void WriterProxy::cleanup()
 
 bool WriterProxy::are_there_missing_changes() const
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     return changes_from_writer_low_mark_ < max_sequence_number_;
 }
@@ -399,9 +402,9 @@ bool WriterProxy::are_there_missing_changes() const
 size_t WriterProxy::unknown_missing_changes_up_to(
         const SequenceNumber_t& seq_num) const
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     uint32_t returnedValue = 0;
 
@@ -437,9 +440,9 @@ size_t WriterProxy::unknown_missing_changes_up_to(
 
 size_t WriterProxy::number_of_changes_from_writer() const
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     if (max_sequence_number_ > changes_from_writer_low_mark_)
     {
@@ -452,9 +455,9 @@ size_t WriterProxy::number_of_changes_from_writer() const
 
 SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     if (last_notified_ < changes_from_writer_low_mark_)
     {
@@ -498,9 +501,9 @@ bool WriterProxy::process_heartbeat(
         bool disable_positive,
         bool& assert_liveliness)
 {
-#if defined(__DEBUG) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
     assert_liveliness = false;
     if (last_heartbeat_count_ < count)
@@ -565,14 +568,14 @@ bool WriterProxy::send(
     }
 
     const ResourceLimitedVector<Locator_t>& remote_locators = remote_locators_shrinked();
-    
+
     return reader_->send_sync_nts(message,
                    Locators(remote_locators.begin()),
                    Locators(remote_locators.end()),
                    max_blocking_time_point);
 }
 
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#ifdef SHOULD_DEBUG_LINUX
 int WriterProxy::get_mutex_owner() const
 {
     auto mutex = reader_->getMutex().native_handle();
@@ -584,7 +587,7 @@ int WriterProxy::get_thread_id() const
     return syscall(__NR_gettid);
 }
 
-#endif
+#endif // SHOULD_DEBUG_LINUX
 
 } /* namespace rtps */
 } /* namespace fastrtps */

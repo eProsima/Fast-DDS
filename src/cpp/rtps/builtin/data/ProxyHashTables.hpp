@@ -25,9 +25,8 @@
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
 #include <foonathan/memory/segregator.hpp>
-#include <foonathan/memory/detail/debug_helpers.hpp>
 
-#include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
+#include "utils/collections/node_size_helpers.hpp"
 
 #include <unordered_map>
 
@@ -47,16 +46,12 @@ class node_segregator
 public:
 
     using allocator_type = foonathan::memory::memory_pool<foonathan::memory::node_pool, RawAllocator>;
+    using size_helper = utilities::collections::detail::pool_size_helper<node_size>;
 
     node_segregator(
             std::size_t nodes_to_allocate,
-            const bool& flag,
-            std::size_t padding = foonathan::memory::detail::memory_block_stack::implementation_offset)
-        : block_size_(nodes_to_allocate
-                * ((node_size > allocator_type::min_node_size ? node_size : allocator_type::min_node_size)
-                // Needs more space in debug info. It allocates space to detect overflow.
-                * (foonathan::memory::detail::debug_fence_size ? 3 : 1))
-                + padding)
+            const bool& flag)
+        : block_size_(size_helper::template min_pool_size<allocator_type>(nodes_to_allocate))
         , node_allocator_(new allocator_type(node_size, block_size_))
         , initialization_is_done_(flag)
     {
@@ -154,18 +149,18 @@ private:
 template<class Proxy>
 class ProxyHashTable
     : protected detail::binary_node_segregator<
-        foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t, Proxy*> >::value>
+        utilities::collections::unordered_map_size_helper<EntityId_t, Proxy*>::node_size>
     , public foonathan::memory::unordered_map<
         EntityId_t,
         Proxy*,
         detail::binary_node_segregator<
-            foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t, Proxy*> >::value>
+            utilities::collections::unordered_map_size_helper<EntityId_t, Proxy*>::node_size>
         >
 {
 public:
 
     using allocator_type = detail::binary_node_segregator<
-        foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t, Proxy*> >::value>;
+        utilities::collections::unordered_map_size_helper<EntityId_t, Proxy*>::node_size>;
     using base_class = foonathan::memory::unordered_map<EntityId_t, Proxy*, allocator_type>;
 
     explicit ProxyHashTable(
