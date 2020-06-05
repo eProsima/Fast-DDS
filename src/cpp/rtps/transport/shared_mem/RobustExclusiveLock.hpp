@@ -75,6 +75,24 @@ public:
     }
 
     /**
+     * Checks whether the file is locked.
+     * @param in name Is the object interprocess global name, visible for all processes in the same machine.
+     */
+    static bool is_locked(const std::string& name)
+    {
+        try
+        {
+            RobustExclusiveLock locked_test(name);
+        }
+        catch(const std::exception& e)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      *  Unlock the interprocess lock.
      */
     ~RobustExclusiveLock()
