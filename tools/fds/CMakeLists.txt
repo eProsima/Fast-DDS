@@ -14,7 +14,10 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-project(Fast-Server VERSION 1.0.0 LANGUAGES C CXX)
+# symlink creation requires install( CODE using generator expressions 
+cmake_policy(SET CMP0087 NEW)
+
+project(fast-discovery-server VERSION 1.0.0 LANGUAGES C CXX)
 
 ###############################################################################
 # Load external dependencies
@@ -78,9 +81,8 @@ target_link_libraries(${PROJECT_NAME} fastrtps fastcdr)
 
 # Properties that change bin names depending on current config.
 # This is convenient because on installation all bins share folder
-# set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION})
-# set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -${PROJECT_VERSION}d)
-set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -d)
+set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION})
+set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION})
 
 ###############################################################################
 # Installation 
@@ -88,9 +90,18 @@ set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -d)
 
 # If not isolated integrate 
 if(CMAKE_PROJECT_NAME STREQUAL "fastrtps" )
-    set(BIN_INSTALL_DIR tools/fast-server/${BIN_INSTALL_DIR} CACHE PATH "Installation directory for binaries within Fast-DDS")
+    set(BIN_INSTALL_DIR tools/fds/${BIN_INSTALL_DIR} CACHE PATH "Installation directory for binaries within Fast-DDS")
 else()
     set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 endif()
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${BIN_INSTALL_DIR} COMPONENT discovery)
+
+# add symlink
+if( WIN32 )
+    # Use powershell to generate the link
+    install( CODE "execute_process(COMMAND PowerShell -Command \"New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe\" WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR} )")
+else()
+    # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
+    install( CODE "execute_process(COMMAND ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}$<$<CONFIG:Debug>:d> WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR})")
+endif()

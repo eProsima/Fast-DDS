@@ -13,5 +13,5 @@
 # limitations under the License.
 
 set(fastrtps_FOUND TRUE)
-add_subdirectory(fast-server)
+add_subdirectory(fds)
 
