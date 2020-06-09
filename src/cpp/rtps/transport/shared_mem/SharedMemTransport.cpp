@@ -461,20 +461,22 @@ bool SharedMemTransport::send(
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
         uint32_t port_id)
 {
-    try
-    {
-        return opened_ports_.at(port_id);
-    }
-    catch (const std::out_of_range&)
-    {
-        // The port is not opened
-        std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->
-                open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
-                        SharedMemGlobal::Port::OpenMode::Write);
-        opened_ports_[port_id] = port;
+    auto ports_it = opened_ports_.find(port_id);
 
-        return port;
+    // The port is already opened
+    if (ports_it != opened_ports_.end())
+    {
+        return (*ports_it).second;
     }
+
+    // The port is not opened
+    std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->
+            open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
+                    SharedMemGlobal::Port::OpenMode::Write);
+                    
+    opened_ports_[port_id] = port;
+
+    return port;
 }
 
 bool SharedMemTransport::push_discard(
