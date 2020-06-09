@@ -96,9 +96,7 @@ endif()
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${BIN_INSTALL_DIR} COMPONENT discovery)
 
 # symlink creation requires install( CODE using generator expressions
-cmake_policy(GET CMP0087 INSTALL_CODE_GE_POLICY)
-message(STATUS INSTALL_CODE_GE_POLICY=${INSTALL_CODE_GE_POLICY} )
-if( INSTALL_CODE_GE_POLICY )
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
 
     cmake_policy(SET CMP0087 NEW)
 
@@ -115,4 +113,3 @@ else()
     message(WARNING "${PROJECT_NAME}: CMake version doesn't allow symlink installation.")
 endif()
 
-unset(INSTALL_CODE_GE_POLICY)
