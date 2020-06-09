@@ -451,7 +451,7 @@ bool IPLocator::setWan(
     int a, b, c, d; //to store the 4 ints
     char ch; //to temporarily store the '.'
 
-    if( ss >> a >> ch >> b >> ch >> c >> ch >> d)
+    if ( ss >> a >> ch >> b >> ch >> c >> ch >> d)
     {
         locator.address[8]  = (octet)a;
         locator.address[9]  = (octet)b;
@@ -498,7 +498,7 @@ bool IPLocator::setLanID(
         int a, b, c, d, e, f, g, h; //to store the 8 ints
         char ch; //to temporarily store the '.'
 
-        if( ss >> a >> ch >> b >> ch >> c >> ch >> d >> ch >> e >> ch >> f >> ch >> g >> ch >> h)
+        if ( ss >> a >> ch >> b >> ch >> c >> ch >> d >> ch >> e >> ch >> f >> ch >> g >> ch >> h)
         {
             locator.address[0] = (octet)a;
             locator.address[1] = (octet)b;

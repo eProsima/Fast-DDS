@@ -18,7 +18,8 @@
 // Parsing setup
 #include "optionparser.h"
 
-enum  optionIndex {
+enum  optionIndex
+{
     UNKNOWN,
     HELP,
     SERVERID,
@@ -53,11 +54,11 @@ const option::Descriptor usage[] = {
 
     { SERVERID,  0, "i", "server-id",    Arg::check_server_id,
       "  -i \t--server-id  Mandatory unique server identifier. Specifies zero based\n"
-              "\t             server position in ROS_DISCOVERY_SERVER environment variable.\n" },
+      "\t             server position in ROS_DISCOVERY_SERVER environment variable.\n" },
 
     { IPADDRESS, 0, "l", "ip-address",   Arg::check_server_ipv4,
       "  -l \t--ip-address Server interface chosen to listen the clients. Defaults\n"
-              "\t             to any (0.0.0.0)\n" },
+      "\t             to any (0.0.0.0)\n" },
 
     { PORT,      0, "p",  "port",         Arg::check_udp_port,
       "  -p  \t--port       UDP port chosen to listen the clients. Defaults to 11811\n" },

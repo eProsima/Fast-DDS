@@ -41,7 +41,7 @@ class ParticipantProxyData;
 class RemoteServerAttributes
 {
 public:
-    RTPS_DllAPI inline bool operator==(
+    RTPS_DllAPI inline bool operator ==(
             const RemoteServerAttributes& r) const
     {
         return guidPrefix == r.guidPrefix
@@ -70,7 +70,7 @@ public:
     RTPS_DllAPI GUID_t GetEDPSubscriptionsReader() const;
 
     RTPS_DllAPI inline bool ReadguidPrefix(
-            const char * pfx)
+            const char* pfx)
     {
         return bool(std::istringstream(pfx) >> guidPrefix);
     }
