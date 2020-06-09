@@ -13,5 +13,7 @@
 # limitations under the License.
 
 set(fastrtps_FOUND TRUE)
-add_subdirectory(fds)
 
+cmake_policy(PUSH)
+add_subdirectory(fds)
+cmake_policy(POP)
