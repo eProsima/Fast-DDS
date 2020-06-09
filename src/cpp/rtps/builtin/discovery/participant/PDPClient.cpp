@@ -50,11 +50,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-// port use if the ros environment variable doesn't specified one
-const uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
-// default server guidPrefix
-const char* DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.49.53.43.53.45.52.56.45.52.5F.30";
-
 GUID_t RemoteServerAttributes::GetParticipant() const
 {
     return GUID_t(guidPrefix, c_EntityId_RTPSParticipant);

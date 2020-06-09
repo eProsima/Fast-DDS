@@ -88,9 +88,9 @@ namespace rtps {
     typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 
     // port use if the ros environment variable doesn't specified one
-    RTPS_DllAPI extern const uint16_t DEFAULT_ROS2_SERVER_PORT;
+    constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
     // default server base guidPrefix
-    RTPS_DllAPI extern const char* DEFAULT_ROS2_SERVER_GUIDPREFIX;
+    constexpr char* DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.49.53.43.53.45.52.56.45.52.5F.30";
 
     /**
      * Retrieves a ; separated list of locators from an environment variable and

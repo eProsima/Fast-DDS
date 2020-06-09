@@ -77,7 +77,7 @@ static void guid_prefix_create(
 // environment variables that forces server-client discovery
 // it must contain a list of UDPv4 locators separated by ;
 // the position in the list defines the default server that listens on the locator
-const char* DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
+constexpr char* DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
 
 std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
