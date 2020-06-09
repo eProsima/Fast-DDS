@@ -41,6 +41,7 @@ class ParticipantProxyData;
 class RemoteServerAttributes
 {
 public:
+
     RTPS_DllAPI inline bool operator ==(
             const RemoteServerAttributes& r) const
     {

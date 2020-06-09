@@ -732,6 +732,6 @@ bool IPLocator::isMulticast(
     }
 }
 
-}
-}
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
