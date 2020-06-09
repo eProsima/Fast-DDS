@@ -246,7 +246,7 @@ private:
                         domain_name);
     }
 
-public: // SharedMemManager
+public:
 
     static std::shared_ptr<SharedMemManager> create(
             const std::string& domain_name)
@@ -261,11 +261,11 @@ public: // SharedMemManager
 
     class Buffer
     {
-    protected: // SharedMemManager::Buffer
+    protected:
 
         virtual ~Buffer() = default;
 
-    public: // SharedMemManager::Buffer
+    public:
 
         virtual void* data() = 0;
         virtual uint32_t size() = 0;
@@ -273,7 +273,7 @@ public: // SharedMemManager
 
     class SharedMemBuffer : public Buffer
     {
-    public: // SharedMemManager::SharedMemBuff
+    public:
 
         SharedMemBuffer(
                 std::shared_ptr<SharedMemSegment>& segment,
@@ -330,7 +330,7 @@ public: // SharedMemManager
             buffer_node_->dec_enqueued_count(validity_id);
         }
 
-    private: // SharedMemManager::SharedMemBuff
+    private:
 
         std::shared_ptr<SharedMemSegment> segment_;
         SharedMemSegment::Id segment_id_;
@@ -345,7 +345,7 @@ public: // SharedMemManager
      */
     class Segment
     {
-    public: // SharedMemManager::Segment
+    public:
 
         Segment(
                 uint32_t size,
@@ -482,7 +482,7 @@ public: // SharedMemManager
             return segment_->mem_size();
         }
 
-    private: // SharedMemManager::Segment
+    private:
 
         std::string segment_name_;
 
@@ -609,7 +609,7 @@ public: // SharedMemManager
      */
     class Listener
     {
-    public: // SharedMemManager::Listener
+    public:
 
         Listener(
                 SharedMemManager* shared_mem_manager,
@@ -763,7 +763,7 @@ public: // SharedMemManager
             global_port_->close_listener(&is_closed_);
         }
 
-    private: // SharedMemManager::Listener
+    private:
 
         std::shared_ptr<SharedMemGlobal::Port> global_port_;
 
@@ -781,7 +781,7 @@ public: // SharedMemManager
      */
     class Port
     {
-    public: // SharedMemManager::Port
+    public:
 
         Port(
                 SharedMemManager* shared_mem_manager,
@@ -858,7 +858,7 @@ public: // SharedMemManager
             return std::make_shared<Listener>(shared_mem_manager_, global_port_);
         }
 
-    private: // SharedMemManager::Port
+    private:
 
         void regenerate_port()
         {
@@ -939,14 +939,14 @@ public: // SharedMemManager
     /**
      * @return The total mem size, in bytes, used by remote mapped segments.
      */
-    uint64_t segments_mem() 
+    uint64_t segments_mem()
     {
         std::lock_guard<std::mutex> lock(ids_segments_mutex_);
 
         return segments_mem_;
     }
 
-private: // SharedMemManager
+private:
 
     std::shared_ptr<Port> regenerate_port(
             std::shared_ptr<SharedMemGlobal::Port> port,
@@ -960,7 +960,7 @@ private: // SharedMemManager
      */
     class SegmentWrapper
     {
-    public: // SharedMemManager::SegmentWrapper
+    public:
 
         SegmentWrapper()
         {
@@ -990,7 +990,7 @@ private: // SharedMemManager
          */
         class WatchTask : public SharedMemWatchdog::Task
         {
-        public: // SharedMemManager::SegmentWrapper::WatchTask
+        public:
 
             static WatchTask& get()
             {
@@ -1016,7 +1016,7 @@ private: // SharedMemManager
                 to_remove_.push_back(segment);
             }
 
-        private: // SharedMemManager::SegmentWrapper::WatchTask
+        private:
 
             std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t> watched_segments_;
 
@@ -1093,7 +1093,7 @@ private: // SharedMemManager
 
         };
 
-    private: // SharedMemManager::SegmentWrapper
+    private:
 
         std::weak_ptr<SharedMemManager> shared_mem_manager_;
         std::shared_ptr<SharedMemSegment> segment_;

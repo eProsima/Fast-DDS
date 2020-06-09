@@ -98,7 +98,7 @@ public:
         }
 
         unlock_and_close(fd, name);
-        
+
         return false;
     }
 
@@ -200,7 +200,9 @@ private:
         return fd;
     }
 
-    static void unlock_and_close(int fd, const std::string& name)
+    static void unlock_and_close(
+            int fd,
+            const std::string& name)
     {
         flock(fd, LOCK_UN | LOCK_NB);
         close(fd);

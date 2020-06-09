@@ -121,7 +121,7 @@ public:
     {
         friend class MockPortSharedMemGlobal;
 
-    private: // Port
+    private:
 
         std::shared_ptr<SharedMemSegment> port_segment_;
 
@@ -154,7 +154,7 @@ public:
          */
         class WatchTask : public SharedMemWatchdog::Task
         {
-        public: // WatchTask
+        public:
 
             struct PortContext
             {
@@ -202,7 +202,7 @@ public:
 
             }
 
-        private: // WatchTask
+        private:
 
             std::vector<std::shared_ptr<PortContext> > watched_ports_;
             std::mutex watched_ports_mutex_;
@@ -339,7 +339,7 @@ public:
             return (listeners_found == node_->num_listeners);
         }
 
-    public: // Port
+    public:
 
         /**
          * Defines open sharing mode of a shared-memory port:

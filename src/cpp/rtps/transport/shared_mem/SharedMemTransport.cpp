@@ -431,7 +431,7 @@ bool SharedMemTransport::send(
 
                 if (packet_logger_ && ret)
                 {
-                    packet_logger_->QueueLog({packet_logger_->now(), Locator_t(), * it, shared_buffer});
+                    packet_logger_->QueueLog({packet_logger_->now(), Locator_t(), *it, shared_buffer});
                 }
             }
 
@@ -473,7 +473,7 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
     std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->
             open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
                     SharedMemGlobal::Port::OpenMode::Write);
-                    
+
     opened_ports_[port_id] = port;
 
     return port;
