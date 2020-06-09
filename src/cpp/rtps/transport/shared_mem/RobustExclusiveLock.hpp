@@ -85,7 +85,7 @@ public:
         {
             RobustExclusiveLock locked_test(name);
         }
-        catch (const std::exception& e)
+        catch (const std::exception&)
         {
             return true;
         }

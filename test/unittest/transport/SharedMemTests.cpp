@@ -1609,6 +1609,70 @@ TEST_F(SHMTransportTests, buffer_recover)
     thread_listener2.join();
 }
 
+TEST_F(SHMTransportTests, remote_segments_free)
+{
+    const std::string domain_name("SHMTests");
+
+    auto shared_mem_manager1 = SharedMemManager::create(domain_name);
+    auto shared_mem_manager2 = SharedMemManager::create(domain_name);
+
+    auto segment1 = shared_mem_manager1->create_segment(16u, 1u);
+    auto segment2 = shared_mem_manager2->create_segment(16u, 1u);
+
+    uint64_t segment_mem_size = segment1->mem_size();
+
+    auto port1 = shared_mem_manager1->open_port(1, 1, 1000);
+    auto port2 = shared_mem_manager2->open_port(2, 1, 1000);
+
+    auto listener1 = port1->create_listener();
+    auto listener2 = port2->create_listener();
+
+    auto buf1 = segment1->alloc_buffer(8, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+    memset(buf1->data(), 0, buf1->size());
+    auto buf2 = segment2->alloc_buffer(8, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+    memset(buf2->data(), 0, buf2->size());
+
+    // No remote segments has been opened
+    ASSERT_EQ(0u, shared_mem_manager1->segments_mem());
+    ASSERT_EQ(0u, shared_mem_manager2->segments_mem());
+
+    ASSERT_TRUE(port2->try_push(buf1));
+    {
+        auto recv_buff = listener2->pop();
+    }
+
+    ASSERT_EQ(0u, shared_mem_manager1->segments_mem());
+    // The manager2 has opened remote segment1
+    ASSERT_EQ(segment_mem_size, shared_mem_manager2->segments_mem());
+
+    ASSERT_TRUE(port1->try_push(buf2));
+    {
+        auto recv_buff = listener1->pop();
+    }
+
+    // The manager1 has opened remote segment2
+    ASSERT_EQ(segment_mem_size, shared_mem_manager1->segments_mem());
+
+    segment2.reset();
+
+    // Wait until manager1, release the remote segment2
+    while (shared_mem_manager1->segments_mem() != 0)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    // The manager2 still has opened remote segment1
+    ASSERT_EQ(segment_mem_size, shared_mem_manager2->segments_mem());
+
+    segment1.reset();
+
+    // Wait until manager2, release the remote segment1
+    while (shared_mem_manager2->segments_mem() != 0)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+}
+
 /*TEST_F(SHMTransportTests, simple_latency)
    {
     int num_samples = 1000;

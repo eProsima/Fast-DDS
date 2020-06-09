@@ -227,7 +227,8 @@ private:
 
     SharedMemManager(
             const std::string& domain_name)
-        : global_segment_(domain_name)
+        : segments_mem_(0)
+        , global_segment_(domain_name)
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
 
@@ -474,6 +475,11 @@ public: // SharedMemManager
             }
 
             return new_buffer;
+        }
+
+        uint64_t mem_size()
+        {
+            return segment_->mem_size();
         }
 
     private: // SharedMemManager::Segment
@@ -930,6 +936,16 @@ public: // SharedMemManager
         return &global_segment_;
     }
 
+    /**
+     * @return The total mem size, in bytes, used by remote mapped segments.
+     */
+    uint64_t segments_mem() 
+    {
+        std::lock_guard<std::mutex> lock(ids_segments_mutex_);
+
+        return segments_mem_;
+    }
+
 private: // SharedMemManager
 
     std::shared_ptr<Port> regenerate_port(
@@ -1116,6 +1132,7 @@ private: // SharedMemManager
     std::unordered_map<SharedMemSegment::Id::type, std::shared_ptr<SegmentWrapper>,
             std::hash<SharedMemSegment::Id::type> > ids_segments_;
     std::mutex ids_segments_mutex_;
+    uint64_t segments_mem_;
 
     SharedMemGlobal global_segment_;
 
@@ -1135,11 +1152,10 @@ private: // SharedMemManager
         {
             auto segment_name = global_segment_.domain_name() + "_" + id.to_string();
             segment = std::make_shared<SharedMemSegment>(boost::interprocess::open_only, segment_name);
-            auto s = shared_from_this();
-            std::weak_ptr<SharedMemManager> p(s);
-            auto segment_wrapper = std::make_shared<SegmentWrapper>(p, segment, id, segment_name);
+            auto segment_wrapper = std::make_shared<SegmentWrapper>(shared_from_this(), segment, id, segment_name);
 
             ids_segments_[id.get()] = segment_wrapper;
+            segments_mem_ += segment->mem_size();
 
             SegmentWrapper::WatchTask::get().add_segment(segment_wrapper);
         }
@@ -1156,6 +1172,7 @@ private: // SharedMemManager
 
         if (segment_it != ids_segments_.end())
         {
+            segments_mem_ -= (*segment_it).second->segment()->mem_size();
             ids_segments_.erase(segment_it);
         }
     }

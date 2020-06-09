@@ -262,6 +262,14 @@ public:
     }
 
     /**
+     * @return The segment's size in bytes, including internal structures overhead.
+     */
+    Offset mem_size() const
+    {
+        return segment_->get_size();
+    }
+
+    /**
      * Unique ID of the memory segment
      */
     class Id
