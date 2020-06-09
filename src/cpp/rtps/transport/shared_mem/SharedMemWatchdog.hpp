@@ -74,6 +74,11 @@ public:
         }
     }
 
+    static constexpr std::chrono::milliseconds period()
+    {
+        return std::chrono::milliseconds(1000);
+    }
+
 private:
 
     std::unordered_set<Task*> tasks_;
@@ -122,7 +127,7 @@ private:
 
                 wake_run_cv_.wait_for(
                     lock,
-                    std::chrono::seconds(1),
+                    period(),
                     [&]
                     {
                         return wake_run_;

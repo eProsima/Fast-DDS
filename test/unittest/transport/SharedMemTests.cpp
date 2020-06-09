@@ -1614,64 +1614,102 @@ TEST_F(SHMTransportTests, buffer_recover)
 TEST_F(SHMTransportTests, remote_segments_free)
 {
     const std::string domain_name("SHMTests");
+    uint32_t num_participants = 100;
 
-    auto shared_mem_manager1 = SharedMemManager::create(domain_name);
-    auto shared_mem_manager2 = SharedMemManager::create(domain_name);
+    std::vector<std::shared_ptr<SharedMemManager> > managers;
+    std::vector<std::shared_ptr<SharedMemManager::Port> > ports;
+    std::vector<std::shared_ptr<SharedMemManager::Segment> > segments;
+    std::vector<std::shared_ptr<SharedMemManager::Listener> > listeners;
 
-    auto segment1 = shared_mem_manager1->create_segment(16u, 1u);
-    auto segment2 = shared_mem_manager2->create_segment(16u, 1u);
+    std::cout << "Creating " << num_participants << " SharedMemManagers & respective segments..." << std::endl;
 
-    uint64_t segment_mem_size = segment1->mem_size();
-
-    auto port1 = shared_mem_manager1->open_port(1, 1, 1000);
-    auto port2 = shared_mem_manager2->open_port(2, 1, 1000);
-
-    auto listener1 = port1->create_listener();
-    auto listener2 = port2->create_listener();
-
-    auto buf1 = segment1->alloc_buffer(8, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
-    memset(buf1->data(), 0, buf1->size());
-    auto buf2 = segment2->alloc_buffer(8, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
-    memset(buf2->data(), 0, buf2->size());
-
-    // No remote segments has been opened
-    ASSERT_EQ(0u, shared_mem_manager1->segments_mem());
-    ASSERT_EQ(0u, shared_mem_manager2->segments_mem());
-
-    ASSERT_TRUE(port2->try_push(buf1));
+    // Create participants
+    for (uint32_t i = 0; i < num_participants; i++)
     {
-        auto recv_buff = listener2->pop();
+        managers.push_back(SharedMemManager::create(domain_name));
+        segments.push_back(managers.back()->create_segment(16u, 1u));
+        ports.push_back(managers.back()->open_port(i, num_participants, 1000));
+        listeners.push_back(ports.back()->create_listener());
     }
 
-    ASSERT_EQ(0u, shared_mem_manager1->segments_mem());
-    // The manager2 has opened remote segment1
-    ASSERT_EQ(segment_mem_size, shared_mem_manager2->segments_mem());
+    uint64_t segment_mem_size = segments[0]->mem_size();
 
-    ASSERT_TRUE(port1->try_push(buf2));
+    std::cout << "segment_mem_size = " << segment_mem_size << std::endl;
+    std::cout << "Each participant send a message to the others " << segment_mem_size << std::endl;
+
+    // Each participant send a message to the others
+    for (uint32_t i = 0; i < num_participants; i++)
     {
-        auto recv_buff = listener1->pop();
+        auto buf = segments[i]->alloc_buffer(8, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+        memset(buf->data(), 0, buf->size());
+
+        for (uint32_t j = 0; j < num_participants; j++)
+        {
+            if (j != i)
+            {
+                ASSERT_TRUE(ports[j]->try_push(buf));
+                ASSERT_TRUE(listeners[j]->pop() != nullptr);
+            }
+        }
     }
 
-    // The manager1 has opened remote segment2
-    ASSERT_EQ(segment_mem_size, shared_mem_manager1->segments_mem());
+    uint64_t remote_mem_size = segment_mem_size * (num_participants - 1);
 
-    segment2.reset();
-
-    // Wait until manager1, release the remote segment2
-    while (shared_mem_manager1->segments_mem() != 0)
+    // Each manager has references to all segments from other managers
+    for (uint32_t i = 0; i < num_participants; i++)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        ASSERT_EQ(remote_mem_size, managers[i]->segments_mem());
     }
 
-    // The manager2 still has opened remote segment1
-    ASSERT_EQ(segment_mem_size, shared_mem_manager2->segments_mem());
+    std::cout << "Each manager has opened all others remote segments. per manager remote opened mem_size = "
+              << remote_mem_size << std::endl
+              << " Total remote segments in this process = "
+              << (num_participants - 1) * num_participants
+              << std::endl;
 
-    segment1.reset();
-
-    // Wait until manager2, release the remote segment1
-    while (shared_mem_manager2->segments_mem() != 0)
+    // Release all segments except participant 0
+    for (uint32_t i = 0; i < num_participants; i++)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        segments[i].reset();
+    }
+
+    std::cout << "All segments released " << std::endl;
+
+    auto last_mem_size = remote_mem_size;
+
+    // Wait until manager0, detect releases segments
+    uint64_t mem_size;
+    uint32_t num_releases_batches = 0u;
+    while ((mem_size = managers[0]->segments_mem()) != 0u)
+    {
+        if (mem_size != last_mem_size)
+        {
+            std::cout << "manager[0] release detected. remote opened mem_size = " << mem_size << std::endl;
+            last_mem_size = mem_size;
+            num_releases_batches++;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    // Assuming num_participants is big enough for the watchdog to complete the all releases in one period,
+    // several releases batches should be observed.
+    ASSERT_GT(num_releases_batches, 1u);
+
+    std::cout << "Wait for all managers release all remote segments..." << std::endl;
+
+    // Wait until all managers have released remote segments
+    uint64_t total_mem_in_use = 1;
+    while (total_mem_in_use)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        total_mem_in_use = 0;
+
+        for (uint32_t i = 0; i < num_participants; i++)
+        {
+            total_mem_in_use += managers[i]->segments_mem();
+        }
     }
 }
 
