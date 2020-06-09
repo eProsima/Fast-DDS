@@ -124,9 +124,9 @@ bool IPLocator::hasIPv4(
         const Locator_t& locator)
 {
     return locator.address[12] != 0 &&
-        locator.address[13] != 0 &&
-        locator.address[14] != 0 &&
-        locator.address[15] != 0;
+           locator.address[13] != 0 &&
+           locator.address[14] != 0 &&
+           locator.address[15] != 0;
 }
 
 std::string IPLocator::toIPv4string(
@@ -389,18 +389,19 @@ bool IPLocator::setLogicalPort(
     loc_logical[0] = port; // Logical port is stored at 2nd and 3rd bytes of port
 #else
     loc_logical[1] = port; // Logical port is stored at 2nd and 3rd bytes of port
-#endif
+#endif // if __BIG_ENDIAN__
     return port != 0;
 }
 
-uint16_t IPLocator::getLogicalPort(const Locator_t& locator)
+uint16_t IPLocator::getLogicalPort(
+        const Locator_t& locator)
 {
     const uint16_t* loc_logical = reinterpret_cast<const uint16_t*>(&locator.port);
 #if __BIG_ENDIAN__
     return loc_logical[0];
 #else
     return loc_logical[1];
-#endif
+#endif // if __BIG_ENDIAN__
 }
 
 bool IPLocator::setPhysicalPort(
@@ -412,18 +413,19 @@ bool IPLocator::setPhysicalPort(
     loc_physical[1] = port; // Physical port is stored at 0 and 1st bytes of port
 #else
     loc_physical[0] = port; // Physical port is stored at 0 and 1st bytes of port
-#endif
+#endif // if __BIG_ENDIAN__
     return port != 0;
 }
 
-uint16_t IPLocator::getPhysicalPort(const Locator_t& locator)
+uint16_t IPLocator::getPhysicalPort(
+        const Locator_t& locator)
 {
     const uint16_t* loc_physical = reinterpret_cast<const uint16_t*>(&locator.port);
 #if __BIG_ENDIAN__
     return loc_physical[1];
 #else
     return loc_physical[0];
-#endif
+#endif // if __BIG_ENDIAN__
 }
 
 // TCPv4
@@ -448,11 +450,14 @@ bool IPLocator::setWan(
     std::stringstream ss(wan);
     int a, b, c, d; //to store the 4 ints
     char ch; //to temporarily store the '.'
-    ss >> a >> ch >> b >> ch >> c >> ch >> d;
-    locator.address[8]  = (octet)a;
-    locator.address[9]  = (octet)b;
-    locator.address[10] = (octet)c;
-    locator.address[11] = (octet)d;
+
+    if( ss >> a >> ch >> b >> ch >> c >> ch >> d)
+    {
+        locator.address[8]  = (octet)a;
+        locator.address[9]  = (octet)b;
+        locator.address[10] = (octet)c;
+        locator.address[11] = (octet)d;
+    }
     return true;
 }
 
@@ -487,21 +492,28 @@ bool IPLocator::setLanID(
         Locator_t& locator,
         const std::string& lanId)
 {
-    if (locator.kind != LOCATOR_KIND_TCPv4)
-        return false;
-    std::stringstream ss(lanId);
-    int a, b, c, d, e, f, g, h; //to store the 8 ints
-    char ch; //to temporarily store the '.'
-    ss >> a >> ch >> b >> ch >> c >> ch >> d >> ch >> e >> ch >> f >> ch >> g >> ch >> h;
-    locator.address[0] = (octet)a;
-    locator.address[1] = (octet)b;
-    locator.address[2] = (octet)c;
-    locator.address[3] = (octet)d;
-    locator.address[4] = (octet)e;
-    locator.address[5] = (octet)f;
-    locator.address[6] = (octet)g;
-    locator.address[7] = (octet)h;
-    return true;
+    if (locator.kind == LOCATOR_KIND_TCPv4)
+    {
+        std::stringstream ss(lanId);
+        int a, b, c, d, e, f, g, h; //to store the 8 ints
+        char ch; //to temporarily store the '.'
+
+        if( ss >> a >> ch >> b >> ch >> c >> ch >> d >> ch >> e >> ch >> f >> ch >> g >> ch >> h)
+        {
+            locator.address[0] = (octet)a;
+            locator.address[1] = (octet)b;
+            locator.address[2] = (octet)c;
+            locator.address[3] = (octet)d;
+            locator.address[4] = (octet)e;
+            locator.address[5] = (octet)f;
+            locator.address[6] = (octet)g;
+            locator.address[7] = (octet)h;
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 const octet* IPLocator::getLanID(
@@ -670,7 +682,8 @@ bool IPLocator::compareAddressAndPhysicalPort(
     return compareAddress(loc1, loc2, true) && getPhysicalPort(loc1) == getPhysicalPort(loc2);
 }
 
-std::string IPLocator::to_string(const Locator_t& loc)
+std::string IPLocator::to_string(
+        const Locator_t& loc)
 {
     std::stringstream ss;
     if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)

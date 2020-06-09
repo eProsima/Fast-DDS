@@ -31,12 +31,12 @@ using namespace std;
 
 int main (
         int argc,
-        char *argv[])
+        char* argv[])
 {
     // skip program name argv[0] if present
     argc -= (argc > 0);
     argv += (argc > 0);
-    option::Stats  stats(usage, argc, argv);
+    option::Stats stats(usage, argc, argv);
     vector<option::Option> options(stats.options_max);
     vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);

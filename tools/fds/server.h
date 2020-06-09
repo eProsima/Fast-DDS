@@ -44,28 +44,28 @@ struct Arg : public option::Arg
 
 const option::Descriptor usage[] = {
 
-    { UNKNOWN,   0,"",   "",             Arg::None,
+    { UNKNOWN,   0, "",   "",             Arg::None,
       "\neProsima Server-Client discovery auxiliary generator tool version " FAST_SERVER_VERSION "\n"
       "\nUsage: " FAST_SERVER_BINARY " -i {0-255} [optional parameters] \nGeneral options:" },
 
-    { HELP,      0,"h",  "help",         Arg::None,
+    { HELP,      0, "h",  "help",         Arg::None,
       "  -h  \t--help       Produce help message.\n" },
 
-    { SERVERID,  0,"i", "server-id",    Arg::check_server_id,
+    { SERVERID,  0, "i", "server-id",    Arg::check_server_id,
       "  -i \t--server-id  Mandatory unique server identifier. Specifies zero based\n"
               "\t             server position in ROS_DISCOVERY_SERVER environment variable.\n" },
 
-    { IPADDRESS, 0,"l", "ip-address",   Arg::check_server_ipv4,
+    { IPADDRESS, 0, "l", "ip-address",   Arg::check_server_ipv4,
       "  -l \t--ip-address Server interface chosen to listen the clients. Defaults\n"
               "\t             to any (0.0.0.0)\n" },
 
-    { PORT,      0,"p",  "port",         Arg::check_udp_port,
+    { PORT,      0, "p",  "port",         Arg::check_udp_port,
       "  -p  \t--port       UDP port chosen to listen the clients. Defaults to 11811\n" },
 
-    { BACKUP,    0,"b",  "backup",       Arg::None,
+    { BACKUP,    0, "b",  "backup",       Arg::None,
       "  -b  \t--backup     Creates a server with a backup file associated.\n" },
 
-    { UNKNOWN,   0,"",  "",              Arg::None,
+    { UNKNOWN,   0, "",  "",              Arg::None,
       "Examples:\n"
 
       "\t1. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"

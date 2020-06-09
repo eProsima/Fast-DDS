@@ -197,10 +197,10 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // mechanism will allocate another by default. Change the default listening port is unacceptable for server
     // discovery.
     if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
-             || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
-             && pimpl->did_mutation_took_place_on_meta(
-                 PParam.builtin.metatrafficMulticastLocatorList,
-                 PParam.builtin.metatrafficUnicastLocatorList))
+            || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+            && pimpl->did_mutation_took_place_on_meta(
+                PParam.builtin.metatrafficMulticastLocatorList,
+                PParam.builtin.metatrafficUnicastLocatorList))
     {
         // we do not log an error because the library may use participant creation as a trial for server existence
         logInfo(RTPS_PARTICIPANT, "Server wasn't able to allocate the specified listening port");
@@ -374,7 +374,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         }
         else
         {
-            // if the variable is not set abort the server-client default setup 
+            // if the variable is not set abort the server-client default setup
             return nullptr;
         }
     }
@@ -392,8 +392,8 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
 
     // Retrieve the info from the environment variable
     if (!load_environment_server_info(
-            list,
-            client_att.builtin.discovery_config.m_DiscoveryServers))
+                list,
+                client_att.builtin.discovery_config.m_DiscoveryServers))
     {
         // it's not an error, the environment variable may not be set. Any issue with environment
         // variable syntax is logError already

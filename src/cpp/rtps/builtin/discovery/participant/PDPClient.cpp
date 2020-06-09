@@ -89,7 +89,7 @@ bool get_server_client_default_guidPrefix(
         int id,
         GuidPrefix_t& guid)
 {
-    if( id >= 0
+    if ( id >= 0
             && id < 256
             && std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> guid)
     {
@@ -141,7 +141,7 @@ bool load_environment_server_info(
 
                     while (++it != mr.cend())
                     {
-                        if( !IPLocator::setIPv4(server_locator, it->str()) )
+                        if ( !IPLocator::setIPv4(server_locator, it->str()) )
                         {
                             stringstream ss;
                             ss << "Wrong ipv4 address passed into the server's list " << it->str();
@@ -211,7 +211,7 @@ bool load_environment_server_info(
             throw std::invalid_argument("No default server locators were provided.");
         }
     }
-    catch( std::exception& e )
+    catch ( std::exception& e )
     {
         logError(SERVER_CLIENT_DISCOVERY, e.what());
         attributes.clear();
@@ -617,11 +617,11 @@ void PDPClient::announceParticipantState(
         CacheChange_t* change = nullptr;
 
         if ((change = pW->new_change(
-                [this]() -> uint32_t
-                {
-                    return mp_builtin->m_att.writerPayloadSize;
-                },
-                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
+                    [this]() -> uint32_t
+                    {
+                        return mp_builtin->m_att.writerPayloadSize;
+                    },
+                    NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
         {
             // update the sequence number
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();

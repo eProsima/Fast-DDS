@@ -28,7 +28,7 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class ParticipantProxyData;
@@ -41,12 +41,13 @@ class ParticipantProxyData;
 class RemoteServerAttributes
 {
 public:
-    RTPS_DllAPI inline bool operator==(const RemoteServerAttributes& r) const
+    RTPS_DllAPI inline bool operator==(
+            const RemoteServerAttributes& r) const
     {
         return guidPrefix == r.guidPrefix
-            && metatrafficUnicastLocatorList == r.metatrafficUnicastLocatorList
-            && metatrafficMulticastLocatorList == r.metatrafficMulticastLocatorList;
-            // proxy == r.proxy;
+               && metatrafficUnicastLocatorList == r.metatrafficUnicastLocatorList
+               && metatrafficMulticastLocatorList == r.metatrafficMulticastLocatorList;
+        //     && proxy == r.proxy;
     }
 
     RTPS_DllAPI void clear()
@@ -68,7 +69,8 @@ public:
     RTPS_DllAPI GUID_t GetEDPPublicationsWriter() const;
     RTPS_DllAPI GUID_t GetEDPSubscriptionsReader() const;
 
-    RTPS_DllAPI inline bool ReadguidPrefix(const char * pfx)
+    RTPS_DllAPI inline bool ReadguidPrefix(
+            const char * pfx)
     {
         return bool(std::istringstream(pfx) >> guidPrefix);
     }
@@ -82,7 +84,7 @@ public:
     GuidPrefix_t guidPrefix;
 
     // Live participant proxy reference
-    const ParticipantProxyData * proxy{};
+    const ParticipantProxyData* proxy{};
 };
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
@@ -90,7 +92,7 @@ typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 // port use if the ros environment variable doesn't specified one
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
-const char * const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.49.53.43.53.45.52.56.45.52.5F.30";
+const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.49.53.43.53.45.52.56.45.52.5F.30";
 
 /**
  * Retrieves a ; separated list of locators from an environment variable and
@@ -112,9 +114,9 @@ RTPS_DllAPI bool get_server_client_default_guidPrefix(
         int id,
         GuidPrefix_t& guid);
 
-}
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
-#endif
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_SERVERATTRIBUTES_H_ */
