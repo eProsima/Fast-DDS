@@ -73,7 +73,7 @@ add_executable(${PROJECT_NAME}
 # we pass the version as a preprocessor definition
 target_compile_definitions(${PROJECT_NAME} 
     PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\" 
-    PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_BASE_NAME:${PROJECT_NAME}>\" )
+    PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_NAME:${PROJECT_NAME}>\" )
 
 target_link_libraries(${PROJECT_NAME} fastrtps fastcdr)
 
