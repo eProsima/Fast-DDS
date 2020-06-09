@@ -77,7 +77,7 @@ static void guid_prefix_create(
 // environment variables that forces server-client discovery
 // it must contain a list of UDPv4 locators separated by ;
 // the position in the list defines the default server that listens on the locator
-constexpr char* DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
+const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
 
 std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
@@ -197,16 +197,16 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // mechanism will allocate another by default. Change the default listening port is unacceptable for server
     // discovery.
     if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
-         || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
-         && pimpl->did_mutation_took_place_on_meta(
-             PParam.builtin.metatrafficMulticastLocatorList,
-             PParam.builtin.metatrafficUnicastLocatorList))
+             || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+             && pimpl->did_mutation_took_place_on_meta(
+                 PParam.builtin.metatrafficMulticastLocatorList,
+                 PParam.builtin.metatrafficUnicastLocatorList))
     {
         // we do not log an error because the library may use participant creation as a trial for server existence
         logInfo(RTPS_PARTICIPANT, "Server wasn't able to allocate the specified listening port");
         delete pimpl;
         return nullptr;
-     }
+    }
 
     // Check there is at least one transport registered.
     if (!pimpl->networkFactoryHasRegisteredTransports())
@@ -224,7 +224,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         delete pimpl;
         return nullptr;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     {
         std::lock_guard<std::mutex> guard(m_mutex);
@@ -380,7 +380,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     }
 
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
-    if(att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
+    if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
     {
         logInfo(DOMAIN, "Detected non simple discovery protocol attributes."
                 << " Ignoring auto default client-server setup.");
@@ -391,7 +391,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     RTPSParticipantAttributes client_att(att);
 
     // Retrieve the info from the environment variable
-    if(!load_environment_server_info(
+    if (!load_environment_server_info(
             list,
             client_att.builtin.discovery_config.m_DiscoveryServers))
     {
@@ -401,13 +401,13 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     }
 
     logInfo(DOMAIN, "Detected auto client-server environment variable."
-        "Trying to create client with the default server setup.");
+            "Trying to create client with the default server setup.");
 
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
 
     RTPSParticipant* part = RTPSDomain::createParticipant(domain_id, client_att, listen);
-    if(nullptr != part)
+    if (nullptr != part)
     {
         // client successfully created
         logInfo(DOMAIN, "Auto default server-client setup. Default client created.");

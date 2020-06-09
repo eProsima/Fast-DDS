@@ -33,7 +33,9 @@ int main (
         int argc,
         char *argv[])
 {
-    argc-=(argc>0); argv+=(argc>0); // skip program name argv[0] if present
+    // skip program name argv[0] if present
+    argc -= (argc > 0);
+    argv += (argc > 0);
     option::Stats  stats(usage, argc, argv);
     vector<option::Option> options(stats.options_max);
     vector<option::Option> buffer(stats.buffer_max);
@@ -98,7 +100,7 @@ int main (
         // validation have been already done
         // Name the server according with the identifier
         if ( !( is >> server_id
-                && rtps::get_server_client_default_guidPrefix(server_id,rtps.prefix) ) )
+                && rtps::get_server_client_default_guidPrefix(server_id, rtps.prefix) ) )
         {
             cout << "The provided server identifier is not valid" << endl;
             return 1;
@@ -111,12 +113,12 @@ int main (
 
     // Choose the kind of server to create
     rtps.builtin.discovery_config.discoveryProtocol =
-        options[BACKUP] ? rtps::DiscoveryProtocol_t::BACKUP : rtps::DiscoveryProtocol_t::SERVER;
+            options[BACKUP] ? rtps::DiscoveryProtocol_t::BACKUP : rtps::DiscoveryProtocol_t::SERVER;
 
     // Set up listening locators.
     // If the number of specify ports doesn't match the number of IPs the last port is used.
     rtps::Locator_t locator(rtps::DEFAULT_ROS2_SERVER_PORT);
-    rtps::IPLocator::setIPv4(locator,0,0,0,0);
+    rtps::IPLocator::setIPv4(locator, 0, 0, 0, 0);
 
     option::Option* pO_port = options[PORT];
     pOp = options[IPADDRESS];
@@ -131,22 +133,22 @@ int main (
         while ( pOp )
         {
             // Update locator address
-            if (!rtps::IPLocator::setIPv4(locator,string(pOp->arg)))
+            if (!rtps::IPLocator::setIPv4(locator, string(pOp->arg)))
             {
                 cout << "Invalid listening locator address specified:" << pOp->arg << endl;
                 return 1;
             }
 
             // Update UDP port
-            if( nullptr != pO_port )
+            if ( nullptr != pO_port )
             {
                 stringstream is;
                 is << pO_port->arg;
                 uint16_t id;
 
                 if ( !(is >> id
-                       && is.eof()
-                       && rtps::IPLocator::setPhysicalPort(locator,id)) )
+                        && is.eof()
+                        && rtps::IPLocator::setPhysicalPort(locator, id)) )
                 {
                     cout << "Invalid listening locator port specified:" << id << endl;
                     return 1;
@@ -164,7 +166,7 @@ int main (
             else
             {
                 cout << "warning: the number of specified ports doesn't match the ip" << endl
-                    << "         addresses provided. Locators share its port number." << endl;
+                     << "         addresses provided. Locators share its port number." << endl;
             }
         }
     }
@@ -211,9 +213,9 @@ option::ArgStatus Arg::check_server_id(
         int id;
 
         if ( is >> id
-             && is.eof()
-             && id >= 0
-             && id <  256 )
+                && is.eof()
+                && id >= 0
+                && id <  256 )
         {
             return option::ARG_OK;
         }
@@ -248,7 +250,7 @@ option::ArgStatus Arg::check_server_ipv4(
     if (msg)
     {
         cout << "Option '" << option.name
-            << "' should be a proper IPv4 address." << endl;
+             << "' should be a proper IPv4 address." << endl;
     }
 
     return option::ARG_ILLEGAL;
@@ -268,9 +270,9 @@ option::ArgStatus Arg::check_udp_port(
         int id;
 
         if ( is >> id
-             && is.eof()
-             && id > 1024
-             && id < 65536 )
+                && is.eof()
+                && id > 1024
+                && id < 65536 )
         {
             return option::ARG_OK;
         }

@@ -90,8 +90,8 @@ bool get_server_client_default_guidPrefix(
         GuidPrefix_t& guid)
 {
     if( id >= 0
-        && id < 256
-        && std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> guid)
+            && id < 256
+            && std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> guid)
     {
         // Last octet denotes the default server id but to ease debugging it starts on char '0' = 48
         guid.value[11] = static_cast<octet>((48 + id) % 256);
@@ -103,8 +103,8 @@ bool get_server_client_default_guidPrefix(
 }
 
 bool load_environment_server_info(
-            std::string list,
-            RemoteServerList_t& attributes)
+        std::string list,
+        RemoteServerList_t& attributes)
 {
     using namespace std;
 
@@ -120,7 +120,11 @@ bool load_environment_server_info(
         Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
         int server_id = 0;
 
-        sregex_iterator server_it(list.begin(),list.end(),ROS2_SERVER_LIST_PATTERN,regex_constants::match_not_null);
+        sregex_iterator server_it(
+            list.begin(),
+            list.end(),
+            ROS2_SERVER_LIST_PATTERN,
+            regex_constants::match_not_null);
 
         while (server_it != sregex_iterator())
         {
@@ -131,11 +135,11 @@ bool load_environment_server_info(
                 // now we must parse the inner expression
                 smatch mr;
                 string locator(sm);
-                if (regex_match(locator, mr, ROS2_IPV4_PATTERN,regex_constants::match_not_null))
+                if (regex_match(locator, mr, ROS2_IPV4_PATTERN, regex_constants::match_not_null))
                 {
                     smatch::iterator it = mr.cbegin();
 
-                    while(++it != mr.cend())
+                    while (++it != mr.cend())
                     {
                         if( !IPLocator::setIPv4(server_locator, it->str()) )
                         {
@@ -144,13 +148,13 @@ bool load_environment_server_info(
                             throw std::invalid_argument(ss.str());
                         }
 
-                        if(IPLocator::isAny(server_locator))
+                        if (IPLocator::isAny(server_locator))
                         {
                             // A server cannot be reach in all interfaces, it's clearly a localhost call
                             IPLocator::setIPv4(server_locator, "127.0.0.1");
                         }
 
-                        if( ++it != mr.cend() )
+                        if ( ++it != mr.cend() )
                         {
                             // reset the locator to default
                             IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
@@ -176,7 +180,7 @@ bool load_environment_server_info(
                     }
 
                     // add the server to the list
-                    if (!get_server_client_default_guidPrefix(server_id,server_att.guidPrefix))
+                    if (!get_server_client_default_guidPrefix(server_id, server_att.guidPrefix))
                     {
                         throw std::invalid_argument("The maximum number of default discovery servers have been reached");
                     }
@@ -206,13 +210,13 @@ bool load_environment_server_info(
         {
             throw std::invalid_argument("No default server locators were provided.");
         }
-   }
-   catch( std::exception& e )
-   {
+    }
+    catch( std::exception& e )
+    {
         logError(SERVER_CLIENT_DISCOVERY, e.what());
         attributes.clear();
         return false;
-   }
+    }
 
     return true;
 }
@@ -613,11 +617,11 @@ void PDPClient::announceParticipantState(
         CacheChange_t* change = nullptr;
 
         if ((change = pW->new_change(
-            [this]() -> uint32_t
-            {
-                return mp_builtin->m_att.writerPayloadSize;
-            },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
+                [this]() -> uint32_t
+                {
+                    return mp_builtin->m_att.writerPayloadSize;
+                },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
         {
             // update the sequence number
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
