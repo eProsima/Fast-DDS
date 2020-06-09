@@ -1024,9 +1024,11 @@ TEST_F(SHMTransportTests, robust_exclusive_lock)
 
     // A second lock fail
     ASSERT_THROW(std::make_shared<RobustExclusiveLock>(lock_name), std::exception);
+    ASSERT_TRUE(RobustExclusiveLock::is_locked(lock_name));
 
     // Remove lock
     el1.reset();
+    ASSERT_FALSE(RobustExclusiveLock::is_locked(lock_name));
 
     bool was_created;
     el1 = std::make_shared<RobustExclusiveLock>(lock_name, &was_created);
