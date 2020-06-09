@@ -1,6 +1,6 @@
 eProsima Server-Client discovery auxiliary generator tool version 1.0.0
 
-Usage: fast-discovery-server -id {0-255} [optional parameters]
+Usage: fast-discovery-server -i {0-255} [optional parameters]
 General options:
   -h  --help       Produce help message.
 

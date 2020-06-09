@@ -46,7 +46,7 @@ const option::Descriptor usage[] = {
 
     { UNKNOWN,   0,"",   "",             Arg::None,
         "\neProsima Server-Client discovery auxiliary generator tool version " FAST_SERVER_VERSION "\n"
-        "\nUsage: " FAST_SERVER_BINARY " -id {0-255} [optional parameters] \nGeneral options:" },
+        "\nUsage: " FAST_SERVER_BINARY " -i {0-255} [optional parameters] \nGeneral options:" },
 
     { HELP,      0,"h",  "help",         Arg::None,
         "  -h  \t--help       Produce help message.\n" },
