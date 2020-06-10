@@ -782,6 +782,21 @@ ReturnCode_t DataWriterImpl::get_offered_deadline_missed_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::get_offered_incompatible_qos_status(
+        OfferedIncompatibleQosStatus& status)
+{
+    if (writer_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+
+    status = offered_incompatible_qos_status_;
+    offered_incompatible_qos_status_.total_count_change = 0;
+    return ReturnCode_t::RETCODE_OK;
+}
+
 bool DataWriterImpl::lifespan_expired()
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());

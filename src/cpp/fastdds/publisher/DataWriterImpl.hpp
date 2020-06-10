@@ -167,12 +167,11 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
-    /**
-     * @brief Returns the offered deadline missed status
-     * @param Deadline missed status struct
-     */
     ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
+
+    ReturnCode_t get_offered_incompatible_qos_status(
+            OfferedIncompatibleQosStatus& status);
 
     ReturnCode_t set_qos(
             const DataWriterQos& qos);
@@ -283,6 +282,9 @@ public:
 
     //! The offered deadline missed status
     fastrtps::OfferedDeadlineMissedStatus deadline_missed_status_;
+
+    //! The offered incompatible qos status
+    OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
 
     //! A timed callback to remove expired samples for lifespan QoS
     fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;

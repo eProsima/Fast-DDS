@@ -144,12 +144,11 @@ public:
      */
     const TopicDescription* get_topicdescription() const;
 
-    /**
-     * @brief Get the requested deadline missed status
-     * @return The deadline missed status
-     */
     ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
+
+    ReturnCode_t get_requested_incompatible_qos_status(
+            RequestedIncompatibleQosStatus& status);
 
     ReturnCode_t set_qos(
             const DataReaderQos& qos);
@@ -281,6 +280,9 @@ public:
 
     //! Requested deadline missed status
     fastrtps::RequestedDeadlineMissedStatus deadline_missed_status_;
+
+    //! Requested incompatible QoS status
+    RequestedIncompatibleQosStatus requested_incompatible_qos_status_;
 
     //! A timed callback to remove expired samples
     fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;

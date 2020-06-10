@@ -24,6 +24,7 @@
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -212,6 +213,14 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
+
+    /**
+     * @brief Get the requested incompatible qos status
+     * @param[out] status Requested incompatible qos status
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_requested_incompatible_qos_status(
+            RequestedIncompatibleQosStatus& status);
 
     /**
      * @brief Setter for the DataReaderQos

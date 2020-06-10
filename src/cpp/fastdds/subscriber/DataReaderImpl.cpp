@@ -542,6 +542,21 @@ ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
+        RequestedIncompatibleQosStatus& status)
+{
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+
+    status = requested_incompatible_qos_status_;
+    requested_incompatible_qos_status_.total_count_change = 0;
+    return ReturnCode_t::RETCODE_OK;
+}
+
 bool DataReaderImpl::lifespan_expired()
 {
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
