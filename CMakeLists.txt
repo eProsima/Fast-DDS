@@ -266,6 +266,15 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER)
 endif()
 
 ###############################################################################
+# Tools default setup 
+###############################################################################
+option(COMPILE_TOOLS "Build tools" OFF)
+
+if(EPROSIMA_BUILD AND IS_TOP_LEVEL)
+    set(COMPILE_TOOLS ON)
+endif()
+
+###############################################################################
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
@@ -293,11 +302,6 @@ endif()
 ###############################################################################
 # Tools 
 ###############################################################################
-option(COMPILE_TOOLS "Build tools" OFF)
-
-if(EPROSIMA_BUILD AND IS_TOP_LEVEL)
-    set(COMPILE_TOOLS ON)
-endif()
 
 if(COMPILE_TOOLS)
     add_subdirectory(tools)

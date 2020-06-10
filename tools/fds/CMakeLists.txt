@@ -93,7 +93,18 @@ else()
     set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 endif()
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${BIN_INSTALL_DIR} COMPONENT discovery)
+install(TARGETS ${PROJECT_NAME} 
+        EXPORT ${PROJECT_NAME}-targets
+        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+        COMPONENT discovery
+        )
+
+# export library
+install(EXPORT ${PROJECT_NAME}-targets
+        DESTINATION ${DATA_INSTALL_DIR}/${CMAKE_PROJECT_NAME}/cmake
+        NAMESPACE fastdds::
+        COMPONENT cmake
+        )
 
 # symlink creation requires install( CODE using generator expressions
 if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
