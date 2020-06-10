@@ -27,6 +27,7 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 namespace eprosima {
 
@@ -280,6 +281,14 @@ public:
             const GUID_t& writer_guid,
             int change);
 
+    void update_requested_incompatible_qos(
+            const GUID_t& reader_guid,
+            fastdds::dds::QosPolicyId_t policy_id);
+
+    void update_offered_incompatible_qos(
+            const GUID_t& writer_guid,
+            fastdds::dds::QosPolicyId_t policy_id);
+
     //! Pointer to the PDP object that contains the endpoint discovery protocol.
     PDP* mp_PDP;
     //! Pointer to the RTPSParticipant.
@@ -336,8 +345,20 @@ private:
 
     ReaderProxyData temp_reader_proxy_data_;
     WriterProxyData temp_writer_proxy_data_;
-    std::map<GUID_t, fastdds::dds::SubscriptionMatchedStatus> reader_status_;
-    std::map<GUID_t, fastdds::dds::PublicationMatchedStatus> writer_status_;
+
+    struct reader_status
+    {
+        fastdds::dds::SubscriptionMatchedStatus subscription_matched;
+        fastdds::dds::QosPolicyId_t requested_incompatible_qos;
+    };
+    std::map<GUID_t, reader_status> reader_status_;
+
+    struct writer_status
+    {
+        fastdds::dds::PublicationMatchedStatus publication_matched;
+        fastdds::dds::QosPolicyId_t offered_incompatible_qos;
+    };
+    std::map<GUID_t, writer_status> writer_status_;
 };
 
 } /* namespace rtps */

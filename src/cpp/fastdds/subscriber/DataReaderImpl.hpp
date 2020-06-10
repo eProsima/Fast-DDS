@@ -147,9 +147,6 @@ public:
     ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
-    ReturnCode_t get_requested_incompatible_qos_status(
-            RequestedIncompatibleQosStatus& status);
-
     ReturnCode_t set_qos(
             const DataReaderQos& qos);
 
@@ -169,10 +166,8 @@ public:
     ReturnCode_t get_liveliness_changed_status(
             fastrtps::LivelinessChangedStatus& status) const;
 
-    /* TODO
-       bool get_requested_incompatible_qos_status(
-            fastrtps::RequestedIncompatibleQosStatus& status) const;
-     */
+    ReturnCode_t get_requested_incompatible_qos_status(
+            RequestedIncompatibleQosStatus& status);
 
     /* TODO
        bool get_sample_lost_status(
@@ -266,6 +261,10 @@ public:
                 fastrtps::rtps::RTPSReader* reader,
                 const fastrtps::LivelinessChangedStatus& status) override;
 
+        void on_requested_incompatible_qos(
+                fastrtps::rtps::RTPSReader* reader,
+                fastdds::dds::QosPolicyId_t qos_id) override;
+
         DataReaderImpl* data_reader_;
     } reader_listener_;
 
@@ -318,6 +317,9 @@ public:
     fastrtps::TopicAttributes topic_attributes() const;
 
     void subscriber_qos_updated();
+
+    RequestedIncompatibleQosStatus& update_requested_incompatible_qos(
+            QosPolicyId_t policy_id);
 
 };
 

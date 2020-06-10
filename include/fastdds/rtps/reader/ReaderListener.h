@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 #include <mutex>
 
@@ -99,6 +100,21 @@ public:
     {
         (void)reader;
         (void)status;
+    }
+
+    /**
+     * This method is called when a new Writer is discovered, with a Topic that
+     * matches that of a local reader, but with an requested QoS that is incompatible
+     * with the one offered by the local reader
+     * @param reader Pointer to the RTPSReader.
+     * @param qos_id The ID of the incompatible Qos.
+     */
+    virtual void on_requested_incompatible_qos(
+            RTPSReader* reader,
+            fastdds::dds::QosPolicyId_t qos_id)
+    {
+        (void)reader;
+        (void)qos_id;
     }
 };
 

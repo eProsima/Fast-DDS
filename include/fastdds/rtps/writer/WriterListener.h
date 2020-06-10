@@ -21,6 +21,7 @@
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 namespace eprosima{
 namespace fastrtps{
@@ -65,6 +66,21 @@ public:
     {
         (void)writer;
         (void)info;
+    }
+
+    /**
+     * This method is called when a new Reader is discovered, with a Topic that
+     * matches that of a local writer, but with an offered QoS that is incompatible
+     * with the one requested by the local writer
+     * @param writer Pointer to the RTPSWriter.
+     * @param qos_id Identifier of the incompatible Qos.
+     */
+    virtual void on_offered_incompatible_qos(
+            RTPSWriter* writer,
+            fastdds::dds::QosPolicyId_t qos_id)
+    {
+        (void)writer;
+        (void)qos_id;
     }
 
     /**

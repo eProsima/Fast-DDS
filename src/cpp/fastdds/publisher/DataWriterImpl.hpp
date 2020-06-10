@@ -258,6 +258,10 @@ public:
                 fastrtps::rtps::RTPSWriter* writer,
                 const fastdds::dds::PublicationMatchedStatus& info) override;
 
+        void on_offered_incompatible_qos(
+                fastrtps::rtps::RTPSWriter* writer,
+                fastdds::dds::QosPolicyId_t qos_id) override;
+
         void onWriterChangeReceivedByAll(
                 fastrtps::rtps::RTPSWriter* writer,
                 fastrtps::rtps::CacheChange_t* change) override;
@@ -380,7 +384,8 @@ public:
 
     void publisher_qos_updated();
 
-
+    OfferedIncompatibleQosStatus& update_offered_incompatible_qos(
+            QosPolicyId_t policy_id);
 };
 
 } /* namespace dds */

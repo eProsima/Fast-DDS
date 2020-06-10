@@ -552,6 +552,10 @@ bool EDP::validMatching(
 {
     if (wdata->topicName() != rdata->topicName())
     {
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::INVALID_QOS_POLICY_ID);
+
         return false;
     }
 
@@ -559,51 +563,94 @@ bool EDP::validMatching(
     if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::INVALID_QOS_POLICY_ID);
         return false;
     }
+
     if (wdata->topicKind() != rdata->topicKind())
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
                                                                << rdata->topicName() << "(keyed:" << rdata->topicKind() <<
-                "), local writer publishes as keyed: " << wdata->topicKind())
+                "), local writer publishes as keyed: " << wdata->topicKind());
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::INVALID_QOS_POLICY_ID);
+
         return false;
     }
+
     if (!rdata->isAlive()) //Matching
     {
         logWarning(RTPS_EDP, "ReaderProxyData object is NOT alive");
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::INVALID_QOS_POLICY_ID);
+
         return false;
     }
+
     if ( wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS
             && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     //Means our writer is BE but the reader wants RE
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote Reader "
                                                          << rdata->guid() << " is Reliable and local writer is BE ");
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::RELIABILITY_QOS_POLICY_ID);
+
         return false;
     }
+
     if (wdata->m_qos.m_durability.kind < rdata->m_qos.m_durability.kind)
     {
         // TODO (MCC) Change log message
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):RemoteReader "
                                                          << rdata->guid() <<
                 " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::DURABILITY_QOS_POLICY_ID);
+
         return false;
     }
     if (wdata->m_qos.m_ownership.kind != rdata->m_qos.m_ownership.kind)
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote reader "
                                                          << rdata->guid() << " has different Ownership Kind");
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::OWNERSHIP_QOS_POLICY_ID);
+
         return false;
     }
     if (wdata->m_qos.m_deadline.period > rdata->m_qos.m_deadline.period)
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote reader "
                                                          << rdata->guid() << " has smaller DEADLINE period");
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::DEADLINE_QOS_POLICY_ID);
+
         return false;
     }
     if (!wdata->m_qos.m_disablePositiveACKs.enabled && rdata->m_qos.m_disablePositiveACKs.enabled)
     {
         logWarning(RTPS_EDP, "Incompatible Disable Positive Acks QoS: writer is enabled but reader is not");
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID);
+
         return false;
     }
     if (wdata->m_qos.m_liveliness.lease_duration > rdata->m_qos.m_liveliness.lease_duration)
@@ -611,11 +658,21 @@ bool EDP::validMatching(
         logWarning(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
                 << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
                 << rdata->m_qos.m_liveliness.lease_duration);
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::LIVELINESS_QOS_POLICY_ID);
+
         return false;
     }
     if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
     {
         logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < requested kind");
+
+        update_offered_incompatible_qos(
+                wdata->guid(),
+                fastdds::dds::LIVELINESS_QOS_POLICY_ID);
+
         return false;
     }
 
@@ -677,6 +734,12 @@ bool EDP::validMatching(
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "): Different Partitions");
     }
+
+    //Partition mismatch does not trigger status change
+    update_offered_incompatible_qos(
+            wdata->guid(),
+            fastdds::dds::INVALID_QOS_POLICY_ID);
+
     return matched;
 }
 
@@ -754,6 +817,9 @@ bool EDP::validMatching(
 {
     if (rdata->topicName() != wdata->topicName())
     {
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::INVALID_QOS_POLICY_ID);
         return false;
     }
 
@@ -761,6 +827,10 @@ bool EDP::validMatching(
     if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::INVALID_QOS_POLICY_ID);
         return false;
     }
 
@@ -768,7 +838,12 @@ bool EDP::validMatching(
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() <<
                 " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<
-                "), local reader subscribes as keyed: " << rdata->topicKind())
+                "), local reader subscribes as keyed: " << rdata->topicKind());
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::INVALID_QOS_POLICY_ID);
+
         return false;
     }
     if (rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS
@@ -778,6 +853,11 @@ bool EDP::validMatching(
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "): Remote Writer " << wdata->guid()
                                                          << " is Best Effort and local reader is RELIABLE "
                 );
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::RELIABILITY_QOS_POLICY_ID);
+
         return false;
     }
     if (rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
@@ -786,12 +866,22 @@ bool EDP::validMatching(
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " << wdata->guid()
                                                          << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL";
                 );
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::DURABILITY_QOS_POLICY_ID);
+
         return false;
     }
     if (rdata->m_qos.m_ownership.kind != wdata->m_qos.m_ownership.kind)
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer " << wdata->guid()
                                                          << " has different Ownership Kind");
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::OWNERSHIP_QOS_POLICY_ID);
+
         return false;
     }
     if (rdata->m_qos.m_deadline.period < wdata->m_qos.m_deadline.period)
@@ -799,11 +889,21 @@ bool EDP::validMatching(
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "
                 << wdata->topicName() << "):RemoteWriter "
                 << wdata->guid() << "has smaller DEADLINE period");
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::DEADLINE_QOS_POLICY_ID);
+
         return false;
     }
     if (rdata->m_qos.m_disablePositiveACKs.enabled && !wdata->m_qos.m_disablePositiveACKs.enabled)
     {
         logWarning(RTPS_EDP, "Incompatible Disable Positive Acks QoS: writer is enabled but reader is not");
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID);
+
         return false;
     }
     if (wdata->m_qos.m_liveliness.lease_duration > rdata->m_qos.m_liveliness.lease_duration)
@@ -811,11 +911,21 @@ bool EDP::validMatching(
         logWarning(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
                 << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
                 << rdata->m_qos.m_liveliness.lease_duration);
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::LIVELINESS_QOS_POLICY_ID);
+
         return false;
     }
     if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
     {
         logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
+
+        update_requested_incompatible_qos(
+                rdata->guid(),
+                fastdds::dds::LIVELINESS_QOS_POLICY_ID);
+
         return false;
     }
 #if HAVE_SECURITY
@@ -878,6 +988,10 @@ bool EDP::validMatching(
                 "): Different Partitions");
     }
 
+    //Partition mismatch does not trigger status change
+    update_requested_incompatible_qos(
+            rdata->guid(),
+            fastdds::dds::INVALID_QOS_POLICY_ID);
     return matched;
 
 }
@@ -933,6 +1047,12 @@ bool EDP::pairingReader(
             }
             else
             {
+                fastdds::dds::QosPolicyId_t incompatible_qos_id = reader_status_[R->getGuid()].requested_incompatible_qos;
+                if (incompatible_qos_id != fastdds::dds::INVALID_QOS_POLICY_ID && R->getListener() != nullptr)
+                {
+                    R->getListener()->on_requested_incompatible_qos(R, incompatible_qos_id);
+                }
+
                 //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
                 if (R->matched_writer_is_matched(wdatait->guid())
                         && R->matched_writer_remove(wdatait->guid()))
@@ -1016,6 +1136,12 @@ bool EDP::pairingWriter(
             }
             else
             {
+                fastdds::dds::QosPolicyId_t incompatible_qos_id = writer_status_[W->getGuid()].offered_incompatible_qos;
+                if (incompatible_qos_id != fastdds::dds::INVALID_QOS_POLICY_ID && W->getListener() != nullptr)
+                {
+                    W->getListener()->on_offered_incompatible_qos(W, incompatible_qos_id);
+                }
+
                 //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
                 if (W->matched_reader_is_matched(reader_guid) && W->matched_reader_remove(reader_guid))
                 {
@@ -1093,6 +1219,12 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
             }
             else
             {
+                fastdds::dds::QosPolicyId_t incompatible_qos_id = writer_status_[writerGUID].offered_incompatible_qos;
+                if (incompatible_qos_id != fastdds::dds::INVALID_QOS_POLICY_ID && (*wit)->getListener() != nullptr)
+                {
+                    (*wit)->getListener()->on_offered_incompatible_qos((*wit), incompatible_qos_id);
+                }
+
                 if ((*wit)->matched_reader_is_matched(reader_guid)
                         && (*wit)->matched_reader_remove(reader_guid))
                 {
@@ -1153,6 +1285,12 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                 }
                 else
                 {
+                    fastdds::dds::QosPolicyId_t incompatible_qos_id = writer_status_[writerGUID].offered_incompatible_qos;
+                    if (incompatible_qos_id != fastdds::dds::INVALID_QOS_POLICY_ID && (*wit)->getListener() != nullptr)
+                    {
+                        (*wit)->getListener()->on_offered_incompatible_qos((*wit), incompatible_qos_id);
+                    }
+
                     if ((*wit)->matched_reader_is_matched(reader_guid)
                             && (*wit)->matched_reader_remove(reader_guid))
                     {
@@ -1274,6 +1412,12 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
             }
             else
             {
+                fastdds::dds::QosPolicyId_t incompatible_qos_id = reader_status_[readerGUID].requested_incompatible_qos;
+                if (incompatible_qos_id != fastdds::dds::INVALID_QOS_POLICY_ID && (*rit)->getListener() != nullptr)
+                {
+                    (*rit)->getListener()->on_requested_incompatible_qos((*rit), incompatible_qos_id);
+                }
+
                 if ((*rit)->matched_writer_is_matched(writer_guid)
                         && (*rit)->matched_writer_remove(writer_guid))
                 {
@@ -1333,6 +1477,12 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                 }
                 else
                 {
+                    fastdds::dds::QosPolicyId_t incompatible_qos_id = reader_status_[readerGUID].requested_incompatible_qos;
+                    if (incompatible_qos_id != fastdds::dds::INVALID_QOS_POLICY_ID && (*rit)->getListener() != nullptr)
+                    {
+                        (*rit)->getListener()->on_requested_incompatible_qos((*rit), incompatible_qos_id);
+                    }
+
                     if ((*rit)->matched_writer_is_matched(writer_guid)
                             && (*rit)->matched_writer_remove(writer_guid))
                     {
@@ -1550,12 +1700,12 @@ const SubscriptionMatchedStatus& EDP::update_subscription_matched_status(
     auto it = reader_status_.find(reader_guid);
     if (it == reader_status_.end())
     {
-        auto pair = reader_status_.emplace(reader_guid, SubscriptionMatchedStatus{});
-        status = &pair.first->second;
+        auto pair = reader_status_.emplace(reader_guid, reader_status{});
+        status = &pair.first->second.subscription_matched;
     }
     else
     {
-        status = &it->second;
+        status = &it->second.subscription_matched;
     }
 
     status->current_count = change;
@@ -1576,12 +1726,12 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
     auto it = writer_status_.find(writer_guid);
     if (it == writer_status_.end())
     {
-        auto pair = writer_status_.emplace(writer_guid, PublicationMatchedStatus{});
-        status = &pair.first->second;
+        auto pair = writer_status_.emplace(writer_guid, writer_status{});
+        status = &pair.first->second.publication_matched;
     }
     else
     {
-        status = &it->second;
+        status = &it->second.publication_matched;
     }
 
     status->current_count = change;
@@ -1591,6 +1741,38 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
     status->last_subscription_handle = reader_guid;
 
     return *status;
+}
+
+void EDP::update_requested_incompatible_qos(
+        const GUID_t& reader_guid,
+        fastdds::dds::QosPolicyId_t policy_id)
+{
+    auto it = reader_status_.find(reader_guid);
+    if (it == reader_status_.end())
+    {
+        auto pair = reader_status_.emplace(reader_guid, reader_status{});
+        pair.first->second.requested_incompatible_qos = policy_id;
+    }
+    else
+    {
+        it->second.requested_incompatible_qos = policy_id;
+    }
+}
+
+void EDP::update_offered_incompatible_qos(
+        const GUID_t& writer_guid,
+        fastdds::dds::QosPolicyId_t policy_id)
+{
+    auto it = writer_status_.find(writer_guid);
+    if (it == writer_status_.end())
+    {
+        auto pair = writer_status_.emplace(writer_guid, writer_status{});
+        pair.first->second.offered_incompatible_qos = policy_id;
+    }
+    else
+    {
+        it->second.offered_incompatible_qos = policy_id;
+    }
 }
 
 }

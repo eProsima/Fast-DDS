@@ -680,6 +680,21 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
     data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
 }
 
+void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
+        RTPSWriter* /*writer*/,
+        fastdds::dds::QosPolicyId_t qos_id)
+{
+    OfferedIncompatibleQosStatus& status = data_writer_->update_offered_incompatible_qos(qos_id);
+    if (data_writer_->listener_ != nullptr)
+    {
+        data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+        status.total_count_change = 0u;
+    }
+
+    data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+}
+
+
 void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
@@ -914,6 +929,17 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
         topic_att.type_information = *type->type_information();
     }
     return topic_att;
+}
+
+OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(
+        QosPolicyId_t policy_id)
+{
+    ++offered_incompatible_qos_status_.total_count;
+    ++offered_incompatible_qos_status_.total_count_change;
+    ++offered_incompatible_qos_status_.policies[policy_id].count;
+    offered_incompatible_qos_status_.last_policy_id = policy_id;
+
+    return offered_incompatible_qos_status_;
 }
 
 void DataWriterImpl::set_qos(

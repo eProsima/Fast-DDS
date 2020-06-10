@@ -420,6 +420,20 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
 }
 
+void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
+        RTPSReader* /*reader*/,
+        fastdds::dds::QosPolicyId_t qos_id)
+{
+    RequestedIncompatibleQosStatus& status = data_reader_->update_requested_incompatible_qos(qos_id);
+    if (data_reader_->listener_ != nullptr)
+    {
+        data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+        status.total_count_change = 0u;
+    }
+
+    data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+}
+
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
 {
@@ -542,21 +556,6 @@ ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
-        RequestedIncompatibleQosStatus& status)
-{
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
-
-    status = requested_incompatible_qos_status_;
-    requested_incompatible_qos_status_.total_count_change = 0;
-    return ReturnCode_t::RETCODE_OK;
-}
-
 bool DataReaderImpl::lifespan_expired()
 {
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
@@ -667,16 +666,20 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool DataReaderImpl::get_requested_incompatible_qos_status(
-        RequestedIncompatibleQosStatus& status) const
+ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
+        RequestedIncompatibleQosStatus& status)
    {
-    (void)status;
-    // TODO Implement
-    // TODO add callback call subscriber_->subscriber_listener_->on_requested_incompatibe_qos
-    return false;
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+
+    status = requested_incompatible_qos_status_;
+    requested_incompatible_qos_status_.total_count_change = 0u;
+    return ReturnCode_t::RETCODE_OK;
    }
- */
 
 /* TODO
    bool DataReaderImpl::get_sample_lost_status(
@@ -723,6 +726,17 @@ const TopicDescription* DataReaderImpl::get_topicdescription() const
 TypeSupport DataReaderImpl::type()
 {
     return type_;
+}
+
+RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qos(
+        QosPolicyId_t policy_id)
+{
+    ++requested_incompatible_qos_status_.total_count;
+    ++requested_incompatible_qos_status_.total_count_change;
+    ++requested_incompatible_qos_status_.policies[policy_id].count;
+    requested_incompatible_qos_status_.last_policy_id = policy_id;
+
+    return requested_incompatible_qos_status_;
 }
 
 ReturnCode_t DataReaderImpl::check_qos (
