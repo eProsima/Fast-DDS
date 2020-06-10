@@ -19,15 +19,14 @@
 #ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 #define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+
 #include <cstdint>
 #include <vector>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-//!Alias of uint32_t
-using QosPolicyId_t = uint32_t;
 
 /**
  * @brief A struct storing the id of the incompatible QoS Policy and the number of times it fails
@@ -40,6 +39,11 @@ struct QosPolicyCount
             int32_t c)
         : policy_id(id)
         , count(c)
+    {
+    }
+
+    QosPolicyCount()
+        : QosPolicyCount(INVALID_QOS_POLICY_ID, 0)
     {
     }
 
@@ -65,10 +69,20 @@ struct IncompatibleQosStatus
     int32_t total_count_change = 0;
 
     //! @brief The id of the policy that was found to be incompatible the last time an incompatibility is detected
-    QosPolicyId_t last_policy_id;
+    QosPolicyId_t last_policy_id = INVALID_QOS_POLICY_ID;
 
     //! @brief A list of QosPolicyCount
     QosPolicyCountSeq policies;
+
+    IncompatibleQosStatus()
+    : policies(NEXT_QOS_POLICY_ID)
+    {
+        for (fastrtps::rtps::octet id = 0; id < NEXT_QOS_POLICY_ID; ++id)
+        {
+            policies[id].policy_id = static_cast<QosPolicyId_t>(id);
+            policies[id].count = 0;
+        }
+    }
 };
 
 //!Alias of IncompatibleQosStatus
