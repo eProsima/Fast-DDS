@@ -47,9 +47,9 @@ We are curious to get to know your use case!**
 
 ## Supported platforms
 
-* Linux [![Linux Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Linux/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Linux)
-* Windows [![Windows Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Windows/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Windows)
-* Mac [![Mac Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac)
+* Linux
+* Windows
+* Mac
 
 ## Installation Guide
 You can get either a binary distribution of *eprosima Fast DDS* or compile the library yourself from source.
