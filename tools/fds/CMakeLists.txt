@@ -103,10 +103,10 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
     # add symlink
     if( WIN32 )
         # Use powershell to generate the link
-        install( CODE "execute_process(COMMAND PowerShell -Command \"New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -ErrorAction SilentlyContinue ; if($error) { Write-Warning '${PROJECT_NAME}: On windows symlink generation requires elevation.'}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" )")
+        install( CODE "execute_process(COMMAND PowerShell -Command \"if( test-path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -PathType Leaf ) { rm ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe };New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -ErrorAction SilentlyContinue ; if($error) { Write-Warning '${PROJECT_NAME}: On windows symlink generation requires elevation.'}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" )")
     else()
         # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
-        install( CODE "execute_process(COMMAND ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}$<$<CONFIG:Debug>:d> WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\")")
+        install( CODE "execute_process(COMMAND \"if( test-path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -PathType Leaf ) { rm ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe } ; ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}$<$<CONFIG:Debug>:d>\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\")")
     endif()
 
 else()
