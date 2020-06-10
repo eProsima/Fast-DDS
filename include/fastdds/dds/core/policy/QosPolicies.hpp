@@ -45,6 +45,62 @@ namespace fastdds {
 namespace dds {
 
 /**
+ * The identifier for each QosPolicy.
+ *
+ * Each QosPolicy class has a different ID that is then used to refer
+ * to the incompatible policies on OfferedIncompatibleQosStatus
+ * and RequestedIncompatibleQosStatus.
+ */
+enum QosPolicyId_t : fastrtps::rtps::octet
+{
+    INVALID_QOS_POLICY_ID,                      //< Does not refer to any valid QosPolicy
+
+    // Standard QosPolicies
+    USERDATA_QOS_POLICY_ID,                     //< UserDataQosPolicy
+    DURABILITY_QOS_POLICY_ID,                   //< DurabilityQosPolicy
+    PRESENTATION_QOS_POLICY_ID,                 //< PresentationQosPolicy
+    DEADLINE_QOS_POLICY_ID,                     //< DeadlineQosPolicy
+    LATENCYBUDGET_QOS_POLICY_ID,                //< LatencyBudgetQosPolicy
+    OWNERSHIP_QOS_POLICY_ID,                    //< OwnershipQosPolicy
+    OWNERSHIPSTRENGTH_QOS_POLICY_ID,            //< OwnershipStrengthQosPolicy
+    LIVELINESS_QOS_POLICY_ID,                   //< LivelinessQosPolicy
+    TIMEBASEDFILTER_QOS_POLICY_ID,              //< TimeBasedFilterQosPolicy
+    PARTITION_QOS_POLICY_ID,                    //< PartitionQosPolicy
+    RELIABILITY_QOS_POLICY_ID,                  //< ReliabilityQosPolicy
+    DESTINATIONORDER_QOS_POLICY_ID,             //< DestinationOrderQosPolicy
+    HISTORY_QOS_POLICY_ID,                      //< HistoryQosPolicy
+    RESOURCELIMITS_QOS_POLICY_ID,               //< ResourceLimitsQosPolicy
+    ENTITYFACTORY_QOS_POLICY_ID,                //< EntityFactoryQosPolicy
+    WRITERDATALIFECYCLE_QOS_POLICY_ID,          //< WriterDataLifecycleQosPolicy
+    READERDATALIFECYCLE_QOS_POLICY_ID,          //< ReaderDataLifecycleQosPolicy
+    TOPICDATA_QOS_POLICY_ID,                    //< TopicDataQosPolicy
+    GROUPDATA_QOS_POLICY_ID,                    //< GroupDataQosPolicy
+    TRANSPORTPRIORITY_QOS_POLICY_ID,            //< TransportPriorityQosPolicy
+    LIFESPAN_QOS_POLICY_ID,                     //< LifespanQosPolicy
+    DURABILITYSERVICE_QOS_POLICY_ID,            //< DurabilityServiceQosPolicy
+
+    //eProsima Extensions
+    DISABLEPOSITIVEACKS_QOS_POLICY_ID,          //< DisablePositiveACKsQosPolicy
+    PARTICIPANTRESOURCELIMITS_QOS_POLICY_ID,    //< ParticipantResourceLimitsQos
+    PROPERTYPOLICY_QOS_POLICY_ID,               //< PropertyPolicyQos
+    PUBLISHMODE_QOS_POLICY_ID,                  //< PublishModeQosPolicy
+    READERRESOURCELIMITS_QOS_POLICY_ID,         //< Reader ResourceLimitsQos
+    RTPSENDPOINT_QOS_POLICY_ID,                 //< RTPSEndpointQos
+    RTPSRELIABLEREADER_QOS_POLICY_ID,           //< RTPSReliableReaderQos
+    RTPSRELIABLEWRITER_QOS_POLICY_ID,           //< RTPSReliableWriterQos
+    TRANSPORTCONFIG_QOS_POLICY_ID,              //< TransportConfigQos
+    TYPECONSISTENCY_QOS_POLICY_ID,              //< TipeConsistencyQos
+    WIREPROTOCOLCONFIG_QOS_POLICY_ID,           //< WireProtocolConfigQos
+    WRITERRESOURCELIMITS_QOS_POLICY_ID,         //< WriterResourceLimitsQos
+
+    //XTypes extensions
+    DATAREPRESENTATION_QOS_POLICY_ID,           //< DataRepresentationQosPolicy
+    TYPECONSISTENCYENFORCEMENT_QOS_POLICY_ID,   //< TypeConsistencyEnforcementQosPolicy
+
+    NEXT_QOS_POLICY_ID                          //< Keep always the last element. For internal use only
+};
+
+/**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
  */
 class QosPolicy
