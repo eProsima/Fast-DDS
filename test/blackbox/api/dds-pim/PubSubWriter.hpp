@@ -29,6 +29,7 @@
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -185,6 +186,15 @@ public:
             times_deadline_missed_ = status.total_count;
         }
 
+        void on_offered_incompatible_qos(
+                eprosima::fastdds::dds::DataWriter* datawriter,
+                const eprosima::fastdds::dds::OfferedIncompatibleQosStatus& status) override
+        {
+            (void)datawriter;
+            writer_.incompatible_qos(status);
+        }
+
+
         void on_liveliness_lost(
                 eprosima::fastdds::dds::DataWriter* datawriter,
                 const eprosima::fastrtps::LivelinessLostStatus& status) override
@@ -237,6 +247,9 @@ public:
         , discovery_result_(false)
         , onDiscovery_(nullptr)
         , times_liveliness_lost_(0)
+        , times_incompatible_qos_(0)
+        , last_incompatible_qos_(eprosima::fastdds::dds::INVALID_QOS_POLICY_ID)
+
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
@@ -515,6 +528,23 @@ public:
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
         times_liveliness_lost_++;
         liveliness_cv_.notify_one();
+    }
+
+    void wait_incompatible_qos(
+            unsigned int times = 1)
+    {
+        std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
+        incompatible_qos_cv_.wait(lock, [&](){
+            return times_incompatible_qos_ >= times;
+        });
+    }
+
+    void incompatible_qos(eprosima::fastdds::dds::OfferedIncompatibleQosStatus status)
+    {
+        std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
+        times_incompatible_qos_ = status.total_count;
+        last_incompatible_qos_ = status.last_policy_id;
+        incompatible_qos_cv_.notify_one();
     }
 
 #if HAVE_SECURITY
@@ -1030,6 +1060,23 @@ public:
         return listener_.times_liveliness_lost();
     }
 
+    unsigned int times_incompatible_qos() const
+    {
+        return times_incompatible_qos_;
+    }
+
+    eprosima::fastdds::dds::QosPolicyId_t last_incompatible_qos() const
+    {
+        return last_incompatible_qos_;
+    }
+
+    eprosima::fastdds::dds::OfferedIncompatibleQosStatus get_incompatible_qos_status() const
+    {
+        eprosima::fastdds::dds::OfferedIncompatibleQosStatus status;
+        datawriter_->get_offered_incompatible_qos_status(status);
+        return status;
+    }
+
 private:
 
     void participant_matched()
@@ -1310,6 +1357,15 @@ private:
     std::condition_variable liveliness_cv_;
     //! The number of times liveliness was lost
     unsigned int times_liveliness_lost_;
+
+    //! A mutex for incompatible qos
+    std::mutex incompatible_qos_mutex_;
+    //! A condition variable for incompatible qos
+    std::condition_variable incompatible_qos_cv_;
+    //! Number of times incompatible_qos was received
+    unsigned int times_incompatible_qos_;
+    //! Latest conflicting PolicyId
+    eprosima::fastdds::dds::QosPolicyId_t last_incompatible_qos_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;
