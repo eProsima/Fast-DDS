@@ -70,7 +70,7 @@ using fastrtps::rtps::RTPSParticipant;
 using fastrtps::rtps::ParticipantDiscoveryInfo;
 #if HAVE_SECURITY
 using fastrtps::rtps::ParticipantAuthenticationInfo;
-#endif
+#endif // if HAVE_SECURITY
 using fastrtps::rtps::ReaderDiscoveryInfo;
 using fastrtps::rtps::ReaderProxyData;
 using fastrtps::rtps::WriterDiscoveryInfo;
