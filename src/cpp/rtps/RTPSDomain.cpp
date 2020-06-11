@@ -359,6 +359,7 @@ bool RTPSDomain::removeRTPSReader(
 
 RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         uint32_t domain_id,
+        bool enabled,
         const RTPSParticipantAttributes& att,
         RTPSParticipantListener* listen /*= nullptr*/)
 {
@@ -406,7 +407,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
 
-    RTPSParticipant* part = RTPSDomain::createParticipant(domain_id, client_att, listen);
+    RTPSParticipant* part = RTPSDomain::createParticipant(domain_id, enabled, client_att, listen);
     if (nullptr != part)
     {
         // client successfully created

@@ -173,6 +173,7 @@ Participant* Domain::createParticipant(
     // that already exists.
     RTPSParticipant* part = RTPSDomain::clientServerEnvironmentCreationOverride(
         att.domainId,
+        true,
         att.rtps,
         &pspartimpl->m_rtps_listener);
 

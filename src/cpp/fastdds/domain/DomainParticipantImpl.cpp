@@ -255,12 +255,24 @@ ReturnCode_t DomainParticipantImpl::enable()
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     set_attributes_from_qos(rtps_attr, qos_);
     rtps_attr.participantID = participant_id_;
-    RTPSParticipant* part = RTPSDomain::createParticipant(domain_id_, false, rtps_attr, &rtps_listener_);
+
+    // If DEFAULT_ROS2_MASTER_URI is specified then try to create default client if
+    // that already exists.
+    RTPSParticipant* part = RTPSDomain::clientServerEnvironmentCreationOverride(
+            domain_id_,
+            false,
+            rtps_attr,
+            &rtps_listener_);
 
     if (part == nullptr)
     {
-        logError(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
-        return ReturnCode_t::RETCODE_ERROR;
+        part = RTPSDomain::createParticipant(domain_id_, false, rtps_attr, &rtps_listener_);
+
+        if(part == nullptr)
+        {
+            logError(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
+            return ReturnCode_t::RETCODE_ERROR;
+        }
     }
 
     guid_ = part->getGuid();
