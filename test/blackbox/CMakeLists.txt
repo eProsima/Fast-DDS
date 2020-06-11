@@ -274,5 +274,21 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
                 )
         endif(FASTDDS_PIM_API_TESTS)
+
+        # Add 'xfail' label to flaky tests
+        set(BLACKBOX_XFAIL_LIST XFAIL_RTPS)
+        if(FASTRTPS_API_TESTS)
+            set(BLACKBOX_XFAIL_LIST ${BLACKBOX_XFAIL_LIST} XFAIL_FASTRTPS)
+        endif()
+        if(FASTDDS_PIM_API_TESTS)
+            set(BLACKBOX_XFAIL_LIST ${BLACKBOX_XFAIL_LIST} XFAIL_DDS_PIM)
+        endif()
+
+        foreach(BLACKBOX_XFAIL_TEST ${BLACKBOX_XFAIL_LIST})
+            add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${BLACKBOX_XFAIL_TEST}.list)
+            if(SECURITY)
+                add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${BLACKBOX_XFAIL_TEST}_SECURITY.list)
+            endif()
+        endforeach()
     endif()
 endif()
