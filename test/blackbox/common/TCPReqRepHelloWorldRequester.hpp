@@ -20,7 +20,7 @@
 #ifndef _TEST_BLACKBOX_TCPReqRepHelloWorldRequester_HPP_
 #define _TEST_BLACKBOX_TCPReqRepHelloWorldRequester_HPP_
 
-#include "types/HelloWorldType.h"
+#include "../types/HelloWorldType.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/subscriber/SubscriberListener.h>

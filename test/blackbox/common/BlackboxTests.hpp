@@ -26,12 +26,12 @@
 #include <unistd.h>
 #endif
 
-#include "types/HelloWorldType.h"
-#include "types/FixedSizedType.h"
-#include "types/KeyedHelloWorldType.h"
-#include "types/StringType.h"
-#include "types/Data64kbType.h"
-#include "types/Data1mbType.h"
+#include "../types/HelloWorldType.h"
+#include "../types/FixedSizedType.h"
+#include "../types/KeyedHelloWorldType.h"
+#include "../types/StringType.h"
+#include "../types/Data64kbType.h"
+#include "../types/Data1mbType.h"
 
 #include <algorithm>
 #include <cstddef>

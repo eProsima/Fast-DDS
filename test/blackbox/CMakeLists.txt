@@ -162,7 +162,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ###############################################################################
         # Unit tests
         ###############################################################################
-        file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "RTPSBlackboxTests*.cpp")
+        file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
         set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
@@ -188,10 +188,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_include_directories(BlackboxTests_RTPS PRIVATE
             ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
-            )
+        add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE})
 
-        file(GLOB BLACKBOXTESTS_TEST_SOURCE "BlackboxTests*.cpp")
+        file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
         set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
@@ -210,8 +209,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             utils/lambda_functions.cpp
             utils/print_functions.cpp
 
-            TCPReqRepHelloWorldRequester.cpp
-            TCPReqRepHelloWorldReplier.cpp
+            common/TCPReqRepHelloWorldRequester.cpp
+            common/TCPReqRepHelloWorldReplier.cpp
             )
 
         # Prepare static discovery xml file for blackbox tests.
