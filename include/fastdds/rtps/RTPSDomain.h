@@ -197,8 +197,8 @@ private:
     static std::set<uint32_t> m_RTPSParticipantIDs;
 };
 
-}
-} /* namespace  */
+} // namespace rtps
+} /* namespace fastrtps  */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_DOMAIN_H_*/

@@ -82,8 +82,8 @@ using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
 static void set_attributes_from_qos(
-    fastrtps::rtps::RTPSParticipantAttributes& attr,
-    const DomainParticipantQos& qos)
+        fastrtps::rtps::RTPSParticipantAttributes& attr,
+        const DomainParticipantQos& qos)
 {
     attr.allocation = qos.allocation();
     attr.properties = qos.properties();
@@ -259,16 +259,16 @@ ReturnCode_t DomainParticipantImpl::enable()
     // If DEFAULT_ROS2_MASTER_URI is specified then try to create default client if
     // that already exists.
     RTPSParticipant* part = RTPSDomain::clientServerEnvironmentCreationOverride(
-            domain_id_,
-            false,
-            rtps_attr,
-            &rtps_listener_);
+        domain_id_,
+        false,
+        rtps_attr,
+        &rtps_listener_);
 
     if (part == nullptr)
     {
         part = RTPSDomain::createParticipant(domain_id_, false, rtps_attr, &rtps_listener_);
 
-        if(part == nullptr)
+        if (part == nullptr)
         {
             logError(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
             return ReturnCode_t::RETCODE_ERROR;
@@ -327,7 +327,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
 {
     bool enabled = (rtps_participant_ != nullptr);
     const DomainParticipantQos& qos_to_set = (&qos == &PARTICIPANT_QOS_DEFAULT) ?
-        DomainParticipantFactory::get_instance()->get_default_participant_qos() : qos;
+            DomainParticipantFactory::get_instance()->get_default_participant_qos() : qos;
 
     if (&qos != &PARTICIPANT_QOS_DEFAULT)
     {
@@ -474,7 +474,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     // Create InstanceHandle for the new publisher
     InstanceHandle_t pub_handle;
     create_instance_handle(pub_handle);
-    pubimpl->handle_ = pub_handle; 
+    pubimpl->handle_ = pub_handle;
 
     //SAVE THE PUBLISHER INTO MAPS
     std::lock_guard<std::mutex> lock(mtx_pubs_);
@@ -798,8 +798,8 @@ DomainParticipant* DomainParticipantImpl::get_participant()
 std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 {
     return rtps_participant_ == nullptr ?
-        std::vector<std::string> {} :
-        rtps_participant_->getParticipantNames();
+           std::vector<std::string> {} :
+           rtps_participant_->getParticipantNames();
 }
 
 Subscriber* DomainParticipantImpl::create_subscriber(
@@ -1116,7 +1116,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
     }
 }
 
-#endif
+#endif // if HAVE_SECURITY
+
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
@@ -1649,9 +1650,9 @@ std::string DomainParticipantImpl::get_inner_type_name(
     std::string str = ss.str();
     std::transform(str.begin(), str.end(), str.begin(),
             [](unsigned char c)
-    {
-        return static_cast<char>(std::tolower(c));
-    });
+            {
+                return static_cast<char>(std::tolower(c));
+            });
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
     std::replace(str.begin(), str.end(), '|', '_');
     return str;
@@ -1764,7 +1765,7 @@ void DomainParticipantImpl::create_instance_handle(
     handle.value[15] = 0x01; // Vendor specific;
     handle.value[14] = static_cast<octet>(next_instance_id_ & 0xFF);
     handle.value[13] = static_cast<octet>((next_instance_id_ >> 8) & 0xFF);
-    handle.value[12] = static_cast<octet>((next_instance_id_ >> 16) & 0xFF);;
+    handle.value[12] = static_cast<octet>((next_instance_id_ >> 16) & 0xFF);
 }
 
 }  // namespace dds
