@@ -13,42 +13,32 @@
 # limitations under the License.
 
 import argparse
-import sys
 
-from shm.parser import Parser as ShmParser
+from shm.clean import Clean
 
 
-class FastDDSParser:
-    """FastDDS tool parser."""
+class Parser:
+    """Shared-memory sub-commands parser."""
 
-    def __init__(self):
-        """Parse sys.argv[1:2].
+    def __init__(self, argv):
+        """Parse the sub-command and dispatch to the appropiate handler.
 
-        Parses the <command> and dispatch to the appropiate handler.
-        Shows usage if no command is specified.
+        Shows usage if no sub-command is specified.
         """
         parser = argparse.ArgumentParser(
-            description='FastDDS Tool',
-            usage=""" fastdds <command> [<args>]
+            description='Shared-memory commands',
+            usage=""" shm <sub-command> [<args>]
 
-        Available commands:
+            shm sub-commands:
 
-            shm     shared-memory commands
-        """)
+                clean     clean SHM zombie files
+
+            """)
 
         parser.add_argument('command', help='Command to run')
-        args = parser.parse_args(sys.argv[1:2])
+        args = parser.parse_args(argv)
 
-        if not hasattr(self, args.command):
-            print('Invalid command')
+        if args.command == 'clean':
+            Clean().run()
         else:
-            getattr(self, args.command)()
-
-    def shm(self):
-        """Shared-memory command handler."""
-        ShmParser(sys.argv[2:])
-
-
-if __name__ == '__main__':
-
-    FastDDSParser()
+            print('shm: ' + args.command + ' sub-command is not valid')
