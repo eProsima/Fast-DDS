@@ -241,6 +241,7 @@ public:
         , topic_(nullptr)
         , publisher_(nullptr)
         , datawriter_(nullptr)
+        , status_mask_(eprosima::fastdds::dds::StatusMask::all())
         , initialized_(false)
         , matched_(0)
         , participant_matched_(0)
@@ -285,7 +286,8 @@ public:
         participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230,
             participant_qos_,
-            &participant_listener_);
+            &participant_listener_,
+            status_mask_);
 
         if (participant_ != nullptr)
         {
@@ -305,7 +307,7 @@ public:
 
             if (publisher_ != nullptr && topic_ != nullptr)
             {
-                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_);
+                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
                 if (datawriter_ != nullptr)
                 {
                     std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
@@ -610,6 +612,28 @@ public:
             int times = mapPartitionCountList_.count(partition) == 0 ? 0 : mapPartitionCountList_[partition];
             return times == repeatedTimes;
         });
+    }
+
+    PubSubWriter& deactivate_status_listener(
+            eprosima::fastdds::dds::StatusMask mask)
+    {
+        eprosima::fastdds::dds::StatusMask tmp = status_mask_;
+        status_mask_ &= mask;
+        status_mask_ ^= tmp;
+        return *this;
+    }
+
+    PubSubWriter& activate_status_listener(
+            eprosima::fastdds::dds::StatusMask mask)
+    {
+        status_mask_ |= mask;
+        return *this;
+    }
+
+    PubSubWriter& reset_status_listener()
+    {
+        status_mask_ = eprosima::fastdds::dds::StatusMask::all();
+        return *this;
     }
 
     /*** Function to change QoS ***/
@@ -1333,6 +1357,7 @@ private:
     eprosima::fastdds::dds::PublisherQos publisher_qos_;
     eprosima::fastdds::dds::DataWriter* datawriter_;
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
+    eprosima::fastdds::dds::StatusMask status_mask_;
     std::string topic_name_;
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
     bool initialized_;

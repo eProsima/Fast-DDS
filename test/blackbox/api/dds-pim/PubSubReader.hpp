@@ -233,6 +233,7 @@ public:
         , topic_(nullptr)
         , subscriber_(nullptr)
         , datareader_(nullptr)
+        , status_mask_(eprosima::fastdds::dds::StatusMask::all())
         , topic_name_(topic_name)
         , initialized_(false)
         , matched_(0)
@@ -277,7 +278,8 @@ public:
         participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230,
             participant_qos_,
-            &participant_listener_);
+            &participant_listener_,
+            status_mask_);
         ASSERT_NE(participant_, nullptr);
         ASSERT_TRUE(participant_->is_enabled());
 
@@ -298,7 +300,7 @@ public:
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
-        datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_);
+        datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
         ASSERT_NE(datareader_, nullptr);
         ASSERT_TRUE(datareader_->is_enabled());
 
@@ -547,6 +549,28 @@ public:
     size_t getReceivedCount() const
     {
         return current_received_count_;
+    }
+
+    PubSubReader& deactivate_status_listener(
+            eprosima::fastdds::dds::StatusMask mask)
+    {
+        eprosima::fastdds::dds::StatusMask tmp = status_mask_;
+        status_mask_ &= mask;
+        status_mask_ ^= tmp;
+        return *this;
+    }
+
+    PubSubReader& activate_status_listener(
+            eprosima::fastdds::dds::StatusMask mask)
+    {
+        status_mask_ |= mask;
+        return *this;
+    }
+
+    PubSubReader& reset_status_listener()
+    {
+        status_mask_ = eprosima::fastdds::dds::StatusMask::all();
+        return *this;
     }
 
     /*** Function to change QoS ***/
@@ -1176,6 +1200,7 @@ private:
     eprosima::fastdds::dds::SubscriberQos subscriber_qos_;
     eprosima::fastdds::dds::DataReader* datareader_;
     eprosima::fastdds::dds::DataReaderQos datareader_qos_;
+    eprosima::fastdds::dds::StatusMask status_mask_;
     std::string topic_name_;
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
     bool initialized_;
