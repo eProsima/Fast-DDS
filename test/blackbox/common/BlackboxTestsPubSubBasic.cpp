@@ -640,20 +640,19 @@ TEST_P(PubSubBasic, PubSubIncompatibleQosListeners)
     EXPECT_EQ(incompatible_durability_reader.last_incompatible_qos(), eprosima::fastdds::dds::DURABILITY_QOS_POLICY_ID);
     EXPECT_FALSE(incompatible_durability_reader.is_matched());
 
-    // A compatible Reader on the same Topic
-    // Should match and never call incompatible QoS callbacks
+    // A compatible Reader on another Topic
+    // Should not match but never call incompatible QoS callbacks
     // Total count of incompatible QoS occurrences and latest incompatible QoS ID stay the same
-    PubSubReader<HelloWorldType> compatible_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> compatible_reader("IncompatibleTopic");
     compatible_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(compatible_reader.isInitialized());
 
-    writer.wait_discovery(std::chrono::seconds(3));
-    compatible_reader.wait_discovery(std::chrono::seconds(3));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     EXPECT_EQ(writer.times_incompatible_qos(), 2u);
     EXPECT_EQ(writer.last_incompatible_qos(), eprosima::fastdds::dds::DURABILITY_QOS_POLICY_ID);
-    EXPECT_TRUE(writer.is_matched());
+    EXPECT_FALSE(writer.is_matched());
 
     EXPECT_EQ(incompatible_reliability_reader.times_incompatible_qos(), 1u);
     EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(), eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID);
@@ -665,7 +664,7 @@ TEST_P(PubSubBasic, PubSubIncompatibleQosListeners)
 
     EXPECT_EQ(compatible_reader.times_incompatible_qos(), 0u);
     EXPECT_EQ(compatible_reader.last_incompatible_qos(), eprosima::fastdds::dds::INVALID_QOS_POLICY_ID);
-    EXPECT_TRUE(compatible_reader.is_matched());
+    EXPECT_FALSE(compatible_reader.is_matched());
 
     // Information on the inner status must match the one above
     eprosima::fastdds::dds::RequestedIncompatibleQosStatus wstatus;
@@ -773,22 +772,21 @@ TEST_P(PubSubBasic, PubSubIncompatibleQosGetters)
     EXPECT_EQ(incompatible_durability_reader.times_incompatible_qos(), 0u);
     EXPECT_EQ(incompatible_durability_reader.last_incompatible_qos(), eprosima::fastdds::dds::INVALID_QOS_POLICY_ID);
 
-    // A compatible Reader on the same Topic
-    // Should match and never increase incompatible QoS occurrences
+    // A compatible Reader on another Topic
+    // Should not match but never increase incompatible QoS occurrences
     // Total count of incompatible QoS occurrences and latest incompatible QoS ID stay the same
-    PubSubReader<HelloWorldType> compatible_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> compatible_reader("IncompatibleTopic");
     compatible_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
     ASSERT_TRUE(compatible_reader.isInitialized());
 
-    writer.wait_discovery(std::chrono::seconds(2));
-    compatible_reader.wait_discovery(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    EXPECT_TRUE(writer.is_matched());
+    EXPECT_FALSE(writer.is_matched());
     EXPECT_FALSE(incompatible_reliability_reader.is_matched());
     EXPECT_FALSE(incompatible_durability_reader.is_matched());
-    EXPECT_TRUE(compatible_reader.is_matched());
+    EXPECT_FALSE(compatible_reader.is_matched());
 
     wstatus = writer.get_incompatible_qos_status();
     EXPECT_EQ(wstatus.total_count, 2u);
