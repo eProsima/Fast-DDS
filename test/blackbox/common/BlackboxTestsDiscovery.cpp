@@ -575,6 +575,43 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
     reader.wait_discovery_result();
 }
 
+// Regression test for #8690.
+TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_depth(100).
+    endpoint_userData({'a', 'b', 'c', 'd'}).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.setOnEndpointDiscoveryFunction([&writer](const WriterDiscoveryInfo& info) -> bool {
+        if (info.info.guid() == writer.datawriter_guid())
+        {
+            std::cout << "Received USER_DATA from the writer: ";
+            for (auto i: info.info.m_qos.m_userData)
+            {
+                std::cout << i << ' ';
+            }
+            return info.info.m_qos.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+        }
+
+        return false;
+    });
+
+    reader.history_depth(100).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    reader.wait_discovery_result();
+}
+
 //! Auxiliar method for discovering participants tests
 static void discoverParticipantsTest(
         bool avoid_multicast,

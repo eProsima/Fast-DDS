@@ -298,7 +298,8 @@ public:
 
             if (publisher_ != nullptr)
             {
-                std::cout << "Created publisher " << publisher_->getGuid() << " for topic " <<
+                publisher_guid_ = publisher_->getGuid();
+                std::cout << "Created publisher " << publisher_guid_ << " for topic " <<
                     publisher_attr_.topic.topicName << std::endl;
                 initialized_ = true;
                 return;
@@ -889,6 +890,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& endpoint_userData(
+            std::vector<eprosima::fastrtps::rtps::octet> user_data)
+    {
+        publisher_attr_.qos.m_userData = user_data;
+        return *this;
+    }
+
     PubSubWriter& lease_duration(
             eprosima::fastrtps::Duration_t lease_duration,
             eprosima::fastrtps::Duration_t announce_period)
@@ -951,6 +959,11 @@ public:
     eprosima::fastrtps::rtps::GUID_t participant_guid()
     {
         return participant_guid_;
+    }
+
+    eprosima::fastrtps::rtps::GUID_t datawriter_guid()
+    {
+        return publisher_guid_;
     }
 
     bool update_partition(
@@ -1237,6 +1250,7 @@ private:
     eprosima::fastrtps::PublisherAttributes publisher_attr_;
     std::string topic_name_;
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
+    eprosima::fastrtps::rtps::GUID_t publisher_guid_;
     bool initialized_;
     std::mutex mutexDiscovery_;
     std::condition_variable cv_;

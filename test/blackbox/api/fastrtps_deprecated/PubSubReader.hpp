@@ -91,6 +91,19 @@ private:
             }
         }
 
+        void onPublisherDiscovery(
+                eprosima::fastrtps::Participant*,
+                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info)
+        {
+            if (reader_.onEndpointDiscovery_ != nullptr)
+            {
+                std::unique_lock<std::mutex> lock(reader_.mutexDiscovery_);
+                reader_.discovery_result_ |= reader_.onEndpointDiscovery_(info);
+                reader_.cvDiscovery_.notify_one();
+            }
+        }
+
+
 #if HAVE_SECURITY
         void onParticipantAuthentication(
                 eprosima::fastrtps::Participant*,
@@ -230,6 +243,7 @@ public:
         , number_samples_expected_(0)
         , discovery_result_(false)
         , onDiscovery_(nullptr)
+        , onEndpointDiscovery_(nullptr)
         , take_(take)
 #if HAVE_SECURITY
         , authorized_(0)
@@ -968,6 +982,12 @@ public:
         onDiscovery_ = f;
     }
 
+    void setOnEndpointDiscoveryFunction(
+            std::function<bool(const eprosima::fastrtps::rtps::WriterDiscoveryInfo&)> f)
+    {
+        onEndpointDiscovery_ = f;
+    }
+
     bool takeNextData(
             void* data)
     {
@@ -1147,6 +1167,7 @@ private:
     bool discovery_result_;
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastrtps::rtps::WriterDiscoveryInfo& info)> onEndpointDiscovery_;
 
     //! True to take data from history. False to read
     bool take_;
