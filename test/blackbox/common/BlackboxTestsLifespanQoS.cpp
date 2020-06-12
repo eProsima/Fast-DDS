@@ -157,11 +157,12 @@ TEST_P(LifespanQos, ShortLifespan)
 INSTANTIATE_TEST_CASE_P(LifespanQos,
         LifespanQos,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<LifespanQos::ParamType>& info) {
-    if (info.param)
-    {
-        return "Intraprocess";
-    }
-    return "NonIntraprocess";
-});
+        [](const testing::TestParamInfo<LifespanQos::ParamType>& info)
+        {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 

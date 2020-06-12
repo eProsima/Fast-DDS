@@ -20,7 +20,7 @@
 #ifndef _TEST_BLACKBOX_TCPReqRepHelloWorldRequester_HPP_
 #define _TEST_BLACKBOX_TCPReqRepHelloWorldRequester_HPP_
 
-#include "types/HelloWorldType.h"
+#include "../types/HelloWorldType.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -38,7 +38,7 @@
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 
 
@@ -48,7 +48,7 @@ public:
 
     class ReplyListener : public eprosima::fastrtps::SubscriberListener
     {
-public:
+    public:
 
         ReplyListener(
                 TCPReqRepHelloWorldRequester& requester)
@@ -72,17 +72,18 @@ public:
             }
         }
 
-private:
+    private:
 
         ReplyListener& operator =(
                 const ReplyListener&) = delete;
 
         TCPReqRepHelloWorldRequester& requester_;
-    } reply_listener_;
+    }
+    reply_listener_;
 
     class RequestListener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         RequestListener(
                 TCPReqRepHelloWorldRequester& requester)
@@ -104,14 +105,15 @@ public:
             }
         }
 
-private:
+    private:
 
         RequestListener& operator =(
                 const RequestListener&) = delete;
 
         TCPReqRepHelloWorldRequester& requester_;
 
-    } request_listener_;
+    }
+    request_listener_;
 
     TCPReqRepHelloWorldRequester();
     virtual ~TCPReqRepHelloWorldRequester();

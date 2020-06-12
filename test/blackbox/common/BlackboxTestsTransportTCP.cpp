@@ -24,7 +24,7 @@ using namespace eprosima::fastrtps::rtps;
 
 #if TLS_FOUND
 static const char* certs_path = nullptr;
-#endif
+#endif // if TLS_FOUND
 
 // TCP and Domain management with logical ports tests
 TEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
@@ -393,7 +393,8 @@ void tls_init()
         exit(-1);
     }
 }
-#endif
+
+#endif // if TLS_FOUND
 
 // Regression test for ShrinkLocators/transform_remote_locators mechanism.
 TEST(BlackBox, TCPLocalhost)

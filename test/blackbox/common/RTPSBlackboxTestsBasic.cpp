@@ -50,6 +50,7 @@ public:
             xmlparser::XMLProfileManager::library_settings(library_settings);
         }
     }
+
 };
 
 TEST_P(RTPS, RTPSAsNonReliableSocket)
@@ -362,7 +363,8 @@ TEST_P(RTPS, RTPSAsReliableVolatileSocket)
 INSTANTIATE_TEST_CASE_P(RTPS,
         RTPS,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<RTPS::ParamType>& info) {
+        [](const testing::TestParamInfo<RTPS::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";

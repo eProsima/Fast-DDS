@@ -299,11 +299,12 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
 INSTANTIATE_TEST_CASE_P(Persistence,
         Persistence,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<Persistence::ParamType>& info) {
+        [](const testing::TestParamInfo<Persistence::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";
             }
             return "NonIntraprocess";
         });
-#endif
+#endif // if HAVE_SQLITE3

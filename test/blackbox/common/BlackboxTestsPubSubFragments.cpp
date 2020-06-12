@@ -62,12 +62,12 @@ protected:
         PubSubWriter<Data1mbType> writer(topic_name);
 
         reader
-            .socket_buffer_size(1048576)    // accomodate large and fast fragments
-            .history_depth(static_cast<int32_t>(data.size()))
-            .reliability(reliable ?
+        .socket_buffer_size(1048576)        // accomodate large and fast fragments
+        .history_depth(static_cast<int32_t>(data.size()))
+        .reliability(reliable ?
                 eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
                 eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .init();
+        .init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -87,11 +87,11 @@ protected:
         }
 
         writer
-            .history_depth(static_cast<int32_t>(data.size()))
-            .reliability(reliable ?
+        .history_depth(static_cast<int32_t>(data.size()))
+        .reliability(reliable ?
                 eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
                 eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .init();
+        .init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -115,6 +115,7 @@ protected:
             reader.block_for_at_least(2);
         }
     }
+
 };
 
 TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
@@ -300,7 +301,7 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditionsSmallFragme
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -324,7 +325,7 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditionsSmallFragme
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(5).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -450,7 +451,8 @@ TEST(PubSubFragments, AsyncFragmentSizeTest)
 INSTANTIATE_TEST_CASE_P(PubSubFragments,
         PubSubFragments,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<PubSubFragments::ParamType>& info) {
+        [](const testing::TestParamInfo<PubSubFragments::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";

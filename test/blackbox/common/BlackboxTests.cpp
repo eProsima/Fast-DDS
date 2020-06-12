@@ -92,10 +92,10 @@ int main(
 
 #if HAVE_SECURITY
     blackbox_security_init();
-#endif
+#endif // if HAVE_SECURITY
 #if TLS_FOUND
     tls_init();
-#endif
+#endif // if TLS_FOUND
 
     return RUN_ALL_TESTS();
 }

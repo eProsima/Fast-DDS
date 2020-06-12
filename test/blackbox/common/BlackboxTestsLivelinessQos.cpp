@@ -1670,11 +1670,12 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
 INSTANTIATE_TEST_CASE_P(LivelinessQos,
         LivelinessQos,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<LivelinessQos::ParamType>& info) {
-    if (info.param)
-    {
-        return "Intraprocess";
-    }
-    return "NonIntraprocess";
-});
+        [](const testing::TestParamInfo<LivelinessQos::ParamType>& info)
+        {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 

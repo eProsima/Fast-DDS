@@ -162,7 +162,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ###############################################################################
         # Unit tests
         ###############################################################################
-        file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "RTPSBlackboxTests*.cpp")
+        file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
         set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
@@ -188,10 +188,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_include_directories(BlackboxTests_RTPS PRIVATE
             ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
-            )
+        add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE})
 
-        file(GLOB BLACKBOXTESTS_TEST_SOURCE "BlackboxTests*.cpp")
+        file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
         set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
@@ -210,8 +209,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             utils/lambda_functions.cpp
             utils/print_functions.cpp
 
-            TCPReqRepHelloWorldRequester.cpp
-            TCPReqRepHelloWorldReplier.cpp
+            common/TCPReqRepHelloWorldRequester.cpp
+            common/TCPReqRepHelloWorldReplier.cpp
             )
 
         # Prepare static discovery xml file for blackbox tests.
@@ -275,5 +274,21 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
                 )
         endif(FASTDDS_PIM_API_TESTS)
+
+        # Add 'xfail' label to flaky tests
+        set(BLACKBOX_XFAIL_LIST XFAIL_RTPS)
+        if(FASTRTPS_API_TESTS)
+            set(BLACKBOX_XFAIL_LIST ${BLACKBOX_XFAIL_LIST} XFAIL_FASTRTPS)
+        endif()
+        if(FASTDDS_PIM_API_TESTS)
+            set(BLACKBOX_XFAIL_LIST ${BLACKBOX_XFAIL_LIST} XFAIL_DDS_PIM)
+        endif()
+
+        foreach(BLACKBOX_XFAIL_TEST ${BLACKBOX_XFAIL_LIST})
+            add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${BLACKBOX_XFAIL_TEST}.list)
+            if(SECURITY)
+                add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${BLACKBOX_XFAIL_TEST}_SECURITY.list)
+            endif()
+        endforeach()
     endif()
 endif()

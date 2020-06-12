@@ -56,8 +56,8 @@ TEST(KeyedTopic, RegistrationFail)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-        resource_limits_max_instances(1).
-        init();
+    resource_limits_max_instances(1).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -73,8 +73,8 @@ TEST(KeyedTopic, UnregistrationFail)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-        resource_limits_max_instances(1).
-        init();
+    resource_limits_max_instances(1).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -91,8 +91,8 @@ TEST(KeyedTopic, DisposeFail)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-        resource_limits_max_instances(1).
-        init();
+    resource_limits_max_instances(1).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -109,8 +109,8 @@ TEST(KeyedTopic, RegistrationAfterUnregistration)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-        resource_limits_max_instances(1).
-        init();
+    resource_limits_max_instances(1).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -136,8 +136,8 @@ TEST(KeyedTopic, RegistrationAfterDispose)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-        resource_limits_max_instances(1).
-        init();
+    resource_limits_max_instances(1).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -160,8 +160,8 @@ TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        init();
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    init();
 
     ASSERT_TRUE(writer.isInitialized());
 

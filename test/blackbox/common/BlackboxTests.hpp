@@ -15,7 +15,9 @@
 #ifndef __BLACKBOX_BLACKBOXTESTS_HPP__
 #define __BLACKBOX_BLACKBOXTESTS_HPP__
 
-#define TEST_TOPIC_NAME std::string(::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string("_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
+#define TEST_TOPIC_NAME std::string( \
+        ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string( \
+            "_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -24,14 +26,14 @@
 #define GET_PID getpid
 #include <sys/types.h>
 #include <unistd.h>
-#endif
+#endif // if defined(_WIN32)
 
-#include "types/HelloWorldType.h"
-#include "types/FixedSizedType.h"
-#include "types/KeyedHelloWorldType.h"
-#include "types/StringType.h"
-#include "types/Data64kbType.h"
-#include "types/Data1mbType.h"
+#include "../types/HelloWorldType.h"
+#include "../types/FixedSizedType.h"
+#include "../types/KeyedHelloWorldType.h"
+#include "../types/StringType.h"
+#include "../types/Data64kbType.h"
+#include "../types/Data1mbType.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -41,10 +43,10 @@
 
 #if HAVE_SECURITY
 extern void blackbox_security_init();
-#endif
+#endif // if HAVE_SECURITY
 #if TLS_FOUND
 extern void tls_init();
-#endif
+#endif // if TLS_FOUND
 
 extern uint16_t global_port;
 
@@ -137,7 +139,8 @@ std::list<Data1mb> default_data300kb_data_generator(
 std::list<Data1mb> default_data300kb_mix_data_generator(
         size_t max = 0);
 
-std::list<Data1mb> default_data96kb_data300kb_data_generator(size_t max = 0);
+std::list<Data1mb> default_data96kb_data300kb_data_generator(
+        size_t max = 0);
 
 /****** Auxiliary lambda functions  ******/
 extern const std::function<void(const HelloWorld&)>  default_helloworld_print;

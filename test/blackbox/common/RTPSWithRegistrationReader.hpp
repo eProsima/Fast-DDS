@@ -57,7 +57,7 @@ private:
 
     class Listener : public eprosima::fastrtps::rtps::ReaderListener
     {
-public:
+    public:
 
         Listener(
                 RTPSWithRegistrationReader& reader)
@@ -89,13 +89,14 @@ public:
             }
         }
 
-private:
+    private:
 
         Listener& operator =(
                 const Listener&) = delete;
 
         RTPSWithRegistrationReader& reader_;
-    } listener_;
+    }
+    listener_;
 
 public:
 
@@ -240,26 +241,29 @@ public:
 
     void block_for_all()
     {
-        block([this]() -> bool {
-            return number_samples_expected_ == current_received_count_;
-        });
+        block([this]() -> bool
+                {
+                    return number_samples_expected_ == current_received_count_;
+                });
     }
 
     size_t block_for_at_least(
             size_t at_least)
     {
-        block([this, at_least]() -> bool {
-            return current_received_count_ >= at_least;
-        });
+        block([this, at_least]() -> bool
+                {
+                    return current_received_count_ >= at_least;
+                });
         return current_received_count_;
     }
 
     void block_until_seq_number_greater_or_equal(
             const eprosima::fastrtps::rtps::SequenceNumber_t& min_seq)
     {
-        block([this, min_seq]() -> bool {
-            return last_seq_ >= min_seq;
-        });
+        block([this, min_seq]() -> bool
+                {
+                    return last_seq_ >= min_seq;
+                });
     }
 
     eprosima::fastrtps::rtps::SequenceNumber_t get_last_received_sequence_number() const
@@ -273,9 +277,10 @@ public:
 
         if (matched_ == 0)
         {
-            cvDiscovery_.wait(lock, [this]() -> bool {
-                return matched_ != 0;
-            });
+            cvDiscovery_.wait(lock, [this]() -> bool
+                    {
+                        return matched_ != 0;
+                    });
         }
     }
 
@@ -361,14 +366,14 @@ public:
         reader_attr_.endpoint.persistence_guid.entityId = 0x55555555;
 
         std::cout << "Initializing persistent READER " << reader_attr_.endpoint.persistence_guid << " with file " <<
-                filename << std::endl;
+            filename << std::endl;
 
         return durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT)
                .add_property("dds.persistence.plugin", "builtin.SQLITE3")
                .add_property("dds.persistence.sqlite3.filename", filename);
     }
 
-#endif
+#endif // if HAVE_SQLITE3
 
 private:
 
