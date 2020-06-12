@@ -160,7 +160,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
     while (data.size() > 1)
     {
         auto data_backup(data);
-        decltype(data)expected_data;
+        decltype(data) expected_data;
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
 
@@ -566,10 +566,11 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
 INSTANTIATE_TEST_CASE_P(PubSubHistory,
         PubSubHistory,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<PubSubHistory::ParamType>& info) {
-    if (info.param)
-    {
-        return "Intraprocess";
-    }
-    return "NonIntraprocess";
-});
+        [](const testing::TestParamInfo<PubSubHistory::ParamType>& info)
+        {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });

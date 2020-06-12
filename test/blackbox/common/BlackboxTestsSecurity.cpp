@@ -54,6 +54,7 @@ public:
             xmlparser::XMLProfileManager::library_settings(library_settings);
         }
     }
+
 };
 
 TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
@@ -341,37 +342,37 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_transport_ok)
     PropertyPolicy pub_property_policy, sub_property_policy;
 
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-        "builtin.PKI-DH"));
+            "builtin.PKI-DH"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-        "file://" + std::string(certs_path) + "/maincacert.pem"));
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-        "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+            "file://" + std::string(certs_path) + "/mainsubcert.pem"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-        "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+            "file://" + std::string(certs_path) + "/mainsubkey.pem"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-        "builtin.AES-GCM-GMAC"));
+            "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-        property_policy(sub_property_policy).init();
+    property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-        "builtin.PKI-DH"));
+            "builtin.PKI-DH"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-        "file://" + std::string(certs_path) + "/maincacert.pem"));
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-        "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+            "file://" + std::string(certs_path) + "/mainpubcert.pem"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-        "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+            "file://" + std::string(certs_path) + "/mainpubkey.pem"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-        "builtin.AES-GCM-GMAC"));
+            "builtin.AES-GCM-GMAC"));
     pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        property_policy(pub_property_policy).init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -415,37 +416,37 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_udp_transport_ok)
     PropertyPolicy pub_property_policy, sub_property_policy;
 
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-        "builtin.PKI-DH"));
+            "builtin.PKI-DH"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-        "file://" + std::string(certs_path) + "/maincacert.pem"));
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-        "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+            "file://" + std::string(certs_path) + "/mainsubcert.pem"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-        "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+            "file://" + std::string(certs_path) + "/mainsubkey.pem"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-        "builtin.AES-GCM-GMAC"));
+            "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-        property_policy(sub_property_policy).init();
+    property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-        "builtin.PKI-DH"));
+            "builtin.PKI-DH"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-        "file://" + std::string(certs_path) + "/maincacert.pem"));
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-        "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+            "file://" + std::string(certs_path) + "/mainpubcert.pem"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-        "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+            "file://" + std::string(certs_path) + "/mainpubkey.pem"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-        "builtin.AES-GCM-GMAC"));
+            "builtin.AES-GCM-GMAC"));
     pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        property_policy(pub_property_policy).init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -2274,19 +2275,19 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool
-    {
-        if (info.info.m_guid == writer.participant_guid())
-        {
-            std::cout << "Received USER_DATA from the writer: ";
-            for (auto i : info.info.m_userData)
             {
-                std::cout << i << ' ';
-            }
-            return info.info.m_userData == std::vector<octet>({ 'a', 'b', 'c', 'd', 'e' });
-        }
+                if (info.info.m_guid == writer.participant_guid())
+                {
+                    std::cout << "Received USER_DATA from the writer: ";
+                    for (auto i : info.info.m_userData)
+                    {
+                        std::cout << i << ' ';
+                    }
+                    return info.info.m_userData == std::vector<octet>({ 'a', 'b', 'c', 'd', 'e' });
+                }
 
-        return false;
-    });
+                return false;
+            });
 
     reader.history_depth(100).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
@@ -2381,7 +2382,9 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
     reader.block_for_all();
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2390,7 +2393,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2399,7 +2404,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2408,8 +2415,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2418,7 +2426,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2427,7 +2437,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2436,7 +2448,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2445,8 +2459,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2455,7 +2470,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2464,7 +2481,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2473,7 +2492,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2482,8 +2503,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2492,7 +2514,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2501,7 +2525,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2510,7 +2536,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2520,7 +2548,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
 }
 
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2529,7 +2559,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2538,7 +2570,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2547,7 +2581,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2556,8 +2592,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2566,7 +2603,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2575,7 +2614,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2584,7 +2625,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2594,7 +2637,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
 }
 
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2603,7 +2648,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2612,7 +2659,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2621,7 +2670,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2630,8 +2681,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2640,7 +2692,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2649,7 +2703,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2658,7 +2714,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2667,8 +2725,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2677,7 +2736,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2686,7 +2747,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2695,7 +2758,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2704,8 +2769,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2714,7 +2780,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2723,7 +2791,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2732,7 +2802,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2741,8 +2813,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2751,7 +2824,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2760,7 +2835,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2769,7 +2846,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2778,8 +2857,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2788,7 +2868,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2797,7 +2879,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2806,7 +2890,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2815,8 +2901,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2825,7 +2912,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2834,7 +2923,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2843,7 +2934,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2852,8 +2945,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2862,7 +2956,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2871,7 +2967,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2880,7 +2978,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2889,8 +2989,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2899,7 +3000,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2908,7 +3011,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2917,7 +3022,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2926,8 +3033,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2936,7 +3044,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2945,7 +3055,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2954,7 +3066,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2963,8 +3077,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-
+// *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2987,7 +3102,8 @@ void blackbox_security_init()
 INSTANTIATE_TEST_CASE_P(Security,
         Security,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<Security::ParamType>& info) {
+        [](const testing::TestParamInfo<Security::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";
@@ -2996,4 +3112,4 @@ INSTANTIATE_TEST_CASE_P(Security,
         });
 
 
-#endif
+#endif // if HAVE_SECURITY

@@ -133,10 +133,11 @@ public:
         while (it != msgs.end())
         {
             eprosima::fastrtps::rtps::CacheChange_t* ch = writer_->new_change([&]() -> uint32_t
-            {
-                size_t current_alignment =  4 + magicword_.size() + 1;
-                return (uint32_t)(current_alignment + type::getCdrSerializedSize(*it, current_alignment));
-            }
+                            {
+                                size_t current_alignment =  4 + magicword_.size() + 1;
+                                return (uint32_t)(current_alignment + type::getCdrSerializedSize(*it,
+                                current_alignment));
+                            }
                             , eprosima::fastrtps::rtps::ALIVE);
 
             eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);

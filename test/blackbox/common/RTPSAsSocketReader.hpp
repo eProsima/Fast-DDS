@@ -49,7 +49,7 @@
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 using eprosima::fastrtps::rtps::IPLocator;
 
@@ -65,7 +65,7 @@ private:
 
     class Listener : public eprosima::fastrtps::rtps::ReaderListener
     {
-public:
+    public:
 
         Listener(
                 RTPSAsSocketReader& reader)
@@ -87,13 +87,14 @@ public:
             reader_.receive_one(reader, change);
         }
 
-private:
+    private:
 
         Listener& operator =(
                 const Listener&) = delete;
 
         RTPSAsSocketReader& reader_;
-    } listener_;
+    }
+    listener_;
 
 public:
 
@@ -232,17 +233,19 @@ public:
 
     void block_for_all()
     {
-        block([this]() -> bool {
-            return number_samples_expected_ == current_received_count_;
-        });
+        block([this]() -> bool
+                {
+                    return number_samples_expected_ == current_received_count_;
+                });
     }
 
     size_t block_for_at_least(
             size_t at_least)
     {
-        block([this, at_least]() -> bool {
-            return current_received_count_ >= at_least;
-        });
+        block([this, at_least]() -> bool
+                {
+                    return current_received_count_ >= at_least;
+                });
         return current_received_count_;
     }
 

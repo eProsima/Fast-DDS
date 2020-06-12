@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #ifndef FASTDDS_SHM_TRANSPORT_DISABLED
-        
+
 #include "BlackboxTests.hpp"
 
 #include "PubSubReader.hpp"
@@ -86,21 +86,21 @@ TEST(SHM, Test300KFragmentation)
     uint32_t big_buffers_send_count = 0;
     uint32_t big_buffers_recv_count = 0;
     shm_transport->big_buffer_size_ = shm_transport->segment_size() / 3;
-    shm_transport->big_buffer_size_send_count_= &big_buffers_send_count;
+    shm_transport->big_buffer_size_send_count_ = &big_buffers_send_count;
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
-    
+
     writer
-        .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .init();
+    .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .init();
 
     reader
-        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .init();
+    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -129,7 +129,7 @@ TEST(SHM, Test300KNoFragmentation)
 
     auto data = default_data300kb_data_generator(1);
     auto data_size = data.front().data().size();
-    
+
     auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
@@ -140,19 +140,19 @@ TEST(SHM, Test300KNoFragmentation)
     shm_transport->big_buffer_size_ = static_cast<uint32_t>(data_size);
     shm_transport->big_buffer_size_send_count_ = &big_buffers_send_count;
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
-    
+
     writer
-        .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .init();    
+    .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .init();
 
     reader
-        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .init();
+    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -204,17 +204,17 @@ TEST(SHM, SHM_UDP_300KFragmentation)
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .add_user_transport_to_pparams(udp_transport)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .add_user_transport_to_pparams(udp_transport)
+    .init();
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .add_user_transport_to_pparams(udp_transport)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .add_user_transport_to_pparams(udp_transport)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -256,7 +256,7 @@ TEST(SHM, UDPvsSHM_UDP)
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
-    
+
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
     uint32_t big_buffers_send_count = 0;
@@ -268,16 +268,16 @@ TEST(SHM, UDPvsSHM_UDP)
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(udp_transport)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(udp_transport)
+    .init();
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .add_user_transport_to_pparams(udp_transport)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .add_user_transport_to_pparams(udp_transport)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -318,22 +318,22 @@ TEST(SHM, SHM_UDPvsUDP)
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
-    
+
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(shm_transport)
-        .add_user_transport_to_pparams(udp_transport)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(shm_transport)
+    .add_user_transport_to_pparams(udp_transport)
+    .init();
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(udp_transport)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(udp_transport)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());

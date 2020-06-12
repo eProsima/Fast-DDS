@@ -151,15 +151,17 @@ void TCPReqRepHelloWorldReplier::wait_discovery(
 
     if (timeout == std::chrono::seconds::zero())
     {
-        cvDiscovery_.wait(lock, [&](){
-            return matched_ > 1;
-        });
+        cvDiscovery_.wait(lock, [&]()
+                {
+                    return matched_ > 1;
+                });
     }
     else
     {
-        cvDiscovery_.wait_for(lock, timeout, [&](){
-            return matched_ > 1;
-        });
+        cvDiscovery_.wait_for(lock, timeout, [&]()
+                {
+                    return matched_ > 1;
+                });
     }
 
     std::cout << "Replier discovery phase finished" << std::endl;
