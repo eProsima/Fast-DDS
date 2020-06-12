@@ -47,6 +47,8 @@ class ReaderHistory
             return ret;
         }
 
+        inline RecursiveTimedMutex* getMutex() { return mp_mutex; }
+
     protected:
 
         RTPSReader* mp_reader;

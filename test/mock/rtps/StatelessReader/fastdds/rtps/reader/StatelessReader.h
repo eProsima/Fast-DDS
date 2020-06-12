@@ -34,6 +34,9 @@ class StatelessReader : public RTPSReader
         MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
 
         MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
+
+        MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
+
 };
 
 } // namespace rtps

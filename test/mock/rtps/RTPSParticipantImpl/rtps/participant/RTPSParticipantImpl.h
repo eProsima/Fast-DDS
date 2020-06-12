@@ -35,6 +35,7 @@
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <rtps/security/SecurityManager.h>
 #endif
 
 #include <gmock/gmock.h>
@@ -86,7 +87,7 @@ public:
         events_.init_thread();
     }
 
-    MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes& ());
+    MOCK_CONST_METHOD0(get_domain_id, uint32_t());
 
     MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
 
@@ -99,6 +100,11 @@ public:
 
     MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security,
             bool(const GUID_t&, const WriterProxyData& remote_writer_data));
+
+    MOCK_CONST_METHOD0(is_secure, bool ());
+
+    MOCK_METHOD0(security_manager, security::SecurityManager& ());
+
 #endif
 
     MOCK_METHOD1(setGuid, void(GUID_t &));
@@ -116,6 +122,9 @@ public:
     MOCK_METHOD0(userWritersListBegin, std::vector<RTPSWriter*>::iterator ());
     MOCK_METHOD0(userWritersListEnd, std::vector<RTPSWriter*>::iterator ());
 
+    MOCK_METHOD0(userReadersListBegin, std::vector<RTPSReader*>::iterator ());
+    MOCK_METHOD0(userReadersListEnd, std::vector<RTPSReader*>::iterator ());
+
     MOCK_METHOD0(async_thread, AsyncWriterThread & ());
 
     MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
@@ -125,8 +134,8 @@ public:
             WriterAttributes& param,
             WriterHistory* hist,
             WriterListener* listen,
-            const EntityId_t& entityId,
-            bool isBuiltin)
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false)
     {
         bool ret = createWriter_mock(writer, param, hist, listen, entityId, isBuiltin);
         if (*writer != nullptr)
@@ -141,9 +150,9 @@ public:
             ReaderAttributes& param,
             ReaderHistory* hist,
             ReaderListener* listen,
-            const EntityId_t& entityId,
-            bool isBuiltin,
-            bool enable)
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false,
+            bool enable = true)
     {
         bool ret = createReader_mock(reader, param, hist, listen, entityId, isBuiltin, enable);
         if (*reader != nullptr)
@@ -196,13 +205,23 @@ public:
         return 65536;
     }
 
-    MOCK_CONST_METHOD0(get_domain_id, uint32_t());
+    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
+    {
+        return attr_;
+    }
+
+    RTPSParticipantAttributes& getAttributes()
+    {
+        return attr_;
+    }
 
 private:
 
     MockParticipantListener listener_;
 
     ResourceEvent events_;
+
+    RTPSParticipantAttributes attr_;
 };
 
 } // namespace rtps

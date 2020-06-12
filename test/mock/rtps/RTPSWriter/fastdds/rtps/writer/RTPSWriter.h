@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 
@@ -43,6 +44,15 @@ class RTPSWriter : public Endpoint
 
         virtual bool matched_reader_remove(const GUID_t& ratt) = 0;
 
+        virtual bool matched_reader_is_matched(const GUID_t& rguid) = 0;
+
+        WriterListener* getListener() const
+        {
+            return listener_;
+        }
+
+        MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+
         MOCK_METHOD3(new_change, CacheChange_t*(const std::function<uint32_t()>&,
             ChangeKind_t, InstanceHandle_t));
 
@@ -50,7 +60,8 @@ class RTPSWriter : public Endpoint
 
         MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl*());
 
-        WriterHistory* history_;
+        MOCK_METHOD0 (getTypeMaxSerialized, uint32_t());
+
 
         virtual bool process_acknack(
             const GUID_t& writer_guid,
@@ -65,6 +76,12 @@ class RTPSWriter : public Endpoint
             result = false;
             return true;
         }
+
+        WriterHistory* history_;
+
+        WriterListener* listener_;
+
+        const GUID_t m_guid;
 };
 
 } // namespace rtps

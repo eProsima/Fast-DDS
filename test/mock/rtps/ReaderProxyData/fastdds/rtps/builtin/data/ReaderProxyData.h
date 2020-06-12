@@ -28,6 +28,8 @@
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif
 
+#include <gmock/gmock.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -42,6 +44,14 @@ class ReaderProxyData
                 size_t max_unicast_locators,
                 size_t max_multicast_locators)
             : remote_locators_(max_unicast_locators, max_multicast_locators)
+            , m_expectsInlineQos(false)
+            , topic_kind_(NO_KEY)
+            , is_alive_(true)
+            , type_id_()
+            , type_()
+            , type_info_()
+            , m_userDefinedId(0)
+
         { }
 
         ReaderProxyData(
@@ -49,6 +59,13 @@ class ReaderProxyData
                 size_t max_multicast_locators,
                 const VariableLengthDataLimits& data_limits)
             : remote_locators_(max_unicast_locators, max_multicast_locators)
+            , m_expectsInlineQos(false)
+            , topic_kind_(NO_KEY)
+            , is_alive_(true)
+            , type_id_()
+            , type_()
+            , type_info_()
+            , m_userDefinedId(0)
         { m_qos.m_userData.set_max_size(data_limits.max_user_data); }
 
         const GUID_t& guid() const { return m_guid; }
@@ -78,20 +95,209 @@ class ReaderProxyData
                 const NetworkFactory& /*network*/,
                 bool /*use_multicast*/) { }
 
-        void topicKind(int /*kind*/) { }
+        bool readFromCDRMessage(
+                CDRMessage_t* /*msg*/,
+                const NetworkFactory& /*network*/,
+                bool /*is_shm_transport_possible*/)
+        {
+            return true;
+        }
+
+        void set_multicast_locators(
+                const LocatorList_t& /*locator*/,
+                const NetworkFactory& /*network*/)
+        {
+        }
+
+        void typeName(const string_255& typeName)
+        {
+            type_name_ = typeName;
+        }
+
+        string_255 typeName() const
+        {
+            return type_name_;
+        }
+
+        void topicName(const string_255& topicName)
+        {
+            topic_name_ = topicName;
+        }
+
+        string_255 topicName() const
+        {
+            return topic_name_;
+        }
+
+        void topicKind(TopicKind_t topicKind)
+        {
+            topic_kind_ = topicKind;
+        }
+
+        TopicKind_t topicKind() const
+        {
+            return topic_kind_;
+        }
+
+        void isAlive (bool alive)
+        {
+            is_alive_ = alive;
+        }
+
+        bool isAlive () const
+        {
+            return is_alive_;
+        }
+
+        bool has_type_id () const
+        {
+            return false;
+        }
+
+        void type_id(const TypeIdV1& other_type_id)
+        {
+            type_id_ = other_type_id;
+        }
+
+        const TypeIdV1& type_id() const
+        {
+            return type_id_;
+        }
+
+        TypeIdV1& type_id()
+        {
+            return type_id_;
+        }
+
+        bool has_type () const
+        {
+            return false;
+        }
+
+        void type(const TypeObjectV1& other_type)
+        {
+            type_ = other_type;
+        }
+
+        const TypeObjectV1& type() const
+        {
+            return type_;
+        }
+
+        TypeObjectV1& type()
+        {
+            return type_;
+        }
+
+        bool has_type_information () const
+        {
+            return false;
+        }
+
+        void type_information(const xtypes::TypeInformation& other_type_info)
+        {
+            type_info_ = other_type_info;
+        }
+
+        const xtypes::TypeInformation& type_information() const
+        {
+            return type_info_;
+        }
+
+        xtypes::TypeInformation& type_information()
+        {
+            return type_info_;
+        }
+
+        void key(
+                const InstanceHandle_t& key)
+        {
+            m_key = key;
+        }
+
+        void key(
+                InstanceHandle_t&& key)
+        {
+            m_key = std::move(key);
+        }
+
+        InstanceHandle_t key() const
+        {
+            return m_key;
+        }
+
+        InstanceHandle_t& key()
+        {
+            return m_key;
+        }
+
+        void RTPSParticipantKey(
+                const InstanceHandle_t& RTPSParticipantKey)
+        {
+            m_RTPSParticipantKey = RTPSParticipantKey;
+        }
+
+        void RTPSParticipantKey(
+                InstanceHandle_t&& RTPSParticipantKey)
+        {
+            m_RTPSParticipantKey = std::move(RTPSParticipantKey);
+        }
+
+        InstanceHandle_t RTPSParticipantKey() const
+        {
+            return m_RTPSParticipantKey;
+        }
+
+        InstanceHandle_t& RTPSParticipantKey()
+        {
+            return m_RTPSParticipantKey;
+        }
+
+        void set_locators(
+                const RemoteLocatorList& /*locators*/)
+        {
+
+        }
+
+        void userDefinedId(
+                uint16_t userDefinedId)
+        {
+            m_userDefinedId = userDefinedId;
+        }
+
+        uint16_t userDefinedId() const
+        {
+            return m_userDefinedId;
+        }
+
+        uint16_t& userDefinedId()
+        {
+            return m_userDefinedId;
+        }
 
 #if HAVE_SECURITY
         security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
         security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif
 
+        RemoteLocatorList remote_locators_;
         bool m_expectsInlineQos;
         ReaderQos m_qos;
-        RemoteLocatorList remote_locators_;
 
     private:
 
         GUID_t m_guid;
+        std::string topic_name_;
+        std::string type_name_;
+        TopicKind_t topic_kind_;
+        bool is_alive_;
+        TypeIdV1 type_id_;
+        TypeObjectV1 type_;
+        xtypes::TypeInformation type_info_;
+        InstanceHandle_t m_key;
+        InstanceHandle_t m_RTPSParticipantKey;
+        uint16_t m_userDefinedId;
+
 };
 
 } // namespace rtps

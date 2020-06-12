@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 #include <gmock/gmock.h>
 
@@ -82,6 +83,16 @@ class WriterHistory
             return last_sequence_number_ + 1;
         }
 
+        MOCK_METHOD0(changesBegin, std::vector<CacheChange_t*>::iterator());
+
+        MOCK_METHOD0(changesRbegin, std::vector<CacheChange_t*>::reverse_iterator());
+
+        MOCK_METHOD0(changesEnd, std::vector<CacheChange_t*>::iterator());
+
+        MOCK_METHOD0(changesRend, std::vector<CacheChange_t*>::reverse_iterator());
+
+        inline RecursiveTimedMutex* getMutex() { return mutex_; }
+
         HistoryAttributes m_att;
 
     private:
@@ -90,6 +101,7 @@ class WriterHistory
         std::mutex samples_number_mutex_;
         unsigned int samples_number_;
         SequenceNumber_t last_sequence_number_;
+        RecursiveTimedMutex* mutex_;
 };
 
 } // namespace rtps
@@ -97,3 +109,4 @@ class WriterHistory
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_WRITERHISTORY_H_
+
