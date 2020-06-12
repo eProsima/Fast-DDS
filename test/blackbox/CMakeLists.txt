@@ -213,6 +213,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             common/TCPReqRepHelloWorldReplier.cpp
             )
 
+        file(GLOB DDS_BLACKBOXTESTS_TEST_SOURCE "common/DDSBlackboxTests*.cpp")
+        set(DDS_BLACKBOXTESTS_SOURCE
+            ${DDS_BLACKBOXTESTS_TEST_SOURCE}
+            ${BLACKBOXTESTS_SOURCE}
+            )
+
         # Prepare static discovery xml file for blackbox tests.
         string(RANDOM LENGTH 4 ALPHABET 0123456789 TOPIC_RANDOM_NUMBER)
         math(EXPR TOPIC_RANDOM_NUMBER "${TOPIC_RANDOM_NUMBER} + 0") # Remove extra leading 0s.
@@ -254,7 +260,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         if(FASTDDS_PIM_API_TESTS)
             set(BLACKBOXTESTS_FASTDDS_PIM_SOURCE
-                ${BLACKBOXTESTS_SOURCE}
+                ${DDS_BLACKBOXTESTS_SOURCE}
                 api/dds-pim/ReqRepHelloWorldRequester.cpp
                 api/dds-pim/ReqRepHelloWorldReplier.cpp
                 )
