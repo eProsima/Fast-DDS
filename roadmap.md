@@ -24,6 +24,7 @@ The following list of features are planned to be addressed in the short term, an
 release(s) of the product:
 
 * Full compliance with DDS minimum-profile
+* Support of DDS-RPC Enhanced Discovery Mechanism
 
 ## Medium term
 
