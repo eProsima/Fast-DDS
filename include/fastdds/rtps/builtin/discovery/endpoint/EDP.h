@@ -346,6 +346,7 @@ private:
     ReaderProxyData temp_reader_proxy_data_;
     WriterProxyData temp_writer_proxy_data_;
 
+protected:
     struct reader_status
     {
         fastdds::dds::SubscriptionMatchedStatus subscription_matched;
