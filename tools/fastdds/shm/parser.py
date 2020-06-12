@@ -20,25 +20,32 @@ from shm.clean import Clean
 class Parser:
     """Shared-memory sub-commands parser."""
 
+    __help_message='''fastdds shm [<shm-command>]\n\n
+    shm-commands:\n\n
+    \tclean     clean SHM zombie files
+    '''
+
     def __init__(self, argv):
         """Parse the sub-command and dispatch to the appropiate handler.
 
         Shows usage if no sub-command is specified.
         """
         parser = argparse.ArgumentParser(
-            description='Shared-memory commands',
-            usage=""" shm <sub-command> [<args>]
+            usage=self.__help_message,
+            add_help=True
+        )
 
-            shm sub-commands:
+        parser.add_argument('command'
+            , nargs='?'
+            , help='shm-command to run'
+        )
 
-                clean     clean SHM zombie files
-
-            """)
-
-        parser.add_argument('command', help='Command to run')
         args = parser.parse_args(argv)
 
-        if args.command == 'clean':
-            Clean().run()
+        if not args.command is None:
+            if args.command == 'clean':
+                Clean().run()
+            else:
+                print('shm-command ' + args.shm_command + ' is not valid')
         else:
-            print('shm: ' + args.command + ' sub-command is not valid')
+            parser.print_help()

@@ -21,6 +21,12 @@ from shm.parser import Parser as ShmParser
 class FastDDSParser:
     """FastDDS tool parser."""
 
+    __help_message='''fastdds <command> [<command-args>]\n\n
+    Commands:\n\n
+    \tshm     shared-memory commands\n
+    fastdds <command> [-h] shows command usage
+    '''
+
     def __init__(self):
         """Parse sys.argv[1:2].
 
@@ -28,21 +34,24 @@ class FastDDSParser:
         Shows usage if no command is specified.
         """
         parser = argparse.ArgumentParser(
-            description='FastDDS Tool',
-            usage=""" fastdds <command> [<args>]
+            usage=self.__help_message,
+            add_help=True
+        )
 
-        Available commands:
+        parser.add_argument('command'
+            , nargs='?'
+            , help='Command to run'
+        )
 
-            shm     shared-memory commands
-        """)
-
-        parser.add_argument('command', help='Command to run')
         args = parser.parse_args(sys.argv[1:2])
 
-        if not hasattr(self, args.command):
-            print('Invalid command')
+        if not args.command is None:
+            if not hasattr(self, args.command):
+                print('Invalid command')
+            else:
+                getattr(self, args.command)()
         else:
-            getattr(self, args.command)()
+            parser.print_help()
 
     def shm(self):
         """Shared-memory command handler."""
