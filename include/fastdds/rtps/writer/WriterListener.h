@@ -77,10 +77,10 @@ public:
      */
     virtual void on_offered_incompatible_qos(
             RTPSWriter* writer,
-            fastdds::dds::QosPolicyId_t qos_id)
+            eprosima::fastdds::dds::PolicyMask qos)
     {
         (void)writer;
-        (void)qos_id;
+        (void)qos;
     }
 
     /**

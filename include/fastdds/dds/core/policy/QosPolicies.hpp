@@ -100,6 +100,8 @@ enum QosPolicyId_t : fastrtps::rtps::octet
     NEXT_QOS_POLICY_ID                          //< Keep always the last element. For internal use only
 };
 
+using PolicyMask = std::bitset<NEXT_QOS_POLICY_ID>;
+
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
  */

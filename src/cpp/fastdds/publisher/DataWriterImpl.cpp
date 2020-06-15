@@ -682,9 +682,9 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
 
 void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         RTPSWriter* /*writer*/,
-        fastdds::dds::QosPolicyId_t qos_id)
+        fastdds::dds::PolicyMask qos)
 {
-    OfferedIncompatibleQosStatus& status = data_writer_->update_offered_incompatible_qos(qos_id);
+    OfferedIncompatibleQosStatus& status = data_writer_->update_offered_incompatible_qos(qos);
     if (data_writer_->listener_ != nullptr)
     {
         data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
@@ -932,13 +932,18 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
 }
 
 OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(
-        QosPolicyId_t policy_id)
+        PolicyMask incompatible_policies)
 {
     ++offered_incompatible_qos_status_.total_count;
     ++offered_incompatible_qos_status_.total_count_change;
-    ++offered_incompatible_qos_status_.policies[policy_id].count;
-    offered_incompatible_qos_status_.last_policy_id = policy_id;
-
+    for (fastrtps::rtps::octet id = 0; id < NEXT_QOS_POLICY_ID; ++id)
+    {
+        if (incompatible_policies.test(id))
+        {
+            ++offered_incompatible_qos_status_.policies[static_cast<QosPolicyId_t>(id)].count;
+            offered_incompatible_qos_status_.last_policy_id = static_cast<QosPolicyId_t>(id);
+        }
+    }
     return offered_incompatible_qos_status_;
 }
 

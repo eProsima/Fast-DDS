@@ -285,9 +285,15 @@ public:
             const GUID_t& reader_guid,
             fastdds::dds::QosPolicyId_t policy_id);
 
+    void clear_requested_incompatible_qos(
+            const GUID_t& reader_guid);
+
     void update_offered_incompatible_qos(
             const GUID_t& writer_guid,
             fastdds::dds::QosPolicyId_t policy_id);
+
+    void clear_offered_incompatible_qos(
+            const GUID_t& writer_guid);
 
     //! Pointer to the PDP object that contains the endpoint discovery protocol.
     PDP* mp_PDP;
@@ -350,14 +356,14 @@ protected:
     struct reader_status
     {
         fastdds::dds::SubscriptionMatchedStatus subscription_matched;
-        fastdds::dds::QosPolicyId_t requested_incompatible_qos;
+        fastdds::dds::PolicyMask requested_incompatible_qos;
     };
     std::map<GUID_t, reader_status> reader_status_;
 
     struct writer_status
     {
         fastdds::dds::PublicationMatchedStatus publication_matched;
-        fastdds::dds::QosPolicyId_t offered_incompatible_qos;
+        fastdds::dds::PolicyMask offered_incompatible_qos;
     };
     std::map<GUID_t, writer_status> writer_status_;
 };

@@ -111,10 +111,10 @@ public:
      */
     virtual void on_requested_incompatible_qos(
             RTPSReader* reader,
-            fastdds::dds::QosPolicyId_t qos_id)
+            eprosima::fastdds::dds::PolicyMask qos)
     {
         (void)reader;
-        (void)qos_id;
+        (void)qos;
     }
 };
 

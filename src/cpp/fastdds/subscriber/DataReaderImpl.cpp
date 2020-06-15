@@ -422,9 +422,9 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 
 void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         RTPSReader* /*reader*/,
-        fastdds::dds::QosPolicyId_t qos_id)
+        fastdds::dds::PolicyMask qos)
 {
-    RequestedIncompatibleQosStatus& status = data_reader_->update_requested_incompatible_qos(qos_id);
+    RequestedIncompatibleQosStatus& status = data_reader_->update_requested_incompatible_qos(qos);
     if (data_reader_->listener_ != nullptr)
     {
         data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
@@ -729,13 +729,18 @@ TypeSupport DataReaderImpl::type()
 }
 
 RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qos(
-        QosPolicyId_t policy_id)
+        PolicyMask incompatible_policies)
 {
     ++requested_incompatible_qos_status_.total_count;
     ++requested_incompatible_qos_status_.total_count_change;
-    ++requested_incompatible_qos_status_.policies[policy_id].count;
-    requested_incompatible_qos_status_.last_policy_id = policy_id;
-
+    for (fastrtps::rtps::octet id = 0; id < NEXT_QOS_POLICY_ID; ++id)
+    {
+        if (incompatible_policies.test(id))
+        {
+            ++requested_incompatible_qos_status_.policies[static_cast<QosPolicyId_t>(id)].count;
+            requested_incompatible_qos_status_.last_policy_id = static_cast<QosPolicyId_t>(id);
+        }
+    }
     return requested_incompatible_qos_status_;
 }
 

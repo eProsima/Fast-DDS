@@ -263,7 +263,7 @@ public:
 
         void on_requested_incompatible_qos(
                 fastrtps::rtps::RTPSReader* reader,
-                fastdds::dds::QosPolicyId_t qos_id) override;
+                fastdds::dds::PolicyMask qos) override;
 
         DataReaderImpl* data_reader_;
     } reader_listener_;
@@ -319,7 +319,7 @@ public:
     void subscriber_qos_updated();
 
     RequestedIncompatibleQosStatus& update_requested_incompatible_qos(
-            QosPolicyId_t policy_id);
+            PolicyMask incompatible_policies);
 
 };
 
