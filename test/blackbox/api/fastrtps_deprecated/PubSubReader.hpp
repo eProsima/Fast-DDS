@@ -103,7 +103,6 @@ private:
             }
         }
 
-
 #if HAVE_SECURITY
         void onParticipantAuthentication(
                 eprosima::fastrtps::Participant*,
