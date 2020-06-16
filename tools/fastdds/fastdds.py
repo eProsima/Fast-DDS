@@ -18,6 +18,7 @@ import argparse
 import sys
 
 from shm.parser import Parser as ShmParser
+from discovery.parser import Parser as DiscoveryParser
 
 
 class FastDDSParser:
@@ -25,7 +26,8 @@ class FastDDSParser:
 
     __help_message='''fastdds <command> [<command-args>]\n\n
     Commands:\n\n
-    \tshm     shared-memory commands\n
+    \tshm           Shared-memory commands\n
+    \tdiscovery     Server-Client discovery auxiliary generator\n
     fastdds <command> [-h] shows command usage
     '''
 
@@ -58,6 +60,10 @@ class FastDDSParser:
     def shm(self):
         """Shared-memory command handler."""
         ShmParser(sys.argv[2:])
+
+    def discovery(self):
+        """Discovery server command handler."""
+        DiscoveryParser(sys.argv[2:])
 
 
 if __name__ == '__main__':
