@@ -24,6 +24,8 @@ from discovery.parser import Parser as DiscoveryParser
 class FastDDSParser:
     """FastDDS tool parser."""
 
+    __required_python_version = (3, 7)
+
     __help_message='''fastdds <command> [<command-args>]\n\n
     Commands:\n\n
     \tshm           Shared-memory commands\n
@@ -37,6 +39,9 @@ class FastDDSParser:
         Parses the <command> and dispatch to the appropiate handler.
         Shows usage if no command is specified.
         """
+
+        self.__check_python_version()
+
         parser = argparse.ArgumentParser(
             usage=self.__help_message,
             add_help=True
@@ -56,6 +61,17 @@ class FastDDSParser:
                 getattr(self, args.command)()
         else:
             parser.print_help()
+
+    def __check_python_version(self):
+        """Assert python version is valid"""
+        req_v = self.__required_python_version
+        v = sys.version_info
+        if not (
+            ((v[0] == req_v[0]) and (v[1] >= req_v[1])) or (v[0] > req_v[0])
+            ):
+            print('fastdds: Invalid Python version. {}.{}.x or greather'
+                    ' is required'.format(req_v[0], req_v[1]))
+            sys.exit(1)
 
     def shm(self):
         """Shared-memory command handler."""
