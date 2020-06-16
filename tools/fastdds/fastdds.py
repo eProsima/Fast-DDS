@@ -17,21 +17,21 @@
 import argparse
 import sys
 
-from shm.parser import Parser as ShmParser
 from discovery.parser import Parser as DiscoveryParser
+from shm.parser import Parser as ShmParser
 
 
 class FastDDSParser:
     """FastDDS tool parser."""
-
+    
     __required_python_version = (3, 5)
 
-    __help_message='''fastdds <command> [<command-args>]\n\n
+    __help_message = """fastdds <command> [<command-args>]\n\n
     Commands:\n\n
     \tshm           Shared-memory commands\n
     \tdiscovery     Server-Client discovery auxiliary generator\n
     fastdds <command> [-h] shows command usage
-    '''
+    """
 
     def __init__(self):
         """Parse sys.argv[1:2].
@@ -39,7 +39,6 @@ class FastDDSParser:
         Parses the <command> and dispatch to the appropiate handler.
         Shows usage if no command is specified.
         """
-
         self.__check_python_version()
 
         parser = argparse.ArgumentParser(
@@ -47,14 +46,13 @@ class FastDDSParser:
             add_help=True
         )
 
-        parser.add_argument('command'
-            , nargs='?'
-            , help='Command to run'
-        )
+        parser.add_argument('command',
+                            nargs='?',
+                            help='Command to run')
 
         args = parser.parse_args(sys.argv[1:2])
 
-        if not args.command is None:
+        if args.command is not None:
             if not hasattr(self, args.command):
                 print('Invalid command')
             else:
@@ -63,14 +61,15 @@ class FastDDSParser:
             parser.print_help()
 
     def __check_python_version(self):
-        """Assert python version is valid"""
+        """Assert python version is valid."""
         req_v = self.__required_python_version
         v = sys.version_info
         if not (
-            ((v[0] == req_v[0]) and (v[1] >= req_v[1])) or (v[0] > req_v[0])
-            ):
+                    ((v[0] == req_v[0]) and (v[1] >= req_v[1])) or
+                    (v[0] > req_v[0])
+               ):
             print('fastdds: Invalid Python version. {}.{}.x or greather'
-                    ' is required'.format(req_v[0], req_v[1]))
+                  ' is required'.format(req_v[0], req_v[1]))
             sys.exit(1)
 
     def shm(self):

@@ -16,19 +16,19 @@ import argparse
 import subprocess
 import re
 
+
 class Parser:
     """Discovery server tool parser."""
 
-    __tool_exe_file='fast-discovery-server'
+    __tool_exe_file = 'fast-discovery-server'
 
-    __help_message='''fastdds discovery <discovery-args>\n\n'''
+    __help_message = '''fastdds discovery <discovery-args>\n\n'''
 
     def __init__(self, argv):
         """Parse the sub-command and dispatch to the appropiate handler.
 
         Shows usage if no sub-command is specified.
         """
-
         try:
             result = subprocess.run(
                 [self.__tool_exe_file],
@@ -36,9 +36,11 @@ class Parser:
                 universal_newlines=True
             )
 
-            if (len(argv) == 0 or 
-                (len(argv) == 1 and argv[0] == '-h') or
-                (len(argv) == 1 and argv[0] == '--help')):
+            if (
+                    len(argv) == 0 or
+                    (len(argv) == 1 and argv[0] == '-h') or
+                    (len(argv) == 1 and argv[0] == '--help')
+               ):
 
                 print(self.edit_tool_help(result.stdout))
 
@@ -50,13 +52,13 @@ class Parser:
                 )
 
         except BaseException as e:
-            self.__help_message+=str(e)
-            self.__help_message+=" fast-discovery-server tool not found!"
+            self.__help_message += str(e)
+            self.__help_message += ' fast-discovery-server tool not found!'
             print(self.__help_message)
-    
+
     def edit_tool_help(self, usage_text):
         """Find and replace the tool-name by fasdds discovery."""
-        m = re.search("Usage: ([a-zA-Z0-9-\.]*)\s", usage_text)
+        m = re.search('Usage: ([a-zA-Z0-9-\\.]*)\\s', usage_text)
         if m:
             tool_name = m.group(1)
             return re.sub(tool_name, 'fastdds discovery', usage_text)
