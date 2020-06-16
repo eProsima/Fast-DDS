@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.5)
-cmake_policy(VERSION 3.5...3.14)
-
 project(fastdds-tool)
 
 ###############################################################################

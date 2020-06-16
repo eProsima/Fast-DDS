@@ -14,6 +14,7 @@
 
 import argparse
 import subprocess
+import sys
 import re
 
 
@@ -55,6 +56,7 @@ class Parser:
             self.__help_message += str(e)
             self.__help_message += ' fast-discovery-server tool not found!'
             print(self.__help_message)
+            sys.exit(1)
 
     def edit_tool_help(self, usage_text):
         """Find and replace the tool-name by fasdds discovery."""
