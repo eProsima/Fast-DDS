@@ -24,7 +24,7 @@ from discovery.parser import Parser as DiscoveryParser
 class FastDDSParser:
     """FastDDS tool parser."""
 
-    __required_python_version = (3, 7)
+    __required_python_version = (3, 5)
 
     __help_message='''fastdds <command> [<command-args>]\n\n
     Commands:\n\n

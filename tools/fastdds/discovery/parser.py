@@ -33,7 +33,7 @@ class Parser:
             result = subprocess.run(
                 [self.__tool_exe_file],
                 stdout=subprocess.PIPE,
-                text=True
+                universal_newlines=True
             )
 
             if (len(argv) == 0 or 
