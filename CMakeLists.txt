@@ -268,7 +268,7 @@ endif()
 ###############################################################################
 # Tools default setup 
 ###############################################################################
-option(COMPILE_TOOLS "Build tools" OFF)
+option(COMPILE_TOOLS "Build tools" ON)
 
 if(EPROSIMA_BUILD AND IS_TOP_LEVEL)
     set(COMPILE_TOOLS ON)
