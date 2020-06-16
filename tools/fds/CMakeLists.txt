@@ -93,7 +93,7 @@ else()
     set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 endif()
 
-install(TARGETS ${PROJECT_NAME} 
+install(TARGETS ${PROJECT_NAME}
         EXPORT ${PROJECT_NAME}-targets
         RUNTIME DESTINATION ${BIN_INSTALL_DIR}
         COMPONENT discovery
@@ -106,19 +106,25 @@ install(EXPORT ${PROJECT_NAME}-targets
         COMPONENT cmake
         )
 
-# symlink creation requires install( CODE using generator expressions
-#if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
-if(0)
+# symlink creation requires:
+#   - install( CODE using generator expressions (legacy code is provided for all cmake versions)
+#   - on windows privileges to create symlinks (a .bat file is provided on unprivileged installations)
+
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
 
     cmake_policy(SET CMP0087 NEW)
 
     # add symlink
     if( WIN32 )
         # Use powershell to generate the link
-        install( CODE "execute_process(COMMAND PowerShell -Command \"if( test-path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -PathType Leaf ) { rm ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe };New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -ErrorAction SilentlyContinue ; if($error) { Write-Warning '${PROJECT_NAME}: On windows symlink generation requires elevation.'}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" )")
+        install(
+          CODE "execute_process( COMMAND PowerShell -Command \"if( test-path ${PROJECT_NAME}.exe -PathType Leaf ) { rm ${PROJECT_NAME}.exe } ; New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}.exe \" ERROR_QUIET RESULTS_VARIABLE SYMLINK_FAILED WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") \n if( SYMLINK_FAILED ) \n message(STATUS \"Windows requires admin installation rights to create symlinks. A bat script will be provided instead.\") \n set(FAST_SERVER_BINARY_NAME $<TARGET_FILE_NAME:${PROJECT_NAME}>) \n configure_file(${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server.bat.in ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}/${PROJECT_NAME}.bat @ONLY) \n endif()"
+          COMPONENT discovery)
     else()
         # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
-        install( CODE "execute_process(COMMAND bash -c \"if [[-h ${PROJECT_NAME}$<$<CONFIG:Debug>:d>]]; then rm ${PROJECT_NAME}$<$<CONFIG:Debug>:d>; fi;  ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}$<$<CONFIG:Debug>:d>\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\")")
+        install(
+            CODE "execute_process(COMMAND bash -c \"if [[-h ${PROJECT_NAME}$<$<CONFIG:Debug>:d>]]; then rm ${PROJECT_NAME}$<$<CONFIG:Debug>:d>; fi;  ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}$<$<CONFIG:Debug>:d>\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\")" 
+            COMPONENT discovery)
     endif()
 
 else() # fallback to all strategies
@@ -130,16 +136,20 @@ else() # fallback to all strategies
             set(LINK_NAME ${PROJECT_NAME})
             if("${CONFIG}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
                 set(BINARY_NAME ${BINARY_NAME}d)
-                set(LINK_NAME ${LINK_NAME}d)
             endif()
             set(BINARY_NAME ${BINARY_NAME}-${PROJECT_VERSION})
 
             if( WIN32 )
                 # Use powershell to generate the link
-		install( CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND PowerShell -Command \"if( test-path ${LINK_NAME}.exe -PathType Leaf ) { rm ${LINK_NAME}.exe };New-Item -ItemType SymbolicLink -Target ${LINK_NAME}.exe -Path ${BINARY_NAME}.exe -ErrorAction SilentlyContinue ; if($error) { Write-Warning '${PROJECT_NAME}: On windows symlink generation requires elevation.'}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" ) \n endif()" COMPONENT discovery)
+                install(
+                    CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND PowerShell -Command \"if( test-path ${LINK_NAME}.exe -PathType Leaf ) { rm ${LINK_NAME}.exe };New-Item -ItemType SymbolicLink -Path ${LINK_NAME}.exe -Target ${BINARY_NAME}.exe \" ERROR_QUIET RESULTS_VARIABLE SYMLINK_FAILED WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" ) \n if( SYMLINK_FAILED ) \n message(STATUS \"Windows requires admin installation rights to create symlinks. A bat script will be provided instead.\") \n set(FAST_SERVER_BINARY_NAME ${BINARY_NAME}.exe) \n configure_file(${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server.bat.in ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}/${LINK_NAME}.bat @ONLY) \n endif() \n endif()"
+                    COMPONENT discovery)
             else()
                 # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
-		install( CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND bash -c \"if [[ -h ${LINK_NAME} ]]; then rm ${LINK_NAME}; fi ; ln -s ${BINARY_NAME} ${LINK_NAME}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") \n endif()" COMPONENT discovery)
+                install(
+                    CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND bash -c \"if [[ -h ${LINK_NAME} ]]; then rm ${LINK_NAME}; fi ; ln -s ${BINARY_NAME} ${LINK_NAME}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") \n endif()" 
+                    COMPONENT discovery
+                    )
             endif()
 
     endfunction()
