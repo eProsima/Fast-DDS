@@ -21,7 +21,6 @@ elif os.name == 'nt':
     import win32con
     import win32file
     import pywintypes
-    import winerror
     import msvcrt
 
 
@@ -60,14 +59,18 @@ class Clean:
         """Find & delete zombie segments in the default SHM dir."""
         segment_lock_re = re.compile('^fastrtps_(\\d|[a-z]){16}_el|_sl')
 
+        # Each segment has an "_el" lock file that is locked if the segment
+        # is open and the owner process is alive
         segment_locks = [
             self.__shm_dir() + file_name for file_name in self.__list_dir()
             if segment_lock_re.match(file_name)]
 
         zombie_files = []
 
+        # Check is_file_locked for each lock file
         for file in segment_locks:
             if not self.__is_file_locked(file):
+                # Not locked so delete lock file & segment file
                 segment_file = file
                 lock_file = file[:-3]
                 self.remove_file(segment_file)
@@ -82,12 +85,18 @@ class Clean:
     def __clean_zombie_ports(self):
         """Find & delete zombie ports in the default SHM dir."""
         port_lock_re = re.compile('^fastrtps_port\\d{,5}_el|_sl')
+        # Each port has an "_el | _sl" lock file that is locked if the port
+        # is open and the owner process is alive
         port_locks = [
             file_name for file_name in self.__list_dir() if port_lock_re.match(
                 file_name)]
         zombie_files = []
+
+        # Check is_file_locked for each lock file
         for file in port_locks:
             if not self.__is_file_locked(self.__shm_dir() + file):
+                # Not locked so delete lock file, segment file and
+                # port_mutex_file
                 port_lock_file = self.__shm_dir() + file
                 port_segment_file = self.__shm_dir() + file[:-3]
                 port_mutex_file = self.__shm_dir() + self.__port_mutex_name(

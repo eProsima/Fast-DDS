@@ -62,7 +62,7 @@ def test_fastdds_installed(install_path):
 
 
 def test_fastdds_shm(install_path):
-    """Test that shm command run"""
+    """Test that shm command run."""
     if os.name == 'posix':
         cmd = cmd_posix(install_path, 'shm clean')
     elif os.name == 'nt':

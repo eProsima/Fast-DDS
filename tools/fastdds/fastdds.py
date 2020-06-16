@@ -18,18 +18,19 @@ import argparse
 import sys
 
 from discovery.parser import Parser as DiscoveryParser
+
 from shm.parser import Parser as ShmParser
 
 
 class FastDDSParser:
     """FastDDS tool parser."""
-    
+
     __required_python_version = (3, 5)
 
     __help_message = """fastdds <command> [<command-args>]\n\n
     Commands:\n\n
-    \tshm           Shared-memory commands\n
     \tdiscovery     Server-Client discovery auxiliary generator\n
+    \tshm           Shared-memory commands\n
     fastdds <command> [-h] shows command usage
     """
 
