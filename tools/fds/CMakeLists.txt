@@ -117,7 +117,7 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
         install( CODE "execute_process(COMMAND PowerShell -Command \"if( test-path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -PathType Leaf ) { rm ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe };New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}$<$<CONFIG:Debug>:d>.exe -ErrorAction SilentlyContinue ; if($error) { Write-Warning '${PROJECT_NAME}: On windows symlink generation requires elevation.'}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" )")
     else()
         # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
-        install( CODE "ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}$<$<CONFIG:Debug>:d>\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\")")
+        install( CODE "execute_process(COMMAND bash -c \"if [[-h ${PROJECT_NAME}$<$<CONFIG:Debug>:d>]]; then rm ${PROJECT_NAME}$<$<CONFIG:Debug>:d>; fi;  ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}$<$<CONFIG:Debug>:d>\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\")")
     endif()
 
 else() # fallback to all strategies
@@ -135,10 +135,10 @@ else() # fallback to all strategies
 
             if( WIN32 )
                 # Use powershell to generate the link
-                install( CODE "if(BUILD_TYPE MATCHES \"${CONFIG}\") execute_process(COMMAND PowerShell -Command \"if( test-path ${LINK_NAME}.exe -PathType Leaf ) { rm ${LINK_NAME}.exe };New-Item -ItemType SymbolicLink -Target ${LINK_NAME}.exe -Path ${BINARY_NAME}.exe -ErrorAction SilentlyContinue ; if($error) { Write-Warning '${PROJECT_NAME}: On windows symlink generation requires elevation.'}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" ) endif()" COMPONENT discovery)
+		install( CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND PowerShell -Command \\\"if( test-path ${LINK_NAME}.exe -PathType Leaf ) { rm ${LINK_NAME}.exe };New-Item -ItemType SymbolicLink -Target ${LINK_NAME}.exe -Path ${BINARY_NAME}.exe -ErrorAction SilentlyContinue ; if($error) { Write-Warning '${PROJECT_NAME}: On windows symlink generation requires elevation.'}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" ) \n endif()" COMPONENT discovery)
             else()
                 # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
-                install( CODE "if(BUILD_TYPE MATCHES \"${CONFIG}\") execute_process(COMMAND \" if [[ -h ${LINK_NAME} ]]; then rm ${LINK_NAME} fi ; ln -s ${BINARY_NAME} ${LINK_NAME}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") endif()" COMPONENT discovery)
+		install( CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND bash -c \"if [[ -h ${LINK_NAME} ]]; then rm ${LINK_NAME}; fi ; ln -s ${BINARY_NAME} ${LINK_NAME}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") \n endif()" COMPONENT discovery)
             endif()
 
     endfunction()
