@@ -51,6 +51,16 @@ namespace rtps {
 
 WriterProxy::~WriterProxy()
 {
+    if (is_alive_ && is_on_same_process_)
+    {
+        logWarning(RTPS_READER, "Automatically unmatching on ~WriterProxy");
+        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+        if (writer)
+        {
+            writer->matched_reader_remove(reader_->getGuid());
+        }
+    }
+
     delete(initial_acknack_);
     delete(heartbeat_response_);
 }
