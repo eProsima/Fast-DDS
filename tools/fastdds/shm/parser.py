@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Entry point of the fastdds shm sub-command."""
+
 import argparse
 
 from shm.clean import Clean
@@ -29,6 +31,9 @@ class Parser:
         """Parse the sub-command and dispatch to the appropriate handler.
 
         Shows usage if no sub-command is specified.
+
+        :param argv: list(str) containing the arguments for the command
+
         """
         parser = argparse.ArgumentParser(
             usage=self.__help_message,

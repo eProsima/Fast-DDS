@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Sub-Command Clean implementation."""
+
 import os
 import re
 from pathlib import Path
@@ -52,16 +54,13 @@ class Clean:
 
         """
         if os.name == 'nt':
-            return Path('c:\\programdata\\eprosima\\fastrtps_interprocess\\').resolve()
+            return Path('c:\\programdata\\eprosima\\'
+                        'fastrtps_interprocess\\').resolve()
         else:
             return Path('/dev/shm/').resolve()
 
     def __list_dir(self):
-        """Return the list of files in the default SHM dir.
-
-        Returns:
-        
-        """
+        """Return a list of files in the default SHM dir."""
         try:
             return os.listdir(self.__shm_dir())
         except BaseException:
@@ -84,11 +83,11 @@ class Clean:
         zombie_files = []
 
         # Check is_file_locked for each lock file
-        for file in segment_locks:
-            if not self.__is_file_locked(file):
+        for f in segment_locks:
+            if not self.__is_file_locked(f):
                 # Not locked so delete lock file & segment file
-                segment_file = file
-                lock_file = file[:-3]
+                segment_file = f
+                lock_file = f[:-3]
                 self.__remove_file(segment_file)
                 self.__remove_file(lock_file)
                 f = [segment_file, lock_file]
@@ -133,33 +132,49 @@ class Clean:
         return [self.__shm_dir() / file_name for file_name in zombie_files]
 
     def __port_mutex_name(self, port_file_name):
-        """Return the mutex object filename for the given port."""
+        """Return the mutex object filename for the given port.
+
+        :param port_file_name: str port segment file_name
+            the mutex name is deduced from it.
+
+        """
         if os.name == 'posix':
             return ''.join(['sem.', port_file_name, '_mutex'])
         else:
             return ''.join([port_file_name, '_mutex'])
 
     def __remove_file(self, file):
-        """Delete a file."""
+        """Delete a file.
+
+        Always return void, even if the function fails.
+
+        :param file: str with the complete file_path
+
+        """
         try:
             os.remove(file)
         except BaseException:
             pass
 
     def __is_file_locked(self, file):
-        """Return whether a file is locked or not."""
+        """Return whether a file is locked or not.
+
+        :param file: str with the complete file_path
+        :return: bool
+
+        """
         try:
-            fd = open(file, 'ab')
-            if os.name == 'posix':
-                # Lock file in Exclusive mode. Fail if the file is locked.
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            elif os.name == 'nt':
-                # Get WIN32 handle to the file
-                h_file = win32file._get_osfhandle(fd.fileno())
-                # Lock file in Exclusive mode. Fail if the file is locked.
-                mode = win32con.LOCKFILE_EXCLUSIVE_LOCK | msvcrt.LK_NBLCK
-                overlapped = pywintypes.OVERLAPPED()
-                win32file.LockFileEx(h_file, mode, 0, -0x10000, overlapped)
+            with open(file, 'ab') as fd:
+                if os.name == 'posix':
+                    # Lock file in Exclusive mode. Fail if the file is locked.
+                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                elif os.name == 'nt':
+                    # Get WIN32 handle to the file
+                    h_file = win32file._get_osfhandle(fd.fileno())
+                    # Lock file in Exclusive mode. Fail if the file is locked.
+                    mode = win32con.LOCKFILE_EXCLUSIVE_LOCK | msvcrt.LK_NBLCK
+                    overlapped = pywintypes.OVERLAPPED()
+                    win32file.LockFileEx(h_file, mode, 0, -0x10000, overlapped)
             return False
         except BaseException:
             return True

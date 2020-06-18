@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Entry point of discovery sub-command."""
+
 import os
 import re
 import subprocess
@@ -85,7 +87,7 @@ class Parser:
             sys.exit(1)
 
     def __edit_tool_help(self, usage_text):
-        """Find and replace the tool-name by fasdds discovery."""
+        """Find and replace the tool-name by fastdds discovery."""
         m = re.search('Usage: ([a-zA-Z0-9-\\.]*)\\s', usage_text)
         if m:
             tool_name = m.group(1)

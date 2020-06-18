@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Test for the fastdds tool."""
+
 import argparse
 import os
 import subprocess
@@ -39,7 +41,8 @@ def cmd(install_path, setup_script_path=Path(), args=''):
         if str(setup_script_path) == '.':
             cmd = f'bash -c "\\"{tool_path}\\" {args}"'
         else:
-            cmd = f'bash -c ". \\"{setup_script_path}\\" && \\"{tool_path}\\" {args}"'
+            cmd = (f'bash -c ". \\"{setup_script_path}\\" && \\"{tool_path}\\"'
+                   f' {args}"')
     elif os.name == 'nt':
         if str(setup_script_path) == '.':
             cmd = f'"{tool_path}" {args}'
