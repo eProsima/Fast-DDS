@@ -37,7 +37,7 @@ class FastDDSParser:
     def __init__(self):
         """Parse sys.argv[1:2].
 
-        Parses the <command> and dispatch to the appropiate handler.
+        Parses the <command> and dispatch to the appropriate handler.
         Shows usage if no command is specified.
         """
         self.__check_python_version()

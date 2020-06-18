@@ -12,27 +12,56 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
+import os
+import re
 import subprocess
 import sys
-import re
+from pathlib import Path
 
 
 class Parser:
     """Discovery server tool parser."""
 
-    __tool_exe_file = 'fast-discovery-server'
+    __help_message = 'fastdds discovery <discovery-args>\n\n'
 
-    __help_message = '''fastdds discovery <discovery-args>\n\n'''
+    def __find_tool_path(self):
+        """Calculate the path to the fast-discovery-server tool.
+
+        Returns
+        str : Full path to the executable
+
+        """
+        tool_path = Path(os.path.dirname(os.path.realpath(__file__)))
+        # We asume the installion path is relative to our installation path
+        tool_path = tool_path / '../../../bin'
+        if os.name == 'posix':
+            ret = tool_path / 'fast-discovery-server'
+            if not os.path.exists(ret):
+                print('fast-discovery-server tool not installed')
+                os.exit(1)
+        elif os.name == 'nt':
+            ret = tool_path / 'fast-discovery-server.exe'
+            if not os.path.exists(ret):
+                ret = tool_path / 'fast-discovery-server.bat'
+                if not os.path.exists(ret):
+                    print('fast-discovery-server tool not installed')
+                    os.exit(1)
+        else:
+            print(f'{os.name} not supported')
+            os.exit(1)
+
+        return ret
 
     def __init__(self, argv):
-        """Parse the sub-command and dispatch to the appropiate handler.
+        """Parse the sub-command and dispatch to the appropriate handler.
 
         Shows usage if no sub-command is specified.
         """
+        tool_path = str(self.__find_tool_path().resolve())
+
         try:
             result = subprocess.run(
-                [self.__tool_exe_file],
+                [tool_path],
                 stdout=subprocess.PIPE,
                 universal_newlines=True
             )
@@ -42,23 +71,20 @@ class Parser:
                     (len(argv) == 1 and argv[0] == '-h') or
                     (len(argv) == 1 and argv[0] == '--help')
                ):
-
-                print(self.edit_tool_help(result.stdout))
-
+                print(self.__edit_tool_help(result.stdout))
             else:
-
                 # Call the tool
                 result = subprocess.run(
-                    [self.__tool_exe_file] + argv
+                    [tool_path] + argv
                 )
 
         except BaseException as e:
             self.__help_message += str(e)
-            self.__help_message += ' fast-discovery-server tool not found!'
+            self.__help_message += '\n fast-discovery-server tool not found!'
             print(self.__help_message)
             sys.exit(1)
 
-    def edit_tool_help(self, usage_text):
+    def __edit_tool_help(self, usage_text):
         """Find and replace the tool-name by fasdds discovery."""
         m = re.search('Usage: ([a-zA-Z0-9-\\.]*)\\s', usage_text)
         if m:

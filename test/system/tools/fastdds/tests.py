@@ -16,46 +16,44 @@ import argparse
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 
-def cmd_setup_posix(install_path, prev_dir=False):
-    """Check setup.bash existance for POSIX os."""
-    return (f'bash -c ". \\"{install_path}/../setup.bash\\""'
-            if prev_dir else f'bash -c ". \\"{install_path}/setup.bash\\""')
-
-
-def cmd_posix(install_path, args=''):
+def setup_script_name():
     """Test script for POSIX os."""
-    return 'bash -c ". \\"{}/setup.bash\\" && fastdds {}"'.format(
-        install_path,
-        args
-    )
+    if os.name == 'posix':
+        script_name = 'setup.bash'
+    elif os.name == 'nt':
+        script_name = 'setup.bat'
+    else:
+        print(f'{os.name} not supported')
+        os.exit(1)
+
+    return script_name
 
 
-def cmd_setup_windows(install_path, prev_dir=False):
-    """Check setup.bash existance for windows os."""
-    return (f'"{install_path}\\..\\setup.bat"'
-            if prev_dir else f'"{install_path}\\setup.bat"')
-
-
-def cmd_windows(install_path, args=''):
-    """Test script for Windows os."""
-    return '"{}\\setup.bat" && fastdds {}'.format(
-        install_path,
-        args)
+def cmd(install_path, setup_script_path=Path(), args=''):
+    """Test script for POSIX os."""
+    tool_path = str(install_path.resolve())
+    if os.name == 'posix':
+        if str(setup_script_path) == '.':
+            cmd = f'bash -c "\\"{tool_path}\\" {args}"'
+        else:
+            cmd = f'bash -c ". \\"{setup_script_path}\\" && \\"{tool_path}\\" {args}"'
+    elif os.name == 'nt':
+        if str(setup_script_path) == '.':
+            cmd = f'"{tool_path}" {args}'
+        else:
+            cmd = f'"{setup_script_path}" && "{tool_path}" {args}'
+    else:
+        print(f'{os.name} not supported')
+        os.exit(1)
+    return cmd
 
 
 def test_fastdds_installed(install_path):
     """Test that fastdds is installed and run."""
-    if os.name == 'posix':
-        cmd = cmd_posix(install_path)
-    elif os.name == 'nt':
-        cmd = cmd_windows(install_path)
-    else:
-        print('OS not supported')
-        sys.exit(1)
-
-    ret = subprocess.call(cmd, shell=True)
+    ret = subprocess.call(cmd(install_path), shell=True)
     if 0 != ret:
         print('test_fastdds_installed FAILED')
         sys.exit(ret)
@@ -63,57 +61,46 @@ def test_fastdds_installed(install_path):
 
 def test_fastdds_shm(install_path):
     """Test that shm command run."""
-    if os.name == 'posix':
-        cmd = cmd_posix(install_path, 'shm clean')
-    elif os.name == 'nt':
-        cmd = cmd_windows(install_path, 'shm clean')
-    else:
-        print('OS not supported')
-        sys.exit(1)
-
-    ret = subprocess.call(cmd, shell=True)
+    args = ' shm clean'
+    ret = subprocess.call(cmd(
+        install_path=install_path, args=args), shell=True)
     if 0 != ret:
         print('test_fastdds_shm FAILED')
         sys.exit(ret)
 
 
-def test_fastdds_discovery(install_path):
-    """Test that discovery-server tool is installed."""
-    if os.name == 'posix':
-        cmd = cmd_posix(install_path, 'discovery')
-    elif os.name == 'nt':
-        cmd = cmd_windows(install_path, 'discovery')
-    else:
-        print('OS not supported')
-        sys.exit(1)
+def test_fastdds_discovery(install_path, setup_script_path):
+    """Test that discovery command run."""
+    args = ' discovery'
+    ret = subprocess.call(
+        cmd(install_path=install_path,
+            setup_script_path=setup_script_path,
+            args=args),
+        shell=True)
 
-    ret = subprocess.call(cmd, shell=True)
     if 0 != ret:
         print('test_fastdds_discovery FAILED')
         sys.exit(ret)
 
 
-def adjust_install_path(install_path):
+def get_paths(install_path):
     """Adjust the install path when --merge-install has been used."""
-    if os.name == 'posix':
-        cmd_setup = cmd_setup_posix
-    elif os.name == 'nt':
-        cmd_setup = cmd_setup_windows
-    else:
-        print('OS not supported')
+    tool_install_path = install_path / 'bin'
 
-    if 0 != subprocess.call(cmd_setup(install_path), shell=True):
-        # Check ../
-        if 0 == subprocess.call(cmd_setup(install_path, True), shell=True):
-            adjusted_install_path = install_path + '/../'
-        else:
-            print('setup.bash not found')
+    if not os.path.exists(tool_install_path.resolve()):
+        tool_install_path = tool_install_path / '..' / 'bin'
+        if not os.path.exists(tool_install_path.resolve()):
+            print(f'{tool_install_path} NOT FOUND')
             sys.exit(1)
-    # The path is valid
-    else:
-        adjusted_install_path = install_path
 
-    return adjusted_install_path
+    setup_script_path = install_path / setup_script_name()
+    if not os.path.exists(str(setup_script_path.resolve())):
+        setup_script_path = install_path / '..' / setup_script_name()
+        if not os.path.exists(str(setup_script_path.resolve())):
+            print(f'setup_script NOT FOUND')
+            sys.exit(1)
+
+    return setup_script_path, tool_install_path / 'fastdds'
 
 
 if __name__ == '__main__':
@@ -127,8 +114,11 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    path = adjust_install_path(args.install_path)
+    setup_script_path, tool_path = get_paths(Path(args.install_path))
 
-    test_fastdds_installed(path)
-    test_fastdds_discovery(path)
-    test_fastdds_shm(path)
+    print(f'setup_script_path: {setup_script_path.resolve()}\n'
+          f'tool_path: {tool_path.resolve()}\n')
+
+    test_fastdds_installed(tool_path)
+    test_fastdds_discovery(tool_path, setup_script_path)
+    test_fastdds_shm(tool_path)

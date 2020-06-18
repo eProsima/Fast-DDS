@@ -26,7 +26,7 @@ class Parser:
     """
 
     def __init__(self, argv):
-        """Parse the sub-command and dispatch to the appropiate handler.
+        """Parse the sub-command and dispatch to the appropriate handler.
 
         Shows usage if no sub-command is specified.
         """
