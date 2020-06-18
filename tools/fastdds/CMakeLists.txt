@@ -28,21 +28,18 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
 
 install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
-if (MSVC) 
+if (MSVC)
+
     # Windows
     install(FILES ${PROJECT_SOURCE_DIR}/fastdds.bat
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-
 else()
 
     # POSIX
-    install(CODE "execute_process( \
-        COMMAND ${CMAKE_COMMAND} -E create_symlink \
-        ../tools/fastdds/fastdds.py \
-        ${CMAKE_INSTALL_PREFIX}/bin/fastdds \
-        )"
-    )
+    set(fastdds_tool_target "../tools/fastdds/fastdds.py")
+    set(fastdds_tool_link ${CMAKE_INSTALL_PREFIX}/bin/fastdds)
+    install(CODE "execute_process(COMMAND ln -s -f \"${fastdds_tool_target}\" \"${fastdds_tool_link}\")")
 
 endif()
