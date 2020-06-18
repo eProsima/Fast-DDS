@@ -2,4 +2,4 @@
 rem This batch file simplifies fast-discovery-server tool scripting use by
 rem offering a version independent name. It will be generated only if an unprivileged
 rem installation prevents symlink creation. 
-@FAST_SERVER_BINARY_NAME@ %*
+"%~dp0\@FAST_SERVER_BINARY_NAME@" %*
