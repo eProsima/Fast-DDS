@@ -391,8 +391,10 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
         {
             data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
         }
-
-        data_reader_->subscriber_->subscriber_listener_.on_data_available(data_reader_->user_datareader_);
+        else
+        {
+            data_reader_->subscriber_->subscriber_listener_.on_data_available(data_reader_->user_datareader_);
+        }
     }
 }
 
@@ -404,8 +406,10 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
     {
         data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
     }
-
-    data_reader_->subscriber_->subscriber_listener_.on_subscription_matched(data_reader_->user_datareader_, info);
+    else
+    {
+        data_reader_->subscriber_->subscriber_listener_.on_subscription_matched(data_reader_->user_datareader_, info);
+    }
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
@@ -416,8 +420,10 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     {
         data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
     }
-
-    data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
+    else
+    {
+        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
+    }
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
@@ -425,13 +431,16 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         fastdds::dds::PolicyMask qos)
 {
     RequestedIncompatibleQosStatus& status = data_reader_->update_requested_incompatible_qos(qos);
-    if (data_reader_->listener_ != nullptr)
+    if (data_reader_->listener_ != nullptr  &&
+            (data_reader_->user_datareader_->get_status_mask() & StatusMask::requested_incompatible_qos()).any())
     {
         data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
         status.total_count_change = 0u;
     }
-
-    data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+    else
+    {
+        data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+    }
 }
 
 bool DataReaderImpl::on_new_cache_change_added(
@@ -733,7 +742,7 @@ RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qo
 {
     ++requested_incompatible_qos_status_.total_count;
     ++requested_incompatible_qos_status_.total_count_change;
-    for (fastrtps::rtps::octet id = 0; id < NEXT_QOS_POLICY_ID; ++id)
+    for (fastrtps::rtps::octet id = 1; id < NEXT_QOS_POLICY_ID; ++id)
     {
         if (incompatible_policies.test(id))
         {

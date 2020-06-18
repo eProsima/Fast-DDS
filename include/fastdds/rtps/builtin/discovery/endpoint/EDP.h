@@ -29,8 +29,9 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
-namespace eprosima {
+#define MATCH_FAILURE_REASON_COUNT size_t(16)
 
+namespace eprosima {
 namespace fastrtps {
 
 namespace types {
@@ -56,6 +57,26 @@ class RTPSParticipantImpl;
 class EDP
 {
 public:
+
+    /**
+     * Mask to hold the reasons why two endpoints do not match.
+     */
+    class MatchingFailureMask : public std::bitset<MATCH_FAILURE_REASON_COUNT>
+    {
+    public:
+
+        //! Bit index for matching failing due to different topic
+        static const uint32_t different_topic = (0x00000001 << 0u);
+
+        //! Bit index for matching failing due to inconsistent topic (same topic name but different characteristics)
+        static const uint32_t inconsistent_topic = (0x00000001 << 1u);
+
+        //! Bit index for matching failing due to incompatible QoS
+        static const uint32_t incompatible_qos = (0x00000001 << 2u);
+
+        //! Bit index for matching failing due to inconsistent partitions
+        static const uint32_t partitions = (0x00000001 << 3u);
+    };
 
     /**
      * Constructor.
@@ -176,6 +197,7 @@ public:
             RTPSWriter* W,
             const TopicAttributes& att,
             const WriterQos& qos);
+
     /**
      * Check the validity of a matching between a RTPSWriter and a ReaderProxyData object.
      * @param wdata Pointer to the WriterProxyData object.
@@ -185,6 +207,7 @@ public:
     bool validMatching(
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata);
+
     /**
      * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
      * @param rdata Pointer to the ReaderProxyData object.
@@ -194,6 +217,34 @@ public:
     bool validMatching(
             const ReaderProxyData* rdata,
             const WriterProxyData* wdata);
+
+    /**
+     * Check the validity of a matching between a RTPSWriter and a ReaderProxyData object.
+     * @param wdata Pointer to the WriterProxyData object.
+     * @param rdata Pointer to the ReaderProxyData object.
+     * @param reason[out] On return will specify the reason of failed matching (if any).
+     * @param incompatible_qos[out] On return will specify all the QoS values that were incompatible (if any).
+     * @return True if the two can be matched.
+     */
+    bool valid_matching(
+            const WriterProxyData* wdata,
+            const ReaderProxyData* rdata,
+            MatchingFailureMask& reason,
+            fastdds::dds::PolicyMask& incompatible_qos);
+
+    /**
+     * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
+     * @param rdata Pointer to the ReaderProxyData object.
+     * @param wdata Pointer to the WriterProxyData object.
+     * @param error_mask[out] On return will specify the reason of failed matching (if any).
+     * @param incompatible_qos[out] On return will specify all the QoS values that were incompatible (if any).
+     * @return True if the two can be matched.
+     */
+    bool valid_matching(
+            const ReaderProxyData* rdata,
+            const WriterProxyData* wdata,
+            MatchingFailureMask& reason,
+            fastdds::dds::PolicyMask& incompatible_qos);
 
     /**
      * Unpair a WriterProxyData object from all local readers.
@@ -281,20 +332,6 @@ public:
             const GUID_t& writer_guid,
             int change);
 
-    void update_requested_incompatible_qos(
-            const GUID_t& reader_guid,
-            fastdds::dds::QosPolicyId_t policy_id);
-
-    void clear_requested_incompatible_qos(
-            const GUID_t& reader_guid);
-
-    void update_offered_incompatible_qos(
-            const GUID_t& writer_guid,
-            fastdds::dds::QosPolicyId_t policy_id);
-
-    void clear_offered_incompatible_qos(
-            const GUID_t& writer_guid);
-
     //! Pointer to the PDP object that contains the endpoint discovery protocol.
     PDP* mp_PDP;
     //! Pointer to the RTPSParticipant.
@@ -351,21 +388,8 @@ private:
 
     ReaderProxyData temp_reader_proxy_data_;
     WriterProxyData temp_writer_proxy_data_;
-
-protected:
-    struct reader_status
-    {
-        fastdds::dds::SubscriptionMatchedStatus subscription_matched;
-        fastdds::dds::PolicyMask requested_incompatible_qos;
-    };
-    std::map<GUID_t, reader_status> reader_status_;
-
-    struct writer_status
-    {
-        fastdds::dds::PublicationMatchedStatus publication_matched;
-        fastdds::dds::PolicyMask offered_incompatible_qos;
-    };
-    std::map<GUID_t, writer_status> writer_status_;
+    std::map<GUID_t, fastdds::dds::SubscriptionMatchedStatus> reader_status_;
+    std::map<GUID_t, fastdds::dds::PublicationMatchedStatus> writer_status_;
 };
 
 } /* namespace rtps */

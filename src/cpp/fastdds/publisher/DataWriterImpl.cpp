@@ -676,8 +676,10 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         data_writer_->listener_->on_publication_matched(
             data_writer_->user_datawriter_, info);
     }
-
-    data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
+    else
+    {
+        data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
+    }
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
@@ -685,13 +687,16 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         fastdds::dds::PolicyMask qos)
 {
     OfferedIncompatibleQosStatus& status = data_writer_->update_offered_incompatible_qos(qos);
-    if (data_writer_->listener_ != nullptr)
+    if (data_writer_->listener_ != nullptr  &&
+            (data_writer_->user_datawriter_->get_status_mask() & StatusMask::offered_incompatible_qos()).any())
     {
         data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
         status.total_count_change = 0u;
     }
-
-    data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+    else
+    {
+        data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+    }
 }
 
 
@@ -719,8 +724,10 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
     {
         data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
     }
-
-    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+    else
+    {
+        data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+    }
 }
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
@@ -808,7 +815,7 @@ ReturnCode_t DataWriterImpl::get_offered_incompatible_qos_status(
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     status = offered_incompatible_qos_status_;
-    offered_incompatible_qos_status_.total_count_change = 0;
+    offered_incompatible_qos_status_.total_count_change = 0u;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -936,7 +943,7 @@ OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(
 {
     ++offered_incompatible_qos_status_.total_count;
     ++offered_incompatible_qos_status_.total_count_change;
-    for (fastrtps::rtps::octet id = 0; id < NEXT_QOS_POLICY_ID; ++id)
+    for (uint32_t id = 1; id < NEXT_QOS_POLICY_ID; ++id)
     {
         if (incompatible_policies.test(id))
         {

@@ -189,7 +189,7 @@ public:
 
     /**
      * @brief Returns the offered incompatible qos status
-     * @param status Offered incompatible qos status struct
+     * @param[out] status Offered incompatible qos status struct
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_offered_incompatible_qos_status(

@@ -45,7 +45,7 @@ class StatefulReader : public RTPSReader
 
         MOCK_METHOD1(liveliness_expired, bool(const GUID_t&));
 
-        MOCK_METHOD2(change_received, bool (CacheChange_t* a_change, WriterProxy* prox));
+        MOCK_METHOD2(change_received, bool(CacheChange_t* a_change, WriterProxy* prox));
 
         MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
 

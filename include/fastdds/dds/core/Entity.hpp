@@ -92,7 +92,7 @@ public:
      */
     RTPS_DllAPI const StatusMask& get_status_changes() const
     {
-        return status_mask_;
+        return status_changes_;
     }
 
     /**

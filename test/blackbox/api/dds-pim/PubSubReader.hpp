@@ -554,9 +554,7 @@ public:
     PubSubReader& deactivate_status_listener(
             eprosima::fastdds::dds::StatusMask mask)
     {
-        eprosima::fastdds::dds::StatusMask tmp = status_mask_;
-        status_mask_ &= mask;
-        status_mask_ ^= tmp;
+        status_mask_ &= ~mask;
         return *this;
     }
 

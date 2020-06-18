@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PDPSimple.h
+ * @file PDP.h
  */
 
 #ifndef _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
@@ -80,4 +80,4 @@ class PDP
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif // _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#endif // _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_

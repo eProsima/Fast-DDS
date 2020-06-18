@@ -51,53 +51,53 @@ namespace dds {
  * to the incompatible policies on OfferedIncompatibleQosStatus
  * and RequestedIncompatibleQosStatus.
  */
-enum QosPolicyId_t : fastrtps::rtps::octet
+enum QosPolicyId_t : uint32_t
 {
-    INVALID_QOS_POLICY_ID,                      //< Does not refer to any valid QosPolicy
+    INVALID_QOS_POLICY_ID                   = 0,    //< Does not refer to any valid QosPolicy
 
     // Standard QosPolicies
-    USERDATA_QOS_POLICY_ID,                     //< UserDataQosPolicy
-    DURABILITY_QOS_POLICY_ID,                   //< DurabilityQosPolicy
-    PRESENTATION_QOS_POLICY_ID,                 //< PresentationQosPolicy
-    DEADLINE_QOS_POLICY_ID,                     //< DeadlineQosPolicy
-    LATENCYBUDGET_QOS_POLICY_ID,                //< LatencyBudgetQosPolicy
-    OWNERSHIP_QOS_POLICY_ID,                    //< OwnershipQosPolicy
-    OWNERSHIPSTRENGTH_QOS_POLICY_ID,            //< OwnershipStrengthQosPolicy
-    LIVELINESS_QOS_POLICY_ID,                   //< LivelinessQosPolicy
-    TIMEBASEDFILTER_QOS_POLICY_ID,              //< TimeBasedFilterQosPolicy
-    PARTITION_QOS_POLICY_ID,                    //< PartitionQosPolicy
-    RELIABILITY_QOS_POLICY_ID,                  //< ReliabilityQosPolicy
-    DESTINATIONORDER_QOS_POLICY_ID,             //< DestinationOrderQosPolicy
-    HISTORY_QOS_POLICY_ID,                      //< HistoryQosPolicy
-    RESOURCELIMITS_QOS_POLICY_ID,               //< ResourceLimitsQosPolicy
-    ENTITYFACTORY_QOS_POLICY_ID,                //< EntityFactoryQosPolicy
-    WRITERDATALIFECYCLE_QOS_POLICY_ID,          //< WriterDataLifecycleQosPolicy
-    READERDATALIFECYCLE_QOS_POLICY_ID,          //< ReaderDataLifecycleQosPolicy
-    TOPICDATA_QOS_POLICY_ID,                    //< TopicDataQosPolicy
-    GROUPDATA_QOS_POLICY_ID,                    //< GroupDataQosPolicy
-    TRANSPORTPRIORITY_QOS_POLICY_ID,            //< TransportPriorityQosPolicy
-    LIFESPAN_QOS_POLICY_ID,                     //< LifespanQosPolicy
-    DURABILITYSERVICE_QOS_POLICY_ID,            //< DurabilityServiceQosPolicy
-
-    //eProsima Extensions
-    DISABLEPOSITIVEACKS_QOS_POLICY_ID,          //< DisablePositiveACKsQosPolicy
-    PARTICIPANTRESOURCELIMITS_QOS_POLICY_ID,    //< ParticipantResourceLimitsQos
-    PROPERTYPOLICY_QOS_POLICY_ID,               //< PropertyPolicyQos
-    PUBLISHMODE_QOS_POLICY_ID,                  //< PublishModeQosPolicy
-    READERRESOURCELIMITS_QOS_POLICY_ID,         //< Reader ResourceLimitsQos
-    RTPSENDPOINT_QOS_POLICY_ID,                 //< RTPSEndpointQos
-    RTPSRELIABLEREADER_QOS_POLICY_ID,           //< RTPSReliableReaderQos
-    RTPSRELIABLEWRITER_QOS_POLICY_ID,           //< RTPSReliableWriterQos
-    TRANSPORTCONFIG_QOS_POLICY_ID,              //< TransportConfigQos
-    TYPECONSISTENCY_QOS_POLICY_ID,              //< TipeConsistencyQos
-    WIREPROTOCOLCONFIG_QOS_POLICY_ID,           //< WireProtocolConfigQos
-    WRITERRESOURCELIMITS_QOS_POLICY_ID,         //< WriterResourceLimitsQos
+    USERDATA_QOS_POLICY_ID                  = 1,    //< UserDataQosPolicy
+    DURABILITY_QOS_POLICY_ID                = 2,    //< DurabilityQosPolicy
+    PRESENTATION_QOS_POLICY_ID              = 3,    //< PresentationQosPolicy
+    DEADLINE_QOS_POLICY_ID                  = 4,    //< DeadlineQosPolicy
+    LATENCYBUDGET_QOS_POLICY_ID             = 5,    //< LatencyBudgetQosPolicy
+    OWNERSHIP_QOS_POLICY_ID                 = 6,    //< OwnershipQosPolicy
+    OWNERSHIPSTRENGTH_QOS_POLICY_ID         = 7,    //< OwnershipStrengthQosPolicy
+    LIVELINESS_QOS_POLICY_ID                = 8,    //< LivelinessQosPolicy
+    TIMEBASEDFILTER_QOS_POLICY_ID           = 9,    //< TimeBasedFilterQosPolicy
+    PARTITION_QOS_POLICY_ID                 = 10,   //< PartitionQosPolicy
+    RELIABILITY_QOS_POLICY_ID               = 11,   //< ReliabilityQosPolicy
+    DESTINATIONORDER_QOS_POLICY_ID          = 12,   //< DestinationOrderQosPolicy
+    HISTORY_QOS_POLICY_ID                   = 13,   //< HistoryQosPolicy
+    RESOURCELIMITS_QOS_POLICY_ID            = 14,   //< ResourceLimitsQosPolicy
+    ENTITYFACTORY_QOS_POLICY_ID             = 15,   //< EntityFactoryQosPolicy
+    WRITERDATALIFECYCLE_QOS_POLICY_ID       = 16,   //< WriterDataLifecycleQosPolicy
+    READERDATALIFECYCLE_QOS_POLICY_ID       = 17,   //< ReaderDataLifecycleQosPolicy
+    TOPICDATA_QOS_POLICY_ID                 = 18,   //< TopicDataQosPolicy
+    GROUPDATA_QOS_POLICY_ID                 = 19,   //< GroupDataQosPolicy
+    TRANSPORTPRIORITY_QOS_POLICY_ID         = 20,   //< TransportPriorityQosPolicy
+    LIFESPAN_QOS_POLICY_ID                  = 21,   //< LifespanQosPolicy
+    DURABILITYSERVICE_QOS_POLICY_ID         = 22,   //< DurabilityServiceQosPolicy
 
     //XTypes extensions
-    DATAREPRESENTATION_QOS_POLICY_ID,           //< DataRepresentationQosPolicy
-    TYPECONSISTENCYENFORCEMENT_QOS_POLICY_ID,   //< TypeConsistencyEnforcementQosPolicy
+    DATAREPRESENTATION_QOS_POLICY_ID            = 23,   //< DataRepresentationQosPolicy
+    TYPECONSISTENCYENFORCEMENT_QOS_POLICY_ID    = 24,   //< TypeConsistencyEnforcementQosPolicy
 
-    NEXT_QOS_POLICY_ID                          //< Keep always the last element. For internal use only
+    //eProsima Extensions
+    DISABLEPOSITIVEACKS_QOS_POLICY_ID       = 25,   //< DisablePositiveACKsQosPolicy
+    PARTICIPANTRESOURCELIMITS_QOS_POLICY_ID = 26,   //< ParticipantResourceLimitsQos
+    PROPERTYPOLICY_QOS_POLICY_ID            = 27,   //< PropertyPolicyQos
+    PUBLISHMODE_QOS_POLICY_ID               = 28,   //< PublishModeQosPolicy
+    READERRESOURCELIMITS_QOS_POLICY_ID      = 29,   //< Reader ResourceLimitsQos
+    RTPSENDPOINT_QOS_POLICY_ID              = 30,   //< RTPSEndpointQos
+    RTPSRELIABLEREADER_QOS_POLICY_ID        = 31,   //< RTPSReliableReaderQos
+    RTPSRELIABLEWRITER_QOS_POLICY_ID        = 32,   //< RTPSReliableWriterQos
+    TRANSPORTCONFIG_QOS_POLICY_ID           = 33,   //< TransportConfigQos
+    TYPECONSISTENCY_QOS_POLICY_ID           = 34,   //< TipeConsistencyQos
+    WIREPROTOCOLCONFIG_QOS_POLICY_ID        = 35,   //< WireProtocolConfigQos
+    WRITERRESOURCELIMITS_QOS_POLICY_ID      = 36,   //< WriterResourceLimitsQos
+
+    NEXT_QOS_POLICY_ID                              //< Keep always the last element. For internal use only
 };
 
 using PolicyMask = std::bitset<NEXT_QOS_POLICY_ID>;

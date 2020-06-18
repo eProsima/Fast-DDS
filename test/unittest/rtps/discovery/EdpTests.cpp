@@ -1,4 +1,4 @@
-// Copyright 220Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-/*
-#define TEST_FRIENDS \
-    FRIEND_TEST(WriterProxyTests, MissingChangesUpdate); \
-    FRIEND_TEST(WriterProxyTests, LostChangesUpdate); \
-    FRIEND_TEST(WriterProxyTests, ReceivedChangeSet); \
-    FRIEND_TEST(WriterProxyTests, IrrelevantChangeSet);
-*/
+
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
@@ -86,16 +80,6 @@ public:
         return true;
     }
 
-    fastdds::dds::PolicyMask reader_incompatible_qos_policies(GUID_t rguid)
-    {
-        return reader_status_[rguid].requested_incompatible_qos;
-    }
-
-    fastdds::dds::PolicyMask writer_incompatible_qos_policies(GUID_t wguid)
-    {
-        return writer_status_[wguid].offered_incompatible_qos;
-    }
-
 };
 
 class EdpTests : public ::testing::Test
@@ -148,6 +132,64 @@ protected:
         rdata->typeName("AnotherTypeName");
     }
 
+    void check_expectations(
+        bool valid_matching)
+    {
+        EDP::MatchingFailureMask no_match_reason;
+        fastdds::dds::PolicyMask incompatible_qos;
+
+        EXPECT_EQ(edp->valid_matching(wdata, rdata, no_match_reason, incompatible_qos), valid_matching);
+        EXPECT_EQ(no_match_reason.none(), valid_matching);
+        EXPECT_FALSE(no_match_reason.test(EDP::MatchingFailureMask::incompatible_qos));
+        EXPECT_TRUE(incompatible_qos.none());
+
+        EXPECT_EQ(edp->valid_matching(rdata, wdata, no_match_reason, incompatible_qos), valid_matching);
+        EXPECT_EQ(no_match_reason.none(), valid_matching);
+        EXPECT_FALSE(no_match_reason.test(EDP::MatchingFailureMask::incompatible_qos));
+        EXPECT_TRUE(incompatible_qos.none());
+    }
+
+    void check_expectations(
+        bool valid_matching,
+        fastdds::dds::QosPolicyId_t policy)
+    {
+        EDP::MatchingFailureMask no_match_reason;
+        fastdds::dds::PolicyMask incompatible_qos;
+
+        EXPECT_EQ(edp->valid_matching(wdata, rdata, no_match_reason, incompatible_qos), valid_matching);
+        EXPECT_EQ(no_match_reason.none(), valid_matching);
+        EXPECT_TRUE(no_match_reason.test(EDP::MatchingFailureMask::incompatible_qos));
+        EXPECT_TRUE(incompatible_qos.test(policy));
+        incompatible_qos.reset(policy);
+        EXPECT_TRUE(incompatible_qos.none());
+
+        EXPECT_EQ(edp->valid_matching(rdata, wdata, no_match_reason, incompatible_qos), valid_matching);
+        EXPECT_EQ(no_match_reason.none(), valid_matching);
+        EXPECT_TRUE(no_match_reason.test(EDP::MatchingFailureMask::incompatible_qos));
+        EXPECT_TRUE(incompatible_qos.test(policy));
+        incompatible_qos.reset(policy);
+        EXPECT_TRUE(incompatible_qos.none());
+    }
+
+    template <typename T>
+    struct QosTestingCase
+    {
+        T offered_qos;
+        T requested_qos;
+        fastdds::dds::QosPolicyId_t failed_qos;
+    };
+
+    void check_expectations(fastdds::dds::QosPolicyId_t failed_qos)
+    {
+        if (failed_qos == fastdds::dds::INVALID_QOS_POLICY_ID)
+        {
+            check_expectations(true);
+        }
+        else
+        {
+            check_expectations(false, failed_qos);
+        }
+    }
 
     ::testing::NiceMock<PDP> pdp_;
     ::testing::NiceMock<RTPSParticipantImpl> participant_;
@@ -159,308 +201,187 @@ protected:
 
 TEST_F(EdpTests, CompleteCompatibility)
 {
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    check_expectations(true);
 }
 
 TEST_F(EdpTests, IncompatibleTopic)
 {
     set_incompatible_topic();
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    check_expectations(false);
 }
 
 TEST_F(EdpTests, IncompatibleTopicKind)
 {
     set_incompatible_topic_kind();
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    check_expectations(false);
 }
 
 TEST_F(EdpTests, IncompatibleType)
 {
     set_incompatible_type();
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    check_expectations(false);
 }
 
-TEST_F(EdpTests, CheckDurabilityCompatibility)
-{
-    wdata->m_qos.m_durability.kind = PERSISTENT_DURABILITY_QOS;
-    rdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
-    rdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    rdata->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
-    rdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::DURABILITY_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::DURABILITY_QOS_POLICY_ID));
-
-    wdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    rdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::DURABILITY_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::DURABILITY_QOS_POLICY_ID));
-
-    wdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
-    rdata->m_qos.m_durability.kind = PERSISTENT_DURABILITY_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::DURABILITY_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::DURABILITY_QOS_POLICY_ID));
-}
-
-TEST_F(EdpTests, CheckDeadlineCompatibility)
-{
-    wdata->m_qos.m_deadline.period = 5;
-    rdata->m_qos.m_deadline.period = 10;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_deadline.period = 10;
-    rdata->m_qos.m_deadline.period = 5;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::DEADLINE_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::DEADLINE_QOS_POLICY_ID));
-}
-
-TEST_F(EdpTests, CheckOwnershipCompatibility)
-{
-    wdata->m_qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
-    rdata->m_qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
-    rdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
-    rdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::OWNERSHIP_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::OWNERSHIP_QOS_POLICY_ID));
-
-    wdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
-    rdata->m_qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::OWNERSHIP_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::OWNERSHIP_QOS_POLICY_ID));
-}
-
-TEST_F(EdpTests, CheckLivelinessKindCompatibility)
-{
-    wdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
-    rdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-    rdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-    rdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::LIVELINESS_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::LIVELINESS_QOS_POLICY_ID));
-
-    wdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-    rdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::LIVELINESS_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::LIVELINESS_QOS_POLICY_ID));
-}
-
-TEST_F(EdpTests, CheckLeaseDurationCompatibility)
-{
-    wdata->m_qos.m_liveliness.lease_duration = 5;
-    rdata->m_qos.m_liveliness.lease_duration = 10;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_liveliness.lease_duration = 10;
-    rdata->m_qos.m_liveliness.lease_duration = 5;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::LIVELINESS_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::LIVELINESS_QOS_POLICY_ID));
-}
-
-TEST_F(EdpTests, CheckReliabilityCompatibility)
-{
-    wdata->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    rdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-    rdata->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::RELIABILITY_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::RELIABILITY_QOS_POLICY_ID));
-}
-
-TEST_F(EdpTests, CheckPositiveAckCompatibility)
-{
-    wdata->m_qos.m_disablePositiveACKs.enabled = true;
-    rdata->m_qos.m_disablePositiveACKs.enabled = false;
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
-
-    wdata->m_qos.m_disablePositiveACKs.enabled = false;
-    rdata->m_qos.m_disablePositiveACKs.enabled = true;
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).test(fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID));
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).test(fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID));
-}
 
 TEST_F(EdpTests, CheckPartitionCompatibility)
 {
     // Start with the same partitions
     wdata->m_qos.m_partition.push_back("Partition1");
     rdata->m_qos.m_partition.push_back("Partition1");
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    check_expectations(true);
 
     // Add new (different) partitions. They still match on the previous one
     wdata->m_qos.m_partition.push_back("Partition2");
     rdata->m_qos.m_partition.push_back("Partition3");
-
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    check_expectations(true);
 
     // Clear and add different partitions
     wdata->m_qos.m_partition.clear();
     wdata->m_qos.m_partition.push_back("Partition10");
     rdata->m_qos.m_partition.clear();
     rdata->m_qos.m_partition.push_back("Partition20");
-
-    EXPECT_FALSE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
-
-    EXPECT_FALSE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    check_expectations(false);
 
     // Wildcard matching
     wdata->m_qos.m_partition.clear();
     wdata->m_qos.m_partition.push_back("Part*");
     rdata->m_qos.m_partition.clear();
     rdata->m_qos.m_partition.push_back("Partition");
+    check_expectations(true);
+}
 
-    EXPECT_TRUE(edp->validMatching(wdata, rdata));
-    EXPECT_TRUE(edp->writer_incompatible_qos_policies(wdata->guid()).none());
+TEST_F(EdpTests, CheckDurabilityCompatibility)
+{
+    std::vector<QosTestingCase<DurabilityQosPolicyKind>> testing_cases{
+        { PERSISTENT_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { PERSISTENT_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { PERSISTENT_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { PERSISTENT_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { TRANSIENT_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { TRANSIENT_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { TRANSIENT_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { TRANSIENT_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { TRANSIENT_LOCAL_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { TRANSIENT_LOCAL_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { TRANSIENT_LOCAL_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { TRANSIENT_LOCAL_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { VOLATILE_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { VOLATILE_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { VOLATILE_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { VOLATILE_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+        };
 
-    EXPECT_TRUE(edp->validMatching(rdata, wdata));
-    EXPECT_TRUE(edp->reader_incompatible_qos_policies(rdata->guid()).none());
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.m_durability.kind = testing_case.offered_qos;
+        rdata->m_qos.m_durability.kind = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
 
+TEST_F(EdpTests, CheckDeadlineCompatibility)
+{
+    std::vector<QosTestingCase<unsigned int>> testing_cases{
+        { 5, 5, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { 5, 10, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { 10, 5, fastdds::dds::DEADLINE_QOS_POLICY_ID}
+        };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.m_deadline.period = testing_case.offered_qos;
+        rdata->m_qos.m_deadline.period = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
+
+TEST_F(EdpTests, CheckOwnershipCompatibility)
+{
+    std::vector<QosTestingCase<OwnershipQosPolicyKind>> testing_cases{
+        { SHARED_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { SHARED_OWNERSHIP_QOS, EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
+        { EXCLUSIVE_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
+        { EXCLUSIVE_OWNERSHIP_QOS, EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+        };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.m_ownership.kind = testing_case.offered_qos;
+        rdata->m_qos.m_ownership.kind = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
+
+TEST_F(EdpTests, CheckLivelinessKindCompatibility)
+{
+    std::vector<QosTestingCase<LivelinessQosPolicyKind>> testing_cases{
+        { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { MANUAL_BY_TOPIC_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
+        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { AUTOMATIC_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
+        { AUTOMATIC_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
+        { AUTOMATIC_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+        };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.m_liveliness.kind = testing_case.offered_qos;
+        rdata->m_qos.m_liveliness.kind = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
+
+TEST_F(EdpTests, CheckLeaseDurationCompatibility)
+{
+    std::vector<QosTestingCase<unsigned int>> testing_cases{
+        { 5, 5, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { 5, 10, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { 10, 5, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
+        };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.m_liveliness.lease_duration = testing_case.offered_qos;
+        rdata->m_qos.m_liveliness.lease_duration = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
+
+TEST_F(EdpTests, CheckReliabilityCompatibility)
+{
+    std::vector<QosTestingCase<ReliabilityQosPolicyKind>> testing_cases{
+        { RELIABLE_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { RELIABLE_RELIABILITY_QOS, BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { BEST_EFFORT_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::RELIABILITY_QOS_POLICY_ID},
+        { BEST_EFFORT_RELIABILITY_QOS, BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+        };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.m_reliability.kind = testing_case.offered_qos;
+        rdata->m_qos.m_reliability.kind = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
+
+TEST_F(EdpTests, CheckPositiveAckCompatibility)
+{
+    std::vector<QosTestingCase<bool>> testing_cases{
+        { true, true, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { true, false, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { false, true, fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID},
+        { false, false, fastdds::dds::INVALID_QOS_POLICY_ID}
+        };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.m_disablePositiveACKs.enabled = testing_case.offered_qos;
+        rdata->m_qos.m_disablePositiveACKs.enabled = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
 }
 
 

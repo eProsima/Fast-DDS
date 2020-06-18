@@ -70,8 +70,8 @@ public:
 
     /**
      * This method is called when a new Reader is discovered, with a Topic that
-     * matches that of a local writer, but with an offered QoS that is incompatible
-     * with the one requested by the local writer
+     * matches that of a local writer, but with a requested QoS that is incompatible
+     * with the one offered by the local writer
      * @param writer Pointer to the RTPSWriter.
      * @param qos_id Identifier of the incompatible Qos.
      */
