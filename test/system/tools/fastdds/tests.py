@@ -12,7 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test for the fastdds tool."""
+"""
+    Tests for the fastdds tool.
+
+    Contains a package of system test for fastdds tool
+
+    usage: test.py <install_path> <test_name>
+
+    install_path: Fast-DDS base path installation
+
+    test_name: Test to run.
+
+    Available tests:
+
+        test_fastdds_installed
+        test_fastdds_discovery
+        test_fastdds_shm
+
+"""
 
 import argparse
 import os
@@ -22,7 +39,13 @@ from pathlib import Path
 
 
 def setup_script_name():
-    """Test script for POSIX os."""
+    """
+    Test script for POSIX os.
+
+    Return the name of the setup script file. This setup script is
+    required by some tests to prepare the test environment
+
+    """
     if os.name == 'posix':
         script_name = 'setup.bash'
     elif os.name == 'nt':
@@ -35,7 +58,19 @@ def setup_script_name():
 
 
 def cmd(install_path, setup_script_path=Path(), args=''):
-    """Test script for POSIX os."""
+    """
+    Build the command line to run for the current platform.
+
+    install_path Path:
+        Fast-DDS instalation path.
+
+    setup_script_path Path:
+        Path to the setup script if necessary.
+
+    args str:
+        Extra argumens for the command (sub-verb)
+
+    """
     tool_path = str(install_path.resolve())
     if os.name == 'posix':
         if str(setup_script_path) == '.':
@@ -55,7 +90,7 @@ def cmd(install_path, setup_script_path=Path(), args=''):
 
 
 def test_fastdds_installed(install_path):
-    """Test that fastdds is installed and run."""
+    """Test that fastdds is installed and runs."""
     ret = subprocess.call(cmd(install_path), shell=True)
     if 0 != ret:
         print('test_fastdds_installed FAILED')
@@ -63,7 +98,7 @@ def test_fastdds_installed(install_path):
 
 
 def test_fastdds_shm(install_path):
-    """Test that shm command run."""
+    """Test that shm command runs."""
     args = ' shm clean'
     ret = subprocess.call(cmd(
         install_path=install_path, args=args), shell=True)
@@ -73,7 +108,7 @@ def test_fastdds_shm(install_path):
 
 
 def test_fastdds_discovery(install_path, setup_script_path):
-    """Test that discovery command run."""
+    """Test that discovery command runs."""
     args = ' discovery'
     ret = subprocess.call(
         cmd(install_path=install_path,
@@ -87,7 +122,17 @@ def test_fastdds_discovery(install_path, setup_script_path):
 
 
 def get_paths(install_path):
-    """Adjust the install path when --merge-install has been used."""
+    """
+    Adjust the install path when --merge-install has been used.
+
+    param install_path Path:
+        Path to the Fast-DDS installation path
+
+    return Path:
+        Adjusted path to the installation path where fastdds tool
+        is installed
+
+    """
     tool_install_path = install_path / 'bin'
 
     if not os.path.exists(tool_install_path.resolve()):

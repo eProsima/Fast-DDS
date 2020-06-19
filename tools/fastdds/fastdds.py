@@ -14,7 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Entry point of the fastdds tool."""
+"""
+    fastdds CLI tool.
+
+    This CLI tool provide a set commands and sub-commands to perform, Fast-DDS
+    related, maintenance / configuration tasks.
+
+    usage: fastdds <command> [<command-args>]
+
+        Commands:
+
+            discovery     Server-Client discovery auxiliary generator
+
+            shm           Shared-memory commands
+
+        fastdds <command> [-h] shows command usage
+
+
+    positional arguments:
+    command     Command to run
+
+    optional arguments:
+    -h, --help  show this help message and exit
+
+"""
 
 import argparse
 import sys
@@ -39,7 +62,7 @@ class FastDDSParser:
     def __init__(self):
         """Parse sys.argv[1:2].
 
-        Parses the <command> and dispatch to the appropriate handler.
+        Parses the <command> and dispatches to the appropriate handler.
         Shows usage if no command is specified.
         """
         self.__check_python_version()

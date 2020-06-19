@@ -12,7 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Entry point of discovery sub-command."""
+"""
+    fastdds discovery verb parser.
+
+    The parser just forward the sub-commands to the fast-discovery-server
+    tool application.
+
+"""
 
 import os
 import re
@@ -26,38 +32,12 @@ class Parser:
 
     __help_message = 'fastdds discovery <discovery-args>\n\n'
 
-    def __find_tool_path(self):
-        """Calculate the path to the fast-discovery-server tool.
-
-        Returns
-        str : Full path to the executable
-
-        """
-        tool_path = Path(os.path.dirname(os.path.realpath(__file__)))
-        # We asume the installion path is relative to our installation path
-        tool_path = tool_path / '../../../bin'
-        if os.name == 'posix':
-            ret = tool_path / 'fast-discovery-server'
-            if not os.path.exists(ret):
-                print('fast-discovery-server tool not installed')
-                os.exit(1)
-        elif os.name == 'nt':
-            ret = tool_path / 'fast-discovery-server.exe'
-            if not os.path.exists(ret):
-                ret = tool_path / 'fast-discovery-server.bat'
-                if not os.path.exists(ret):
-                    print('fast-discovery-server tool not installed')
-                    os.exit(1)
-        else:
-            print(f'{os.name} not supported')
-            os.exit(1)
-
-        return ret
-
     def __init__(self, argv):
-        """Parse the sub-command and dispatch to the appropriate handler.
+        """
+        Parse the sub-command and dispatch to the appropriate handler.
 
         Shows usage if no sub-command is specified.
+
         """
         tool_path = str(self.__find_tool_path().resolve())
 
@@ -88,6 +68,35 @@ class Parser:
             self.__help_message += '\n fast-discovery-server tool not found!'
             print(self.__help_message)
             sys.exit(1)
+
+    def __find_tool_path(self):
+        """
+        Calculate the path to the fast-discovery-server tool.
+
+        returns str:
+            Full path to the executable
+
+        """
+        tool_path = Path(os.path.dirname(os.path.realpath(__file__)))
+        # We asume the installion path is relative to our installation path
+        tool_path = tool_path / '../../../bin'
+        if os.name == 'posix':
+            ret = tool_path / 'fast-discovery-server'
+            if not os.path.exists(ret):
+                print('fast-discovery-server tool not installed')
+                os.exit(1)
+        elif os.name == 'nt':
+            ret = tool_path / 'fast-discovery-server.exe'
+            if not os.path.exists(ret):
+                ret = tool_path / 'fast-discovery-server.bat'
+                if not os.path.exists(ret):
+                    print('fast-discovery-server tool not installed')
+                    os.exit(1)
+        else:
+            print(f'{os.name} not supported')
+            os.exit(1)
+
+        return ret
 
     def __edit_tool_help(self, usage_text):
         """Find and replace the tool-name by fastdds discovery."""

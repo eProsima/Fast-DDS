@@ -12,7 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Sub-Command Clean implementation."""
+"""
+    Sub-Command Clean implementation.
+
+    This sub-command finds and remove unused shared-memory files.
+
+"""
 
 import os
 import platform
@@ -48,10 +53,11 @@ class Clean:
         print(int(len(zombie_segments) / 2), 'zombie segments cleaned')
 
     def __shm_dir(self):
-        """Return the shm directory.
+        """
+        Calculate the shm directory.
 
-        Returns:
-        Path: The path to the platform specific the SHM directory
+        returns Path:
+            The path to the platform specific the SHM directory
 
         """
         # Windows
@@ -78,10 +84,11 @@ class Clean:
             return []
 
     def __clean_zombie_segments(self):
-        """Find & delete zombie segments in the default SHM dir.
+        """
+        Find & delete zombie segments in the default SHM dir.
 
-        Returns:
-        list(str): With the deleted file names
+        returns list(str):
+            The deleted file names
 
         """
         segment_lock_re = re.compile('^fastrtps_(\\d|[a-z]){16}_el|_sl')
@@ -89,8 +96,8 @@ class Clean:
         # Each segment has an "_el" lock file that is locked if the segment
         # is open and the owner process is alive
         segment_locks = [
-            str(self.__shm_dir() / file_name) for file_name in self.__list_dir()
-            if segment_lock_re.match(file_name)]
+            str(self.__shm_dir() / file_name) for file_name in
+            self.__list_dir() if segment_lock_re.match(file_name)]
         zombie_files = []
 
         # Check is_file_locked for each lock file
@@ -109,10 +116,11 @@ class Clean:
         return zombie_files
 
     def __clean_zombie_ports(self):
-        """Find & delete zombie ports in the default SHM dir.
+        """
+        Find & delete zombie ports in the default SHM dir.
 
-        Returns:
-        list(str): With the deleted file names
+        returns list(str):
+            the deleted file names
 
         """
         port_lock_re = re.compile('^fastrtps_port\\d{,5}_el|_sl')
@@ -143,10 +151,14 @@ class Clean:
         return [self.__shm_dir() / file_name for file_name in zombie_files]
 
     def __port_mutex_name(self, port_file_name):
-        """Return the mutex object filename for the given port.
+        """
+        Return the mutex object filename for the given port.
 
-        :param port_file_name: str port segment file_name
-            the mutex name is deduced from it.
+        param port_file_name str:
+            port segment file_name, the mutex name is deduced from it.
+
+        returns str:
+            mutex file name
 
         """
         if os.name == 'posix':
@@ -155,11 +167,13 @@ class Clean:
             return ''.join([port_file_name, '_mutex'])
 
     def __remove_file(self, file):
-        """Delete a file.
+        """
+        Delete a file.
 
         Always return void, even if the function fails.
 
-        :param file: str with the complete file_path
+        param file str: 
+            The complete file_path
 
         """
         try:

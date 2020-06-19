@@ -12,7 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Entry point of the fastdds shm sub-command."""
+"""
+    fastdds shm sub-command.
+
+    This verb provides maintenance tasks related with Fast-DDS shared-memory
+    transport.
+
+    usage: fastdds shm [<shm-command>]
+
+    shm-commands:
+
+        clean     clean SHM zombie files
+
+    positional arguments:
+        command     shm-command to run
+
+    optional arguments:
+        -h, --help  show this help message and exit
+
+"""
 
 import argparse
 
@@ -32,8 +50,12 @@ class Parser:
 
         Shows usage if no sub-command is specified.
 
-        :param argv: list(str) containing the arguments for the command
+        Supported sub-commands:
 
+            clean   clean SHM zombie files
+
+        param argv list(str):
+            list containing the arguments for the command
         """
         parser = argparse.ArgumentParser(
             usage=self.__help_message,
