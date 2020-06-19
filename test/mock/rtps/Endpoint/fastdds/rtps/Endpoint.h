@@ -28,17 +28,23 @@ namespace rtps {
 
 class Endpoint
 {
-    public:
+public:
 
-        virtual ~Endpoint() = default;
+    virtual ~Endpoint() = default;
 
-        inline RecursiveTimedMutex& getMutex() { return mutex_; }
+    inline RecursiveTimedMutex& getMutex()
+    {
+        return mutex_;
+    }
 
-        EndpointAttributes& getAttributes() { return attributes_; }
+    EndpointAttributes& getAttributes()
+    {
+        return attributes_;
+    }
 
 #if HAVE_SECURITY
-        bool supports_rtps_protection_;
-#endif
+    bool supports_rtps_protection_;
+#endif // HAVE_SECURITY
 
     RecursiveTimedMutex mutex_;
     EndpointAttributes attributes_;

@@ -224,7 +224,6 @@ TypeSupport DataReader::type()
     return impl_->type();
 }
 
-
 const TopicDescription* DataReader::get_topicdescription() const
 {
     return impl_->get_topicdescription();

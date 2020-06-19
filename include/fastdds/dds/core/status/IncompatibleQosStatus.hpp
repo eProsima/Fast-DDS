@@ -70,7 +70,7 @@ struct IncompatibleQosStatus
     QosPolicyCountSeq policies;
 
     IncompatibleQosStatus()
-    : policies(static_cast<size_t>(NEXT_QOS_POLICY_ID), QosPolicyCount(INVALID_QOS_POLICY_ID, 0))
+        : policies(static_cast<size_t>(NEXT_QOS_POLICY_ID), QosPolicyCount(INVALID_QOS_POLICY_ID, 0))
     {
         for (uint32_t id = 0; id < NEXT_QOS_POLICY_ID; ++id)
         {
@@ -78,6 +78,7 @@ struct IncompatibleQosStatus
             policies[id].count = 0;
         }
     }
+
 };
 
 //!Alias of IncompatibleQosStatus

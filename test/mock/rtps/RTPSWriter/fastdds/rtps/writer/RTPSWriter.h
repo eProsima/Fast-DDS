@@ -36,52 +36,58 @@ class RTPSParticipantImpl;
 
 class RTPSWriter : public Endpoint
 {
-    public:
+public:
 
-        virtual ~RTPSWriter() = default;
+    virtual ~RTPSWriter() = default;
 
-        virtual bool matched_reader_add(const ReaderProxyData& ratt) = 0;
+    virtual bool matched_reader_add(
+            const ReaderProxyData& ratt) = 0;
 
-        virtual bool matched_reader_remove(const GUID_t& ratt) = 0;
+    virtual bool matched_reader_remove(
+            const GUID_t& ratt) = 0;
 
-        virtual bool matched_reader_is_matched(const GUID_t& rguid) = 0;
+    virtual bool matched_reader_is_matched(
+            const GUID_t& rguid) = 0;
 
-        WriterListener* getListener() const
-        {
-            return listener_;
-        }
+    WriterListener* getListener() const
+    {
+        return listener_;
+    }
 
-        MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
 
-        MOCK_METHOD3(new_change, CacheChange_t*(const std::function<uint32_t()>&,
-            ChangeKind_t, InstanceHandle_t));
+    MOCK_METHOD3(new_change, CacheChange_t* (
+            const std::function<uint32_t()>&,
+            ChangeKind_t,
+            InstanceHandle_t));
 
-        MOCK_METHOD1(set_separate_sending, void(bool));
+    MOCK_METHOD1(set_separate_sending, void(bool));
 
-        MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl*());
+    MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());
 
-        MOCK_METHOD0 (getTypeMaxSerialized, uint32_t());
+    MOCK_METHOD0 (getTypeMaxSerialized, uint32_t());
+    // *INDENT-ON*
 
-
-        virtual bool process_acknack(
+    virtual bool process_acknack(
             const GUID_t& writer_guid,
             const GUID_t& reader_guid,
             uint32_t ack_count,
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
             bool& result)
-        {
-            (void)writer_guid; (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
+    {
+        (void)writer_guid; (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
 
-            result = false;
-            return true;
-        }
+        result = false;
+        return true;
+    }
 
-        WriterHistory* history_;
+    WriterHistory* history_;
 
-        WriterListener* listener_;
+    WriterListener* listener_;
 
-        const GUID_t m_guid;
+    const GUID_t m_guid;
 };
 
 } // namespace rtps

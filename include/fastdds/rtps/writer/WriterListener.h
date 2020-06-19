@@ -23,17 +23,17 @@
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSWriter;
 struct CacheChange_t;
 
 /**
-* Class WriterListener with virtual method so the user can implement callbacks to certain events.
-*  @ingroup WRITER_MODULE
-*/
+ * Class WriterListener with virtual method so the user can implement callbacks to certain events.
+ * @ingroup WRITER_MODULE
+ */
 class RTPS_DllAPI WriterListener
 {
 public:
@@ -109,6 +109,7 @@ public:
         (void)writer;
         (void)status;
     }
+
 };
 
 } /* namespace rtps */

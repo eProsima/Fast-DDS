@@ -34,25 +34,32 @@ class ReaderHistory
 {
     friend class RTPSReader;
 
-    public:
+public:
 
-        ReaderHistory(const HistoryAttributes& /*att*/){}
+    ReaderHistory(
+            const HistoryAttributes& /*att*/)
+    {
+    }
 
-        MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
+    MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
 
-        bool remove_change(CacheChange_t* change)
-        {
-            bool ret = remove_change_mock(change);
-            delete change;
-            return ret;
-        }
+    bool remove_change(
+            CacheChange_t* change)
+    {
+        bool ret = remove_change_mock(change);
+        delete change;
+        return ret;
+    }
 
-        inline RecursiveTimedMutex* getMutex() { return mp_mutex; }
+    inline RecursiveTimedMutex* getMutex()
+    {
+        return mp_mutex;
+    }
 
-    protected:
+protected:
 
-        RTPSReader* mp_reader;
-        RecursiveTimedMutex* mp_mutex;
+    RTPSReader* mp_reader;
+    RecursiveTimedMutex* mp_mutex;
 };
 
 } // namespace rtps

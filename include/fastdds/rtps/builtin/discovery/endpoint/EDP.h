@@ -36,7 +36,7 @@ namespace fastrtps {
 
 namespace types {
 class TypeIdentifier;
-}
+} // namespace types
 
 class TopicAttributes;
 
@@ -285,7 +285,7 @@ public:
     bool pairing_remote_reader_with_local_writer_after_security(
             const GUID_t& local_writer,
             const ReaderProxyData& remote_reader_data);
-#endif
+#endif // if HAVE_SECURITY
 
     /**
      * Try to pair/unpair WriterProxyData.
@@ -321,7 +321,7 @@ public:
         return false;
     }
 
-#endif
+#endif // if HAVE_SECURITY
     const fastdds::dds::SubscriptionMatchedStatus& update_subscription_matched_status(
             const GUID_t& reader_guid,
             const GUID_t& writer_guid,
@@ -396,5 +396,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_EDP_H_ */

@@ -125,9 +125,9 @@ public:
             SampleInfo* info);
 
     /**
-    * Get associated GUID
-    * @return Associated GUID
-    */
+     * Get associated GUID
+     * @return Associated GUID
+     */
     const fastrtps::rtps::GUID_t& guid() const;
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
@@ -237,7 +237,7 @@ private:
 
     class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
     {
-public:
+    public:
 
         InnerDataReaderListener(
                 DataReaderImpl* s)
@@ -266,7 +266,8 @@ public:
                 fastdds::dds::PolicyMask qos) override;
 
         DataReaderImpl* data_reader_;
-    } reader_listener_;
+    }
+    reader_listener_;
 
     //! A timer used to check for deadlines
     fastrtps::rtps::TimedEvent* deadline_timer_ = nullptr;
@@ -327,5 +328,5 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTRTPS_DATAREADERIMPL_HPP_*/

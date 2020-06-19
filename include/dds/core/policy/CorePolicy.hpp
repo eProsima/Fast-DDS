@@ -33,16 +33,16 @@
 
 //==============================================================================
 // MACROS
-//
+// *INDENT-OFF*
 #define OMG_DDS_POLICY_TRAITS(POLICY, ID) \
     template<> \
     class policy_id<POLICY> { \
-public: \
+    public: \
         static const dds::core::policy::QosPolicyId value = ID; \
     }; \
     template<> \
     class policy_name<POLICY> { \
-public: \
+    public: \
         static const std::string& name(); \
     };
 
@@ -51,6 +51,7 @@ public: \
         static std::string name = #NAME; \
         return name; \
     }
+// *INDENT-OFF*
 
 
 namespace dds {
@@ -644,7 +645,7 @@ public:
 
     #   if defined (__SUNPRO_CC) && defined(SHARED)
     #   undef SHARED
-    #   endif
+    #   endif // if defined (__SUNPRO_CC) && defined(SHARED)
     /**
      * Creates an Ownership QoS instance
      *
@@ -953,8 +954,8 @@ public:
      * @param ordered_access the ordered_access setting
      */
     Presentation(
-            dds::core::policy::PresentationAccessScopeKind::Type access_scope
-                = dds::core::policy::PresentationAccessScopeKind::INSTANCE,
+            dds::core::policy::PresentationAccessScopeKind::Type access_scope =
+                dds::core::policy::PresentationAccessScopeKind::INSTANCE,
             bool coherent_access = false,
             bool ordered_access = false);
 
@@ -1149,8 +1150,8 @@ public:
      * @param kind the kind
      */
     explicit DestinationOrder(
-            dds::core::policy::DestinationOrderKind::Type kind
-                = dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
+            dds::core::policy::DestinationOrderKind::Type kind =
+                dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
 
     /**
      * Copies a DestinationOrder QoS instance
@@ -1664,7 +1665,7 @@ class policy_name;
 
 #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 /** @todo - Known issue. */
-#endif
+#endif // ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
 OMG_DDS_POLICY_TRAITS(UserData,             eprosima::fastdds::dds::USERDATA_QOS_POLICY_ID)
 OMG_DDS_POLICY_TRAITS(Durability,           eprosima::fastdds::dds::DURABILITY_QOS_POLICY_ID)

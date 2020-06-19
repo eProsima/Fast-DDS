@@ -242,7 +242,7 @@ private:
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener
     {
-public:
+    public:
 
         InnerDataWriterListener(
                 DataWriterImpl* w)
@@ -271,7 +271,8 @@ public:
                 const fastrtps::LivelinessLostStatus& status) override;
 
         DataWriterImpl* data_writer_;
-    } writer_listener_;
+    }
+    writer_listener_;
 
     uint32_t high_mark_for_frag_;
 

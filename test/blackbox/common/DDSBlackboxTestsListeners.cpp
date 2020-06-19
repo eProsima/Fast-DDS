@@ -24,7 +24,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 #define INCOMPATIBLE_TEST_TOPIC_NAME std::string( \
-            std::string("incompatible_") + TEST_TOPIC_NAME)
+        std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
 class DDSStatus : public testing::TestWithParam<bool>
@@ -59,7 +59,7 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-          .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(writer.isInitialized());
 
     // A Reader on the same Topic but with incompatible QoS
@@ -76,7 +76,8 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     EXPECT_FALSE(writer.is_matched());
 
     EXPECT_EQ(incompatible_reliability_reader.times_incompatible_qos(), 1u);
-    EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(), eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID);
+    EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(),
+            eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     EXPECT_FALSE(incompatible_reliability_reader.is_matched());
 
     // Another Reader on the same Topic but with incompatible QoS
@@ -85,7 +86,7 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     // but old Reader stays the same
     PubSubReader<HelloWorldType> incompatible_durability_reader(TEST_TOPIC_NAME);
     incompatible_durability_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
     ASSERT_TRUE(incompatible_durability_reader.isInitialized());
 
     writer.wait_incompatible_qos(2);
@@ -96,7 +97,8 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     EXPECT_FALSE(writer.is_matched());
 
     EXPECT_EQ(incompatible_reliability_reader.times_incompatible_qos(), 1u);
-    EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(), eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID);
+    EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(),
+            eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     EXPECT_FALSE(incompatible_reliability_reader.is_matched());
 
     EXPECT_EQ(incompatible_durability_reader.times_incompatible_qos(), 1u);
@@ -107,12 +109,12 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     // Incompatible readers increase incompatible QoS occurrences by two
     PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
     writer2.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-          .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(writer2.isInitialized());
 
     PubSubWriter<HelloWorldType> writer3(TEST_TOPIC_NAME);
     writer3.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-          .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(writer3.isInitialized());
 
     // A compatible Reader on another Topic
@@ -120,7 +122,7 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     // Total count of incompatible QoS occurrences and latest incompatible QoS ID stay the same
     PubSubReader<HelloWorldType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
     compatible_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
     ASSERT_TRUE(compatible_reader.isInitialized());
 
     writer2.wait_incompatible_qos(2);
@@ -139,7 +141,8 @@ TEST_P(DDSStatus, IncompatibleQosListeners)
     EXPECT_FALSE(writer2.is_matched());
 
     EXPECT_EQ(incompatible_reliability_reader.times_incompatible_qos(), 3u);
-    EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(), eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID);
+    EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(),
+            eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     EXPECT_FALSE(incompatible_reliability_reader.is_matched());
 
     EXPECT_EQ(incompatible_durability_reader.times_incompatible_qos(), 3u);
@@ -186,15 +189,15 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-          .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
-          .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+        .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
     ASSERT_TRUE(writer.isInitialized());
 
     // A Reader on the same Topic but with incompatible QoS
     // Should not match and increase the incompatible QoS occurrences on both Writer and Reader
     PubSubReader<HelloWorldType> incompatible_reliability_reader(TEST_TOPIC_NAME);
     incompatible_reliability_reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                  .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
+        .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
     ASSERT_TRUE(incompatible_reliability_reader.isInitialized());
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -226,8 +229,8 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
     // but old Reader stays the same
     PubSubReader<HelloWorldType> incompatible_durability_reader(TEST_TOPIC_NAME);
     incompatible_durability_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
     ASSERT_TRUE(incompatible_durability_reader.isInitialized());
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -268,22 +271,22 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
     // Incompatible readers increase incompatible QoS occurrences by two
     PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
     writer2.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-          .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
-          .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+        .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
     ASSERT_TRUE(writer2.isInitialized());
 
     PubSubWriter<HelloWorldType> writer3(TEST_TOPIC_NAME);
     writer3.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-          .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
-          .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+        .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::offered_incompatible_qos()).init();
     ASSERT_TRUE(writer3.isInitialized());
 
     // A compatible Reader on another Topic
     // Should not match but never increase incompatible QoS occurrences
     PubSubReader<HelloWorldType> compatible_reader(INCOMPATIBLE_TEST_TOPIC_NAME);
     compatible_reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
-            .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
+        .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+        .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
     ASSERT_TRUE(compatible_reader.isInitialized());
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -354,7 +357,8 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
 INSTANTIATE_TEST_CASE_P(DDSStatus,
         DDSStatus,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<DDSStatus::ParamType>& info) {
+        [](const testing::TestParamInfo<DDSStatus::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";

@@ -30,29 +30,31 @@ namespace security {
 
 class SecurityManager
 {
-    public:
+public:
 
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD4(discovered_reader, bool(
-            const GUID_t& writer_guid,
-            const GUID_t& remote_participant,
-            ReaderProxyData& remote_reader_data,
-            const EndpointSecurityAttributes& security_attributes));
+                const GUID_t& writer_guid,
+                const GUID_t& remote_participant,
+                ReaderProxyData& remote_reader_data,
+                const EndpointSecurityAttributes& security_attributes));
 
     MOCK_METHOD3(remove_reader, void(
-            const GUID_t& writer_guid,
-            const GUID_t& remote_participant,
-            const GUID_t& remote_reader_guid));
+                const GUID_t& writer_guid,
+                const GUID_t& remote_participant,
+                const GUID_t& remote_reader_guid));
 
     MOCK_METHOD4(discovered_writer, bool(
-            const GUID_t& reader_guid,
-            const GUID_t& remote_participant,
-            WriterProxyData& remote_writer_guid,
-            const EndpointSecurityAttributes& security_attributes));
+                const GUID_t& reader_guid,
+                const GUID_t& remote_participant,
+                WriterProxyData& remote_writer_guid,
+                const EndpointSecurityAttributes& security_attributes));
 
     MOCK_METHOD3(remove_writer, void(
-            const GUID_t& reader_guid,
-            const GUID_t& remote_participant,
-            const GUID_t& remote_writer_guid));
+                const GUID_t& reader_guid,
+                const GUID_t& remote_participant,
+                const GUID_t& remote_writer_guid));
+    // *INDENT-ON*
 };
 
 } //namespace security

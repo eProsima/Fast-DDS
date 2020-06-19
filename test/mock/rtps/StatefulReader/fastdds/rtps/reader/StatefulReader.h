@@ -31,65 +31,86 @@ struct CDRMessage_t;
 
 class StatefulReader : public RTPSReader
 {
-    public:
+public:
 
-        StatefulReader() { }
+    StatefulReader()
+    {
+    }
 
-        StatefulReader(ReaderHistory* history, RecursiveTimedMutex* mutex) : RTPSReader(history, mutex) {}
+    StatefulReader(
+            ReaderHistory* history,
+            RecursiveTimedMutex* mutex)
+        : RTPSReader(history, mutex)
+    {
+    }
 
-        virtual ~StatefulReader() {}
+    virtual ~StatefulReader()
+    {
+    }
 
-        MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
 
-        MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
+    MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
 
-        MOCK_METHOD1(liveliness_expired, bool(const GUID_t&));
+    MOCK_METHOD1(liveliness_expired, bool(const GUID_t&));
 
-        MOCK_METHOD2(change_received, bool(CacheChange_t* a_change, WriterProxy* prox));
+    MOCK_METHOD2(change_received, bool(CacheChange_t* a_change, WriterProxy* prox));
 
-        MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
+    MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
+    // *INDENT-ON*
 
 
-        // In real class, inherited from Endpoint base class.
-        inline const GUID_t& getGuid() const { return guid_; };
+    // In real class, inherited from Endpoint base class.
+    inline const GUID_t& getGuid() const
+    {
+        return guid_;
+    }
 
-        ReaderTimes& getTimes() {  return times_;  };
+    ReaderTimes& getTimes()
+    {
+        return times_;
+    }
 
-        void send_acknack(
-                const WriterProxy* /*writer*/,
-                const SequenceNumberSet_t& sns,
-                const RTPSMessageSenderInterface& /*sender*/,
-                bool /*is_final*/)
-        {
-            // only insterested in SequenceNumberSet_t.
-            simp_send_acknack( sns );
-        }
+    void send_acknack(
+            const WriterProxy* /*writer*/,
+            const SequenceNumberSet_t& sns,
+            const RTPSMessageSenderInterface& /*sender*/,
+            bool /*is_final*/)
+    {
+        // only insterested in SequenceNumberSet_t.
+        simp_send_acknack( sns );
+    }
 
-        // See gmock cookbook #SimplerInterfaces
-        MOCK_METHOD1(simp_send_acknack, void( const SequenceNumberSet_t& ));
+    // See gmock cookbook #SimplerInterfaces
+    MOCK_METHOD1(simp_send_acknack, void(const SequenceNumberSet_t& seq));
 
-        void send_acknack(
-                const WriterProxy* /*writer*/,
-                const RTPSMessageSenderInterface& /*sender*/,
-                bool /*heartbeat_was_final*/)
-        {}
+    void send_acknack(
+            const WriterProxy* /*writer*/,
+            const RTPSMessageSenderInterface& /*sender*/,
+            bool /*heartbeat_was_final*/)
+    {
+    }
 
-        RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }
+    RTPSParticipantImpl* getRTPSParticipant() const
+    {
+        return nullptr;
+    }
 
-        bool send_sync_nts(
-                CDRMessage_t* /*message*/,
-                const LocatorsIterator& /*destination_locators_begin*/,
-                const LocatorsIterator& /*destination_locators_end*/,
-                std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
-        {
-            return true;
-        }
+    bool send_sync_nts(
+            CDRMessage_t* /*message*/,
+            const LocatorsIterator& /*destination_locators_begin*/,
+            const LocatorsIterator& /*destination_locators_end*/,
+            std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
+    {
+        return true;
+    }
 
-    private:
+private:
 
-        GUID_t guid_;
+    GUID_t guid_;
 
-        ReaderTimes times_;
+    ReaderTimes times_;
 };
 
 } // namespace rtps

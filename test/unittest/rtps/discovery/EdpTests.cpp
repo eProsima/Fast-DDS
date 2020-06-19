@@ -33,9 +33,11 @@ using ::testing::ReturnRef;
 class EDPMock : public EDP
 {
 public:
-    EDPMock(PDP* pdp,
+
+    EDPMock(
+            PDP* pdp,
             RTPSParticipantImpl* part)
-    : EDP(pdp, part)
+        : EDP(pdp, part)
     {
     }
 
@@ -88,8 +90,8 @@ protected:
 
     void SetUp() override
     {
-        wdata = new ::testing::NiceMock<WriterProxyData>(1,1);
-        rdata = new ::testing::NiceMock<ReaderProxyData>(1,1);
+        wdata = new ::testing::NiceMock<WriterProxyData>(1, 1);
+        rdata = new ::testing::NiceMock<ReaderProxyData>(1, 1);
 
         //Same Topic
         wdata->topicName("Topic");
@@ -133,7 +135,7 @@ protected:
     }
 
     void check_expectations(
-        bool valid_matching)
+            bool valid_matching)
     {
         EDP::MatchingFailureMask no_match_reason;
         fastdds::dds::PolicyMask incompatible_qos;
@@ -150,8 +152,8 @@ protected:
     }
 
     void check_expectations(
-        bool valid_matching,
-        fastdds::dds::QosPolicyId_t policy)
+            bool valid_matching,
+            fastdds::dds::QosPolicyId_t policy)
     {
         EDP::MatchingFailureMask no_match_reason;
         fastdds::dds::PolicyMask incompatible_qos;
@@ -179,7 +181,8 @@ protected:
         fastdds::dds::QosPolicyId_t failed_qos;
     };
 
-    void check_expectations(fastdds::dds::QosPolicyId_t failed_qos)
+    void check_expectations(
+            fastdds::dds::QosPolicyId_t failed_qos)
     {
         if (failed_qos == fastdds::dds::INVALID_QOS_POLICY_ID)
         {
@@ -252,7 +255,7 @@ TEST_F(EdpTests, CheckPartitionCompatibility)
 
 TEST_F(EdpTests, CheckDurabilityCompatibility)
 {
-    std::vector<QosTestingCase<DurabilityQosPolicyKind>> testing_cases{
+    std::vector<QosTestingCase<DurabilityQosPolicyKind> > testing_cases{
         { PERSISTENT_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { PERSISTENT_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { PERSISTENT_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
@@ -269,7 +272,7 @@ TEST_F(EdpTests, CheckDurabilityCompatibility)
         { VOLATILE_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
         { VOLATILE_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
         { VOLATILE_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
-        };
+    };
 
     for (auto testing_case : testing_cases)
     {
@@ -281,11 +284,11 @@ TEST_F(EdpTests, CheckDurabilityCompatibility)
 
 TEST_F(EdpTests, CheckDeadlineCompatibility)
 {
-    std::vector<QosTestingCase<unsigned int>> testing_cases{
+    std::vector<QosTestingCase<unsigned int> > testing_cases{
         { 5, 5, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 5, 10, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 10, 5, fastdds::dds::DEADLINE_QOS_POLICY_ID}
-        };
+    };
 
     for (auto testing_case : testing_cases)
     {
@@ -297,12 +300,12 @@ TEST_F(EdpTests, CheckDeadlineCompatibility)
 
 TEST_F(EdpTests, CheckOwnershipCompatibility)
 {
-    std::vector<QosTestingCase<OwnershipQosPolicyKind>> testing_cases{
+    std::vector<QosTestingCase<OwnershipQosPolicyKind> > testing_cases{
         { SHARED_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { SHARED_OWNERSHIP_QOS, EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
         { EXCLUSIVE_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
         { EXCLUSIVE_OWNERSHIP_QOS, EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
-        };
+    };
 
     for (auto testing_case : testing_cases)
     {
@@ -314,17 +317,18 @@ TEST_F(EdpTests, CheckOwnershipCompatibility)
 
 TEST_F(EdpTests, CheckLivelinessKindCompatibility)
 {
-    std::vector<QosTestingCase<LivelinessQosPolicyKind>> testing_cases{
+    std::vector<QosTestingCase<LivelinessQosPolicyKind> > testing_cases{
         { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { MANUAL_BY_TOPIC_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
-        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+          fastdds::dds::INVALID_QOS_POLICY_ID},
         { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { AUTOMATIC_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
         { AUTOMATIC_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
         { AUTOMATIC_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
-        };
+    };
 
     for (auto testing_case : testing_cases)
     {
@@ -336,11 +340,11 @@ TEST_F(EdpTests, CheckLivelinessKindCompatibility)
 
 TEST_F(EdpTests, CheckLeaseDurationCompatibility)
 {
-    std::vector<QosTestingCase<unsigned int>> testing_cases{
+    std::vector<QosTestingCase<unsigned int> > testing_cases{
         { 5, 5, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 5, 10, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 10, 5, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
-        };
+    };
 
     for (auto testing_case : testing_cases)
     {
@@ -352,12 +356,12 @@ TEST_F(EdpTests, CheckLeaseDurationCompatibility)
 
 TEST_F(EdpTests, CheckReliabilityCompatibility)
 {
-    std::vector<QosTestingCase<ReliabilityQosPolicyKind>> testing_cases{
+    std::vector<QosTestingCase<ReliabilityQosPolicyKind> > testing_cases{
         { RELIABLE_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { RELIABLE_RELIABILITY_QOS, BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { BEST_EFFORT_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::RELIABILITY_QOS_POLICY_ID},
         { BEST_EFFORT_RELIABILITY_QOS, BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
-        };
+    };
 
     for (auto testing_case : testing_cases)
     {
@@ -369,12 +373,12 @@ TEST_F(EdpTests, CheckReliabilityCompatibility)
 
 TEST_F(EdpTests, CheckPositiveAckCompatibility)
 {
-    std::vector<QosTestingCase<bool>> testing_cases{
+    std::vector<QosTestingCase<bool> > testing_cases{
         { true, true, fastdds::dds::INVALID_QOS_POLICY_ID},
         { true, false, fastdds::dds::INVALID_QOS_POLICY_ID},
         { false, true, fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID},
         { false, false, fastdds::dds::INVALID_QOS_POLICY_ID}
-        };
+    };
 
     for (auto testing_case : testing_cases)
     {
@@ -389,9 +393,10 @@ TEST_F(EdpTests, CheckPositiveAckCompatibility)
 } // namespace fastrtps
 } // namespace eprosima
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
-

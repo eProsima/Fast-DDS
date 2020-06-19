@@ -34,58 +34,65 @@ namespace rtps {
 
 class RTPSReader : public Endpoint
 {
-    public:
+public:
 
-        RTPSReader() {}
+    RTPSReader()
+    {
+    }
 
-        RTPSReader(ReaderHistory* history, RecursiveTimedMutex* mutex)
-        {
-            history->mp_reader = this;
-            history->mp_mutex = mutex;
-        }
+    RTPSReader(
+            ReaderHistory* history,
+            RecursiveTimedMutex* mutex)
+    {
+        history->mp_reader = this;
+        history->mp_mutex = mutex;
+    }
 
-        virtual ~RTPSReader() = default;
-
-
-        virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
-
-        virtual bool matched_writer_remove(const GUID_t& wdata) = 0;
-
-        virtual bool matched_writer_is_matched(const GUID_t& wguid) = 0;
-
-        const GUID_t& getGuid()
-        {
-            return m_guid;
-        }
-
-        ReaderListener* getListener() const
-        {
-            return listener_;
-        }
-
-        MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
-
-        MOCK_METHOD0(getHistory_mock, ReaderHistory*());
-
-        MOCK_METHOD2(reserveCache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
-
-        MOCK_METHOD1(releaseCache, bool (CacheChange_t* a_change));
-
-        MOCK_METHOD0(expectsInlineQos, bool());
+    virtual ~RTPSReader() = default;
 
 
-        ReaderHistory* getHistory()
-        {
-            getHistory_mock();
-            return history_;
-        }
+    virtual bool matched_writer_add(
+            const WriterProxyData& wdata) = 0;
 
-        ReaderHistory* history_;
+    virtual bool matched_writer_remove(
+            const GUID_t& wdata) = 0;
 
-        ReaderListener* listener_;
+    virtual bool matched_writer_is_matched(
+            const GUID_t& wguid) = 0;
 
-        const GUID_t m_guid;
+    const GUID_t& getGuid()
+    {
+        return m_guid;
+    }
 
+    ReaderListener* getListener() const
+    {
+        return listener_;
+    }
+
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
+
+    MOCK_METHOD0(getHistory_mock, ReaderHistory* ());
+
+    MOCK_METHOD2(reserveCache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
+
+    MOCK_METHOD1(releaseCache, bool (CacheChange_t* a_change));
+
+    MOCK_METHOD0(expectsInlineQos, bool());
+    // *INDENT-ON*
+
+    ReaderHistory* getHistory()
+    {
+        getHistory_mock();
+        return history_;
+    }
+
+    ReaderHistory* history_;
+
+    ReaderListener* listener_;
+
+    const GUID_t m_guid;
 };
 
 } // namespace rtps

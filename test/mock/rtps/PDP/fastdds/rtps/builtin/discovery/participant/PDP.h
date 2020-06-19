@@ -32,11 +32,16 @@ namespace rtps {
 
 class PDP
 {
-    public:
+public:
 
-    inline std::recursive_mutex* getMutex() const {return mutex_;}
+    inline std::recursive_mutex* getMutex() const
+    {
+        return mutex_;
+    }
 
-    MOCK_METHOD1(init, bool(RTPSParticipantImpl* part));
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD1(init, bool(
+            RTPSParticipantImpl* part));
 
     MOCK_METHOD2(createParticipantProxyData, ParticipantProxyData*(
             const ParticipantProxyData& p,
@@ -44,11 +49,14 @@ class PDP
 
     MOCK_METHOD0(createPDPEndpoints, bool());
 
-    MOCK_METHOD1(assignRemoteEndpoints, void(ParticipantProxyData* pdata));
+    MOCK_METHOD1(assignRemoteEndpoints, void(
+            ParticipantProxyData* pdata));
 
-    MOCK_METHOD1(notifyAboveRemoteEndpoints, void(const ParticipantProxyData& pdata));
+    MOCK_METHOD1(notifyAboveRemoteEndpoints, void(
+            const ParticipantProxyData& pdata));
 
-    MOCK_METHOD1(removeRemoteEndpoints, void(const ParticipantProxyData* pdata));
+    MOCK_METHOD1(removeRemoteEndpoints, void(
+            const ParticipantProxyData* pdata));
 
     MOCK_METHOD3(addReaderProxyData, ReaderProxyData*(
             const GUID_t& reader_guid,
@@ -71,6 +79,7 @@ class PDP
     MOCK_METHOD0(ParticipantProxiesBegin, ResourceLimitedVector<ParticipantProxyData*>::const_iterator());
 
     MOCK_METHOD0(ParticipantProxiesEnd, ResourceLimitedVector<ParticipantProxyData*>::const_iterator());
+    // *INDENT-ON*
 
     std::recursive_mutex* mutex_;
 };

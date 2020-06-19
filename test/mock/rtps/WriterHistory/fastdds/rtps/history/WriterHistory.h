@@ -31,77 +31,99 @@ namespace rtps {
 
 class WriterHistory
 {
-    public:
+public:
 
+    WriterHistory(
+            const HistoryAttributes& /*att*/)
+        : samples_number_(0)
+    {
+    }
 
-        WriterHistory(const HistoryAttributes& /*att*/) : samples_number_(0) {}
+    WriterHistory()
+        : samples_number_(0)
+    {
+    }
 
-        WriterHistory() : samples_number_(0) {}
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD1(release_Cache, bool(CacheChange_t* change));
 
-        MOCK_METHOD1(release_Cache, bool (CacheChange_t* change));
+    MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
+    // *INDENT-ON*
 
-        MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
+    bool add_change(
+            CacheChange_t* change)
+    {
+        bool ret = add_change_mock(change);
+        samples_number_mutex_.lock();
+        ++samples_number_;
+        change->sequenceNumber = ++last_sequence_number_;
+        samples_number_mutex_.unlock();
+        samples_number_cond_.notify_all();
+        return ret;
+    }
 
-        bool add_change(CacheChange_t* change)
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD3(get_change, bool(
+            const SequenceNumber_t& seq,
+            const GUID_t& guid,
+            CacheChange_t** change));
+
+    MOCK_METHOD1(remove_change, bool(const SequenceNumber_t&));
+
+    MOCK_METHOD1(remove_change_and_reuse, CacheChange_t*(const SequenceNumber_t&));
+
+    MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
+    // *INDENT-ON*
+
+    bool remove_change(
+            CacheChange_t* change)
+    {
+        bool ret = remove_change_mock(change);
+        delete change;
+        return ret;
+    }
+
+    void wait_for_more_samples_than(
+            unsigned int minimum)
+    {
+        std::unique_lock<std::mutex> lock(samples_number_mutex_);
+
+        if (samples_number_ <= minimum)
         {
-            bool ret = add_change_mock(change);
-            samples_number_mutex_.lock();
-            ++samples_number_;
-            change->sequenceNumber = ++last_sequence_number_;
-            samples_number_mutex_.unlock();
-            samples_number_cond_.notify_all();
-            return ret;
+            samples_number_cond_.wait(lock, [&]()
+                    {
+                        return samples_number_ > minimum;
+                    });
         }
+    }
 
-        MOCK_METHOD3(get_change, bool(const SequenceNumber_t& seq, const GUID_t& guid, CacheChange_t** change));
+    SequenceNumber_t next_sequence_number() const
+    {
+        return last_sequence_number_ + 1;
+    }
 
-        MOCK_METHOD1(remove_change, bool (const SequenceNumber_t&));
+    MOCK_METHOD0(changesBegin, std::vector<CacheChange_t*>::iterator());
 
-        MOCK_METHOD1(remove_change_and_reuse, CacheChange_t* (const SequenceNumber_t&));
+    MOCK_METHOD0(changesRbegin, std::vector<CacheChange_t*>::reverse_iterator());
 
-        MOCK_METHOD1(remove_change_mock, bool (CacheChange_t*));
+    MOCK_METHOD0(changesEnd, std::vector<CacheChange_t*>::iterator());
 
-        bool remove_change(CacheChange_t* change)
-        {
-            bool ret = remove_change_mock(change);
-            delete change;
-            return ret;
-        }
+    MOCK_METHOD0(changesRend, std::vector<CacheChange_t*>::reverse_iterator());
 
-        void wait_for_more_samples_than(unsigned int minimum)
-        {
-            std::unique_lock<std::mutex> lock(samples_number_mutex_);
+    inline RecursiveTimedMutex* getMutex()
+    {
+        return mutex_;
+    }
 
-            if(samples_number_ <= minimum)
-            {
-                samples_number_cond_.wait(lock, [&]() {return samples_number_ > minimum;});
-            }
-        }
+    HistoryAttributes m_att;
 
-        SequenceNumber_t next_sequence_number() const
-        {
-            return last_sequence_number_ + 1;
-        }
+private:
 
-        MOCK_METHOD0(changesBegin, std::vector<CacheChange_t*>::iterator());
-
-        MOCK_METHOD0(changesRbegin, std::vector<CacheChange_t*>::reverse_iterator());
-
-        MOCK_METHOD0(changesEnd, std::vector<CacheChange_t*>::iterator());
-
-        MOCK_METHOD0(changesRend, std::vector<CacheChange_t*>::reverse_iterator());
-
-        inline RecursiveTimedMutex* getMutex() { return mutex_; }
-
-        HistoryAttributes m_att;
-
-    private:
-
-        std::condition_variable samples_number_cond_;
-        std::mutex samples_number_mutex_;
-        unsigned int samples_number_;
-        SequenceNumber_t last_sequence_number_;
-        RecursiveTimedMutex* mutex_;
+    std::condition_variable samples_number_cond_;
+    std::mutex samples_number_mutex_;
+    unsigned int samples_number_;
+    SequenceNumber_t last_sequence_number_;
+    RecursiveTimedMutex* mutex_;
 };
 
 } // namespace rtps

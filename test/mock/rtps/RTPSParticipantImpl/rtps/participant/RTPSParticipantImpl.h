@@ -36,7 +36,7 @@
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <gmock/gmock.h>
 
@@ -75,7 +75,7 @@ public:
     }
 
     MOCK_METHOD2(onParticipantAuthentication, void (RTPSParticipant*, const ParticipantAuthenticationInfo&));
-#endif
+#endif // if HAVE_SECURITY
 };
 
 class RTPSParticipantImpl
@@ -105,19 +105,21 @@ public:
 
     MOCK_METHOD0(security_manager, security::SecurityManager& ());
 
-#endif
+#endif // if HAVE_SECURITY
 
     MOCK_METHOD1(setGuid, void(GUID_t &));
 
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD6(createWriter_mock,
-            bool (RTPSWriter * *writer, WriterAttributes & param, WriterHistory * hist,
-            WriterListener * listen,
+            bool (RTPSWriter** writer, WriterAttributes& param, WriterHistory* hist,
+            WriterListener* listen,
             const EntityId_t& entityId, bool isBuiltin));
 
     MOCK_METHOD7(createReader_mock,
-            bool (RTPSReader * *reader, ReaderAttributes & param, ReaderHistory * hist,
-            ReaderListener * listen,
+            bool (RTPSReader** reader, ReaderAttributes& param, ReaderHistory* hist,
+            ReaderListener* listen,
             const EntityId_t& entityId, bool isBuiltin, bool enable));
+    // *INDENT-ON*
 
     MOCK_METHOD0(userWritersListBegin, std::vector<RTPSWriter*>::iterator ());
     MOCK_METHOD0(userWritersListEnd, std::vector<RTPSWriter*>::iterator ());

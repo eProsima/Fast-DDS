@@ -27,18 +27,18 @@
 
 #include <mutex>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSReader;
 struct CacheChange_t;
 
 /**
-* Class ReaderListener, to be used by the user to override some of is virtual method to program actions to
-* certain events.
-*  @ingroup READER_MODULE
-*/
+ * Class ReaderListener, to be used by the user to override some of is virtual method to program actions to
+ * certain events.
+ * @ingroup READER_MODULE
+ */
 class RTPS_DllAPI ReaderListener
 {
 public:
@@ -116,11 +116,11 @@ public:
         (void)reader;
         (void)qos;
     }
+
 };
 
-//Namespace enders
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_READERLISTENER_H_ */

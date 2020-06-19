@@ -166,18 +166,18 @@ ReturnCode_t DataReaderImpl::enable()
     reader_ = reader;
 
     deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-        [&]() -> bool
-        {
-            return deadline_missed();
-        },
-        qos_.deadline().period.to_ns() * 1e-6);
+                    [&]() -> bool
+                    {
+                        return deadline_missed();
+                    },
+                    qos_.deadline().period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-        [&]() -> bool
-        {
-            return lifespan_expired();
-        },
-        qos_.lifespan().duration.to_ns() * 1e-6);
+                    [&]() -> bool
+                    {
+                        return lifespan_expired();
+                    },
+                    qos_.lifespan().duration.to_ns() * 1e-6);
 
     // Register the reader
     ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
@@ -234,7 +234,7 @@ ReturnCode_t DataReaderImpl::read_next_sample(
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
-#endif
+#endif // if HAVE_STRICT_REALTIME
     SampleInfo_t rtps_info;
     if (history_.readNextData(data, &rtps_info, max_blocking_time))
     {
@@ -263,7 +263,7 @@ ReturnCode_t DataReaderImpl::take_next_sample(
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 #else
             std::chrono::hours(24);
-#endif
+#endif // if HAVE_STRICT_REALTIME
 
     SampleInfo_t rtps_info;
     if (history_.takeNextData(data, &rtps_info, max_blocking_time))
@@ -316,14 +316,14 @@ ReturnCode_t DataReaderImpl::set_qos(
 {
     bool enabled = reader_ != nullptr;
     const DataReaderQos& qos_to_set = (&qos == &DATAREADER_QOS_DEFAULT) ?
-        subscriber_->get_default_datareader_qos() : qos;
+            subscriber_->get_default_datareader_qos() : qos;
 
     // Default qos is always considered consistent
     if (&qos != &DATAREADER_QOS_DEFAULT)
     {
         if (subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data != 0 &&
-            subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data <
-            qos_to_set.user_data().getValue().size())
+                subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data <
+                qos_to_set.user_data().getValue().size())
         {
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
@@ -351,8 +351,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         // Deadline
         if (qos_.deadline().period != c_TimeInfinite)
         {
-            deadline_duration_us_ =
-                duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
+            deadline_duration_us_ = duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
             deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
         }
         else
@@ -364,7 +363,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         if (qos_.lifespan().duration != c_TimeInfinite)
         {
             lifespan_duration_us_ =
-                std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
+                    std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
             lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
         }
         else
@@ -439,7 +438,8 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
     }
     else
     {
-        data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_, status);
+        data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_,
+                status);
     }
 }
 
@@ -677,7 +677,7 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
 
 ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
         RequestedIncompatibleQosStatus& status)
-   {
+{
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
@@ -688,7 +688,7 @@ ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
     status = requested_incompatible_qos_status_;
     requested_incompatible_qos_status_.total_count_change = 0u;
     return ReturnCode_t::RETCODE_OK;
-   }
+}
 
 /* TODO
    bool DataReaderImpl::get_sample_lost_status(
