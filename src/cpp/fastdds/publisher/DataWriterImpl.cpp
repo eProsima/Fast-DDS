@@ -688,7 +688,7 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
 {
     OfferedIncompatibleQosStatus& status = data_writer_->update_offered_incompatible_qos(qos);
     if (data_writer_->listener_ != nullptr  &&
-            (data_writer_->user_datawriter_->get_status_mask() & StatusMask::offered_incompatible_qos()).any())
+            (data_writer_->user_datawriter_->get_status_mask().is_active(StatusMask::offered_incompatible_qos())))
     {
         data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
         status.total_count_change = 0u;

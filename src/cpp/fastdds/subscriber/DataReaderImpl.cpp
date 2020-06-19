@@ -432,7 +432,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
 {
     RequestedIncompatibleQosStatus& status = data_reader_->update_requested_incompatible_qos(qos);
     if (data_reader_->listener_ != nullptr  &&
-            (data_reader_->user_datareader_->get_status_mask() & StatusMask::requested_incompatible_qos()).any())
+            (data_reader_->user_datareader_->get_status_mask().is_active(StatusMask::requested_incompatible_qos())))
     {
         data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
         status.total_count_change = 0u;
