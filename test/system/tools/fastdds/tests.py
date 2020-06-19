@@ -109,19 +109,25 @@ def get_paths(install_path):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-            usage='test.py <install_path>',
+            usage='test.py <install_path> <test_name>',
         )
 
     parser.add_argument('install_path',
                         help='FastDDS install path')
 
+    parser.add_argument('test_name',
+                        help='Test to run')
+
     args = parser.parse_args()
 
     setup_script_path, tool_path = get_paths(Path(args.install_path))
 
-    print(f'setup_script_path: {setup_script_path.resolve()}\n'
-          f'tool_path: {tool_path.resolve()}\n')
+    # Tests dictionary
+    tests = {
+        'test_fastdds_installed': lambda: test_fastdds_installed(tool_path),
+        'test_fastdds_discovery': lambda: test_fastdds_discovery(
+            tool_path, setup_script_path),
+        'test_fastdds_shm': lambda: test_fastdds_shm(tool_path)
+    }
 
-    test_fastdds_installed(tool_path)
-    test_fastdds_discovery(tool_path, setup_script_path)
-    test_fastdds_shm(tool_path)
+    tests[args.test_name]()
