@@ -15,6 +15,7 @@
 """Sub-Command Clean implementation."""
 
 import os
+import platform
 import re
 from pathlib import Path
 
@@ -53,11 +54,21 @@ class Clean:
         Path: The path to the platform specific the SHM directory
 
         """
+        # Windows
         if os.name == 'nt':
-            return Path('c:\\programdata\\eprosima\\'
-                        'fastrtps_interprocess\\').resolve()
+            shm_path = Path('c:\\programdata\\eprosima\\'
+                            'fastrtps_interprocess\\').resolve()
+        elif os.name == 'posix':
+            # MAC
+            if platform.mac_ver()[0] != '':
+                shm_path = Path('/private/tmp/boost_interprocess/').resolve()
+            # Linux
+            else:
+                shm_path = Path('/dev/shm/').resolve()
         else:
-            return Path('/dev/shm/').resolve()
+            raise RuntimeError(f'{os.name} not supported')
+
+        return shm_path
 
     def __list_dir(self):
         """Return a list of files in the default SHM dir."""
