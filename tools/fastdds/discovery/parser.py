@@ -68,6 +68,9 @@ class Parser:
                 universal_newlines=True
             )
 
+            if result.returncode != 0:
+                sys.exit(result.returncode)
+
             if (
                     len(argv) == 0 or
                     (len(argv) == 1 and argv[0] == '-h') or
@@ -76,9 +79,9 @@ class Parser:
                 print(self.__edit_tool_help(result.stdout))
             else:
                 # Call the tool
-                result = subprocess.run(
-                    [tool_path] + argv
-                )
+                result = subprocess.run([tool_path] + argv)
+                if result.returncode != 0:
+                    sys.exit(result.returncode)
 
         except BaseException as e:
             self.__help_message += str(e)
