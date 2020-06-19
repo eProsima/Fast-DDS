@@ -33,16 +33,16 @@
 
 //==============================================================================
 // MACROS
-//
+// *INDENT-OFF*
 #define OMG_DDS_POLICY_TRAITS(POLICY, ID) \
     template<> \
     class policy_id<POLICY> { \
-public: \
+    public: \
         static const dds::core::policy::QosPolicyId value = ID; \
     }; \
     template<> \
     class policy_name<POLICY> { \
-public: \
+    public: \
         static const std::string& name(); \
     };
 
@@ -51,6 +51,7 @@ public: \
         static std::string name = #NAME; \
         return name; \
     }
+// *INDENT-OFF*
 
 
 namespace dds {
@@ -644,7 +645,7 @@ public:
 
     #   if defined (__SUNPRO_CC) && defined(SHARED)
     #   undef SHARED
-    #   endif
+    #   endif // if defined (__SUNPRO_CC) && defined(SHARED)
     /**
      * Creates an Ownership QoS instance
      *
@@ -953,8 +954,8 @@ public:
      * @param ordered_access the ordered_access setting
      */
     Presentation(
-            dds::core::policy::PresentationAccessScopeKind::Type access_scope
-                = dds::core::policy::PresentationAccessScopeKind::INSTANCE,
+            dds::core::policy::PresentationAccessScopeKind::Type access_scope =
+                dds::core::policy::PresentationAccessScopeKind::INSTANCE,
             bool coherent_access = false,
             bool ordered_access = false);
 
@@ -1149,8 +1150,8 @@ public:
      * @param kind the kind
      */
     explicit DestinationOrder(
-            dds::core::policy::DestinationOrderKind::Type kind
-                = dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
+            dds::core::policy::DestinationOrderKind::Type kind =
+                dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
 
     /**
      * Copies a DestinationOrder QoS instance
@@ -1664,38 +1665,37 @@ class policy_name;
 
 #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 /** @todo - Known issue. */
-#endif
+#endif // ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
-OMG_DDS_POLICY_TRAITS(UserData,             1)
-OMG_DDS_POLICY_TRAITS(Durability,           2)
-OMG_DDS_POLICY_TRAITS(Presentation,         3)
-OMG_DDS_POLICY_TRAITS(Deadline,             4)
-OMG_DDS_POLICY_TRAITS(LatencyBudget,        5)
-OMG_DDS_POLICY_TRAITS(Ownership,            6)
+OMG_DDS_POLICY_TRAITS(UserData,             eprosima::fastdds::dds::USERDATA_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(Durability,           eprosima::fastdds::dds::DURABILITY_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(Presentation,         eprosima::fastdds::dds::PRESENTATION_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(Deadline,             eprosima::fastdds::dds::DEADLINE_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(LatencyBudget,        eprosima::fastdds::dds::LATENCYBUDGET_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(Ownership,            eprosima::fastdds::dds::OWNERSHIP_QOS_POLICY_ID)
 
 //#ifdef OMG_DDS_OWNERSHIP_SUPPORT
-OMG_DDS_POLICY_TRAITS(OwnershipStrength,    7)
+OMG_DDS_POLICY_TRAITS(OwnershipStrength,    eprosima::fastdds::dds::OWNERSHIPSTRENGTH_QOS_POLICY_ID)
 //#endif  //OMG_DDS_OWNERSHIP_SUPPORT
 
-OMG_DDS_POLICY_TRAITS(Liveliness,           8)
-OMG_DDS_POLICY_TRAITS(TimeBasedFilter,      9)
-OMG_DDS_POLICY_TRAITS(Partition,            10)
-OMG_DDS_POLICY_TRAITS(Reliability,          11)
-OMG_DDS_POLICY_TRAITS(DestinationOrder,     12)
-OMG_DDS_POLICY_TRAITS(History,              13)
-OMG_DDS_POLICY_TRAITS(ResourceLimits,       14)
-OMG_DDS_POLICY_TRAITS(EntityFactory,        15)
-OMG_DDS_POLICY_TRAITS(WriterDataLifecycle,  16)
-OMG_DDS_POLICY_TRAITS(ReaderDataLifecycle,  17)
-OMG_DDS_POLICY_TRAITS(TopicData,            18)
-OMG_DDS_POLICY_TRAITS(GroupData,            19)
-OMG_DDS_POLICY_TRAITS(TransportPriority,    20)
-OMG_DDS_POLICY_TRAITS(Lifespan,             21)
+OMG_DDS_POLICY_TRAITS(Liveliness,           eprosima::fastdds::dds::LIVELINESS_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(TimeBasedFilter,      eprosima::fastdds::dds::TIMEBASEDFILTER_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(Partition,            eprosima::fastdds::dds::PARTITION_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(Reliability,          eprosima::fastdds::dds::RELIABILITY_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(DestinationOrder,     eprosima::fastdds::dds::DESTINATIONORDER_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(History,              eprosima::fastdds::dds::HISTORY_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(ResourceLimits,       eprosima::fastdds::dds::RESOURCELIMITS_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(EntityFactory,        eprosima::fastdds::dds::ENTITYFACTORY_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(WriterDataLifecycle,  eprosima::fastdds::dds::WRITERDATALIFECYCLE_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(ReaderDataLifecycle,  eprosima::fastdds::dds::READERDATALIFECYCLE_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(TopicData,            eprosima::fastdds::dds::TOPICDATA_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(GroupData,            eprosima::fastdds::dds::GROUPDATA_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(TransportPriority,    eprosima::fastdds::dds::TRANSPORTPRIORITY_QOS_POLICY_ID)
+OMG_DDS_POLICY_TRAITS(Lifespan,             eprosima::fastdds::dds::LIFESPAN_QOS_POLICY_ID)
 
 //#ifdef  OMG_DDS_PERSISTENCE_SUPPORT
-OMG_DDS_POLICY_TRAITS(DurabilityService,    22)
+OMG_DDS_POLICY_TRAITS(DurabilityService,    eprosima::fastdds::dds::DURABILITYSERVICE_QOS_POLICY_ID)
 //#endif  //OMG_DDS_PERSISTENCE_SUPPORT
-
 
 } //namespace policy
 } //namespace core

@@ -54,7 +54,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 EDP::EDP(
         PDP* p,
         RTPSParticipantImpl* part)
@@ -131,7 +130,7 @@ bool EDP::newLocalReaderProxyData(
                     rpd->security_attributes_ = 0UL;
                     rpd->plugin_security_attributes_ = 0UL;
                 }
-#endif
+#endif // if HAVE_SECURITY
                 if (att.auto_fill_type_information)
                 {
                     // TypeInformation, TypeObject and TypeIdentifier
@@ -246,7 +245,7 @@ bool EDP::newLocalWriterProxyData(
                     wpd->security_attributes_ = 0UL;
                     wpd->plugin_security_attributes_ = 0UL;
                 }
-#endif
+#endif // if HAVE_SECURITY
 
                 if (att.auto_fill_type_information)
                 {
@@ -491,7 +490,7 @@ bool EDP::unpairWriterProxy(
 #if HAVE_SECURITY
             mp_RTPSParticipant->security_manager().remove_writer(reader_guid,
                     participant_guid, writer_guid);
-#endif
+#endif // if HAVE_SECURITY
 
             //MATCHED AND ADDED CORRECTLY:
             if ((*rit)->getListener() != nullptr)
@@ -528,7 +527,7 @@ bool EDP::unpairReaderProxy(
 #if HAVE_SECURITY
             mp_RTPSParticipant->security_manager().remove_reader(writer_guid,
                     participant_guid, reader_guid);
-#endif
+#endif // if HAVE_SECURITY
             //MATCHED AND ADDED CORRECTLY:
             if ((*wit)->getListener() != nullptr)
             {
@@ -550,8 +549,23 @@ bool EDP::validMatching(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata)
 {
+    MatchingFailureMask reason;
+    fastdds::dds::PolicyMask incompatible_qos;
+    return valid_matching(wdata, rdata, reason, incompatible_qos);
+}
+
+bool EDP::valid_matching(
+        const WriterProxyData* wdata,
+        const ReaderProxyData* rdata,
+        MatchingFailureMask& reason,
+        fastdds::dds::PolicyMask& incompatible_qos)
+{
+    reason.reset();
+    incompatible_qos.reset();
+
     if (wdata->topicName() != rdata->topicName())
     {
+        reason.set(MatchingFailureMask::different_topic);
         return false;
     }
 
@@ -559,69 +573,89 @@ bool EDP::validMatching(
     if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
+        reason.set(MatchingFailureMask::inconsistent_topic);
         return false;
     }
+
     if (wdata->topicKind() != rdata->topicKind())
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
                                                                << rdata->topicName() << "(keyed:" << rdata->topicKind() <<
-                "), local writer publishes as keyed: " << wdata->topicKind())
+                "), local writer publishes as keyed: " << wdata->topicKind());
+
+        reason.set(MatchingFailureMask::inconsistent_topic);
         return false;
     }
+
     if (!rdata->isAlive()) //Matching
     {
         logWarning(RTPS_EDP, "ReaderProxyData object is NOT alive");
+
         return false;
     }
+
     if ( wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS
             && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     //Means our writer is BE but the reader wants RE
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote Reader "
                                                          << rdata->guid() << " is Reliable and local writer is BE ");
-        return false;
+        incompatible_qos.set(fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     }
+
     if (wdata->m_qos.m_durability.kind < rdata->m_qos.m_durability.kind)
     {
         // TODO (MCC) Change log message
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):RemoteReader "
                                                          << rdata->guid() <<
                 " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
-        return false;
+        incompatible_qos.set(fastdds::dds::DURABILITY_QOS_POLICY_ID);
     }
+
     if (wdata->m_qos.m_ownership.kind != rdata->m_qos.m_ownership.kind)
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote reader "
                                                          << rdata->guid() << " has different Ownership Kind");
-        return false;
+        incompatible_qos.set(fastdds::dds::OWNERSHIP_QOS_POLICY_ID);
     }
+
     if (wdata->m_qos.m_deadline.period > rdata->m_qos.m_deadline.period)
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote reader "
                                                          << rdata->guid() << " has smaller DEADLINE period");
-        return false;
+        incompatible_qos.set(fastdds::dds::DEADLINE_QOS_POLICY_ID);
     }
+
     if (!wdata->m_qos.m_disablePositiveACKs.enabled && rdata->m_qos.m_disablePositiveACKs.enabled)
     {
         logWarning(RTPS_EDP, "Incompatible Disable Positive Acks QoS: writer is enabled but reader is not");
-        return false;
+        incompatible_qos.set(fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID);
     }
+
     if (wdata->m_qos.m_liveliness.lease_duration > rdata->m_qos.m_liveliness.lease_duration)
     {
         logWarning(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
                 << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
                 << rdata->m_qos.m_liveliness.lease_duration);
-        return false;
+        incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
+
     if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
     {
         logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < requested kind");
-        return false;
+        incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
 
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
-#endif
+#endif // if HAVE_SECURITY
+
+    //Partition mismatch does not trigger status change
+    if (incompatible_qos.any())
+    {
+        reason.set(MatchingFailureMask::incompatible_qos);
+        return false;
+    }
 
     //Partition check:
     bool matched = false;
@@ -676,7 +710,9 @@ bool EDP::validMatching(
     if (!matched) //Different partitions
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "): Different Partitions");
+        reason.set(MatchingFailureMask::partitions);
     }
+
     return matched;
 }
 
@@ -752,8 +788,23 @@ bool EDP::validMatching(
         const ReaderProxyData* rdata,
         const WriterProxyData* wdata)
 {
+    MatchingFailureMask reason;
+    fastdds::dds::PolicyMask incompatible_qos;
+    return valid_matching(rdata, wdata, reason, incompatible_qos);
+}
+
+bool EDP::valid_matching(
+        const ReaderProxyData* rdata,
+        const WriterProxyData* wdata,
+        MatchingFailureMask& reason,
+        fastdds::dds::PolicyMask& incompatible_qos)
+{
+    reason.reset();
+    incompatible_qos.reset();
+
     if (rdata->topicName() != wdata->topicName())
     {
+        reason.set(MatchingFailureMask::different_topic);
         return false;
     }
 
@@ -761,6 +812,7 @@ bool EDP::validMatching(
     if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
+        reason.set(MatchingFailureMask::inconsistent_topic);
         return false;
     }
 
@@ -768,7 +820,8 @@ bool EDP::validMatching(
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() <<
                 " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<
-                "), local reader subscribes as keyed: " << rdata->topicKind())
+                "), local reader subscribes as keyed: " << rdata->topicKind());
+        reason.set(MatchingFailureMask::inconsistent_topic);
         return false;
     }
     if (rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS
@@ -778,7 +831,7 @@ bool EDP::validMatching(
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "): Remote Writer " << wdata->guid()
                                                          << " is Best Effort and local reader is RELIABLE "
                 );
-        return false;
+        incompatible_qos.set(fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     }
     if (rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
     {
@@ -786,41 +839,48 @@ bool EDP::validMatching(
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " << wdata->guid()
                                                          << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL";
                 );
-        return false;
+        incompatible_qos.set(fastdds::dds::DURABILITY_QOS_POLICY_ID);
     }
     if (rdata->m_qos.m_ownership.kind != wdata->m_qos.m_ownership.kind)
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer " << wdata->guid()
                                                          << " has different Ownership Kind");
-        return false;
+        incompatible_qos.set(fastdds::dds::OWNERSHIP_QOS_POLICY_ID);
     }
     if (rdata->m_qos.m_deadline.period < wdata->m_qos.m_deadline.period)
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "
                 << wdata->topicName() << "):RemoteWriter "
                 << wdata->guid() << "has smaller DEADLINE period");
-        return false;
+        incompatible_qos.set(fastdds::dds::DEADLINE_QOS_POLICY_ID);
     }
     if (rdata->m_qos.m_disablePositiveACKs.enabled && !wdata->m_qos.m_disablePositiveACKs.enabled)
     {
         logWarning(RTPS_EDP, "Incompatible Disable Positive Acks QoS: writer is enabled but reader is not");
-        return false;
+        incompatible_qos.set(fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID);
     }
     if (wdata->m_qos.m_liveliness.lease_duration > rdata->m_qos.m_liveliness.lease_duration)
     {
         logWarning(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
                 << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
                 << rdata->m_qos.m_liveliness.lease_duration);
-        return false;
+        incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
     if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
     {
         logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
-        return false;
+        incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
-#endif
+#endif // if HAVE_SECURITY
+
+    //Partition mismatch does not trigger status change
+    if (incompatible_qos.any())
+    {
+        reason.set(MatchingFailureMask::incompatible_qos);
+        return false;
+    }
 
     //Partition check:
     bool matched = false;
@@ -876,6 +936,7 @@ bool EDP::validMatching(
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName() <<
                 "): Different Partitions");
+        reason.set(MatchingFailureMask::partitions);
     }
 
     return matched;
@@ -900,7 +961,9 @@ bool EDP::pairingReader(
         for (auto& pair : *(*pit)->m_writers)
         {
             WriterProxyData* wdatait = pair.second;
-            bool valid = validMatching(&rdata, wdatait);
+            MatchingFailureMask no_match_reason;
+            fastdds::dds::PolicyMask incompatible_qos;
+            bool valid = valid_matching(&rdata, wdatait, no_match_reason, incompatible_qos);
             const GUID_t& reader_guid = R->getGuid();
             const GUID_t& writer_guid = wdatait->guid();
 
@@ -915,7 +978,9 @@ bool EDP::pairingReader(
 #else
                 if (R->matched_writer_add(*wdatait))
                 {
-                    logInfo(RTPS_EDP_MATCH, "WP:" << wdatait->guid() << " match R:" << R->getGuid() << ". RLoc:" << wdatait->remote_locators());
+                    logInfo(RTPS_EDP_MATCH,
+                            "WP:" << wdatait->guid() << " match R:" << R->getGuid() << ". RLoc:" <<
+                            wdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if (R->getListener() != nullptr)
                     {
@@ -929,10 +994,15 @@ bool EDP::pairingReader(
                         R->getListener()->onReaderMatched(R, sub_info);
                     }
                 }
-#endif
+#endif // if HAVE_SECURITY
             }
             else
             {
+                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && R->getListener() != nullptr)
+                {
+                    R->getListener()->on_requested_incompatible_qos(R, incompatible_qos);
+                }
+
                 //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
                 if (R->matched_writer_is_matched(wdatait->guid())
                         && R->matched_writer_remove(wdatait->guid()))
@@ -940,7 +1010,7 @@ bool EDP::pairingReader(
 #if HAVE_SECURITY
                     mp_RTPSParticipant->security_manager().remove_writer(reader_guid, participant_guid,
                             wdatait->guid());
-#endif
+#endif // if HAVE_SECURITY
 
                     //MATCHED AND ADDED CORRECTLY:
                     if (R->getListener() != nullptr)
@@ -984,7 +1054,9 @@ bool EDP::pairingWriter(
                 continue;
             }
 
-            bool valid = validMatching(&wdata, rdatait);
+            MatchingFailureMask no_match_reason;
+            fastdds::dds::PolicyMask incompatible_qos;
+            bool valid = valid_matching(&wdata, rdatait, no_match_reason, incompatible_qos);
 
             if (valid)
             {
@@ -997,7 +1069,9 @@ bool EDP::pairingWriter(
 #else
                 if (W->matched_reader_add(*rdatait))
                 {
-                    logInfo(RTPS_EDP_MATCH, "RP:" << rdatait->guid() << " match W:" << W->getGuid() << ". WLoc:" << rdatait->remote_locators());
+                    logInfo(RTPS_EDP_MATCH,
+                            "RP:" << rdatait->guid() << " match W:" << W->getGuid() << ". WLoc:" <<
+                            rdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if (W->getListener() != nullptr)
                     {
@@ -1012,16 +1086,21 @@ bool EDP::pairingWriter(
                         W->getListener()->onWriterMatched(W, pub_info);
                     }
                 }
-#endif
+#endif // if HAVE_SECURITY
             }
             else
             {
+                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && W->getListener() != nullptr)
+                {
+                    W->getListener()->on_offered_incompatible_qos(W, incompatible_qos);
+                }
+
                 //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
                 if (W->matched_reader_is_matched(reader_guid) && W->matched_reader_remove(reader_guid))
                 {
 #if HAVE_SECURITY
                     mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), participant_guid, reader_guid);
-#endif
+#endif // if HAVE_SECURITY
                     //MATCHED AND ADDED CORRECTLY:
                     if (W->getListener() != nullptr)
                     {
@@ -1061,7 +1140,9 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
         (*wit)->getMutex().unlock();
         if (mp_PDP->lookupWriterProxyData(writerGUID, temp_writer_proxy_data_))
         {
-            bool valid = validMatching(&temp_writer_proxy_data_, rdata);
+            MatchingFailureMask no_match_reason;
+            fastdds::dds::PolicyMask incompatible_qos;
+            bool valid = valid_matching(&temp_writer_proxy_data_, rdata, no_match_reason, incompatible_qos);
             const GUID_t& reader_guid = rdata->guid();
 
             if (valid)
@@ -1075,7 +1156,9 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 #else
                 if ((*wit)->matched_reader_add(*rdata))
                 {
-                    logInfo(RTPS_EDP_MATCH, "RP:" << rdata->guid() << " match W:" << (*wit)->getGuid() << ". RLoc:" << rdata->remote_locators());
+                    logInfo(RTPS_EDP_MATCH,
+                            "RP:" << rdata->guid() << " match W:" << (*wit)->getGuid() << ". RLoc:" <<
+                            rdata->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*wit)->getListener() != nullptr)
                     {
@@ -1089,17 +1172,22 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         (*wit)->getListener()->onWriterMatched((*wit), pub_info);
                     }
                 }
-#endif
+#endif // if HAVE_SECURITY
             }
             else
             {
+                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && (*wit)->getListener() != nullptr)
+                {
+                    (*wit)->getListener()->on_offered_incompatible_qos((*wit), incompatible_qos);
+                }
+
                 if ((*wit)->matched_reader_is_matched(reader_guid)
                         && (*wit)->matched_reader_remove(reader_guid))
                 {
 #if HAVE_SECURITY
                     mp_RTPSParticipant->security_manager().remove_reader(
                         (*wit)->getGuid(), participant_guid, reader_guid);
-#endif
+#endif // if HAVE_SECURITY
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*wit)->getListener() != nullptr)
                     {
@@ -1141,7 +1229,9 @@ bool EDP::pairing_reader_proxy_with_local_writer(
         {
             if (mp_PDP->lookupWriterProxyData(writerGUID, temp_writer_proxy_data_))
             {
-                bool valid = validMatching(&temp_writer_proxy_data_, &rdata);
+                MatchingFailureMask no_match_reason;
+                fastdds::dds::PolicyMask incompatible_qos;
+                bool valid = valid_matching(&temp_writer_proxy_data_, &rdata, no_match_reason, incompatible_qos);
 
                 if (valid)
                 {
@@ -1153,6 +1243,11 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                 }
                 else
                 {
+                    if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && (*wit)->getListener() != nullptr)
+                    {
+                        (*wit)->getListener()->on_offered_incompatible_qos((*wit), incompatible_qos);
+                    }
+
                     if ((*wit)->matched_reader_is_matched(reader_guid)
                             && (*wit)->matched_reader_remove(reader_guid))
                     {
@@ -1221,7 +1316,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
     return pairing_remote_reader_with_local_builtin_writer_after_security(local_writer, remote_reader_data);
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 bool EDP::pairing_writer_proxy_with_any_local_reader(
         const GUID_t& participant_guid,
@@ -1241,7 +1336,9 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
         (*rit)->getMutex().unlock();
         if (mp_PDP->lookupReaderProxyData(readerGUID, temp_reader_proxy_data_))
         {
-            bool valid = validMatching(&temp_reader_proxy_data_, wdata);
+            MatchingFailureMask no_match_reason;
+            fastdds::dds::PolicyMask incompatible_qos;
+            bool valid = valid_matching(&temp_reader_proxy_data_, wdata, no_match_reason, incompatible_qos);
             const GUID_t& writer_guid = wdata->guid();
 
             if (valid)
@@ -1255,7 +1352,9 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 #else
                 if ((*rit)->matched_writer_add(*wdata))
                 {
-                    logInfo(RTPS_EDP_MATCH, "WP:" << wdata->guid() << " match R:" << (*rit)->getGuid() << ". WLoc:" << wdata->remote_locators());
+                    logInfo(RTPS_EDP_MATCH,
+                            "WP:" << wdata->guid() << " match R:" << (*rit)->getGuid() << ". WLoc:" <<
+                            wdata->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*rit)->getListener() != nullptr)
                     {
@@ -1270,16 +1369,21 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                         (*rit)->getListener()->onReaderMatched((*rit), sub_info);
                     }
                 }
-#endif
+#endif // if HAVE_SECURITY
             }
             else
             {
+                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && (*rit)->getListener() != nullptr)
+                {
+                    (*rit)->getListener()->on_requested_incompatible_qos((*rit), incompatible_qos);
+                }
+
                 if ((*rit)->matched_writer_is_matched(writer_guid)
                         && (*rit)->matched_writer_remove(writer_guid))
                 {
 #if HAVE_SECURITY
                     mp_RTPSParticipant->security_manager().remove_writer(readerGUID, participant_guid, writer_guid);
-#endif
+#endif // if HAVE_SECURITY
                     //MATCHED AND ADDED CORRECTLY:
                     if ((*rit)->getListener() != nullptr)
                     {
@@ -1320,7 +1424,9 @@ bool EDP::pairing_writer_proxy_with_local_reader(
         {
             if (mp_PDP->lookupReaderProxyData(readerGUID, temp_reader_proxy_data_))
             {
-                bool valid = validMatching(&temp_reader_proxy_data_, &wdata);
+                MatchingFailureMask no_match_reason;
+                fastdds::dds::PolicyMask incompatible_qos;
+                bool valid = valid_matching(&temp_reader_proxy_data_, &wdata, no_match_reason, incompatible_qos);
                 const GUID_t& writer_guid = wdata.guid();
 
                 if (valid)
@@ -1333,6 +1439,11 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                 }
                 else
                 {
+                    if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && (*rit)->getListener() != nullptr)
+                    {
+                        (*rit)->getListener()->on_requested_incompatible_qos((*rit), incompatible_qos);
+                    }
+
                     if ((*rit)->matched_writer_is_matched(writer_guid)
                             && (*rit)->matched_writer_remove(writer_guid))
                     {
@@ -1402,7 +1513,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
     return pairing_remote_writer_with_local_builtin_reader_after_security(local_reader, remote_writer_data);
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 bool EDP::checkTypeIdentifier(
         const WriterProxyData* wdata,
@@ -1593,6 +1704,6 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
     return *status;
 }
 
-}
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

@@ -125,9 +125,9 @@ public:
             SampleInfo* info);
 
     /**
-    * Get associated GUID
-    * @return Associated GUID
-    */
+     * Get associated GUID
+     * @return Associated GUID
+     */
     const fastrtps::rtps::GUID_t& guid() const;
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
@@ -144,10 +144,6 @@ public:
      */
     const TopicDescription* get_topicdescription() const;
 
-    /**
-     * @brief Get the requested deadline missed status
-     * @return The deadline missed status
-     */
     ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
@@ -170,10 +166,8 @@ public:
     ReturnCode_t get_liveliness_changed_status(
             fastrtps::LivelinessChangedStatus& status) const;
 
-    /* TODO
-       bool get_requested_incompatible_qos_status(
-            fastrtps::RequestedIncompatibleQosStatus& status) const;
-     */
+    ReturnCode_t get_requested_incompatible_qos_status(
+            RequestedIncompatibleQosStatus& status);
 
     /* TODO
        bool get_sample_lost_status(
@@ -243,7 +237,7 @@ private:
 
     class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
     {
-public:
+    public:
 
         InnerDataReaderListener(
                 DataReaderImpl* s)
@@ -267,8 +261,13 @@ public:
                 fastrtps::rtps::RTPSReader* reader,
                 const fastrtps::LivelinessChangedStatus& status) override;
 
+        void on_requested_incompatible_qos(
+                fastrtps::rtps::RTPSReader* reader,
+                fastdds::dds::PolicyMask qos) override;
+
         DataReaderImpl* data_reader_;
-    } reader_listener_;
+    }
+    reader_listener_;
 
     //! A timer used to check for deadlines
     fastrtps::rtps::TimedEvent* deadline_timer_ = nullptr;
@@ -281,6 +280,9 @@ public:
 
     //! Requested deadline missed status
     fastrtps::RequestedDeadlineMissedStatus deadline_missed_status_;
+
+    //! Requested incompatible QoS status
+    RequestedIncompatibleQosStatus requested_incompatible_qos_status_;
 
     //! A timed callback to remove expired samples
     fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
@@ -317,11 +319,14 @@ public:
 
     void subscriber_qos_updated();
 
+    RequestedIncompatibleQosStatus& update_requested_incompatible_qos(
+            PolicyMask incompatible_policies);
+
 };
 
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTRTPS_DATAREADERIMPL_HPP_*/

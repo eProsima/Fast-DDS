@@ -132,6 +132,12 @@ ReturnCode_t DataReader::get_requested_deadline_missed_status(
     return impl_->get_requested_deadline_missed_status(status);
 }
 
+ReturnCode_t DataReader::get_requested_incompatible_qos_status(
+        RequestedIncompatibleQosStatus& status)
+{
+    return impl_->get_requested_incompatible_qos_status(status);
+}
+
 /* TODO
    bool DataReader::read(
         std::vector<void *>& data_values,
@@ -217,7 +223,6 @@ TypeSupport DataReader::type()
 {
     return impl_->type();
 }
-
 
 const TopicDescription* DataReader::get_topicdescription() const
 {

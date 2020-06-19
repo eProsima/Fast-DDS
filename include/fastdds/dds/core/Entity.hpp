@@ -44,6 +44,7 @@ public:
     RTPS_DllAPI Entity(
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
+        , status_changes_(StatusMask::none())
         , enable_(false)
     {
     }
@@ -73,6 +74,25 @@ public:
     RTPS_DllAPI const StatusMask& get_status_mask() const
     {
         return status_mask_;
+    }
+
+    /**
+     * @brief Retrieves the set of triggered statuses in the Entity
+     *
+     * Triggered statuses are the ones whose value has changed
+     * since the last time the application read the status.
+     * When the entity is first created or if the entity is not enabled,
+     * all communication statuses are in the “untriggered” state,
+     * so the list returned by the get_status_changes operation will be empty.
+     * The list of statuses returned by the get_status_changes operation
+     * refers to the status that are triggered on the Entity itself
+     * and does not include statuses that apply to contained entities.
+     *
+     * @return const reference to the StatusMask with the triggered statuses set to 1
+     */
+    RTPS_DllAPI const StatusMask& get_status_changes() const
+    {
+        return status_changes_;
     }
 
     /**
@@ -113,6 +133,9 @@ protected:
 
     //! StatusMask with relevant statuses set to 1
     StatusMask status_mask_;
+
+    //! StatusMask with triggered statuses set to 1
+    StatusMask status_changes_;
 
     //! InstanceHandle associated to the Entity
     fastrtps::rtps::InstanceHandle_t instance_handle_;

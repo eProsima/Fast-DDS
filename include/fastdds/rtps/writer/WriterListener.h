@@ -21,18 +21,19 @@
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSWriter;
 struct CacheChange_t;
 
 /**
-* Class WriterListener with virtual method so the user can implement callbacks to certain events.
-*  @ingroup WRITER_MODULE
-*/
+ * Class WriterListener with virtual method so the user can implement callbacks to certain events.
+ * @ingroup WRITER_MODULE
+ */
 class RTPS_DllAPI WriterListener
 {
 public:
@@ -68,6 +69,21 @@ public:
     }
 
     /**
+     * This method is called when a new Reader is discovered, with a Topic that
+     * matches that of a local writer, but with a requested QoS that is incompatible
+     * with the one offered by the local writer
+     * @param writer Pointer to the RTPSWriter.
+     * @param qos_id Identifier of the incompatible Qos.
+     */
+    virtual void on_offered_incompatible_qos(
+            RTPSWriter* writer,
+            eprosima::fastdds::dds::PolicyMask qos)
+    {
+        (void)writer;
+        (void)qos;
+    }
+
+    /**
      * This method is called when all the readers matched with this Writer acknowledge that a cache
      * change has been received.
      * @param writer Pointer to the RTPSWriter.
@@ -93,6 +109,7 @@ public:
         (void)writer;
         (void)status;
     }
+
 };
 
 } /* namespace rtps */

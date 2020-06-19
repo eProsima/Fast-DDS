@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastrtps/xmlparser/XMLParser.h>
@@ -59,7 +60,7 @@ private:
 
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         ParticipantListener(
                 PubSubReader& reader)
@@ -109,19 +110,20 @@ public:
             }
         }
 
-#endif
+#endif // if HAVE_SECURITY
 
-private:
+    private:
 
         ParticipantListener& operator =(
                 const ParticipantListener&) = delete;
         PubSubReader& reader_;
 
-    } participant_listener_;
+    }
+    participant_listener_;
 
     class Listener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         Listener(
                 PubSubReader& reader)
@@ -174,6 +176,14 @@ public:
             times_deadline_missed_ = status.total_count;
         }
 
+        void on_requested_incompatible_qos(
+                eprosima::fastdds::dds::DataReader* datareader,
+                const eprosima::fastdds::dds::RequestedIncompatibleQosStatus& status) override
+        {
+            (void)datareader;
+            reader_.incompatible_qos(status);
+        }
+
         void on_liveliness_changed(
                 eprosima::fastdds::dds::DataReader* datareader,
                 const eprosima::fastrtps::LivelinessChangedStatus& status) override
@@ -199,7 +209,7 @@ public:
             return times_deadline_missed_;
         }
 
-private:
+    private:
 
         Listener& operator =(
                 const Listener&) = delete;
@@ -209,7 +219,8 @@ private:
         //! Number of times deadline was missed
         unsigned int times_deadline_missed_;
 
-    } listener_;
+    }
+    listener_;
 
     friend class Listener;
 
@@ -224,6 +235,7 @@ public:
         , topic_(nullptr)
         , subscriber_(nullptr)
         , datareader_(nullptr)
+        , status_mask_(eprosima::fastdds::dds::StatusMask::all())
         , topic_name_(topic_name)
         , initialized_(false)
         , matched_(0)
@@ -237,11 +249,13 @@ public:
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
-#endif
+#endif // if HAVE_SECURITY
         , liveliness_mutex_()
         , liveliness_cv_()
         , times_liveliness_lost_(0)
         , times_liveliness_recovered_(0)
+        , times_incompatible_qos_(0)
+        , last_incompatible_qos_(eprosima::fastdds::dds::INVALID_QOS_POLICY_ID)
     {
         // Generate topic name
         std::ostringstream t;
@@ -266,7 +280,8 @@ public:
         participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230,
             participant_qos_,
-            &participant_listener_);
+            &participant_listener_,
+            status_mask_);
         ASSERT_NE(participant_, nullptr);
         ASSERT_TRUE(participant_->is_enabled());
 
@@ -287,7 +302,7 @@ public:
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
-        datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_);
+        datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
         ASSERT_NE(datareader_, nullptr);
         ASSERT_TRUE(datareader_->is_enabled());
 
@@ -359,17 +374,19 @@ public:
 
     void block_for_all()
     {
-        block([this]() -> bool {
-            return number_samples_expected_ == current_received_count_;
-        });
+        block([this]() -> bool
+                {
+                    return number_samples_expected_ == current_received_count_;
+                });
     }
 
     size_t block_for_at_least(
             size_t at_least)
     {
-        block([this, at_least]() -> bool {
-            return current_received_count_ >= at_least;
-        });
+        block([this, at_least]() -> bool
+                {
+                    return current_received_count_ >= at_least;
+                });
         return current_received_count_;
     }
 
@@ -387,9 +404,10 @@ public:
             const std::chrono::duration<_Rep, _Period>& max_wait)
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        cv_.wait_for(lock, max_wait, [this]() -> bool {
-            return number_samples_expected_ == current_received_count_;
-        });
+        cv_.wait_for(lock, max_wait, [this]() -> bool
+                {
+                    return number_samples_expected_ == current_received_count_;
+                });
 
         return current_received_count_;
     }
@@ -403,15 +421,17 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            cvDiscovery_.wait(lock, [&](){
-                return matched_ != 0;
-            });
+            cvDiscovery_.wait(lock, [&]()
+                    {
+                        return matched_ != 0;
+                    });
         }
         else
         {
-            cvDiscovery_.wait_for(lock, timeout, [&](){
-                return matched_ != 0;
-            });
+            cvDiscovery_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ != 0;
+                    });
         }
 
         std::cout << "Reader discovery finished..." << std::endl;
@@ -427,15 +447,17 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            cvDiscovery_.wait(lock, [&](){
-                return participant_matched_ == 0;
-            });
+            cvDiscovery_.wait(lock, [&]()
+                    {
+                        return participant_matched_ == 0;
+                    });
         }
         else
         {
-            if (!cvDiscovery_.wait_for(lock, timeout, [&](){
-                return participant_matched_ == 0;
-            }))
+            if (!cvDiscovery_.wait_for(lock, timeout, [&]()
+                    {
+                        return participant_matched_ == 0;
+                    }))
             {
                 ret_value = false;
             }
@@ -459,9 +481,10 @@ public:
 
         std::cout << "Reader is waiting removal..." << std::endl;
 
-        cvDiscovery_.wait(lock, [&](){
-            return matched_ == 0;
-        });
+        cvDiscovery_.wait(lock, [&]()
+                {
+                    return matched_ == 0;
+                });
 
         std::cout << "Reader removal finished..." << std::endl;
     }
@@ -471,9 +494,10 @@ public:
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&](){
-            return times_liveliness_recovered_ >= times;
-        });
+        liveliness_cv_.wait(lock, [&]()
+                {
+                    return times_liveliness_recovered_ >= times;
+                });
     }
 
     void wait_liveliness_lost(
@@ -481,9 +505,30 @@ public:
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&](){
-            return times_liveliness_lost_ >= times;
-        });
+        liveliness_cv_.wait(lock, [&]()
+                {
+                    return times_liveliness_lost_ >= times;
+                });
+    }
+
+    void wait_incompatible_qos(
+            unsigned int times = 1)
+    {
+        std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
+
+        incompatible_qos_cv_.wait(lock, [&]()
+                {
+                    return times_incompatible_qos_ >= times;
+                });
+    }
+
+    void incompatible_qos(
+            eprosima::fastdds::dds::OfferedIncompatibleQosStatus status)
+    {
+        std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
+        times_incompatible_qos_++;
+        last_incompatible_qos_ = status.last_policy_id;
+        incompatible_qos_cv_.notify_one();
     }
 
 #if HAVE_SECURITY
@@ -493,9 +538,10 @@ public:
 
         std::cout << "Reader is waiting authorization..." << std::endl;
 
-        cvAuthentication_.wait(lock, [&]() -> bool {
-            return authorized_ > 0;
-        });
+        cvAuthentication_.wait(lock, [&]() -> bool
+                {
+                    return authorized_ > 0;
+                });
 
         std::cout << "Reader authorization finished..." << std::endl;
     }
@@ -506,18 +552,39 @@ public:
 
         std::cout << "Reader is waiting unauthorization..." << std::endl;
 
-        cvAuthentication_.wait(lock, [&]() -> bool {
-            return unauthorized_ > 0;
-        });
+        cvAuthentication_.wait(lock, [&]() -> bool
+                {
+                    return unauthorized_ > 0;
+                });
 
         std::cout << "Reader unauthorization finished..." << std::endl;
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     size_t getReceivedCount() const
     {
         return current_received_count_;
+    }
+
+    PubSubReader& deactivate_status_listener(
+            eprosima::fastdds::dds::StatusMask mask)
+    {
+        status_mask_ &= ~mask;
+        return *this;
+    }
+
+    PubSubReader& activate_status_listener(
+            eprosima::fastdds::dds::StatusMask mask)
+    {
+        status_mask_ |= mask;
+        return *this;
+    }
+
+    PubSubReader& reset_status_listener()
+    {
+        status_mask_ = eprosima::fastdds::dds::StatusMask::all();
+        return *this;
     }
 
     /*** Function to change QoS ***/
@@ -949,9 +1016,10 @@ public:
 
         std::cout << "Reader is waiting discovery result..." << std::endl;
 
-        cvDiscovery_.wait(lock, [&](){
-            return discovery_result_;
-        });
+        cvDiscovery_.wait(lock, [&]()
+                {
+                    return discovery_result_;
+                });
 
         std::cout << "Reader gets discovery result..." << std::endl;
     }
@@ -1013,6 +1081,27 @@ public:
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
         return times_liveliness_recovered_;
+    }
+
+    unsigned int times_incompatible_qos()
+    {
+        std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
+
+        return times_incompatible_qos_;
+    }
+
+    eprosima::fastdds::dds::QosPolicyId_t last_incompatible_qos()
+    {
+        std::unique_lock<std::mutex> lock(incompatible_qos_mutex_);
+
+        return last_incompatible_qos_;
+    }
+
+    eprosima::fastdds::dds::RequestedIncompatibleQosStatus get_incompatible_qos_status() const
+    {
+        eprosima::fastdds::dds::RequestedIncompatibleQosStatus status;
+        datareader_->get_requested_incompatible_qos_status(status);
+        return status;
     }
 
     const eprosima::fastrtps::LivelinessChangedStatus& liveliness_changed_status()
@@ -1114,7 +1203,7 @@ private:
         cvAuthentication_.notify_all();
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     PubSubReader& operator =(
             const PubSubReader&) = delete;
@@ -1126,6 +1215,7 @@ private:
     eprosima::fastdds::dds::SubscriberQos subscriber_qos_;
     eprosima::fastdds::dds::DataReader* datareader_;
     eprosima::fastdds::dds::DataReaderQos datareader_qos_;
+    eprosima::fastdds::dds::StatusMask status_mask_;
     std::string topic_name_;
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
     bool initialized_;
@@ -1153,7 +1243,7 @@ private:
     std::condition_variable cvAuthentication_;
     unsigned int authorized_;
     unsigned int unauthorized_;
-#endif
+#endif // if HAVE_SECURITY
 
     //! A mutex for liveliness status
     std::mutex liveliness_mutex_;
@@ -1165,6 +1255,16 @@ private:
     unsigned int times_liveliness_recovered_;
     //! The liveliness changed status
     eprosima::fastrtps::LivelinessChangedStatus liveliness_changed_status_;
+
+    //! A mutex for incompatible_qos status
+    std::mutex incompatible_qos_mutex_;
+    //! A condition variable to notify when incompatible qos was received
+    std::condition_variable incompatible_qos_cv_;
+    //! Number of times incompatible_qos was received
+    unsigned int times_incompatible_qos_;
+    //! Latest conflicting PolicyId
+    eprosima::fastdds::dds::QosPolicyId_t last_incompatible_qos_;
+
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_

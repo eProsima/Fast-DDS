@@ -19,15 +19,14 @@
 #ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 #define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+
 #include <cstdint>
 #include <vector>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-//!Alias of uint32_t
-using QosPolicyId_t = uint32_t;
 
 /**
  * @brief A struct storing the id of the incompatible QoS Policy and the number of times it fails
@@ -44,11 +43,11 @@ struct QosPolicyCount
     }
 
     //! @brief The id of the policy
-    QosPolicyId_t policy_id;
+    QosPolicyId_t policy_id = INVALID_QOS_POLICY_ID;
 
     //! @brief Total number of times that the concerned writer discovered a reader for the same topic
     //! @details The requested QoS is incompatible with the one offered by the writer
-    int32_t count;
+    uint32_t count = 0;
 };
 
 //!Alias of std::vector<QosPolicyCount>
@@ -59,16 +58,27 @@ struct IncompatibleQosStatus
 {
     //! @brief Total cumulative number of times the concerned writer discovered a reader for the same topic
     //! @details The requested QoS is incompatible with the one offered by the writer
-    int32_t total_count = 0;
+    uint32_t total_count = 0;
 
     //! @brief The change in total_count since the last time the listener was called or the status was read
-    int32_t total_count_change = 0;
+    uint32_t total_count_change = 0;
 
     //! @brief The id of the policy that was found to be incompatible the last time an incompatibility is detected
-    QosPolicyId_t last_policy_id;
+    QosPolicyId_t last_policy_id = INVALID_QOS_POLICY_ID;
 
     //! @brief A list of QosPolicyCount
     QosPolicyCountSeq policies;
+
+    IncompatibleQosStatus()
+        : policies(static_cast<size_t>(NEXT_QOS_POLICY_ID), QosPolicyCount(INVALID_QOS_POLICY_ID, 0))
+    {
+        for (uint32_t id = 0; id < NEXT_QOS_POLICY_ID; ++id)
+        {
+            policies[id].policy_id = static_cast<QosPolicyId_t>(id);
+            policies[id].count = 0;
+        }
+    }
+
 };
 
 //!Alias of IncompatibleQosStatus

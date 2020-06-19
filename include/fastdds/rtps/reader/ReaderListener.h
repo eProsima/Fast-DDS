@@ -23,21 +23,22 @@
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 #include <mutex>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSReader;
 struct CacheChange_t;
 
 /**
-* Class ReaderListener, to be used by the user to override some of is virtual method to program actions to
-* certain events.
-*  @ingroup READER_MODULE
-*/
+ * Class ReaderListener, to be used by the user to override some of is virtual method to program actions to
+ * certain events.
+ * @ingroup READER_MODULE
+ */
 class RTPS_DllAPI ReaderListener
 {
 public:
@@ -100,11 +101,26 @@ public:
         (void)reader;
         (void)status;
     }
+
+    /**
+     * This method is called when a new Writer is discovered, with a Topic that
+     * matches that of a local reader, but with an offered QoS that is incompatible
+     * with the one requested by the local reader
+     * @param reader Pointer to the RTPSReader.
+     * @param qos_id The ID of the incompatible Qos.
+     */
+    virtual void on_requested_incompatible_qos(
+            RTPSReader* reader,
+            eprosima::fastdds::dds::PolicyMask qos)
+    {
+        (void)reader;
+        (void)qos;
+    }
+
 };
 
-//Namespace enders
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_READERLISTENER_H_ */

@@ -21,6 +21,7 @@
 
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/Entity.hpp>
@@ -180,11 +181,19 @@ public:
 
     /**
      * @brief Returns the offered deadline missed status
-     * @param status Deadline missed status struct
+     * @param[out] status Deadline missed status struct
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
+
+    /**
+     * @brief Returns the offered incompatible qos status
+     * @param[out] status Offered incompatible qos status struct
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_offered_incompatible_qos_status(
+            OfferedIncompatibleQosStatus& status);
 
     /**
      * Establishes the DataWriterQos for this DataWriter.

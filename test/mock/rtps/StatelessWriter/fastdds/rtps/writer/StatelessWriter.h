@@ -29,25 +29,34 @@ class RTPSParticipantImpl;
 
 class StatelessWriter : public RTPSWriter
 {
-    public:
+public:
 
-        StatelessWriter(RTPSParticipantImpl* participant) : participant_(participant) {}
+    StatelessWriter(
+            RTPSParticipantImpl* participant)
+        : participant_(participant)
+    {
+    }
 
-        virtual ~StatelessWriter() = default;
+    virtual ~StatelessWriter() = default;
 
-        MOCK_METHOD1(matched_reader_add, bool(const ReaderProxyData&));
+    MOCK_METHOD1(matched_reader_add, bool(const ReaderProxyData&));
 
-        MOCK_METHOD1(matched_reader_remove, bool(const GUID_t&));
+    MOCK_METHOD1(matched_reader_remove, bool(const GUID_t&));
 
-        MOCK_METHOD0(getGuid, const GUID_t&());
+    MOCK_METHOD1 (matched_reader_is_matched, bool(const GUID_t& reader_guid));
 
-        MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
+    MOCK_METHOD0(getGuid, const GUID_t& ());
 
-        RTPSParticipantImpl* getRTPSParticipant() { return participant_; }
+    MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
 
-    private:
+    RTPSParticipantImpl* getRTPSParticipant()
+    {
+        return participant_;
+    }
 
-        RTPSParticipantImpl* participant_;
+private:
+
+    RTPSParticipantImpl* participant_;
 };
 
 } // namespace rtps

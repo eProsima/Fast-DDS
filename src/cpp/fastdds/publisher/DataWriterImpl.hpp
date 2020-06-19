@@ -167,12 +167,11 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
-    /**
-     * @brief Returns the offered deadline missed status
-     * @param Deadline missed status struct
-     */
     ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
+
+    ReturnCode_t get_offered_incompatible_qos_status(
+            OfferedIncompatibleQosStatus& status);
 
     ReturnCode_t set_qos(
             const DataWriterQos& qos);
@@ -243,7 +242,7 @@ private:
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener
     {
-public:
+    public:
 
         InnerDataWriterListener(
                 DataWriterImpl* w)
@@ -259,6 +258,10 @@ public:
                 fastrtps::rtps::RTPSWriter* writer,
                 const fastdds::dds::PublicationMatchedStatus& info) override;
 
+        void on_offered_incompatible_qos(
+                fastrtps::rtps::RTPSWriter* writer,
+                fastdds::dds::PolicyMask qos) override;
+
         void onWriterChangeReceivedByAll(
                 fastrtps::rtps::RTPSWriter* writer,
                 fastrtps::rtps::CacheChange_t* change) override;
@@ -268,7 +271,8 @@ public:
                 const fastrtps::LivelinessLostStatus& status) override;
 
         DataWriterImpl* data_writer_;
-    } writer_listener_;
+    }
+    writer_listener_;
 
     uint32_t high_mark_for_frag_;
 
@@ -283,6 +287,9 @@ public:
 
     //! The offered deadline missed status
     fastrtps::OfferedDeadlineMissedStatus deadline_missed_status_;
+
+    //! The offered incompatible qos status
+    OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
 
     //! A timed callback to remove expired samples for lifespan QoS
     fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
@@ -378,7 +385,8 @@ public:
 
     void publisher_qos_updated();
 
-
+    OfferedIncompatibleQosStatus& update_offered_incompatible_qos(
+            PolicyMask incompatible_policies);
 };
 
 } /* namespace dds */

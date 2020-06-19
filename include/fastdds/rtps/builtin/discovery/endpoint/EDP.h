@@ -27,14 +27,16 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+
+#define MATCH_FAILURE_REASON_COUNT size_t(16)
 
 namespace eprosima {
-
 namespace fastrtps {
 
 namespace types {
 class TypeIdentifier;
-}
+} // namespace types
 
 class TopicAttributes;
 
@@ -55,6 +57,26 @@ class RTPSParticipantImpl;
 class EDP
 {
 public:
+
+    /**
+     * Mask to hold the reasons why two endpoints do not match.
+     */
+    class MatchingFailureMask : public std::bitset<MATCH_FAILURE_REASON_COUNT>
+    {
+    public:
+
+        //! Bit index for matching failing due to different topic
+        static const uint32_t different_topic = (0x00000001 << 0u);
+
+        //! Bit index for matching failing due to inconsistent topic (same topic name but different characteristics)
+        static const uint32_t inconsistent_topic = (0x00000001 << 1u);
+
+        //! Bit index for matching failing due to incompatible QoS
+        static const uint32_t incompatible_qos = (0x00000001 << 2u);
+
+        //! Bit index for matching failing due to inconsistent partitions
+        static const uint32_t partitions = (0x00000001 << 3u);
+    };
 
     /**
      * Constructor.
@@ -175,24 +197,54 @@ public:
             RTPSWriter* W,
             const TopicAttributes& att,
             const WriterQos& qos);
+
     /**
-     * Check the validity of a matching between a RTPSWriter and a ReaderProxyData object.
-     * @param wdata Pointer to the WriterProxyData object.
+     * Check the validity of a matching between a local RTPSWriter and a ReaderProxyData object.
+     * @param wdata Pointer to the WriterProxyData object of the local RTPSWriter.
      * @param rdata Pointer to the ReaderProxyData object.
      * @return True if the two can be matched.
      */
     bool validMatching(
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata);
+
     /**
-     * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
-     * @param rdata Pointer to the ReaderProxyData object.
+     * Check the validity of a matching between a local RTPSReader and a WriterProxyData object.
+     * @param rdata Pointer to the ReaderProxyData object of the local RTPSReader.
      * @param wdata Pointer to the WriterProxyData object.
      * @return True if the two can be matched.
      */
     bool validMatching(
             const ReaderProxyData* rdata,
             const WriterProxyData* wdata);
+
+    /**
+     * Check the validity of a matching between a local RTPSWriter and a ReaderProxyData object.
+     * @param wdata Pointer to the WriterProxyData object of the local RTPSWriter.
+     * @param rdata Pointer to the ReaderProxyData object.
+     * @param reason[out] On return will specify the reason of failed matching (if any).
+     * @param incompatible_qos[out] On return will specify all the QoS values that were incompatible (if any).
+     * @return True if the two can be matched.
+     */
+    bool valid_matching(
+            const WriterProxyData* wdata,
+            const ReaderProxyData* rdata,
+            MatchingFailureMask& reason,
+            fastdds::dds::PolicyMask& incompatible_qos);
+
+    /**
+     * Check the validity of a matching between a local RTPSReader and a WriterProxyData object.
+     * @param rdata Pointer to the ReaderProxyData object of the local RTPSReader.
+     * @param wdata Pointer to the WriterProxyData object.
+     * @param error_mask[out] On return will specify the reason of failed matching (if any).
+     * @param incompatible_qos[out] On return will specify all the QoS values that were incompatible (if any).
+     * @return True if the two can be matched.
+     */
+    bool valid_matching(
+            const ReaderProxyData* rdata,
+            const WriterProxyData* wdata,
+            MatchingFailureMask& reason,
+            fastdds::dds::PolicyMask& incompatible_qos);
 
     /**
      * Unpair a WriterProxyData object from all local readers.
@@ -233,7 +285,7 @@ public:
     bool pairing_remote_reader_with_local_writer_after_security(
             const GUID_t& local_writer,
             const ReaderProxyData& remote_reader_data);
-#endif
+#endif // if HAVE_SECURITY
 
     /**
      * Try to pair/unpair WriterProxyData.
@@ -269,7 +321,7 @@ public:
         return false;
     }
 
-#endif
+#endif // if HAVE_SECURITY
     const fastdds::dds::SubscriptionMatchedStatus& update_subscription_matched_status(
             const GUID_t& reader_guid,
             const GUID_t& writer_guid,
@@ -344,5 +396,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_EDP_H_ */

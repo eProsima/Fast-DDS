@@ -34,38 +34,65 @@ namespace rtps {
 
 class RTPSReader : public Endpoint
 {
-    public:
+public:
 
-        RTPSReader() {}
+    RTPSReader()
+    {
+    }
 
-        RTPSReader(ReaderHistory* history, RecursiveTimedMutex* mutex)
-        {
-            history->mp_reader = this;
-            history->mp_mutex = mutex;
-        }
+    RTPSReader(
+            ReaderHistory* history,
+            RecursiveTimedMutex* mutex)
+    {
+        history->mp_reader = this;
+        history->mp_mutex = mutex;
+    }
 
-        virtual ~RTPSReader() = default;
+    virtual ~RTPSReader() = default;
 
 
-        virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
+    virtual bool matched_writer_add(
+            const WriterProxyData& wdata) = 0;
 
-        virtual bool matched_writer_remove(const GUID_t& wdata) = 0;
+    virtual bool matched_writer_remove(
+            const GUID_t& wdata) = 0;
 
-        MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
+    virtual bool matched_writer_is_matched(
+            const GUID_t& wguid) = 0;
 
-        MOCK_METHOD0(getHistory_mock, ReaderHistory*());
+    const GUID_t& getGuid()
+    {
+        return m_guid;
+    }
 
-        MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+    ReaderListener* getListener() const
+    {
+        return listener_;
+    }
 
-        ReaderHistory* getHistory()
-        {
-            getHistory_mock();
-            return history_;
-        }
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
 
-        ReaderHistory* history_;
+    MOCK_METHOD0(getHistory_mock, ReaderHistory* ());
 
-        ReaderListener* listener_;
+    MOCK_METHOD2(reserveCache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
+
+    MOCK_METHOD1(releaseCache, bool (CacheChange_t* a_change));
+
+    MOCK_METHOD0(expectsInlineQos, bool());
+    // *INDENT-ON*
+
+    ReaderHistory* getHistory()
+    {
+        getHistory_mock();
+        return history_;
+    }
+
+    ReaderHistory* history_;
+
+    ReaderListener* listener_;
+
+    const GUID_t m_guid;
 };
 
 } // namespace rtps

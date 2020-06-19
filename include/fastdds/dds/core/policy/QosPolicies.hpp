@@ -34,15 +34,66 @@
 
 
 namespace eprosima {
-
-namespace fastrtps {
-namespace rtps {
-class EDP;
-}
-}
-
 namespace fastdds {
 namespace dds {
+
+/**
+ * The identifier for each QosPolicy.
+ *
+ * Each QosPolicy class has a different ID that is then used to refer
+ * to the incompatible policies on OfferedIncompatibleQosStatus
+ * and RequestedIncompatibleQosStatus.
+ */
+enum QosPolicyId_t : uint32_t
+{
+    INVALID_QOS_POLICY_ID                   = 0,    //< Does not refer to any valid QosPolicy
+
+    // Standard QosPolicies
+    USERDATA_QOS_POLICY_ID                  = 1,    //< UserDataQosPolicy
+    DURABILITY_QOS_POLICY_ID                = 2,    //< DurabilityQosPolicy
+    PRESENTATION_QOS_POLICY_ID              = 3,    //< PresentationQosPolicy
+    DEADLINE_QOS_POLICY_ID                  = 4,    //< DeadlineQosPolicy
+    LATENCYBUDGET_QOS_POLICY_ID             = 5,    //< LatencyBudgetQosPolicy
+    OWNERSHIP_QOS_POLICY_ID                 = 6,    //< OwnershipQosPolicy
+    OWNERSHIPSTRENGTH_QOS_POLICY_ID         = 7,    //< OwnershipStrengthQosPolicy
+    LIVELINESS_QOS_POLICY_ID                = 8,    //< LivelinessQosPolicy
+    TIMEBASEDFILTER_QOS_POLICY_ID           = 9,    //< TimeBasedFilterQosPolicy
+    PARTITION_QOS_POLICY_ID                 = 10,   //< PartitionQosPolicy
+    RELIABILITY_QOS_POLICY_ID               = 11,   //< ReliabilityQosPolicy
+    DESTINATIONORDER_QOS_POLICY_ID          = 12,   //< DestinationOrderQosPolicy
+    HISTORY_QOS_POLICY_ID                   = 13,   //< HistoryQosPolicy
+    RESOURCELIMITS_QOS_POLICY_ID            = 14,   //< ResourceLimitsQosPolicy
+    ENTITYFACTORY_QOS_POLICY_ID             = 15,   //< EntityFactoryQosPolicy
+    WRITERDATALIFECYCLE_QOS_POLICY_ID       = 16,   //< WriterDataLifecycleQosPolicy
+    READERDATALIFECYCLE_QOS_POLICY_ID       = 17,   //< ReaderDataLifecycleQosPolicy
+    TOPICDATA_QOS_POLICY_ID                 = 18,   //< TopicDataQosPolicy
+    GROUPDATA_QOS_POLICY_ID                 = 19,   //< GroupDataQosPolicy
+    TRANSPORTPRIORITY_QOS_POLICY_ID         = 20,   //< TransportPriorityQosPolicy
+    LIFESPAN_QOS_POLICY_ID                  = 21,   //< LifespanQosPolicy
+    DURABILITYSERVICE_QOS_POLICY_ID         = 22,   //< DurabilityServiceQosPolicy
+
+    //XTypes extensions
+    DATAREPRESENTATION_QOS_POLICY_ID            = 23,   //< DataRepresentationQosPolicy
+    TYPECONSISTENCYENFORCEMENT_QOS_POLICY_ID    = 24,   //< TypeConsistencyEnforcementQosPolicy
+
+    //eProsima Extensions
+    DISABLEPOSITIVEACKS_QOS_POLICY_ID       = 25,   //< DisablePositiveACKsQosPolicy
+    PARTICIPANTRESOURCELIMITS_QOS_POLICY_ID = 26,   //< ParticipantResourceLimitsQos
+    PROPERTYPOLICY_QOS_POLICY_ID            = 27,   //< PropertyPolicyQos
+    PUBLISHMODE_QOS_POLICY_ID               = 28,   //< PublishModeQosPolicy
+    READERRESOURCELIMITS_QOS_POLICY_ID      = 29,   //< Reader ResourceLimitsQos
+    RTPSENDPOINT_QOS_POLICY_ID              = 30,   //< RTPSEndpointQos
+    RTPSRELIABLEREADER_QOS_POLICY_ID        = 31,   //< RTPSReliableReaderQos
+    RTPSRELIABLEWRITER_QOS_POLICY_ID        = 32,   //< RTPSReliableWriterQos
+    TRANSPORTCONFIG_QOS_POLICY_ID           = 33,   //< TransportConfigQos
+    TYPECONSISTENCY_QOS_POLICY_ID           = 34,   //< TipeConsistencyQos
+    WIREPROTOCOLCONFIG_QOS_POLICY_ID        = 35,   //< WireProtocolConfigQos
+    WRITERRESOURCELIMITS_QOS_POLICY_ID      = 36,   //< WriterResourceLimitsQos
+
+    NEXT_QOS_POLICY_ID                              //< Keep always the last element. For internal use only
+};
+
+using PolicyMask = std::bitset<NEXT_QOS_POLICY_ID>;
 
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
@@ -898,62 +949,63 @@ public:
  * By default, zero-sized sequence.
  * @note Mutable Qos Policy
  */
-#define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                     \
+// *INDENT-OFF*  (uncrustify seems to have problems with this macro)
+#define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                         \
     class TClassName : public GenericDataQosPolicy                                         \
     {                                                                                      \
-public:                                                                                \
-                                                                                       \
+    public:                                                                                \
+                                                                                           \
         RTPS_DllAPI TClassName()                                                           \
             : GenericDataQosPolicy(TPid)                                                   \
         {                                                                                  \
         }                                                                                  \
-                                                                                       \
+                                                                                           \
         RTPS_DllAPI TClassName(                                                            \
-            uint16_t in_length)                                                        \
+                uint16_t in_length)                                                        \
             : GenericDataQosPolicy(TPid, in_length)                                        \
         {                                                                                  \
         }                                                                                  \
-                                                                                       \
-        /** \
-         * Construct from another TClassName. \
-         * \
-         * The resulting TClassName will have the same size limits \
-         * as the input attribute \
-         * \
-         * @param data data to copy in the newly created object \
-         */                                                                            \
+                                                                                           \
+        /**                                                                                \
+         * Construct from another TClassName.                                              \
+         *                                                                                 \
+         * The resulting TClassName will have the same size limits                         \
+         * as the input attribute                                                          \
+         *                                                                                 \
+         * @param data data to copy in the newly created object                            \
+         */                                                                                \
         RTPS_DllAPI TClassName(                                                            \
-            const TClassName &data) = default;                                         \
-                                                                                       \
-        /** \
-         * Construct from underlying collection type. \
-         * \
-         * Useful to easy integration on old APIs where a traditional container was used. \
-         * The resulting TClassName will always be unlimited in size \
-         * \
-         * @param data data to copy in the newly created object \
-         */                                                                            \
+                const TClassName &data) = default;                                         \
+                                                                                           \
+        /**                                                                                \
+         * Construct from underlying collection type.                                      \
+         *                                                                                 \
+         * Useful to easy integration on old APIs where a traditional container was used.  \
+         * The resulting TClassName will always be unlimited in size                       \
+         *                                                                                 \
+         * @param data data to copy in the newly created object                            \
+         */                                                                                \
         RTPS_DllAPI TClassName(                                                            \
-            const collection_type &data)                                               \
+                const collection_type &data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \
-                                                                                       \
+                                                                                           \
         virtual RTPS_DllAPI ~TClassName() = default;                                       \
-                                                                                       \
-        /** \
-         * Copies another TClassName. \
-         * \
-         * The resulting TClassName will have the same size limit \
-         * as the input parameter, so all data in the input will be copied. \
-         * \
-         * @param b object to be copied \
-         * @return reference to the current object. \
-         */                                                                            \
+                                                                                           \
+        /**                                                                                \
+         * Copies another TClassName.                                                      \
+         *                                                                                 \
+         * The resulting TClassName will have the same size limit                          \
+         * as the input parameter, so all data in the input will be copied.                \
+         *                                                                                 \
+         * @param b object to be copied                                                    \
+         * @return reference to the current object.                                        \
+         */                                                                                \
         TClassName& operator =(                                                            \
-            const TClassName &b) = default;                                            \
-                                                                                       \
+                const TClassName& b) = default;                                            \
     };
+// *INDENT-ON*
 
 //Variable used to generate the doxygen documentation for this QoS Policies
 #ifdef DOXYGEN_DOCUMENTATION
@@ -997,7 +1049,7 @@ class TopicDataQosPolicy : public GenericDataQosPolicy
 class GroupDataQosPolicy : public GenericDataQosPolicy
 {
 };
-#endif
+#endif  // DOXYGEN_DOCUMENTATION
 
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
@@ -1211,13 +1263,11 @@ public:
  */
 class PartitionQosPolicy : public Parameter_t, public QosPolicy
 {
-    friend class fastrtps::rtps::EDP;
-
 public:
 
     class const_iterator
     {
-public:
+    public:
 
         typedef const_iterator self_type;
         typedef const Partition_t value_type;
@@ -1273,7 +1323,7 @@ public:
             return ptr_ != rhs.ptr_;
         }
 
-protected:
+    protected:
 
         /**
          * @brief Shift the pointer to the next element
@@ -1286,7 +1336,7 @@ protected:
             value_ = Partition_t(ptr_);
         }
 
-private:
+    private:
 
         //!Pointer
         const fastrtps::rtps::octet* ptr_;

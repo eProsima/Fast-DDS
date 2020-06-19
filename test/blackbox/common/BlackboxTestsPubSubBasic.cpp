@@ -594,6 +594,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     ASSERT_FALSE(reader.is_matched());
 }
 
+
 INSTANTIATE_TEST_CASE_P(PubSubBasic,
         PubSubBasic,
         testing::Values(false, true),
