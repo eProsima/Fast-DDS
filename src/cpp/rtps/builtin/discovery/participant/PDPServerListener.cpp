@@ -94,7 +94,7 @@ void PDPServerListener::onNewCacheChangeAdded(
 
         // Load information on local_data
         CDRMessage_t msg(change->serializedPayload);
-        if(local_data.readFromCDRMessage(&msg, true, 
+        if(local_data.readFromCDRMessage(&msg, true,
             parent_pdp_->getRTPSParticipant()->network_factory(),
             parent_pdp_->getRTPSParticipant()->has_shm_transport()))
         {
@@ -146,7 +146,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 lock.unlock();
 
                 // Included for symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
-                // right now servers doesn't need to modify EDP on updates
+                // right now servers do not need to modify EDP on updates
                 if (parent_pdp_->updateInfoMatchesEDP())
                 {
                     parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);

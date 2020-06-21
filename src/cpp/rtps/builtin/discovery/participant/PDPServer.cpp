@@ -1037,9 +1037,6 @@ bool PDPServer::remove_remote_participant(
 
                 if (mp_PDPWriterHistory->add_change(pC, wp))
                 {
-                    // Impersonate
-                    pC->writerGUID = GUID_t(partGUID.guidPrefix, c_EntityId_SPDPWriter);
-
                     logInfo(RTPS_PDP, "Server created a DATA(p[UD]) for a lease duration casualty.")
                 }
             }
@@ -1053,9 +1050,7 @@ bool PDPServer::remove_remote_participant(
     // only DATA acknowledge by all clients would be actually removed
     if(res)
     {
-        InstanceHandle_t ih;
-
-        removeParticipantFromHistory(ih = partGUID);
+        removeParticipantFromHistory(key);
         removeParticipantForEDPMatch(partGUID);
 
         // awake server event thread
