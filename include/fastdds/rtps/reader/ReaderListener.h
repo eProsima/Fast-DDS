@@ -107,7 +107,7 @@ public:
      * matches that of a local reader, but with an offered QoS that is incompatible
      * with the one requested by the local reader
      * @param reader Pointer to the RTPSReader.
-     * @param qos_id The ID of the incompatible Qos.
+     * @param qos A mask with the bits of all incompatible Qos activated.
      */
     virtual void on_requested_incompatible_qos(
             RTPSReader* reader,

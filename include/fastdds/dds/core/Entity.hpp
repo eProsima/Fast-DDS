@@ -82,7 +82,7 @@ public:
      * Triggered statuses are the ones whose value has changed
      * since the last time the application read the status.
      * When the entity is first created or if the entity is not enabled,
-     * all communication statuses are in the “untriggered” state,
+     * all communication statuses are in the non-triggered state,
      * so the list returned by the get_status_changes operation will be empty.
      * The list of statuses returned by the get_status_changes operation
      * refers to the status that are triggered on the Entity itself
