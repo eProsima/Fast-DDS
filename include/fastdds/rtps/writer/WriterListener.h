@@ -73,7 +73,7 @@ public:
      * matches that of a local writer, but with a requested QoS that is incompatible
      * with the one offered by the local writer
      * @param writer Pointer to the RTPSWriter.
-     * @param qos_id Identifier of the incompatible Qos.
+     * @param qos A mask with the bits of all incompatible Qos activated.
      */
     virtual void on_offered_incompatible_qos(
             RTPSWriter* writer,
