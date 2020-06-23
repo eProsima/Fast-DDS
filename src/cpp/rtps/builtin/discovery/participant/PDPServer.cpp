@@ -700,6 +700,7 @@ std::string PDPServer::GetPersistenceFileName()
 
     return filename.str();
 }
+
 #endif // HAVE_SQLITE3
 
 //! returns true if loading info from persistency database
