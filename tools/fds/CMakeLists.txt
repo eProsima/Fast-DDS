@@ -80,6 +80,8 @@ target_link_libraries(${PROJECT_NAME} fastrtps fastcdr)
 # Properties that change bin names depending on current config.
 # This is convenient because on installation all bins share folder
 set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION})
+set_target_properties(${PROJECT_NAME} PROPERTIES MINSIZEREL_POSTFIX m-${PROJECT_VERSION})
+set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX rd-${PROJECT_VERSION})
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION})
 
 ###############################################################################
@@ -142,6 +144,10 @@ else() # fallback to all strategies
             set(LINK_NAME ${PROJECT_NAME})
             if("${CONFIG}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
                 set(BINARY_NAME ${BINARY_NAME}d)
+            elseif("${CONFIG}" MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+                set(BINARY_NAME ${BINARY_NAME}m)
+            elseif("${CONFIG}" MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+                set(BINARY_NAME ${BINARY_NAME}rd)
             endif()
             set(BINARY_NAME ${BINARY_NAME}-${PROJECT_VERSION})
 
