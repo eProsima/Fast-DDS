@@ -135,6 +135,15 @@ public:
     //! Process the info recorded in the persistence database
     void processPersistentData();
 
+    /**
+    * Trigger the participant CacheChange_t removal system
+    * @return True if successfully modified WriterHistory
+    */
+    void removePublisherFromHistory(
+            const InstanceHandle_t&);
+    void removeSubscriberFromHistory(
+            const InstanceHandle_t&);
+
     protected:
 
     /**
@@ -152,15 +161,6 @@ public:
     {
         return addEndpointFromHistory(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
     }
-
-    /**
-    * Trigger the participant CacheChange_t removal system
-    * @return True if successfully modified WriterHistory
-    */
-    void removePublisherFromHistory(
-            const InstanceHandle_t&);
-    void removeSubscriberFromHistory(
-            const InstanceHandle_t&);
 
 private:
 
