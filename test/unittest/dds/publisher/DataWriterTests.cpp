@@ -255,6 +255,11 @@ TEST(DataWriterTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds

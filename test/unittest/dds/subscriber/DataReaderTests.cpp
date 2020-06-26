@@ -216,6 +216,11 @@ TEST(DataReaderTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
+
+    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds

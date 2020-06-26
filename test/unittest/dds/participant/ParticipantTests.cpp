@@ -811,6 +811,8 @@ TEST(ParticipantTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds

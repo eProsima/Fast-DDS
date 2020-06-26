@@ -187,9 +187,6 @@ TEST(TopicTests, SetListener)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    ASSERT_NE(subscriber, nullptr);
-
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
 
@@ -213,6 +210,9 @@ TEST(TopicTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
+
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds
