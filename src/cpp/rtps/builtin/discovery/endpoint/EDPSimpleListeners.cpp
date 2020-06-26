@@ -56,7 +56,7 @@ void EDPBasePUBListener::add_writer_from_change(
     {
         change->instanceHandle = temp_writer_data_.key();
         if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
-            && !ongoingDeserialization(edp))
+                && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
@@ -67,23 +67,24 @@ void EDPBasePUBListener::add_writer_from_change(
             WriterProxyData* data,
             bool updating,
             const ParticipantProxyData& participant_data)
-        {
-            if (!temp_writer_data_.has_locators())
-            {
-                temp_writer_data_.set_remote_locators(participant_data.default_locators, network, true);
-            }
+                {
+                    if (!temp_writer_data_.has_locators())
+                    {
+                        temp_writer_data_.set_remote_locators(participant_data.default_locators, network, true);
+                    }
 
-            if (updating && !data->is_update_allowed(temp_writer_data_))
-            {
-                logWarning(RTPS_EDP, "Received incompatible update for WriterQos. writer_guid = " << data->guid());
-            }
-            *data = temp_writer_data_;
-            return true;
-        };
+                    if (updating && !data->is_update_allowed(temp_writer_data_))
+                    {
+                        logWarning(RTPS_EDP,
+                                "Received incompatible update for WriterQos. writer_guid = " << data->guid());
+                    }
+                    *data = temp_writer_data_;
+                    return true;
+                };
 
         GUID_t participant_guid;
         WriterProxyData* writer_data =
-            edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
+                edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
         if (writer_data != nullptr)
         {
             // At this point we can release reader lock, cause change is not used
@@ -103,31 +104,31 @@ void EDPBasePUBListener::add_writer_from_change(
 
 void EDPSimplePUBListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t * const change_in)
+        const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->publications_reader_.first->getMutex());
-    logInfo(RTPS_EDP,"");
-    if(!computeKey(change))
+    logInfo(RTPS_EDP, "");
+    if (!computeKey(change))
     {
-        logWarning(RTPS_EDP,"Received change with no Key");
+        logWarning(RTPS_EDP, "Received change with no Key");
     }
 
     ReaderHistory* reader_history =
 #if HAVE_SECURITY
-        reader == sedp_->publications_secure_reader_.first ?
-        sedp_->publications_secure_reader_.second :
-#endif
-        sedp_->publications_reader_.second;
+            reader == sedp_->publications_secure_reader_.first ?
+            sedp_->publications_secure_reader_.second :
+#endif // if HAVE_SECURITY
+            sedp_->publications_reader_.second;
 
-    if(change->kind == ALIVE)
+    if (change->kind == ALIVE)
     {
         add_writer_from_change(reader, change, sedp_);
     }
     else
     {
         //REMOVE WRITER FROM OUR READERS:
-        logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
+        logInfo(RTPS_EDP, "Disposed Remote Writer, removing...");
         GUID_t writer_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeWriterProxyData(writer_guid);
     }
@@ -138,17 +139,18 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
     return;
 }
 
-bool EDPListener::computeKey(CacheChange_t* change)
+bool EDPListener::computeKey(
+        CacheChange_t* change)
 {
     return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }
 
 bool EDPListener::ongoingDeserialization(
-    EDP* edp)
+        EDP* edp)
 {
-    EDPServer * pServer = dynamic_cast<EDPServer*>(edp);
+    EDPServer* pServer = dynamic_cast<EDPServer*>(edp);
 
-    if(pServer)
+    if (pServer)
     {
         return pServer->ongoingDeserialization();
     }
@@ -168,7 +170,7 @@ void EDPBaseSUBListener::add_reader_from_change(
     {
         change->instanceHandle = temp_reader_data_.key();
         if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
-            && !ongoingDeserialization(edp))
+                && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;
@@ -178,24 +180,25 @@ void EDPBaseSUBListener::add_reader_from_change(
             ReaderProxyData* data,
             bool updating,
             const ParticipantProxyData& participant_data)
-        {
-            if (!temp_reader_data_.has_locators())
-            {
-                temp_reader_data_.set_remote_locators(participant_data.default_locators, network, true);
-            }
+                {
+                    if (!temp_reader_data_.has_locators())
+                    {
+                        temp_reader_data_.set_remote_locators(participant_data.default_locators, network, true);
+                    }
 
-            if (updating && !data->is_update_allowed(temp_reader_data_))
-            {
-                logWarning(RTPS_EDP, "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
-            }
-            *data = temp_reader_data_;
-            return true;
-        };
+                    if (updating && !data->is_update_allowed(temp_reader_data_))
+                    {
+                        logWarning(RTPS_EDP,
+                                "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
+                    }
+                    *data = temp_reader_data_;
+                    return true;
+                };
 
         //LOOK IF IS AN UPDATED INFORMATION
         GUID_t participant_guid;
         ReaderProxyData* reader_data =
-            edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
+                edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
         if (reader_data != nullptr) //ADDED NEW DATA
         {
             // At this point we can release reader lock, cause change is not used
@@ -212,34 +215,34 @@ void EDPBaseSUBListener::add_reader_from_change(
         }
     }
 }
-    
+
 void EDPSimpleSUBListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t * const change_in)
+        const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->subscriptions_reader_.first->getMutex());
-    logInfo(RTPS_EDP,"");
-    if(!computeKey(change))
+    logInfo(RTPS_EDP, "");
+    if (!computeKey(change))
     {
-        logWarning(RTPS_EDP,"Received change with no Key");
+        logWarning(RTPS_EDP, "Received change with no Key");
     }
 
     ReaderHistory* reader_history =
 #if HAVE_SECURITY
-        reader == sedp_->subscriptions_secure_reader_.first ?
-        sedp_->subscriptions_secure_reader_.second :
-#endif
-        sedp_->subscriptions_reader_.second;
+            reader == sedp_->subscriptions_secure_reader_.first ?
+            sedp_->subscriptions_secure_reader_.second :
+#endif // if HAVE_SECURITY
+            sedp_->subscriptions_reader_.second;
 
-    if(change->kind == ALIVE)
+    if (change->kind == ALIVE)
     {
         add_reader_from_change(reader, change, sedp_);
     }
     else
     {
         //REMOVE WRITER FROM OUR READERS:
-        logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
+        logInfo(RTPS_EDP, "Disposed Remote Reader, removing...");
 
         GUID_t reader_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeReaderProxyData(reader_guid);
@@ -251,35 +254,39 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
     return;
 }
 
-void EDPSimplePUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPSimplePUBListener::onWriterChangeReceivedByAll(
+        RTPSWriter* writer,
+        CacheChange_t* change)
 {
     (void)writer;
 
-    if(ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == change->kind)
+    if (ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == change->kind)
     {
         WriterHistory* writer_history =
 #if HAVE_SECURITY
-            writer == sedp_->publications_secure_writer_.first ?
-            sedp_->publications_secure_writer_.second :
-#endif
-            sedp_->publications_writer_.second;
+                writer == sedp_->publications_secure_writer_.first ?
+                sedp_->publications_secure_writer_.second :
+#endif // if HAVE_SECURITY
+                sedp_->publications_writer_.second;
 
         writer_history->remove_change(change);
     }
 }
 
-void EDPSimpleSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPSimpleSUBListener::onWriterChangeReceivedByAll(
+        RTPSWriter* writer,
+        CacheChange_t* change)
 {
     (void)writer;
 
-    if(ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == change->kind)
+    if (ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == change->kind)
     {
         WriterHistory* writer_history =
 #if HAVE_SECURITY
-            writer == sedp_->subscriptions_secure_writer_.first ?
-            sedp_->subscriptions_secure_writer_.second :
-#endif
-            sedp_->subscriptions_writer_.second;
+                writer == sedp_->subscriptions_secure_writer_.first ?
+                sedp_->subscriptions_secure_writer_.second :
+#endif // if HAVE_SECURITY
+                sedp_->subscriptions_writer_.second;
 
         writer_history->remove_change(change);
     }
@@ -287,5 +294,5 @@ void EDPSimpleSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, Cache
 }
 
 } /* namespace rtps */
-}
+} // namespace fastrtps
 } /* namespace eprosima */

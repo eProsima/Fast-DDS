@@ -29,31 +29,32 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
 DServerEvent::DServerEvent(
         PDPServer* p_PDP,
         double interval)
-    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(), 
-        [this](EventCode code)
-        {
-            return event(code);
-        }, interval)
+    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
+            [this](EventCode code)
+            {
+                return event(code);
+            }, interval)
     , mp_PDP(p_PDP)
     , messages_enabled_(false)
-    {
+{
 
-    }
+}
 
 DServerEvent::~DServerEvent()
 {
 }
 
-bool DServerEvent::event(EventCode code)
+bool DServerEvent::event(
+        EventCode code)
 {
-    if(code == EVENT_SUCCESS)
+    if (code == EVENT_SUCCESS)
     {
         logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
@@ -62,7 +63,7 @@ bool DServerEvent::event(EventCode code)
         // messges_enabled is only modified from this thread
         if (!messages_enabled_)
         {
-            if(mp_PDP->_durability == TRANSIENT)
+            if (mp_PDP->_durability == TRANSIENT)
             {
                 // backup servers must process its own data before before receiving any callbacks
                 mp_PDP->processPersistentData();
@@ -84,12 +85,15 @@ bool DServerEvent::event(EventCode code)
             }
             else
             {
-                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all servers acknowledge PDP info")
+                logInfo(SERVER_PDP_THREAD,
+                        "Server " << mp_PDP->getRTPSParticipant()->getGuid() <<
+                        " not all servers acknowledge PDP info")
                 restart = true;
             }
         }
         else
-        {   // awake the other servers
+        {
+            // awake the other servers
             mp_PDP->announceParticipantState(false);
             restart = true;
         }
@@ -104,15 +108,20 @@ bool DServerEvent::event(EventCode code)
                 // Whenever new clients appear restart_timer()
                 // see PDPServer::queueParticipantForEDPMatch
 
-                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " clients EDP points matched")
+                logInfo(SERVER_PDP_THREAD,
+                        "Server " << mp_PDP->getRTPSParticipant()->getGuid() <<
+                        " clients EDP points matched")
             }
             else
-            {   // keep trying the match
-                restart = true;  
+            {
+                // keep trying the match
+                restart = true;
 
-                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all clients acknowledge PDP info")
+                logInfo(SERVER_PDP_THREAD,
+                        "Server " << mp_PDP->getRTPSParticipant()->getGuid() <<
+                        " not all clients acknowledge PDP info")
             }
-        }  
+        }
 
         if (mp_PDP->pendingHistoryCleaning())
         {
@@ -124,9 +133,9 @@ bool DServerEvent::event(EventCode code)
         return restart;
 
     }
-    else if(code == EVENT_ABORT)
+    else if (code == EVENT_ABORT)
     {
-        logInfo(SERVER_PDP_THREAD,"DServerEvent aborted");
+        logInfo(SERVER_PDP_THREAD, "DServerEvent aborted");
     }
 
     return false;
