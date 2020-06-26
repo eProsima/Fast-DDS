@@ -19,6 +19,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/Publisher.hpp>
@@ -199,6 +200,61 @@ TEST(DataWriterTests, Write)
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+void set_listener_test (DataWriter* writer, DataWriterListener* listener, StatusMask mask)
+{
+    ASSERT_EQ(writer->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(writer->get_status_mask(), mask);
+}
+
+class CustomListener : public DataWriterListener
+{
+
+};
+
+TEST(DataWriterTests, SetListener)
+{
+    CustomListener listener;
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT, &listener);
+    ASSERT_NE(datawriter, nullptr);
+    ASSERT_EQ(datawriter->get_status_mask(), StatusMask::all());
+
+    std::vector<std::tuple<DataWriter*, DataWriterListener*, StatusMask> > testing_cases{
+        //statuses, one by one
+        { datawriter, &listener, StatusMask::liveliness_lost() },
+        { datawriter, &listener, StatusMask::offered_deadline_missed() },
+        { datawriter, &listener, StatusMask::offered_incompatible_qos() },
+        { datawriter, &listener, StatusMask::publication_matched() },
+        //all except one
+        { datawriter, &listener, StatusMask::all() >> StatusMask::liveliness_lost() },
+        { datawriter, &listener, StatusMask::all() >> StatusMask::offered_deadline_missed() },
+        { datawriter, &listener, StatusMask::all() >> StatusMask::offered_incompatible_qos() },
+        { datawriter, &listener, StatusMask::all() >> StatusMask::publication_matched() },
+        //all and none
+        { datawriter, &listener, StatusMask::all() },
+        { datawriter, &listener, StatusMask::none() }
+    };
+
+    for (auto testing_case : testing_cases)
+    {
+        set_listener_test(std::get<0>(testing_case),
+                std::get<1>(testing_case),
+                std::get<2>(testing_case));
+    }
 }
 
 } // namespace dds

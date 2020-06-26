@@ -18,6 +18,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/Publisher.hpp>
@@ -310,6 +311,53 @@ TEST(PublisherTests, DeletePublisherWithWriters)
 
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+
+void set_listener_test (Publisher* publisher, PublisherListener* listener, StatusMask mask)
+{
+    ASSERT_EQ(publisher->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->get_status_mask(), mask);
+}
+
+class CustomListener : public PublisherListener
+{
+
+};
+
+TEST(PublisherTests, SetListener)
+{
+    CustomListener listener;
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener);
+    ASSERT_NE(publisher, nullptr);
+    ASSERT_EQ(publisher->get_status_mask(), StatusMask::all());
+
+    std::vector<std::tuple<Publisher*, PublisherListener*, StatusMask> > testing_cases{
+        //statuses, one by one
+        { publisher, &listener, StatusMask::liveliness_lost() },
+        { publisher, &listener, StatusMask::offered_deadline_missed() },
+        { publisher, &listener, StatusMask::offered_incompatible_qos() },
+        { publisher, &listener, StatusMask::publication_matched() },
+        //all except one
+        { publisher, &listener, StatusMask::all() >> StatusMask::liveliness_lost() },
+        { publisher, &listener, StatusMask::all() >> StatusMask::offered_deadline_missed() },
+        { publisher, &listener, StatusMask::all() >> StatusMask::offered_incompatible_qos() },
+        { publisher, &listener, StatusMask::all() >> StatusMask::publication_matched() },
+        //all and none
+        { publisher, &listener, StatusMask::all() },
+        { publisher, &listener, StatusMask::none() }
+    };
+
+    for (auto testing_case : testing_cases)
+    {
+        set_listener_test(std::get<0>(testing_case),
+                std::get<1>(testing_case),
+                std::get<2>(testing_case));
+    }
 }
 
 

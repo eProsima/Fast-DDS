@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
@@ -750,6 +751,66 @@ TEST(ParticipantTests, DeleteTopicInUse)
 
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+
+void set_listener_test (DomainParticipant* participant, DomainParticipantListener* listener, StatusMask mask)
+{
+    ASSERT_EQ(participant->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->get_status_mask(), mask);
+}
+
+class CustomListener : public DomainParticipantListener
+{
+
+};
+
+TEST(ParticipantTests, SetListener)
+{
+    CustomListener listener;
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, &listener);
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+
+    std::vector<std::tuple<DomainParticipant*, DomainParticipantListener*, StatusMask> > testing_cases{
+        //statuses, one by one
+        { participant, &listener, StatusMask::liveliness_lost() },
+        { participant, &listener, StatusMask::offered_deadline_missed() },
+        { participant, &listener, StatusMask::offered_incompatible_qos() },
+        { participant, &listener, StatusMask::publication_matched() },
+        { participant, &listener, StatusMask::data_on_readers() },
+        { participant, &listener, StatusMask::data_available() },
+        { participant, &listener, StatusMask::sample_rejected() },
+        { participant, &listener, StatusMask::liveliness_changed() },
+        { participant, &listener, StatusMask::requested_deadline_missed() },
+        { participant, &listener, StatusMask::requested_incompatible_qos() },
+        { participant, &listener, StatusMask::subscription_matched() },
+        { participant, &listener, StatusMask::sample_lost() },
+        //all except one
+        { participant, &listener, StatusMask::all() >> StatusMask::liveliness_lost() },
+        { participant, &listener, StatusMask::all() >> StatusMask::offered_deadline_missed() },
+        { participant, &listener, StatusMask::all() >> StatusMask::offered_incompatible_qos() },
+        { participant, &listener, StatusMask::all() >> StatusMask::publication_matched() },
+        { participant, &listener, StatusMask::all() >> StatusMask::data_on_readers() },
+        { participant, &listener, StatusMask::all() >> StatusMask::data_available() },
+        { participant, &listener, StatusMask::all() >> StatusMask::sample_rejected() },
+        { participant, &listener, StatusMask::all() >> StatusMask::liveliness_changed() },
+        { participant, &listener, StatusMask::all() >> StatusMask::requested_deadline_missed() },
+        { participant, &listener, StatusMask::all() >> StatusMask::requested_incompatible_qos() },
+        { participant, &listener, StatusMask::all() >> StatusMask::subscription_matched() },
+        { participant, &listener, StatusMask::all() >> StatusMask::sample_lost() },
+        //all and none
+        { participant, &listener, StatusMask::all() },
+        { participant, &listener, StatusMask::none() }
+    };
+
+    for (auto testing_case : testing_cases)
+    {
+        set_listener_test(std::get<0>(testing_case),
+                std::get<1>(testing_case),
+                std::get<2>(testing_case));
+    }
 }
 
 } // namespace dds

@@ -22,6 +22,7 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/types.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/sub/DataReader.hpp>
@@ -373,6 +374,60 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
     ASSERT_NE(data_reader, ::dds::core::null);
    }
  */
+
+void set_listener_test (Subscriber* subscriber, SubscriberListener* listener, StatusMask mask)
+{
+    ASSERT_EQ(subscriber->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->get_status_mask(), mask);
+}
+
+class CustomListener : public SubscriberListener
+{
+
+};
+
+TEST(SubscriberTests, SetListener)
+{
+    CustomListener listener;
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
+    ASSERT_NE(subscriber, nullptr);
+    ASSERT_EQ(subscriber->get_status_mask(), StatusMask::all());
+
+    std::vector<std::tuple<Subscriber*, SubscriberListener*, StatusMask> > testing_cases{
+        //statuses, one by one
+        { subscriber, &listener, StatusMask::data_on_readers() },
+        { subscriber, &listener, StatusMask::data_available() },
+        { subscriber, &listener, StatusMask::sample_rejected() },
+        { subscriber, &listener, StatusMask::liveliness_changed() },
+        { subscriber, &listener, StatusMask::requested_deadline_missed() },
+        { subscriber, &listener, StatusMask::requested_incompatible_qos() },
+        { subscriber, &listener, StatusMask::subscription_matched() },
+        { subscriber, &listener, StatusMask::sample_lost() },
+        //all except one
+        { subscriber, &listener, StatusMask::all() >> StatusMask::data_on_readers() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::data_available() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::sample_rejected() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::liveliness_changed() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::requested_deadline_missed() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::requested_incompatible_qos() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::subscription_matched() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::sample_lost() },
+        //all and none
+        { subscriber, &listener, StatusMask::all() },
+        { subscriber, &listener, StatusMask::none() }
+    };
+
+    for (auto testing_case : testing_cases)
+    {
+        set_listener_test(std::get<0>(testing_case),
+                std::get<1>(testing_case),
+                std::get<2>(testing_case));
+    }
+}
 
 } // namespace dds
 } // namespace fastdds

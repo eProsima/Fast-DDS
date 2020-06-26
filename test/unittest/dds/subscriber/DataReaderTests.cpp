@@ -22,6 +22,7 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/types.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/sub/DataReader.hpp>
@@ -152,6 +153,69 @@ TEST(DataReaderTests, ReadData)
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+
+
+void set_listener_test (DataReader* reader, DataReaderListener* listener, StatusMask mask)
+{
+    ASSERT_EQ(reader->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(reader->get_status_mask(), mask);
+}
+
+class CustomListener : public DataReaderListener
+{
+
+};
+
+TEST(DataReaderTests, SetListener)
+{
+    CustomListener listener;
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT, &listener);
+    ASSERT_NE(datareader, nullptr);
+    ASSERT_EQ(datareader->get_status_mask(), StatusMask::all());
+
+    std::vector<std::tuple<DataReader*, DataReaderListener*, StatusMask> > testing_cases{
+        //statuses, one by one
+        { datareader, &listener, StatusMask::data_available() },
+        { datareader, &listener, StatusMask::sample_rejected() },
+        { datareader, &listener, StatusMask::liveliness_changed() },
+        { datareader, &listener, StatusMask::requested_deadline_missed() },
+        { datareader, &listener, StatusMask::requested_incompatible_qos() },
+        { datareader, &listener, StatusMask::subscription_matched() },
+        { datareader, &listener, StatusMask::sample_lost() },
+        //all except one
+        { datareader, &listener, StatusMask::all() >> StatusMask::data_available() },
+        { datareader, &listener, StatusMask::all() >> StatusMask::sample_rejected() },
+        { datareader, &listener, StatusMask::all() >> StatusMask::liveliness_changed() },
+        { datareader, &listener, StatusMask::all() >> StatusMask::requested_deadline_missed() },
+        { datareader, &listener, StatusMask::all() >> StatusMask::requested_incompatible_qos() },
+        { datareader, &listener, StatusMask::all() >> StatusMask::subscription_matched() },
+        { datareader, &listener, StatusMask::all() >> StatusMask::sample_lost() },
+        //all and none
+        { datareader, &listener, StatusMask::all() },
+        { datareader, &listener, StatusMask::none() }
+    };
+
+    for (auto testing_case : testing_cases)
+    {
+        set_listener_test(std::get<0>(testing_case),
+                std::get<1>(testing_case),
+                std::get<2>(testing_case));
+    }
 }
 
 } // namespace dds
