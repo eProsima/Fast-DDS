@@ -19,7 +19,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i) (i == 1)? printf(text, ## __VA_ARGS__) : printf( \
+#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i)(i == 1)? printf(text, ## __VA_ARGS__) : printf( \
         "\t")
 
 /**
@@ -322,6 +322,7 @@ extern const char* LIVELINESS_KIND_NOT_PRESENT;
 extern const char* _AUTOMATIC_LIVELINESS_QOS;
 extern const char* _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
 extern const char* _MANUAL_BY_TOPIC_LIVELINESS_QOS;
+extern const char* DURATION_SEC;
 extern const char* LEASE_DURATION_MS;
 extern const char* _INF;
 extern const char* EPROSIMA_UNKNOWN_STRING;
@@ -440,4 +441,4 @@ extern const char* REPLY_TOPIC_NAME;
 } /* namespace */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef XML_PARSER_COMMON_H_

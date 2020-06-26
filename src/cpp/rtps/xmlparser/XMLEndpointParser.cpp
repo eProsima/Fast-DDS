@@ -442,6 +442,11 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
                 }
             }
         }
+        else if (key == DISABLE_POSITIVE_ACKS)
+        {
+            const char* enabled_str = element->Attribute(ENABLED);
+            rdata->m_qos.m_disablePositiveACKs.enabled = (enabled_str ? (strcmp(enabled_str, "true") == 0) : false);
+        }
         else
         {
             logWarning(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key)
@@ -722,6 +727,26 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
                 if (milliseclease == 0)
                 {
                     logWarning(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");
+                }
+            }
+        }
+        else if (key == DISABLE_POSITIVE_ACKS)
+        {
+            const char* enabled_str = element->Attribute(ENABLED);
+            wdata->m_qos.m_disablePositiveACKs.enabled = (enabled_str ? (strcmp(enabled_str, "true") == 0) : false);
+            const char* duration_sec = element->Attribute(DURATION_SEC);
+            std::string auxstring = std::string(duration_sec ? duration_sec : _INF);
+            if (auxstring == _INF)
+            {
+                wdata->m_qos.m_disablePositiveACKs.duration = c_TimeInfinite;
+            }
+            else
+            {
+                int32_t seconds = std::strtol(auxstring.c_str(), nullptr, 10);
+                wdata->m_qos.m_disablePositiveACKs.duration = {seconds, 0};
+                if (seconds == 0)
+                {
+                    logWarning(RTPS_EDP, "BAD XML:disablePositiveAcks duration is 0");
                 }
             }
         }
