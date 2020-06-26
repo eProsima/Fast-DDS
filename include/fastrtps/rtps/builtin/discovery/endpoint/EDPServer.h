@@ -131,6 +131,15 @@ public:
                        *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
     }
 
+    /**
+     * Trigger the participant CacheChange_t removal system
+     * @return True if successfully modified WriterHistory
+     */
+    void removePublisherFromHistory(
+            const InstanceHandle_t&);
+    void removeSubscriberFromHistory(
+            const InstanceHandle_t&);
+
 protected:
 
     /**
@@ -148,15 +157,6 @@ protected:
     {
         return addEndpointFromHistory(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
     }
-
-    /**
-     * Trigger the participant CacheChange_t removal system
-     * @return True if successfully modified WriterHistory
-     */
-    void removePublisherFromHistory(
-            const InstanceHandle_t&);
-    void removeSubscriberFromHistory(
-            const InstanceHandle_t&);
 
 private:
 
