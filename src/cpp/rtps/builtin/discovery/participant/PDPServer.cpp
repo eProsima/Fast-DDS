@@ -506,9 +506,10 @@ bool PDPServer::trimPDPWriterHistory()
 
     // sweep away any resurrected participant
     std::for_each(ParticipantProxiesBegin(), ParticipantProxiesEnd(),
-            [&disposal](const ParticipantProxyData* pD) {
-                    disposal.insert(pD->m_key);
-                });
+            [&disposal](const ParticipantProxyData* pD)
+            {
+                disposal.insert(pD->m_key);
+            });
     std::set_difference(_demises.cbegin(), _demises.cend(), disposal.cbegin(), disposal.cend(),
             std::inserter(aux, aux.begin()));
     _demises.swap(aux);
@@ -525,9 +526,9 @@ bool PDPServer::trimPDPWriterHistory()
     std::copy_if(mp_PDPWriterHistory->changesBegin(),
             mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
             [this](const CacheChange_t* chan)
-                {
-                    return _demises.find(chan->instanceHandle) != _demises.cend();
-                });
+            {
+                return _demises.find(chan->instanceHandle) != _demises.cend();
+            });
 
     if (removal.empty())
     {
@@ -575,7 +576,7 @@ bool PDPServer::addRelayedChangeToHistory(
         logError(RTPS_PDP,
                 "A DATA(p) received by server " << mp_PDPWriter->getGuid()
                                                 << " from participant " << c.writerGUID <<
-                            " without a valid SampleIdentity");
+                " without a valid SampleIdentity");
     }
 
     if (wp.related_sample_identity() == SampleIdentity::unknown())
@@ -588,9 +589,10 @@ bool PDPServer::addRelayedChangeToHistory(
     auto it = std::find_if(
         mp_PDPWriterHistory->changesRbegin(),
         mp_PDPWriterHistory->changesRend(),
-        [&sid] (CacheChange_t* c) {
-                    return sid == c->write_params.sample_identity();
-                });
+        [&sid](CacheChange_t* c)
+        {
+            return sid == c->write_params.sample_identity();
+        });
 
     if (it == mp_PDPWriterHistory->changesRend())
     {
@@ -766,15 +768,17 @@ void PDPServer::announceParticipantState(
             PDP::announceParticipantState(new_change, dispose, wp);
         }
         else
-        {   // we must assure when the server is dying that all client are send at least a DATA(p)
+        {
+            // we must assure when the server is dying that all client are send at least a DATA(p)
             // note here we can no longer receive and DATA or ACKNACK from clients.
             // In order to avoid that we send the message directly as in the standard stateless PDP
 
             CacheChange_t* change = nullptr;
 
-            if ((change = pW->new_change([this]() -> uint32_t {
-                            return mp_builtin->m_att.writerPayloadSize;
-                        },
+            if ((change = pW->new_change([this]() -> uint32_t
+                    {
+                        return mp_builtin->m_att.writerPayloadSize;
+                    },
                     NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
             {
                 // update the sequence number
@@ -949,10 +953,12 @@ bool PDPServer::remove_remote_participant(
         if (!(mp_PDPReaderHistory->get_max_change(&pC) &&
                 pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
                 pC->instanceHandle == key )) // from the same participant I'm going to report
-        {   // We must create the DATA(p[UD])
-            if ((pC = mp_PDPWriter->new_change([this]() -> uint32_t {
-                            return mp_builtin->m_att.writerPayloadSize;
-                        },
+        {
+            // We must create the DATA(p[UD])
+            if ((pC = mp_PDPWriter->new_change([this]() -> uint32_t
+                    {
+                        return mp_builtin->m_att.writerPayloadSize;
+                    },
                     NOT_ALIVE_DISPOSED_UNREGISTERED, key)))
             {
                 // Use this server identity in order to hint clients it's a lease duration demise
@@ -1033,7 +1039,7 @@ bool PDPServer::remove_remote_participant(
     }
 
     return res;
-   // only DATA acknowledge by all clients would be actually removed
+    // only DATA acknowledge by all clients would be actually removed
 }
 
 bool PDPServer::pendingHistoryCleaning()
