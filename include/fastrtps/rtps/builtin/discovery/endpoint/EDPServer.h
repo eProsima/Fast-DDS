@@ -133,7 +133,16 @@ class EDPServer : public EDPSimple
     //! Process the info recorded in the persistence database
     void processPersistentData();
 
-    protected:
+    /**
+     * Trigger the participant CacheChange_t removal system
+     * @return True if successfully modified WriterHistory
+     */
+    void removePublisherFromHistory(
+            const InstanceHandle_t&);
+    void removeSubscriberFromHistory(
+            const InstanceHandle_t&);
+
+protected:
 
     /**
         * Add participant CacheChange_ts from reader to writer
@@ -149,20 +158,13 @@ class EDPServer : public EDPSimple
         return addEndpointFromHistory(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
     }
 
-    /**
-    * Trigger the participant CacheChange_t removal system
-    * @return True if successfully modified WriterHistory
-    */
-    void removePublisherFromHistory(const InstanceHandle_t&);
-    void removeSubscriberFromHistory(const InstanceHandle_t&);
-
-    private:
+private:
 
     /**
     * Callback to remove unnecesary WriterHistory info common implementation
     * @return True if trim is finished
     */
-    template<class ProxyCont> 
+    template<class ProxyCont>
     bool trimWriterHistory(
         key_list& _demises,
         StatefulWriter& writer,
