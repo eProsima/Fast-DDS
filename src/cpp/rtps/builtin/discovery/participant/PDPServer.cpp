@@ -1020,7 +1020,7 @@ bool PDPServer::remove_remote_participant(
             }
         }
 
-        if( nullptr == pdata )
+        if ( nullptr == pdata )
         {
             return false;
         }
@@ -1080,7 +1080,8 @@ bool PDPServer::remove_remote_participant(
             ReaderProxyData* rit = pit.second;
             if (rit->guid() != c_Guid_Unknown)
             {
-                logInfo(RTPS_PDPSERVER_TRIM, "EDPServer mark the following Subscriber DATA for trimming " << rit->guid());
+                logInfo(RTPS_PDPSERVER_TRIM,
+                        "EDPServer mark the following Subscriber DATA for trimming " << rit->guid());
                 disposed_subscribers.insert(rit->key());
             }
         }
@@ -1091,7 +1092,8 @@ bool PDPServer::remove_remote_participant(
             WriterProxyData* wit = pit.second;
             if (wit->guid() != c_Guid_Unknown)
             {
-                logInfo(RTPS_PDPSERVER_TRIM, "EDPServer mark the following Publisher DATA for trimming " << wit->guid());
+                logInfo(RTPS_PDPSERVER_TRIM,
+                        "EDPServer mark the following Publisher DATA for trimming " << wit->guid());
                 disposed_publishers.insert(wit->key());
             }
         }
@@ -1104,7 +1106,7 @@ bool PDPServer::remove_remote_participant(
     // the server database to avoid confuse the trim mechanism that would consider this endpoints resurrect and avoid
     // history cleaning
     {
-        EDPServer * pEDP = dynamic_cast<EDPServer*>(getEDP());
+        EDPServer* pEDP = dynamic_cast<EDPServer*>(getEDP());
         assert(pEDP);
 
         for (auto sub_key : disposed_subscribers)

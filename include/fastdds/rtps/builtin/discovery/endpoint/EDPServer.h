@@ -74,11 +74,11 @@ public:
     }
 
     /**
-      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
-      * @param reader Pointer to the Reader object.
-      * @param rdata Pointer to the ReaderProxyData object.
-      * @return true if correct.
-      */
+     * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
+     * @param reader Pointer to the Reader object.
+     * @param rdata Pointer to the ReaderProxyData object.
+     * @return true if correct.
+     */
     bool processLocalReaderProxyData(
             RTPSReader* reader,
             ReaderProxyData* rdata) override;
@@ -97,14 +97,14 @@ public:
      * @return True if correct.
      */
     bool removeLocalReader(
-            RTPSReader*R) override;
+            RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
     bool removeLocalWriter(
-            RTPSWriter*W) override;
+            RTPSWriter* W) override;
 
     /**
      * Some History data is flag for defer removal till every client
@@ -120,13 +120,13 @@ public:
     bool trimPUBWriterHistory()
     {
         return trimWriterHistory<ProxyHashTable<WriterProxyData>*>(_PUBdemises,
-                *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
+                       *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
     }
 
     bool trimSUBWriterHistory()
     {
         return trimWriterHistory<ProxyHashTable<ReaderProxyData>*>(_SUBdemises,
-                *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
+                       *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
     }
 
     //! returns true if loading info from persistency database
@@ -136,20 +136,20 @@ public:
     void processPersistentData();
 
     /**
-    * Trigger the participant CacheChange_t removal system
-    * @return True if successfully modified WriterHistory
-    */
+     * Trigger the participant CacheChange_t removal system
+     * @return True if successfully modified WriterHistory
+     */
     void removePublisherFromHistory(
             const InstanceHandle_t&);
     void removeSubscriberFromHistory(
             const InstanceHandle_t&);
 
-    protected:
+protected:
 
     /**
-        * Add participant CacheChange_ts from reader to writer
-        * @return True if successfully modified WriterHistory
-        */
+     * Add participant CacheChange_ts from reader to writer
+     * @return True if successfully modified WriterHistory
+     */
     bool addPublisherFromHistory(
             CacheChange_t& c)
     {
@@ -193,5 +193,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_EDPSERVER_H_ */
