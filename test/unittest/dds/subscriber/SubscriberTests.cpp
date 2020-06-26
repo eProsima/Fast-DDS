@@ -374,34 +374,6 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
    }
  */
 
-
-TEST(SubscriberTests, ReadData)
-{
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    ASSERT_NE(subscriber, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
-    ASSERT_NE(data_reader, nullptr);
-
-    FooType data;
-    SampleInfo info;
-    ASSERT_EQ(data_reader->read_next_sample(&data, &info), ReturnCode_t::RETCODE_NO_DATA);
-
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
-}
-
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
