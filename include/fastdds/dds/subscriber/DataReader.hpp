@@ -246,13 +246,22 @@ public:
             DataReaderQos& qos) const;
 
     /**
-     * @brief Setter for the DataReaderListener
+     * Modifies the DataReaderListener, sets the mask to StatusMask::all()
      * @param listener new value for the DataReaderListener
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             DataReaderListener* listener);
 
+    /**
+     * Modifies the DataReaderListener.
+     * @param listener new value for the DataReaderListener
+     * @param mask StatusMask
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t set_listener(
+            DataReaderListener* listener,
+            const StatusMask& mask);
     /**
      * @brief Getter for the DataReaderListener
      * @return Pointer to the DataReaderListener

@@ -136,7 +136,20 @@ ReturnCode_t DataWriter::get_qos(
 ReturnCode_t DataWriter::set_listener(
         DataWriterListener* listener)
 {
-    return impl_->set_listener(listener);
+    return set_listener(listener, StatusMask::all());
+}
+
+ReturnCode_t DataWriter::set_listener(
+        DataWriterListener* listener,
+        const StatusMask& mask)
+{
+    ReturnCode_t ret_val = impl_->set_listener(listener);
+    if (ret_val == ReturnCode_t::RETCODE_OK)
+    {
+        status_mask_ = mask;
+    }
+
+    return ret_val;
 }
 
 const DataWriterListener* DataWriter::get_listener() const

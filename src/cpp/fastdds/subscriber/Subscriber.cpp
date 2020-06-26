@@ -86,7 +86,20 @@ const SubscriberListener* Subscriber::get_listener() const
 ReturnCode_t Subscriber::set_listener(
         SubscriberListener* listener)
 {
-    return impl_->set_listener(listener);
+    return set_listener(listener, StatusMask::all());
+}
+
+ReturnCode_t Subscriber::set_listener(
+        SubscriberListener* listener,
+        const StatusMask& mask)
+{
+    ReturnCode_t ret_val = impl_->set_listener(listener);
+    if (ret_val == ReturnCode_t::RETCODE_OK)
+    {
+        status_mask_ = mask;
+    }
+
+    return ret_val;
 }
 
 DataReader* Subscriber::create_datareader(

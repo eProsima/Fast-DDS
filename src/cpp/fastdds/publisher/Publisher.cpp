@@ -92,7 +92,20 @@ const PublisherListener* Publisher::get_listener() const
 ReturnCode_t Publisher::set_listener(
         PublisherListener* listener)
 {
-    return impl_->set_listener(listener);
+    return set_listener(listener, StatusMask::all());
+}
+
+ReturnCode_t Publisher::set_listener(
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    ReturnCode_t ret_val = impl_->set_listener(listener);
+    if (ret_val == ReturnCode_t::RETCODE_OK)
+    {
+        status_mask_ = mask;
+    }
+
+    return ret_val;
 }
 
 DataWriter* Publisher::create_datawriter(

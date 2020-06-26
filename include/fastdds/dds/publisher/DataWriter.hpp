@@ -231,12 +231,22 @@ public:
     RTPS_DllAPI const DataWriterListener* get_listener() const;
 
     /**
-     * Establishes the listener for this DataWriter.
-     * @param listener Pointer to DataWriterListener to be set
+     * Modifies the DataWriterListener, sets the mask to StatusMask::all()
+     * @param listener new value for the DataWriterListener
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             DataWriterListener* listener);
+
+    /**
+     * Modifies the DataWriterListener.
+     * @param listener new value for the DataWriterListener
+     * @param mask StatusMask
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t set_listener(
+            DataWriterListener* listener,
+            const StatusMask& mask);
 
     /* TODO
        bool get_key_value(

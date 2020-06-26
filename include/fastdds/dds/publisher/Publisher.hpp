@@ -120,12 +120,22 @@ public:
     RTPS_DllAPI const PublisherListener* get_listener() const;
 
     /**
-     * Modifies the PublisherListener.
-     * @param listener PublisherListener pointer
+     * Modifies the PublisherListener, sets the mask to StatusMask::all()
+     * @param listener new value for the PublisherListener
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             PublisherListener* listener);
+
+    /**
+     * Modifies the PublisherListener.
+     * @param listener new value for the PublisherListener
+     * @param mask StatusMask
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t set_listener(
+            PublisherListener* listener,
+            const StatusMask& mask);
 
     /**
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.

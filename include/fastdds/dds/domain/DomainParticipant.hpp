@@ -109,12 +109,22 @@ public:
             const DomainParticipantQos& qos) const;
 
     /**
-     * Allows modifying the DomainParticipantListener.
-     * @param listener
+     * Modifies the DomainParticipantListener, sets the mask to StatusMask::all()
+     * @param listener new value for the DomainParticipantListener
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             DomainParticipantListener* listener);
+
+    /**
+     * Modifies the DomainParticipantListener.
+     * @param listener new value for the DomainParticipantListener
+     * @param mask StatusMask
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t set_listener(
+            DomainParticipantListener* listener,
+            const StatusMask& mask);
 
     /**
      * Allows accessing the DomainParticipantListener.

@@ -127,13 +127,22 @@ public:
     RTPS_DllAPI const SubscriberListener* get_listener() const;
 
     /**
-     * Modifies the SubscriberListener.
+     * Modifies the SubscriberListener, sets the mask to StatusMask::all()
      * @param listener new value for SubscriberListener
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             SubscriberListener* listener);
 
+    /**
+     * Modifies the SubscriberListener.
+     * @param listener new value for the SubscriberListener
+     * @param mask StatusMask
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t set_listener(
+            SubscriberListener* listener,
+            const StatusMask& mask);
     /**
      * This operation creates a DataReader. The returned DataReader will be attached and belong to the Subscriber.
      * @param topic Topic the DataReader will be listening.
