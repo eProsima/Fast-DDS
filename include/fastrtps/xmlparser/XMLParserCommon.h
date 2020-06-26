@@ -330,6 +330,7 @@ extern const char* LIVELINESS_KIND_NOT_PRESENT;
 extern const char* _AUTOMATIC_LIVELINESS_QOS;
 extern const char* _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
 extern const char* _MANUAL_BY_TOPIC_LIVELINESS_QOS;
+extern const char* DURATION_SEC;
 extern const char* LEASE_DURATION_MS;
 extern const char* _INF;
 extern const char* EPROSIMA_UNKNOWN_STRING;
