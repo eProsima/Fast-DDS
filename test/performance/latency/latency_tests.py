@@ -165,7 +165,7 @@ if __name__ == '__main__':
         pub_command += domain_options
         pub_command += xml_options
         pub_command += demands_options
-        
+
         sub_command += domain_options
         sub_command += xml_options
         sub_command += demands_options
@@ -217,6 +217,7 @@ if __name__ == '__main__':
 
         command += domain_options
         command += xml_options
+        command += demands_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),
