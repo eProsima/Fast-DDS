@@ -36,6 +36,8 @@ target_link_libraries(
 ###########################################################################
 set(
     LATENCY_TEST_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
     interprocess_best_effort_udp
     interprocess_reliable_udp
     interprocess_best_effort_tcp
