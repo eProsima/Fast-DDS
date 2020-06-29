@@ -61,7 +61,7 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
     if (info.status == MATCHED_MATCHING)
     {
         ++throughput_publisher_.data_discovery_count_;
-        std::cout << C_RED << "Pub: DATA Pub Matched " 
+        std::cout << C_RED << "Pub: DATA Pub Matched "
             << throughput_publisher_.data_discovery_count_ << "/" << throughput_publisher_.subscribers_
             << C_DEF << std::endl;
     }
@@ -99,7 +99,7 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
     if (info.status == MATCHED_MATCHING)
     {
         ++throughput_publisher_.command_discovery_count_;
-        std::cout << C_RED << "Pub: COMMAND Sub Matched " 
+        std::cout << C_RED << "Pub: COMMAND Sub Matched "
             << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_*2
             << C_DEF << std::endl;
     }
@@ -138,10 +138,10 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(
     if (info.status == MATCHED_MATCHING)
     {
         ++throughput_publisher_.command_discovery_count_;
-        std::cout << C_RED << "Pub: COMMAND Pub Matched " 
+        std::cout << C_RED << "Pub: COMMAND Pub Matched "
             << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_*2
             << C_DEF << std::endl;
-        
+
     }
     else
     {
@@ -355,6 +355,7 @@ ThroughputPublisher::ThroughputPublisher(
 ThroughputPublisher::~ThroughputPublisher()
 {
     Domain::removeParticipant(participant_);
+    std::cout << "Pub: Participant removed" << std::endl;
 }
 
 bool ThroughputPublisher::ready()
@@ -422,7 +423,7 @@ void ThroughputPublisher::run(
         data_file.close();
     }
 
-    std::cout << "Pub Waiting for command discovery" << std::endl;
+    std::cout << "Pub: Waiting for command discovery" << std::endl;
     {
 	    std::unique_lock<std::mutex> disc_lock(command_mutex_);
 	    command_discovery_cv_.wait(disc_lock, [&]()
@@ -430,7 +431,7 @@ void ThroughputPublisher::run(
 	        return command_discovery_count_ == static_cast<int>(subscribers_ * 2);
 	    });
 	}
-    std::cout << "Pub Discovery command complete" << std::endl;
+    std::cout << "Pub: Discovery command complete" << std::endl;
 
     ThroughputCommandType command;
     SampleInfo_t info;
@@ -483,13 +484,18 @@ void ThroughputPublisher::run(
                     {
                         subscribers_ready_++;
 
-                        if (subscribers_ready_ == subscribers_ && 
+                        if (subscribers_ready_ == subscribers_ &&
                             !test(test_time, recovery_times_[i], *dit, sit->first))
                         {
                             command.m_command = ALL_STOPS;
                             command_publisher_->write((void*)&command);
                             return;
                         }
+
+                        // Reset data discovery counter
+                        std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
+                        data_discovery_count_ = 0;
+                        data_disc_lock.unlock();
                     }
                 }
             }
@@ -507,12 +513,21 @@ void ThroughputPublisher::run(
     }
     else
     {
-        // Wait for the subscriber unmatch.
+        // Wait for the disposal of all ThroughputSubscriber publihsers and subscribers. Wait for 5s, checking status
+        // every 100 ms. If after 5 s the entities have not been disposed, shutdown ThroughputPublisher without
+        // receiving them.
         std::unique_lock<std::mutex> disc_lock(command_mutex_);
-        command_discovery_cv_.wait_for(disc_lock, std::chrono::seconds(5), [&]()
+        for (uint16_t i = 0; i <= 50; i++)
+        {
+            if (command_discovery_cv_.wait_for(disc_lock, std::chrono::milliseconds(100), [&]()
+                {
+                    return command_discovery_count_ == 0;
+                }))
             {
-                return command_discovery_count_ == 0;
-            });
+                std::cout << "Pub: All ThroughputSubscriber publishers and subscribers unmatched" << std::endl;
+                break;
+            }
+        }
     }
 }
 
@@ -677,7 +692,7 @@ bool ThroughputPublisher::test(
                 result.subscriber.recv_samples = command_sample.m_lastrecsample - command_sample.m_lostsamples;
                 result.subscriber.lost_samples = command_sample.m_lostsamples;
                 result.subscriber.totaltime_us =
-                        std::chrono::microseconds(command_sample.m_totaltime) 
+                        std::chrono::microseconds(command_sample.m_totaltime)
                             - test_start_ack_duration - clock_overhead;
 
                 result.compute();

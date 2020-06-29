@@ -25,6 +25,7 @@
 #include <fstream>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastrtps/Domain.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -481,7 +482,7 @@ int main(
     {
         load_demands_payload(demands_file, data_sizes.sample_sizes());
     }
-    
+
     uint8_t return_code = 0;
 
     if (test_agent == TestAgent::PUBLISHER)
@@ -561,13 +562,14 @@ int main(
         }
     }
 
+    Domain::stopAll();
     if (return_code == 0)
     {
-        std::cout << "EVERYTHING STOPPED FINE" << std::endl;
+        std::cout << C_GREEN << "EVERYTHING STOPPED FINE" << C_DEF << std::endl;
     }
     else
     {
-        std::cout << "SOMETHING WENT WRONG" << std::endl;
+        std::cout << C_RED << "SOMETHING WENT WRONG" << C_DEF << std::endl;
     }
 
     return return_code;

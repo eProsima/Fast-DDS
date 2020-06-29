@@ -212,7 +212,8 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
 
 ThroughputSubscriber::~ThroughputSubscriber()
 {
-    Domain::stopAll();
+    Domain::removeParticipant(participant_);
+    std::cout << "Sub: Participant removed" << std::endl;
 }
 
 ThroughputSubscriber::ThroughputSubscriber(
@@ -509,6 +510,7 @@ void ThroughputSubscriber::process_message()
                     stop_count_ = 2;
                     lock.unlock();
                     std::cout << "Command: ALL_STOPS" << std::endl;
+                    break;
                 }
                 default:
                 {
@@ -597,8 +599,10 @@ void ThroughputSubscriber::run()
             stop_count_ = 0;
 
             Domain::removeSubscriber(data_subscriber_);
+            std::cout << "Sub: Data subscriber removed" << std::endl;
             data_subscriber_ = nullptr;
             Domain::unregisterType(participant_, "ThroughputType");
+            std::cout << "Sub: ThroughputType unregistered" << std::endl;
 
             if (!dynamic_data_)
             {
@@ -608,6 +612,15 @@ void ThroughputSubscriber::run()
             std::cout << "-----------------------------------------------------------------------" << std::endl;
         }
     } while (stop_count_ != 2);
+
+    // ThroughputPublisher is waiting for all ThroughputSubscriber publishers and subscribers to unmatch. Leaving the
+    // destruction of the entities to ~ThroughputSubscriber() is not enough for the intraprocess case, because
+    // main_ThroughputTests first joins the publisher run thread and only then it joins this thread. This means that
+    // ~ThroughputSubscriber() is only called when all the ThroughputSubscriber publishers and subscribers are disposed.
+    Domain::removePublisher(command_publisher_);
+    std::cout << "Sub: Command publisher removed" << std::endl;
+    Domain::removeSubscriber(command_subscriber_);
+    std::cout << "Sub: Command subscriber removed" << std::endl;
 
     return;
 }

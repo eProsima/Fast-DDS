@@ -491,12 +491,12 @@ int main(int argc, char** argv)
 
         // Initialize subscribers
         std::vector<std::shared_ptr<ThroughputSubscriber>> throughput_subscribers;
-        
+
         bool are_subscribers_ready = true;
         for (uint32_t i=0; i < subscribers; i++)
         {
-            throughput_subscribers.push_back(std::make_shared<ThroughputSubscriber>(reliable, 
-                seed, hostname, sub_part_property_policy, sub_property_policy, 
+            throughput_subscribers.push_back(std::make_shared<ThroughputSubscriber>(reliable,
+                seed, hostname, sub_part_property_policy, sub_property_policy,
                 xml_config_file, dynamic_types, forced_domain));
 
             are_subscribers_ready &= throughput_subscribers.back()->ready();
@@ -531,11 +531,11 @@ int main(int argc, char** argv)
     Domain::stopAll();
     if (return_code == 0)
     {
-        std::cout << "EVERYTHING STOPPED FINE" << std::endl;
+        std::cout << C_GREEN << "EVERYTHING STOPPED FINE" << C_DEF << std::endl;
     }
     else
     {
-        std::cout << "SOMETHING WENT WRONG" << std::endl;
+        std::cout << C_RED << "SOMETHING WENT WRONG" << C_DEF << std::endl;
     }
 
     return return_code;
