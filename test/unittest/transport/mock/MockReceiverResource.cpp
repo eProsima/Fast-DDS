@@ -76,7 +76,6 @@ void MockMessageReceiver::setCallback(std::function<void()> cb)
 void MockMessageReceiver::processCDRMsg(const Locator_t&, CDRMessage_t*msg)
 {
     data = msg->buffer;
-    data_size = msg->length;
     if (callback != nullptr)
     {
         callback();

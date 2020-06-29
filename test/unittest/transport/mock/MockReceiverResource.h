@@ -45,7 +45,6 @@ public:
     void setCallback(std::function<void()> cb);
     octet* data;
     std::function<void()> callback;
-    uint32_t data_size;
 };
 
 } // namespace rtps
