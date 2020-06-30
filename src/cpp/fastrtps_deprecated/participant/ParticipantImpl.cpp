@@ -490,7 +490,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(
     }
 }
 
-#endif
+#endif // HAVE_SECURITY
 
 void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,

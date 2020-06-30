@@ -59,18 +59,18 @@ ReaderProxy::ReaderProxy(
 {
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
                     [&]() -> bool
-                {
-                    writer_->perform_nack_supression(guid());
-                    return false;
-                },
+                    {
+                        writer_->perform_nack_supression(guid());
+                        return false;
+                    },
                     TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
     initial_heartbeat_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
                     [&]() -> bool
-                {
-                    writer_->intraprocess_heartbeat(this);
-                    return false;
-                }, 0);
+                    {
+                        writer_->intraprocess_heartbeat(this);
+                        return false;
+                    }, 0);
 
     stop();
 }
@@ -359,16 +359,17 @@ bool ReaderProxy::requested_changes_set(
 {
     bool isSomeoneWasSetRequested = false;
 
-    seq_num_set.for_each([&](SequenceNumber_t sit)
-                {
-                    ChangeIterator chit = find_change(sit, true);
-                    if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
-                    {
-                        chit->setStatus(REQUESTED);
-                        chit->markAllFragmentsAsUnsent();
-                        isSomeoneWasSetRequested = true;
-                    }
-                });
+    seq_num_set.for_each(
+        [&](SequenceNumber_t sit)
+        {
+            ChangeIterator chit = find_change(sit, true);
+            if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
+            {
+                chit->setStatus(REQUESTED);
+                chit->markAllFragmentsAsUnsent();
+                isSomeoneWasSetRequested = true;
+            }
+        });
 
     if (isSomeoneWasSetRequested)
     {

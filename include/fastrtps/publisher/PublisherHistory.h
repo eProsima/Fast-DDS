@@ -169,5 +169,5 @@ private:
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
-#endif
+#endif /* DOXYGEN_SHOULD_SKIP_THIS_PUBLIC */
 #endif /* PUBLISHERHISTORY_H_ */

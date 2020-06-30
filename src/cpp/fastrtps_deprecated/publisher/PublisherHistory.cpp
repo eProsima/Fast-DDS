@@ -112,7 +112,7 @@ bool PublisherHistory::add_pub_change(
         if (this->add_change_(change, wparams, max_blocking_time))
 #else
         if (this->add_change_(change, wparams))
-#endif
+#endif // HAVE_STRICT_REALTIME
         {
             returnedValue = true;
         }
@@ -159,7 +159,7 @@ bool PublisherHistory::add_pub_change(
                 if (this->add_change_(change, wparams, max_blocking_time))
 #else
                 if (this->add_change_(change, wparams))
-#endif
+#endif // HAVE_STRICT_REALTIME
                 {
                     logInfo(RTPS_HISTORY,
                             topic_att_.getTopicDataType()
@@ -379,7 +379,7 @@ bool PublisherHistory::remove_instance_changes(
 
     vit->second.cache_changes.erase(vit->second.cache_changes.begin(), chit);
 
-    if(vit->second.cache_changes.empty())
+    if (vit->second.cache_changes.empty())
     {
         keyed_changes_.erase(vit);
     }
@@ -436,9 +436,9 @@ bool PublisherHistory::get_next_deadline(
             [](
                 const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
                 const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
-        {
-            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-        });
+            {
+                return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+            });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
@@ -465,10 +465,10 @@ bool PublisherHistory::is_key_registered(
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(handle);
     return (vit != keyed_changes_.end() &&
-            (vit->second.cache_changes.empty() ||
-                (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
-                NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
-                )
-            )
+           (vit->second.cache_changes.empty() ||
+           (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
+           NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
+           )
+           )
            );
 }
