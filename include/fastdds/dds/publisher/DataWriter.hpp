@@ -70,8 +70,8 @@ class DataWriter : public DomainEntity
     friend class DataWriterImpl;
 
     /**
-     * Create a data writer, assigning its pointer to the associated writer.
-     * Don't use directly, create Publisher using DomainRTPSParticipant static function.
+     * Create a data writer, assigning its pointer to the associated implementation.
+     * Don't use directly, create DataWriter using create_datawriter from Publisher.
      */
     RTPS_DllAPI DataWriter(
             DataWriterImpl* impl,
@@ -241,7 +241,7 @@ public:
     /**
      * Modifies the DataWriterListener.
      * @param listener new value for the DataWriterListener
-     * @param mask StatusMask
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(

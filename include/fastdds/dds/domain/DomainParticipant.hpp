@@ -119,7 +119,7 @@ public:
     /**
      * Modifies the DomainParticipantListener.
      * @param listener new value for the DomainParticipantListener
-     * @param mask StatusMask
+     * @param mask StatusMask that holds statuses the listener responds to
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(

@@ -66,9 +66,8 @@ class Subscriber : public DomainEntity
     friend class DomainParticipantImpl;
 
     /**
-     * Constructor from a SubscriberImpl pointer
-     * @param pimpl Actual implementation of the subscriber
-     * @param mask StatusMask (default: all)
+     * Create a subscriber, assigning its pointer to the associated implementation.
+     * Don't use directly, create Subscriber using create_subscriber from DomainParticipant.
      */
     RTPS_DllAPI Subscriber(
             SubscriberImpl* pimpl,
@@ -137,7 +136,7 @@ public:
     /**
      * Modifies the SubscriberListener.
      * @param listener new value for the SubscriberListener
-     * @param mask StatusMask
+     * @param mask StatusMask that holds statuses the listener responds to.
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
@@ -148,7 +147,7 @@ public:
      * @param topic Topic the DataReader will be listening.
      * @param reader_qos QoS of the DataReader.
      * @param listener Pointer to the listener (default: nullptr)
-     * @param mask StatusMask (default: all)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     RTPS_DllAPI DataReader* create_datareader(
@@ -162,7 +161,7 @@ public:
      * @param topic Topic the DataReader will be listening.
      * @param profile_name DataReader profile name.
      * @param listener Pointer to the listener (default: nullptr)
-     * @param mask StatusMask (default: all)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     RTPS_DllAPI DataReader* create_datareader_with_profile(

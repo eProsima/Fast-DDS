@@ -63,8 +63,8 @@ class Publisher : public DomainEntity
     friend class DomainParticipantImpl;
 
     /**
-     * Create a publisher, assigning its pointer to the associated writer.
-     * Don't use directly, create Publisher using create_publisher from Participant.
+     * Create a publisher, assigning its pointer to the associated implementation.
+     * Don't use directly, create Publisher using create_publisher from DomainParticipant.
      */
     RTPS_DllAPI Publisher(
             PublisherImpl* p,
@@ -130,7 +130,7 @@ public:
     /**
      * Modifies the PublisherListener.
      * @param listener new value for the PublisherListener
-     * @param mask StatusMask
+     * @param mask StatusMask that holds statuses the listener responds to
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
@@ -142,7 +142,7 @@ public:
      * @param topic Topic the DataWriter will be listening
      * @param qos QoS of the DataWriter.
      * @param listener Pointer to the listener (default: nullptr).
-     * @param mask StatusMask (default: all).
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter(
@@ -156,7 +156,7 @@ public:
      * @param topic Topic the DataWriter will be listening
      * @param profile_name DataWriter profile name.
      * @param listener Pointer to the listener (default: nullptr).
-     * @param mask StatusMask (default: all).
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter_with_profile(
