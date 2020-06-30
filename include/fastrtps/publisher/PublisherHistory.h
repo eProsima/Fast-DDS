@@ -80,6 +80,11 @@ public:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
+     * Rebuild instances loaded from DB. Does nothing if the topic doesn't have key.
+     */
+    void rebuild_instances();
+
+    /**
      * Remove all change from the associated history.
      * @param removed Number of elements removed.
      * @return True if all elements were removed.

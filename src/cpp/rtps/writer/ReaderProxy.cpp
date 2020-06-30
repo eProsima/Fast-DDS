@@ -220,9 +220,10 @@ void ReaderProxy::add_change(
     if (changes_for_reader_.push_back(change) == nullptr)
     {
         // This should never happen
-        assert(false);
         logError(RTPS_WRITER, "Error adding change " << change.getSequenceNumber() << " to reader proxy " << \
                 guid());
+        eprosima::fastdds::dds::Log::Flush();
+        assert(false);
     }
 }
 

@@ -237,6 +237,7 @@ Publisher* ParticipantImpl::createPublisher(
         delete(pubimpl);
         return nullptr;
     }
+    pubimpl->m_history.rebuild_instances();
     pubimpl->mp_writer = writer;
     //SAVE THE PUBLISHER PAIR
     t_p_PublisherPair pubpair;

@@ -58,7 +58,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
             m_max_pool_size = (uint32_t)abs(pool_size);
         }
         else
-            m_max_pool_size = (uint32_t)abs(max_pool_size + 1);
+            m_max_pool_size = (uint32_t)abs(max_pool_size/* + 1*/);
     }
     else
         m_max_pool_size = 0;
