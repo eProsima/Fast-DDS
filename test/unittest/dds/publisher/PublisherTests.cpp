@@ -93,7 +93,8 @@ public:
 
 TEST(PublisherTests, GetPublisherParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -115,7 +116,8 @@ TEST(PublisherTests, GetPSMPublisherParticipant)
 
 TEST(PublisherTests, ChangeDefaultDataWriterQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -156,7 +158,8 @@ TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
 
 TEST(PublisherTests, ChangePublisherQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
@@ -198,7 +201,8 @@ TEST(PublisherTests, ChangePSMPublisherQos)
 
 TEST(PublisherTests, CreateDataWriter)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -220,7 +224,9 @@ TEST(PublisherTests, CreateDataWriter)
 }
 
 
-void check_datawriter_with_profile (DataWriter* datawriter, const std::string& profile_name)
+void check_datawriter_with_profile (
+        DataWriter* datawriter,
+        const std::string& profile_name)
 {
     DataWriterQos qos;
     datawriter->get_qos(qos);
@@ -229,7 +235,9 @@ void check_datawriter_with_profile (DataWriter* datawriter, const std::string& p
     XMLProfileManager::fillPublisherAttributes(profile_name, publisher_atts);
 
     //Values taken from profile
-    ASSERT_TRUE(qos.writer_resource_limits().matched_subscriber_allocation == publisher_atts.matched_subscriber_allocation);
+    ASSERT_TRUE(
+            qos.writer_resource_limits().matched_subscriber_allocation ==
+            publisher_atts.matched_subscriber_allocation);
     ASSERT_TRUE(qos.properties() == publisher_atts.properties);
     ASSERT_TRUE(qos.throughput_controller() == publisher_atts.throughputController);
     ASSERT_TRUE(qos.endpoint().unicast_locator_list == publisher_atts.unicastLocatorList);
@@ -264,7 +272,8 @@ void check_datawriter_with_profile (DataWriter* datawriter, const std::string& p
 TEST(PublisherTests, CreateDataWriterWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -289,7 +298,8 @@ TEST(PublisherTests, CreateDataWriterWithProfile)
 
 TEST(PublisherTests, DeletePublisherWithWriters)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -314,7 +324,10 @@ TEST(PublisherTests, DeletePublisherWithWriters)
 }
 
 
-void set_listener_test (Publisher* publisher, PublisherListener* listener, StatusMask mask)
+void set_listener_test (
+        Publisher* publisher,
+        PublisherListener* listener,
+        StatusMask mask)
 {
     ASSERT_EQ(publisher->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(publisher->get_status_mask(), mask);
@@ -329,7 +342,8 @@ TEST(PublisherTests, SetListener)
 {
     CustomListener listener;
 
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener);

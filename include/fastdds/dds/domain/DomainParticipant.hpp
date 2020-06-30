@@ -39,8 +39,8 @@ using eprosima::fastrtps::types::ReturnCode_t;
 namespace dds {
 namespace domain {
 class DomainParticipant;
-}
-}
+} // namespace domain
+} // namespace dds
 
 namespace eprosima {
 namespace fastrtps {

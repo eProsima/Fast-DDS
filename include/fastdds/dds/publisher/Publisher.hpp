@@ -33,8 +33,8 @@ using eprosima::fastrtps::types::ReturnCode_t;
 namespace dds {
 namespace pub {
 class Publisher;
-}
-}
+} // namespace pub
+} // namespace dds
 
 namespace eprosima {
 namespace fastrtps {

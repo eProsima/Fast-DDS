@@ -124,7 +124,8 @@ public:
 
 TEST(TopicTests, ChangeTopicQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
@@ -154,7 +155,8 @@ TEST(TopicTests, ChangeTopicQos)
 
 TEST(TopicTests, GetTopicParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
@@ -169,7 +171,10 @@ TEST(TopicTests, GetTopicParticipant)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-void set_listener_test (Topic* topic, TopicListener* listener, StatusMask mask)
+void set_listener_test (
+        Topic* topic,
+        TopicListener* listener,
+        StatusMask mask)
 {
     ASSERT_EQ(topic->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(topic->get_status_mask(), mask);
@@ -184,7 +189,8 @@ TEST(TopicTests, SetListener)
 {
     CustomListener listener;
 
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());

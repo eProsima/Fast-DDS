@@ -117,7 +117,8 @@ public:
 
 TEST(DataWriterTests, ChangeDataWriterQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -174,7 +175,8 @@ TEST(DataWriterTests, ChangeDataWriterQos)
 
 TEST(DataWriterTests, Write)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -202,7 +204,10 @@ TEST(DataWriterTests, Write)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-void set_listener_test (DataWriter* writer, DataWriterListener* listener, StatusMask mask)
+void set_listener_test (
+        DataWriter* writer,
+        DataWriterListener* listener,
+        StatusMask mask)
 {
     ASSERT_EQ(writer->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(writer->get_status_mask(), mask);
@@ -217,7 +222,8 @@ TEST(DataWriterTests, SetListener)
 {
     CustomListener listener;
 
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);

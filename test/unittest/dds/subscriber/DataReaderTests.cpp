@@ -130,7 +130,8 @@ public:
 
 TEST(DataReaderTests, ReadData)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -157,7 +158,10 @@ TEST(DataReaderTests, ReadData)
 
 
 
-void set_listener_test (DataReader* reader, DataReaderListener* listener, StatusMask mask)
+void set_listener_test (
+        DataReader* reader,
+        DataReaderListener* listener,
+        StatusMask mask)
 {
     ASSERT_EQ(reader->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(reader->get_status_mask(), mask);
@@ -172,7 +176,8 @@ TEST(DataReaderTests, SetListener)
 {
     CustomListener listener;
 
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);

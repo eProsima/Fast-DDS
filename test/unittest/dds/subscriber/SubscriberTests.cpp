@@ -130,7 +130,8 @@ public:
 
 TEST(SubscriberTests, ChangeSubscriberQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -172,7 +173,8 @@ TEST(SubscriberTests, ChangePSMSubscriberQos)
 
 TEST(SubscriberTests, ChangeDefaultDataReaderQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -215,7 +217,8 @@ TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
 
 TEST(SubscriberTests, GetSubscriberParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -236,7 +239,8 @@ TEST(SubscriberTests, GetPSMSubscriberParticipant)
 
 TEST(SubscriberTests, CreateDataReader)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -257,7 +261,9 @@ TEST(SubscriberTests, CreateDataReader)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-void check_datareader_with_profile (DataReader* datareader, const std::string& profile_name)
+void check_datareader_with_profile (
+        DataReader* datareader,
+        const std::string& profile_name)
 {
     DataReaderQos qos;
     datareader->get_qos(qos);
@@ -300,7 +306,8 @@ void check_datareader_with_profile (DataReader* datareader, const std::string& p
 TEST(SubscriberTests, CreateDataReaderWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -325,7 +332,8 @@ TEST(SubscriberTests, CreateDataReaderWithProfile)
 
 TEST(SubscriberTests, DeleteSubscriberWithReaders)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -375,7 +383,10 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
    }
  */
 
-void set_listener_test (Subscriber* subscriber, SubscriberListener* listener, StatusMask mask)
+void set_listener_test (
+        Subscriber* subscriber,
+        SubscriberListener* listener,
+        StatusMask mask)
 {
     ASSERT_EQ(subscriber->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(subscriber->get_status_mask(), mask);
@@ -390,7 +401,8 @@ TEST(SubscriberTests, SetListener)
 {
     CustomListener listener;
 
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
