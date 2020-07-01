@@ -49,7 +49,7 @@ CacheChangePool::CacheChangePool(
     : memoryMode(memoryPolicy)
 {
     //Common for all modes: Set the payload size (maximum allowed), size and size limit
-    ++pool_size;
+    // ++pool_size; // TODO - See comment below regarding SECURITY
     logInfo(RTPS_UTILS,
             "Creating CacheChangePool of size: " << pool_size << " with payload of size: " << payload_size);
 
@@ -64,6 +64,12 @@ CacheChangePool::CacheChangePool(
         }
         else
         {
+            /*
+             * TODO - SECURITY
+             * This "+1" may be needed for SECURITY decrypt, but this isn't the place where to
+             * add it, since allows an extra change to be added when loaded from DB, for example.
+             * Upper layers should take care of it only if SECURITY is enabled.
+             */
             m_max_pool_size = (uint32_t)abs(max_pool_size /* + 1*/);
         }
     }
@@ -76,12 +82,12 @@ CacheChangePool::CacheChangePool(
     {
         case PREALLOCATED_MEMORY_MODE:
             logInfo(RTPS_UTILS, "Static Mode is active, preallocating memory for pool_size elements");
-            allocateGroup(pool_size);
+            allocateGroup(pool_size == 0 ? 1 : pool_size);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
             logInfo(RTPS_UTILS,
                     "Semi-Static Mode is active, preallocating memory for pool_size. Size of the cachechanges can be increased");
-            allocateGroup(pool_size);
+            allocateGroup(pool_size == 0 ? 1 : pool_size);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
             logInfo(RTPS_UTILS, "Dynamic Mode is active, CacheChanges are allocated on request");
