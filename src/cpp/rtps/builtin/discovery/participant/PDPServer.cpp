@@ -560,6 +560,8 @@ bool PDPServer::trimPDPWriterHistory()
             logInfo(RTPS_PDPSERVER_TRIM, "PDPServer is procrastinating DATA("
                     << (pC->kind == ALIVE ? "p" : "p[UD]" ) << ") " "of participant "
                     << pC->instanceHandle << " from history");
+
+            pending.insert(pC->instanceHandle);
         }
     }
 
