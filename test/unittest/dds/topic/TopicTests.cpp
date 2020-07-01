@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,27 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+
 #include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/DataWriterQos.hpp>
-#include <dds/pub/AnyDataWriter.hpp>
+#include <dds/core/types.hpp>
+#include <dds/topic/Topic.hpp>
+
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+using fastrtps::TopicAttributes;
+using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::xmlparser::XMLP_ret;
+
 
 class FooType
 {
@@ -66,8 +75,6 @@ private:
 class TopicDataTypeMock : public TopicDataType
 {
 public:
-
-    typedef FooType type;
 
     TopicDataTypeMock()
         : TopicDataType()
@@ -115,14 +122,11 @@ public:
 
 };
 
-TEST(DataWriterTests, ChangeDataWriterQos)
+TEST(TopicTests, ChangeTopicQos)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
-
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    ASSERT_NE(publisher, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -130,57 +134,30 @@ TEST(DataWriterTests, ChangeDataWriterQos)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(datawriter, nullptr);
+    TopicQos qos;
+    ASSERT_EQ(topic->get_qos(qos), ReturnCode_t::RETCODE_OK);
 
-    DataWriterQos qos;
-    datawriter->get_qos(qos);
-    ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
+    ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
 
-    qos.deadline().period = 260;
+    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
-    DataWriterQos wqos;
-    datawriter->get_qos(wqos);
+    ASSERT_EQ(topic->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    TopicQos tqos;
+    ASSERT_EQ(topic->get_qos(tqos), ReturnCode_t::RETCODE_OK);
 
-    ASSERT_EQ(qos, wqos);
-    ASSERT_EQ(wqos.deadline().period, 260);
+    ASSERT_TRUE(qos == tqos);
+    ASSERT_EQ(tqos.reliability().kind, RELIABLE_RELIABILITY_QOS);
 
-    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+
 }
 
-
-//TODO: Activate the test once PSM API for DataWriter is in place
-//TEST(DataWriterTests, DISABLED_ChangePSMDataWriterQos)
-//{
-//    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-//    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
-
-//    ::dds::pub::AnyDataWriter datawriter = ::dds::pub::AnyDataWriter();
-
-//    ::dds::pub::qos::DataWriterQos qos = datawriter.qos();
-//        ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
-
-//        qos.deadline().period = 540;
-
-//        ASSERT_NO_THROW(datawriter.qos(qos));
-//        ::dds::pub::qos::DataWriterQos wqos = datawriter.qos();
-
-//        ASSERT_EQ(qos, wqos);
-//        ASSERT_EQ(wqos.deadline().period, 540);
-//}
-
-TEST(DataWriterTests, Write)
+TEST(TopicTests, GetTopicParticipant)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
-
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    ASSERT_NE(publisher, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -188,37 +165,27 @@ TEST(DataWriterTests, Write)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(datawriter, nullptr);
+    ASSERT_EQ(topic->get_participant(), participant);
 
-    FooType data;
-    data.message("HelloWorld");
-    ASSERT_TRUE(datawriter->write(&data, fastrtps::rtps::c_InstanceHandle_Unknown) ==
-            ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(datawriter->write(&data, participant->get_instance_handle()) ==
-            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-
-    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 void set_listener_test (
-        DataWriter* writer,
-        DataWriterListener* listener,
+        Topic* topic,
+        TopicListener* listener,
         StatusMask mask)
 {
-    ASSERT_EQ(writer->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(writer->get_status_mask(), mask);
+    ASSERT_EQ(topic->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(topic->get_status_mask(), mask);
 }
 
-class CustomListener : public DataWriterListener
+class CustomListener : public TopicListener
 {
 
 };
 
-TEST(DataWriterTests, SetListener)
+TEST(TopicTests, SetListener)
 {
     CustomListener listener;
 
@@ -226,33 +193,21 @@ TEST(DataWriterTests, SetListener)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    ASSERT_NE(publisher, nullptr);
-
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
+    ASSERT_EQ(topic->get_status_mask(), StatusMask::all());
 
-    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT, &listener);
-    ASSERT_NE(datawriter, nullptr);
-    ASSERT_EQ(datawriter->get_status_mask(), StatusMask::all());
-
-    std::vector<std::tuple<DataWriter*, DataWriterListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<Topic*, TopicListener*, StatusMask> > testing_cases{
         //statuses, one by one
-        { datawriter, &listener, StatusMask::liveliness_lost() },
-        { datawriter, &listener, StatusMask::offered_deadline_missed() },
-        { datawriter, &listener, StatusMask::offered_incompatible_qos() },
-        { datawriter, &listener, StatusMask::publication_matched() },
+        { topic, &listener, StatusMask::data_available() },
         //all except one
-        { datawriter, &listener, StatusMask::all() >> StatusMask::liveliness_lost() },
-        { datawriter, &listener, StatusMask::all() >> StatusMask::offered_deadline_missed() },
-        { datawriter, &listener, StatusMask::all() >> StatusMask::offered_incompatible_qos() },
-        { datawriter, &listener, StatusMask::all() >> StatusMask::publication_matched() },
+        { topic, &listener, StatusMask::all() >> StatusMask::sample_lost() },
         //all and none
-        { datawriter, &listener, StatusMask::all() },
-        { datawriter, &listener, StatusMask::none() }
+        { topic, &listener, StatusMask::all() },
+        { topic, &listener, StatusMask::none() }
     };
 
     for (auto testing_case : testing_cases)
@@ -262,9 +217,7 @@ TEST(DataWriterTests, SetListener)
                 std::get<2>(testing_case));
     }
 
-    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 

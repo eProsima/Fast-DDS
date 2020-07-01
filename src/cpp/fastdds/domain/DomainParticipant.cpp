@@ -85,7 +85,20 @@ const DomainParticipantQos& DomainParticipant::get_qos() const
 ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener)
 {
-    return impl_->set_listener(listener);
+    return set_listener(listener, StatusMask::all());
+}
+
+ReturnCode_t DomainParticipant::set_listener(
+        DomainParticipantListener* listener,
+        const StatusMask& mask)
+{
+    ReturnCode_t ret_val = impl_->set_listener(listener);
+    if (ret_val == ReturnCode_t::RETCODE_OK)
+    {
+        status_mask_ = mask;
+    }
+
+    return ret_val;
 }
 
 const DomainParticipantListener* DomainParticipant::get_listener() const

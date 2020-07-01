@@ -56,7 +56,7 @@ class Topic : public DomainEntity, public TopicDescription
 
     /**
      * Create a topic, assigning its pointer to the associated implementation.
-     * Don't use directly, create Topic using create_topic from Participant.
+     * Don't use directly, create Topic using create_topic from DomainParticipant.
      */
     RTPS_DllAPI Topic(
             const std::string& topic_name,
@@ -127,7 +127,7 @@ public:
     /**
      * Modifies the TopicListener.
      * @param listener new value for the TopicListener
-     * @param mask StatusMask (default: all)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
