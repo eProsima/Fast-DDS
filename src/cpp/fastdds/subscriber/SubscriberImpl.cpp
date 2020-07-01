@@ -153,7 +153,7 @@ ReturnCode_t SubscriberImpl::set_qos(
 {
     bool enabled = user_subscriber_->is_enabled();
     const SubscriberQos& qos_to_set = (&qos == &SUBSCRIBER_QOS_DEFAULT) ?
-        participant_->get_default_subscriber_qos() : qos;
+            participant_->get_default_subscriber_qos() : qos;
 
     if (&qos != &SUBSCRIBER_QOS_DEFAULT)
     {
@@ -471,9 +471,13 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
         DataReader* reader,
         const fastrtps::LivelinessChangedStatus& status)
 {
+    (void)status;
+
     if (subscriber_->listener_ != nullptr)
     {
-        subscriber_->listener_->on_liveliness_changed(reader, status);
+        LivelinessChangedStatus reader_status;
+        reader->get_liveliness_changed_status(reader_status);
+        subscriber_->listener_->on_liveliness_changed(reader, reader_status);
     }
 }
 
@@ -533,7 +537,6 @@ bool SubscriberImpl::type_in_use(
     }
     return false;
 }
-
 
 void SubscriberImpl::set_qos(
         SubscriberQos& to,

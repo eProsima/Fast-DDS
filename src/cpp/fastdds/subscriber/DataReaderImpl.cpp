@@ -415,13 +415,19 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         RTPSReader* /*reader*/,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    if (data_reader_->listener_ != nullptr)
+    data_reader_->update_liveliness_status(status);
+    DataReader* user_reader = data_reader_->user_datareader_;
+
+    if ( (data_reader_->listener_ != nullptr) &&
+            (user_reader->get_status_mask().is_active(StatusMask::liveliness_changed())))
     {
-        data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
+        LivelinessChangedStatus reader_status;
+        data_reader_->get_liveliness_changed_status(reader_status);
+        data_reader_->listener_->on_liveliness_changed(user_reader, reader_status);
     }
     else
     {
-        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
+        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(user_reader, status);
     }
 }
 
@@ -658,20 +664,19 @@ const DataReaderListener* DataReaderImpl::get_listener() const
  */
 
 ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
-        LivelinessChangedStatus& status) const
+        LivelinessChangedStatus& status)
 {
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
-    status = reader_->liveliness_changed_status_;
+    status = liveliness_changed_status_;
+    liveliness_changed_status_.alive_count_change = 0u;
+    liveliness_changed_status_.not_alive_count_change = 0u;
 
-    reader_->liveliness_changed_status_.alive_count_change = 0u;
-    reader_->liveliness_changed_status_.not_alive_count_change = 0u;
-    // TODO add callback call subscriber_->subscriber_listener_->on_liveliness_changed
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -751,6 +756,18 @@ RequestedIncompatibleQosStatus& DataReaderImpl::update_requested_incompatible_qo
         }
     }
     return requested_incompatible_qos_status_;
+}
+
+LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
+        const fastrtps::LivelinessChangedStatus& status)
+{
+    liveliness_changed_status_.alive_count = status.alive_count;
+    liveliness_changed_status_.not_alive_count = status.not_alive_count;
+    liveliness_changed_status_.alive_count_change += status.alive_count_change;
+    liveliness_changed_status_.not_alive_count_change += status.not_alive_count_change;
+    liveliness_changed_status_.last_publication_handle = status.last_publication_handle;
+
+    return liveliness_changed_status_;
 }
 
 ReturnCode_t DataReaderImpl::check_qos (
