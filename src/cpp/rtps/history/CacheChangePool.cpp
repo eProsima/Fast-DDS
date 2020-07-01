@@ -146,10 +146,10 @@ bool CacheChangePool::reserve_Cache(
             {
                 (*chan)->serializedPayload.reserve(dataSize);
             }
-            catch(std::bad_alloc& ex)
+            catch (std::bad_alloc& ex)
             {
                 logError(RTPS_HISTORY,
-                         "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
+                        "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
                 delete(*chan);
                 *chan = nullptr;
                 return false;
@@ -183,10 +183,10 @@ bool CacheChangePool::reserve_Cache(
                 {
                     (*chan)->serializedPayload.reserve(dataSize);
                 }
-                catch(std::bad_alloc& ex)
+                catch (std::bad_alloc& ex)
                 {
                     logError(RTPS_HISTORY,
-                             "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
+                            "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
                     delete(*chan);
                     *chan = nullptr;
                     return false;
@@ -328,6 +328,6 @@ CacheChange_t* CacheChangePool::allocateSingle(
     return ch;
 }
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

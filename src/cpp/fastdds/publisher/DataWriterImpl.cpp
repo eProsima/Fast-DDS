@@ -143,6 +143,7 @@ ReturnCode_t DataWriterImpl::enable()
         logError(DATA_WRITER, "Problem creating associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
+    history_.rebuild_instances();
 
     writer_ = writer;
 

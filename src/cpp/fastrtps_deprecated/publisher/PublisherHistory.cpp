@@ -179,48 +179,13 @@ void PublisherHistory::rebuild_instances()
 {
     if (topic_att_.getTopicKind() == WITH_KEY)
     {
-        auto ch_it = changesBegin();
-        while (ch_it != changesEnd())
+        for (CacheChange_t* change : m_changes)
         {
-            CacheChange_t* change = *ch_it;
             t_m_Inst_Caches::iterator vit;
             if (find_or_add_key(change->instanceHandle, &vit))
             {
-                logInfo(RTPS_HISTORY, "Found key: " << vit->first);
-                bool add = false;
-                if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
-                {
-                    if (static_cast<int32_t>(vit->second.cache_changes.size()) <
-                            resource_limited_qos_.max_samples_per_instance)
-                    {
-                        add = true;
-                    }
-                    else
-                    {
-                        logWarning(RTPS_HISTORY, "Change not added due to maximum number of samples per instance");
-                    }
-                }
-                else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
-                {
-                    if (vit->second.cache_changes.size() < static_cast<size_t>(history_qos_.depth))
-                    {
-                        add = true;
-                    }
-                    else
-                    {
-                        if (remove_change_pub(vit->second.cache_changes.front()))
-                        {
-                            add = true;
-                        }
-                    }
-                }
-
-                if (add)
-                {
-                    vit->second.cache_changes.push_back(change);
-                }
+                vit->second.cache_changes.push_back(change);
             }
-            ++ch_it;
         }
     }
 }
