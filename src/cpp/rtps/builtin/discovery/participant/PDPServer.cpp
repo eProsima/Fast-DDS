@@ -1075,6 +1075,9 @@ bool PDPServer::remove_remote_participant(
     key_list disposed_publishers, disposed_subscribers;
 
     {
+        // protect reader and writers collections
+        std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
+
         for (auto pit : *pdata->m_readers)
         {
             ReaderProxyData* rit = pit.second;
