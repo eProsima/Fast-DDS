@@ -232,8 +232,8 @@ bool EDPServer::ongoingDeserialization()
 
 void EDPServer::processPersistentData()
 {
-    EDPSimple::processPersistentData(publications_reader_, publications_writer_);
-    EDPSimple::processPersistentData(subscriptions_reader_, subscriptions_writer_);
+    EDPSimple::processPersistentData(publications_reader_, publications_writer_, _PUBdemises);
+    EDPSimple::processPersistentData(subscriptions_reader_, subscriptions_writer_, _SUBdemises);
 }
 
 bool EDPServer::addEndpointFromHistory(
@@ -335,7 +335,7 @@ bool EDPServer::removeLocalReader(
         InstanceHandle_t iH;
         iH = guid;
         CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
+            []() -> uint32_t
             {
                 return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
             },
@@ -374,7 +374,7 @@ bool EDPServer::removeLocalWriter(
         InstanceHandle_t iH;
         iH = guid;
         CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
+            []() -> uint32_t
             {
                 return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
             },

@@ -46,8 +46,6 @@ class EDPServer : public EDPSimple
     friend class EDPServerPUBListener;
     friend class EDPServerSUBListener;
 
-    typedef std::set<InstanceHandle_t> key_list;
-
     //! Keys to wipe out from WriterHistory because its related Participants have been removed
     key_list _PUBdemises, _SUBdemises;
 

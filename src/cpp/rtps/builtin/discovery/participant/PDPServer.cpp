@@ -529,7 +529,6 @@ bool PDPServer::trimPDPWriterHistory()
     std::lock_guard<RecursiveTimedMutex> guardW(mp_PDPWriter->getMutex());
 
     std::copy_if(mp_PDPWriterHistory->changesBegin(),
-
             mp_PDPWriterHistory->changesEnd(), std::front_inserter(removal),
             [this](const CacheChange_t* chan)
             {
@@ -714,13 +713,33 @@ void PDPServer::processPersistentData()
         std::lock_guard<RecursiveTimedMutex> guardR(p_PDPReader->getMutex());
         std::lock_guard<RecursiveTimedMutex> guardW(mp_PDPWriter->getMutex());
 
+        // own server instance
+        InstanceHandle_t server_key = getLocalParticipantProxyData()->m_key;
+
+        // reference own references from writer history
+        std::forward_list<CacheChange_t*> removal;
+
+        // keep a record of referenced participants
+        key_list referenced_participants;
+
         std::for_each(mp_PDPWriterHistory->changesBegin(),
                 mp_PDPWriterHistory->changesEnd(),
-                [p_PDPReader](CacheChange_t* change)
+                [p_PDPReader, &removal, &referenced_participants, &server_key](CacheChange_t* change)
                 {
+                    // this participant is referenced
+                    referenced_participants.insert(change->instanceHandle);
+
+                    // check if its own data and mark for removal
+                    if (change->instanceHandle == server_key)
+                    {
+                        removal.push_front(change);
+                        return;
+                    }
+
                     CacheChange_t* change_to_add = nullptr;
 
-                    if (!p_PDPReader->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+                    //Reserve a new cache from the corresponding cache pool
+                    if (!p_PDPReader->reserveCache(&change_to_add, change->serializedPayload.length))
                     {
                         logError(RTPS_PDP, "Problem reserving CacheChange in PDPServer reader");
                         return;
@@ -745,6 +764,38 @@ void PDPServer::processPersistentData()
 
                     // change_to_add would be released within change_received
                 });
+
+        // remove our own old server samples
+        removal.pop_front(); // we keep the new one
+
+        for (auto pC : removal)
+        {
+            mp_PDPWriterHistory->remove_change(pC);
+        }
+
+        // marked for removal all samples linked with unknown participants
+        key_list known_participants;
+
+        std::for_each(
+            ParticipantProxiesBegin(),
+            ParticipantProxiesEnd(),
+            [&known_participants](const ParticipantProxyData* pD)
+            {
+                known_participants.insert(pD->m_key);
+            });
+
+        // We have not processed any PDP message yet
+        assert(_demises.empty());
+
+        // identify unknown participants, mark them for trimming
+        std::set_difference(
+            referenced_participants.cbegin(),
+            referenced_participants.cend(),
+            known_participants.cbegin(),
+            known_participants.cend(),
+            std::inserter(_demises, _demises.begin()));
+
+        // We don't need to awake the server thread because we are in it
     }
 
     EDPServer* pEDP = dynamic_cast<EDPServer*>(mp_EDP);

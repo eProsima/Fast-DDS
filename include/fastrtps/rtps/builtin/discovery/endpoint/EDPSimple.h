@@ -53,6 +53,8 @@ class EDPSimple : public EDP
 
 public:
 
+    typedef std::set<InstanceHandle_t> key_list;
+
     /**
      * Constructor.
      * @param p Pointer to the PDP
@@ -187,9 +189,10 @@ protected:
     virtual bool createSEDPEndpoints();
 
     //! Process the info recorded in the persistence database
-    static void processPersistentData(
+    void processPersistentData(
             t_p_StatefulReader& reader,
-            t_p_StatefulWriter& writer);
+            t_p_StatefulWriter& writer,
+            key_list& demises);
 
 private:
 

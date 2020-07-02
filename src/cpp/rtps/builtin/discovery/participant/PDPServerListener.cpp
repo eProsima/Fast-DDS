@@ -83,8 +83,7 @@ void PDPServerListener::onNewCacheChangeAdded(
     if (change->kind == ALIVE)
     {
         // Ignore announcement from own RTPSParticipant
-        if (guid == parent_pdp_->getRTPSParticipant()->getGuid()
-                && !parent_server_pdp_->ongoingDeserialization() )
+        if (guid == parent_pdp_->getRTPSParticipant()->getGuid())
         {
             logInfo(RTPS_PDP, "Message from own RTPSParticipant, removing");
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
@@ -120,16 +119,20 @@ void PDPServerListener::onNewCacheChangeAdded(
 
             if (pdata == nullptr)
             {
-                logInfo(RTPS_PDP, "Registering a new participant: " << writer_guid);
+                // On deserialization we must pretend the CacheChange was send by the client
+                GUID_t aux_writer_guid =
+                        parent_server_pdp_->ongoingDeserialization() ? local_data.m_guid : writer_guid;
+
+                logInfo(RTPS_PDP, "Registering a new participant: " << aux_writer_guid);
 
                 // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(local_data, writer_guid);
+                pdata = parent_pdp_->createParticipantProxyData(local_data, aux_writer_guid);
                 if (pdata != nullptr)
                 {
                     lock.unlock();
 
                     // Dismiss any client data relayed by a server
-                    if (pdata->m_guid.guidPrefix == change->writerGUID.guidPrefix)
+                    if (pdata->m_guid.guidPrefix == aux_writer_guid.guidPrefix)
                     {
                         // This call would be needed again if the clients known not the server prefix
                         //  parent_pdp_->announceParticipantState(false);
