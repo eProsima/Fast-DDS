@@ -84,17 +84,17 @@ class Parser:
             ret = tool_path / 'fast-discovery-server'
             if not os.path.exists(ret):
                 print('fast-discovery-server tool not installed')
-                os.exit(1)
+                sys.exit(1)
         elif os.name == 'nt':
             ret = tool_path / 'fast-discovery-server.exe'
             if not os.path.exists(ret):
                 ret = tool_path / 'fast-discovery-server.bat'
                 if not os.path.exists(ret):
                     print('fast-discovery-server tool not installed')
-                    os.exit(1)
+                    sys.exit(1)
         else:
             print(f'{os.name} not supported')
-            os.exit(1)
+            sys.exit(1)
 
         return ret
 

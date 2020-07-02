@@ -52,7 +52,7 @@ def setup_script_name():
         script_name = 'setup.bat'
     else:
         print(f'{os.name} not supported')
-        os.exit(1)
+        sys.exit(1)
 
     return script_name
 
@@ -85,7 +85,7 @@ def cmd(install_path, setup_script_path=Path(), args=''):
             cmd = f'"{setup_script_path}" && "{tool_path}" {args}'
     else:
         print(f'{os.name} not supported')
-        os.exit(1)
+        sys.exit(1)
     return cmd
 
 
