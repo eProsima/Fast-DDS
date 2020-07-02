@@ -413,7 +413,8 @@ public:
     }
 
     void wait_discovery(
-            std::chrono::seconds timeout = std::chrono::seconds::zero())
+            std::chrono::seconds timeout = std::chrono::seconds::zero(),
+            unsigned int min_writers = 1)
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
@@ -423,14 +424,14 @@ public:
         {
             cvDiscovery_.wait(lock, [&]()
                     {
-                        return matched_ != 0;
+                        return matched_ >= min_writers;
                     });
         }
         else
         {
             cvDiscovery_.wait_for(lock, timeout, [&]()
                     {
-                        return matched_ != 0;
+                        return matched_ >= min_writers;
                     });
         }
 
@@ -1109,6 +1110,13 @@ public:
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
         return liveliness_changed_status_;
+    }
+
+    eprosima::fastdds::dds::LivelinessChangedStatus get_liveliness_changed_status() const
+    {
+        eprosima::fastdds::dds::LivelinessChangedStatus status;
+        datareader_->get_liveliness_changed_status(status);
+        return status;
     }
 
     bool is_matched() const
