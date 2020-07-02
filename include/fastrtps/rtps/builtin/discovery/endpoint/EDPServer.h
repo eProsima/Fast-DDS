@@ -107,7 +107,7 @@ public:
             RTPSWriter* W) override;
 
     /**
-     * Some History data is flag for defer removal till every client
+     * Some History data is flagged for deferred removal till every client
      * acknowledges reception
      * @return True if trimming must be done
      */
@@ -117,17 +117,8 @@ public:
     }
 
     //! Callback to remove unnecesary WriterHistory info
-    bool trimPUBWriterHistory()
-    {
-        return trimWriterHistory<ResourceLimitedVector<WriterProxyData*> >(_PUBdemises,
-                       *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
-    }
-
-    bool trimSUBWriterHistory()
-    {
-        return trimWriterHistory<ResourceLimitedVector<ReaderProxyData*> >(_SUBdemises,
-                       *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
-    }
+    bool trimPUBWriterHistory();
+    bool trimSUBWriterHistory();
 
     //! returns true if loading info from persistency database
     bool ongoingDeserialization();

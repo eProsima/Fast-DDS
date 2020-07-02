@@ -498,8 +498,9 @@ bool PDPServer::trimWriterHistory()
 
 bool PDPServer::trimPDPWriterHistory()
 {
-    logInfo(RTPS_PDPSERVER_TRIM, "In trimPDPWriteHistory PDP history count: " << mp_PDPWriterHistory->getHistorySize()
-                                                                              << " demises:" << _demises.size() );
+    std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
+
+    logInfo(RTPS_PDPSERVER_TRIM, "In trimPDPWriteHistory PDP history count: " << mp_PDPWriterHistory->getHistorySize())
 
     // trim demises container
     key_list disposal, aux;
@@ -712,6 +713,7 @@ void PDPServer::processPersistentData()
         StatefulReader* p_PDPReader = static_cast<StatefulReader*>(mp_PDPReader);
         std::lock_guard<RecursiveTimedMutex> guardR(p_PDPReader->getMutex());
         std::lock_guard<RecursiveTimedMutex> guardW(mp_PDPWriter->getMutex());
+        std::lock_guard<std::recursive_mutex> guardP(*getMutex());
 
         // own server instance
         InstanceHandle_t server_key = getLocalParticipantProxyData()->m_key;

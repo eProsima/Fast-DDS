@@ -159,6 +159,7 @@ void EDPSimple::processPersistentData(
 {
     std::lock_guard<RecursiveTimedMutex> guardR(reader.first->getMutex());
     std::lock_guard<RecursiveTimedMutex> guardW(writer.first->getMutex());
+    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
 
     // own server instance
     InstanceHandle_t server_key = mp_PDP->getLocalParticipantProxyData()->m_key;

@@ -138,6 +138,22 @@ bool EDPServer::createSEDPEndpoints()
     return created;
 }
 
+bool EDPServer::trimPUBWriterHistory()
+{
+    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+
+    return trimWriterHistory<ResourceLimitedVector<WriterProxyData*> >(_PUBdemises,
+                   *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
+}
+
+bool EDPServer::trimSUBWriterHistory()
+{
+    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+
+    return trimWriterHistory<ResourceLimitedVector<ReaderProxyData*> >(_SUBdemises,
+                   *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
+}
+
 template<class ProxyCont>
 bool EDPServer::trimWriterHistory(
         key_list& _demises,
@@ -179,7 +195,7 @@ bool EDPServer::trimWriterHistory(
     std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesEnd(), std::front_inserter(removal),
-            [_demises](const CacheChange_t* chan)
+            [&_demises](const CacheChange_t* chan)
             {
                 return _demises.find(chan->instanceHandle) != _demises.cend();
             });
