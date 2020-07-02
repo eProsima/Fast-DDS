@@ -33,7 +33,7 @@ bool ThroughputDataType::serialize(void*data,SerializedPayload_t* payload)
     memcpy(payload->data + 4, &data_size, sizeof(data_size));
     //	std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
     memcpy(payload->data + 8, lt->data.data(), lt->data.size());
-    payload->length = 8+(uint16_t)lt->data.size();
+    payload->length = 8 + lt->data.size();
     return true;
 }
 
@@ -68,7 +68,7 @@ std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(void* da
 
 void* ThroughputDataType::createData()
 {
-    return (void*)new ThroughputType((uint16_t)this->m_typeSize);
+    return (void*)new ThroughputType(this->m_typeSize);
 }
 void ThroughputDataType::deleteData(void* data)
 {

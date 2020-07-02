@@ -456,7 +456,7 @@ void ThroughputSubscriber::process_message()
 
                         throughput_data_type_ = new ThroughputDataType(data_size_);
                         Domain::registerType(participant_, throughput_data_type_);
-                        throughput_type_ = new ThroughputType((uint16_t)data_size_);
+                        throughput_type_ = new ThroughputType(data_size_);
                     }
 
                     data_subscriber_ = Domain::createSubscriber(participant_, sub_attrs_, &data_sub_listener_);

@@ -567,7 +567,7 @@ bool ThroughputPublisher::test(
     {
         throughput_data_type_ = new ThroughputDataType(msg_size);
         Domain::registerType(participant_, throughput_data_type_);
-        throughput_type_ = new ThroughputType((uint16_t)msg_size);
+        throughput_type_ = new ThroughputType(msg_size);
     }
 
     data_publisher_ = Domain::createPublisher(participant_, pub_attrs_, &data_pub_listener_);

@@ -90,7 +90,7 @@ typedef struct ThroughputType {
     std::vector<uint8_t> data;
 
     ThroughputType(
-            uint16_t number)
+            uint32_t number)
         : seqnum(0)
         , data(number,0)
     {
