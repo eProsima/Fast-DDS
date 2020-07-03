@@ -71,7 +71,7 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
     ASSERT_TRUE(reader.isInitialized());
 
     // Create a participant for the writers
-    std::unique_ptr<PubSubParticipant<HelloWorldType>> writers;
+    std::unique_ptr<PubSubParticipant<HelloWorldType> > writers;
     writers.reset(new PubSubParticipant<HelloWorldType>(num_times, 0, num_times, 0));
     writers->pub_topic_name(TEST_TOPIC_NAME)
     .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
