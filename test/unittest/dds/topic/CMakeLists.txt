@@ -24,35 +24,23 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
             COPYONLY)
 
-        set(SUBSCRIBERTESTS_SOURCE SubscriberTests.cpp)
-        set(DATAREADERTESTS_SOURCE DataReaderTests.cpp)
+        set(TOPICTESTS_SOURCE TopicTests.cpp)
         
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        add_executable(SubscriberTests ${SUBSCRIBERTESTS_SOURCE})
-        target_compile_definitions(SubscriberTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(SubscriberTests PRIVATE
+        add_executable(TopicTests ${TOPICTESTS_SOURCE})
+        target_compile_definitions(TopicTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(TopicTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(SubscriberTests fastrtps foonathan_memory
+        target_link_libraries(TopicTests fastrtps foonathan_memory
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        add_gtest(SubscriberTests SOURCES ${SUBSCRIBERTESTS_SOURCE})
+        add_gtest(TopicTests SOURCES ${TOPICTESTS_SOURCE})
 
-        add_executable(DataReaderTests ${DATAREADERTESTS_SOURCE})
-        target_compile_definitions(DataReaderTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(DataReaderTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
-            )
-        target_link_libraries(DataReaderTests fastrtps foonathan_memory
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        add_gtest(DataReaderTests SOURCES ${DATAREADERTESTS_SOURCE})
     endif()
 endif()

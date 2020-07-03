@@ -33,8 +33,8 @@ using eprosima::fastrtps::types::ReturnCode_t;
 namespace dds {
 namespace pub {
 class Publisher;
-}
-}
+} // namespace pub
+} // namespace dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -63,8 +63,8 @@ class Publisher : public DomainEntity
     friend class DomainParticipantImpl;
 
     /**
-     * Create a publisher, assigning its pointer to the associated writer.
-     * Don't use directly, create Publisher using create_publisher from Participant.
+     * Create a publisher, assigning its pointer to the associated implementation.
+     * Don't use directly, create Publisher using create_publisher from DomainParticipant.
      */
     RTPS_DllAPI Publisher(
             PublisherImpl* p,
@@ -120,19 +120,29 @@ public:
     RTPS_DllAPI const PublisherListener* get_listener() const;
 
     /**
-     * Modifies the PublisherListener.
-     * @param listener PublisherListener pointer
+     * Modifies the PublisherListener, sets the mask to StatusMask::all()
+     * @param listener new value for the PublisherListener
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
             PublisherListener* listener);
 
     /**
+     * Modifies the PublisherListener.
+     * @param listener new value for the PublisherListener
+     * @param mask StatusMask that holds statuses the listener responds to
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t set_listener(
+            PublisherListener* listener,
+            const StatusMask& mask);
+
+    /**
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
      * @param topic Topic the DataWriter will be listening
      * @param qos QoS of the DataWriter.
      * @param listener Pointer to the listener (default: nullptr).
-     * @param mask StatusMask (default: all).
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter(
@@ -146,7 +156,7 @@ public:
      * @param topic Topic the DataWriter will be listening
      * @param profile_name DataWriter profile name.
      * @param listener Pointer to the listener (default: nullptr).
-     * @param mask StatusMask (default: all).
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
     RTPS_DllAPI DataWriter* create_datawriter_with_profile(

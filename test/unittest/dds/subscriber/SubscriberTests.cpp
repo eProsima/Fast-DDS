@@ -22,6 +22,7 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/types.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/sub/DataReader.hpp>
@@ -129,7 +130,8 @@ public:
 
 TEST(SubscriberTests, ChangeSubscriberQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -171,7 +173,8 @@ TEST(SubscriberTests, ChangePSMSubscriberQos)
 
 TEST(SubscriberTests, ChangeDefaultDataReaderQos)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -214,7 +217,8 @@ TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
 
 TEST(SubscriberTests, GetSubscriberParticipant)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
@@ -235,7 +239,8 @@ TEST(SubscriberTests, GetPSMSubscriberParticipant)
 
 TEST(SubscriberTests, CreateDataReader)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -256,7 +261,9 @@ TEST(SubscriberTests, CreateDataReader)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-void check_datareader_with_profile (DataReader* datareader, const std::string& profile_name)
+void check_datareader_with_profile (
+        DataReader* datareader,
+        const std::string& profile_name)
 {
     DataReaderQos qos;
     datareader->get_qos(qos);
@@ -299,7 +306,8 @@ void check_datareader_with_profile (DataReader* datareader, const std::string& p
 TEST(SubscriberTests, CreateDataReaderWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -324,7 +332,8 @@ TEST(SubscriberTests, CreateDataReaderWithProfile)
 
 TEST(SubscriberTests, DeleteSubscriberWithReaders)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -374,30 +383,63 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
    }
  */
 
-
-TEST(SubscriberTests, ReadData)
+void set_listener_test (
+        Subscriber* subscriber,
+        SubscriberListener* listener,
+        StatusMask mask)
 {
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_EQ(subscriber->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->get_status_mask(), mask);
+}
+
+class CustomListener : public SubscriberListener
+{
+
+};
+
+TEST(SubscriberTests, SetListener)
+{
+    CustomListener listener;
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
     ASSERT_NE(subscriber, nullptr);
+    ASSERT_EQ(subscriber->get_status_mask(), StatusMask::all());
 
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
+    std::vector<std::tuple<Subscriber*, SubscriberListener*, StatusMask> > testing_cases{
+        //statuses, one by one
+        { subscriber, &listener, StatusMask::data_on_readers() },
+        { subscriber, &listener, StatusMask::data_available() },
+        { subscriber, &listener, StatusMask::sample_rejected() },
+        { subscriber, &listener, StatusMask::liveliness_changed() },
+        { subscriber, &listener, StatusMask::requested_deadline_missed() },
+        { subscriber, &listener, StatusMask::requested_incompatible_qos() },
+        { subscriber, &listener, StatusMask::subscription_matched() },
+        { subscriber, &listener, StatusMask::sample_lost() },
+        //all except one
+        { subscriber, &listener, StatusMask::all() >> StatusMask::data_on_readers() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::data_available() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::sample_rejected() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::liveliness_changed() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::requested_deadline_missed() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::requested_incompatible_qos() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::subscription_matched() },
+        { subscriber, &listener, StatusMask::all() >> StatusMask::sample_lost() },
+        //all and none
+        { subscriber, &listener, StatusMask::all() },
+        { subscriber, &listener, StatusMask::none() }
+    };
 
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
+    for (auto testing_case : testing_cases)
+    {
+        set_listener_test(std::get<0>(testing_case),
+                std::get<1>(testing_case),
+                std::get<2>(testing_case));
+    }
 
-    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
-    ASSERT_NE(data_reader, nullptr);
-
-    FooType data;
-    SampleInfo info;
-    ASSERT_EQ(data_reader->read_next_sample(&data, &info), ReturnCode_t::RETCODE_NO_DATA);
-
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }

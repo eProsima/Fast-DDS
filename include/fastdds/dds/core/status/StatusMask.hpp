@@ -69,7 +69,7 @@ public:
     }
 
     /**
-     * Shift (merge) given StatusMask bits into this StatusMask bitset.
+     * Add given StatusMask bits into this StatusMask bitset.
      *
      * @return StatusMask this
      */
@@ -77,6 +77,18 @@ public:
             const StatusMask& mask)
     {
         *this |= mask;
+        return *this;
+    }
+
+    /**
+     * Remove given StatusMask bits into this StatusMask bitset.
+     *
+     * @return StatusMask this
+     */
+    inline StatusMask& operator >>(
+            const StatusMask& mask)
+    {
+        *this &= ~mask;
         return *this;
     }
 
