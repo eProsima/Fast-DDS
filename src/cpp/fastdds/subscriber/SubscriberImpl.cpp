@@ -477,7 +477,7 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
     (void)status;
 
     SubscriberListener* listener = subscriber_->listener_;
-    if (!subscriber_->user_subscriber_->get_status_mask().is_active(StatusMask::liveliness_changed()))
+    if (listener == nullptr || !subscriber_->user_subscriber_->get_status_mask().is_active(StatusMask::liveliness_changed()))
     {
         auto participant = subscriber_->get_participant();
         auto part_listener = const_cast<DomainParticipantListener*>(participant->get_listener());
