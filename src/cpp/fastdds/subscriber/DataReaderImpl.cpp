@@ -415,19 +415,19 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         RTPSReader* /*reader*/,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    data_reader_->update_liveliness_status(status);
+    LivelinessChangedStatus& reader_status = data_reader_->update_liveliness_status(status);
     DataReader* user_reader = data_reader_->user_datareader_;
 
     if ( (data_reader_->listener_ != nullptr) &&
             (user_reader->get_status_mask().is_active(StatusMask::liveliness_changed())))
     {
-        LivelinessChangedStatus reader_status;
-        data_reader_->get_liveliness_changed_status(reader_status);
-        data_reader_->listener_->on_liveliness_changed(user_reader, reader_status);
+        LivelinessChangedStatus callback_status;
+        data_reader_->get_liveliness_changed_status(callback_status);
+        data_reader_->listener_->on_liveliness_changed(user_reader, callback_status);
     }
     else
     {
-        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(user_reader, status);
+        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(user_reader, reader_status);
     }
 }
 

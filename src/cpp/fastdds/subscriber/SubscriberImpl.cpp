@@ -22,6 +22,9 @@
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -473,11 +476,23 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
 {
     (void)status;
 
-    if (subscriber_->listener_ != nullptr)
+    SubscriberListener* listener = subscriber_->listener_;
+    if (!subscriber_->user_subscriber_->get_status_mask().is_active(StatusMask::liveliness_changed()))
     {
-        LivelinessChangedStatus reader_status;
-        reader->get_liveliness_changed_status(reader_status);
-        subscriber_->listener_->on_liveliness_changed(reader, reader_status);
+        auto participant = subscriber_->get_participant();
+        auto part_listener = const_cast<DomainParticipantListener*>(participant->get_listener());
+        listener = static_cast<SubscriberListener*>(part_listener);
+        if (!participant->get_status_mask().is_active(StatusMask::liveliness_changed()))
+        {
+            listener = nullptr;
+        }
+    }
+
+    if (listener != nullptr)
+    {
+        LivelinessChangedStatus callback_status;
+        reader->get_liveliness_changed_status(callback_status);
+        listener->on_liveliness_changed(reader, callback_status);
     }
 }
 
