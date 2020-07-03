@@ -38,8 +38,9 @@ if (MSVC)
 else()
 
     # POSIX
-    set(fastdds_tool_target "../tools/fastdds/fastdds.py")
-    set(fastdds_tool_link ${CMAKE_INSTALL_PREFIX}/bin/fastdds)
-    install(CODE "execute_process(COMMAND ln -s -f \"${fastdds_tool_target}\" \"${fastdds_tool_link}\")")
+    install(FILES ${PROJECT_SOURCE_DIR}/fastdds
+        PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+    )
 
 endif()
