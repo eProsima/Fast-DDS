@@ -164,7 +164,7 @@ public:
      */
 
     ReturnCode_t get_liveliness_changed_status(
-            fastrtps::LivelinessChangedStatus& status) const;
+            fastrtps::LivelinessChangedStatus& status);
 
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status);
@@ -278,6 +278,9 @@ private:
     //! The current timer owner, i.e. the instance which started the deadline timer
     fastrtps::rtps::InstanceHandle_t timer_owner_;
 
+    //! Liveliness changed status
+    LivelinessChangedStatus liveliness_changed_status_;
+
     //! Requested deadline missed status
     fastrtps::RequestedDeadlineMissedStatus deadline_missed_status_;
 
@@ -321,6 +324,9 @@ private:
 
     RequestedIncompatibleQosStatus& update_requested_incompatible_qos(
             PolicyMask incompatible_policies);
+
+    LivelinessChangedStatus& update_liveliness_status(
+            const fastrtps::LivelinessChangedStatus& status);
 
 };
 

@@ -22,6 +22,9 @@
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -153,7 +156,7 @@ ReturnCode_t SubscriberImpl::set_qos(
 {
     bool enabled = user_subscriber_->is_enabled();
     const SubscriberQos& qos_to_set = (&qos == &SUBSCRIBER_QOS_DEFAULT) ?
-        participant_->get_default_subscriber_qos() : qos;
+            participant_->get_default_subscriber_qos() : qos;
 
     if (&qos != &SUBSCRIBER_QOS_DEFAULT)
     {
@@ -471,9 +474,26 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
         DataReader* reader,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    if (subscriber_->listener_ != nullptr)
+    (void)status;
+
+    SubscriberListener* listener = subscriber_->listener_;
+    if (listener == nullptr ||
+            !subscriber_->user_subscriber_->get_status_mask().is_active(StatusMask::liveliness_changed()))
     {
-        subscriber_->listener_->on_liveliness_changed(reader, status);
+        auto participant = subscriber_->get_participant();
+        auto part_listener = const_cast<DomainParticipantListener*>(participant->get_listener());
+        listener = static_cast<SubscriberListener*>(part_listener);
+        if (!participant->get_status_mask().is_active(StatusMask::liveliness_changed()))
+        {
+            listener = nullptr;
+        }
+    }
+
+    if (listener != nullptr)
+    {
+        LivelinessChangedStatus callback_status;
+        reader->get_liveliness_changed_status(callback_status);
+        listener->on_liveliness_changed(reader, callback_status);
     }
 }
 
@@ -533,7 +553,6 @@ bool SubscriberImpl::type_in_use(
     }
     return false;
 }
-
 
 void SubscriberImpl::set_qos(
         SubscriberQos& to,

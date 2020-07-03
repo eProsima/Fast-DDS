@@ -272,7 +272,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 api/dds-pim
                 ${GTEST_INCLUDE_DIRS})
             target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
-            add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
+            add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${DDS_BLACKBOXTESTS_SOURCE}
                 ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
                 "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
                 "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
