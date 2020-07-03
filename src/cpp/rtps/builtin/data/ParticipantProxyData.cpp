@@ -544,10 +544,191 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
     return persistent;
 }
 
+void ParticipantProxyData::set_sample_identity(
+        const SampleIdentity& sid)
+{
+    // only valid values
+    if (sid == SampleIdentity::unknown())
+    {
+        return;
+    }
+
+    // generate pair
+    std::pair<std::string, std::string> sample_identity;
+    sample_identity.first = "PID_CLIENT_SERVER_KEY";
+
+    std::ostringstream data;
+    data << sid;
+    sample_identity.second = data.str();
+
+    // if exists replace
+    auto it = std::find_if(
+        m_properties.properties.begin(),
+        m_properties.properties.end(),
+        [&sample_identity](const std::pair<std::string, std::string> & p)
+                {
+                    return sample_identity.first == p.first;
+                });
+
+    if (it != m_properties.properties.end())
+    {
+        *it = sample_identity;
+    }
+    else
+    {
+        // if not exists add
+        m_properties.properties.push_back(sample_identity);
+    }
+}
+
+SampleIdentity ParticipantProxyData::get_sample_identity() const
+{
+    SampleIdentity sid;
+
+    auto it = std::find_if(
+        m_properties.properties.begin(),
+        m_properties.properties.end(),
+        [](const std::pair<std::string, std::string>& p)
+                {
+                    return "PID_CLIENT_SERVER_KEY" == p.first;
+                });
+
+    if (it != m_properties.properties.end())
+    {
+        std::istringstream in(it->second);
+        in >> sid;
+    }
+
+    return sid;
+}
+
+void ParticipantProxyData::set_backup_stamp(const GUID_t& guid)
+{
+    // only valid values
+    if (guid == c_Guid_Unknown)
+    {
+        return;
+    }
+
+    // generate pair
+    std::pair<std::string, std::string> backup_guid;
+    backup_guid.first = "PID_BACKUP_STAMP";
+
+    std::ostringstream data;
+    data << guid;
+    backup_guid.second = data.str();
+
+    // if exists replace
+    std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
+
+    std::vector<std::pair<std::string, std::string>>::iterator it =
+        std::find_if(
+            props.begin(),
+            props.end(),
+            [&backup_guid](const std::pair<std::string, std::string> & p)
+            {
+                return backup_guid.first == p.first;
+            });
+
+    if (it != props.end())
+    {
+        *it = std::move(backup_guid);
+    }
+    else
+    {
+        // if not exists add
+        m_properties.properties.push_back(std::move(backup_guid));
+    }
+}
+
+GUID_t ParticipantProxyData::get_backup_stamp() const
+{
+    GUID_t stamp(c_Guid_Unknown);
+
+    const std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
+
+    std::vector<std::pair<std::string, std::string>>::const_iterator it =
+        std::find_if(
+            props.cbegin(),
+            props.cend(),
+            [](const std::pair<std::string, std::string> & p)
+            {
+                return "PID_BACKUP_STAMP" == p.first;
+            });
+
+    if (it != props.end())
+    {
+        std::istringstream in(it->second);
+        in >> stamp;
+    }
+
+    return stamp;
+}
+
 void ParticipantProxyData::assert_liveliness()
 {
     last_received_message_tm_ = std::chrono::steady_clock::now();
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Stream operator, retrieves a GUID.
+ * @param input Input stream.
+ * @param sid SampleIdentity to read.
+ * @return Stream operator.
+ */
+std::istream& operator >>(
+        std::istream& input,
+        SampleIdentity& sid)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+
+            char sep;
+            input >> sid.writer_guid_ >> sep >> sid.sequence_number_;
+
+            if (sep != '|')
+            {
+                input.setstate(std::ios_base::failbit);
+            }
+        }
+        catch (std::ios_base::failure&)
+        {
+            // maybe is unknown or just invalid
+            sid.writer_guid_ = GUID_t::unknown();
+            sid.sequence_number_ = SequenceNumber_t::unknown();
+        }
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
+}
+
+/**
+ * Stream operator, prints a GUID.
+ * @param output Output stream.
+ * @param sid SampleIdentity to print.
+ * @return Stream operator.
+ */
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const SampleIdentity& sid)
+{
+    output << sid.writer_guid_ << '|' << sid.sequence_number_;
+
+    return output;
+}
+
+#endif DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } /* namespace rtps */
 } /* namespace fastrtps */

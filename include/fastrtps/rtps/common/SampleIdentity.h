@@ -148,7 +148,11 @@ namespace eprosima
                     GUID_t writer_guid_;
 
                     SequenceNumber_t sequence_number_;
-            };
+
+                    friend std::istream& operator >>(std::istream& input, SampleIdentity& sid);
+                    friend std::ostream& operator <<(std::ostream& output, const SampleIdentity& sid);
+           };
+
         } //namespace rtps
     } //namespace fastrtps
 } //namespace eprosima

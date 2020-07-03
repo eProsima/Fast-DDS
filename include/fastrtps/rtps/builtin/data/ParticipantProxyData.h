@@ -176,6 +176,32 @@ class ParticipantProxyData
          */
         GUID_t get_persistence_guid() const;
 
+        /**
+         * Set participant client server sample identity
+         * @param sid valid SampleIdentity
+         */
+        void set_sample_identity(
+            const SampleIdentity& sid);
+
+        /**
+         * Retrieve participant SampleIdentity
+         * @return SampleIdentity
+         */
+        SampleIdentity get_sample_identity() const;
+
+        /**
+         * Identifies the participant as client of the given server
+         * @param guid valid backup server GUID
+         */
+        void set_backup_stamp(
+            const GUID_t& guid);
+
+        /**
+         * Retrieves BACKUP server stamp. On deserialization hints if lease duration must be enforced
+         * @return GUID
+         */
+        GUID_t get_backup_stamp() const;
+
         void assert_liveliness();
 
         const std::chrono::steady_clock::time_point& last_received_message_tm() const
@@ -185,11 +211,10 @@ class ParticipantProxyData
 
         const std::chrono::microseconds& lease_duration() const
         {
-            return lease_duration_;
+           return lease_duration_;
         }
 
     private:
-
         //! Store the last timestamp it was received a RTPS message from the remote participant.
         std::chrono::steady_clock::time_point last_received_message_tm_;
 

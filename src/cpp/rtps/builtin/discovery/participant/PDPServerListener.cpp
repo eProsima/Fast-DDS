@@ -119,20 +119,18 @@ void PDPServerListener::onNewCacheChangeAdded(
 
             if (pdata == nullptr)
             {
-                // On deserialization we must pretend the CacheChange was send by the client
-                GUID_t aux_writer_guid =
-                        parent_server_pdp_->ongoingDeserialization() ? local_data.m_guid : writer_guid;
-
-                logInfo(RTPS_PDP, "Registering a new participant: " << aux_writer_guid);
+                logInfo(RTPS_PDP, "Registering a new participant: " <<
+                        change->write_params.sample_identity().writer_guid());
 
                 // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(local_data, aux_writer_guid);
+                pdata = parent_pdp_->createParticipantProxyData(local_data, writer_guid);
+                lock.unlock();
+
                 if (pdata != nullptr)
                 {
-                    lock.unlock();
 
                     // Dismiss any client data relayed by a server
-                    if (pdata->m_guid.guidPrefix == aux_writer_guid.guidPrefix)
+                    if (pdata->m_guid.guidPrefix == writer_guid.guidPrefix)
                     {
                         // This call would be needed again if the clients known not the server prefix
                         //  parent_pdp_->announceParticipantState(false);
