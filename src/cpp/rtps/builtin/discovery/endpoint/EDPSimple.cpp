@@ -181,11 +181,55 @@ void EDPSimple::processPersistentData(
     // We have not processed any PDP message yet
     assert(demises.empty());
 
+    // aux lambda to retrieve sample identity
+    // update format for 2.0.x port
+    uint32_t qos_size;
+    SampleIdentity si;
+
+    auto param_process = [&si](const Parameter_t* param)
+    {
+        if (param->Pid == PID_PROPERTY_LIST)
+        {
+            si = SampleIdentity::unknown();
+            const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
+            assert(p != nullptr);
+
+            const auto & properties = p->properties;
+            auto it = properties.begin();
+
+            it = std::find_if( it, properties.end(),
+                    [](const std::pair<std::string, std::string>& p)
+                    {
+                        return "PID_CLIENT_SERVER_KEY" == p.first;
+                    });
+
+            if (it != properties.end())
+            {
+                std::istringstream in(it->second);
+                in >> si;
+            }
+        }
+
+        return true;
+    };
+
+
     std::for_each(writer.second->changesBegin(),
             writer.second->changesEnd(),
-            [&reader, &known_participants, &demises, &removal, &server_key](CacheChange_t* change)
+            [&](CacheChange_t* change)
             {
-                // Get Participant InstanceHandle
+                 // We must retrieve the identity info from the payload and update the WriteParams
+                CDRMessage_t msg(change->serializedPayload);
+                ParameterList::readParameterListfromCDRMsg(msg, param_process, true, qos_size);
+
+                // recover sample identity
+                if (si != SampleIdentity::unknown())
+                {
+                    change->write_params.sample_identity(si);
+                    change->write_params.related_sample_identity(si);
+                }
+
+               // Get Participant InstanceHandle
                 InstanceHandle_t handle;
                 {
                     GUID_t guid = iHandle2GUID(change->instanceHandle);

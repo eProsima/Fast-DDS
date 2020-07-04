@@ -70,6 +70,7 @@ ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo)
     , m_topicDiscoveryKind(readerInfo.m_topicDiscoveryKind)
     , m_type_id(readerInfo.m_type_id)
     , m_type(readerInfo.m_type)
+    , m_properties(readerInfo.m_properties)
 {
     m_qos.setQos(readerInfo.m_qos, true);
 }
@@ -95,6 +96,7 @@ ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
     m_topicDiscoveryKind = readerInfo.m_topicDiscoveryKind;
     m_type_id = readerInfo.m_type_id;
     m_type = readerInfo.m_type;
+    m_properties = readerInfo.m_properties;
 
     return *this;
 }
@@ -231,6 +233,13 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
             if (!m_type.addToCDRMessage(msg)) return false;
         }
     }
+
+    if(m_properties.properties.size()>0)
+    {
+        ParameterPropertyList_t p(m_properties);
+        if (!p.addToCDRMessage(msg)) return false;
+    }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -492,6 +501,14 @@ bool ReaderProxyData::readFromCDRMessage(
                 plugin_security_attributes_ = p->plugin_security_attributes;
             }
 #endif
+            case PID_PROPERTY_LIST:
+            {
+                const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
+                assert(p != nullptr);
+                this->m_properties = *p;
+                break;
+            }
+
             default:
             {
                 //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(param)->Pid << " NOT CONSIDERED");
@@ -537,6 +554,8 @@ void ReaderProxyData::clear()
     m_topicDiscoveryKind = NO_CHECK;
     m_type_id = TypeIdV1();
     m_type = TypeObjectV1();
+    m_properties.properties.clear();
+    m_properties.length = 0;
 }
 
 bool ReaderProxyData::is_update_allowed(const ReaderProxyData& rdata) const
@@ -583,6 +602,7 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
         m_type_id = rdata->m_type_id;
         m_type = rdata->m_type;
     }
+    m_properties = rdata->m_properties;
 }
 
 void ReaderProxyData::add_unicast_locator(const Locator_t& locator)

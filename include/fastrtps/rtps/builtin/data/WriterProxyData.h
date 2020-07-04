@@ -309,6 +309,25 @@ class WriterProxyData
         //!WriterQOS
         WriterQos m_qos;
 
+        /**
+         * Set participant client server sample identity
+         * @param sid valid SampleIdentity
+         */
+        void set_sample_identity(
+                const SampleIdentity& sid)
+        {
+            set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", m_properties.properties);
+        }
+
+        /**
+         * Retrieve participant SampleIdentity
+         * @return SampleIdentity
+         */
+        SampleIdentity get_sample_identity() const
+        {
+            return get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", m_properties.properties);
+        }
+
 #if HAVE_SECURITY
         //!EndpointSecurityInfo.endpoint_security_attributes
         security::EndpointSecurityAttributesMask security_attributes_;
@@ -386,6 +405,9 @@ class WriterProxyData
 
         //!Type Object
         TypeObjectV1 m_type;
+
+        //!
+        ParameterPropertyList_t m_properties;
 };
 
 } /* namespace rtps */

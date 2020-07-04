@@ -622,9 +622,9 @@ bool PDPServer::addRelayedChangeToHistory(
         // mp_PDPWriterHistory->reserve_Cache(&pCh, DISCOVERY_PARTICIPANT_DATA_MAX_SIZE)
         if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh )
         {
-            if ( _durability == DurabilityKind_t::TRANSIENT_LOCAL )
+            if ( mp_PDPWriter->getAttributes().durabilityKind == DurabilityKind_t::TRANSIENT_LOCAL )
             {
-                // an ordinary server just copy the payload to history
+                // an ordinary server just copies the payload to history
                 pCh->copy(&c);
                 pCh->writerGUID = mp_PDPWriter->getGuid();
                 // keep the original sample identity by using wp

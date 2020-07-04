@@ -68,6 +68,7 @@ WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
     , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
     , m_type_id(writerInfo.m_type_id)
     , m_type(writerInfo.m_type)
+    , m_properties(writerInfo.m_properties)
 {
     m_qos.setQos(writerInfo.m_qos, true);
 }
@@ -97,6 +98,7 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_topicDiscoveryKind = writerInfo.m_topicDiscoveryKind;
     m_type_id = writerInfo.m_type_id;
     m_type = writerInfo.m_type;
+    m_properties = writerInfo.m_properties;
 
     return *this;
 }
@@ -239,6 +241,13 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
             if (!m_type.addToCDRMessage(msg)) return false;
         }
     }
+
+    if(m_properties.properties.size()>0)
+    {
+        ParameterPropertyList_t p(m_properties);
+        if (!p.addToCDRMessage(msg)) return false;
+    }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -493,6 +502,14 @@ bool WriterProxyData::readFromCDRMessage(
                 break;
             }
 #endif
+            case PID_PROPERTY_LIST:
+            {
+                const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
+                assert(p != nullptr);
+                this->m_properties = *p;
+                break;
+            }
+
             default:
             {
                 //logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(param)->Pid <<" NOT CONSIDERED");
@@ -531,6 +548,8 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
+    m_properties.properties.clear();
+    m_properties.length = 0;
 }
 
 void WriterProxyData::copy(WriterProxyData* wdata)
@@ -552,6 +571,7 @@ void WriterProxyData::copy(WriterProxyData* wdata)
         m_type_id = wdata->m_type_id;
         m_type = wdata->m_type;
     }
+    m_properties = wdata->m_properties;
 }
 
 bool WriterProxyData::is_update_allowed(const WriterProxyData& wdata) const

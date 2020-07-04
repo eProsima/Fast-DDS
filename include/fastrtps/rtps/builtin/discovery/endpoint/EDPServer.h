@@ -142,16 +142,10 @@ protected:
      * @return True if successfully modified WriterHistory
      */
     bool addPublisherFromHistory(
-            CacheChange_t& c)
-    {
-        return addEndpointFromHistory(*publications_writer_.first, *publications_writer_.second, c);
-    }
+            CacheChange_t& c);
 
     bool addSubscriberFromHistory(
-            CacheChange_t& c)
-    {
-        return addEndpointFromHistory(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
-    }
+            CacheChange_t& c);
 
 private:
 
@@ -167,6 +161,7 @@ private:
             ProxyCont ParticipantProxyData::* pCont);
 
     //! addPublisherFromHistory and addSubscriberFromHistory common implementation
+    template<class Proxy>
     bool addEndpointFromHistory(
             StatefulWriter& writer,
             WriterHistory& history,

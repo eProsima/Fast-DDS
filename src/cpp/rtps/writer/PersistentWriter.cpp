@@ -64,7 +64,14 @@ void PersistentWriter::add_persistent_change(CacheChange_t* cptr)
 
 void PersistentWriter::remove_persistent_change(CacheChange_t* change)
 {
-    persistence_->remove_writer_change_from_storage(persistence_guid_, *change);
+    bool ret;
+    int count = 100;
+
+    do
+    {
+        ret = persistence_->remove_writer_change_from_storage(persistence_guid_, *change);
+    } while (!ret && --count);
+
 }
 
 } /* namespace rtps */

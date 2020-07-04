@@ -665,6 +665,65 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
 
 #endif
 
+template<class T, class PL>
+void set_proxy_property(const T& p, const char* PID, PL& properties)
+{
+    // only valid values
+    if (p == T::unknown())
+    {
+        return;
+    }
+
+    // generate pair
+    std::pair<std::string, std::string> pair;
+    pair.first = PID;
+
+    std::ostringstream data;
+    data << p;
+    pair.second = data.str();
+
+    // if exists replace
+    auto it = std::find_if(
+        properties.begin(),
+        properties.end(),
+        [&pair](const std::pair<std::string, std::string> & p)
+                {
+                    return pair.first == p.first;
+                });
+
+    if (it != properties.end())
+    {
+        *it = std::move(pair);
+    }
+    else
+    {
+        // if not exists add
+        properties.push_back(std::move(pair));
+    }
+}
+
+template<class T, class PL>
+T get_proxy_property(const char* const PID, PL& properties)
+{
+    T property;
+
+    auto it = std::find_if(
+        properties.begin(),
+        properties.end(),
+        [PID](const std::pair<std::string, std::string>& p)
+                {
+                    return PID == p.first;
+                });
+
+    if (it != properties.end())
+    {
+        std::istringstream in(it->second);
+        in >> property;
+    }
+
+    return property;
+}
+
 ///@}
 
 #endif

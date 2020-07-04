@@ -252,6 +252,7 @@ void EDPServer::processPersistentData()
     EDPSimple::processPersistentData(subscriptions_reader_, subscriptions_writer_, _SUBdemises);
 }
 
+template<class Proxy>
 bool EDPServer::addEndpointFromHistory(
         StatefulWriter& writer,
         WriterHistory& history,
@@ -295,14 +296,60 @@ bool EDPServer::addEndpointFromHistory(
     {
         // history.reserve_Cache(&pCh, DISCOVERY_PUBLICATION_DATA_MAX_SIZE )
         // history.reserve_Cache(&pCh, DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE )
-        if (history.reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
+        if (history.reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh)
         {
-            pCh->writerGUID = writer.getGuid();
-            return history.add_change(pCh, pCh->write_params);
+            if ( writer.getAttributes().durabilityKind == TRANSIENT_LOCAL )
+            {
+                // an ordinary server just copies the payload to history
+                pCh->copy(&c);
+                pCh->writerGUID = writer.getGuid();
+                return history.add_change(pCh, pCh->write_params);
+            }
+            else
+            {
+               pCh->copy_not_memcpy(&c);
+               // a backup server must add extra context properties to replace WriteParams functionality
+               RemoteLocatorsAllocationAttributes& locators_alloc = mp_RTPSParticipant->getAttributes().allocation.locators;
+               Proxy local_data(locators_alloc.max_unicast_locators, locators_alloc.max_multicast_locators);
+               CDRMessage_t deserialization_msg(c.serializedPayload);
+               if (local_data.readFromCDRMessage(&deserialization_msg, mp_RTPSParticipant->network_factory()))
+               {
+                   // insert identity within the payload
+                   // deserialized payload
+                   local_data.set_sample_identity(wp.sample_identity());
+
+                   // Update the payload Add: pCh->serializedPayload.reserve(local_data.get_serialized_size(true)); for
+                   // 2.0.x port.
+                   // Note that DISCOVERY_PUBLICATION_DATA_MAX_SIZE and DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE share value
+                   pCh->serializedPayload.reserve(DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
+
+                   // serialized payload
+                   CDRMessage_t serialization_msg(pCh->serializedPayload);
+                   if (local_data.writeToCDRMessage(&serialization_msg,true))
+                   {
+                       pCh->writerGUID = writer.getGuid();
+                       pCh->serializedPayload.length = (uint16_t)serialization_msg.length;
+                       // keep the original sample identity by using wp
+                       return history.add_change(pCh, wp);
+                   }
+               }
+            }
         }
     }
 
     return false;
+}
+
+bool EDPServer::addPublisherFromHistory(
+        CacheChange_t& c)
+{
+    return addEndpointFromHistory<WriterProxyData>(*publications_writer_.first, *publications_writer_.second, c);
+}
+
+bool EDPServer::addSubscriberFromHistory(
+        CacheChange_t& c)
+{
+    return addEndpointFromHistory<ReaderProxyData>(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
 }
 
 void EDPServer::removePublisherFromHistory(
