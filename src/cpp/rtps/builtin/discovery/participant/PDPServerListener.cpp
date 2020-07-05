@@ -184,8 +184,6 @@ void PDPServerListener::onNewCacheChangeAdded(
             return;
         }
 
-        std::unique_ptr<PDPServer::InPDPCallback> guard = parent_server_pdp_->signalCallback();
-
         if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
             return; // all changes related with this participant have been removed from history by removeRemoteParticipant

@@ -185,9 +185,17 @@ void EDPSimple::processPersistentData(
     // update format for 2.0.x port
     uint32_t qos_size;
     SampleIdentity si;
+    ChangeKind_t kind;
 
-    auto param_process = [&si](const Parameter_t* param)
+    auto param_process = [&si, &kind](const Parameter_t* param)
     {
+        // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
+        if (param->Pid == PID_PARTICIPANT_GUID )
+        {
+            kind = ALIVE;
+            return true;
+        }
+
         if (param->Pid == PID_PROPERTY_LIST)
         {
             si = SampleIdentity::unknown();
@@ -200,7 +208,7 @@ void EDPSimple::processPersistentData(
             it = std::find_if( it, properties.end(),
                     [](const std::pair<std::string, std::string>& p)
                     {
-                        return "PID_CLIENT_SERVER_KEY" == p.first;
+                    return "PID_CLIENT_SERVER_KEY" == p.first;
                     });
 
             if (it != properties.end())
@@ -218,9 +226,16 @@ void EDPSimple::processPersistentData(
             writer.second->changesEnd(),
             [&](CacheChange_t* change)
             {
-                 // We must retrieve the identity info from the payload and update the WriteParams
+                // Reset the variables referenced by the lambda
+                si = SampleIdentity::unknown();
+                kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
+
+                // We must retrieve the identity info from the payload and update the WriteParams
                 CDRMessage_t msg(change->serializedPayload);
                 ParameterList::readParameterListfromCDRMsg(msg, param_process, true, qos_size);
+
+                // determine kind
+                change->kind = kind;
 
                 // recover sample identity
                 if (si != SampleIdentity::unknown())

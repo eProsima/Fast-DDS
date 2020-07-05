@@ -402,7 +402,7 @@ inline std::istream& operator >>(
     return input;
 }
 
-#endif DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
 } // namespace fastrtps
