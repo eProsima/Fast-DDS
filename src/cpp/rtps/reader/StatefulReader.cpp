@@ -310,21 +310,17 @@ bool StatefulReader::processDataMsg(
     {
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            auto wlp = this->mp_RTPSParticipant->wlp();
+            if (wlp != nullptr)
             {
-                auto wlp = this->mp_RTPSParticipant->wlp();
-                if (wlp != nullptr)
-                {
-                    wlp->sub_liveliness_manager_->assert_liveliness(
-                        change->writerGUID,
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-                }
-                else
-                {
-                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-                }
+                wlp->sub_liveliness_manager_->assert_liveliness(
+                    change->writerGUID,
+                    liveliness_kind_,
+                    liveliness_lease_duration_);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
             }
         }
 
@@ -404,21 +400,17 @@ bool StatefulReader::processDataFragMsg(
     {
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            auto wlp = this->mp_RTPSParticipant->wlp();
+            if ( wlp != nullptr)
             {
-                auto wlp = this->mp_RTPSParticipant->wlp();
-                if ( wlp != nullptr)
-                {
-                    wlp->sub_liveliness_manager_->assert_liveliness(
-                        incomingChange->writerGUID,
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-                }
-                else
-                {
-                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-                }
+                wlp->sub_liveliness_manager_->assert_liveliness(
+                    incomingChange->writerGUID,
+                    liveliness_kind_,
+                    liveliness_lease_duration_);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
             }
         }
 
