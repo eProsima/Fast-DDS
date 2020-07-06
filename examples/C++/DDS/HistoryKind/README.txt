@@ -7,16 +7,16 @@
 
 eProsima Fast RTPS provides users with a wide range of configuration options. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours on the Publisher/Subscriber scheme.
 
-This example is a supplement to the UseCaseLauncher example, consisting on an application which ilustrates the effect the different kinds of Subscriber Histories have on sample storage.
+This example is a supplement to the UseCaseLauncher example, consisting on an application which illustrates the effect the different kinds of Subscriber Histories have on sample storage.
 
 2 - Configuration options
 --------------------------
 
 These are the main parameters that affect the behaviour of eProsima Fast RTPS and that are used in the Use Case set of example:
 
-- Reliability Kind 
-    
-    Defines how eProsima Fast RTPS deals upon possible packet loss during data exchanges.    
+- Reliability Kind
+
+    Defines how eProsima Fast RTPS deals upon possible packet loss during data exchanges.
 
     + Best Effort: No arrival confirmation. It is fast but lost samples are not re-sent.
     + Reliable: With arrival confirmation. It is slower but provides guarantee that all lost samples are re-sent and eventually received by the subscriber.
@@ -53,16 +53,16 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
     The depth is the amount of past samples that are stored in the history before starting to overwrite. Only takes effect when the History is on "Keep Last" mode.
 
 - History Size
-    
-    This accounts for the total number of samples that can be stored in the history, regardless of any other configuration option. 
+
+    This accounts for the total number of samples that can be stored in the history, regardless of any other configuration option.
 
 - Instances
-    
+
     Instances are the different data sinks the History is divided and act as receptors of the Keys.
 
 - Instance size
 
-    As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
+    As it happens with depth, you can define a maximum number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
 3. Application behaviour
 ------------------------
@@ -70,7 +70,7 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 This application spawns a Publisher and two Subscribers, one Keep-All and one Keep-Last with depth 10. Then it will publish 20 samples. After inspecting the contents of both subscribers histories you will see the following:
 
 * The Keep-All subscriber holds the 20 samples, because it stores all samples up to the maximum size of the History.
-* The Keep-Last subscriber holds samples 11 to 20. This is because after storing 10 samples (its depth) it startes to overwrite past samples.
+* The Keep-Last subscriber holds samples 11 to 20. This is because after storing 10 samples (its depth) it starts to overwrite past samples.
 
 4. Built-in tests
 -----------------
