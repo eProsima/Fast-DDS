@@ -125,7 +125,7 @@ bool StatelessReader::matched_writer_remove(
                 else
                 {
                     logError(RTPS_LIVELINESS,
-                        "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+                            "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
                 }
             }
 
@@ -144,11 +144,10 @@ bool StatelessReader::matched_writer_is_matched(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     return std::any_of(matched_writers_.begin(), matched_writers_.end(),
-        [writer_guid](
-                const RemoteWriterInfo_t& item)
-        {
-            return item.guid == writer_guid;
-        });
+                   [writer_guid](const RemoteWriterInfo_t& item)
+                   {
+                       return item.guid == writer_guid;
+                   });
 }
 
 bool StatelessReader::change_received(
@@ -200,7 +199,6 @@ bool StatelessReader::nextUntakenCache(
     return ret;
 }
 
-
 bool StatelessReader::nextUnreadCache(
         CacheChange_t** change,
         WriterProxy** /*wpout*/)
@@ -210,7 +208,7 @@ bool StatelessReader::nextUnreadCache(
     std::vector<CacheChange_t*>::iterator it;
 
     for (it = mp_history->changesBegin();
-            it!=mp_history->changesEnd(); ++it)
+            it != mp_history->changesEnd(); ++it)
     {
         if (!(*it)->isRead)
         {
@@ -234,7 +232,6 @@ bool StatelessReader::nextUnreadCache(
     logInfo(RTPS_READER, "No Unread elements left");
     return false;
 }
-
 
 bool StatelessReader::change_removed_by_history(
         CacheChange_t* ch,
@@ -274,8 +271,8 @@ bool StatelessReader::processDataMsg(
             {
                 change_to_add->copy_not_memcpy(change);
                 if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
-                        change->serializedPayload,
-                        change_to_add->serializedPayload, m_guid, change->writerGUID))
+                            change->serializedPayload,
+                            change_to_add->serializedPayload, m_guid, change->writerGUID))
                 {
                     releaseCache(change_to_add);
                     logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
@@ -284,7 +281,7 @@ bool StatelessReader::processDataMsg(
             }
             else
             {
-#endif
+#endif // if HAVE_SECURITY
             if (!change_to_add->copy(change))
             {
                 logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
@@ -295,7 +292,7 @@ bool StatelessReader::processDataMsg(
             }
 #if HAVE_SECURITY
         }
-#endif
+#endif // if HAVE_SECURITY
         }
         else
         {
@@ -334,7 +331,7 @@ bool StatelessReader::processDataFragMsg(
             if (!thereIsUpperRecordOf(writer_guid, incomingChange->sequenceNumber))
             {
                 logInfo(RTPS_MSG_IN, IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
-                    " TO reader: " << m_guid);
+                        " TO reader: " << m_guid);
 
                 // Early return if we already know abount a greater sequence number
                 CacheChange_t* work_change = writer.fragmented_change;
@@ -353,8 +350,8 @@ bool StatelessReader::processDataFragMsg(
                     {
                         change_to_add->copy_not_memcpy(incomingChange);
                         if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
-                            incomingChange->serializedPayload,
-                            change_to_add->serializedPayload, m_guid, writer_guid))
+                                    incomingChange->serializedPayload,
+                                    change_to_add->serializedPayload, m_guid, writer_guid))
                         {
                             releaseCache(change_to_add);
                             logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
@@ -362,12 +359,12 @@ bool StatelessReader::processDataFragMsg(
                         }
                     }
                 }
-#endif
+#endif // if HAVE_SECURITY
 
                 // Check if pending fragmented change should be dropped
                 if (work_change != nullptr)
                 {
-                    if(work_change->sequenceNumber < change_to_add->sequenceNumber)
+                    if (work_change->sequenceNumber < change_to_add->sequenceNumber)
                     {
                         // Pending change should be dropped. Check if it can be reused
                         if (sampleSize <= work_change->serializedPayload.max_size)
@@ -409,7 +406,7 @@ bool StatelessReader::processDataFragMsg(
                 CacheChange_t* change_completed = nullptr;
                 if (work_change != nullptr)
                 {
-                    if(work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
+                    if (work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
                             fragmentsInSubmessage))
                     {
                         change_completed = work_change;
@@ -424,7 +421,7 @@ bool StatelessReader::processDataFragMsg(
                 {
                     releaseCache(change_to_add);
                 }
-#endif
+#endif // if HAVE_SECURITY
 
                 // If the change was completed, process it.
                 if (change_completed != nullptr)
@@ -432,7 +429,8 @@ bool StatelessReader::processDataFragMsg(
                     if (!change_received(change_completed))
                     {
                         logInfo(RTPS_MSG_IN,
-                            IDSTRING "MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
+                                IDSTRING "MessageReceiver not add change " <<
+                                change_completed->sequenceNumber.to64long());
 
                         // Release CacheChange_t.
                         releaseCache(change_completed);
@@ -484,9 +482,9 @@ bool StatelessReader::acceptMsgFrom(
 
     return std::any_of(matched_writers_.begin(), matched_writers_.end(),
                    [&writerId](const RemoteWriterInfo_t& writer)
-    {
-        return writer.guid == writerId;
-    });
+                   {
+                       return writer.guid == writerId;
+                   });
 }
 
 bool StatelessReader::thereIsUpperRecordOf(
@@ -501,21 +499,17 @@ void StatelessReader::assert_writer_liveliness(
 {
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
-        if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-            writer_has_manual_liveliness(guid))
+        auto wlp = mp_RTPSParticipant->wlp();
+        if (wlp != nullptr)
         {
-            auto wlp = mp_RTPSParticipant->wlp();
-            if (wlp != nullptr)
-            {
-                wlp->sub_liveliness_manager_->assert_liveliness(
-                    guid,
-                    liveliness_kind_,
-                    liveliness_lease_duration_);
-            }
-            else
-            {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-            }
+            wlp->sub_liveliness_manager_->assert_liveliness(
+                guid,
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
         }
     }
 }
