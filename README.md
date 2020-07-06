@@ -72,6 +72,12 @@ For example, on Ubuntu you can install them by using its package manager with th
 sudo apt install libasio-dev libtinyxml2-dev
 ```
 
+On OpenSuSU, you can install these libraries using the next command
+
+```bash
+sudo zypper install asio-devel tinyxml2-devel 
+```
+
 On Windows, you can install these libraries using [Chocolatey](https://chocolatey.org).
 First, download the following chocolatey packages from this
 [ROS2 Github repository](https://github.com/ros2/choco-packages/releases/latest).
@@ -103,6 +109,7 @@ Download the repos file that will be used to download Fast RTPS and its dependen
 $ wget https://raw.githubusercontent.com/eProsima/Fast-DDS/master/fastrtps.repos
 $ mkdir src
 $ vcs import src < fastrtps.repos
+$ cd src
 ```
 
 Finally, use colcon to compile all software:
