@@ -348,7 +348,7 @@ bool StatefulReader::processDataMsg(
                 }
                 else
                 {
-#endif
+#endif // if HAVE_SECURITY
                 if (!change_to_add->copy(change))
                 {
                     logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: " << change->serializedPayload.length
@@ -359,7 +359,7 @@ bool StatefulReader::processDataMsg(
                 }
 #if HAVE_SECURITY
             }
-#endif
+#endif // if HAVE_SECURITY
             }
             else
             {
@@ -439,7 +439,7 @@ bool StatefulReader::processDataFragMsg(
                     }
                 }
             }
-#endif
+#endif // if HAVE_SECURITY
 
             CacheChange_t* change_created = nullptr;
             CacheChange_t* work_change = nullptr;
@@ -474,7 +474,7 @@ bool StatefulReader::processDataFragMsg(
             {
                 releaseCache(change_to_add);
             }
-#endif
+#endif // if HAVE_SECURITY
 
             // If this is the first time we have received fragments for this change, add it to history
             if (change_created != nullptr)
@@ -595,22 +595,24 @@ bool StatefulReader::processGapMsg(
             }
         }
 
-        gapList.for_each([&](SequenceNumber_t it)
-        {
-            if (pWP->irrelevant_change_set(it))
+        gapList.for_each(
+            [&](SequenceNumber_t it)
             {
-                CacheChange_t* to_remove = nullptr;
-                auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
-                if (to_remove != nullptr)
+                if (pWP->irrelevant_change_set(it))
                 {
-                    history_iterator = mp_history->remove_change_nts(to_remove, ret_iterator);
+                    CacheChange_t* to_remove = nullptr;
+                    auto ret_iterator =
+                    findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                    if (to_remove != nullptr)
+                    {
+                        history_iterator = mp_history->remove_change_nts(to_remove, ret_iterator);
+                    }
+                    else if (ret_iterator != mp_history->changesEnd())
+                    {
+                        history_iterator = ret_iterator;
+                    }
                 }
-                else if (ret_iterator != mp_history->changesEnd())
-                {
-                    history_iterator = ret_iterator;
-                }
-            }
-        });
+            });
 
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
@@ -1018,34 +1020,35 @@ void StatefulReader::send_acknack(
 
             missing_changes.for_each(
                 [&](const SequenceNumber_t& seq)
-            {
-                // Check if the CacheChange_t is uncompleted.
-                CacheChange_t* uncomplete_change = nullptr;
-                auto ret_iterator = findCacheInFragmentedProcess(seq, guid, &uncomplete_change, history_iterator);
-                if (ret_iterator != mp_history->changesEnd())
                 {
-                    history_iterator = ret_iterator;
-                }
-                if (uncomplete_change == nullptr)
-                {
-                    if (!sns.add(seq))
+                    // Check if the CacheChange_t is uncompleted.
+                    CacheChange_t* uncomplete_change = nullptr;
+                    auto ret_iterator = findCacheInFragmentedProcess(seq, guid, &uncomplete_change, history_iterator);
+                    if (ret_iterator != mp_history->changesEnd())
                     {
-                        logInfo(RTPS_READER, "Sequence number " << seq
-                                                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: "
-                                                                << sns.base());
+                        history_iterator = ret_iterator;
                     }
-                }
-                else
-                {
-                    FragmentNumberSet_t frag_sns;
-                    uncomplete_change->get_missing_fragments(frag_sns);
-                    ++nackfrag_count_;
-                    logInfo(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
+                    if (uncomplete_change == nullptr)
+                    {
+                        if (!sns.add(seq))
+                        {
+                            logInfo(RTPS_READER, "Sequence number " << seq
+                                                                    <<
+                                " exceeded bitmap limit of AckNack. SeqNumSet Base: "
+                                                                    << sns.base());
+                        }
+                    }
+                    else
+                    {
+                        FragmentNumberSet_t frag_sns;
+                        uncomplete_change->get_missing_fragments(frag_sns);
+                        ++nackfrag_count_;
+                        logInfo(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
 
-                    group.add_nackfrag(seq, frag_sns, nackfrag_count_);
-                }
+                        group.add_nackfrag(seq, frag_sns, nackfrag_count_);
+                    }
 
-            });
+                });
 
             acknack_count_++;
             logInfo(RTPS_READER, "Sending ACKNACK: " << sns; );
