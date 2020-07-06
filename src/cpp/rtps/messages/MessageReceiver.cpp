@@ -549,7 +549,7 @@ bool MessageReceiver::proc_Submsg_Data(
     msg->pos += 2;
 
     bool valid = true;
-    int16_t octetsToInlineQos;
+    int16_t octetsToInlineQos = 0;
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
@@ -705,7 +705,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     msg->pos += 2;
 
     bool valid = true;
-    int16_t octetsToInlineQos;
+    int16_t octetsToInlineQos = 0;
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
@@ -742,7 +742,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     valid &= CDRMessage::readUInt16(msg, &fragmentsInSubmessage);
 
     // READ FRAGMENTSIZE
-    uint16_t fragmentSize;
+    uint16_t fragmentSize = 0;
     valid &= CDRMessage::readUInt16(msg, &fragmentSize);
 
     // READ SAMPLESIZE
