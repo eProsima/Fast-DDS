@@ -145,8 +145,6 @@ private:
 
         if (ret != 0)
         {
-            char errmsg[1024];
-            strerror_s(errmsg, sizeof(errmsg), errno);
             return -1;
         }
 
