@@ -24,8 +24,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-//Funciones de serializacion y deserializacion para el ejemplo
-bool ThroughputDataType::serialize(void*data,SerializedPayload_t* payload)
+// Serialization and deserialization functions
+bool ThroughputDataType::serialize(void*data, SerializedPayload_t* payload)
 {
     ThroughputType* lt = (ThroughputType*)data;
     memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
@@ -33,7 +33,7 @@ bool ThroughputDataType::serialize(void*data,SerializedPayload_t* payload)
     memcpy(payload->data + 4, &data_size, sizeof(data_size));
     //	std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
     memcpy(payload->data + 8, lt->data.data(), lt->data.size());
-    payload->length = 8 + lt->data.size();
+    payload->length = 8 + static_cast<uint32_t>(lt->data.size());
     return true;
 }
 
