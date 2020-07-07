@@ -14,9 +14,9 @@ This example is a supplement to the UseCaseLauncher example, consisting on an ap
 
 These are the main parameters that affect the behaviour of eProsima Fast RTPS and that are used in the Use Case set of example:
 
-- Reliability Kind 
-    
-    Defines how eProsima Fast RTPS deals upon possible packet loss during data exchanges.    
+- Reliability Kind
+
+    Defines how eProsima Fast RTPS deals upon possible packet loss during data exchanges.
 
     + Best Effort: No arrival confirmation. It is fast but lost samples are not re-sent.
     + Reliable: With arrival confirmation. It is slower but provides guarantee that all lost samples are re-sent and eventually received by the subscriber.
@@ -53,11 +53,11 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
     The depth is the amount of past samples that are stored in the history before starting to overwrite. Only takes effect when the History is on "Keep Last" mode.
 
 - History Size
-    
-    This accounts for the total number of samples that can be stored in the history, regardless of any other configuration option. 
+
+    This accounts for the total number of samples that can be stored in the history, regardless of any other configuration option.
 
 - Instances
-    
+
     Instances are the different data sinks the History is divided and act as receptors of the Keys.
 
 - Instance size
@@ -69,7 +69,7 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 
 The application creates a Publisher and posts 20 samples on the topic BEFORE creating the subscriber. Then it creates a Transient-Local and a Volatile subscriber and it posts 20 more samples. After analyzing the contexts the subscribers you will see:
 
-* The Volatile Subsciber only holds the las 20 samples sent after its creation.
+* The Volatile Subsciber only holds the last 20 samples sent after its creation.
 * The Transient-Local Subscriber holds all samples, including the 20 that were sent before its creation.
 
 4. Built-in tests
