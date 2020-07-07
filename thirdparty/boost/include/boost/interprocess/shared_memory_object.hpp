@@ -394,10 +394,22 @@ inline bool shared_memory_object::remove(const char *filename)
 
 inline void shared_memory_object::truncate(offset_t length)
 {
+#ifdef BOOST_FASTDDS_PATCHES
+
+   if (0 != fallocate(m_handle, 0, 0, length))
+   {
+       error_info err(system_error_code());
+       throw interprocess_exception(err);
+   }
+
+#else // Original BOOST code
+
    if(0 != ftruncate(m_handle, length)){
       error_info err(system_error_code());
       throw interprocess_exception(err);
    }
+
+#endif
 }
 
 inline void shared_memory_object::priv_close()

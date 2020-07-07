@@ -18,10 +18,11 @@
 #define BOOST_DATE_TIME_NO_LIB
 #define BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
 #define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 1000
+#define BOOST_FASTDDS_PATCHES
 
 #ifdef __APPLE__
 #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
-#endif
+#endif // ifdef __APPLE__
 
 #ifdef _MSC_VER
 
@@ -38,8 +39,8 @@
 #include <boost/interprocess/detail/workaround.hpp>
 #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
 /*#if defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
-#error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
-#endif*/
+ #error "BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION must be disabled in boost/interprocess/detail/workarround.hpp"
+ #endif*/
 
 // Todo(Adolfo): BlackBox.SHMTransportPubSub fail with BOOST_INTERPROCESS_USE_WINDOWS
 //#define BOOST_INTERPROCESS_USE_WINDOWS
@@ -48,7 +49,7 @@
 #endif // _MSC_VER_
 
 /**
- * This singleton class performs some necesary system dependent initializations 
+ * This singleton class performs some necesary system dependent initializations
  * before start working with shared-memory
  */
 class SharedMemEnvironment
@@ -58,11 +59,11 @@ public:
     SharedMemEnvironment()
 #ifdef _MSC_VER
         : is_init_done_(false)
-#endif
+#endif // ifdef _MSC_VER
     {
     }
 
-    /** 
+    /**
      * @return the singleton instance
      */
     static SharedMemEnvironment& get()
@@ -80,11 +81,11 @@ public:
         if (!is_init_done_)
         {
             get().create_shared_dir_if_doesnt_exist();
-            
+
         }
 
         is_init_done_ = true;
-#endif
+#endif // ifdef _MSC_VER
     }
 
 private:
@@ -113,7 +114,8 @@ private:
     {
         system("del " BOOST_INTERPROCESS_SHARED_DIR_PATH "\\*.* /Q");
     }
-#endif
+
+#endif // ifdef _MSC_VER
 
 };
 
