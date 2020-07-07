@@ -41,8 +41,8 @@ This project is part of [FIWARE](https://www.fiware.org/). For more information 
 
 <br/>
 
-**Want us to share your project with the community?  
-Write to Evaluation.Support@eprosima.com or mention @EProsima on Twitter.  
+**Want us to share your project with the community?
+Write to Evaluation.Support@eprosima.com or mention @EProsima on Twitter.
 We are curious to get to know your use case!**
 
 <br/>
@@ -150,10 +150,10 @@ $ cmake --build . --target install
 You can access the documentation online, which is hosted on [Read the Docs](https://fast-dds.docs.eprosima.com).
 
 * [Start Page](https://fast-dds.docs.eprosima.com)
-* [Installation manual](https://fast-dds.docs.eprosima.com/en/latest/requirements.html)
-* [User manual](https://fast-dds.docs.eprosima.com/en/latest/introduction.html)
-* [FastRTPSGen manual](https://fast-dds.docs.eprosima.com/en/latest/geninfo.html)
-* [Release notes](https://fast-dds.docs.eprosima.com/en/latest/notes.html)
+* [Installation manual](https://fast-dds.docs.eprosima.com/en/latest/installation/binaries/binaries_linux.html)
+* [User manual](https://fast-dds.docs.eprosima.com/en/latest/fastdds/getting_started/getting_started.html)
+* [Fast DDS-Gen manual](https://fast-dds.docs.eprosima.com/en/latest/fastddsgen/introduction/introduction.html)
+* [Release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html)
 
 ## Quick Demo
 
