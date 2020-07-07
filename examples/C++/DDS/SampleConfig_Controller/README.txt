@@ -62,7 +62,7 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 
 - Instance size
 
-    As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
+    As it happens with depth, you can define a maximum number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
 5. Application examples
 ----------------------
