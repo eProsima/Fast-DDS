@@ -23,6 +23,8 @@
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastdds/rtps/attributes/ServerAttributes.h>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -826,6 +828,7 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
                 // and makes the intraprocess delivery on a deleted builtin reader.
                 participant_1.create_additional_topics(1);
             };
+
     EXPECT_NO_THROW(second_participant_process());
 
     // Stop endpoint creation thread
@@ -845,5 +848,145 @@ INSTANTIATE_TEST_CASE_P(Discovery,
             return "NonIntraprocess";
         });
 
+//! Tests the server-client setup using environment variable works fine
+TEST(Discovery, ServerClientEnvironmentSetUp)
+{
+    using namespace std;
 
+    RemoteServerList_t output, standard;
+    RemoteServerAttributes att;
+    Locator_t loc;
 
+    // We are going to use several test string and check they are properly parsed and turn into RemoteServerList_t
+    // 1. single server address without specific port provided
+    string text = "192.168.36.34";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, text);
+    IPLocator::setPhysicalPort(loc, DEFAULT_ROS2_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 2. single server address specifying a custom listening port
+    text = "192.168.36.34:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, text);
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 3. check any locator is turned into localhost
+    text = "0.0.0.0:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, string("127.0.0.1"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 4. check empty string scenario is handled
+    text = "";
+    output.clear();
+
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+    // 5. check at least one server be present scenario is hadled
+    text = ";;;;";
+    output.clear();
+
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+    // 6. check several server scenario
+    text = "192.168.36.34:14520;172.29.55.77:8783;172.30.80.1:31090";
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.29.55.77"));
+    IPLocator::setPhysicalPort(loc, 8783);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(1, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.30.80.1"));
+    IPLocator::setPhysicalPort(loc, 31090);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(2, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 7. check ignore some servers scenario
+    text = ";192.168.36.34:14520;;172.29.55.77:8783;172.30.80.1:31090;";
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(1, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.29.55.77"));
+    IPLocator::setPhysicalPort(loc, 8783);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(3, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.30.80.1"));
+    IPLocator::setPhysicalPort(loc, 31090);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(4, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 7. check ignore some servers scenario
+    text = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+            ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+            ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;192.168.36.34:14520";
+    output.clear();
+
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+    // 8. check non-consistent addresses scenario
+    text = "192.168.36.34:14520;localhost:12345;172.30.80.1:31090;";
+
+    output.clear();
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+}

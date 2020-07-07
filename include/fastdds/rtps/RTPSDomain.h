@@ -154,12 +154,14 @@ public:
     /**
      * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
      * @param domain_id DDS domain associated
+     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
      * @param attrs RTPSParticipant Attributes.
      * @param listen Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
      */
     static RTPSParticipant* clientServerEnvironmentCreationOverride(
             uint32_t domain_id,
+            bool enabled,
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* listen /*= nullptr*/);
 
@@ -195,8 +197,8 @@ private:
     static std::set<uint32_t> m_RTPSParticipantIDs;
 };
 
-}
-} /* namespace  */
+} // namespace rtps
+} /* namespace fastrtps  */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_DOMAIN_H_*/

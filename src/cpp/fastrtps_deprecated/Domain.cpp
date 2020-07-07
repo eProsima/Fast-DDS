@@ -167,16 +167,17 @@ Participant* Domain::createParticipant(
         ParticipantListener* listen)
 {
     Participant* pubsubpar = new Participant();
-    ParticipantImpl* pspartimpl = new ParticipantImpl(att,pubsubpar,listen);
+    ParticipantImpl* pspartimpl = new ParticipantImpl(att, pubsubpar, listen);
 
-    // If DEFAULT_ROS2_MASTER_URI is specified then try to create default server or client if
+    // If DEFAULT_ROS2_MASTER_URI is specified then try to create default client if
     // that already exists.
     RTPSParticipant* part = RTPSDomain::clientServerEnvironmentCreationOverride(
         att.domainId,
+        true,
         att.rtps,
         &pspartimpl->m_rtps_listener);
 
-    if(part == nullptr)
+    if (part == nullptr)
     {
         // Default creation procedure
         part = RTPSDomain::createParticipant(att.domainId, att.rtps, &pspartimpl->m_rtps_listener);
