@@ -241,7 +241,9 @@ public:
     void processPersistentData();
 
     //! adds identity info to DATA(p[UD])s in order to keep it through persistance serialization process
-    static bool set_data_disposal_payload(CDRMessage_t* msg, const SampleIdentity& sid);
+    static bool set_data_disposal_payload(
+            CDRMessage_t* msg,
+            const SampleIdentity& sid);
 
     //! Wakes up the DServerEvent for new matching or trimming
     void awakeServerThread()

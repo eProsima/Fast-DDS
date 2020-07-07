@@ -187,7 +187,7 @@ inline bool operator <(
     return false;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 const GUID_t c_Guid_Unknown;
 
@@ -254,7 +254,7 @@ inline std::istream& operator >>(
     return input;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
 } // namespace fastrtps

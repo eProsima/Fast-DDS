@@ -188,38 +188,38 @@ void EDPSimple::processPersistentData(
     ChangeKind_t kind;
 
     auto param_process = [&si, &kind](const Parameter_t* param)
-    {
-        // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
-        if (param->Pid == PID_PARTICIPANT_GUID )
-        {
-            kind = ALIVE;
-            return true;
-        }
-
-        if (param->Pid == PID_PROPERTY_LIST)
-        {
-            si = SampleIdentity::unknown();
-            const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
-            assert(p != nullptr);
-
-            const auto & properties = p->properties;
-            auto it = properties.begin();
-
-            it = std::find_if( it, properties.end(),
-                    [](const std::pair<std::string, std::string>& p)
-                    {
-                    return "PID_CLIENT_SERVER_KEY" == p.first;
-                    });
-
-            if (it != properties.end())
             {
-                std::istringstream in(it->second);
-                in >> si;
-            }
-        }
+                // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
+                if (param->Pid == PID_PARTICIPANT_GUID )
+                {
+                    kind = ALIVE;
+                    return true;
+                }
 
-        return true;
-    };
+                if (param->Pid == PID_PROPERTY_LIST)
+                {
+                    si = SampleIdentity::unknown();
+                    const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
+                    assert(p != nullptr);
+
+                    const auto& properties = p->properties;
+                    auto it = properties.begin();
+
+                    it = std::find_if( it, properties.end(),
+                                    [](const std::pair<std::string, std::string>& p)
+                                    {
+                                        return "PID_CLIENT_SERVER_KEY" == p.first;
+                                    });
+
+                    if (it != properties.end())
+                    {
+                        std::istringstream in(it->second);
+                        in >> si;
+                    }
+                }
+
+                return true;
+            };
 
 
     std::for_each(writer.second->changesBegin(),
@@ -244,7 +244,7 @@ void EDPSimple::processPersistentData(
                     change->write_params.related_sample_identity(si);
                 }
 
-               // Get Participant InstanceHandle
+                // Get Participant InstanceHandle
                 InstanceHandle_t handle;
                 {
                     GUID_t guid = iHandle2GUID(change->instanceHandle);

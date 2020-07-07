@@ -312,7 +312,8 @@ bool EDPServer::addEndpointFromHistory(
                 if (c.kind == ALIVE)
                 {
                     // a backup server must add extra context properties to replace WriteParams functionality
-                    RemoteLocatorsAllocationAttributes& locators_alloc = mp_RTPSParticipant->getAttributes().allocation.locators;
+                    RemoteLocatorsAllocationAttributes& locators_alloc =
+                            mp_RTPSParticipant->getAttributes().allocation.locators;
                     Proxy local_data(locators_alloc.max_unicast_locators, locators_alloc.max_multicast_locators);
                     CDRMessage_t deserialization_msg(c.serializedPayload);
                     if (local_data.readFromCDRMessage(&deserialization_msg, mp_RTPSParticipant->network_factory()))
@@ -328,7 +329,7 @@ bool EDPServer::addEndpointFromHistory(
 
                         // serialized payload
                         CDRMessage_t serialization_msg(pCh->serializedPayload);
-                        if (local_data.writeToCDRMessage(&serialization_msg,true))
+                        if (local_data.writeToCDRMessage(&serialization_msg, true))
                         {
                             pCh->writerGUID = writer.getGuid();
                             pCh->serializedPayload.length = (uint16_t)serialization_msg.length;
@@ -342,7 +343,7 @@ bool EDPServer::addEndpointFromHistory(
                     // It's a DATA(w|r[UD]). We need to generate the payload
                     pCh->serializedPayload.reserve(DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
                     CDRMessage_t msg(pCh->serializedPayload);
-                    if (PDPServer::set_data_disposal_payload(&msg,wp.sample_identity()))
+                    if (PDPServer::set_data_disposal_payload(&msg, wp.sample_identity()))
                     {
                         pCh->writerGUID = writer.getGuid();
                         pCh->serializedPayload.length = (uint16_t)msg.length;
