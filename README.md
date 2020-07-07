@@ -72,7 +72,7 @@ For example, on Ubuntu you can install them by using its package manager with th
 sudo apt install libasio-dev libtinyxml2-dev
 ```
 
-On OpenSuSU, you can install these libraries using the next command
+On OpenSuSE, you can install these libraries using the next command
 
 ```bash
 sudo zypper install asio-devel tinyxml2-devel 
