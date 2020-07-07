@@ -7,16 +7,16 @@
 
 eProsima Fast RTPS provides users with a wide range of configuration options. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours on the Publisher/Subscriber scheme.
 
-This example is a supplement to the UseCaseLauncher example, consisting on a sample Publisher-Subscriber application with a configuration optimized to perform secure event-based transmissions. 
+This example is a supplement to the UseCaseLauncher example, consisting on a sample Publisher-Subscriber application with a configuration optimized to perform secure event-based transmissions.
 
 2 - Configuration options
 --------------------------
 
 These are the main parameters that affect the behaviour of eProsima Fast RTPS and that are used in the Use Case set of example:
 
-- Reliability Kind 
-    
-    Defines how eProsima Fast RTPS deals upon possible packet loss during data exchanges.    
+- Reliability Kind
+
+    Defines how eProsima Fast RTPS deals upon possible packet loss during data exchanges.
 
     + Best Effort: No arrival confirmation. It is fast but lost samples are not re-sent.
     + Reliable: With arrival confirmation. It is slower but provides guarantee that all lost samples are re-sent and eventually received by the subscriber.
@@ -53,11 +53,11 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
     The depth is the amount of past samples that are stored in the history before starting to overwrite. Only takes effect when the History is on "Keep Last" mode.
 
 - History Size
-    
-    This accounts for the total number of samples that can be stored in the history, regardless of any other configuration option. 
+
+    This accounts for the total number of samples that can be stored in the history, regardless of any other configuration option.
 
 - Instances
-    
+
     Instances are the different data sinks the History is divided and act as receptors of the Keys.
 
 - Instance size
@@ -73,15 +73,15 @@ The following list provides examples configurations for real-life scenarios, inc
 
 Audio and Video transmission have a common characteristic: Having a stable, high datarate feed is more important than having a 100% lossless transmission.
 
-	Reliability: Best-Effort. We want to have a fast tranmission. If a sample is lost, it can be recovered via error-correcting algorithms.
+	Reliability: Best-Effort. We want to have a fast transmission. If a sample is lost, it can be recovered via error-correcting algorithms.
 	Durability: Volatile. We do not mind data from the past, we want to stream what is happening in the present.
 	History: Keep-Last with Low Depth. Once displayed or recorded on the receiving application, they are not needed in the History.
-	note: In the case of video, depth can be as low as 1. A missing sample of a 50 frames per second stream represents virtually no information loss. 
+	note: In the case of video, depth can be as low as 1. A missing sample of a 50 frames per second stream represents virtually no information loss.
 
 - Distributed measurement: Controllers
 
 Lets say we have a factory with a network of distributed temperature sensors and we want to use eProsima Fast RTPS to send data from said sensors to an automation computer which
-makes decisions based on the temperature distribution. We would group all sensors within one single topic, 
+makes decisions based on the temperature distribution. We would group all sensors within one single topic,
 
 	Reliability: Reliable. We want to make sure samples are not lost. Furthermore, since reliable more ensures data delivery, it allows us to detect hardware problems when a sensor becomes silent
 	Keys: We use a separate key for each sensor. That way new messages from one sensor dont affect the storage of past samples from another sensor.
@@ -92,7 +92,7 @@ makes decisions based on the temperature distribution. We would group all sensor
 
 In some cases, you may want to transmit information only under certain circumstances that happen in your system, for example a photo from a surveillance camera when it detects movement.
 In these cases and due to the low  it is important that all datagrams reach their destination
-		
+
 	Reliability: Reliable. All samples must reach their destination.
 	Durability: Volatile. Since corrective actions are taken as events come, past triggers provide have no use.
 	History: Keep-Last. No past alarm information is necessary for present-time transmissions.

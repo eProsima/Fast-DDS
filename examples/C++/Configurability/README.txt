@@ -131,7 +131,7 @@ The following list provides examples configurations for real-life scenarios, as 
 
 Audio and Video transmission have a common characteristic: Having a stable, high datarate feed is more important than having a 100% lossless transmission.
 
-	Reliability: Best-Effort. We want to have a fast tranmission. If a sample is lost, it can be recovered via error-correcting algorithms.
+	Reliability: Best-Effort. We want to have a fast transmission. If a sample is lost, it can be recovered via error-correcting algorithms.
 	Durability: Volatile. We do not mind data from the past, we want to stream what is happening in the present.
 	History: Keep-Last with Low Depth. Once displayed or recorded on the receiving application, they are not needed in the History.
 	note: In the case of video, depth can be as low as 1. A missing sample of a 50 frames per second stream represents virtually no information loss. 
