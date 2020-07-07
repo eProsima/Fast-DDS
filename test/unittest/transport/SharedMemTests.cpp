@@ -38,7 +38,8 @@ using namespace eprosima::fastdds::rtps;
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#include <sys/statvfs.h>
+#endif // if defined(_WIN32)
 
 static uint16_t g_default_port = 0;
 static uint16_t g_output_port = 0;
@@ -92,43 +93,48 @@ public:
 
     static constexpr uint32_t TEST_MAX_NOTIFICATIONS = 3;
 
-    void wait_test(int id, 
-        SharedMemSegment::mutex& mutex,
-        SharedMemSegment::condition_variable& cv,
-        bool* condition,
-        std::atomic<uint32_t>& notifications_counter,
-        boost::posix_time::milliseconds time_out)
+    void wait_test(
+            int id,
+            SharedMemSegment::mutex& mutex,
+            SharedMemSegment::condition_variable& cv,
+            bool* condition,
+            std::atomic<uint32_t>& notifications_counter,
+            boost::posix_time::milliseconds time_out)
     {
-        std::thread thread_wait([&] 
-            {
-                std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+        std::thread thread_wait([&]
+                {
+                    std::unique_lock<SharedMemSegment::mutex> lock(mutex);
 
-                while(notifications_counter.load() < TEST_MAX_NOTIFICATIONS)
-                {                                   
-                    boost::system_time const timeout =
-                        boost::get_system_time()+ time_out;
-
-                    std::cout << "P" << id << " waiting..." << std::endl;
-
-                    if(cv.timed_wait(lock, timeout, [&] { return *condition; }))
+                    while (notifications_counter.load() < TEST_MAX_NOTIFICATIONS)
                     {
-                        notifications_counter.fetch_add(1);
-                        *condition = false;
+                        boost::system_time const timeout =
+                        boost::get_system_time() + time_out;
 
-                        std::cout << "P" << id << " " << notifications_counter.load()
-                            << " notifications received." << std::endl;
+                        std::cout << "P" << id << " waiting..." << std::endl;
+
+                        if (cv.timed_wait(lock, timeout, [&]
+                        {
+                            return *condition;
+                        }))
+                        {
+                            notifications_counter.fetch_add(1);
+                            *condition = false;
+
+                            std::cout << "P" << id << " " << notifications_counter.load()
+                                      << " notifications received." << std::endl;
+                        }
+                        else
+                        {
+                            std::cout << "P" << id << " wait timeout!" << std::endl;
+                        }
                     }
-                    else
-                    {
-                        std::cout << "P" << id << " wait timeout!" << std::endl;
-                    }
-                } 
-            });
-        
+                });
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         thread_wait.join();
     }
+
 };
 
 
@@ -166,6 +172,7 @@ protected:
         ring_buffer_.reset();
         cells_.reset();
     }
+
 };
 
 class SHMRingBufferMultiThread
@@ -179,13 +186,14 @@ TEST_F(SHMRingBuffer, test_read_write_bounds)
 {
     auto listener = ring_buffer_->register_listener();
 
-    for (uint32_t i = 0; i<buffer_size_; i++){
-        ring_buffer_->push({0,i});
+    for (uint32_t i = 0; i < buffer_size_; i++)
+    {
+        ring_buffer_->push({0, i});
     }
 
-    ASSERT_THROW(ring_buffer_->push({0,(std::numeric_limits<uint32_t>::max)()}), std::exception);
+    ASSERT_THROW(ring_buffer_->push({0, (std::numeric_limits<uint32_t>::max)()}), std::exception);
 
-    for (uint32_t i = 0; i<buffer_size_; i++)
+    for (uint32_t i = 0; i < buffer_size_; i++)
     {
         EXPECT_EQ(listener->head()->data().counter, i);
         listener->pop();
@@ -203,26 +211,27 @@ TEST_F(SHMRingBuffer, circular_pointer)
     auto listener = ring_buffer_->register_listener();
 
     // Buffer full
-    for (; i<buffer_size_; i++){
-        ring_buffer_->push({0,w++});
+    for (; i < buffer_size_; i++)
+    {
+        ring_buffer_->push({0, w++});
     }
 
     i = (i % buffer_size_);
     ASSERT_EQ(i, 0u);
 
     // Another cicle
-    for (; i<buffer_size_; i++)
+    for (; i < buffer_size_; i++)
     {
         ASSERT_EQ(listener->head()->data().counter, r++);
         listener->pop();
-        ring_buffer_->push({0,w++});
+        ring_buffer_->push({0, w++});
     }
 
     i = (i % buffer_size_);
     ASSERT_EQ(i, 0u);
 
     // Flush the buffer
-    for (; i<buffer_size_; i++)
+    for (; i < buffer_size_; i++)
     {
         ASSERT_EQ(listener->head()->data().counter, r++);
         listener->pop();
@@ -237,12 +246,12 @@ TEST_F(SHMRingBuffer, one_listener_reads_all)
     auto listener1 = ring_buffer_->register_listener();
     auto listener2 = ring_buffer_->register_listener();
 
-    for (uint32_t i=0; i<buffer_size_; i++)
+    for (uint32_t i = 0; i < buffer_size_; i++)
     {
-        ring_buffer_->push({0,i});
+        ring_buffer_->push({0, i});
     }
 
-    for (uint32_t i=0; i<buffer_size_; i++)
+    for (uint32_t i = 0; i < buffer_size_; i++)
     {
         listener1->pop();
     }
@@ -269,12 +278,12 @@ TEST_F(SHMRingBuffer, copy)
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(0u, enqueued_data.size());
 
-    ring_buffer->push({ 0,0 });
+    ring_buffer->push({ 0, 0 });
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(1u, enqueued_data.size());
     enqueued_data.clear();
 
-    ring_buffer->push({ 0,1 });
+    ring_buffer->push({ 0, 1 });
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(2u, enqueued_data.size());
 
@@ -284,7 +293,7 @@ TEST_F(SHMRingBuffer, copy)
     listener->pop();
 
     enqueued_data.clear();
-    ring_buffer->push({ 0,2 });
+    ring_buffer->push({ 0, 2 });
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(2u, enqueued_data.size());
 
@@ -294,7 +303,7 @@ TEST_F(SHMRingBuffer, copy)
     listener->pop();
 
     enqueued_data.clear();
-    ring_buffer->push({ 0,3 });
+    ring_buffer->push({ 0, 3 });
     ring_buffer->copy(&enqueued_data);
     ASSERT_EQ(2u, enqueued_data.size());
 
@@ -315,18 +324,18 @@ TEST_F(SHMRingBuffer, copy)
 TEST_F(SHMRingBuffer, listeners_register_unregister)
 {
     // 0 Must be discarted because no listeners
-    ring_buffer_->push({0,0});
+    ring_buffer_->push({0, 0});
 
     auto listener1 = ring_buffer_->register_listener();
     // 1 Must be only read by listener1
-    ring_buffer_->push({0,1});
+    ring_buffer_->push({0, 1});
 
     auto listener2 = ring_buffer_->register_listener();
     // 2 Must be read by listener1 and listener 2
-    ring_buffer_->push({0,2});
+    ring_buffer_->push({0, 2});
 
     // 3
-    ring_buffer_->push({0,3});
+    ring_buffer_->push({0, 3});
 
     ASSERT_EQ(listener1->head()->data().counter, 1u);
     ASSERT_EQ(listener2->head()->data().counter, 2u);
@@ -340,7 +349,7 @@ TEST_F(SHMRingBuffer, listeners_register_unregister)
     listener1.reset();
 
     // 4
-    ring_buffer_->push({0,4});
+    ring_buffer_->push({0, 4});
 
     ASSERT_EQ(listener2->head()->data().counter, 3u);
     listener2->pop(); // 3
@@ -365,25 +374,27 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
         threads.emplace_back(
             std::thread(
                 [&]()
-        {
-            std::vector<uint32_t> read_counters(num_listeners_writters, (std::numeric_limits<uint32_t>::max)());
-            MultiProducerConsumerRingBuffer<MyData>::Cell* cell;
+                {
+                    std::vector<uint32_t> read_counters(num_listeners_writters, (std::numeric_limits<uint32_t>::max)());
+                    MultiProducerConsumerRingBuffer<MyData>::Cell* cell;
 
-            auto listener = ring_buffer_->register_listener();
-            ready_listeners.fetch_add(1);
+                    auto listener = ring_buffer_->register_listener();
+                    ready_listeners.fetch_add(1);
 
-            do
-            {
-                // poll until there's data
-                while (nullptr == (cell = listener->head()));
+                    do
+                    {
+                        // poll until there's data
+                        while (nullptr == (cell = listener->head()))
+                        {
+                        }
 
-                ASSERT_EQ(++read_counters[cell->data().thread_number], cell->data().counter);
+                        ASSERT_EQ(++read_counters[cell->data().thread_number], cell->data().counter);
 
-                listener->pop();
+                        listener->pop();
 
-            } while (cell->data().counter != elements_to_push-1);
+                    } while (cell->data().counter != elements_to_push - 1);
 
-        }));
+                }));
     }
 
     // Wait until all listeners ready
@@ -398,23 +409,23 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
         threads.emplace_back(
             std::thread(
                 [&](uint32_t thread_number)
-        {
-            for (uint32_t c = 0; c < elements_to_push; c++)
-            {
-                bool success = false;
-                while (!success)
                 {
-                    try
+                    for (uint32_t c = 0; c < elements_to_push; c++)
                     {
-                        ring_buffer_->push({thread_number, c});
-                        success = true;
+                        bool success = false;
+                        while (!success)
+                        {
+                            try
+                            {
+                                ring_buffer_->push({thread_number, c});
+                                success = true;
+                            }
+                            catch (const std::exception&)
+                            {
+                            }
+                        }
                     }
-                    catch (const std::exception&)
-                    {
-                    }
-                }
-            }
-        }, i));
+                }, i));
     }
 
     for (uint32_t i = 0; i < num_register_unregister; i++)
@@ -423,21 +434,23 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
         threads.emplace_back(
             std::thread(
                 [&]()
-        {
-            auto listener = ring_buffer_->register_listener();
+                {
+                    auto listener = ring_buffer_->register_listener();
 
-            // Reads two times the size values
-            for (uint32_t i=0; i<buffer_size_*2; i++)
-            {
-                // poll until there's data
-                while (!listener->head());
-                listener->pop();
-            }
+                    // Reads two times the size values
+                    for (uint32_t i = 0; i < buffer_size_ * 2; i++)
+                    {
+                        // poll until there's data
+                        while (!listener->head())
+                        {
+                        }
+                        listener->pop();
+                    }
 
-            // Unregister
-            listener.reset();
+                    // Unregister
+                    listener.reset();
 
-        }));
+                }));
     }
 
     for (auto& thread : threads)
@@ -452,23 +465,23 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
 TEST_F(SHMCondition, wait_notify)
 {
     SharedMemSegment::condition_variable cv;
-    SharedMemSegment::mutex mutex;  
-    bool condition = false;  
+    SharedMemSegment::mutex mutex;
+    bool condition = false;
 
     std::thread thread_wait([&]
-        {
-            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
-            cv.wait(lock, [&] 
-                { 
-                    return condition; 
+            {
+                std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+                cv.wait(lock, [&]
+                {
+                    return condition;
                 });
-        });
+            });
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     {
         std::lock_guard<SharedMemSegment::mutex> lock(mutex);
-        condition = true;  
+        condition = true;
     }
 
     cv.notify_one();
@@ -488,82 +501,82 @@ TEST_F(SHMCondition, robust_condition_fix_glibc_deadlock)
         std::atomic<uint32_t> notify_count[2];
         SharedMemSegment::mutex mutex;
         SharedMemSegment::condition_variable cv;
-        bool condition;                
+        bool condition;
     };
 
     auto p1 = fork();
-    if(p1 == 0)
+    if (p1 == 0)
     {
         auto p2 = fork();
-        if(p2 == 0)
+        if (p2 == 0)
         {
             printf("p2 go!\n");
             //P2
             boost::interprocess::shared_memory_object::remove("robust_condition_fix_test");
-            boost::interprocess::managed_shared_memory shm(boost::interprocess::create_only, 
-                "robust_condition_fix_test", 1024 + sizeof(SharedSegment));
+            boost::interprocess::managed_shared_memory shm(boost::interprocess::create_only,
+                    "robust_condition_fix_test", 1024 + sizeof(SharedSegment));
 
             auto shared_segment = shm.construct<SharedSegment>("shared_segment")();
             shared_segment->notify_count[0].exchange(0);
             shared_segment->notify_count[1].exchange(0);
-    
-            wait_test(2, shared_segment->mutex, 
-                shared_segment->cv, 
-                &shared_segment->condition, 
-                shared_segment->notify_count[1],
-                boost::posix_time::milliseconds(60*1000));
+
+            wait_test(2, shared_segment->mutex,
+                    shared_segment->cv,
+                    &shared_segment->condition,
+                    shared_segment->notify_count[1],
+                    boost::posix_time::milliseconds(60 * 1000));
         }
         else //P1
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            printf("p1 go!\n");            
+            printf("p1 go!\n");
 
             // Kill p2
             ASSERT_EQ(0, system((std::string("kill -9 ") + std::to_string(p2)).c_str()));
-            printf("p2 killed!\n");            
+            printf("p2 killed!\n");
 
-            boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only, 
-                "robust_condition_fix_test");
+            boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only,
+                    "robust_condition_fix_test");
 
             auto shared_segment = shm.find<SharedSegment>("shared_segment").first;
 
             // P2 died without notifications
             ASSERT_EQ(shared_segment->notify_count[1].load(), 0u);
-    
-            wait_test(1, shared_segment->mutex, 
-                shared_segment->cv, 
-                &shared_segment->condition, 
-                shared_segment->notify_count[0],
-                boost::posix_time::milliseconds(500));
-        }            
+
+            wait_test(1, shared_segment->mutex,
+                    shared_segment->cv,
+                    &shared_segment->condition,
+                    shared_segment->notify_count[0],
+                    boost::posix_time::milliseconds(500));
+        }
     }
     else // P0
     {
         std::this_thread::sleep_for(std::chrono::seconds(2));
         printf("p0 go!\n");
 
-        boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only, 
+        boost::interprocess::managed_shared_memory shm(boost::interprocess::open_only,
                 "robust_condition_fix_test");
 
         auto shared_segment = shm.find<SharedSegment>("shared_segment").first;
 
-        for(uint32_t i=0;i<TEST_MAX_NOTIFICATIONS;i++)
+        for (uint32_t i = 0; i < TEST_MAX_NOTIFICATIONS; i++)
         {
             {
                 std::unique_lock<boost::interprocess::interprocess_mutex> lock(shared_segment->mutex);
-                shared_segment->condition = true;            
-            }        
-            shared_segment->cv.notify_all();        
+                shared_segment->condition = true;
+            }
+            shared_segment->cv.notify_all();
 
             // Wait until P1 receives the last notification
-            while(shared_segment->notify_count[0].load() < i+1)
+            while (shared_segment->notify_count[0].load() < i + 1)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
         }
     }
 }
-#endif
+#endif // ifndef _MSC_VER
 
 TEST_F(SHMCondition, max_listeners)
 {
@@ -582,26 +595,26 @@ TEST_F(SHMCondition, max_listeners)
     std::atomic<uint32_t> wait_exception(0);
     std::atomic<uint32_t> wait_ok(0);
 
-    for (uint32_t i=0; i<max_test_listeners; i++)
+    for (uint32_t i = 0; i < max_test_listeners; i++)
     {
         threads.emplace_back([&]
-        {
-            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
-            waiting_threads.fetch_add(1);
-            try
-            {
-                cv.wait(lock, [&]
                 {
-                    return condition;
-                });
+                    std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+                    waiting_threads.fetch_add(1);
+                    try
+                    {
+                        cv.wait(lock, [&]
+                        {
+                            return condition;
+                        });
 
-                wait_ok.fetch_add(1);
-            }
-            catch (const std::exception&)
-            {
-                wait_exception.fetch_add(1);
-            }
-        });
+                        wait_ok.fetch_add(1);
+                    }
+                    catch (const std::exception&)
+                    {
+                        wait_exception.fetch_add(1);
+                    }
+                });
     }
 
     std::cout << threads.size() << " listeners spawned." << std::endl;
@@ -642,11 +655,14 @@ TEST_F(SHMCondition, fifo_policy)
     std::vector<uint32_t> exit_order;
 
     auto wait_lambda = [&](uint32_t id, const boost::posix_time::ptime& end_time_point)
-        {
-            std::unique_lock<SharedMemSegment::mutex> lock(mutex);
-            ASSERT_NO_THROW(cv.timed_wait(lock, end_time_point, [&] { return condition; }));
-            exit_order.push_back(id);
-        };
+            {
+                std::unique_lock<SharedMemSegment::mutex> lock(mutex);
+                ASSERT_NO_THROW(cv.timed_wait(lock, end_time_point, [&]
+                        {
+                            return condition;
+                        }));
+                exit_order.push_back(id);
+            };
 
     // Check notify is FIFO
     // Three elements remove the intermediate
@@ -656,7 +672,7 @@ TEST_F(SHMCondition, fifo_policy)
     threads.emplace_back(std::thread(wait_lambda, 1, now + boost::posix_time::seconds(3600)));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     threads.emplace_back(std::thread(wait_lambda, 2, now + boost::posix_time::seconds(3600)));
-    
+
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     {
@@ -664,7 +680,7 @@ TEST_F(SHMCondition, fifo_policy)
         condition = true;
     }
 
-    
+
     ASSERT_EQ(exit_order.size(), 0u);
     cv.notify_one();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -679,7 +695,7 @@ TEST_F(SHMCondition, fifo_policy)
         thread.join();
     }
 
-    ASSERT_EQ(exit_order, std::vector<uint32_t>({0,1,2}));
+    ASSERT_EQ(exit_order, std::vector<uint32_t>({0, 1, 2}));
     threads.clear();
     exit_order.clear();
 }
@@ -824,26 +840,26 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
-    octet message[5] = { 'H','e','l','l','o' };
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
     std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+            {
+                EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                sem.post();
+            };
     msg_recv->setCallback(recCallback);
 
     LocatorList_t locator_list;
     locator_list.push_back(unicastLocator);
 
     auto sendThreadFunction = [&]()
-        {
-            Locators locators_begin(locator_list.begin());
-            Locators locators_end(locator_list.end());
+            {
+                Locators locators_begin(locator_list.begin());
+                Locators locators_end(locator_list.end());
 
-            EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-                    (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-        };
+                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
+            };
 
     std::unique_ptr<std::thread> sender_thread;
     sender_thread.reset(new std::thread(sendThreadFunction));
@@ -886,7 +902,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     eprosima::fastrtps::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
-    octet message[4] = { 'H','e','l','l'};
+    octet message[4] = { 'H', 'e', 'l', 'l'};
 
     LocatorList_t locator_list;
     locator_list.push_back(unicastLocator);
@@ -896,21 +912,21 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
         // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried
         // to cause segment overflow
-        octet message_big[4096] = { 'H','e','l','l'};
+        octet message_big[4096] = { 'H', 'e', 'l', 'l'};
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
     // At least 4 msgs of 4 bytes are allowed
-    for (int i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
     {
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
 
         // At least 4 msgs of 4 bytes are allowed
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
     // Wait until the receiver get the first message
@@ -928,7 +944,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
     // Push a 5th will not cause overflow
@@ -937,7 +953,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
 
         EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
     sem.disable();
@@ -958,14 +974,14 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
     Semaphore sem_lock_done;
     Semaphore sem_end_thread_locker;
     std::thread thread_locker([&]
-        {
-            // lock has to be done in another thread because
-            // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
-            auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
-            ASSERT_TRUE(port_mutex->try_lock());
-            sem_lock_done.post();
-            sem_end_thread_locker.wait();
-        }
+            {
+                // lock has to be done in another thread because
+                // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+                auto port_mutex = port_mocker.get_port_mutex(domain_name, 0);
+                ASSERT_TRUE(port_mutex->try_lock());
+                sem_lock_done.post();
+                sem_end_thread_locker.wait();
+            }
             );
 
     sem_lock_done.wait();
@@ -991,7 +1007,7 @@ TEST_F(SHMTransportTests, port_lock_read_exclusive)
 
     auto port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
     ASSERT_THROW(shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive),
-        std::exception);
+            std::exception);
 
     port.reset();
     port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
@@ -1081,7 +1097,7 @@ TEST_F(SHMTransportTests, robust_shared_lock)
 
     sl1.reset();
     new_lock.reset();
-    
+
     // The resource has been removed
     ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
 
@@ -1100,6 +1116,137 @@ TEST_F(SHMTransportTests, robust_shared_lock)
     ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
 }
 
+// This regression test asserts that shared-memory mapped files cannot exceed file-system bounds.
+// The original implementation in boost::interprocess, for posix systems, use ftruncate() to set the
+// file size. ftruncate() do not check available size in the file system, so SIGBUS error can occur
+// when reading / writing in the mapped mem.
+TEST_F(SHMTransportTests, memory_bounds)
+{
+    const std::string domain_name("SHMTests");
+    SharedMemManager shared_mem_manager(domain_name);
+    auto shm_path = RobustLock::get_file_path("");
+
+    uint64_t max_file_system_free_size;
+    uint64_t physical_mem_size;
+
+#ifndef _MSC_VER // Posix is assumed
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    physical_mem_size = pages * page_size;
+
+    struct statvfs stat_info;
+    ASSERT_TRUE(statvfs(shm_path.c_str(), &stat_info) == 0);
+    max_file_system_free_size = stat_info.f_bavail * stat_info.f_bsize;
+
+#else // Windows
+
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    physical_mem_size = status.ullTotalPhys;
+
+    ULARGE_INTEGER FreeBytesAvailableToCaller;
+    ULARGE_INTEGER TotalNumberOfBytes;
+    ULARGE_INTEGER TotalNumberOfFreeBytes;
+
+    ASSERT_TRUE(GetDiskFreeSpaceEx(shm_path.c_str(), &FreeBytesAvailableToCaller, &TotalNumberOfBytes,
+            &TotalNumberOfFreeBytes));
+
+    max_file_system_free_size = FreeBytesAvailableToCaller.QuadPart;
+
+#endif // ifndef _MSC_VER
+
+    uint64_t mem_size = (std::min)(max_file_system_free_size, physical_mem_size);
+
+    uint32_t allocations;
+    uint32_t allocation_size;
+    uint64_t free_size60 = static_cast<uint64_t>(mem_size * 0.6);
+    uint32_t extra_allocation = 0u;
+
+    if (free_size60 > (std::numeric_limits<uint32_t>::max)())
+    {
+        allocations = static_cast<uint32_t>(free_size60 / (std::numeric_limits<uint32_t>::max)());
+        allocation_size = static_cast<uint32_t>(free_size60 / allocations);
+        extra_allocation = free_size60 % (std::numeric_limits<uint32_t>::max)();
+    }
+    else
+    {
+        allocation_size = static_cast<uint32_t>(free_size60);
+        allocations = 1u;
+    }
+
+    std::vector<std::shared_ptr<SharedMemManager::Segment> > segments;
+
+    auto zero_mem = [&]()
+            {
+                auto buf = segments.back()->alloc_buffer(allocation_size,
+                                std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+                ASSERT_TRUE(buf != nullptr);
+                memset(buf->data(), 0, buf->size());
+                buf.reset();
+            };
+
+    // Fist allocation must succeed
+    for (uint32_t i = 0; i < allocations; i++)
+    {
+        segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+        zero_mem();
+    }
+    if (extra_allocation)
+    {
+        segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+        zero_mem();
+    }
+
+    // The /dev/shm file system is < physical memory => cannot support allocation beyond 100%
+    // Is the default configuration in Linux systems
+    if ( max_file_system_free_size < physical_mem_size )
+    {
+        // Send allocation must fail
+        ASSERT_THROW(
+            for (uint32_t i = 0; i < allocations; i++)
+        {
+            segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+            zero_mem();
+        }
+            if (extra_allocation)
+        {
+            segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+            zero_mem();
+        }
+            , std::exception);
+    }
+    else // Allocation beyond 100% physical mem may or may not be supported by virtual-mem and page file
+    {
+        try
+        {
+            for (uint32_t i = 0; i < allocations; i++)
+            {
+                segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+                zero_mem();
+            }
+            if (extra_allocation)
+            {
+                segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+                zero_mem();
+            }
+        }
+        catch (const std::exception&)
+        {
+            for (uint32_t i = 0; i < allocations; i++)
+            {
+                segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+                zero_mem();
+            }
+            if (extra_allocation)
+            {
+                segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+                zero_mem();
+            }
+        }
+    }
+}
+
 TEST_F(SHMTransportTests, port_listener_dead_recover)
 {
     const std::string domain_name("SHMTests");
@@ -1115,27 +1262,27 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
 
     std::atomic<uint32_t> thread_listener2_state(0);
     std::thread thread_listener2([&]
-        {
-            // lock has to be done in another thread because
-            // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
-            auto buf = listener2->pop();
-            ASSERT_TRUE(*static_cast<uint8_t*>(buf->data()) == 1);
+            {
+                // lock has to be done in another thread because
+                // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+                auto buf = listener2->pop();
+                ASSERT_TRUE(*static_cast<uint8_t*>(buf->data()) == 1);
 
-            thread_listener2_state = 1;
+                thread_listener2_state = 1;
 
-            buf = listener2->pop();
-            // The pop is broken by port regeneration
-            ASSERT_TRUE(buf == nullptr);
+                buf = listener2->pop();
+                // The pop is broken by port regeneration
+                ASSERT_TRUE(buf == nullptr);
 
-            thread_listener2_state = 2;
+                thread_listener2_state = 2;
 
-            buf = listener2->pop();
-            // 2 is received in the new regenerated port
-            ASSERT_TRUE(*static_cast<uint8_t*>(buf->data()) == 2);
+                buf = listener2->pop();
+                // 2 is received in the new regenerated port
+                ASSERT_TRUE(*static_cast<uint8_t*>(buf->data()) == 2);
 
-            thread_listener2_state = 3;
-        }
-    );
+                thread_listener2_state = 3;
+            }
+            );
 
     auto port_sender = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
     auto segment = shared_mem_manager.create_segment(1024, 16);
@@ -1154,10 +1301,10 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
     MockPortSharedMemGlobal port_mocker;
     std::atomic_bool is_listener1_closed(false);
     std::thread thread_listener1([&]
-        {
-            // Deadlock the listener.
-            port_mocker.wait_pop_deadlock(*port1, *listener1, is_listener1_closed, listener1_index);
-        }
+            {
+                // Deadlock the listener.
+                port_mocker.wait_pop_deadlock(*port1, *listener1, is_listener1_closed, listener1_index);
+            }
             );
 
     // Wait until port is regenerated
@@ -1200,13 +1347,13 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
     Semaphore sem_lock_done;
     Semaphore sem_end_thread_locker;
     std::thread thread_locker([&]
-        {
-            // lock has to be done in another thread because
-            // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
-            ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
-            sem_lock_done.post();
-            sem_end_thread_locker.wait();
-        }
+            {
+                // lock has to be done in another thread because
+                // boost::inteprocess_named_mutex and  interprocess_mutex are recursive in Win32
+                ASSERT_TRUE(port_mocker.lock_empty_cv_mutex(*global_port));
+                sem_lock_done.post();
+                sem_end_thread_locker.wait();
+            }
             );
 
     sem_lock_done.wait();
@@ -1231,7 +1378,7 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 
     SharedMemManager shared_mem_manager(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager.global_segment();
-    
+
     shared_mem_global->remove_port(0);
     auto deadlocked_port = shared_mem_global->open_port(0, 1, 1000);
     uint32_t listener_index;
@@ -1240,12 +1387,12 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
     // Simulates a deadlocked wait_pop
     std::atomic_bool is_listener_closed(false);
     std::thread thread_wait_deadlock([&]
-        {
-            MockPortSharedMemGlobal port_mocker;
-            port_mocker.wait_pop_deadlock(*deadlocked_port, *deadlocked_listener, 
+            {
+                MockPortSharedMemGlobal port_mocker;
+                port_mocker.wait_pop_deadlock(*deadlocked_port, *deadlocked_listener,
                 is_listener_closed, listener_index);
-            (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
-        });
+                (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
+            });
 
     // Assert the thread is waiting
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -1282,26 +1429,26 @@ TEST_F(SHMTransportTests, port_not_ok_listener_recover)
 
     // Simulates a deadlocked wait_pop
     std::thread thread_listener([&]
-        {
-            auto buff = listener->pop();
-            // The pop is broken by port regeneration
-            ASSERT_TRUE(buff == nullptr);
-            stage.exchange(1u);
-            buff = listener->pop();
-            ASSERT_TRUE(*static_cast<uint8_t*>(buff->data()) == 6);
-        });
+            {
+                auto buff = listener->pop();
+                // The pop is broken by port regeneration
+                ASSERT_TRUE(buff == nullptr);
+                stage.exchange(1u);
+                buff = listener->pop();
+                ASSERT_TRUE(*static_cast<uint8_t*>(buff->data()) == 6);
+            });
 
     // Open the deadlocked port
     auto port = shared_mem_global->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
     auto managed_port = shared_mem_manager.open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::Write);
     auto data_segment = shared_mem_manager.create_segment(1, 1);
-    
+
     MockPortSharedMemGlobal port_mocker;
     port_mocker.set_port_not_ok(*port);
     (void)port_mocker; // Removes an inexplicable warning when compiling with VC(v140 toolset)
 
-    while(stage.load() != 1u)
-    { 
+    while (stage.load() != 1u)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
@@ -1319,19 +1466,19 @@ TEST_F(SHMTransportTests, buffer_recover)
     const std::string domain_name("SHMTests");
 
     SharedMemManager shared_mem_manager(domain_name);
-    
-    auto segment = shared_mem_manager.create_segment(3,3);
+
+    auto segment = shared_mem_manager.create_segment(3, 3);
 
     shared_mem_manager.remove_port(1);
     auto pub_sub1_write = shared_mem_manager.open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
 
     shared_mem_manager.remove_port(2);
-    auto pub_sub2_write = shared_mem_manager.open_port(2, 8, 1000,SharedMemGlobal::Port::OpenMode::Write);
+    auto pub_sub2_write = shared_mem_manager.open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
 
     auto sub1_read = shared_mem_manager.open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
 
     auto sub2_read = shared_mem_manager.open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
-    
+
     bool exit_listeners = false;
 
     uint32_t listener1_sleep_ms = 400u;
@@ -1341,48 +1488,48 @@ TEST_F(SHMTransportTests, buffer_recover)
 
     std::atomic<uint32_t> listener1_recv_count(0);
     auto thread_listener1 = std::thread( [&]
-        {
-            while(!exit_listeners)
-            {
-                auto buffer = listener1->pop();
+                    {
+                        while (!exit_listeners)
+                        {
+                            auto buffer = listener1->pop();
 
-                if(buffer)
-                {
-                    listener1_recv_count.fetch_add(1);
-                    // This is a slow listener
-                    std::this_thread::sleep_for(std::chrono::milliseconds(listener1_sleep_ms));
-                    buffer.reset();
-                }
-            }
-        });
+                            if (buffer)
+                            {
+                                listener1_recv_count.fetch_add(1);
+                                // This is a slow listener
+                                std::this_thread::sleep_for(std::chrono::milliseconds(listener1_sleep_ms));
+                                buffer.reset();
+                            }
+                        }
+                    });
 
     auto listener2 = sub2_read->create_listener();
     std::atomic<uint32_t> listener2_recv_count(0u);
     SharedMemSegment::condition_variable received_cv;
     SharedMemSegment::mutex received_mutex;
     auto thread_listener2 = std::thread( [&]
-        {
-            while(!exit_listeners)
-            {
-                auto buffer = listener2->pop();
-
-                if(buffer)
-                {
                     {
-                        std::lock_guard<SharedMemSegment::mutex> lock(received_mutex);
-                        listener2_recv_count.fetch_add(1);
-                    }
-                    std::this_thread::sleep_for(std::chrono::milliseconds(listener2_sleep_ms));
-                    buffer.reset();
-                    received_cv.notify_one();
-                }
-            }
-        });
+                        while (!exit_listeners)
+                        {
+                            auto buffer = listener2->pop();
+
+                            if (buffer)
+                            {
+                                {
+                                    std::lock_guard<SharedMemSegment::mutex> lock(received_mutex);
+                                    listener2_recv_count.fetch_add(1);
+                                }
+                                std::this_thread::sleep_for(std::chrono::milliseconds(listener2_sleep_ms));
+                                buffer.reset();
+                                received_cv.notify_one();
+                            }
+                        }
+                    });
 
     // Test 1 (without port overflow)
     uint32_t send_counter = 0u;
-    while(listener1_recv_count.load() < 16u)
-    {        
+    while (listener1_recv_count.load() < 16u)
+    {
         {
             // The segment should never overflow
             auto buf = segment->alloc_buffer(1, std::chrono::steady_clock::time_point());
@@ -1395,17 +1542,20 @@ TEST_F(SHMTransportTests, buffer_recover)
             std::unique_lock<SharedMemSegment::mutex> lock(received_mutex);
             send_counter++;
             // Wait until listener2 (the fast listener) receives the buffer
-            received_cv.wait(lock, [&] { return send_counter == listener2_recv_count.load();});
+            received_cv.wait(lock, [&]
+                    {
+                        return send_counter == listener2_recv_count.load();
+                    });
         }
     }
 
     // The slow listener is 4 times slower than the fast one
-    ASSERT_LT(listener1_recv_count.load()*3, listener2_recv_count.load());
-    ASSERT_GT(listener1_recv_count.load(), listener2_recv_count.load()/5);
-    std::cout << "Test1:" 
-        << " Listener1_recv_count " << listener1_recv_count.load()
-        << " Listener2_recv_count " << listener2_recv_count.load()
-        << std::endl;
+    ASSERT_LT(listener1_recv_count.load() * 3, listener2_recv_count.load());
+    ASSERT_GT(listener1_recv_count.load(), listener2_recv_count.load() / 5);
+    std::cout << "Test1:"
+              << " Listener1_recv_count " << listener1_recv_count.load()
+              << " Listener2_recv_count " << listener2_recv_count.load()
+              << std::endl;
 
     // Test 2 (with port overflow)
     listener2_sleep_ms = 0u;
@@ -1414,18 +1564,18 @@ TEST_F(SHMTransportTests, buffer_recover)
     listener2_recv_count.exchange(0u);
     uint32_t port_overflows1 = 0u;
     uint32_t port_overflows2 = 0u;
-    while(listener1_recv_count.load() < 16u)
-    {        
+    while (listener1_recv_count.load() < 16u)
+    {
         {
             // The segment should never overflow
             auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
 
-            if(!pub_sub1_write->try_push(buf))
+            if (!pub_sub1_write->try_push(buf))
             {
                 port_overflows1++;
             }
-            
-            if(!pub_sub2_write->try_push(buf))
+
+            if (!pub_sub2_write->try_push(buf))
             {
                 port_overflows2++;
             }
@@ -1435,18 +1585,18 @@ TEST_F(SHMTransportTests, buffer_recover)
     }
 
     std::cout << "Test2:"
-        << " port_overflows1 " << port_overflows1
-        << " port_overflows2 " << port_overflows2
-        << " send_counter " << send_counter
-        << " listener1_recv_count " << listener1_recv_count.load()
-        << " listener2_recv_count " << listener2_recv_count.load()
-        << std::endl;
+              << " port_overflows1 " << port_overflows1
+              << " port_overflows2 " << port_overflows2
+              << " send_counter " << send_counter
+              << " listener1_recv_count " << listener1_recv_count.load()
+              << " listener2_recv_count " << listener2_recv_count.load()
+              << std::endl;
 
     ASSERT_GT(port_overflows1, 0u);
     ASSERT_LT(port_overflows2, port_overflows1);
     ASSERT_LT(listener1_recv_count.load(), listener2_recv_count.load());
     ASSERT_GT(send_counter, listener2_recv_count.load());
-    
+
     exit_listeners = true;
 
     {
@@ -1843,32 +1993,32 @@ TEST_F(SHMTransportTests, dump_file)
 
         Semaphore sem;
         MockReceiverResource receiver(transportUnderTest, unicastLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
         eprosima::fastrtps::rtps::SendResourceList send_resource_list;
         ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
         std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    sem.post();
+                };
         msg_recv->setCallback(recCallback);
 
         LocatorList_t locator_list;
         locator_list.push_back(unicastLocator);
 
         auto sendThreadFunction = [&]()
-        {
-            Locators locators_begin(locator_list.begin());
-            Locators locators_end(locator_list.end());
+                {
+                    Locators locators_begin(locator_list.begin());
+                    Locators locators_end(locator_list.end());
 
-            EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(1000))));
-        };
+                    EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                            (std::chrono::steady_clock::now() + std::chrono::microseconds(1000))));
+                };
 
         std::unique_ptr<std::thread> sender_thread;
         sender_thread.reset(new std::thread(sendThreadFunction));
@@ -1880,7 +2030,7 @@ TEST_F(SHMTransportTests, dump_file)
     {
         std::ifstream dump_file(log_file.c_str());
         std::string dump_text((std::istreambuf_iterator<char>(dump_file)),
-                    std::istreambuf_iterator<char>());
+                std::istreambuf_iterator<char>());
 
         ASSERT_EQ(dump_text.length(), 312u);
         ASSERT_EQ(dump_text.c_str()[308], '6');
@@ -1888,7 +2038,7 @@ TEST_F(SHMTransportTests, dump_file)
         ASSERT_EQ(dump_text.c_str()[310], 10);
         ASSERT_EQ(dump_text.c_str()[311], 10);
     }
-    
+
     std::remove(log_file.c_str());
 }
 
