@@ -585,6 +585,10 @@ elseif(NOT EPROSIMA_INSTALLER)
         set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
     endif()
 
+    if(COMPILE_TOOLS)
+        set(INCLUDE_FASTDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
+    endif()
+
     # Add fastrtps dependencies in its CMake config file.
     if(LINK_SSL AND NOT EPROSIMA_INSTALLER_MINION)
         set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
