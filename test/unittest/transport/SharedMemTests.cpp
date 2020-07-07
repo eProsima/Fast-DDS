@@ -1125,7 +1125,7 @@ TEST_F(SHMTransportTests, robust_shared_lock)
 TEST_F(SHMTransportTests, memory_bounds)
 {
     const std::string domain_name("SHMTests");
-    SharedMemManager shared_mem_manager(domain_name);
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
     auto shm_path = RobustLock::get_file_path("");
 
     uint64_t max_file_system_free_size;
@@ -1191,12 +1191,12 @@ TEST_F(SHMTransportTests, memory_bounds)
     // Fist allocation must succeed
     for (uint32_t i = 0; i < allocations; i++)
     {
-        segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+        segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
         zero_mem();
     }
     if (extra_allocation)
     {
-        segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+        segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
         zero_mem();
     }
 
@@ -1208,12 +1208,12 @@ TEST_F(SHMTransportTests, memory_bounds)
         ASSERT_THROW(
             for (uint32_t i = 0; i < allocations; i++)
         {
-            segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+            segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
             zero_mem();
         }
             if (extra_allocation)
         {
-            segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+            segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
             zero_mem();
         }
             , std::exception);
@@ -1224,12 +1224,12 @@ TEST_F(SHMTransportTests, memory_bounds)
         {
             for (uint32_t i = 0; i < allocations; i++)
             {
-                segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+                segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
                 zero_mem();
             }
             if (extra_allocation)
             {
-                segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+                segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
                 zero_mem();
             }
         }
@@ -1237,12 +1237,12 @@ TEST_F(SHMTransportTests, memory_bounds)
         {
             for (uint32_t i = 0; i < allocations; i++)
             {
-                segments.push_back(shared_mem_manager.create_segment(allocation_size, 1));
+                segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
                 zero_mem();
             }
             if (extra_allocation)
             {
-                segments.push_back(shared_mem_manager.create_segment(extra_allocation, 1));
+                segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
                 zero_mem();
             }
         }
