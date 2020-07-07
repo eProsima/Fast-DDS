@@ -100,6 +100,8 @@ pip install -U colcon-common-extensions vcstool
 Download the repos file that will be used to download Fast RTPS and its dependencies:
 
 ```bash
+$ mkdir fastdds_ws
+$ cd fastdds_ws
 $ wget https://raw.githubusercontent.com/eProsima/Fast-DDS/master/fastrtps.repos
 $ mkdir src
 $ vcs import src < fastrtps.repos
