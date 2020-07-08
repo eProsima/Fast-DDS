@@ -110,8 +110,8 @@ public:
     /**
      * Create a Publisher in this Participant.
      * @param qos QoS of the Publisher.
-     * @param att Attributes of the Publisher.
-     * @param listen Pointer to the listener.
+     * @param listenerer Pointer to the listener.
+     * @param mask StatusMask
      * @return Pointer to the created Publisher.
      */
     Publisher* create_publisher(
@@ -121,8 +121,8 @@ public:
 
     /**
      * Create a Publisher in this Participant.
-     * @param profile Publisher profile name.
-     * @param listen Pointer to the listener.
+     * @param profile_name Publisher profile name.
+     * @param listener Pointer to the listener.
      * @param mask StatusMask
      * @return Pointer to the created Publisher.
      */
@@ -137,7 +137,7 @@ public:
     /**
      * Create a Subscriber in this Participant.
      * @param qos QoS of the Subscriber.
-     * @param listen Pointer to the listener.
+     * @param listener Pointer to the listener.
      * @param mask StatusMask that holds statuses the listener responds to
      * @return Pointer to the created Subscriber.
      */
@@ -149,7 +149,7 @@ public:
     /**
      * Create a Subscriber in this Participant.
      * @param profile Subscriber profile name.
-     * @param listen Pointer to the listener.
+     * @param listener Pointer to the listener.
      * @param mask StatusMask
      * @return Pointer to the created Subscriber.
      */
@@ -166,7 +166,7 @@ public:
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param qos QoS of the Topic.
-     * @param listen Pointer to the listener.
+     * @param listener Pointer to the listener.
      * @param mask StatusMask that holds statuses the listener responds to
      * @return Pointer to the created Topic.
      */
@@ -182,7 +182,7 @@ public:
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param profile Topic profile name.
-     * @param listen Pointer to the listener.
+     * @param listener Pointer to the listener.
      * @param mask StatusMask that holds statuses the listener responds to
      * @return Pointer to the created Topic.
      */
@@ -493,7 +493,7 @@ public:
 
     void create_instance_handle(
             fastrtps::rtps::InstanceHandle_t& handle);
-    
+
     bool exists_entity_id(
             const fastrtps::rtps::EntityId_t& entity_id) const;
 
