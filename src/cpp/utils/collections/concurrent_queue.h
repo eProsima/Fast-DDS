@@ -124,7 +124,7 @@ public:
 
     /**
      * @brief empty Whether the queue is empty or not
-     * @return true if empty, false othewise.
+     * @return true if empty, false otherwise.
      */
     bool empty() const noexcept
     {
