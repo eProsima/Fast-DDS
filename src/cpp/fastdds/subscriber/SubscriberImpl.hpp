@@ -207,6 +207,12 @@ public:
             const SubscriberQos& to,
             const SubscriberQos& from);
 
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    SubscriberListener* get_listener_for(const StatusMask& status);
+
 protected:
 
     //!Participant

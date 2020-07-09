@@ -388,6 +388,12 @@ protected:
 
     OfferedIncompatibleQosStatus& update_offered_incompatible_qos(
             PolicyMask incompatible_policies);
+
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    DataWriterListener* get_listener_for(const StatusMask& status);
 };
 
 } /* namespace dds */

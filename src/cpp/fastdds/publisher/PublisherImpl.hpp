@@ -175,6 +175,12 @@ public:
     bool type_in_use(
             const std::string& type_name) const;
 
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    PublisherListener* get_listener_for(const StatusMask& status);
+
 protected:
 
     DomainParticipantImpl* participant_;

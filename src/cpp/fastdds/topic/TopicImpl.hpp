@@ -82,6 +82,12 @@ public:
 
     const TypeSupport& get_type() const;
 
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    TopicListener* get_listener_for(const StatusMask& status);
+
 protected:
 
     DomainParticipantImpl* participant_;

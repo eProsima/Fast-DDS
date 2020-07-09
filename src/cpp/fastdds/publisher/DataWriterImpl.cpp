@@ -23,6 +23,7 @@
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -673,14 +674,10 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
-    if (data_writer_->listener_ != nullptr)
+    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::publication_matched());
+    if (listener != nullptr)
     {
-        data_writer_->listener_->on_publication_matched(
-            data_writer_->user_datawriter_, info);
-    }
-    else
-    {
-        data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
+        listener->on_publication_matched(data_writer_->user_datawriter_, info);
     }
 }
 
@@ -688,17 +685,15 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         RTPSWriter* /*writer*/,
         fastdds::dds::PolicyMask qos)
 {
-    OfferedIncompatibleQosStatus& status = data_writer_->update_offered_incompatible_qos(qos);
-    if (data_writer_->listener_ != nullptr  &&
-            (data_writer_->user_datawriter_->get_status_mask().is_active(StatusMask::offered_incompatible_qos())))
+    data_writer_->update_offered_incompatible_qos(qos);
+    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::offered_incompatible_qos());
+    if (listener != nullptr)
     {
-        data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
-        status.total_count_change = 0u;
-    }
-    else
-    {
-        data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_,
-                status);
+        OfferedIncompatibleQosStatus callback_status;
+        if (data_writer_->get_offered_incompatible_qos_status(callback_status) == ReturnCode_t::RETCODE_OK)
+        {
+            listener->on_offered_incompatible_qos(data_writer_->user_datawriter_, callback_status);
+        }
     }
 }
 
@@ -722,13 +717,11 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
-    if (data_writer_->listener_ != nullptr)
+    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::liveliness_lost());
+    if (listener != nullptr)
     {
-        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
-    }
-    else
-    {
-        data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+        listener->on_liveliness_lost(
+            data_writer_->user_datawriter_, status);
     }
 }
 
@@ -1142,6 +1135,16 @@ bool DataWriterImpl::can_qos_be_updated(
         logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataWriter.");
     }
     return updatable;
+}
+
+DataWriterListener* DataWriterImpl::get_listener_for(const StatusMask& status)
+{
+    if (listener_ != nullptr &&
+            user_datawriter_->get_status_mask().is_active(status))
+    {
+        return listener_;
+    }
+    return publisher_->get_listener_for(status);
 }
 
 } // namespace dds

@@ -26,6 +26,7 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -563,6 +564,16 @@ bool PublisherImpl::can_qos_be_updated(
     (void) to;
     (void) from;
     return true;
+}
+
+PublisherListener* PublisherImpl::get_listener_for(const StatusMask& status)
+{
+    if (listener_ != nullptr &&
+            user_publisher_->get_status_mask().is_active(status))
+    {
+        return listener_;
+    }
+    return participant_->get_listener_for(status);
 }
 
 } // dds

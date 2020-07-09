@@ -25,11 +25,12 @@
 #include <fastdds/rtps/common/Guid.h>
 
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
@@ -329,6 +330,12 @@ protected:
 
     LivelinessChangedStatus& update_liveliness_status(
             const fastrtps::LivelinessChangedStatus& status);
+
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    DataReaderListener* get_listener_for(const StatusMask& status);
 
 };
 

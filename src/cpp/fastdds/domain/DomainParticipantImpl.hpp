@@ -370,6 +370,13 @@ public:
      */
     bool has_active_entities();
 
+
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    DomainParticipantListener* get_listener_for(const StatusMask& status);
+
 protected:
 
     //!Domain id
