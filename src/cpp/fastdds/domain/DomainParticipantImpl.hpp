@@ -73,7 +73,7 @@ class DomainParticipantImpl
     friend class DomainParticipantFactory;
     friend class DomainParticipant;
 
-private:
+protected:
 
     DomainParticipantImpl(
             DomainParticipant* dp,
@@ -370,7 +370,7 @@ public:
      */
     bool has_active_entities();
 
-private:
+protected:
 
     //!Domain id
     DomainId_t domain_id_;

@@ -187,7 +187,7 @@ public:
     RTPS_DllAPI ReturnCode_t set_qos(
             const DomainParticipantFactoryQos& qos);
 
-private:
+protected:
 
     friend class DomainParticipantFactoryReleaser;
     friend class DomainParticipant;

@@ -66,6 +66,7 @@ class Topic;
  */
 class DataWriter : public DomainEntity
 {
+protected:
     friend class PublisherImpl;
     friend class DataWriterImpl;
 
@@ -316,7 +317,7 @@ public:
     RTPS_DllAPI ReturnCode_t clear_history(
             size_t* removed);
 
-private:
+protected:
 
     DataWriterImpl* impl_;
 };

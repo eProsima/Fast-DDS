@@ -82,13 +82,14 @@ public:
 
     const TypeSupport& get_type() const;
 
-private:
+protected:
 
     DomainParticipantImpl* participant_;
     TypeSupport type_support_;
     TopicQos qos_;
     TopicListener* listener_;
     Topic* user_topic_;
+
 };
 
 } // dds

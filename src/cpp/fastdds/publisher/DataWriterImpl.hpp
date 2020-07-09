@@ -65,6 +65,7 @@ class Publisher;
  */
 class DataWriterImpl
 {
+protected:
     friend class PublisherImpl;
 
     /**
@@ -219,7 +220,7 @@ public:
     ReturnCode_t clear_history(
             size_t* removed);
 
-private:
+protected:
 
     PublisherImpl* publisher_ = nullptr;
 

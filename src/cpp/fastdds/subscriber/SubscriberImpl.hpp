@@ -62,6 +62,7 @@ class TopicDescription;
  */
 class SubscriberImpl
 {
+protected:
     friend class DomainParticipantImpl;
     friend class DataReaderImpl;
 
@@ -206,7 +207,7 @@ public:
             const SubscriberQos& to,
             const SubscriberQos& from);
 
-private:
+protected:
 
     //!Participant
     DomainParticipantImpl* participant_;

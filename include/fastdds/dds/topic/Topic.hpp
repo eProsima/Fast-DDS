@@ -140,7 +140,7 @@ public:
      */
     TopicDescriptionImpl* get_impl() const override;
 
-private:
+protected:
 
     TopicImpl* impl_;
 

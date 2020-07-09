@@ -65,6 +65,8 @@ class Topic;
  */
 class PublisherImpl
 {
+protected:
+
     friend class DomainParticipantImpl;
     friend class DataWriterImpl;
 
@@ -173,7 +175,7 @@ public:
     bool type_in_use(
             const std::string& type_name) const;
 
-private:
+protected:
 
     DomainParticipantImpl* participant_;
 

@@ -61,6 +61,8 @@ struct SampleInfo;
  */
 class DataReaderImpl
 {
+protected:
+
     friend class SubscriberImpl;
 
     /**
@@ -214,7 +216,7 @@ public:
             const DataReaderQos& from,
             bool first_time);
 
-private:
+protected:
 
     //!Subscriber
     SubscriberImpl* subscriber_ = nullptr;
