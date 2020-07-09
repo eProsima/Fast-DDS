@@ -122,16 +122,17 @@ void PDPServerListener::onNewCacheChangeAdded(
 
             if (pdata == nullptr)
             {
-                logInfo(RTPS_PDP, "Registering a new participant: " << writer_guid);
+                logInfo(RTPS_PDP, "Registering a new participant: " <<
+                        change->write_params.sample_identity().writer_guid());
 
                 // Create a new one when not found
                 pdata = parent_pdp_->createParticipantProxyData(local_data, writer_guid);
+                lock.unlock();
+
                 if (pdata != nullptr)
                 {
-                    lock.unlock();
-
                     // Dismiss any client data relayed by a server
-                    if (pdata->m_guid.guidPrefix == change->writerGUID.guidPrefix)
+                    if (pdata->m_guid.guidPrefix == writer_guid.guidPrefix)
                     {
                         // This call would be needed again if the clients known not the server prefix
                         //  parent_pdp_->announceParticipantState(false);
@@ -184,8 +185,6 @@ void PDPServerListener::onNewCacheChangeAdded(
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
             return;
         }
-
-        std::unique_ptr<PDPServer::InPDPCallback> guard = parent_server_pdp_->signalCallback();
 
         if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {

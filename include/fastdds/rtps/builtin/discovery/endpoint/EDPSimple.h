@@ -52,6 +52,8 @@ class EDPSimple : public EDP
 
 public:
 
+    typedef std::set<InstanceHandle_t> key_list;
+
     /**
      * Constructor.
      * @param p Pointer to the PDP
@@ -215,7 +217,10 @@ protected:
             CacheChange_t** created_change);
 
     //! Process the info recorded in the persistence database
-    static void processPersistentData(t_p_StatefulReader & reader, t_p_StatefulWriter & writer);
+    void processPersistentData(
+            t_p_StatefulReader& reader,
+            t_p_StatefulWriter& writer,
+            key_list& demises);
 
 private:
     /**

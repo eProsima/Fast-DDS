@@ -62,7 +62,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
 
     ReaderHistory* reader_history = sedp_->publications_reader_.second;
 
-    // update the PDP Writer with this reader info
+    // update the EDP Writer with this reader info
     if (!sedp_->addPublisherFromHistory(*change))
     {
         reader_history->remove_change(change);
