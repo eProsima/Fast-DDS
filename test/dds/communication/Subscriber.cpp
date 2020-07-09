@@ -353,9 +353,10 @@ int main(
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().builtin.typelookup_config.use_client = true;
     ParListener participant_listener;
+    StatusMask participant_mask = StatusMask::none();
     g_participant =
             DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,
-                    &participant_listener);
+                    &participant_listener, participant_mask);
 
     if (g_participant == nullptr)
     {
@@ -368,9 +369,12 @@ int main(
     topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     SubListener listener;
+    StatusMask mask = StatusMask::subscription_matched()
+            << StatusMask::data_available()
+            << StatusMask::liveliness_changed();
 
     //CREATE THE SUBSCRIBER
-    g_subscriber = g_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener);
+    g_subscriber = g_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &listener, mask);
 
     if (g_subscriber == nullptr)
     {
