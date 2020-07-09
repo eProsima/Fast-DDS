@@ -174,7 +174,70 @@ private:
     GUID_t writer_guid_;
 
     SequenceNumber_t sequence_number_;
+
+    friend std::istream& operator >>(std::istream& input, SampleIdentity& sid);
+    friend std::ostream& operator <<(std::ostream& output, const SampleIdentity& sid);
 };
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Stream operator, retrieves a GUID.
+ * @param input Input stream.
+ * @param sid SampleIdentity to read.
+ * @return Stream operator.
+ */
+inline std::istream& operator >>(
+        std::istream& input,
+        SampleIdentity& sid)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+
+            char sep;
+            input >> sid.writer_guid_ >> sep >> sid.sequence_number_;
+
+            if (sep != '|')
+            {
+                input.setstate(std::ios_base::failbit);
+            }
+        }
+        catch (std::ios_base::failure&)
+        {
+            // maybe is unknown or just invalid
+            sid.writer_guid_ = GUID_t::unknown();
+            sid.sequence_number_ = SequenceNumber_t::unknown();
+        }
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
+}
+
+/**
+ * Stream operator, prints a GUID.
+ * @param output Output stream.
+ * @param sid SampleIdentity to print.
+ * @return Stream operator.
+ */
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const SampleIdentity& sid)
+{
+    output << sid.writer_guid_ << '|' << sid.sequence_number_;
+
+    return output;
+}
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } //namespace rtps
 } //namespace fastrtps

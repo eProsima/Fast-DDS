@@ -826,6 +826,27 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
     return persistent;
 }
 
+void ParticipantProxyData::set_sample_identity(
+        const SampleIdentity& sid)
+{
+    fastdds::dds::set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", m_properties);
+}
+
+SampleIdentity ParticipantProxyData::get_sample_identity() const
+{
+    return fastdds::dds::get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", m_properties);
+}
+
+void ParticipantProxyData::set_backup_stamp(const GUID_t& guid)
+{
+    fastdds::dds::set_proxy_property(guid,"PID_BACKUP_STAMP", m_properties);
+}
+
+GUID_t ParticipantProxyData::get_backup_stamp() const
+{
+    return fastdds::dds::get_proxy_property<GUID_t>("PID_BACKUP_STAMP", m_properties);
+}
+
 void ParticipantProxyData::assert_liveliness()
 {
     last_received_message_tm_ = std::chrono::steady_clock::now();

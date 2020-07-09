@@ -343,6 +343,25 @@ public:
     }
 
     /**
+     * Set participant client server sample identity
+     * @param sid valid SampleIdentity
+     */
+    void set_sample_identity(
+            const SampleIdentity& sid)
+    {
+        fastdds::dds::set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", m_properties);
+    }
+
+    /**
+     * Retrieve participant SampleIdentity
+     * @return SampleIdentity
+     */
+    SampleIdentity get_sample_identity() const
+    {
+        return fastdds::dds::get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", m_properties);
+    }
+
+    /**
      * Get the size in bytes of the CDR serialization of this object.
      * @param include_encapsulation Whether to include the size of the encapsulation info.
      * @return size in bytes of the CDR serialization.
@@ -436,6 +455,8 @@ private:
     TypeObjectV1* m_type;
     //!Type Information
     xtypes::TypeInformation* m_type_information;
+    //!
+    ParameterPropertyList_t m_properties;
 };
 
 }

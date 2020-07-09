@@ -16,13 +16,13 @@
  * @file PDPServer.cpp
  *
  */
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -60,7 +60,6 @@ PDPServer::PDPServer(
     : PDP(builtin, allocation)
     , _durability(durability_kind)
     , mp_sync(nullptr)
-    , PDP_callback_(false)
 {
 
 }
@@ -398,7 +397,7 @@ void PDPServer::removeRemoteEndpoints(
         wguid.guidPrefix = pdata->m_guid.guidPrefix;
         wguid.entityId = c_EntityId_SPDPWriter;
 
-        safe_PDP_matched_writer_remove(wguid);
+        mp_PDPReader->matched_writer_remove(wguid);
 
         /*
             When a server acts like a client to another server it should never
@@ -467,20 +466,25 @@ void PDPServer::match_all_clients_EDP_endpoints()
     // PDP must have been initialize
     assert(mp_EDP);
 
+    // In order to assign remote endpoints the reader mutex is taken
+    // thus we must release previously the PDP mutex
+    pending_matches_list temp;
+
+    {
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
 
     if (!pendingEDPMatches())
     {
         return;
     }
+        temp.swap(_p2match);
+    }
 
-    for (auto p: _p2match)
+    for (auto p: temp)
     {
         assert( p != nullptr);
         mp_EDP->assignRemoteEndpoints(*p);
     }
-
-    _p2match.clear();
 }
 
 bool PDPServer::trimWriterHistory()
@@ -592,7 +596,7 @@ bool PDPServer::addRelayedChangeToHistory(
         return true;
     }
 
-    std::lock_guard<RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
     CacheChange_t* pCh = nullptr;
 
     // validate the sample, if no sample data update it
@@ -625,13 +629,97 @@ bool PDPServer::addRelayedChangeToHistory(
 
     if (it == mp_PDPWriterHistory->changesRend())
     {
-        if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
+        if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh )
         {
+            if ( mp_PDPWriter->getAttributes().durabilityKind == DurabilityKind_t::TRANSIENT_LOCAL )
+            {
+                // an ordinary server just copies the payload to history
+                pCh->copy(&c);
             pCh->writerGUID = mp_PDPWriter->getGuid();
             // keep the original sample identity by using wp
             return mp_PDPWriterHistory->add_change(pCh, wp);
         }
+            else
+            {
+               pCh->copy_not_memcpy(&c);
+
+               if (c.kind == ALIVE)
+               {
+                   // a backup server must add extra context properties to replace WriteParams functionality
+                   ParticipantProxyData local_data(getRTPSParticipant()->getRTPSParticipantAttributes().allocation);
+                   CDRMessage_t deserialization_msg(c.serializedPayload);
+                   if (local_data.readFromCDRMessage(&deserialization_msg,
+                        true,
+                        getRTPSParticipant()->network_factory(),
+                        getRTPSParticipant()->has_shm_transport()))
+                   {
+                       // insert identity within the payload
+                       // deserialized payload
+                       local_data.set_sample_identity(wp.sample_identity());
+
+                       // if is this server's client, stamp it
+                       if (pCh->writerGUID == wp.sample_identity().writer_guid())
+                       {
+                           local_data.set_backup_stamp(mp_PDPWriter->getGuid());
+                       }
+
+                       // Update the payload
+                       pCh->serializedPayload.reserve(local_data.get_serialized_size(true));
+
+                       // serialized payload
+                       CDRMessage_t serialization_msg(pCh->serializedPayload);
+                       if (local_data.writeToCDRMessage(&serialization_msg,true))
+                       {
+                           pCh->writerGUID = mp_PDPWriter->getGuid();
+                           pCh->serializedPayload.length = (uint16_t)serialization_msg.length;
+                           // keep the original sample identity by using wp
+                           return mp_PDPWriterHistory->add_change(pCh, wp);
+                       }
+                   }
+               }
+               else
+               {
+                   // It's a DATA(p[UD]) generate the payload
+                   pCh->serializedPayload.reserve(get_data_disposal_payload_serialized_size());
+                   CDRMessage_t msg(pCh->serializedPayload);
+                   if (set_data_disposal_payload(&msg,wp.sample_identity()))
+                   {
+                       pCh->writerGUID = mp_PDPWriter->getGuid();
+                       pCh->serializedPayload.length = (uint16_t)msg.length;
+                       // keep the original sample identity by using wp
+                       return mp_PDPWriterHistory->add_change(pCh, wp);
+                   }
+               }
+            }
+        }
     }
+
+    // Already in the history
+
+#ifdef __INTERNALDEBUG
+
+    if( c.kind == ALIVE )
+    {
+        // Check if participant already exists (updated info)
+        lock.unlock();
+        std::lock_guard<std::recursive_mutex> pdp_lock(*getMutex());
+
+        for (ParticipantProxyData* pp : participant_proxies_)
+        {
+            if (sid.writer_guid().guidPrefix == pp->m_guid.guidPrefix)
+            {
+                // already also in the database
+                return false;
+            }
+        }
+        // Writer history and proxies are not in sync, this may happen if a participant is dropped been alived because the
+        // trimming mechanism may not had time enough to remove all its samples.
+        logInfo(SERVER_PDP_THREAD, "Server " << getRTPSParticipant()->getGuid() <<
+                " mismatch in discovery database and writer history cache on sample " << sid.writer_guid());
+     }
+
+#endif // __INTERNALDEBUG
+
     return false;
 }
 
@@ -719,11 +807,108 @@ void PDPServer::processPersistentData()
         StatefulReader* p_PDPReader = static_cast<StatefulReader*>(mp_PDPReader);
         std::lock_guard<RecursiveTimedMutex> guardR(p_PDPReader->getMutex());
         std::lock_guard<RecursiveTimedMutex> guardW(mp_PDPWriter->getMutex());
+        std::lock_guard<std::recursive_mutex> guardP(*getMutex());
+
+        // own server instance
+        InstanceHandle_t server_key = getLocalParticipantProxyData()->m_key;
+
+        // reference own references from writer history
+        std::forward_list<CacheChange_t*> removal;
+
+        // keep a record of referenced participants
+        key_list referenced_participants;
+
+        // aux lambda to retrieve sample identity
+        // update format for 2.0.x port
+        uint32_t qos_size;
+        SampleIdentity si;
+        ChangeKind_t kind;
+        GUID_t guid;
+
+        auto param_process = [&si, &guid, &kind](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+        {
+            // we use the PID_PARTICIPANT_GUID to identify a DATA(p)
+            if (pid == fastdds::dds::PID_PARTICIPANT_GUID )
+            {
+                kind = ALIVE;
+                return true;
+            }
+
+            if (pid == fastdds::dds::PID_PROPERTY_LIST)
+            {
+                si = SampleIdentity::unknown();
+                guid = GUID_t::unknown();
+                ParameterPropertyList_t pl;
+
+                if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg, plength))
+                {
+                    return false;
+                }
+
+                auto it = pl.begin();
+                const std::string server_key("PID_CLIENT_SERVER_KEY"), stamp("PID_BACKUP_STAMP");
+
+                while (true)
+                {
+                    it = std::find_if( it, pl.end(),
+                            [&,server_key,stamp](ParameterPropertyList_t::iterator::reference p)
+                            {
+                                return server_key == p.first() || stamp == p.first();
+                            });
+
+                    if (it == pl.end())
+                    {
+                        return true;
+                    }
+
+                    std::istringstream in(it->second());
+                    if (it++->first() == server_key)
+                    {
+                        in >> si;
+                    }
+                    else
+                    {
+                        in >> guid;
+                    }
+                }
+            }
+
+            return true;
+        };
 
         std::for_each(mp_PDPWriterHistory->changesBegin(),
-                mp_PDPWriterHistory->changesEnd(),
-                [p_PDPReader](CacheChange_t* change)
-                {
+            mp_PDPWriterHistory->changesEnd(),
+                [&](CacheChange_t* change)
+        {
+                    // Reset the variables referenced by the lambda
+                    si = SampleIdentity::unknown();
+                    kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
+                    guid = GUID_t::unknown();
+
+                    // We must retrieve the identity info from the payload and update the WriteParams
+                    CDRMessage_t msg(change->serializedPayload);
+                    fastdds::dds::ParameterList::readParameterListfromCDRMsg(msg, param_process, true, qos_size);
+
+                    // determine kind
+                    change->kind = kind;
+
+                    // recover sample identity
+                    if (si != SampleIdentity::unknown())
+                    {
+                        change->write_params.sample_identity(si);
+                        change->write_params.related_sample_identity(si);
+                    }
+
+                    // this participant is referenced
+                    referenced_participants.insert(change->instanceHandle);
+
+                    // check if its own data and mark for removal
+                    if (change->instanceHandle == server_key)
+                    {
+                        removal.push_front(change);
+                        return;
+                    }
+
                     CacheChange_t* change_to_add = nullptr;
 
                     //Reserve a new cache from the corresponding cache pool
@@ -743,15 +928,56 @@ void PDPServer::processPersistentData()
                         return;
                     }
 
-                    if (!p_PDPReader->change_received(change_to_add, nullptr))
+                    // Only DATA(p)s directly received from a client would have the PID_BACKUP_STAMP property
+                    // The CacheChange_t pass to the server simulates a client's DATA(p)
+                    if ( guid != GUID_t::unknown() && guid == mp_PDPWriter->getGuid() )
                     {
-                        logInfo(RTPS_PDP, "PDPServer couldn't process database data not add change "
-                            << change_to_add->sequenceNumber);
-                        p_PDPReader->releaseCache(change_to_add);
+                        assert(si != SampleIdentity::unknown());
+                        change_to_add->writerGUID = si.writer_guid();
+                        change_to_add->sequenceNumber = si.sequence_number();
                     }
 
-                    // change_to_add would be released within change_received
-                });
+            if (!p_PDPReader->change_received(change_to_add, nullptr))
+            {
+                logInfo(RTPS_PDP, "PDPServer couldn't process database data not add change "
+                    << change_to_add->sequenceNumber);
+                p_PDPReader->releaseCache(change_to_add);
+            }
+
+            // change_to_add would be released within change_received
+        });
+
+            // remove our own old server samples
+            removal.pop_front(); // we keep the new one
+
+            for (auto pC : removal)
+            {
+                mp_PDPWriterHistory->remove_change(pC);
+            }
+
+            // marked for removal all samples linked with unknown participants
+            key_list known_participants;
+
+            std::for_each(
+                    ParticipantProxiesBegin(),
+                    ParticipantProxiesEnd(),
+                    [&known_participants](const ParticipantProxyData* pD)
+                    {
+                    known_participants.insert(pD->m_key);
+                    });
+
+            // We have not processed any PDP message yet but any lease duration callback may have modified _demises
+            // already
+
+            // identify unknown participants, mark them for trimming
+            std::set_difference(
+                    referenced_participants.cbegin(),
+                    referenced_participants.cend(),
+                    known_participants.cbegin(),
+                    known_participants.cend(),
+                    std::inserter(_demises, _demises.begin()));
+
+            // We don't need to awake the server thread because we are in it
     }
 
     EDPServer* pEDP = dynamic_cast<EDPServer*>(mp_EDP);
@@ -931,9 +1157,21 @@ void PDPServer::announceParticipantState(
     }
     else
     {
-        // retrieve the participant discovery data
-        CacheChange_t* pPD;
-        if (mp_PDPWriterHistory->get_min_change(&pPD))
+        // retrieve the participant discovery data, deserialization trimming (see processPersistentData) invalidates
+        // the assumption that own discovery data is the first one.
+        CacheChange_t* pPD = nullptr;
+        // we search in reverse order to get the last update if multiple
+        for (auto it = mp_PDPWriterHistory->changesRbegin(); it != mp_PDPWriterHistory->changesRend(); ++it, pPD = nullptr)
+        {
+            pPD = *it;
+            if (pPD->write_params.sample_identity().writer_guid() == mp_PDPWriter->getGuid())
+            {
+                // located
+                break;
+            }
+        }
+
+        if (pPD)
         {
             std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
@@ -1149,56 +1387,35 @@ bool PDPServer::pendingHistoryCleaning()
     return !_demises.empty() || pEDP->pendingHistoryCleaning();
 }
 
-// ! returns a unique_ptr to an object that handles PDP_callback_ in a RAII fashion
-std::unique_ptr<PDPServer::InPDPCallback> PDPServer::signalCallback()
-{
-    // TODO: change when C++14 available
-    //return std::make_unique<PDPServer::InPDPCallback>(*this);
-    return std::unique_ptr<InPDPCallback>(new InPDPCallback(*this));
-}
-
-// ! calls PDP Reader matched_writer_remove preventing deadlocks
-bool PDPServer::safe_PDP_matched_writer_remove(
-        const GUID_t& wguid)
-{
-    bool res;
-    std::unique_lock<std::recursive_mutex> guardP(*getMutex());
-
-    if (PDP_callback_)
+//static
+bool PDPServer::set_data_disposal_payload(
+        CDRMessage_t* msg,
+        const SampleIdentity& sid)
     {
-        // If we are in a transport callback the reader mutex is already lock
-        // and we cannot remove the writer proxies
-        RecursiveTimedMutex& mtx = mp_PDPReader->getMutex();
+    using namespace fastdds::dds;
 
-        mtx.unlock();
-        res = mp_PDPReader->matched_writer_remove(wguid);
-        mtx.lock();
-    }
-    else
+    if (!ParameterList::writeEncapsulationToCDRMsg(msg))
     {
-        // if a lease callback takes place while transport callback is going on
-        // an before it has the unmatch done we must prevent a deadlock in PDP mutex
-        guardP.unlock();
-        res = mp_PDPReader->matched_writer_remove(wguid);
+        return false;
     }
 
-    return res;
+    ParameterPropertyList_t properties;
+    set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", properties);
+
+    if (!ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(properties, msg))
+{
+        return false;
+    }
+
+    return ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }
 
-PDPServer::InPDPCallback::InPDPCallback(
-        PDPServer& svr)
-    : server_(svr)
+//static
+uint32_t PDPServer::get_data_disposal_payload_serialized_size()
 {
-    std::lock_guard<std::recursive_mutex> lock(*server_.getMutex());
-
-    server_.PDP_callback_ = true;
-}
-
-PDPServer::InPDPCallback::~InPDPCallback()
-{
-    std::lock_guard<std::recursive_mutex> lock(*server_.getMutex());
-
-    server_.PDP_callback_ = false;
+   // |GUID UNKNOWN| lenght 14
+   // ff.ff.ff.ff.ff.ff.ff.ff.ff.ff.ff.ff|ff.ff.ff.ff lenght 47
+   return 47;
 }
 
 } /* namespace rtps */

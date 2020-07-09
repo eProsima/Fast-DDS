@@ -64,6 +64,7 @@ ReaderProxyData::ReaderProxyData (
 {
     m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
     m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
+    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 }
 
 ReaderProxyData::~ReaderProxyData()
@@ -94,6 +95,7 @@ ReaderProxyData::ReaderProxyData(
     , m_type_id(nullptr)
     , m_type(nullptr)
     , m_type_information(nullptr)
+    , m_properties(readerInfo.m_properties)
 {
     if (readerInfo.m_type_id)
     {
@@ -132,6 +134,7 @@ ReaderProxyData& ReaderProxyData::operator =(
     m_expectsInlineQos = readerInfo.m_expectsInlineQos;
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
+    m_properties = readerInfo.m_properties;
 
     if (readerInfo.m_type_id)
     {
@@ -288,6 +291,12 @@ uint32_t ReaderProxyData::get_serialized_size(
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
             m_qos.type_consistency);
+    }
+
+    if (m_properties.size() > 0)
+    {
+        // PID_PROPERTY_LIST
+        ret_val += fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(m_properties);
     }
 
 #if HAVE_SECURITY
@@ -515,6 +524,14 @@ bool ReaderProxyData::writeToCDRMessage(
     if (m_type && m_type->m_type_object._d() != 0)
     {
         if (!fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(*m_type, msg))
+        {
+            return false;
+        }
+    }
+
+    if (m_properties.size() > 0)
+    {
+        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
         {
             return false;
         }
@@ -912,6 +929,16 @@ bool ReaderProxyData::readFromCDRMessage(
                         break;
                     }
 #endif
+                    case fastdds::dds::PID_PROPERTY_LIST:
+                    {
+                        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(
+                                    m_properties, msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
+
                     default:
                     {
                         break;
@@ -965,6 +992,8 @@ void ReaderProxyData::clear()
     m_isAlive = true;
     m_topicKind = NO_KEY;
     m_qos.clear();
+    m_properties.clear();
+    m_properties.length = 0;
 
     if (m_type_id)
     {
@@ -1020,6 +1049,7 @@ void ReaderProxyData::copy(
     m_expectsInlineQos = rdata->m_expectsInlineQos;
     m_isAlive = rdata->m_isAlive;
     m_topicKind = rdata->m_topicKind;
+    m_properties = rdata->m_properties;
 
     if (rdata->m_type_id)
     {

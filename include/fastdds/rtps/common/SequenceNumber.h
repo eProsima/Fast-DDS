@@ -59,6 +59,17 @@ struct RTPS_DllAPI SequenceNumber_t
     {
     }
 
+    /*!
+     * @param 64long
+     */
+    explicit
+    SequenceNumber_t(
+            uint64_t u) noexcept
+        : high( static_cast<int32_t>(u >> 32u) )
+        , low( static_cast<uint32_t>(u) )
+    {
+    }
+
     /*! Convert the number to 64 bit.
      * @return 64 bit representation of the SequenceNumber
      */
@@ -371,7 +382,27 @@ inline std::ostream& operator <<(
     return output;
 }
 
-#endif
+/**
+ *
+ * @param input
+ * @param seqNum
+ * @return
+ */
+inline std::istream& operator >>(
+        std::istream& input,
+        SequenceNumber_t& seqNum)
+{
+    uint64_t aux;
+
+    if (input >> aux)
+    {
+        seqNum = SequenceNumber_t(aux);
+    }
+
+    return input;
+}
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
 } // namespace fastrtps

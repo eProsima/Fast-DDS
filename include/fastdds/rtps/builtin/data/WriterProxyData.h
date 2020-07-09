@@ -367,6 +367,25 @@ public:
     //!WriterQOS
     WriterQos m_qos;
 
+    /**
+     * Set participant client server sample identity
+     * @param sid valid SampleIdentity
+     */
+    void set_sample_identity(
+            const SampleIdentity& sid)
+    {
+        fastdds::dds::set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", m_properties);
+    }
+
+    /**
+     * Retrieve participant SampleIdentity
+     * @return SampleIdentity
+     */
+    SampleIdentity get_sample_identity() const
+    {
+        return fastdds::dds::get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", m_properties);
+    }
+
 #if HAVE_SECURITY
     //!EndpointSecurityInfo.endpoint_security_attributes
     security::EndpointSecurityAttributesMask security_attributes_;
@@ -456,6 +475,9 @@ private:
 
     //!Type Information
     xtypes::TypeInformation* m_type_information;
+
+    //!
+    ParameterPropertyList_t m_properties;
 };
 
 } /* namespace rtps */

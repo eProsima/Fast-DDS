@@ -998,7 +998,7 @@ public:
 
         typedef iterator self_type;
         typedef ParameterProperty_t value_type;
-        typedef ParameterProperty_t reference;
+        typedef ParameterProperty_t& reference;
         typedef ParameterProperty_t* pointer;
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
@@ -1084,7 +1084,7 @@ public:
 
         typedef const_iterator self_type;
         typedef const ParameterProperty_t value_type;
-        typedef const ParameterProperty_t reference;
+        typedef const ParameterProperty_t& reference;
         typedef const ParameterProperty_t* pointer;
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
@@ -1573,6 +1573,66 @@ public:
 #endif
 
 ///@}
+
+template<class T, class PL>
+void set_proxy_property(const T& p, const char* PID, PL& properties)
+{
+    // only valid values
+    if (p == T::unknown())
+    {
+        return;
+    }
+
+    // generate pair
+    std::pair<std::string, std::string> pair;
+    pair.first = PID;
+
+    std::ostringstream data;
+    data << p;
+    pair.second = data.str();
+
+    // if exists replace
+    auto it = std::find_if(
+        properties.begin(),
+        properties.end(),
+        [&pair](const PL::const_iterator::reference p)
+                {
+                    return pair.first == p.first();
+                });
+
+    if (it != properties.end())
+    {
+        // it->modify(pair);
+        properties.set_property(it,pair);
+    }
+    else
+    {
+        // if not exists add
+        properties.push_back(pair);
+    }
+}
+
+template<class T, class PL>
+T get_proxy_property(const char* const PID, PL& properties)
+{
+    T property;
+
+    auto it = std::find_if(
+        properties.begin(),
+        properties.end(),
+        [PID](const PL::const_iterator::reference p)
+                {
+                    return PID == p.first();
+                });
+
+    if (it != properties.end())
+    {
+        std::istringstream in(it->second());
+        in >> property;
+    }
+
+    return property;
+}
 
 } //namespace dds
 } //namespace fastdds

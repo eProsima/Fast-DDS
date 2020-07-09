@@ -17,6 +17,7 @@
  *
  */
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
@@ -37,6 +38,10 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
+#include <forward_list>
+#include <algorithm>
+
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {
@@ -153,16 +158,123 @@ bool EDPSimple::initEDP(
 }
 
 //! Process the info recorded in the persistence database
-void EDPSimple::processPersistentData(t_p_StatefulReader & reader, t_p_StatefulWriter & writer)
+void EDPSimple::processPersistentData(
+        t_p_StatefulReader& reader,
+        t_p_StatefulWriter& writer,
+        key_list& demises)
 {
     std::lock_guard<RecursiveTimedMutex> guardR(reader.first->getMutex());
     std::lock_guard<RecursiveTimedMutex> guardW(writer.first->getMutex());
+    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+
+    // own server instance
+    InstanceHandle_t server_key = mp_PDP->getLocalParticipantProxyData()->m_key;
+
+    // reference own references from writer history
+    std::forward_list<CacheChange_t*> removal;
+
+    // List known participants
+    key_list known_participants;
+
+    std::for_each(
+        mp_PDP->ParticipantProxiesBegin(),
+        mp_PDP->ParticipantProxiesEnd(),
+        [&known_participants](const ParticipantProxyData* pD)
+        {
+            known_participants.insert(pD->m_key);
+        });
+
+    // We have not processed any PDP message yet
+    assert(demises.empty());
+
+    // aux lambda to retrieve sample identity
+    // update format for 2.0.x port
+    uint32_t qos_size;
+    SampleIdentity si;
+    ChangeKind_t kind;
+
+    auto param_process = [&si, &kind](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+    {
+        // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
+        if (pid == fastdds::dds::PID_PARTICIPANT_GUID )
+        {
+            kind = ALIVE;
+            return true;
+        }
+
+        if (pid == fastdds::dds::PID_PROPERTY_LIST)
+        {
+            ParameterPropertyList_t pl;
+            si = SampleIdentity::unknown();
+
+            if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg, plength))
+            {
+                return false;
+            }
+
+            ParameterPropertyList_t::iterator it = pl.begin();
+            it = std::find_if( it, pl.end(),
+                    [](ParameterPropertyList_t::iterator::reference p)
+                    {
+                    return "PID_CLIENT_SERVER_KEY" == p.first();
+                    });
+
+            if (it != pl.end())
+            {
+                std::istringstream in(it->second());
+                in >> si;
+            }
+        }
+
+        return true;
+    };
+
 
     std::for_each(writer.second->changesBegin(),
-        writer.second->changesEnd(),
-        [&reader](CacheChange_t* change)
-    {
-        CacheChange_t* change_to_add = nullptr;
+            writer.second->changesEnd(),
+            [&](CacheChange_t* change)
+            {
+                // Reset the variables referenced by the lambda
+                si = SampleIdentity::unknown();
+                kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
+
+                // We must retrieve the identity info from the payload and update the WriteParams
+                CDRMessage_t msg(change->serializedPayload);
+                ParameterList::readParameterListfromCDRMsg(msg, param_process, true, qos_size);
+
+                // determine kind
+                change->kind = kind;
+
+                // recover sample identity
+                if (si != SampleIdentity::unknown())
+                {
+                    change->write_params.sample_identity(si);
+                    change->write_params.related_sample_identity(si);
+                }
+
+               // Get Participant InstanceHandle
+                InstanceHandle_t handle;
+                {
+                    GUID_t guid = iHandle2GUID(change->instanceHandle);
+                    guid.entityId = c_EntityId_RTPSParticipant;
+                    handle = guid;
+                }
+
+                // mark for removal endpoints from unknown participants
+                if ( known_participants.find(handle) == known_participants.end() )
+                {
+                    demises.insert(change->instanceHandle);
+                    return;
+                }
+
+                // check if its own data: mark for removal and ignore
+                if ( handle == server_key)
+                {
+                    removal.push_front(change);
+                    return;
+                }
+
+                CacheChange_t* change_to_add = nullptr;
 
         if (!reader.first->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
         {
@@ -187,8 +299,16 @@ void EDPSimple::processPersistentData(t_p_StatefulReader & reader, t_p_StatefulW
             reader.first->releaseCache(change_to_add);
         }
 
-        // change_to_add would be released within change_received
-    });
+                // change_to_add would be released within change_received
+            });
+
+    // remove our own old server samples
+    for (auto pC : removal)
+    {
+        writer.second->remove_change(pC);
+    }
+
+    // We don't need to awake the server thread because we are in it
 }
 
 void EDPSimple::set_builtin_reader_history_attributes(
