@@ -29,7 +29,7 @@ class Property
 {
     public:
 
-        Property() : propagate_(false) {}
+        Property() {}
 
         Property(const Property& property) :
             name_(property.name_),
@@ -132,7 +132,7 @@ class Property
 
         std::string value_;
 
-        bool propagate_;
+        bool propagate_ = false;
 };
 
 typedef std::vector<Property> PropertySeq;
