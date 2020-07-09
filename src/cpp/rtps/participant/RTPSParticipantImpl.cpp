@@ -132,7 +132,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         SharedMemTransportDescriptor shm_transport;
         // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
         // the equivalent segment size in SHM would be socket buffer size x 2
-        auto segment_size_udp_equivalent = 
+        auto segment_size_udp_equivalent =
             std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
         shm_transport.segment_size(segment_size_udp_equivalent);
         // Use same default max_message_size on both UDP and SHM
@@ -523,21 +523,47 @@ bool RTPSParticipantImpl::createWriter(
 
     // Update persistence guidPrefix, restore this change later to keep param unblemished
     GUID_t former_persistence_guid = param.endpoint.persistence_guid;
-    if (param.endpoint.persistence_guid == c_Guid_Unknown && m_persistence_guid != c_Guid_Unknown)
+    if (param.endpoint.persistence_guid == c_Guid_Unknown)
     {
-        param.endpoint.persistence_guid = GUID_t(
-            m_persistence_guid.guidPrefix,
-            entityId);
+        // Try to load persistence_guid from property
+        std::string* persistence_guid_property = PropertyPolicyHelper::find_property(
+            param.endpoint.properties, "dds.persistence.guid");
+        if (persistence_guid_property != nullptr)
+        {
+            // Load persistence_guid from property
+            std::istringstream(persistence_guid_property->c_str()) >> param.endpoint.persistence_guid;
+            if (param.endpoint.persistence_guid == c_Guid_Unknown)
+            {
+                // Wrongly configured property
+                logError(RTPS_PARTICIPANT, "Cannot configure writer's persistence GUID from '"
+                    << persistence_guid_property->c_str() << "'. Wrong input");
+                return false;
+            }
+            // Make sure the persistence guid sticks
+            former_persistence_guid = param.endpoint.persistence_guid;
+        }
+        else if (m_persistence_guid != c_Guid_Unknown)
+        {
+            // Generate persistence guid from participant persistence guid
+            param.endpoint.persistence_guid = GUID_t(
+                m_persistence_guid.guidPrefix,
+                entityId);
+        }
     }
 
     // Get persistence service
     IPersistenceService* persistence = nullptr;
     if (param.endpoint.durabilityKind >= TRANSIENT)
     {
+        if (param.endpoint.persistence_guid == c_Guid_Unknown)
+        {
+            logError(RTPS_PARTICIPANT, "Cannot create persistence service. Persistence GUID not specified");
+            return false;
+        }
         persistence = get_persistence_service(param.endpoint);
         if (persistence == nullptr)
         {
-            logError(RTPS_PARTICIPANT, "Couldn't create persistence service for transient/persistent writer");
+            logError(RTPS_PARTICIPANT, "Couldn't create writer persistence service for transient/persistent writer");
             return false;
         }
     }
@@ -683,6 +709,31 @@ bool RTPSParticipantImpl::createReader(
     IPersistenceService* persistence = nullptr;
     if (param.endpoint.durabilityKind >= TRANSIENT)
     {
+        // Check if persistence guid needs to be set from property
+        if (param.endpoint.persistence_guid == c_Guid_Unknown)
+        {
+            // Try to load persistence_guid from property
+            std::string* persistence_guid_property = PropertyPolicyHelper::find_property(
+                param.endpoint.properties, "dds.persistence.guid");
+            if (persistence_guid_property != nullptr)
+            {
+                // Load persistence_guid from property
+                std::istringstream(persistence_guid_property->c_str()) >> param.endpoint.persistence_guid;
+                if (param.endpoint.persistence_guid == c_Guid_Unknown)
+                {
+                    // Wrongly configured property
+                    logError(RTPS_PARTICIPANT, "Cannot configure readers's persistence GUID from '"
+                        << persistence_guid_property->c_str() << "'. Wrong input");
+                    return false;
+                }
+            }
+            else
+            {
+                logError(RTPS_PARTICIPANT, "Cannot create reader persistence service. Persistence GUID not specified");
+                return false;
+            }
+        }
+
         persistence = get_persistence_service(param.endpoint);
         if (persistence == nullptr)
         {
@@ -1435,7 +1486,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     std::list<Locator_t> unicast_real_locators;
     LocatorListConstIterator it = UnicastLocatorList.begin(), old_it;
     LocatorList_t locals;
- 
+
     do
     {
         // copy ordinary locators till the first ANY
@@ -1478,7 +1529,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     {
         typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
 
-        ResetLogical(const Transports& tp) 
+        ResetLogical(const Transports& tp)
             : Transports_(tp)
             , tcp4(nullptr)
             , tcp6(nullptr)

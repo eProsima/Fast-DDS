@@ -240,8 +240,13 @@ inline std::istream& operator >>(
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> guid.guidPrefix;
-            input >> guid.entityId;
+            char sep;
+            input >> guid.guidPrefix >> sep >> guid.entityId;
+
+            if (sep != '|')
+            {
+                input.setstate(std::ios_base::failbit);
+            }
         }
         catch (std::ios_base::failure&)
         {
