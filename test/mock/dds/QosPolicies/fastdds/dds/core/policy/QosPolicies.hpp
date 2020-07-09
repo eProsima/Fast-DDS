@@ -464,7 +464,7 @@ public:
         , ResourceLimitedOctetVector()
     {
         assign(data.begin(), data.end());
-        length = (size() + 7) & ~3;
+        length = static_cast<unsigned short int>((size() + 7u) & static_cast<uint32_t>(~3));
     }
 
     virtual RTPS_DllAPI ~GenericDataQosPolicy()

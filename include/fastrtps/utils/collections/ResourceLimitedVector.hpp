@@ -247,9 +247,11 @@ public:
             InputIterator first,
             InputIterator last)
     {
-        size_type n = std::distance(first, last);
+        size_type n = static_cast<size_type>(std::distance(first, last));
         n = std::min(n, configuration_.maximum);
-        collection_.assign(first, first + n);
+        InputIterator value = first;
+        std::advance(value, n);
+        collection_.assign(first, value);
     }
 
     /**
