@@ -281,7 +281,7 @@ public:
             (uint32_t)GET_PID() % 230,
             participant_qos_,
             &participant_listener_,
-            status_mask_);
+            eprosima::fastdds::dds::StatusMask::none());
         ASSERT_NE(participant_, nullptr);
         ASSERT_TRUE(participant_->is_enabled());
 

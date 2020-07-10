@@ -355,7 +355,8 @@ public:
         participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = initial_pdp_count;
 
         participant_ = DomainParticipantFactory::get_instance()->create_participant(
-            (uint32_t)GET_PID() % 230, participant_qos_, &participant_listener_);
+            (uint32_t)GET_PID() % 230, participant_qos_, &participant_listener_,
+            eprosima::fastdds::dds::StatusMask::none());
         ASSERT_NE(participant_, nullptr);
         ASSERT_TRUE(participant_->is_enabled());
 
