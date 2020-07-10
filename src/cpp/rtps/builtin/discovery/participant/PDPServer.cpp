@@ -836,8 +836,7 @@ void PDPServer::processPersistentData()
 
             if (pid == fastdds::dds::PID_PROPERTY_LIST)
             {
-                si = SampleIdentity::unknown();
-                guid = GUID_t::unknown();
+                // remember to reset guid and sid before calling the lambda
                 ParameterPropertyList_t pl;
 
                 if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg, plength))
@@ -846,14 +845,16 @@ void PDPServer::processPersistentData()
                 }
 
                 auto it = pl.begin();
+                std::string key;
                 const std::string server_key("PID_CLIENT_SERVER_KEY"), stamp("PID_BACKUP_STAMP");
 
                 while (true)
                 {
                     it = std::find_if( it, pl.end(),
-                            [&,server_key,stamp](ParameterPropertyList_t::iterator::reference p)
+                            [&key, &server_key, &stamp](ParameterPropertyList_t::iterator::reference p)
                             {
-                                return server_key == p.first() || stamp == p.first();
+                                key = p.first();
+                                return server_key == key || stamp == key;
                             });
 
                     if (it == pl.end())
@@ -862,7 +863,7 @@ void PDPServer::processPersistentData()
                     }
 
                     std::istringstream in(it->second());
-                    if (it++->first() == server_key)
+                    if (key == server_key)
                     {
                         in >> si;
                     }
@@ -870,6 +871,8 @@ void PDPServer::processPersistentData()
                     {
                         in >> guid;
                     }
+
+                    ++it; // next property
                 }
             }
 
@@ -1411,11 +1414,21 @@ bool PDPServer::set_data_disposal_payload(
 }
 
 //static
-uint32_t PDPServer::get_data_disposal_payload_serialized_size()
+const uint32_t PDPServer::get_data_disposal_payload_serialized_size()
 {
+   // GUID_t sizes
    // |GUID UNKNOWN| lenght 14
    // ff.ff.ff.ff.ff.ff.ff.ff.ff.ff.ff.ff|ff.ff.ff.ff lenght 47
-   return 47;
+   // SequenceNumber sizes
+   //     0 length 1
+   //     18446744073709551615 length 20
+   // SampleIdentity introduces a separator overhead
+   // Identifier PID_CLIENT_SERVER_KEY 20
+   // ParameterPropertyList_t overhead see ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(
+   //    list overhead: p_id + p_length + n_properties = 2 + 2 + 4
+   //    properties overhead: str_len + null_char + alignment = 4 + 1 + 3
+
+  return 2 + 2 + 4 + (4 + 1 + 3 + 20) + (4 + 1 + 3 + (47 + 20 + 1));
 }
 
 } /* namespace rtps */

@@ -1595,7 +1595,7 @@ void set_proxy_property(const T& p, const char* PID, PL& properties)
     auto it = std::find_if(
         properties.begin(),
         properties.end(),
-        [&pair](const PL::const_iterator::reference p)
+        [&pair](const typename PL::const_iterator::reference p)
                 {
                     return pair.first == p.first();
                 });
@@ -1620,7 +1620,7 @@ T get_proxy_property(const char* const PID, PL& properties)
     auto it = std::find_if(
         properties.begin(),
         properties.end(),
-        [PID](const PL::const_iterator::reference p)
+        [PID](const typename PL::const_iterator::reference p)
                 {
                     return PID == p.first();
                 });
