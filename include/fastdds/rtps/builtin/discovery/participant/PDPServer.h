@@ -236,7 +236,7 @@ public:
     static bool set_data_disposal_payload(CDRMessage_t* msg, const SampleIdentity& sid);
 
     //! returns the DATA(p[UD])s size to hint payload allocation
-    static uint32_t get_data_disposal_payload_serialized_size();
+    static const uint32_t get_data_disposal_payload_serialized_size();
 
     //! Wakes up the DServerEvent for new matching or trimming
     void awakeServerThread() { mp_sync->restart_timer(); }
