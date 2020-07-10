@@ -158,7 +158,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
 
     //CREATE THE TOPIC
     Topic* topic = subscriber_->mp_participant->create_topic(
-            "HelloWorldTopic",
+            "DDSDynHelloWorldTopic",
             m_type->getName(),
             TOPIC_QOS_DEFAULT);
 
