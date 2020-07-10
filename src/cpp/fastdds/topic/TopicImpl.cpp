@@ -165,7 +165,8 @@ const TypeSupport& TopicImpl::get_type() const
     return type_support_;
 }
 
-TopicListener* TopicImpl::get_listener_for(const StatusMask& status)
+TopicListener* TopicImpl::get_listener_for(
+        const StatusMask& status)
 {
     if (listener_ != nullptr &&
             user_topic_->get_status_mask().is_active(status))

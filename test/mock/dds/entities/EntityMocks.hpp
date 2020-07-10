@@ -56,17 +56,19 @@ namespace dds {
 class DataReaderImplMock : public DataReaderImpl
 {
 public:
+
     DataReaderImplMock(
             SubscriberImpl* s,
             TypeSupport& type,
             TopicDescription* topic,
             const DataReaderQos& qos,
             DataReaderListener* listener = nullptr)
-    : DataReaderImpl(s, type, topic, qos, listener)
+        : DataReaderImpl(s, type, topic, qos, listener)
     {
     }
 
-    void set_user_datareader(DataReader* reader)
+    void set_user_datareader(
+            DataReader* reader)
     {
         user_datareader_ = reader;
     }
@@ -82,10 +84,11 @@ public:
 class DataReaderMock : public DataReader
 {
 public:
+
     DataReaderMock(
             DataReaderImpl* impl,
             const StatusMask& mask = StatusMask::all())
-    : DataReader(impl, mask)
+        : DataReader(impl, mask)
     {
     }
 
@@ -95,7 +98,7 @@ public:
             const DataReaderQos& qos,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
-    : DataReader(s, topic, qos, listener, mask)
+        : DataReader(s, topic, qos, listener, mask)
     {
     }
 
@@ -103,17 +106,19 @@ public:
     {
         return dynamic_cast<DataReaderImplMock*>(impl_);
     }
+
 };
 
 // Mocked SubscriberImpl with access to the inner members
 class SubscriberImplMock : public SubscriberImpl
 {
 public:
+
     SubscriberImplMock(
             DomainParticipantImpl* p,
             const SubscriberQos& qos,
             SubscriberListener* p_listen = nullptr)
-    : SubscriberImpl(p, qos, p_listen)
+        : SubscriberImpl(p, qos, p_listen)
     {
     }
 
@@ -122,17 +127,20 @@ public:
         return &subscriber_listener_;
     }
 
-    void set_user_subscriber(Subscriber* sub)
+    void set_user_subscriber(
+            Subscriber* sub)
     {
         user_subscriber_ = sub;
     }
 
-    void set_rtps_participant(fastrtps::rtps::RTPSParticipant* part)
+    void set_rtps_participant(
+            fastrtps::rtps::RTPSParticipant* part)
     {
         rtps_participant_ = part;
     }
 
-    void set_handle(fastrtps::rtps::InstanceHandle_t handle)
+    void set_handle(
+            fastrtps::rtps::InstanceHandle_t handle)
     {
         handle_ = handle;
     }
@@ -186,16 +194,18 @@ public:
 
         return reader;
     }
+
 };
 
 // Mocked Subscriber with access to the SubscriberImpl
 class SubscriberMock : public Subscriber
 {
 public:
+
     SubscriberMock(
             SubscriberImpl* p,
             const StatusMask& mask = StatusMask::all())
-    : Subscriber(p, mask)
+        : Subscriber(p, mask)
     {
     }
 
@@ -204,7 +214,7 @@ public:
             const SubscriberQos& qos = SUBSCRIBER_QOS_DEFAULT,
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
-    : Subscriber(dp, qos, listener, mask)
+        : Subscriber(dp, qos, listener, mask)
     {
     }
 
@@ -221,6 +231,7 @@ public:
     {
         return dynamic_cast<SubscriberImplMock*>(impl_)->create_datareader(topic, qos, listener, mask);
     }
+
 };
 
 // Mocked DataWriterImpl with access to the inner members
@@ -234,7 +245,7 @@ public:
             Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr)
-    : DataWriterImpl(p, type, topic, qos, listener)
+        : DataWriterImpl(p, type, topic, qos, listener)
     {
     }
 
@@ -243,20 +254,23 @@ public:
         return &writer_listener_;
     }
 
-    void set_user_datawriter(DataWriter* writer)
+    void set_user_datawriter(
+            DataWriter* writer)
     {
         user_datawriter_ = writer;
     }
+
 };
 
 // Mocked DataWriter with access to the DataWriterImpl
 class DataWriterMock : public DataWriter
 {
 public:
+
     DataWriterMock(
             DataWriterImpl* impl,
             const StatusMask& mask = StatusMask::all())
-    : DataWriter(impl, mask)
+        : DataWriter(impl, mask)
     {
     }
 
@@ -266,7 +280,7 @@ public:
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
-    : DataWriter(p, topic, qos, listener, mask)
+        : DataWriter(p, topic, qos, listener, mask)
     {
     }
 
@@ -274,17 +288,19 @@ public:
     {
         return dynamic_cast<DataWriterImplMock*>(impl_);
     }
+
 };
 
 // Mocked PublisherImpl with access to the inner members
 class PublisherImplMock : public PublisherImpl
 {
 public:
+
     PublisherImplMock(
             DomainParticipantImpl* p,
             const PublisherQos& qos,
             PublisherListener* p_listen = nullptr)
-    : PublisherImpl(p, qos, p_listen)
+        : PublisherImpl(p, qos, p_listen)
     {
     }
 
@@ -293,17 +309,20 @@ public:
         return &publisher_listener_;
     }
 
-    void set_user_publisher(Publisher* pub)
+    void set_user_publisher(
+            Publisher* pub)
     {
         user_publisher_ = pub;
     }
 
-    void set_rtps_participant(fastrtps::rtps::RTPSParticipant* part)
+    void set_rtps_participant(
+            fastrtps::rtps::RTPSParticipant* part)
     {
         rtps_participant_ = part;
     }
 
-    void set_handle(fastrtps::rtps::InstanceHandle_t handle)
+    void set_handle(
+            fastrtps::rtps::InstanceHandle_t handle)
     {
         handle_ = handle;
     }
@@ -358,10 +377,11 @@ public:
 class PublisherMock : public Publisher
 {
 public:
+
     PublisherMock(
             PublisherImpl* p,
             const StatusMask& mask = StatusMask::all())
-    : Publisher(p, mask)
+        : Publisher(p, mask)
     {
     }
 
@@ -370,7 +390,7 @@ public:
             const PublisherQos& qos = PUBLISHER_QOS_DEFAULT,
             PublisherListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
-    : Publisher(dp, qos, listener, mask)
+        : Publisher(dp, qos, listener, mask)
     {
     }
 
@@ -387,18 +407,20 @@ public:
     {
         return dynamic_cast<PublisherImplMock*>(impl_)->create_datawriter(topic, qos, listener, mask);
     }
+
 };
 
 // Mocked DomainParticipantImpl with access to the inner members
 class DomainParticipantImplMock : public DomainParticipantImpl
 {
 public:
+
     DomainParticipantImplMock(
             DomainParticipant* dp,
             DomainId_t did,
             const DomainParticipantQos& qos,
             DomainParticipantListener* listen = nullptr)
-    : DomainParticipantImpl(dp, did, qos, listen)
+        : DomainParticipantImpl(dp, did, qos, listen)
     {
     }
 
@@ -486,9 +508,10 @@ public:
 class DomainParticipantMock : public DomainParticipant
 {
 public:
+
     DomainParticipantMock(
             const StatusMask& mask = StatusMask::all())
-    :DomainParticipant(mask)
+        : DomainParticipant(mask)
     {
     }
 
@@ -497,7 +520,7 @@ public:
             const DomainParticipantQos& qos,
             DomainParticipantListener* listener,
             const StatusMask& mask = StatusMask::all())
-    :DomainParticipant(domain_id, qos, listener, mask)
+        : DomainParticipant(domain_id, qos, listener, mask)
     {
     }
 
@@ -528,14 +551,18 @@ public:
 class DomainParticipantFactoryMock : public DomainParticipantFactory
 {
 private:
+
     DomainParticipantFactoryMock()
     {
     }
 
 public:
-    DomainParticipantFactoryMock(const DomainParticipantFactoryMock&) = delete;
 
-    void operator= (const DomainParticipantFactoryMock&) = delete;
+    DomainParticipantFactoryMock(
+            const DomainParticipantFactoryMock&) = delete;
+
+    void operator = (
+            const DomainParticipantFactoryMock&) = delete;
 
     static DomainParticipantFactoryMock* get_instance()
     {
@@ -587,6 +614,7 @@ public:
     {
         return DomainParticipantFactory::delete_participant(part);
     }
+
 };
 
 

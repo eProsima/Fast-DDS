@@ -969,7 +969,8 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
     return topic_att;
 }
 
-DataReaderListener* DataReaderImpl::get_listener_for(const StatusMask& status)
+DataReaderListener* DataReaderImpl::get_listener_for(
+        const StatusMask& status)
 {
     if (listener_ != nullptr &&
             user_datareader_->get_status_mask().is_active(status))

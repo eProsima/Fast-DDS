@@ -60,6 +60,7 @@ class Topic;
 class Publisher : public DomainEntity
 {
 protected:
+
     friend class PublisherImpl;
     friend class DomainParticipantImpl;
 

@@ -1137,7 +1137,8 @@ bool DataWriterImpl::can_qos_be_updated(
     return updatable;
 }
 
-DataWriterListener* DataWriterImpl::get_listener_for(const StatusMask& status)
+DataWriterListener* DataWriterImpl::get_listener_for(
+        const StatusMask& status)
 {
     if (listener_ != nullptr &&
             user_datawriter_->get_status_mask().is_active(status))

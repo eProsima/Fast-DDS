@@ -335,7 +335,8 @@ protected:
      * Returns the most appropriate listener to handle the callback for the given status,
      * or nullptr if there is no appropriate listener.
      */
-    DataReaderListener* get_listener_for(const StatusMask& status);
+    DataReaderListener* get_listener_for(
+            const StatusMask& status);
 
 };
 

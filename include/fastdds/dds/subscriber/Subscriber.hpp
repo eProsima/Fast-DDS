@@ -63,6 +63,7 @@ class TopicDescription;
 class Subscriber : public DomainEntity
 {
 protected:
+
     friend class SubscriberImpl;
     friend class DomainParticipantImpl;
 

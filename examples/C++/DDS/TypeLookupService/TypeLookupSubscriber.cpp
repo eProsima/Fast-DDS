@@ -186,9 +186,9 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
 
                 //CREATE THE TOPIC
                 eprosima::fastdds::dds::Topic* topic = subscriber_->mp_participant->create_topic(
-                        "TypeLookupTopic",
-                        name,
-                        TOPIC_QOS_DEFAULT);
+                    "TypeLookupTopic",
+                    name,
+                    TOPIC_QOS_DEFAULT);
 
                 if (topic == nullptr)
                 {

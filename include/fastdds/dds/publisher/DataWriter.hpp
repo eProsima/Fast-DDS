@@ -67,6 +67,7 @@ class Topic;
 class DataWriter : public DomainEntity
 {
 protected:
+
     friend class PublisherImpl;
     friend class DataWriterImpl;
 

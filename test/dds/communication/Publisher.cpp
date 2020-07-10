@@ -110,7 +110,7 @@ public:
         }
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
 private:
 
@@ -297,9 +297,10 @@ int main(
     if (wait > 0)
     {
         std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&] {
-            return listener.matched_ >= wait;
-        });
+        listener.cv_.wait(lock, [&]
+                {
+                    return listener.matched_ >= wait;
+                });
     }
 
     types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));

@@ -179,7 +179,8 @@ public:
      * Returns the most appropriate listener to handle the callback for the given status,
      * or nullptr if there is no appropriate listener.
      */
-    PublisherListener* get_listener_for(const StatusMask& status);
+    PublisherListener* get_listener_for(
+            const StatusMask& status);
 
 protected:
 
@@ -198,7 +199,7 @@ protected:
     //!Listener to capture the events of the Writer
     class PublisherWriterListener : public DataWriterListener
     {
-public:
+    public:
 
         PublisherWriterListener(
                 PublisherImpl* p)
@@ -223,7 +224,8 @@ public:
                 const LivelinessLostStatus& status) override;
 
         PublisherImpl* publisher_;
-    } publisher_listener_;
+    }
+    publisher_listener_;
 
     Publisher* user_publisher_;
 
@@ -250,5 +252,5 @@ public:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_PUBLISHER_HPP_ */

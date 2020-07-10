@@ -63,6 +63,7 @@ class TopicDescription;
 class SubscriberImpl
 {
 protected:
+
     friend class DomainParticipantImpl;
     friend class DataReaderImpl;
 
@@ -211,7 +212,8 @@ public:
      * Returns the most appropriate listener to handle the callback for the given status,
      * or nullptr if there is no appropriate listener.
      */
-    SubscriberListener* get_listener_for(const StatusMask& status);
+    SubscriberListener* get_listener_for(
+            const StatusMask& status);
 
 protected:
 
@@ -230,7 +232,7 @@ protected:
 
     class SubscriberReaderListener : public DataReaderListener
     {
-public:
+    public:
 
         SubscriberReaderListener(
                 SubscriberImpl* s)
@@ -270,7 +272,8 @@ public:
                 const SampleLostStatus& status) override;
 
         SubscriberImpl* subscriber_;
-    } subscriber_listener_;
+    }
+    subscriber_listener_;
 
     Subscriber* user_subscriber_;
 
@@ -286,5 +289,5 @@ public:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_SUBSCRIBERIMPL_HPP_ */

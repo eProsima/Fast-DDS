@@ -66,6 +66,7 @@ class Publisher;
 class DataWriterImpl
 {
 protected:
+
     friend class PublisherImpl;
 
     /**
@@ -393,7 +394,8 @@ protected:
      * Returns the most appropriate listener to handle the callback for the given status,
      * or nullptr if there is no appropriate listener.
      */
-    DataWriterListener* get_listener_for(const StatusMask& status);
+    DataWriterListener* get_listener_for(
+            const StatusMask& status);
 };
 
 } /* namespace dds */

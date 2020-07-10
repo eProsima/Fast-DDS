@@ -596,7 +596,8 @@ bool SubscriberImpl::can_qos_be_updated(
     return true;
 }
 
-SubscriberListener* SubscriberImpl::get_listener_for(const StatusMask& status)
+SubscriberListener* SubscriberImpl::get_listener_for(
+        const StatusMask& status)
 {
     if (listener_ != nullptr &&
             user_subscriber_->get_status_mask().is_active(status))
@@ -605,7 +606,6 @@ SubscriberListener* SubscriberImpl::get_listener_for(const StatusMask& status)
     }
     return participant_->get_listener_for(status);
 }
-
 
 } /* namespace dds */
 } /* namespace fastdds */

@@ -74,6 +74,7 @@ struct SampleInfo;
 class DataReader : public DomainEntity
 {
 protected:
+
     friend class DataReaderImpl;
     friend class SubscriberImpl;
 

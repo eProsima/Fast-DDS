@@ -190,7 +190,7 @@ public:
         }
     }
 
-#endif
+#endif // if HAVE_SECURITY
 };
 
 class SubListener : public SubscriberListener
@@ -394,9 +394,10 @@ int main(
     if (g_run)
     {
         std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&] {
-            return listener.number_samples_ >= samples;
-        });
+        listener.cv_.wait(lock, [&]
+                {
+                    return listener.number_samples_ >= samples;
+                });
     }
 
     if (g_reader != nullptr)

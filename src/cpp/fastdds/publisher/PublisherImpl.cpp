@@ -158,7 +158,7 @@ ReturnCode_t PublisherImpl::set_qos(
     bool enabled = user_publisher_->is_enabled();
 
     const PublisherQos& qos_to_set = (&qos == &PUBLISHER_QOS_DEFAULT) ?
-        participant_->get_default_publisher_qos() : qos;
+            participant_->get_default_publisher_qos() : qos;
 
     if (&qos != &PUBLISHER_QOS_DEFAULT)
     {
@@ -566,7 +566,8 @@ bool PublisherImpl::can_qos_be_updated(
     return true;
 }
 
-PublisherListener* PublisherImpl::get_listener_for(const StatusMask& status)
+PublisherListener* PublisherImpl::get_listener_for(
+        const StatusMask& status)
 {
     if (listener_ != nullptr &&
             user_publisher_->get_status_mask().is_active(status))
