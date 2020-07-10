@@ -57,7 +57,8 @@ bool TypeLookupSubscriber::init()
     factory_qos.entity_factory().autoenable_created_entities = false;
     DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener);
+    StatusMask par_mask = StatusMask::subscription_matched() << StatusMask::data_available();
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener, par_mask);
     if (mp_participant == nullptr)
     {
         return false;
@@ -194,10 +195,12 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     return;
                 }
 
+                StatusMask sub_mask = StatusMask::subscription_matched() << StatusMask::data_available();
                 DataReader* reader = subscriber_->mp_subscriber->create_datareader(
                     topic,
                     subscriber_->qos_,
-                    &subscriber_->m_listener);
+                    &subscriber_->m_listener,
+                    sub_mask);
 
                 if (type == nullptr)
                 {
