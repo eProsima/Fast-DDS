@@ -337,7 +337,7 @@ bool PDP::initPDP(
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
 
     mp_mutex->lock();
-    ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid(), true);
+    ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid(), false);
     mp_mutex->unlock();
 
     if (pdata == nullptr)
@@ -1018,8 +1018,9 @@ void PDP::check_remote_participant_liveliness(
 {
     std::unique_lock<std::recursive_mutex> guard(*this->mp_mutex);
 
-    if (GUID_t::unknown() != remote_participant->m_guid)
+    if (remote_participant->should_check_lease_duration)
     {
+        assert(GUID_t::unknown() != remote_participant->m_guid);
         // Check last received message's time_point plus lease duration time doesn't overcome now().
         // If overcame, remove participant.
         auto now = std::chrono::steady_clock::now();
