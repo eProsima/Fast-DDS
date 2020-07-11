@@ -145,15 +145,19 @@ void PDPServerListener::onNewCacheChangeAdded(
             {
                 pdata->updateData(local_data);
                 pdata->isAlive = true;
+                // activate lease duration if the DATA(p) comes directly from the client
+                bool previous_lease_check_status = pdata->should_check_lease_duration;
+                pdata->should_check_lease_duration = writer_guid.guidPrefix == pdata->m_guid.guidPrefix;
                 lock.unlock();
 
                 // Included for symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
-                // right now servers do not need to modify EDP on updates
-                if (parent_pdp_->updateInfoMatchesEDP())
+                // right now servers update matching on clients that were previously relayed by a server
+                if ( previous_lease_check_status != pdata->should_check_lease_duration
+                     || parent_pdp_->updateInfoMatchesEDP() )
                 {
-                    parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
+                        parent_pdp_->assignRemoteEndpoints(pdata);
+                        parent_server_pdp_->queueParticipantForEDPMatch(pdata);
                 }
-
             }
 
             if (pdata != nullptr)

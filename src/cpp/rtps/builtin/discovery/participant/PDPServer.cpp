@@ -627,7 +627,20 @@ bool PDPServer::addRelayedChangeToHistory(
             return sid == c->write_params.sample_identity();
         });
 
-    if (it == mp_PDPWriterHistory->changesRend())
+    if (it != mp_PDPWriterHistory->changesRend())
+    {
+        // already there, check if we must activate liveliness because we received a direct announcement from a client
+        // reported by another server
+        if ( c.writerGUID == (*it)->write_params.sample_identity().writer_guid()
+            && c.writerGUID != (*it)->writerGUID )
+        {
+            // directly send from the client, reprocess...
+            // note that once the DATA(p) is directly receive from the client the WriterProxy::change_was_received would
+            // prevent it from be processed again
+            return true;
+        }
+    }
+    else
     {
         if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh )
         {
