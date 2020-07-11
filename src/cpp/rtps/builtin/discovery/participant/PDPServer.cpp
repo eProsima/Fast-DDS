@@ -1414,7 +1414,7 @@ bool PDPServer::set_data_disposal_payload(
 }
 
 //static
-const uint32_t PDPServer::get_data_disposal_payload_serialized_size()
+uint32_t PDPServer::get_data_disposal_payload_serialized_size()
 {
    // GUID_t sizes
    //     |GUID UNKNOWN| lenght 14
