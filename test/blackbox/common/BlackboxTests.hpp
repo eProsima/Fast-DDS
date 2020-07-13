@@ -133,6 +133,9 @@ std::list<String> default_large_string_data_generator(
 std::list<Data64kb> default_data64kb_data_generator(
         size_t max = 0);
 
+std::list<Data1mb> default_data16kb_data_generator(
+        size_t max = 0);
+
 std::list<Data1mb> default_data300kb_data_generator(
         size_t max = 0);
 
