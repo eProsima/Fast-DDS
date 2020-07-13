@@ -547,6 +547,13 @@ public:
 
 };
 
+
+class DomainParticipantFactoryMock;
+
+static bool g_instance_initialized = false;
+static std::mutex g_mtx;
+static DomainParticipantFactoryMock* g_instance = nullptr;
+
 // Mocked DomainParticipantFactory that creates DomainParticipantMock
 class DomainParticipantFactoryMock : public DomainParticipantFactory
 {
@@ -566,8 +573,16 @@ public:
 
     static DomainParticipantFactoryMock* get_instance()
     {
-        static DomainParticipantFactoryMock instance;
-        return &instance;
+        if (!g_instance_initialized)
+        {
+            std::lock_guard<std::mutex> lock(g_mtx);
+            if (g_instance == nullptr)
+            {
+                g_instance = new DomainParticipantFactoryMock();
+                g_instance_initialized = true;
+            }
+        }
+        return g_instance;
     }
 
     DomainParticipantMock* create_participant(

@@ -27,6 +27,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(LISTENERTESTS_SOURCE ListenerTests.cpp
             )
 
+        if(WIN32)
+            add_definitions(-D_WIN32_WINNT=0x0601)
+        endif()
+
         add_executable(ListenerTests ${LISTENERTESTS_SOURCE})
         target_compile_definitions(ListenerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(ListenerTests PRIVATE
