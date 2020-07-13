@@ -49,6 +49,7 @@
 
 using namespace eprosima::fastrtps;
 
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -909,6 +910,8 @@ void PDPServer::processPersistentData()
                     change->kind = kind;
 
                     // recover sample identity
+
+
                     if (si != SampleIdentity::unknown())
                     {
                         change->write_params.sample_identity(si);
@@ -982,8 +985,8 @@ void PDPServer::processPersistentData()
                     known_participants.insert(pD->m_key);
                     });
 
-            // We have not processed any PDP message yet
-            assert(_demises.empty());
+            // We have not processed any PDP message yet but any lease duration callback may have modified _demises
+            // already
 
             // identify unknown participants, mark them for trimming
             std::set_difference(
