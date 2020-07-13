@@ -184,8 +184,8 @@ void EDPSimple::processPersistentData(
             known_participants.insert(pD->m_key);
         });
 
-    // We have not processed any PDP message yet
-    assert(demises.empty());
+    // We have not processed any PDP message yet but any lease duration callback may have modified demises
+    // already
 
     // aux lambda to retrieve sample identity
     // update format for 2.0.x port
@@ -284,7 +284,7 @@ void EDPSimple::processPersistentData(
 
         if (!change_to_add->copy(change))
         {
-            logWarning(RTPS_EDP,"Problem copying CacheChange, received data is: " 
+            logWarning(RTPS_EDP,"Problem copying CacheChange, received data is: "
                 << change->serializedPayload.length << " bytes and max size in EDPServer reader"
                 << " is " << change_to_add->serializedPayload.max_size);
 

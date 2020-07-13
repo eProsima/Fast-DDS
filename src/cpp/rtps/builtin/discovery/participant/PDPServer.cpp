@@ -49,6 +49,7 @@
 
 using namespace eprosima::fastrtps;
 
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -909,6 +910,8 @@ void PDPServer::processPersistentData()
                     change->kind = kind;
 
                     // recover sample identity
+
+
                     if (si != SampleIdentity::unknown())
                     {
                         change->write_params.sample_identity(si);
