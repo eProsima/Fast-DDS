@@ -19,7 +19,6 @@
 
 #ifndef RTPSGAPBUILDER_HPP
 #define RTPSGAPBUILDER_HPP
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 
@@ -65,7 +64,7 @@ public:
      * Adds a sequence number to the GAP list.
      *
      * @remark Sequence numbers should be added in strict increasing order.
-     * 
+     *
      * @param gap_sequence Sequence number to be added to the GAP list.
      * @return false if a GAP message couldn't be added to the message group,
      *         true if no GAP message was needed or it was successfully added.
@@ -91,5 +90,4 @@ public:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
 #endif /* RTPSGAPBUILDER_HPP */

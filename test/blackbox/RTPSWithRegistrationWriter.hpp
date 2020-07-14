@@ -52,7 +52,7 @@ private:
 
     class Listener : public eprosima::fastrtps::rtps::WriterListener
     {
-public:
+    public:
 
         Listener(
                 RTPSWithRegistrationWriter& writer)
@@ -74,14 +74,15 @@ public:
             }
         }
 
-private:
+    private:
 
         Listener& operator =(
                 const Listener&) = delete;
 
         RTPSWithRegistrationWriter& writer_;
 
-    } listener_;
+    }
+    listener_;
 
 public:
 
@@ -207,9 +208,10 @@ public:
 
         if (matched_ == 0)
         {
-            cv_.wait(lock, [this]() -> bool {
-                return matched_ != 0;
-            });
+            cv_.wait(lock, [this]() -> bool
+                    {
+                        return matched_ != 0;
+                    });
         }
 
         ASSERT_NE(matched_, 0u);
@@ -314,7 +316,7 @@ public:
                .add_property("dds.persistence.sqlite3.filename", filename);
     }
 
-#endif
+#endif // HAVE_SQLITE3
 
     RTPSWithRegistrationWriter& history_depth(
             const int32_t depth)

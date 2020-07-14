@@ -637,12 +637,13 @@ void ReaderProxy::send_gaps(
         try
         {
             if (are_there_gaps() ||
-                (0 < changes_for_reader_.size() && next_seq != changes_for_reader_.rbegin()->getSequenceNumber()))
+                    (0 < changes_for_reader_.size() && next_seq != changes_for_reader_.rbegin()->getSequenceNumber()))
             {
                 RTPSGapBuilder gap_builder(group);
                 SequenceNumber_t current_seq = changes_low_mark_ + 1;
 
-                for (ReaderProxy::ChangeConstIterator cit = changes_for_reader_.begin(); cit != changes_for_reader_.end(); ++cit)
+                for (ReaderProxy::ChangeConstIterator cit = changes_for_reader_.begin();
+                        cit != changes_for_reader_.end(); ++cit)
                 {
                     SequenceNumber_t seq_num = cit->getSequenceNumber();
                     while (current_seq != seq_num)
