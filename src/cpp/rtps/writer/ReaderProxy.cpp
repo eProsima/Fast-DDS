@@ -630,18 +630,12 @@ bool ReaderProxy::are_there_gaps()
 
 void ReaderProxy::send_gaps(
         RTPSMessageGroup& group,
-        SequenceNumber_t min_seq,
         SequenceNumber_t next_seq)
 {
     if (is_remote_and_reliable())
     {
         try
         {
-            if (durability_kind_ == VOLATILE && min_seq <= changes_low_mark_)
-            {
-                group.add_gap(min_seq, SequenceNumberSet_t(changes_low_mark_ + 1));
-            }
-
             if (are_there_gaps() ||
                 (0 < changes_for_reader_.size() && next_seq != changes_for_reader_.rbegin()->getSequenceNumber()))
             {

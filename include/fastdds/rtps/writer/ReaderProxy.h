@@ -379,16 +379,12 @@ public:
 
     /**
      * Adds gaps to message group if there are holes / irrelevant changes on this proxy.
-     *
-     * @pre min_seq should be strictly less than next_seq (i.e. history should not be empty)
-     *
+
      * @param group Message group where gaps will be added.
-     * @param min_seq Sequence number of first sample in history.
      * @param next_seq Sequence number of next sample to be added to history.
      */
     void send_gaps(
             RTPSMessageGroup& group,
-            SequenceNumber_t min_seq,
             SequenceNumber_t next_seq);
 
     LocatorSelectorEntry* locator_selector_entry()
