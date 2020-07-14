@@ -929,7 +929,14 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
 
     RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
-    heartbeat_has_been_sent = send_hole_gaps_to_group(group);
+    // GAP for holes in history sent to the readers that need it
+    send_hole_gaps_to_group(group);
+
+    // Reset the state of locator_selector to select all readers
+    group.flush_and_reset();
+    locator_selector_.reset(true);
+    network.select_locators(locator_selector_);
+    compute_selected_guids();
 
     for (ReaderProxy* remoteReader : matched_readers_)
     {
