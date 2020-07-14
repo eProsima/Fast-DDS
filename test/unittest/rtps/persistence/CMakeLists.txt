@@ -28,18 +28,32 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
+        set(PERSISTENCEGUIDTESTS_SOURCE
+            PersistenceGuidTests.cpp)
+
         add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
+        add_executable(PersistenceGuidTests ${PERSISTENCEGUIDTESTS_SOURCE})
         target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(PersistenceGuidTests PRIVATE FASTRTPS_NO_LIBS)
         target_include_directories(PersistenceTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
+        target_include_directories(PersistenceGuidTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(PersistenceTests foonathan_memory ${GTEST_LIBRARIES} ${CMAKE_DL_LIBS})
+        target_link_libraries(PersistenceGuidTests fastrtps foonathan_memory fastcdr tinyxml2 ${GTEST_LIBRARIES} ${CMAKE_DL_LIBS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(PersistenceTests ${PRIVACY}
                 iphlpapi Shlwapi
                 )
         endif()
         add_gtest(PersistenceTests SOURCES ${PERSISTENCETESTS_SOURCE})
+        add_gtest(PersistenceGuidTests SOURCES ${PERSISTENCEGUIDTESTS_SOURCE})
+
+        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/check_guid.py
+             DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 endif()
