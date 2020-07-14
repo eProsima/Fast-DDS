@@ -133,24 +133,24 @@ StatefulWriter::StatefulWriter(
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
 
     periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                {
-                    return send_periodic_heartbeat();
-                },
+                    {
+                        return send_periodic_heartbeat();
+                    },
                     TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 
     nack_response_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                {
-                    perform_nack_response();
-                    return false;
-                },
+                    {
+                        perform_nack_response();
+                        return false;
+                    },
                     TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     if (disable_positive_acks_)
     {
         ack_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                    {
-                        return ack_timer_expired();
-                    },
+                        {
+                            return ack_timer_expired();
+                        },
                         att.keep_duration.to_ns() * 1e-6); // in milliseconds
     }
 
@@ -234,7 +234,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
 #if HAVE_SECURITY
     encrypt_cachechange(change);
-#endif
+#endif // if HAVE_SECURITY
 
     if (!matched_readers_.empty())
     {
@@ -1157,9 +1157,9 @@ void StatefulWriter::update_reader_info(
     {
         RTPSParticipantImpl* part = getRTPSParticipant();
         locator_selector_.for_each([part](const Locator_t& loc)
-                    {
-                        part->createSenderResources(loc);
-                    });
+                {
+                    part->createSenderResources(loc);
+                });
     }
 
     // Check if we have local or remote readers
@@ -1469,9 +1469,9 @@ bool StatefulWriter::is_acked_by_all(
     assert(mp_history->next_sequence_number() > change->sequenceNumber);
     return std::all_of(matched_readers_.begin(), matched_readers_.end(),
                    [change](const ReaderProxy* reader)
-                {
-                    return reader->change_is_acked(change->sequenceNumber);
-                });
+                   {
+                       return reader->change_is_acked(change->sequenceNumber);
+                   });
 }
 
 bool StatefulWriter::all_readers_updated()
@@ -1497,17 +1497,18 @@ bool StatefulWriter::wait_for_all_acked(
 
     all_acked_ = std::none_of(matched_readers_.begin(), matched_readers_.end(),
                     [](const ReaderProxy* reader)
-                {
-                    return reader->has_changes();
-                });
+                    {
+                        return reader->has_changes();
+                    });
     lock.unlock();
 
     if (!all_acked_)
     {
         std::chrono::microseconds max_w(TimeConv::Duration_t2MicroSecondsInt64(max_wait));
-        all_acked_cond_.wait_for(all_acked_lock, max_w, [&]() {
-                        return all_acked_;
-                    });
+        all_acked_cond_.wait_for(all_acked_lock, max_w, [&]()
+                {
+                    return all_acked_;
+                });
     }
 
     return all_acked_;
@@ -1555,9 +1556,9 @@ void StatefulWriter::check_acked_status()
                                 [](
                                     const CacheChange_t* change,
                                     const SequenceNumber_t& seq)
-                            {
-                                return change->sequenceNumber < seq;
-                            });
+                                {
+                                    return change->sequenceNumber < seq;
+                                });
                 if (cit != history_end && (*cit)->sequenceNumber == min_low_mark)
                 {
                     ++cit;
@@ -1639,9 +1640,10 @@ bool StatefulWriter::try_remove_change(
     {
         may_remove_change_ = 0;
         may_remove_change_cond_.wait_until(lock, max_blocking_time_point,
-                [&]() {
-                        return may_remove_change_ > 0;
-                    });
+                [&]()
+                {
+                    return may_remove_change_ > 0;
+                });
         may_remove_change = may_remove_change_;
     }
 
@@ -1743,9 +1745,9 @@ bool StatefulWriter::send_periodic_heartbeat(
 
             unacked_changes = std::any_of(matched_readers_.begin(), matched_readers_.end(),
                             [](const ReaderProxy* reader)
-                        {
-                            return reader->has_unacknowledged();
-                        });
+                            {
+                                return reader->has_unacknowledged();
+                            });
 
             if (unacked_changes)
             {
