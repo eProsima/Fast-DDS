@@ -387,8 +387,8 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-            disable_builtin_transport().
-            add_user_transport_to_pparams(testTransport).init();
+    disable_builtin_transport().
+    add_user_transport_to_pparams(testTransport).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -416,7 +416,7 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     {
         if ((it->index() % 2) == 0)
         {
-            eprosima::fastrtps::rtps::SequenceNumber_t seq {0,it->index()};
+            eprosima::fastrtps::rtps::SequenceNumber_t seq {0, it->index()};
             writer.remove_change(seq);
             it = data.erase(it);
         }
