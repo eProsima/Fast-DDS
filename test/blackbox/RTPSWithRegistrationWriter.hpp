@@ -106,7 +106,8 @@ public:
         writer_attr_.times.nackResponseDelay.seconds = 0;
         writer_attr_.times.nackResponseDelay.nanosec = 100000000;
 
-        participant_attr_.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
+        participant_attr_.builtin.discovery_config.discoveryProtocol =
+                eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
         participant_attr_.builtin.use_WriterLivelinessProtocol = true;
     }
 
@@ -125,7 +126,8 @@ public:
     void init()
     {
         //Create participant
-        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant((uint32_t)GET_PID() % 230, participant_attr_);
+        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
+            (uint32_t)GET_PID() % 230, participant_attr_);
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory
@@ -186,7 +188,8 @@ public:
         }
     }
 
-    bool remove_change (const eprosima::fastrtps::rtps::SequenceNumber_t& sequence_number)
+    bool remove_change (
+            const eprosima::fastrtps::rtps::SequenceNumber_t& sequence_number)
     {
         return history_->remove_change(sequence_number);
     }
