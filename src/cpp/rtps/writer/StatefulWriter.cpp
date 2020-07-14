@@ -794,11 +794,10 @@ void StatefulWriter::send_all_unsent_changes(
         compute_selected_guids();
 
         bool acknack_required = next_all_acked_notify_sequence_ < get_seq_num_min();
-        bool heartbeat_has_been_sent = false;
 
         RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
-        heartbeat_has_been_sent = send_hole_gaps_to_group(group);
+        acknack_required |= send_hole_gaps_to_group(group);
 
         uint32_t lastBytesProcessed = 0;
         auto sent_fun = [this, &lastBytesProcessed, &group](
@@ -882,9 +881,9 @@ void StatefulWriter::send_all_unsent_changes(
         }
 
         // Heartbeat piggyback.
-        if (!heartbeat_has_been_sent && acknack_required)
+        if (acknack_required)
         {
-            send_heartbeat_nts_(all_remote_readers_.size(), group, false);
+            send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
         }
 
         group.flush_and_reset();
@@ -1105,6 +1104,9 @@ bool StatefulWriter::send_hole_gaps_to_group(
     {
         try
         {
+            // Only send gaps to readers requiring it
+            select_all_readers_with_lowmark_below(max_removed, group);
+
             send_heartbeat_nts_(all_remote_readers_.size(), group, true);
             ret_val = true;
 
@@ -1142,6 +1144,30 @@ bool StatefulWriter::send_hole_gaps_to_group(
     }
 
     return ret_val;
+}
+
+void StatefulWriter::select_all_readers_with_lowmark_below(
+        SequenceNumber_t seq,
+        RTPSMessageGroup& group)
+{
+    // Deselect all entries on the locator selector (we will only activate the
+    // readers for which this sequence number is pending)
+    locator_selector_.reset(false);
+
+    for (ReaderProxy* remoteReader : matched_readers_)
+    {
+        if (remoteReader->changes_low_mark() < seq)
+        {
+            locator_selector_.enable(remoteReader->guid());
+        }
+    }
+
+    if (locator_selector_.state_has_changed())
+    {
+        group.flush_and_reset();
+        getRTPSParticipant()->network_factory().select_locators(locator_selector_);
+        compute_selected_guids();
+    }
 }
 
 /*
