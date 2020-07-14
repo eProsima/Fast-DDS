@@ -1827,19 +1827,27 @@ void StatefulWriter::send_heartbeat_to_nts(
         ReaderProxy& remoteReaderProxy,
         bool liveliness)
 {
-    try
+    if (remoteReaderProxy.is_remote_and_reliable())
     {
-        RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
-        send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
-        SequenceNumber_t first_seq = get_seq_num_min();
-        if (first_seq != c_SequenceNumber_Unknown)
+        try
         {
-            remoteReaderProxy.send_gaps(group, first_seq, mp_history->next_sequence_number());
+            RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
+            send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
+            SequenceNumber_t first_seq = get_seq_num_min();
+            if (first_seq != c_SequenceNumber_Unknown)
+            {
+                SequenceNumber_t low_mark = remoteReaderProxy.changes_low_mark();
+                if (remoteReaderProxy.durability_kind() == VOLATILE && first_seq <= low_mark)
+                {
+                    group.add_gap(first_seq, SequenceNumberSet_t(low_mark + 1));
+                }
+                remoteReaderProxy.send_gaps(group, mp_history->next_sequence_number());
+            }
         }
-    }
-    catch (const RTPSMessageGroup::timeout&)
-    {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
     }
 }
 
