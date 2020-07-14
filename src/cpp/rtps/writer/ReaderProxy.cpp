@@ -29,6 +29,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/history/HistoryAttributesExtension.hpp>
 
+#include "rtps/messages/RTPSGapBuilder.hpp"
+
 #include <mutex>
 #include <cassert>
 #include <algorithm>
@@ -624,6 +626,51 @@ bool ReaderProxy::are_there_gaps()
     return (0 < changes_for_reader_.size() &&
            changes_low_mark_ + uint32_t(changes_for_reader_.size()) !=
            changes_for_reader_.rbegin()->getSequenceNumber());
+}
+
+void ReaderProxy::send_gaps(
+        RTPSMessageGroup& group,
+        SequenceNumber_t min_seq,
+        SequenceNumber_t next_seq)
+{
+    if (is_remote_and_reliable())
+    {
+        try
+        {
+            if (durability_kind_ == VOLATILE && min_seq <= changes_low_mark_)
+            {
+                group.add_gap(min_seq, SequenceNumberSet_t(changes_low_mark_ + 1));
+            }
+
+            if (are_there_gaps() ||
+                (0 < changes_for_reader_.size() && next_seq != changes_for_reader_.rbegin()->getSequenceNumber()))
+            {
+                RTPSGapBuilder gap_builder(group);
+                SequenceNumber_t current_seq = changes_low_mark_ + 1;
+
+                for (ReaderProxy::ChangeConstIterator cit = changes_for_reader_.begin(); cit != changes_for_reader_.end(); ++cit)
+                {
+                    SequenceNumber_t seq_num = cit->getSequenceNumber();
+                    while (current_seq != seq_num)
+                    {
+                        gap_builder.add(current_seq);
+                        ++current_seq;
+                    }
+                    ++current_seq;
+                }
+
+                while (current_seq < next_seq)
+                {
+                    gap_builder.add(current_seq);
+                    ++current_seq;
+                }
+            }
+        }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+    }
 }
 
 }   // namespace rtps
