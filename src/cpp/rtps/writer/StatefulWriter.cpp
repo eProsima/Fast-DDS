@@ -1800,16 +1800,7 @@ void StatefulWriter::send_heartbeat_to_nts(
         SequenceNumber_t first_seq = get_seq_num_min();
         if (first_seq != c_SequenceNumber_Unknown)
         {
-            if (remoteReaderProxy.durability_kind() < TRANSIENT_LOCAL ||
-                    getAttributes().durabilityKind < TRANSIENT_LOCAL)
-            {
-                SequenceNumber_t last_irrelevance = remoteReaderProxy.changes_low_mark();
-                if (first_seq <= last_irrelevance)
-                {
-                    group.add_gap(first_seq, SequenceNumberSet_t(last_irrelevance + 1));
-                }
-            }
-
+            remoteReaderProxy.send_gaps(group, first_seq, mp_history->next_sequence_number());
         }
     }
     catch (const RTPSMessageGroup::timeout&)
