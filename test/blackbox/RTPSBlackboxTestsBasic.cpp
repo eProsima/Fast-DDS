@@ -19,6 +19,7 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
 
 #include <gtest/gtest.h>
 
@@ -358,6 +359,90 @@ TEST_P(RTPS, RTPSAsReliableVolatileSocket)
 
     ASSERT_TRUE(writer.is_history_empty());
 }
+
+TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
+{
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // To simulate lossy conditions
+    int gaps_to_drop = 2;
+    auto testTransport = std::make_shared<rtps::test_UDPv4TransportDescriptor>();
+    testTransport->drop_gap_messages_filter_ = [&gaps_to_drop](rtps::CDRMessage_t& )
+            {
+                if (gaps_to_drop > 0)
+                {
+                    --gaps_to_drop;
+                    return true;
+                }
+                return false;
+            };
+    testTransport->dropLogLength = 1;
+
+    reader.
+    durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    auto send_data (data);
+
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(send_data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(send_data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+    // Block until all data is ACK'd
+    writer.waitForAllAcked(std::chrono::seconds(10));
+
+    // Make holes in history
+    for (auto it = data.begin(); it != data.end();)
+    {
+        if ((it->index() % 2) == 0)
+        {
+            eprosima::fastrtps::rtps::SequenceNumber_t seq {0,it->index()};
+            writer.remove_change(seq);
+            it = data.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+    // Create a late joiner
+    RTPSWithRegistrationReader<HelloWorldType> late_joiner(TEST_TOPIC_NAME);
+
+    late_joiner.
+    durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+
+    ASSERT_TRUE(late_joiner.isInitialized());
+
+    // Wait for discovery.
+    late_joiner.wait_discovery();
+
+    // Block reader until reception finished or timeout.
+    late_joiner.expected_data(data);
+    late_joiner.startReception();
+    late_joiner.block_for_all();
+}
+
 
 INSTANTIATE_TEST_CASE_P(RTPS,
         RTPS,
