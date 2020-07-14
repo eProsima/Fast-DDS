@@ -348,6 +348,10 @@ private:
     bool send_hole_gaps_to_group(
             RTPSMessageGroup& group);
 
+    void select_all_readers_with_lowmark_below(
+            SequenceNumber_t seq,
+            RTPSMessageGroup& group);
+
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
