@@ -843,6 +843,7 @@ void StatefulWriter::send_all_unsent_changes(
 
             if (locator_selector_.state_has_changed())
             {
+                gap_builder.flush();
                 group.flush_and_reset();
                 network.select_locators(locator_selector_);
                 compute_selected_guids();
