@@ -42,7 +42,7 @@
 
 #include <rtps/writer/RTPSWriterCollector.h>
 #include "rtps/RTPSDomainImpl.hpp"
-#include "../messages/RTPSGapBuilder.hpp"
+#include "rtps/messages/RTPSGapBuilder.hpp"
 
 #include <mutex>
 #include <vector>
@@ -1100,7 +1100,7 @@ bool StatefulWriter::send_hole_gaps_to_group(
     SequenceNumber_t last_sequence = mp_history->next_sequence_number();
     SequenceNumber_t min_history_seq = get_seq_num_min();
     uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
-    if ((next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
+    if ( (min_readers_low_mark_ < max_removed) &&    // some holes pending acknowledgement
             (min_history_seq + history_size != last_sequence)) // There is a hole in the history
     {
         try
@@ -1602,6 +1602,7 @@ void StatefulWriter::check_acked_status()
             may_remove_change_ = 1;
             may_remove_change_cond_.notify_one();
         }
+        min_readers_low_mark_ = min_low_mark;
     }
 
     if (all_acked)
