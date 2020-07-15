@@ -126,15 +126,7 @@ public:
     UUID(
             const null_t&)
     {
-        memset(uuid_, 0, SIZE);
-    }
-
-    UUID& operator =(
-            const UUID& other)
-    {
-        memcpy(uuid_, other.uuid_, sizeof(uuid_));
-
-        return *this;
+        memset(uuid_, 0, sizeof(uuid_));
     }
 
     static void generate(
@@ -155,6 +147,7 @@ public:
 
     size_t hash() const
     {
+        static_assert(sizeof(uuid_) >= sizeof(size_t), "UUID size should accomodate a size_t");
         return *reinterpret_cast<const size_t*>(uuid_);
     }
 
