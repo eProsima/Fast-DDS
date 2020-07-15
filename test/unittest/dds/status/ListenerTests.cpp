@@ -15,14 +15,125 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <EntityMocks.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+
 
 using ::testing::StrictMock;
+using ::testing::NiceMock;
 using ::testing::Mock;
 
+using eprosima::fastrtps::rtps::RTPSDomain;
+
 namespace eprosima {
+
+namespace fastrtps {
+namespace rtps {
+class RTPSDomain;
+
+RTPSReader* RTPSDomain::reader_ = nullptr;
+RTPSWriter* RTPSDomain::writer_ = nullptr;
+RTPSParticipant* RTPSDomain::participant_ = nullptr;
+} //namespace rtps
+} //namespace fastrtps
+
 namespace fastdds {
 namespace dds {
+
+namespace builtin {
+
+const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+
+} // namespace builtin
+
+class RTPSParticipantMock : public eprosima::fastrtps::rtps::RTPSParticipant
+{
+public:
+
+    RTPSParticipantMock()
+    {
+    }
+
+    virtual ~RTPSParticipantMock() = default;
+};
+
+class RTPSReaderMock : public eprosima::fastrtps::rtps::RTPSReader
+{
+public:
+
+    RTPSReaderMock()
+    {
+    }
+
+    virtual ~RTPSReaderMock() = default;
+
+    virtual bool matched_writer_add(
+            const eprosima::fastrtps::rtps::WriterProxyData&)
+    {
+        return true;
+    }
+
+    virtual bool matched_writer_remove(
+            const eprosima::fastrtps::rtps::GUID_t&)
+    {
+        return true;
+    }
+
+    virtual bool matched_writer_is_matched(
+            const eprosima::fastrtps::rtps::GUID_t&)
+    {
+        return true;
+    }
+};
+
+class RTPSWriterMock : public eprosima::fastrtps::rtps::RTPSWriter
+{
+public:
+
+    RTPSWriterMock()
+    {
+    }
+
+    virtual ~RTPSWriterMock() = default;
+
+    virtual bool matched_reader_add(
+            const eprosima::fastrtps::rtps::ReaderProxyData&)
+    {
+        return true;
+    }
+
+    virtual bool matched_reader_remove(
+            const eprosima::fastrtps::rtps::GUID_t&)
+    {
+        return true;
+    }
+
+    virtual bool matched_reader_is_matched(
+            const eprosima::fastrtps::rtps::GUID_t&)
+    {
+        return true;
+    }
+};
+
 class CustomDataReaderListener : public DataReaderListener
 {
 public:
@@ -418,1149 +529,1028 @@ public:
 
 };
 
+class UserListeners : public ::testing::Test
+{
+
+protected:
+    void SetUp() override
+    {
+        // Set the RTPS entity mocks on the RTPSDomain (also mocked)
+        RTPSDomain::participant_ = &participant_mock_;
+        RTPSDomain::writer_ = &writer_mock_;
+        RTPSDomain::reader_ = &reader_mock_;
+
+        // Create the DDS entities with the user listeners
+        participant_ =
+                DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
+                        &participant_listener_);
+        ASSERT_NE(participant_, nullptr);
+        ASSERT_EQ(participant_->get_status_mask(), StatusMask::all());
+
+        TypeSupport type(new TopicDataTypeMock());
+        type.register_type(participant_);
+        topic_ = participant_->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+        ASSERT_NE(topic_, nullptr);
+
+        publisher_ =
+                participant_->create_publisher(PUBLISHER_QOS_DEFAULT, &publisher_listener_);
+        ASSERT_NE(publisher_, nullptr);
+
+        datawriter_ =
+                publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &datawriter_listener_);
+        ASSERT_NE(datawriter_, nullptr);
+
+        subscriber_ =
+                participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &subscriber_listener_);
+        ASSERT_NE(subscriber_, nullptr);
+
+        datareader_ =
+                subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &datareader_listener_);
+        ASSERT_NE(datareader_, nullptr);
+
+    }
+
+    void TearDown() override
+    {
+        ASSERT_EQ(publisher_->delete_datawriter(datawriter_), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(participant_->delete_publisher(publisher_), ReturnCode_t::RETCODE_OK);
+
+        ASSERT_EQ(subscriber_->delete_datareader(datareader_), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(participant_->delete_subscriber(subscriber_), ReturnCode_t::RETCODE_OK);
+
+        ASSERT_EQ(participant_->delete_topic(topic_), ReturnCode_t::RETCODE_OK);
+
+        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_), ReturnCode_t::RETCODE_OK);
+    }
+
+    // RTPS entity mocks are nice, we don't want to track all calls
+    NiceMock<RTPSParticipantMock> participant_mock_;
+    NiceMock<RTPSWriterMock> writer_mock_;
+    NiceMock<RTPSReaderMock> reader_mock_;
+
+    // User listeners are strick, we want to track unexpected calls
+    StrictMock<CustomParticipantListener> participant_listener_;
+    StrictMock<CustomPublisherListener> publisher_listener_;
+    StrictMock<CustomDataWriterListener> datawriter_listener_;
+    StrictMock<CustomSubscriberListener> subscriber_listener_;
+    StrictMock<CustomDataReaderListener> datareader_listener_;
+
+    DomainParticipant* participant_;
+    Publisher* publisher_;
+    DataWriter* datawriter_;
+    Subscriber* subscriber_;
+    DataReader* datareader_;
+    Topic* topic_;
+};
+
 void verify_expectations_on_publication_matched (
-        DataWriterMock* writer,
-        StrictMock<CustomParticipantListener>& participant_listener,
-        StrictMock<CustomPublisherListener>& publisher_listener,
-        StrictMock<CustomDataWriterListener>& datawriter_listener)
+        StrictMock<CustomParticipantListener>& participant_listener_,
+        StrictMock<CustomPublisherListener>& publisher_listener_,
+        StrictMock<CustomDataWriterListener>& datawriter_listener_)
 {
     fastdds::dds::PublicationMatchedStatus status;
 
-    writer->get_implementation()->get_inner_listener()->onWriterMatched(nullptr, status);
-    Mock::VerifyAndClearExpectations(&datawriter_listener);
-    Mock::VerifyAndClearExpectations(&publisher_listener);
-    Mock::VerifyAndClearExpectations(&participant_listener);
+    RTPSDomain::writer_->listener_->onWriterMatched(nullptr, status);
+    Mock::VerifyAndClearExpectations(&datawriter_listener_);
+    Mock::VerifyAndClearExpectations(&publisher_listener_);
+    Mock::VerifyAndClearExpectations(&participant_listener_);
 }
 
-TEST(UserListeners, publication_matched)
+TEST_F(UserListeners, publication_matched)
 {
-    StrictMock<CustomParticipantListener> participant_listener;
-    DomainParticipantMock* participant =
-            DomainParticipantFactoryMock::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
-                    &participant_listener);
-    ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
-
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    StrictMock<CustomPublisherListener> publisher_listener;
-    PublisherMock* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &publisher_listener);
-    ASSERT_NE(publisher, nullptr);
-
-    StrictMock<CustomDataWriterListener> datawriter_listener;
-    DataWriterMock* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT, &datawriter_listener);
-    ASSERT_NE(datawriter, nullptr);
 
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::publication_matched());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::publication_matched());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::all() >> StatusMask::publication_matched());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::all() >> StatusMask::publication_matched());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::publication_matched());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::publication_matched());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::all() >> StatusMask::publication_matched());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::all() >> StatusMask::publication_matched());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    // If both datareader and subscriber listeners are unavailable, the participant is called
-    datawriter->set_listener(nullptr, StatusMask::all());
+    // If both datareader_ and subscriber listeners are unavailable, the participant_ is called
+    datawriter_->set_listener(nullptr, StatusMask::all());
 
-    publisher->set_listener(&publisher_listener, StatusMask::all() >> StatusMask::publication_matched());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(1);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    publisher_->set_listener(&publisher_listener_, StatusMask::all() >> StatusMask::publication_matched());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(1);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    publisher->set_listener(&publisher_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(1);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    publisher_->set_listener(&publisher_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(1);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    publisher->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(1);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    publisher_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(1);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    // If participant listener is unavailable too, nothing gets called
-    publisher->set_listener(nullptr, StatusMask::all());
+    // If participant_ listener is unavailable too, nothing gets called
+    publisher_->set_listener(nullptr, StatusMask::all());
 
-    participant->set_listener(&participant_listener, StatusMask::all() >> StatusMask::publication_matched());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::all() >> StatusMask::publication_matched());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_publication_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_publication_matched_relay()).Times(0);
-    verify_expectations_on_publication_matched(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_publication_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_publication_matched_relay()).Times(0);
+    verify_expectations_on_publication_matched(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactoryMock::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 void verify_expectations_on_offered_incompatible_qos (
-        DataWriterMock* writer,
-        StrictMock<CustomParticipantListener>& participant_listener,
-        StrictMock<CustomPublisherListener>& publisher_listener,
-        StrictMock<CustomDataWriterListener>& datawriter_listener)
+        StrictMock<CustomParticipantListener>& participant_listener_,
+        StrictMock<CustomPublisherListener>& publisher_listener_,
+        StrictMock<CustomDataWriterListener>& datawriter_listener_)
 {
     PolicyMask status;
 
-    writer->get_implementation()->get_inner_listener()->on_offered_incompatible_qos(nullptr, status);
-    Mock::VerifyAndClearExpectations(&datawriter_listener);
-    Mock::VerifyAndClearExpectations(&publisher_listener);
-    Mock::VerifyAndClearExpectations(&participant_listener);
+    RTPSDomain::writer_->listener_->on_offered_incompatible_qos(nullptr, status);
+    Mock::VerifyAndClearExpectations(&datawriter_listener_);
+    Mock::VerifyAndClearExpectations(&publisher_listener_);
+    Mock::VerifyAndClearExpectations(&participant_listener_);
 }
 
-TEST(UserListeners, offered_incompatible_qos)
+TEST_F(UserListeners, offered_incompatible_qos)
 {
-    StrictMock<CustomParticipantListener> participant_listener;
-    DomainParticipantMock* participant =
-            DomainParticipantFactoryMock::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
-                    &participant_listener);
-    ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    StrictMock<CustomPublisherListener> publisher_listener;
-    PublisherMock* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &publisher_listener);
-    ASSERT_NE(publisher, nullptr);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::offered_incompatible_qos());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    StrictMock<CustomDataWriterListener> datawriter_listener;
-    DataWriterMock* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT, &datawriter_listener);
-    ASSERT_NE(datawriter, nullptr);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::all() >> StatusMask::offered_incompatible_qos());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::offered_incompatible_qos());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::offered_incompatible_qos());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::all() >> StatusMask::offered_incompatible_qos());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::all() >> StatusMask::offered_incompatible_qos());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    // If both datareader_ and subscriber listeners are unavailable, the participant_ is called
+    datawriter_->set_listener(nullptr, StatusMask::all());
 
-    datawriter->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    publisher_->set_listener(&publisher_listener_, StatusMask::all() >> StatusMask::offered_incompatible_qos());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::offered_incompatible_qos());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    publisher_->set_listener(&publisher_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::all() >> StatusMask::offered_incompatible_qos());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    publisher_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(1);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    // If both datareader and subscriber listeners are unavailable, the participant is called
-    datawriter->set_listener(nullptr, StatusMask::all());
+    // If participant_ listener is unavailable too, nothing gets called
+    publisher_->set_listener(nullptr, StatusMask::all());
 
-    publisher->set_listener(&publisher_listener, StatusMask::all() >> StatusMask::offered_incompatible_qos());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(1);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::all() >> StatusMask::offered_incompatible_qos());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    publisher->set_listener(&publisher_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(1);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 
-    publisher->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(1);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
-
-    // If participant listener is unavailable too, nothing gets called
-    publisher->set_listener(nullptr, StatusMask::all());
-
-    participant->set_listener(&participant_listener, StatusMask::all() >> StatusMask::offered_incompatible_qos());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
-
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
-
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_offered_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_offered_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_offered_incompatible_qos(datawriter, participant_listener, publisher_listener,
-            datawriter_listener);
-
-    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactoryMock::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_offered_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_offered_incompatible_qos(participant_listener_, publisher_listener_,
+            datawriter_listener_);
 }
 
 void verify_expectations_on_liveliness_lost (
-        DataWriterMock* writer,
-        StrictMock<CustomParticipantListener>& participant_listener,
-        StrictMock<CustomPublisherListener>& publisher_listener,
-        StrictMock<CustomDataWriterListener>& datawriter_listener)
+        StrictMock<CustomParticipantListener>& participant_listener_,
+        StrictMock<CustomPublisherListener>& publisher_listener_,
+        StrictMock<CustomDataWriterListener>& datawriter_listener_)
 {
     LivelinessLostStatus status;
 
-    writer->get_implementation()->get_inner_listener()->on_liveliness_lost(nullptr, status);
-    Mock::VerifyAndClearExpectations(&datawriter_listener);
-    Mock::VerifyAndClearExpectations(&publisher_listener);
-    Mock::VerifyAndClearExpectations(&participant_listener);
+    RTPSDomain::writer_->listener_->on_liveliness_lost(nullptr, status);
+    Mock::VerifyAndClearExpectations(&datawriter_listener_);
+    Mock::VerifyAndClearExpectations(&publisher_listener_);
+    Mock::VerifyAndClearExpectations(&participant_listener_);
 }
 
-TEST(UserListeners, liveliness_lost_test)
+TEST_F(UserListeners, liveliness_lost_test)
 {
-    StrictMock<CustomParticipantListener> participant_listener;
-    DomainParticipantMock* participant =
-            DomainParticipantFactoryMock::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
-                    &participant_listener);
-    ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    StrictMock<CustomPublisherListener> publisher_listener;
-    PublisherMock* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &publisher_listener);
-    ASSERT_NE(publisher, nullptr);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::liveliness_lost());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    StrictMock<CustomDataWriterListener> datawriter_listener;
-    DataWriterMock* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT, &datawriter_listener);
-    ASSERT_NE(datawriter, nullptr);
+    datawriter_->set_listener(&datawriter_listener_, StatusMask::all() >> StatusMask::liveliness_lost());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::liveliness_lost());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::liveliness_lost());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    datawriter->set_listener(&datawriter_listener, StatusMask::all() >> StatusMask::liveliness_lost());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    datawriter_->set_listener(nullptr, StatusMask::all() >> StatusMask::liveliness_lost());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    // If both datareader_ and subscriber listeners are unavailable, the participant_ is called
+    datawriter_->set_listener(nullptr, StatusMask::all());
 
-    datawriter->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    publisher_->set_listener(&publisher_listener_, StatusMask::all() >> StatusMask::liveliness_lost());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(1);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::liveliness_lost());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    publisher_->set_listener(&publisher_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(1);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    datawriter->set_listener(nullptr, StatusMask::all() >> StatusMask::liveliness_lost());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    publisher_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(1);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    // If both datareader and subscriber listeners are unavailable, the participant is called
-    datawriter->set_listener(nullptr, StatusMask::all());
+    // If participant_ listener is unavailable too, nothing gets called
+    publisher_->set_listener(nullptr, StatusMask::all());
 
-    publisher->set_listener(&publisher_listener, StatusMask::all() >> StatusMask::liveliness_lost());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(1);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::all() >> StatusMask::liveliness_lost());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    publisher->set_listener(&publisher_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(1);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 
-    publisher->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(1);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
-
-    // If participant listener is unavailable too, nothing gets called
-    publisher->set_listener(nullptr, StatusMask::all());
-
-    participant->set_listener(&participant_listener, StatusMask::all() >> StatusMask::liveliness_lost());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
-
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
-
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datawriter_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(publisher_listener, on_liveliness_lost_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_lost_relay()).Times(0);
-    verify_expectations_on_liveliness_lost(datawriter, participant_listener, publisher_listener, datawriter_listener);
-
-    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactoryMock::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datawriter_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(publisher_listener_, on_liveliness_lost_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_lost_relay()).Times(0);
+    verify_expectations_on_liveliness_lost(participant_listener_, publisher_listener_, datawriter_listener_);
 }
 
 void verify_expectations_on_subscription_matched (
-        DataReaderMock* reader,
-        StrictMock<CustomParticipantListener>& participant_listener,
-        StrictMock<CustomSubscriberListener>& subscriber_listener,
-        StrictMock<CustomDataReaderListener>& datareader_listener)
+        StrictMock<CustomParticipantListener>& participant_listener_,
+        StrictMock<CustomSubscriberListener>& subscriber_listener_,
+        StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
     SubscriptionMatchedStatus status;
 
-    reader->get_implementation()->get_inner_listener()->onReaderMatched(nullptr, status);
-    Mock::VerifyAndClearExpectations(&datareader_listener);
-    Mock::VerifyAndClearExpectations(&subscriber_listener);
-    Mock::VerifyAndClearExpectations(&participant_listener);
+    RTPSDomain::reader_->listener_->onReaderMatched(nullptr, status);
+    Mock::VerifyAndClearExpectations(&datareader_listener_);
+    Mock::VerifyAndClearExpectations(&subscriber_listener_);
+    Mock::VerifyAndClearExpectations(&participant_listener_);
 }
 
-TEST(UserListeners, subscription_matched_test)
+TEST_F(UserListeners, subscription_matched_test)
 {
-    StrictMock<CustomParticipantListener> participant_listener;
-    DomainParticipantMock* participant =
-            DomainParticipantFactoryMock::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
-                    &participant_listener);
-    ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+    datareader_->set_listener(&datareader_listener_, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
+    datareader_->set_listener(&datareader_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    StrictMock<CustomSubscriberListener> subscriber_listener;
-    SubscriberMock* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &subscriber_listener);
-    ASSERT_NE(subscriber, nullptr);
+    datareader_->set_listener(&datareader_listener_, StatusMask::subscription_matched());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    StrictMock<CustomDataReaderListener> datareader_listener;
-    DataReaderMock* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT, &datareader_listener);
-    ASSERT_NE(datareader, nullptr);
+    datareader_->set_listener(&datareader_listener_, StatusMask::all() >> StatusMask::subscription_matched());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::subscription_matched());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::subscription_matched());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::all() >> StatusMask::subscription_matched());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all() >> StatusMask::subscription_matched());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    // If both datareader_ and subscriber listeners are unavailable, the participant_ is called
+    datareader_->set_listener(nullptr, StatusMask::all());
 
-    datareader->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::all() >> StatusMask::subscription_matched());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(1);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::subscription_matched());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(1);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all() >> StatusMask::subscription_matched());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(1);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    // If both datareader and subscriber listeners are unavailable, the participant is called
-    datareader->set_listener(nullptr, StatusMask::all());
+    // If participant_ listener is unavailable too, nothing gets called
+    subscriber_->set_listener(nullptr, StatusMask::all());
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::all() >> StatusMask::subscription_matched());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(1);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::all() >> StatusMask::subscription_matched());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(1);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(1);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    // If participant listener is unavailable too, nothing gets called
-    subscriber->set_listener(nullptr, StatusMask::all());
-
-    participant->set_listener(&participant_listener, StatusMask::all() >> StatusMask::subscription_matched());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_subscription_matched_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_subscription_matched_relay()).Times(0);
-    verify_expectations_on_subscription_matched(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactoryMock::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_subscription_matched_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_subscription_matched_relay()).Times(0);
+    verify_expectations_on_subscription_matched(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 }
 
 void verify_expectations_on_liveliness_changed (
-        DataReaderMock* reader,
-        StrictMock<CustomParticipantListener>& participant_listener,
-        StrictMock<CustomSubscriberListener>& subscriber_listener,
-        StrictMock<CustomDataReaderListener>& datareader_listener)
+        StrictMock<CustomParticipantListener>& participant_listener_,
+        StrictMock<CustomSubscriberListener>& subscriber_listener_,
+        StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
     LivelinessChangedStatus status;
 
-    reader->get_implementation()->get_inner_listener()->on_liveliness_changed(nullptr, status);
-    Mock::VerifyAndClearExpectations(&datareader_listener);
-    Mock::VerifyAndClearExpectations(&subscriber_listener);
-    Mock::VerifyAndClearExpectations(&participant_listener);
+    RTPSDomain::reader_->listener_->on_liveliness_changed(nullptr, status);
+    Mock::VerifyAndClearExpectations(&datareader_listener_);
+    Mock::VerifyAndClearExpectations(&subscriber_listener_);
+    Mock::VerifyAndClearExpectations(&participant_listener_);
 }
 
-TEST(UserListeners, liveliness_changed_test)
+TEST_F(UserListeners, liveliness_changed_test)
 {
-    StrictMock<CustomParticipantListener> participant_listener;
-    DomainParticipantMock* participant =
-            DomainParticipantFactoryMock::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
-                    &participant_listener);
-    ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+    datareader_->set_listener(&datareader_listener_, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
+    datareader_->set_listener(&datareader_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    StrictMock<CustomSubscriberListener> subscriber_listener;
-    SubscriberMock* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &subscriber_listener);
-    ASSERT_NE(subscriber, nullptr);
+    datareader_->set_listener(&datareader_listener_, StatusMask::liveliness_changed());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    StrictMock<CustomDataReaderListener> datareader_listener;
-    DataReaderMock* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT, &datareader_listener);
-    ASSERT_NE(datareader, nullptr);
+    datareader_->set_listener(&datareader_listener_, StatusMask::all() >> StatusMask::liveliness_changed());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::liveliness_changed());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::liveliness_changed());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::all() >> StatusMask::liveliness_changed());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all() >> StatusMask::liveliness_changed());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    // If both datareader_ and subscriber listeners are unavailable, the participant_ is called
+    datareader_->set_listener(nullptr, StatusMask::all());
 
-    datareader->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::all() >> StatusMask::liveliness_changed());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(1);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::liveliness_changed());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(1);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all() >> StatusMask::liveliness_changed());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(1);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    // If both datareader and subscriber listeners are unavailable, the participant is called
-    datareader->set_listener(nullptr, StatusMask::all());
+    // If participant_ listener is unavailable too, nothing gets called
+    subscriber_->set_listener(nullptr, StatusMask::all());
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::all() >> StatusMask::liveliness_changed());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(1);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::all() >> StatusMask::liveliness_changed());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(1);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(1);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    // If participant listener is unavailable too, nothing gets called
-    subscriber->set_listener(nullptr, StatusMask::all());
-
-    participant->set_listener(&participant_listener, StatusMask::all() >> StatusMask::liveliness_changed());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_liveliness_changed_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_liveliness_changed_relay()).Times(0);
-    verify_expectations_on_liveliness_changed(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactoryMock::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_liveliness_changed_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_liveliness_changed_relay()).Times(0);
+    verify_expectations_on_liveliness_changed(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 }
 
 void verify_expectations_on_requested_incompatible_qos (
-        DataReaderMock* reader,
-        StrictMock<CustomParticipantListener>& participant_listener,
-        StrictMock<CustomSubscriberListener>& subscriber_listener,
-        StrictMock<CustomDataReaderListener>& datareader_listener)
+        StrictMock<CustomParticipantListener>& participant_listener_,
+        StrictMock<CustomSubscriberListener>& subscriber_listener_,
+        StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
     PolicyMask status;
 
-    reader->get_implementation()->get_inner_listener()->on_requested_incompatible_qos(nullptr, status);
-    Mock::VerifyAndClearExpectations(&datareader_listener);
-    Mock::VerifyAndClearExpectations(&subscriber_listener);
-    Mock::VerifyAndClearExpectations(&participant_listener);
+    RTPSDomain::reader_->listener_->on_requested_incompatible_qos(nullptr, status);
+    Mock::VerifyAndClearExpectations(&datareader_listener_);
+    Mock::VerifyAndClearExpectations(&subscriber_listener_);
+    Mock::VerifyAndClearExpectations(&participant_listener_);
 }
 
-TEST(UserListeners, requested_incompatible_qos_test)
+TEST_F(UserListeners, requested_incompatible_qos_test)
 {
-    StrictMock<CustomParticipantListener> participant_listener;
-    DomainParticipantMock* participant =
-            DomainParticipantFactoryMock::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
-                    &participant_listener);
-    ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
-
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    StrictMock<CustomSubscriberListener> subscriber_listener;
-    SubscriberMock* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &subscriber_listener);
-    ASSERT_NE(subscriber, nullptr);
-
-    StrictMock<CustomDataReaderListener> datareader_listener;
-    DataReaderMock* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT, &datareader_listener);
-    ASSERT_NE(datareader, nullptr);
-
     // All statuses active
-    datareader->set_listener(&datareader_listener, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::requested_incompatible_qos());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::requested_incompatible_qos());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::all() >> StatusMask::requested_incompatible_qos());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::all() >> StatusMask::requested_incompatible_qos());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::requested_incompatible_qos());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::requested_incompatible_qos());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all() >> StatusMask::requested_incompatible_qos());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all() >> StatusMask::requested_incompatible_qos());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    // If both datareader and subscriber listeners are unavailable, the participant is called
-    datareader->set_listener(nullptr, StatusMask::all());
+    // If both datareader_ and subscriber listeners are unavailable, the participant_ is called
+    datareader_->set_listener(nullptr, StatusMask::all());
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::all() >> StatusMask::requested_incompatible_qos());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(1);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::all() >> StatusMask::requested_incompatible_qos());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(1);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(1);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(1);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    // If participant listener is unavailable too, nothing gets called
-    subscriber->set_listener(nullptr, StatusMask::all());
+    // If participant_ listener is unavailable too, nothing gets called
+    subscriber_->set_listener(nullptr, StatusMask::all());
 
-    participant->set_listener(&participant_listener, StatusMask::all() >> StatusMask::requested_incompatible_qos());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::all() >> StatusMask::requested_incompatible_qos());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_requested_incompatible_qos_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_requested_incompatible_qos_relay()).Times(0);
-    verify_expectations_on_requested_incompatible_qos(datareader, participant_listener, subscriber_listener,
-            datareader_listener);
-
-    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactoryMock::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_requested_incompatible_qos_relay()).Times(0);
+    verify_expectations_on_requested_incompatible_qos(participant_listener_, subscriber_listener_,
+            datareader_listener_);
 }
 
 void verify_expectations_on_data_available (
-        DataReaderMock* reader,
-        StrictMock<CustomParticipantListener>& participant_listener,
-        StrictMock<CustomSubscriberListener>& subscriber_listener,
-        StrictMock<CustomDataReaderListener>& datareader_listener)
+        StrictMock<CustomParticipantListener>& participant_listener_,
+        StrictMock<CustomSubscriberListener>& subscriber_listener_,
+        StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
     fastrtps::rtps::CacheChange_t change;
 
-    reader->get_implementation()->get_inner_listener()->onNewCacheChangeAdded(nullptr, &change);
-    Mock::VerifyAndClearExpectations(&datareader_listener);
-    Mock::VerifyAndClearExpectations(&subscriber_listener);
-    Mock::VerifyAndClearExpectations(&participant_listener);
+    RTPSDomain::reader_->listener_->onNewCacheChangeAdded(nullptr, &change);
+    Mock::VerifyAndClearExpectations(&datareader_listener_);
+    Mock::VerifyAndClearExpectations(&subscriber_listener_);
+    Mock::VerifyAndClearExpectations(&participant_listener_);
 }
 
-TEST(UserListeners, data_available)
+TEST_F(UserListeners, data_available)
 {
-    StrictMock<CustomParticipantListener> participant_listener;
-    DomainParticipantMock* participant =
-            DomainParticipantFactoryMock::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
-                    &participant_listener);
-    ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
-
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    StrictMock<CustomSubscriberListener> subscriber_listener;
-    SubscriberMock* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, &subscriber_listener);
-    ASSERT_NE(subscriber, nullptr);
-
-    StrictMock<CustomDataReaderListener> datareader_listener;
-    DataReaderMock* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT, &datareader_listener);
-    ASSERT_NE(datareader, nullptr);
-
     fastrtps::rtps::CacheChange_t change;
 
     //data_on_readers has priority
     ////////////////////////////////////////////////////////////////////
 
-    // Set all statuses active on the reader and participant, see if they ever get called
-    datareader->set_listener(&datareader_listener, StatusMask::all());
-    participant->set_listener(&participant_listener, StatusMask::all());
+    // Set all statuses active on the reader and participant_, see if they ever get called
+    datareader_->set_listener(&datareader_listener_, StatusMask::all());
+    participant_->set_listener(&participant_listener_, StatusMask::all());
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(1);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(1);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::data_on_readers());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::data_on_readers());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::all() >> StatusMask::data_on_readers());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(1);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::all() >> StatusMask::data_on_readers());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(1);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::all() >> StatusMask::data_on_readers());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(1);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::all() >> StatusMask::data_on_readers());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(1);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(1);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(1);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::data_on_readers());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(1);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::data_on_readers());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(1);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::all() >> StatusMask::data_on_readers());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(1);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::all() >> StatusMask::data_on_readers());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(1);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    // If subscriber listener and participant listener are unavailable, nothing is called
-    datareader->set_listener(nullptr, StatusMask::all());
-    subscriber->set_listener(nullptr, StatusMask::all());
+    // If subscriber listener and participant_ listener are unavailable, nothing is called
+    datareader_->set_listener(nullptr, StatusMask::all());
+    subscriber_->set_listener(nullptr, StatusMask::all());
 
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
 
     // If no data_on_readers, then try data_available
     ///////////////////////////////////////////////////////////////////////
 
-    // Set all statuses active on the subscriber and participant, except data_on_readers
-    subscriber->set_listener(&subscriber_listener, StatusMask::all() >> StatusMask::data_on_readers());
-    participant->set_listener(&participant_listener, StatusMask::all() >> StatusMask::data_on_readers());
+    // Set all statuses active on the subscriber and participant_, except data_on_readers
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::all() >> StatusMask::data_on_readers());
+    participant_->set_listener(&participant_listener_, StatusMask::all() >> StatusMask::data_on_readers());
 
-    datareader->set_listener(&datareader_listener, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::data_available());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::data_available());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    datareader->set_listener(&datareader_listener, StatusMask::all() >> StatusMask::data_available());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(&datareader_listener_, StatusMask::all() >> StatusMask::data_available());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::data_available());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::data_available());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    datareader->set_listener(nullptr, StatusMask::all() >> StatusMask::data_available());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    datareader_->set_listener(nullptr, StatusMask::all() >> StatusMask::data_available());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    // If both datareader and subscriber listeners are unavailable, the participant is called
-    datareader->set_listener(nullptr, StatusMask::all());
+    // If both datareader_ and subscriber listeners are unavailable, the participant_ is called
+    datareader_->set_listener(nullptr, StatusMask::all());
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::all()
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::all()
             >> StatusMask::data_on_readers()
             >> StatusMask::data_available());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(&subscriber_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(&subscriber_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    subscriber->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(1);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    subscriber_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(1);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    // If participant listener is unavailable too, nothing gets called
-    datareader->set_listener(nullptr, StatusMask::all());
-    subscriber->set_listener(nullptr, StatusMask::all());
+    // If participant_ listener is unavailable too, nothing gets called
+    datareader_->set_listener(nullptr, StatusMask::all());
+    subscriber_->set_listener(nullptr, StatusMask::all());
 
-    participant->set_listener(&participant_listener, StatusMask::all()
+    participant_->set_listener(&participant_listener_, StatusMask::all()
             >> StatusMask::data_on_readers()
             >> StatusMask::data_available());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    participant->set_listener(&participant_listener, StatusMask::none());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
+    participant_->set_listener(&participant_listener_, StatusMask::none());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 
-    participant->set_listener(nullptr, StatusMask::all());
-    EXPECT_CALL(datareader_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_available_relay()).Times(0);
-    EXPECT_CALL(subscriber_listener, on_data_on_readers_relay()).Times(0);
-    EXPECT_CALL(participant_listener, on_data_on_readers_relay()).Times(0);
-    verify_expectations_on_data_available(datareader, participant_listener, subscriber_listener, datareader_listener);
-
-
-    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactoryMock::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    participant_->set_listener(nullptr, StatusMask::all());
+    EXPECT_CALL(datareader_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_available_relay()).Times(0);
+    EXPECT_CALL(subscriber_listener_, on_data_on_readers_relay()).Times(0);
+    EXPECT_CALL(participant_listener_, on_data_on_readers_relay()).Times(0);
+    verify_expectations_on_data_available(participant_listener_, subscriber_listener_, datareader_listener_);
 }
 
 } // namespace dds

@@ -20,17 +20,31 @@
 #ifndef _FASTDDS_RTPS_RESOURCES_RESOURCEEVENT_H_
 #define _FASTDDS_RTPS_RESOURCES_RESOURCEEVENT_H_
 
+#include <gmock/gmock.h>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-#include <gmock/gmock.h>
+class TimedEventImpl;
+
 
 class ResourceEvent
 {
     public:
 
     MOCK_METHOD0(init_thread, void());
+
+    MOCK_METHOD1(register_timer, void(TimedEventImpl* event));
+
+    MOCK_METHOD1(unregister_timer, void(TimedEventImpl* event));
+
+    MOCK_METHOD1(notify, void(TimedEventImpl* event));
+
+    MOCK_METHOD2(notify, void(
+            TimedEventImpl* event,
+            const std::chrono::steady_clock::time_point& timeout));
+
 };
 
 }

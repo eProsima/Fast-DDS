@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_RTPS_READERHISTORY_H_
 #define _FASTDDS_RTPS_READERHISTORY_H_
 
+#include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/utils/TimedMutex.hpp>
 
@@ -29,6 +30,7 @@ namespace fastrtps {
 namespace rtps {
 
 class RTPSReader;
+class WriterProxy;
 
 class ReaderHistory
 {
@@ -41,7 +43,28 @@ public:
     {
     }
 
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
+
+    MOCK_METHOD0(getHistorySize, size_t());
+
+    MOCK_METHOD1(get_earliest_change, bool(
+            CacheChange_t** change));
+
+    MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
+    // *INDENT-ON*
+
+    bool add_change(
+            CacheChange_t* change)
+    {
+        bool ret = add_change_mock(change);
+        samples_number_mutex_.lock();
+        ++samples_number_;
+        change->sequenceNumber = ++last_sequence_number_;
+        samples_number_mutex_.unlock();
+        return ret;
+    }
+
 
     bool remove_change(
             CacheChange_t* change)
@@ -60,6 +83,12 @@ protected:
 
     RTPSReader* mp_reader;
     RecursiveTimedMutex* mp_mutex;
+    std::vector<CacheChange_t*> m_changes;
+    bool m_isHistoryFull;
+    std::mutex samples_number_mutex_;
+    unsigned int samples_number_;
+    SequenceNumber_t last_sequence_number_;
+
 };
 
 } // namespace rtps
