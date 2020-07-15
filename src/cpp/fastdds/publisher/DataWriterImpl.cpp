@@ -37,6 +37,7 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include <functional>
 #include <iostream>
@@ -1149,7 +1150,9 @@ void DataWriterImpl::set_fragment_size_on_change(
     // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
     if (wparams.related_sample_identity() != SampleIdentity::unknown())
     {
-        final_high_mark_for_frag -= 32;
+        final_high_mark_for_frag -= (
+            ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE +
+            ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
     }
 
     // If it is big data, fragment it.
