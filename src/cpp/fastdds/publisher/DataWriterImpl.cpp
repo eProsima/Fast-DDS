@@ -167,7 +167,7 @@ ReturnCode_t DataWriterImpl::enable()
         high_mark_for_frag_ &= ~3;
     }
 
-    for(PublisherHistory::iterator it = history_.changesBegin(); it != history_.changesEnd(); it++)
+    for (PublisherHistory::iterator it = history_.changesBegin(); it != history_.changesEnd(); it++)
     {
         WriteParams wparams;
         set_fragment_size_on_change(wparams, *it, high_mark_for_frag_);

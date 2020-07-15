@@ -135,7 +135,6 @@ protected:
         reader.block_for_all();
     }
 
-
 };
 
 TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentLargeData)
