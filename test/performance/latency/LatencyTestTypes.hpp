@@ -131,7 +131,7 @@ public:
 
 };
 
-enum TESTCOMMAND:uint32_t
+enum TESTCOMMAND : uint32_t
 {
     DEFAULT,
     READY,
