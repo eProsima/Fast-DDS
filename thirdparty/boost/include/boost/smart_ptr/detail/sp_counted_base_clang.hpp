@@ -26,6 +26,16 @@ namespace boost
 namespace detail
 {
 
+#if defined(__clang__)
+# pragma clang diagnostic push
+#endif
+
+#if defined(__clang__) && defined(__has_warning)
+# if __has_warning( "-Wc11-extensions" )
+#  pragma clang diagnostic ignored "-Wc11-extensions"
+# endif
+#endif
+
 typedef _Atomic( boost::int_least32_t ) atomic_int_least32_t;
 
 inline void atomic_increment( atomic_int_least32_t * pw ) BOOST_SP_NOEXCEPT
@@ -61,7 +71,6 @@ inline boost::int_least32_t atomic_conditional_increment( atomic_int_least32_t *
 }
 
 #if defined(__clang__)
-# pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wweak-vtables"
 #endif
 
