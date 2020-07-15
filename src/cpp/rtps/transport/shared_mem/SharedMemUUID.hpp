@@ -17,7 +17,7 @@
 
 #ifdef _MSC_VER
 #include <Windows.h>
-#endif
+#endif // ifdef _MSC_VER
 
 #include <stdint.h>
 #include <random>
@@ -78,12 +78,12 @@ public:
         std::mt19937 gen;
 
         // The seed is derived from the ProcessID and the steady clock
-        std::array<uint32_t,4> seq;
+        std::array<uint32_t, 4> seq;
         uint64_t pid = this_process_pid();
         seq[0] = static_cast<uint32_t>(pid);
-        seq[1] = static_cast<uint32_t>(pid>>32);
+        seq[1] = static_cast<uint32_t>(pid >> 32);
         seq[2] = static_cast<uint32_t>(now);
-        seq[3] = static_cast<uint32_t>(now>>32);
+        seq[3] = static_cast<uint32_t>(now >> 32);
 
         std::seed_seq seed_seq(seq.begin(), seq.end());
         gen.seed(seed_seq);
@@ -107,8 +107,9 @@ private:
         return GetCurrentProcessId();
 #else // POSIX
         return static_cast<uint64_t>(getpid());
-#endif
+#endif // ifdef _MSC_VER
     }
+
 };
 
 template <size_t SIZE>
@@ -156,7 +157,7 @@ public:
         // TODO(Adolfo): This function should be allocation free
         std::stringstream ss;
 
-        for (size_t i=0; i < sizeof(uuid_); i++ )
+        for (size_t i = 0; i < sizeof(uuid_); i++ )
         {
             std::stringstream hex_ss;
             hex_ss << std::hex << static_cast<unsigned int>(uuid_[i]);
@@ -187,11 +188,12 @@ namespace std {
 template <>
 struct hash<eprosima::fastdds::rtps::UUID<8> >
 {
-    std::size_t operator()(
+    std::size_t operator ()(
             const eprosima::fastdds::rtps::UUID<8>& k) const
     {
         return k.hash();
     }
+
 };
 
 } // namespace std
