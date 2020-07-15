@@ -38,7 +38,8 @@ struct TroughputResults
         uint64_t send_samples;
         double MBitssec;
         double Packssec;
-    } publisher;
+    }
+    publisher;
 
     struct SubscriberResults
     {
@@ -47,7 +48,8 @@ struct TroughputResults
         uint32_t lost_samples;
         double MBitssec;
         double Packssec;
-    } subscriber;
+    }
+    subscriber;
 
     void compute()
     {
@@ -56,15 +58,19 @@ struct TroughputResults
         subscriber.MBitssec = (double)subscriber.recv_samples * payload_size * 8 / subscriber.totaltime_us.count();
         subscriber.Packssec = (double)subscriber.recv_samples * 1000000 / subscriber.totaltime_us.count();
     }
+
 };
 
 inline void print_results(
         std::vector<TroughputResults> results)
 {
     printf("\n");
-    printf("[            TEST           ][                    PUBLISHER                      ][                            SUBSCRIBER                        ]\n");
-    printf("[ Bytes,Demand,Recovery Time][Sent Samples,Send Time(us),   Packs/sec,  MBits/sec][Rec Samples,Lost Samples,Rec Time(us),   Packs/sec,  MBits/sec]\n");
-    printf("[------,------,-------------][------------,-------------,------------,-----------][-----------,------------,------------,------------,-----------]\n");
+    printf(
+        "[            TEST           ][                    PUBLISHER                      ][                            SUBSCRIBER                        ]\n");
+    printf(
+        "[ Bytes,Demand,Recovery Time][Sent Samples,Send Time(us),   Packs/sec,  MBits/sec][Rec Samples,Lost Samples,Rec Time(us),   Packs/sec,  MBits/sec]\n");
+    printf(
+        "[------,------,-------------][------------,-------------,------------,-----------][-----------,------------,------------,------------,-----------]\n");
     for (uint32_t i = 0; i < results.size(); i++)
     {
         printf("%7u,%6u,%13u,%13.0f,%13.0f,%12.3f,%11.3f,%12.0f,%12.0f,%12.0f,%12.3f,%11.3f\n",
@@ -85,77 +91,87 @@ inline void print_results(
     fflush(stdout);
 }
 
-typedef struct ThroughputType {
+typedef struct ThroughputType
+{
     uint32_t seqnum;
     std::vector<uint8_t> data;
 
     ThroughputType(
             uint32_t number)
         : seqnum(0)
-        , data(number,0)
+        , data(number, 0)
     {
     }
+
 } ThroughputType;
 
-inline bool operator==(
+inline bool operator ==(
         const ThroughputType& lt1,
         const ThroughputType& lt2)
 {
-    if(lt1.seqnum!=lt2.seqnum)
-        return false;
-    if(lt1.data.size()!=lt2.data.size())
-        return false;
-    for(size_t i = 0;i<lt1.data.size();++i)
+    if (lt1.seqnum != lt2.seqnum)
     {
-        if(lt1.data.at(i) != lt2.data.at(i))
+        return false;
+    }
+    if (lt1.data.size() != lt2.data.size())
+    {
+        return false;
+    }
+    for (size_t i = 0; i < lt1.data.size(); ++i)
+    {
+        if (lt1.data.at(i) != lt2.data.at(i))
+        {
             return false;
+        }
     }
     return true;
 }
 
-
-class ThroughputDataType: public eprosima::fastrtps::TopicDataType
+class ThroughputDataType : public eprosima::fastrtps::TopicDataType
 {
-    public:
-        ThroughputDataType(
-                uint32_t size)
-        {
-            setName("ThroughputType");
-            m_typeSize = size + 4 + 4;
-            m_isGetKeyDefined = false;
-        };
+public:
 
-        ~ThroughputDataType()
-        {
-        };
+    ThroughputDataType(
+            uint32_t size)
+    {
+        setName("ThroughputType");
+        m_typeSize = size + 4 + 4;
+        m_isGetKeyDefined = false;
+    }
 
-        bool serialize(
-                void*data,
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+    ~ThroughputDataType()
+    {
+    }
 
-        bool deserialize(
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-                void * data) override;
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
 
-        std::function<uint32_t()> getSerializedSizeProvider(
-                void* data) override;
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
 
-        void* createData() override;
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
 
-        void deleteData(
-                void* data) override;
+    void* createData() override;
 
-        bool getKey(
-                void* /*data*/,
-                eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
-                bool force_md5 = false) override
-        {
-            (void)force_md5;
-            return false;
-        }
+    void deleteData(
+            void* data) override;
+
+    bool getKey(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
 };
 
-enum e_Command:uint32_t{
+enum e_Command : uint32_t
+{
     DEFAULT,
     READY_TO_START,
     BEGIN,
@@ -192,14 +208,17 @@ typedef struct ThroughputCommandType
         , m_lostsamples(0)
         , m_lastrecsample(0)
         , m_totaltime(0)
-        {
-        }
+    {
+    }
+
 } ThroughputCommandType;
 
 
-inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType& com)
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const ThroughputCommandType& com)
 {
-    switch(com.m_command)
+    switch (com.m_command)
     {
         case (DEFAULT): return output << "DEFAULT";
         case (READY_TO_START): return output << "READY_TO_START";
@@ -213,45 +232,46 @@ inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType
     return output;
 }
 
-
 class ThroughputCommandDataType : public eprosima::fastrtps::TopicDataType
 {
-    public:
-        ThroughputCommandDataType()
-        {
-            setName("ThroughputCommand");
-            m_typeSize = 4 * sizeof(uint32_t) + 2 * sizeof(uint64_t) + sizeof(double);
-            m_isGetKeyDefined = false;
-        };
+public:
 
-        ~ThroughputCommandDataType()
-        {
-        };
+    ThroughputCommandDataType()
+    {
+        setName("ThroughputCommand");
+        m_typeSize = 4 * sizeof(uint32_t) + 2 * sizeof(uint64_t) + sizeof(double);
+        m_isGetKeyDefined = false;
+    }
 
-        bool serialize(
-                void*data,
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+    ~ThroughputCommandDataType()
+    {
+    }
 
-        bool deserialize(
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-                void * data) override;
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
 
-        std::function<uint32_t()> getSerializedSizeProvider(
-                void* data) override;
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
 
-        void* createData() override;
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
 
-        void deleteData(
-                void* data) override;
+    void* createData() override;
 
-        bool getKey(
-                void* /*data*/,
-                eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
-                bool force_md5 = false) override
-        {
-            (void)force_md5;
-            return false;
-        }
+    void deleteData(
+            void* data) override;
+
+    bool getKey(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
 };
 
 #endif /* THROUGHPUTTYPES_H_ */
