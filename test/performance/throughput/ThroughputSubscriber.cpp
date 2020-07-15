@@ -469,9 +469,9 @@ void ThroughputSubscriber::process_message()
                     std::cout << "Waiting for data discovery" << std::endl;
                     std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
                     data_discovery_cv_.wait(data_disc_lock, [&]()
-                    {
-                        return data_discovery_count_ > 0;
-                    });
+                            {
+                                return data_discovery_count_ > 0;
+                            });
                     data_disc_lock.unlock();
                     std::cout << "Discovery data complete" << std::endl;
                     break;
@@ -536,9 +536,9 @@ void ThroughputSubscriber::run()
     {
         std::unique_lock<std::mutex> lock(command_mutex_);
         command_discovery_cv_.wait(lock, [&]()
-        {
-            return command_discovery_count_ >= 2;
-        });
+                {
+                    return command_discovery_count_ >= 2;
+                });
     }
     std::cout << "Sub Discovery command complete" << std::endl;
 
@@ -551,9 +551,9 @@ void ThroughputSubscriber::run()
             std::cout << "Waiting for data matching removal" << std::endl;
             std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
             data_discovery_cv_.wait(data_disc_lock, [&]()
-            {
-                return data_discovery_count_ == 0;
-            });
+                    {
+                        return data_discovery_count_ == 0;
+                    });
             data_disc_lock.unlock();
 
             std::cout << "Waiting clean state" << std::endl;

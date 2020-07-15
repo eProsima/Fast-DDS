@@ -112,9 +112,9 @@ public:
             uint32_t datasize);
 
     void export_csv(
-        const std::string& data_name,
-        const std::string& str_reliable,
-        const std::stringstream& data_stream);
+            const std::string& data_name,
+            const std::string& str_reliable,
+            const std::stringstream& data_stream);
 
     /* Entities */
     eprosima::fastrtps::Participant* participant_;
@@ -127,7 +127,7 @@ public:
     std::chrono::steady_clock::time_point start_time_;
     std::chrono::steady_clock::time_point end_time_;
     std::chrono::duration<double, std::micro> overhead_time_;
-    std::vector<std::chrono::duration<double, std::micro>> times_;
+    std::vector<std::chrono::duration<double, std::micro> > times_;
 
     /* Data */
     eprosima::fastrtps::SampleInfo_t sampleinfo_;
@@ -149,7 +149,7 @@ public:
     constexpr static uint32_t MINIMUM_INDEX = 0;
     constexpr static uint32_t AVERAGE_INDEX = 1;
     constexpr static uint32_t DATA_BASE_INDEX = 2;
-    std::vector<std::shared_ptr<std::stringstream>> output_files_;    
+    std::vector<std::shared_ptr<std::stringstream> > output_files_;
     std::string xml_config_file_;
     std::string raw_data_file_;
     std::string export_prefix_;
@@ -198,7 +198,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } data_pub_listener_;
+    }
+    data_pub_listener_;
 
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -224,7 +225,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } data_sub_listener_;
+    }
+    data_sub_listener_;
 
     /* Command Listeners */
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
@@ -248,7 +250,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } command_pub_listener_;
+    }
+    command_pub_listener_;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -273,7 +276,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } command_sub_listener_;
+    }
+    command_sub_listener_;
 };
 
 #endif /* LATENCYPUBLISHER_H_ */

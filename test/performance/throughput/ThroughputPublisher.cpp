@@ -62,8 +62,8 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
     {
         ++throughput_publisher_.data_discovery_count_;
         std::cout << C_RED << "Pub: DATA Pub Matched "
-            << throughput_publisher_.data_discovery_count_ << "/" << throughput_publisher_.subscribers_
-            << C_DEF << std::endl;
+                  << throughput_publisher_.data_discovery_count_ << "/" << throughput_publisher_.subscribers_
+                  << C_DEF << std::endl;
     }
     else
     {
@@ -72,7 +72,7 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
 
     lock.unlock();
 
-    if(throughput_publisher_.data_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_))
+    if (throughput_publisher_.data_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_))
     {
         throughput_publisher_.data_discovery_cv_.notify_one();
     }
@@ -100,8 +100,8 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
     {
         ++throughput_publisher_.command_discovery_count_;
         std::cout << C_RED << "Pub: COMMAND Sub Matched "
-            << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_*2
-            << C_DEF << std::endl;
+                  << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_ * 2
+                  << C_DEF << std::endl;
     }
     else
     {
@@ -109,7 +109,7 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
         --throughput_publisher_.command_discovery_count_;
     }
 
-    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_*2))
+    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2))
     {
         throughput_publisher_.command_discovery_cv_.notify_one();
     }
@@ -139,8 +139,8 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(
     {
         ++throughput_publisher_.command_discovery_count_;
         std::cout << C_RED << "Pub: COMMAND Pub Matched "
-            << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_*2
-            << C_DEF << std::endl;
+                  << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_ * 2
+                  << C_DEF << std::endl;
 
     }
     else
@@ -149,7 +149,7 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(
         --throughput_publisher_.command_discovery_count_;
     }
 
-    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_*2) )
+    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2) )
     {
         throughput_publisher_.command_discovery_cv_.notify_one();
     }
@@ -425,12 +425,12 @@ void ThroughputPublisher::run(
 
     std::cout << "Pub: Waiting for command discovery" << std::endl;
     {
-	    std::unique_lock<std::mutex> disc_lock(command_mutex_);
-	    command_discovery_cv_.wait(disc_lock, [&]()
-	    {
-	        return command_discovery_count_ == static_cast<int>(subscribers_ * 2);
-	    });
-	}
+        std::unique_lock<std::mutex> disc_lock(command_mutex_);
+        command_discovery_cv_.wait(disc_lock, [&]()
+                {
+                    return command_discovery_count_ == static_cast<int>(subscribers_ * 2);
+                });
+    }
     std::cout << "Pub: Discovery command complete" << std::endl;
 
     ThroughputCommandType command;
@@ -485,7 +485,7 @@ void ThroughputPublisher::run(
                         subscribers_ready_++;
 
                         if (subscribers_ready_ == subscribers_ &&
-                            !test(test_time, recovery_times_[i], *dit, sit->first))
+                                !test(test_time, recovery_times_[i], *dit, sit->first))
                         {
                             command.m_command = ALL_STOPS;
                             command_publisher_->write((void*)&command);
@@ -520,9 +520,9 @@ void ThroughputPublisher::run(
         for (uint16_t i = 0; i <= 50; i++)
         {
             if (command_discovery_cv_.wait_for(disc_lock, std::chrono::milliseconds(100), [&]()
-                {
-                    return command_discovery_count_ == 0;
-                }))
+                    {
+                        return command_discovery_count_ == 0;
+                    }))
             {
                 std::cout << "Pub: All ThroughputSubscriber publishers and subscribers unmatched" << std::endl;
                 break;
@@ -574,9 +574,9 @@ bool ThroughputPublisher::test(
 
     std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
     data_discovery_cv_.wait(data_disc_lock, [&]()
-    {
-        return data_discovery_count_ > 0;
-    });
+            {
+                return data_discovery_count_ > 0;
+            });
     data_disc_lock.unlock();
 
     // Declare test time variables
@@ -693,11 +693,11 @@ bool ThroughputPublisher::test(
                 result.subscriber.lost_samples = command_sample.m_lostsamples;
                 result.subscriber.totaltime_us =
                         std::chrono::microseconds(command_sample.m_totaltime)
-                            - test_start_ack_duration - clock_overhead;
+                        - test_start_ack_duration - clock_overhead;
 
                 result.compute();
 
-                if(num_results_received == 1)
+                if (num_results_received == 1)
                 {
                     results_.push_back(result);
                 }
@@ -717,18 +717,18 @@ bool ThroughputPublisher::test(
                     std::ofstream data_file;
                     data_file.open(export_csv_, std::fstream::app);
                     data_file << std::fixed << std::setprecision(3)
-                            << result.payload_size << ","
-                            << result.demand << ","
-                            << result.recovery_time_ms << ","
-                            << result.publisher.send_samples << ","
-                            << result.publisher.totaltime_us.count() << ","
-                            << result.publisher.Packssec << ","
-                            << result.publisher.MBitssec << ","
-                            << result.subscriber.recv_samples << ","
-                            << result.subscriber.lost_samples << ","
-                            << result.subscriber.totaltime_us.count() << ","
-                            << result.subscriber.Packssec << ","
-                            << result.subscriber.MBitssec << std::endl;
+                              << result.payload_size << ","
+                              << result.demand << ","
+                              << result.recovery_time_ms << ","
+                              << result.publisher.send_samples << ","
+                              << result.publisher.totaltime_us.count() << ","
+                              << result.publisher.Packssec << ","
+                              << result.publisher.MBitssec << ","
+                              << result.subscriber.recv_samples << ","
+                              << result.subscriber.lost_samples << ","
+                              << result.subscriber.totaltime_us.count() << ","
+                              << result.subscriber.Packssec << ","
+                              << result.subscriber.MBitssec << std::endl;
                     data_file.flush();
                     data_file.close();
                 }

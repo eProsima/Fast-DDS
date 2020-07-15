@@ -119,7 +119,8 @@ public:
                 eprosima::fastrtps::rtps::MatchingInfo& info);
 
         LatencyTestSubscriber* latency_publisher_;
-    } data_pub_listener_;
+    }
+    data_pub_listener_;
 
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -143,7 +144,8 @@ public:
                 eprosima::fastrtps::Subscriber* sub);
 
         LatencyTestSubscriber* latency_publisher_;
-    } data_sub_listener_;
+    }
+    data_sub_listener_;
 
     /* Command Listeners */
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
@@ -165,7 +167,8 @@ public:
                 eprosima::fastrtps::rtps::MatchingInfo& info);
 
         LatencyTestSubscriber* latency_publisher_;
-    } command_pub_listener_;
+    }
+    command_pub_listener_;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -189,7 +192,8 @@ public:
                 eprosima::fastrtps::Subscriber* sub);
 
         LatencyTestSubscriber* latency_publisher_;
-    } command_sub_listener_;
+    }
+    command_sub_listener_;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */

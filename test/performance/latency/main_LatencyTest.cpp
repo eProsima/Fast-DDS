@@ -33,7 +33,7 @@
 #if defined(_MSC_VER)
 #pragma warning (push)
 #pragma warning (disable:4512)
-#endif
+#endif // if defined(_MSC_VER)
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -42,7 +42,7 @@ using namespace eprosima::fastrtps::rtps;
 #define COPYSTR strcpy_s
 #else
 #define COPYSTR strcpy
-#endif
+#endif // if defined(_WIN32)
 
 
 struct Arg : public option::Arg
@@ -150,31 +150,53 @@ enum TestAgent
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "Usage: LatencyTest <publisher|subscriber|both>\n\nGeneral options:" },
-    { HELP,            0, "h", "help",            Arg::None,     "  -h           --help                Produce help message." },
-    { RELIABILITY,     0, "r", "reliability",     Arg::Required, "  -r <arg>,    --reliability=<arg>   Set reliability (\"reliable\"/\"besteffort\")."},
-    { SAMPLES,         0, "s", "samples",         Arg::Numeric,  "  -s <num>,    --samples=<num>       Number of samples." },
-    { SEED,            0, "",  "seed",            Arg::Numeric,  "               --seed=<num>          Seed to calculate domain and topic." },
-    { HOSTNAME,        0, "",  "hostname",        Arg::None,     "               --hostname            Append hostname to the topic." },
-    { XML_FILE,        0, "",  "xml",             Arg::String,   "               --xml                 XML Configuration file." },
+    { UNKNOWN_OPT,     0, "",  "",                Arg::None,
+      "Usage: LatencyTest <publisher|subscriber|both>\n\nGeneral options:" },
+    { HELP,            0, "h", "help",            Arg::None,
+      "  -h           --help                Produce help message." },
+    { RELIABILITY,     0, "r", "reliability",     Arg::Required,
+      "  -r <arg>,    --reliability=<arg>   Set reliability (\"reliable\"/\"besteffort\")."},
+    { SAMPLES,         0, "s", "samples",         Arg::Numeric,
+      "  -s <num>,    --samples=<num>       Number of samples." },
+    { SEED,            0, "",  "seed",            Arg::Numeric,
+      "               --seed=<num>          Seed to calculate domain and topic." },
+    { HOSTNAME,        0, "",  "hostname",        Arg::None,
+      "               --hostname            Append hostname to the topic." },
+    { XML_FILE,        0, "",  "xml",             Arg::String,
+      "               --xml                 XML Configuration file." },
     { FORCED_DOMAIN,   0, "",  "domain",          Arg::Numeric,  "               --domain              RTPS Domain." },
-    { DYNAMIC_TYPES,   0, "",  "dynamic_types",   Arg::None,     "               --dynamic_types       Use dynamic types." },
+    { DYNAMIC_TYPES,   0, "",  "dynamic_types",   Arg::None,
+      "               --dynamic_types       Use dynamic types." },
 #if HAVE_SECURITY
-    { USE_SECURITY,    0, "",  "security",        Arg::Required, "               --security <arg>      Echo mode (\"true\"/\"false\")." },
-    { CERTS_PATH,      0, "",  "certs",           Arg::Required, "               --certs <arg>         Path where located certificates." },
-#endif
-    { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nPublisher/Both options:"},
-    { SUBSCRIBERS,     0, "n", "subscribers",     Arg::Numeric,  "  -n <num>,    --subscribers=<arg>   Number of subscribers." },
-    { EXPORT_CSV,      0, "",  "export_csv",      Arg::None,     "               --export_csv          Flag to export a CSV file." },
-    { EXPORT_RAW_DATA, 0, "",  "export_raw_data", Arg::String,   "               --export_raw_data     File name to export all raw data as CSV." },
-    { EXPORT_PREFIX,   0, "",  "export_prefix",   Arg::String,   "               --export_prefix       File prefix for the CSV file." },
+    {
+        USE_SECURITY,    0, "",  "security",        Arg::Required,
+        "               --security <arg>      Echo mode (\"true\"/\"false\")."
+    },
+    { CERTS_PATH,      0, "",  "certs",           Arg::Required,
+      "               --certs <arg>         Path where located certificates." },
+#endif // if HAVE_SECURITY
+    {
+        UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nPublisher/Both options:"
+    },
+    { SUBSCRIBERS,     0, "n", "subscribers",     Arg::Numeric,
+      "  -n <num>,    --subscribers=<arg>   Number of subscribers." },
+    { EXPORT_CSV,      0, "",  "export_csv",      Arg::None,
+      "               --export_csv          Flag to export a CSV file." },
+    { EXPORT_RAW_DATA, 0, "",  "export_raw_data", Arg::String,
+      "               --export_raw_data     File name to export all raw data as CSV." },
+    { EXPORT_PREFIX,   0, "",  "export_prefix",   Arg::String,
+      "               --export_prefix       File prefix for the CSV file." },
     { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nSubscriber options:"},
-    { ECHO_OPT,        0, "e", "echo",            Arg::Required, "  -e <arg>,    --echo=<arg>          Echo mode (\"true\"/\"false\")." },
-    { FILE_R,        0, "f", "file",            Arg::Required, "  -f <arg>,  --file=<arg>             File to read the payload demands from." },
+    { ECHO_OPT,        0, "e", "echo",            Arg::Required,
+      "  -e <arg>,    --echo=<arg>          Echo mode (\"true\"/\"false\")." },
+    { FILE_R,        0, "f", "file",            Arg::Required,
+      "  -f <arg>,  --file=<arg>             File to read the payload demands from." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
-bool load_demands_payload(const std::string& demands_file, std::vector<uint32_t>& demands)
+bool load_demands_payload(
+        const std::string& demands_file,
+        std::vector<uint32_t>& demands)
 {
     demands.clear();
 
@@ -209,7 +231,7 @@ bool load_demands_payload(const std::string& demands_file, std::vector<uint32_t>
                 return false;
             }
 
-            demands.push_back(payload-4);
+            demands.push_back(payload - 4);
 
             start = end + DELIM.length();
             end = line.find(DELIM, start);
@@ -219,7 +241,7 @@ bool load_demands_payload(const std::string& demands_file, std::vector<uint32_t>
                 std::istringstream n_iss(line.substr(start, end - start));
                 if (n_iss >> payload)
                 {
-                    demands.push_back(payload-4);
+                    demands.push_back(payload - 4);
                 }
             }
         }
@@ -249,7 +271,7 @@ int main(
     }
 #else
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
-#endif
+#endif // if defined(_WIN32)
 
     TestAgent test_agent = TestAgent::PUBLISHER;
     int subscribers = 1;
@@ -257,7 +279,7 @@ int main(
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
-#endif
+#endif // if HAVE_SECURITY
     bool echo = true;
     bool reliable = false;
     uint32_t seed = 80;
@@ -418,7 +440,7 @@ int main(
             case CERTS_PATH:
                 certs_path = opt.arg;
                 break;
-#endif
+#endif // if HAVE_SECURITY
             case FILE_R:
                 demands_file = opt.arg;
                 break;
@@ -468,7 +490,7 @@ int main(
         pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     }
-#endif
+#endif // if HAVE_SECURITY
 
     // Load an XML file with predefined profiles for publisher and subscriber
     if (xml_config_file.length() > 0)
@@ -478,7 +500,7 @@ int main(
 
     LatencyDataSizes data_sizes;
 
-    if(!demands_file.empty())
+    if (!demands_file.empty())
     {
         load_demands_payload(demands_file, data_sizes.sample_sizes());
     }
@@ -488,7 +510,7 @@ int main(
     if (test_agent == TestAgent::PUBLISHER)
     {
         std::cout << "Performing test with " << subscribers << " subscribers and " << samples << " samples"
-                << std::endl;
+                  << std::endl;
         LatencyTestPublisher latency_publisher;
         if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
@@ -505,7 +527,8 @@ int main(
     else if (test_agent == TestAgent::SUBSCRIBER)
     {
         LatencyTestSubscriber latency_subscriber;
-        if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+        if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
+                sub_property_policy,
                 xml_config_file, dynamic_types, forced_domain, data_sizes))
         {
             latency_subscriber.run();
@@ -519,23 +542,24 @@ int main(
     else if (test_agent == TestAgent::BOTH)
     {
         std::cout << "Performing intraprocess test with " << subscribers << " subscribers and " << samples <<
-                " samples" << std::endl;
+            " samples" << std::endl;
 
         // Initialize publisher
         LatencyTestPublisher latency_publisher;
         bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
-                export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
-                xml_config_file, dynamic_types, forced_domain, data_sizes);
+                        export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
+                        xml_config_file, dynamic_types, forced_domain, data_sizes);
 
         // Initialize subscribers
-        std::vector<std::shared_ptr<LatencyTestSubscriber>> latency_subscribers;
+        std::vector<std::shared_ptr<LatencyTestSubscriber> > latency_subscribers;
 
         bool sub_init = true;
-        for (int i=0; i < subscribers; i++)
+        for (int i = 0; i < subscribers; i++)
         {
             latency_subscribers.push_back(std::make_shared<LatencyTestSubscriber>());
-            sub_init &= latency_subscribers.back()->init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
-                sub_property_policy, xml_config_file, dynamic_types, forced_domain, data_sizes);
+            sub_init &= latency_subscribers.back()->init(echo, samples, reliable, seed, hostname,
+                            sub_part_property_policy,
+                            sub_property_policy, xml_config_file, dynamic_types, forced_domain, data_sizes);
         }
 
         // Spawn run threads
@@ -577,4 +601,4 @@ int main(
 
 #if defined(_MSC_VER)
 #pragma warning (pop)
-#endif
+#endif // if defined(_MSC_VER)

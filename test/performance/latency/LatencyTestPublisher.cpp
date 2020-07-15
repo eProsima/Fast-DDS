@@ -99,7 +99,7 @@ bool LatencyTestPublisher::init(
     raw_data_file_ = raw_data_file;
 
     data_size_pub_ = latency_data_sizes.sample_sizes();
-    
+
     // Init dynamic data
     if (dynamic_data_)
     {
@@ -136,7 +136,7 @@ bool LatencyTestPublisher::init(
         // Summary files
         *output_files_[MINIMUM_INDEX] << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
         *output_files_[AVERAGE_INDEX] << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
-        
+
         if (it != data_size_pub_.end() - 1)
         {
             *output_files_[MINIMUM_INDEX] << ",";
@@ -149,7 +149,7 @@ bool LatencyTestPublisher::init(
 
         data_index++;
     }
-    
+
     *output_files_[MINIMUM_INDEX] << std::endl;
     *output_files_[AVERAGE_INDEX] << std::endl;
 
@@ -592,7 +592,7 @@ void LatencyTestPublisher::run()
 
         if (export_csv_)
         {
-            export_csv("_" + std::to_string(stats_[i].bytes_) + "_", str_reliable, *output_files_[i+2]);
+            export_csv("_" + std::to_string(stats_[i].bytes_) + "_", str_reliable, *output_files_[i + 2]);
         }
     }
 
@@ -658,9 +658,10 @@ bool LatencyTestPublisher::test(
     command_publisher_->write(&command);
 
     std::unique_lock<std::mutex> lock(mutex_);
-    command_msg_cv_.wait(lock, [&]() {
-        return command_msg_count_ >= subscribers_;
-    });
+    command_msg_cv_.wait(lock, [&]()
+            {
+                return command_msg_count_ >= subscribers_;
+            });
     command_msg_count_ = 0;
     lock.unlock();
 
@@ -683,9 +684,10 @@ bool LatencyTestPublisher::test(
         }
 
         lock.lock();
-        data_msg_cv_.wait_for(lock, std::chrono::milliseconds(4), [&]() {
-            return data_msg_count_ >= subscribers_;
-        });
+        data_msg_cv_.wait_for(lock, std::chrono::milliseconds(4), [&]()
+                {
+                    return data_msg_count_ >= subscribers_;
+                });
         data_msg_count_ = 0;
         lock.unlock();
     }
@@ -813,7 +815,7 @@ void LatencyTestPublisher::print_stats(
     printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
             stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
             stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count());
-#endif
+#endif // ifdef _WIN32
 }
 
 void LatencyTestPublisher::export_raw_data(

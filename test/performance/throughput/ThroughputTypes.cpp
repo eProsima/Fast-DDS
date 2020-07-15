@@ -25,7 +25,9 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 // Serialization and deserialization functions
-bool ThroughputDataType::serialize(void*data, SerializedPayload_t* payload)
+bool ThroughputDataType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
     ThroughputType* lt = (ThroughputType*)data;
     memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
@@ -37,9 +39,11 @@ bool ThroughputDataType::serialize(void*data, SerializedPayload_t* payload)
     return true;
 }
 
-bool ThroughputDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool ThroughputDataType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
-    if(payload->length > 0)
+    if (payload->length > 0)
     {
         ThroughputType* lt = (ThroughputType*)data;
         memcpy(&lt->seqnum, payload->data, sizeof(lt->seqnum));
@@ -53,31 +57,34 @@ bool ThroughputDataType::deserialize(SerializedPayload_t* payload,void * data)
     return true;
 }
 
-std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(void* data)
+std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(
+        void* data)
 {
     return [data]() -> uint32_t
-    {
-        ThroughputType *tdata = static_cast<ThroughputType*>(data);
-        uint32_t size = 0;
+           {
+               ThroughputType* tdata = static_cast<ThroughputType*>(data);
+               uint32_t size = 0;
 
-        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size());
+               size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size());
 
-        return size;
-    };
+               return size;
+           };
 }
 
 void* ThroughputDataType::createData()
 {
     return (void*)new ThroughputType(this->m_typeSize);
 }
-void ThroughputDataType::deleteData(void* data)
+
+void ThroughputDataType::deleteData(
+        void* data)
 {
     delete((ThroughputType*)data);
 }
 
-
-
-bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* p)
+bool ThroughputCommandDataType::serialize(
+        void* data,
+        SerializedPayload_t* p)
 {
     ThroughputCommandType* t = (ThroughputCommandType*)data;
     p->length = 0;
@@ -96,7 +103,10 @@ bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* p)
     p->length += sizeof(t->m_totaltime);
     return true;
 }
-bool ThroughputCommandDataType::deserialize(SerializedPayload_t* p,void * data)
+
+bool ThroughputCommandDataType::deserialize(
+        SerializedPayload_t* p,
+        void* data)
 {
     ThroughputCommandType* t = (ThroughputCommandType*)data;
     p->pos = 0;
@@ -117,24 +127,27 @@ bool ThroughputCommandDataType::deserialize(SerializedPayload_t* p,void * data)
     return true;
 }
 
-std::function<uint32_t()> ThroughputCommandDataType::getSerializedSizeProvider(void*)
+std::function<uint32_t()> ThroughputCommandDataType::getSerializedSizeProvider(
+        void*)
 {
     return []() -> uint32_t
-    {
-        uint32_t size = 0;
+           {
+               uint32_t size = 0;
 
-        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
-                sizeof(uint64_t) + sizeof(uint64_t));
+               size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
+                       sizeof(uint64_t) + sizeof(uint64_t));
 
-        return size;
-    };
+               return size;
+           };
 }
 
 void* ThroughputCommandDataType::createData()
 {
     return (void*)new ThroughputCommandType();
 }
-void ThroughputCommandDataType::deleteData(void* data)
+
+void ThroughputCommandDataType::deleteData(
+        void* data)
 {
     delete((ThroughputCommandType*)data);
 }

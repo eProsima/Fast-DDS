@@ -71,7 +71,7 @@ bool LatencyTestSubscriber::init(
         LatencyDataSizes& latency_data_sizes)
 {
     data_size_sub_ = latency_data_sizes.sample_sizes();
-    
+
     xml_config_file_ = xml_config_file;
     echo_ = echo;
     samples_ = samples;
@@ -175,7 +175,7 @@ bool LatencyTestSubscriber::init(
     publisher_data_attributes.properties = property_policy;
 
     publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    
+
     if (xml_config_file_.length() > 0)
     {
         data_publisher_ = Domain::createPublisher(participant_, profile_name,
@@ -482,9 +482,9 @@ bool LatencyTestSubscriber::test(
 
     lock.lock();
     command_msg_cv_.wait(lock, [&]()
-    {
-        return command_msg_count_ > 0;
-    });
+            {
+                return command_msg_count_ > 0;
+            });
     --command_msg_count_;
     lock.unlock();
 
