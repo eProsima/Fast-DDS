@@ -100,6 +100,7 @@ protected:
         {
             data = default_data300kb_data_generator();
         }
+        auto unreceived_data = data;
 
         // Send data
         writer.send(data);
@@ -113,9 +114,11 @@ protected:
         ASSERT_TRUE(writer.isInitialized());
 
         reader
-        .socket_buffer_size(1048576)
-        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(10)
         .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .socket_buffer_size(1048576)
         .init();
 
         ASSERT_TRUE(reader.isInitialized());
@@ -124,11 +127,6 @@ protected:
         writer.wait_discovery();
         reader.wait_discovery();
 
-        auto unreceived_data = default_data16kb_data_generator();
-        if (large_data)
-        {
-            unreceived_data = default_data300kb_data_generator();
-        }
         reader.startReception(unreceived_data);
 
         // Block reader until reception finished or timeout.
