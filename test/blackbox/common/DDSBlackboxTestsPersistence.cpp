@@ -129,6 +129,8 @@ protected:
 
         reader.startReception(unreceived_data);
 
+        std::cout << "After start reception." << std::endl;
+
         // Block reader until reception finished or timeout.
         reader.block_for_all();
     }
