@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,8 +83,6 @@ protected:
         testTransport->maxMessageSize = 32768;
         testTransport->receiveBufferSize = 32768;
 
-        std::cout << db_file_name() << std::endl;
-
         writer
         .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
         .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
@@ -129,20 +127,18 @@ protected:
 
         reader.startReception(unreceived_data);
 
-        std::cout << "After start reception." << std::endl;
-
         // Block reader until reception finished or timeout.
         reader.block_for_all();
     }
 
 };
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentLargeData)
+TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithFrag)
 {
     fragment_data(true);
 }
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentSmallData)
+TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentNoFrag)
 {
     fragment_data(false);
 }
