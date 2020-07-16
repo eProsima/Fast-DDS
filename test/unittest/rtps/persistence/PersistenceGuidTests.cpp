@@ -50,12 +50,13 @@ public:
     {
     }
 
-    inline void message(const std::string &_message)
+    inline void message(
+            const std::string& _message)
     {
         m_message = _message;
     }
 
-    inline  const std::string& message() const
+    inline const std::string& message() const
     {
         return m_message;
     }
@@ -123,10 +124,10 @@ public:
 
 
 /*!
-* @fn TEST(PersistenceGuidTest, DDS_persistence_guid)
-* @brief This test checks if the persistence guid is set correctly on the RTPSWriter when it is specified using the property
-* dds.persistence.guid through DDS layer
-*/
+ * @fn TEST(PersistenceGuidTest, DDS_persistence_guid)
+ * @brief This test checks if the persistence guid is set correctly on the RTPSWriter when it is specified using the property
+ * dds.persistence.guid through DDS layer
+ */
 TEST(PersistenceGuidTest, DDS_persistence_guid)
 {
     HelloWorld hello;
@@ -171,20 +172,22 @@ TEST(PersistenceGuidTest, DDS_persistence_guid)
 
     writer->write(&hello);
 
-    int result1 = system("python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+    int result1 = system(
+        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    int result2 = system("python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
+    int result2 = system(
+        "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
 
     std::remove("persistence.db");
 }
 
 /*!
-* @fn TEST(PersistenceGuidTest, RTPS_persistence_guid)
-* @brief This test checks if the persistence guid is set correctly on the RTPSWriter when it is specified using the property
-* dds.persistence.guid through RTPS layer
-*/
+ * @fn TEST(PersistenceGuidTest, RTPS_persistence_guid)
+ * @brief This test checks if the persistence guid is set correctly on the RTPSWriter when it is specified using the property
+ * dds.persistence.guid through RTPS layer
+ */
 TEST(PersistenceGuidTest, RTPS_persistence_guid)
 {
     // Create participant
@@ -246,9 +249,10 @@ TEST(PersistenceGuidTest, RTPS_persistence_guid)
     ReaderQos Rqos;
     participant->registerReader(reader, Tatt_r, Rqos);
 
-    CacheChange_t* ch = writer->new_change([]() -> uint32_t {
-            return 255;
-        }, ALIVE);
+    CacheChange_t* ch = writer->new_change([]() -> uint32_t
+                    {
+                        return 255;
+                    }, ALIVE);
 
 #if defined(_WIN32)
     ch->serializedPayload.length =
@@ -256,23 +260,25 @@ TEST(PersistenceGuidTest, RTPS_persistence_guid)
 #else
     ch->serializedPayload.length =
             sprintf((char*)ch->serializedPayload.data, "My example string") + 1;
-#endif
+#endif // if defined(_WIN32)
     w_history->add_change(ch);
 
-    int result1 = system("python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+    int result1 = system(
+        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    int result2 = system("python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
+    int result2 = system(
+        "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
 
     std::remove("persistence.db");
 }
 
 /*!
-* @fn TEST(PersistenceGuidTest, check_prevalence)
-* @brief This test checks which persistence guid prevails the one set manually or the one set using the dds.persistence.guid
-* property
-*/
+ * @fn TEST(PersistenceGuidTest, check_prevalence)
+ * @brief This test checks which persistence guid prevails the one set manually or the one set using the dds.persistence.guid
+ * property
+ */
 TEST(PersistenceGuidTest, check_prevalence)
 {
     // Create participant
@@ -338,9 +344,10 @@ TEST(PersistenceGuidTest, check_prevalence)
     ReaderQos Rqos;
     participant->registerReader(reader, Tatt_r, Rqos);
 
-    CacheChange_t* ch = writer->new_change([]() -> uint32_t {
-            return 255;
-        }, ALIVE);
+    CacheChange_t* ch = writer->new_change([]() -> uint32_t
+                    {
+                        return 255;
+                    }, ALIVE);
 
 #if defined(_WIN32)
     ch->serializedPayload.length =
@@ -348,16 +355,18 @@ TEST(PersistenceGuidTest, check_prevalence)
 #else
     ch->serializedPayload.length =
             sprintf((char*)ch->serializedPayload.data, "My example string") + 1;
-#endif
+#endif // if defined(_WIN32)
     w_history->add_change(ch);
 
-    int result1 = system("python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+    int result1 = system(
+        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 0);
 
     result1 = system("python3 check_guid.py 'persistence.db' 'writers' '0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    int result2 = system("python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
+    int result2 = system(
+        "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 0);
 
     result2 = system("python3 check_guid.py 'persistence.db' 'readers' '0.0.0.0.0.0.0.0.0.0.0.2|0.0.0.1'");
@@ -367,9 +376,9 @@ TEST(PersistenceGuidTest, check_prevalence)
 }
 
 /*!
-* @fn TEST(PersistenceGuidTest, persistence_guid_by_xml)
-* @brief This test checks if the persistence guid is set correctly on the RTPSWriter when it is specified using an XML
-*/
+ * @fn TEST(PersistenceGuidTest, persistence_guid_by_xml)
+ * @brief This test checks if the persistence guid is set correctly on the RTPSWriter when it is specified using an XML
+ */
 TEST(PersistenceGuidTest, persistence_guid_by_xml)
 {
     HelloWorld hello;
@@ -405,17 +414,21 @@ TEST(PersistenceGuidTest, persistence_guid_by_xml)
 
     writer->write(&hello);
 
-    int result1 = system("python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+    int result1 = system(
+        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    int result2 = system("python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
+    int result2 = system(
+        "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
 
     std::remove("persistence.db");
 }
 
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
