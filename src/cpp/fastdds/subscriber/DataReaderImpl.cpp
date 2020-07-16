@@ -388,10 +388,11 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
     if (data_reader_->on_new_cache_change_added(change_in))
     {
         //First check if we can handle with on_data_on_readers
-        SubscriberListener* listener = data_reader_->subscriber_->get_listener_for(StatusMask::data_on_readers());
-        if (listener != nullptr)
+        SubscriberListener* subscriber_listener =
+                data_reader_->subscriber_->get_listener_for(StatusMask::data_on_readers());
+        if (subscriber_listener != nullptr)
         {
-            listener->on_data_on_readers(data_reader_->subscriber_->user_subscriber_);
+            subscriber_listener->on_data_on_readers(data_reader_->subscriber_->user_subscriber_);
         }
         else
         {

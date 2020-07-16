@@ -548,7 +548,6 @@ protected:
                 DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
                         &participant_listener_);
         ASSERT_NE(participant_, nullptr);
-        ASSERT_EQ(participant_->get_status_mask(), StatusMask::all());
 
         TypeSupport type(new TopicDataTypeMock());
         type.register_type(participant_);

@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <rtps/flowcontrol/FlowController.h>
 
 #include <condition_variable>
 #include <gmock/gmock.h>
