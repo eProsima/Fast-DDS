@@ -189,7 +189,6 @@ public:
 
 protected:
 
-    friend class DomainParticipantFactoryReleaser;
     friend class DomainParticipant;
 
     std::map<DomainId_t, std::vector<DomainParticipantImpl*> > participants_;
@@ -198,9 +197,13 @@ protected:
 
     virtual ~DomainParticipantFactory();
 
-    void reset_default_participant_qos();
+    DomainParticipantFactory (
+            const DomainParticipantFactory&) = delete;
 
-    static bool delete_instance();
+    void operator= (
+            const DomainParticipantFactory&) = delete;
+
+    void reset_default_participant_qos();
 
     static void set_qos(
             DomainParticipantFactoryQos& to,

@@ -24,7 +24,6 @@
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include <rtps/flowcontrol/FlowController.h>
 
 #include <condition_variable>
 #include <gmock/gmock.h>
@@ -35,7 +34,6 @@ namespace rtps {
 
 class WriterHistory;
 class RTPSParticipantImpl;
-class FlowController;
 
 class RTPSWriter : public Endpoint
 {
@@ -105,11 +103,6 @@ public:
             std::unique_lock<RecursiveTimedMutex>&)
     {
         return true;
-    }
-
-    virtual void add_flow_controller(
-            std::unique_ptr<FlowController>)
-    {
     }
 
     virtual void unsent_change_added_to_history(
