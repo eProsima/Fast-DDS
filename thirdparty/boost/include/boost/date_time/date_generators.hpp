@@ -25,7 +25,7 @@ namespace date_time {
   //! Base class for all generators that take a year and produce a date.
   /*! This class is a base class for polymorphic function objects that take
     a year and produce a concrete date.
-    @param date_type The type representing a date.  This type must
+    @tparam date_type The type representing a date.  This type must
     export a calender_type which defines a year_type.
   */
   template<class date_type>
@@ -153,9 +153,18 @@ namespace date_time {
    month_type month_;
  };
 
-
   //! Returns nth arg as string. 1 -> "first", 2 -> "second", max is 5.
-  BOOST_DATE_TIME_DECL const char* nth_as_str(int n);
+  inline const char* nth_as_str(int ele)
+  {
+    static const char* const _nth_as_str[] = {"out of range", "first", "second",
+                                              "third", "fourth", "fifth"};
+    if(ele >= 1 && ele <= 5) {
+      return _nth_as_str[ele];
+    }
+    else {
+      return _nth_as_str[0];
+    }
+  }
 
   //! Useful generator functor for finding holidays
   /*! Based on the idea in Cal. Calc. for finding holidays that are
@@ -307,7 +316,7 @@ namespace date_time {
   /*! Useful generator functor for finding holidays and daylight savings
    *  Get the last day of the month and then calculate the difference
    *  to the last previous day.
-   *  @param date_type A date class that exports day_of_week, month_type, etc.
+   *  @tparam date_type A date class that exports day_of_week, month_type, etc.
    *  \ingroup date_alg
    */
   template<class date_type>

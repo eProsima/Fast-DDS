@@ -21,7 +21,7 @@
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
    #define BOOST_INTERPROCESS_WINDOWS
-//   #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
+   #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
    #define BOOST_INTERPROCESS_HAS_KERNEL_BOOTTIME
    //Define this to connect with shared memory created with versions < 1.54
    //#define BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
@@ -49,17 +49,12 @@
       //Cygwin defines _POSIX_THREAD_PROCESS_SHARED but does not implement it.
       #if defined(__CYGWIN__)
          #define BOOST_INTERPROCESS_BUGGY_POSIX_PROCESS_SHARED
-      //Mac Os X < Lion (10.7) might define _POSIX_THREAD_PROCESS_SHARED but there is no real support.
       #elif defined(__APPLE__)
-         #include "TargetConditionals.h"
-         //Check we're on Mac OS target
-         #if defined(TARGET_OS_MAC)
-            #include "AvailabilityMacros.h"
-            //If minimum target for this compilation is older than Mac Os Lion, then we are out of luck
-            #if MAC_OS_X_VERSION_MIN_REQUIRED < 1070
-               #define BOOST_INTERPROCESS_BUGGY_POSIX_PROCESS_SHARED
-            #endif
-         #endif
+         //The pthreads implementation of darwin stores a pointer to a mutex inside the condition
+         //structure so real sharing between processes is broken. See:
+         //https://opensource.apple.com/source/libpthread/libpthread-301.30.1/src/pthread_cond.c.auto.html
+         //in method pthread_cond_wait
+         #define BOOST_INTERPROCESS_BUGGY_POSIX_PROCESS_SHARED
       #endif
 
       //If buggy _POSIX_THREAD_PROCESS_SHARED is detected avoid using it
