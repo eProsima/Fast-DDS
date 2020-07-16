@@ -17,6 +17,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND AND SQLITE3_SUPPORT)
+
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/persistence.xml
+                    ${CMAKE_CURRENT_BINARY_DIR}/persistence.xml
+                    COPYONLY)
+
         set(PERSISTENCETESTS_SOURCE
             PersistenceTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <profiles>                                                                                            
+        <participant profile_name="persistence_participant">
+            <rtps>
+                <propertiesPolicy>
+                    <properties>
+                        <property>
+                            <name>dds.persistence.plugin</name>
+                            <value>builtin.SQLITE3</value>
+                        </property>
+                        <property>
+                            <name>dds.persistence.sqlite3.filename</name>
+                            <value>persistence.db</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+
+        <data_writer profile_name="persistence_data_writer">
+            <qos>
+                <durability>
+                    <kind>TRANSIENT</kind>
+                </durability>
+            </qos>
+            <propertiesPolicy>
+                <properties>
+                    <property>
+                        <name>dds.persistence.guid</name>
+                        <value>77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64</value>
+                    </property>
+                </properties>
+            </propertiesPolicy>
+        </data_writer>
+
+        <data_reader profile_name="persistence_data_reader">
+            <qos>
+                <durability>
+                    <kind>TRANSIENT</kind>
+                </durability>
+            </qos>
+            <propertiesPolicy>
+                <properties>
+                    <property>
+                        <name>dds.persistence.guid</name>
+                        <value>77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65</value>
+                    </property>
+                </properties>
+            </propertiesPolicy>
+        </data_reader>
+    </profiles>
+</dds>
