@@ -798,7 +798,8 @@ DomainParticipant* DomainParticipantImpl::get_participant()
 std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 {
     return rtps_participant_ == nullptr ?
-           std::vector<std::string> {} :
+           std::vector<std::string> {}
+           :
            rtps_participant_->getParticipantNames();
 }
 

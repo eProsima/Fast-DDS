@@ -93,7 +93,7 @@ public:
 
     MOCK_METHOD0(enable, void());
 
-    MOCK_CONST_METHOD0(wlp, WLP*());
+    MOCK_CONST_METHOD0(wlp, WLP * ());
 
     void set_check_type_function(
             std::function<bool(const std::string&)>&&)
@@ -103,41 +103,41 @@ public:
     MOCK_CONST_METHOD0(getParticipantNames, std::vector<std::string>());
 
     MOCK_METHOD2(newRemoteWriterDiscovered, bool(
-            const GUID_t& pguid,
-            int16_t userDefinedId));
+                const GUID_t& pguid,
+                int16_t userDefinedId));
 
     MOCK_METHOD2(newRemoteReaderDiscovered, bool(
-            const GUID_t& pguid,
-            int16_t userDefinedId));
+                const GUID_t& pguid,
+                int16_t userDefinedId));
 
     ResourceEvent& get_resource_event()
     {
         return mp_event_thr;
     }
 
-    MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager*());
+    MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
 
     MOCK_METHOD3(registerWriter, bool(
-            RTPSWriter* Writer,
-            const TopicAttributes& topicAtt,
-            const WriterQos& wqos));
+                RTPSWriter * Writer,
+                const TopicAttributes& topicAtt,
+                const WriterQos& wqos));
 
     MOCK_METHOD3(updateWriter, bool(
-            RTPSWriter* Writer,
-            const TopicAttributes& topicAtt,
-            const WriterQos& wqos));
+                RTPSWriter * Writer,
+                const TopicAttributes& topicAtt,
+                const WriterQos& wqos));
 
     MOCK_METHOD3(registerReader, bool(
-            RTPSReader* Reader,
-            const TopicAttributes& topicAtt,
-            const ReaderQos& rqos));
+                RTPSReader * Reader,
+                const TopicAttributes& topicAtt,
+                const ReaderQos& rqos));
 
     MOCK_METHOD3(updateReader, bool(
-            RTPSReader* Reader,
-            const TopicAttributes& topicAtt,
-            const ReaderQos& rqos));
+                RTPSReader * Reader,
+                const TopicAttributes& topicAtt,
+                const ReaderQos& rqos));
 
-    MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
+    MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes& ());
 
 
     RTPSParticipantListener* listener_;
@@ -145,7 +145,7 @@ public:
     ResourceEvent mp_event_thr;
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 

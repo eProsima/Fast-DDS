@@ -95,7 +95,8 @@ public:
     // *INDENT-ON*
 
 
-    virtual bool processDataMsg(CacheChange_t*)
+    virtual bool processDataMsg(
+            CacheChange_t*)
     {
         return true;
     }

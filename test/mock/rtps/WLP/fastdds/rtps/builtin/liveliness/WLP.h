@@ -58,9 +58,9 @@ public:
     MOCK_METHOD0(assert_liveliness_manual_by_participant, bool());
 
     MOCK_METHOD3(assert_liveliness, bool(
-            GUID_t writer,
-            LivelinessQosPolicyKind kind,
-            Duration_t lease_duration));
+                GUID_t writer,
+                LivelinessQosPolicyKind kind,
+                Duration_t lease_duration));
 };
 
 } /* namespace rtps */

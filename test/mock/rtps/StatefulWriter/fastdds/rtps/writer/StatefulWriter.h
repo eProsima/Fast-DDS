@@ -68,11 +68,11 @@ public:
     MOCK_METHOD2(intraprocess_gap, void(const ReaderProxy*, const SequenceNumber_t&));
 
     MOCK_METHOD2(send_periodic_heartbeat, bool(
-            bool final,
-            bool liveliness));
+                bool final,
+                bool liveliness));
 
     MOCK_METHOD1(send_periodic_heartbeat, bool(
-            bool final));
+                bool final));
 
     MOCK_METHOD0(send_periodic_heartbeat, bool());
 

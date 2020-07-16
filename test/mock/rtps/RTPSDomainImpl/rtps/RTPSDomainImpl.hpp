@@ -16,7 +16,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-    class RTPSWriter;
+class RTPSWriter;
 
 /**
  * @brief Class RTPSDomainImpl, contains the private implementation of the RTPSDomain
@@ -42,7 +42,7 @@ public:
     }
 
     static RTPSWriter* find_local_writer(
-        const GUID_t& /* writer_guid */ )
+            const GUID_t& /* writer_guid */ )
     {
         return nullptr;
     }
@@ -52,6 +52,7 @@ public:
             GUID_t& /*guid*/)
     {
     }
+
 };
 
 } // namespace rtps

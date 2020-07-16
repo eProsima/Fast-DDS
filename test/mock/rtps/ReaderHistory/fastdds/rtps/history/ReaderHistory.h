@@ -65,7 +65,6 @@ public:
         return ret;
     }
 
-
     bool remove_change(
             CacheChange_t* change)
     {

@@ -163,7 +163,6 @@ public:
         return writer_guid == m_guid;
     }
 
-
     WriterHistory* history_;
 
     WriterListener* listener_;

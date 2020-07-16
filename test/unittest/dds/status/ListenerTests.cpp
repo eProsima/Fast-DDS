@@ -103,6 +103,7 @@ public:
     {
         return true;
     }
+
 };
 
 class RTPSWriterMock : public eprosima::fastrtps::rtps::RTPSWriter
@@ -132,6 +133,7 @@ public:
     {
         return true;
     }
+
 };
 
 class CustomDataReaderListener : public DataReaderListener
@@ -533,6 +535,7 @@ class UserListeners : public ::testing::Test
 {
 
 protected:
+
     void SetUp() override
     {
         // Set the RTPS entity mocks on the RTPSDomain (also mocked)

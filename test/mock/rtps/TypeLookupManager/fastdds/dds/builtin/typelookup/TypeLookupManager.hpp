@@ -23,7 +23,7 @@
 
 namespace eprosima {
 
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class BuiltinProtocols;
@@ -51,10 +51,11 @@ class TypeLookupManager
 {
 
 public:
+
     /**
-    * Constructor
-    * @param prot Pointer to the BuiltinProtocols object.
-    */
+     * Constructor
+     * @param prot Pointer to the BuiltinProtocols object.
+     */
     TypeLookupManager(
             fastrtps::rtps::BuiltinProtocols*)
     {
@@ -65,10 +66,10 @@ public:
     }
 
     MOCK_CONST_METHOD1(get_type_dependencies, fastrtps::rtps::SampleIdentity(
-            const fastrtps::types::TypeIdentifierSeq&));
+                const fastrtps::types::TypeIdentifierSeq&));
 
     MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
-            const fastrtps::types::TypeIdentifierSeq&));
+                const fastrtps::types::TypeIdentifierSeq&));
 
 };
 

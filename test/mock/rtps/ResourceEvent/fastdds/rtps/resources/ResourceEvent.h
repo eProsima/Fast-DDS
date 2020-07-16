@@ -23,7 +23,7 @@
 #include <gmock/gmock.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class TimedEventImpl;
@@ -31,8 +31,9 @@ class TimedEventImpl;
 
 class ResourceEvent
 {
-    public:
+public:
 
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD0(init_thread, void());
 
     MOCK_METHOD1(register_timer, void(TimedEventImpl* event));
@@ -42,14 +43,15 @@ class ResourceEvent
     MOCK_METHOD1(notify, void(TimedEventImpl* event));
 
     MOCK_METHOD2(notify, void(
-            TimedEventImpl* event,
-            const std::chrono::steady_clock::time_point& timeout));
+                TimedEventImpl* event,
+                const std::chrono::steady_clock::time_point& timeout));
+    // *INDENT-ON*
 
 };
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif //_FASTDDS_RTPS_RESOURCES_RESOURCEEVENT_H_
 
