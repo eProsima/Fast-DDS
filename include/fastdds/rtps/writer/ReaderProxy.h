@@ -377,6 +377,16 @@ public:
      */
     bool are_there_gaps();
 
+    /**
+     * Adds gaps to message group if there are holes / irrelevant changes on this proxy.
+
+     * @param group Message group where gaps will be added.
+     * @param next_seq Sequence number of next sample to be added to history.
+     */
+    void send_gaps(
+            RTPSMessageGroup& group,
+            SequenceNumber_t next_seq);
+
     LocatorSelectorEntry* locator_selector_entry()
     {
         return locator_info_.locator_selector_entry();
@@ -469,5 +479,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_WRITER_READERPROXY_H_ */

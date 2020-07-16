@@ -30,6 +30,7 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
@@ -51,7 +52,7 @@ private:
 
     class Listener : public eprosima::fastrtps::rtps::WriterListener
     {
-public:
+    public:
 
         Listener(
                 RTPSWithRegistrationWriter& writer)
@@ -73,14 +74,15 @@ public:
             }
         }
 
-private:
+    private:
 
         Listener& operator =(
                 const Listener&) = delete;
 
         RTPSWithRegistrationWriter& writer_;
 
-    } listener_;
+    }
+    listener_;
 
 public:
 
@@ -104,6 +106,10 @@ public:
         writer_attr_.times.heartbeatPeriod.nanosec = 100000000;
         writer_attr_.times.nackResponseDelay.seconds = 0;
         writer_attr_.times.nackResponseDelay.nanosec = 100000000;
+
+        participant_attr_.builtin.discovery_config.discoveryProtocol =
+                eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
+        participant_attr_.builtin.use_WriterLivelinessProtocol = true;
     }
 
     virtual ~RTPSWithRegistrationWriter()
@@ -121,10 +127,8 @@ public:
     void init()
     {
         //Create participant
-        eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-        pattr.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
-        pattr.builtin.use_WriterLivelinessProtocol = true;
-        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant((uint32_t)GET_PID() % 230, pattr);
+        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
+            (uint32_t)GET_PID() % 230, participant_attr_);
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory
@@ -185,6 +189,12 @@ public:
         }
     }
 
+    bool remove_change (
+            const eprosima::fastrtps::rtps::SequenceNumber_t& sequence_number)
+    {
+        return history_->remove_change(sequence_number);
+    }
+
     void matched()
     {
         std::unique_lock<std::mutex> lock(mutex_);
@@ -198,12 +208,22 @@ public:
 
         if (matched_ == 0)
         {
-            cv_.wait(lock, [this]() -> bool {
-                return matched_ != 0;
-            });
+            cv_.wait(lock, [this]() -> bool
+                    {
+                        return matched_ != 0;
+                    });
         }
 
         ASSERT_NE(matched_, 0u);
+    }
+
+    template<class _Rep,
+            class _Period
+            >
+    bool waitForAllAcked(
+            const std::chrono::duration<_Rep, _Period>& max_wait)
+    {
+        return writer_->wait_for_all_acked(eprosima::fastrtps::Time_t((int32_t)max_wait.count(), 0));
     }
 
     /*** Function to change QoS ***/
@@ -296,12 +316,25 @@ public:
                .add_property("dds.persistence.sqlite3.filename", filename);
     }
 
-#endif
+#endif // HAVE_SQLITE3
 
     RTPSWithRegistrationWriter& history_depth(
             const int32_t depth)
     {
         topic_attr_.historyQos.depth = depth;
+        return *this;
+    }
+
+    RTPSWithRegistrationWriter& disable_builtin_transport()
+    {
+        participant_attr_.useBuiltinTransports = false;
+        return *this;
+    }
+
+    RTPSWithRegistrationWriter& add_user_transport_to_pparams(
+            std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
+    {
+        participant_attr_.userTransports.push_back(userTransportDescriptor);
         return *this;
     }
 
@@ -315,6 +348,7 @@ private:
     eprosima::fastrtps::rtps::WriterAttributes writer_attr_;
     eprosima::fastrtps::WriterQos writer_qos_;
     eprosima::fastrtps::TopicAttributes topic_attr_;
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes participant_attr_;
     eprosima::fastrtps::rtps::WriterHistory* history_;
     eprosima::fastrtps::rtps::HistoryAttributes hattr_;
     bool initialized_;
