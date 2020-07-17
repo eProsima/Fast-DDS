@@ -66,7 +66,7 @@ public:
     /*!
      * @brief Assignment operator.
      */
-    SampleIdentity& operator=(
+    SampleIdentity& operator =(
             const SampleIdentity& sample_id)
     {
         writer_guid_ = sample_id.writer_guid_;
@@ -77,7 +77,7 @@ public:
     /*!
      * @brief Move constructor.
      */
-    SampleIdentity& operator=(
+    SampleIdentity& operator =(
             SampleIdentity&& sample_id)
     {
         writer_guid_ = std::move(sample_id.writer_guid_);
@@ -88,7 +88,7 @@ public:
     /*!
      * @brief
      */
-    bool operator==(
+    bool operator ==(
             const SampleIdentity& sample_id) const
     {
         return (writer_guid_ == sample_id.writer_guid_) && (sequence_number_ == sample_id.sequence_number_);
@@ -97,7 +97,7 @@ public:
     /*!
      * @brief
      */
-    bool operator!=(
+    bool operator !=(
             const SampleIdentity& sample_id) const
     {
         return !(*this == sample_id);
@@ -108,12 +108,12 @@ public:
      * @param sample
      * @return
      */
-    bool operator<(
+    bool operator <(
             const SampleIdentity& sample) const
     {
         return writer_guid_ < sample.writer_guid_
-            || (writer_guid_ == sample.writer_guid_
-                   && sequence_number_ < sample.sequence_number_);
+               || (writer_guid_ == sample.writer_guid_
+               && sequence_number_ < sample.sequence_number_);
     }
 
     SampleIdentity& writer_guid(
@@ -175,8 +175,12 @@ private:
 
     SequenceNumber_t sequence_number_;
 
-    friend std::istream& operator >>(std::istream& input, SampleIdentity& sid);
-    friend std::ostream& operator <<(std::ostream& output, const SampleIdentity& sid);
+    friend std::istream& operator >>(
+            std::istream& input,
+            SampleIdentity& sid);
+    friend std::ostream& operator <<(
+            std::ostream& output,
+            const SampleIdentity& sid);
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

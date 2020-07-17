@@ -29,7 +29,7 @@
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 
@@ -392,7 +392,7 @@ public:
 
     //!EndpointSecurityInfo.plugin_endpoint_security_attributes
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
 
     //!Clear the information and return the object to the default state.
     void clear();
@@ -484,5 +484,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_

@@ -194,40 +194,41 @@ void EDPSimple::processPersistentData(
     ChangeKind_t kind;
 
     auto param_process = [&si, &kind](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
-    {
-        // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
-        if (pid == fastdds::dds::PID_PARTICIPANT_GUID )
-        {
-            kind = ALIVE;
-            return true;
-        }
-
-        if (pid == fastdds::dds::PID_PROPERTY_LIST)
-        {
-            ParameterPropertyList_t pl;
-            si = SampleIdentity::unknown();
-
-            if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg, plength))
             {
-                return false;
-            }
+                // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
+                if (pid == fastdds::dds::PID_PARTICIPANT_GUID )
+                {
+                    kind = ALIVE;
+                    return true;
+                }
 
-            ParameterPropertyList_t::iterator it = pl.begin();
-            it = std::find_if( it, pl.end(),
-                    [](ParameterPropertyList_t::iterator::reference p)
+                if (pid == fastdds::dds::PID_PROPERTY_LIST)
+                {
+                    ParameterPropertyList_t pl;
+                    si = SampleIdentity::unknown();
+
+                    if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg,
+                            plength))
                     {
-                    return "PID_CLIENT_SERVER_KEY" == p.first();
-                    });
+                        return false;
+                    }
 
-            if (it != pl.end())
-            {
-                std::istringstream in(it->second());
-                in >> si;
-            }
-        }
+                    ParameterPropertyList_t::iterator it = pl.begin();
+                    it = std::find_if( it, pl.end(),
+                                    [](ParameterPropertyList_t::iterator::reference p)
+                                    {
+                                        return "PID_CLIENT_SERVER_KEY" == p.first();
+                                    });
 
-        return true;
-    };
+                    if (it != pl.end())
+                    {
+                        std::istringstream in(it->second());
+                        in >> si;
+                    }
+                }
+
+                return true;
+            };
 
 
     std::for_each(writer.second->changesBegin(),
@@ -252,7 +253,7 @@ void EDPSimple::processPersistentData(
                     change->write_params.related_sample_identity(si);
                 }
 
-               // Get Participant InstanceHandle
+                // Get Participant InstanceHandle
                 InstanceHandle_t handle;
                 {
                     GUID_t guid = iHandle2GUID(change->instanceHandle);
@@ -282,11 +283,11 @@ void EDPSimple::processPersistentData(
                     return;
                 }
 
-        if (!change_to_add->copy(change))
-        {
-            logWarning(RTPS_EDP,"Problem copying CacheChange, received data is: "
-                << change->serializedPayload.length << " bytes and max size in EDPServer reader"
-                << " is " << change_to_add->serializedPayload.max_size);
+                if (!change_to_add->copy(change))
+                {
+                    logWarning(RTPS_EDP, "Problem copying CacheChange, received data is: "
+                        << change->serializedPayload.length << " bytes and max size in EDPServer reader"
+                        << " is " << change_to_add->serializedPayload.max_size);
 
                     reader.first->releaseCache(change_to_add);
                     return;
@@ -711,8 +712,13 @@ bool EDPSimple::serialize_proxy_data(
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
-            change->serializedPayload.encapsulation = (uint16_t)PL_DEFAULT_ENCAPSULATION;
-            aux_msg.msg_endian = DEFAULT_ENDIAN;
+#if __BIG_ENDIAN__
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+            aux_msg.msg_endian = BIGEND;
+#else
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+            aux_msg.msg_endian = LITTLEEND;
+#endif // if __BIG_ENDIAN__
 
             data.writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
