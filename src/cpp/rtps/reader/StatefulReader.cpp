@@ -672,7 +672,7 @@ bool StatefulReader::change_received(
                         // That happens because the WriterProxy created when the listener matches the PDP endpoints is
                         // initialized using this SequenceNumber_t. Note that on a SERVER the own DATA(p) may be in any
                         // position within the WriterHistory preventing effective data exchange.
-                        update_last_notified(a_change->writerGUID, SequenceNumber_t(0,1));
+                        update_last_notified(a_change->writerGUID, SequenceNumber_t(0, 1));
 
                         if (getListener() != nullptr)
                         {

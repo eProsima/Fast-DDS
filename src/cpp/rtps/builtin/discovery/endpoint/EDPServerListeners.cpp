@@ -102,7 +102,7 @@ void EDPServerPUBListener::onWriterChangeReceivedByAll(
 #if HAVE_SECURITY
                 writer == sedp_->publications_secure_writer_.first ?
                 sedp_->publications_secure_writer_.second :
-#endif
+#endif // if HAVE_SECURITY
                 sedp_->publications_writer_.second;
 
         writer_history->remove_change(change);
@@ -169,7 +169,7 @@ void EDPServerSUBListener::onWriterChangeReceivedByAll(
 #if HAVE_SECURITY
                 writer == sedp_->subscriptions_secure_writer_.first ?
                 sedp_->subscriptions_secure_writer_.second :
-#endif
+#endif // if HAVE_SECURITY
                 sedp_->subscriptions_writer_.second;
 
         writer_history->remove_change(change);
@@ -178,6 +178,6 @@ void EDPServerSUBListener::onWriterChangeReceivedByAll(
 }
 
 } /* namespace rtps */
-}
+} // namespace fastrtps
 } /* namespace eprosima */
 

@@ -410,8 +410,13 @@ void PDP::announceParticipantState(
             {
                 CDRMessage_t aux_msg(change->serializedPayload);
 
-                change->serializedPayload.encapsulation = (uint16_t)PL_DEFAULT_ENCAPSULATION;
-                aux_msg.msg_endian = DEFAULT_ENDIAN;
+#if __BIG_ENDIAN__
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+                aux_msg.msg_endian = BIGEND;
+#else
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+                aux_msg.msg_endian =  LITTLEEND;
+#endif // if __BIG_ENDIAN__
 
                 if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
                 {
@@ -448,8 +453,13 @@ void PDP::announceParticipantState(
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
-            change->serializedPayload.encapsulation = (uint16_t)PL_DEFAULT_ENCAPSULATION;
-            aux_msg.msg_endian = DEFAULT_ENDIAN;
+#if __BIG_ENDIAN__
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+            aux_msg.msg_endian = BIGEND;
+#else
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+            aux_msg.msg_endian =  LITTLEEND;
+#endif // if __BIG_ENDIAN__
 
             if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
             {
