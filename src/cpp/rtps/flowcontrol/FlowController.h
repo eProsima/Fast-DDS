@@ -22,7 +22,6 @@
 #include <mutex>
 #include <functional>
 #include <memory>
-#include <asio.hpp>
 #include <thread>
 
 namespace eprosima{
@@ -59,7 +58,6 @@ class FlowController
         void DeRegisterAsListeningController();
 
         static std::vector<FlowController*> ListeningControllers;
-        static std::unique_ptr<std::thread> ControllerThread;
 
         // No copy, assignment or move! Controllers are accessed by reference
         // from several places.
@@ -70,7 +68,6 @@ class FlowController
 
     protected:
         static std::recursive_mutex FlowControllerMutex;
-        static std::unique_ptr<asio::io_service> ControllerService;
 
     public:
         // To be used by derived filters to schedule asynchronous operations.

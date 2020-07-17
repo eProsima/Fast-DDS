@@ -17,8 +17,6 @@
 #include <fastdds/rtps/resources/AsyncWriterThread.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <asio.hpp>
-#include <asio/steady_timer.hpp>
 #include <cassert>
 
 
@@ -67,10 +65,12 @@ void ThroughputController::disable()
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
     mAssociatedWriter = nullptr;
     mAssociatedParticipant = nullptr;
+    events_.clear();
 }
 
 template<typename Collector>
-void ThroughputController::process_nts(Collector& changesToSend)
+void ThroughputController::process_nts(
+        Collector& changesToSend)
 {
     uint32_t size_to_restore = 0;
     auto it = changesToSend.items().begin();
@@ -118,37 +118,38 @@ bool ThroughputController::process_change_nts_(
 void ThroughputController::ScheduleRefresh(
         uint32_t sizeToRestore)
 {
-    std::shared_ptr<asio::steady_timer> throwawayTimer(std::make_shared<asio::steady_timer>(
-                *FlowController::ControllerService));
-    auto refresh = [throwawayTimer, this, sizeToRestore]
-                (const asio::error_code& error)
+    auto participant = mAssociatedWriter ? mAssociatedWriter->getRTPSParticipant() : mAssociatedParticipant;
+    if (participant)
+    {
+        auto refresh = [this, sizeToRestore]()
+        {
+            if (FlowController::IsListening(this))
             {
-                if ((error != asio::error::operation_aborted) &&
-                        FlowController::IsListening(this))
-                {
-                    std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
-                    throwawayTimer->cancel();
-                    mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ?
-                        0 : mAccumulatedPayloadSize - sizeToRestore;
+                std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
+                mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ?
+                    0 : mAccumulatedPayloadSize - sizeToRestore;
 
-                    if (mAssociatedWriter)
+                if (mAssociatedWriter)
+                {
+                    mAssociatedWriter->getRTPSParticipant()->async_thread().wake_up(mAssociatedWriter);
+                }
+                else if (mAssociatedParticipant)
+                {
+                    std::unique_lock<std::recursive_mutex> lock(*mAssociatedParticipant->getParticipantMutex());
+                    for (auto it = mAssociatedParticipant->userWritersListBegin();
+                        it != mAssociatedParticipant->userWritersListEnd(); ++it)
                     {
-                        mAssociatedWriter->getRTPSParticipant()->async_thread().wake_up(mAssociatedWriter);
-                    }
-                    else if (mAssociatedParticipant)
-                    {
-                        std::unique_lock<std::recursive_mutex> lock(*mAssociatedParticipant->getParticipantMutex());
-                        for (auto it = mAssociatedParticipant->userWritersListBegin();
-                                it != mAssociatedParticipant->userWritersListEnd(); ++it)
-                        {
-                            mAssociatedParticipant->async_thread().wake_up(*it);
-                        }
+                        mAssociatedParticipant->async_thread().wake_up(*it);
                     }
                 }
-            };
+                events_.pop_back();
+            }
 
-    throwawayTimer->expires_from_now(std::chrono::milliseconds(mPeriodMillisecs));
-    throwawayTimer->async_wait(refresh);
+            return false;
+        };
+
+        events_.push_front(std::make_shared<TimedEvent>(participant->getEventResource(), refresh, mPeriodMillisecs));
+    }
 }
 
 } // namespace rtps

@@ -19,13 +19,9 @@ using namespace eprosima::fastrtps::rtps;
 
 std::vector<FlowController*> FlowController::ListeningControllers;
 std::recursive_mutex FlowController::FlowControllerMutex;
-std::unique_ptr<std::thread> FlowController::ControllerThread;
-std::unique_ptr<asio::io_service> FlowController::ControllerService;
 
 FlowController::FlowController()
 {
-   if (!ControllerService)
-      ControllerService.reset(new asio::io_service);
    RegisterAsListeningController();
 }
 
@@ -45,33 +41,12 @@ void FlowController::RegisterAsListeningController()
 {
    std::unique_lock<std::recursive_mutex> scopedLock(FlowControllerMutex);
    ListeningControllers.push_back(this);
-
-   if (!ControllerThread)
-   {
-       auto ioServiceFunction = [&]()
-       {
-           asio::io_service::work work(*ControllerService);
-           ControllerService->run();
-       };
-       ControllerThread.reset(new std::thread(ioServiceFunction));
-   }
 }
 
 void FlowController::DeRegisterAsListeningController()
 {
     std::unique_lock<std::recursive_mutex> scopedLock(FlowControllerMutex);
-
     ListeningControllers.erase(std::remove(ListeningControllers.begin(), ListeningControllers.end(), this), ListeningControllers.end());
-    if (ListeningControllers.empty() && ControllerThread)
-    {
-        auto thread_to_join(std::move(ControllerThread));
-        scopedLock.unlock();
-        ControllerService->stop();
-        thread_to_join->join();
-        asio::io_service* service = ControllerService.release();
-        if(service != nullptr)
-            delete service;
-    }
 }
 
 bool FlowController::IsListening(FlowController* filter)

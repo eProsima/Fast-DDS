@@ -17,8 +17,9 @@
 
 #include <rtps/flowcontrol/FlowController.h>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <thread>
+#include <deque>
 
 namespace eprosima {
 namespace fastrtps {
@@ -69,6 +70,7 @@ private:
 
     RTPSParticipantImpl* mAssociatedParticipant;
     RTPSWriter* mAssociatedWriter;
+    std::deque<std::shared_ptr<TimedEvent> > events_;
 
     /*
      * Schedules the filter to be refreshed in period ms. When it does, its capacity
