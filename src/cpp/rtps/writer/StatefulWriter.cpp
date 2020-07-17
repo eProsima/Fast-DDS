@@ -42,7 +42,7 @@
 
 #include <rtps/writer/RTPSWriterCollector.h>
 #include "rtps/RTPSDomainImpl.hpp"
-#include "../messages/RTPSGapBuilder.hpp"
+#include "rtps/messages/RTPSGapBuilder.hpp"
 
 #include <mutex>
 #include <vector>
@@ -133,24 +133,24 @@ StatefulWriter::StatefulWriter(
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
 
     periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                {
-                    return send_periodic_heartbeat();
-                },
+                    {
+                        return send_periodic_heartbeat();
+                    },
                     TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 
     nack_response_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                {
-                    perform_nack_response();
-                    return false;
-                },
+                    {
+                        perform_nack_response();
+                        return false;
+                    },
                     TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     if (disable_positive_acks_)
     {
         ack_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                    {
-                        return ack_timer_expired();
-                    },
+                        {
+                            return ack_timer_expired();
+                        },
                         att.keep_duration.to_ns() * 1e-6); // in milliseconds
     }
 
@@ -234,7 +234,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
 #if HAVE_SECURITY
     encrypt_cachechange(change);
-#endif
+#endif // if HAVE_SECURITY
 
     if (!matched_readers_.empty())
     {
@@ -794,11 +794,10 @@ void StatefulWriter::send_all_unsent_changes(
         compute_selected_guids();
 
         bool acknack_required = next_all_acked_notify_sequence_ < get_seq_num_min();
-        bool heartbeat_has_been_sent = false;
 
         RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
-        heartbeat_has_been_sent = send_hole_gaps_to_group(group);
+        acknack_required |= send_hole_gaps_to_group(group);
 
         uint32_t lastBytesProcessed = 0;
         auto sent_fun = [this, &lastBytesProcessed, &group](
@@ -844,6 +843,7 @@ void StatefulWriter::send_all_unsent_changes(
 
             if (locator_selector_.state_has_changed())
             {
+                gap_builder.flush();
                 group.flush_and_reset();
                 network.select_locators(locator_selector_);
                 compute_selected_guids();
@@ -882,9 +882,9 @@ void StatefulWriter::send_all_unsent_changes(
         }
 
         // Heartbeat piggyback.
-        if (!heartbeat_has_been_sent && acknack_required)
+        if (acknack_required)
         {
-            send_heartbeat_nts_(all_remote_readers_.size(), group, false);
+            send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
         }
 
         group.flush_and_reset();
@@ -929,7 +929,14 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
 
     RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
-    heartbeat_has_been_sent = send_hole_gaps_to_group(group);
+    // GAP for holes in history sent to the readers that need it
+    send_hole_gaps_to_group(group);
+
+    // Reset the state of locator_selector to select all readers
+    group.flush_and_reset();
+    locator_selector_.reset(true);
+    network.select_locators(locator_selector_);
+    compute_selected_guids();
 
     for (ReaderProxy* remoteReader : matched_readers_)
     {
@@ -1100,11 +1107,14 @@ bool StatefulWriter::send_hole_gaps_to_group(
     SequenceNumber_t last_sequence = mp_history->next_sequence_number();
     SequenceNumber_t min_history_seq = get_seq_num_min();
     uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
-    if ((next_all_acked_notify_sequence_ < max_removed) &&    // some holes pending acknowledgement
+    if ( (min_readers_low_mark_ < max_removed) &&    // some holes pending acknowledgement
             (min_history_seq + history_size != last_sequence)) // There is a hole in the history
     {
         try
         {
+            // Only send gaps to readers requiring it
+            select_all_readers_with_lowmark_below(max_removed, group);
+
             send_heartbeat_nts_(all_remote_readers_.size(), group, true);
             ret_val = true;
 
@@ -1144,6 +1154,30 @@ bool StatefulWriter::send_hole_gaps_to_group(
     return ret_val;
 }
 
+void StatefulWriter::select_all_readers_with_lowmark_below(
+        SequenceNumber_t seq,
+        RTPSMessageGroup& group)
+{
+    // Deselect all entries on the locator selector (we will only activate the
+    // readers for which this sequence number is pending)
+    locator_selector_.reset(false);
+
+    for (ReaderProxy* remoteReader : matched_readers_)
+    {
+        if (remoteReader->changes_low_mark() < seq)
+        {
+            locator_selector_.enable(remoteReader->guid());
+        }
+    }
+
+    if (locator_selector_.state_has_changed())
+    {
+        group.flush_and_reset();
+        getRTPSParticipant()->network_factory().select_locators(locator_selector_);
+        compute_selected_guids();
+    }
+}
+
 /*
  * MATCHED_READER-RELATED METHODS
  */
@@ -1157,9 +1191,9 @@ void StatefulWriter::update_reader_info(
     {
         RTPSParticipantImpl* part = getRTPSParticipant();
         locator_selector_.for_each([part](const Locator_t& loc)
-                    {
-                        part->createSenderResources(loc);
-                    });
+                {
+                    part->createSenderResources(loc);
+                });
     }
 
     // Check if we have local or remote readers
@@ -1469,9 +1503,9 @@ bool StatefulWriter::is_acked_by_all(
     assert(mp_history->next_sequence_number() > change->sequenceNumber);
     return std::all_of(matched_readers_.begin(), matched_readers_.end(),
                    [change](const ReaderProxy* reader)
-                {
-                    return reader->change_is_acked(change->sequenceNumber);
-                });
+                   {
+                       return reader->change_is_acked(change->sequenceNumber);
+                   });
 }
 
 bool StatefulWriter::all_readers_updated()
@@ -1497,17 +1531,18 @@ bool StatefulWriter::wait_for_all_acked(
 
     all_acked_ = std::none_of(matched_readers_.begin(), matched_readers_.end(),
                     [](const ReaderProxy* reader)
-                {
-                    return reader->has_changes();
-                });
+                    {
+                        return reader->has_changes();
+                    });
     lock.unlock();
 
     if (!all_acked_)
     {
         std::chrono::microseconds max_w(TimeConv::Duration_t2MicroSecondsInt64(max_wait));
-        all_acked_cond_.wait_for(all_acked_lock, max_w, [&]() {
-                        return all_acked_;
-                    });
+        all_acked_cond_.wait_for(all_acked_lock, max_w, [&]()
+                {
+                    return all_acked_;
+                });
     }
 
     return all_acked_;
@@ -1555,9 +1590,9 @@ void StatefulWriter::check_acked_status()
                                 [](
                                     const CacheChange_t* change,
                                     const SequenceNumber_t& seq)
-                            {
-                                return change->sequenceNumber < seq;
-                            });
+                                {
+                                    return change->sequenceNumber < seq;
+                                });
                 if (cit != history_end && (*cit)->sequenceNumber == min_low_mark)
                 {
                     ++cit;
@@ -1601,6 +1636,7 @@ void StatefulWriter::check_acked_status()
             may_remove_change_ = 1;
             may_remove_change_cond_.notify_one();
         }
+        min_readers_low_mark_ = min_low_mark;
     }
 
     if (all_acked)
@@ -1639,9 +1675,10 @@ bool StatefulWriter::try_remove_change(
     {
         may_remove_change_ = 0;
         may_remove_change_cond_.wait_until(lock, max_blocking_time_point,
-                [&]() {
-                        return may_remove_change_ > 0;
-                    });
+                [&]()
+                {
+                    return may_remove_change_ > 0;
+                });
         may_remove_change = may_remove_change_;
     }
 
@@ -1743,9 +1780,9 @@ bool StatefulWriter::send_periodic_heartbeat(
 
             unacked_changes = std::any_of(matched_readers_.begin(), matched_readers_.end(),
                             [](const ReaderProxy* reader)
-                        {
-                            return reader->has_unacknowledged();
-                        });
+                            {
+                                return reader->has_unacknowledged();
+                            });
 
             if (unacked_changes)
             {
@@ -1790,28 +1827,27 @@ void StatefulWriter::send_heartbeat_to_nts(
         ReaderProxy& remoteReaderProxy,
         bool liveliness)
 {
-    try
+    if (remoteReaderProxy.is_remote_and_reliable())
     {
-        RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
-        send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
-        SequenceNumber_t first_seq = get_seq_num_min();
-        if (first_seq != c_SequenceNumber_Unknown)
+        try
         {
-            if (remoteReaderProxy.durability_kind() < TRANSIENT_LOCAL ||
-                    getAttributes().durabilityKind < TRANSIENT_LOCAL)
+            RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
+            send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
+            SequenceNumber_t first_seq = get_seq_num_min();
+            if (first_seq != c_SequenceNumber_Unknown)
             {
-                SequenceNumber_t last_irrelevance = remoteReaderProxy.changes_low_mark();
-                if (first_seq <= last_irrelevance)
+                SequenceNumber_t low_mark = remoteReaderProxy.changes_low_mark();
+                if (remoteReaderProxy.durability_kind() == VOLATILE && first_seq <= low_mark)
                 {
-                    group.add_gap(first_seq, SequenceNumberSet_t(last_irrelevance + 1));
+                    group.add_gap(first_seq, SequenceNumberSet_t(low_mark + 1));
                 }
+                remoteReaderProxy.send_gaps(group, mp_history->next_sequence_number());
             }
-
         }
-    }
-    catch (const RTPSMessageGroup::timeout&)
-    {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
     }
 }
 

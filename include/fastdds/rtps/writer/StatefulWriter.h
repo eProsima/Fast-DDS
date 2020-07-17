@@ -83,6 +83,8 @@ private:
 
     //!To avoid notifying twice of the same sequence number
     SequenceNumber_t next_all_acked_notify_sequence_;
+    SequenceNumber_t min_readers_low_mark_;
+
     // TODO Join this mutex when main mutex would not be recursive.
     std::mutex all_acked_mutex_;
     std::condition_variable all_acked_cond_;
@@ -346,6 +348,10 @@ private:
     bool send_hole_gaps_to_group(
             RTPSMessageGroup& group);
 
+    void select_all_readers_with_lowmark_below(
+            SequenceNumber_t seq,
+            RTPSMessageGroup& group);
+
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
@@ -374,5 +380,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_STATEFULWRITER_H_ */
