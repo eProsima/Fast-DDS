@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+	<profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>udp_transport</transport_id>
+                <type>UDPv4</type>
+                <interfaceWhiteList>
+                    <address>127.0.0.1</address>
+                </interfaceWhiteList>
+            </transport_descriptor>
+        </transport_descriptors>	
+        <!-- PUBLISHER -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <name>latency_test_publisher</name>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+        <publisher profile_name="pub_publisher_profile">
+            <topic>
+                <name>latency_interprocess_pub2sub</name>
+                <dataType>LatencyType</dataType>
+                <kind>NO_KEY</kind>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+        </publisher>
+        <subscriber profile_name="pub_subscriber_profile">
+            <topic>
+                <name>latency_interprocess_sub2pub</name>
+                <dataType>LatencyType</dataType>
+                <kind>NO_KEY</kind>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+        </subscriber>
+
+        <!-- SUBSCRIBER -->
+        <participant profile_name="sub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <name>latency_test_subscriber</name>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+        <publisher profile_name="sub_publisher_profile">
+            <topic>
+                <name>latency_interprocess_sub2pub</name>
+                <dataType>LatencyType</dataType>
+                <kind>NO_KEY</kind>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+        </publisher>
+        <subscriber profile_name="sub_subscriber_profile">
+            <topic>
+                <name>latency_interprocess_pub2sub</name>
+                <dataType>LatencyType</dataType>
+                <kind>NO_KEY</kind>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+        </subscriber>
+    </profiles>
+</dds>

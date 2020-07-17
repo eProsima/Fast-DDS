@@ -61,14 +61,20 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
     if (info.status == MATCHED_MATCHING)
     {
         ++throughput_publisher_.data_discovery_count_;
+        std::cout << C_RED << "Pub: DATA Pub Matched "
+                  << throughput_publisher_.data_discovery_count_ << "/" << throughput_publisher_.subscribers_
+                  << C_DEF << std::endl;
     }
     else
     {
         --throughput_publisher_.data_discovery_count_;
     }
 
+    if (throughput_publisher_.data_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_))
+    {
+        throughput_publisher_.data_discovery_cv_.notify_one();
+    }
     lock.unlock();
-    throughput_publisher_.data_discovery_cv_.notify_one();
 }
 
 // *******************************************************************************************
@@ -91,17 +97,23 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
     std::unique_lock<std::mutex> lock(throughput_publisher_.command_mutex_);
     if (info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "COMMAND Sub Matched" << C_DEF << std::endl;
         ++throughput_publisher_.command_discovery_count_;
+        std::cout << C_RED << "Pub: COMMAND Sub Matched "
+                  << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_ * 2
+                  << C_DEF << std::endl;
     }
     else
     {
-        std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
+        std::cout << C_RED << "Pub: COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
         --throughput_publisher_.command_discovery_count_;
     }
 
+    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2))
+    {
+        throughput_publisher_.command_discovery_cv_.notify_one();
+    }
+
     lock.unlock();
-    throughput_publisher_.command_discovery_cv_.notify_one();
 }
 
 // *******************************************************************************************
@@ -124,17 +136,24 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(
     std::unique_lock<std::mutex> lock(throughput_publisher_.command_mutex_);
     if (info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "COMMAND Pub Matched" << C_DEF << std::endl;
         ++throughput_publisher_.command_discovery_count_;
+        std::cout << C_RED << "Pub: COMMAND Pub Matched "
+                  << throughput_publisher_.command_discovery_count_ << "/" << throughput_publisher_.subscribers_ * 2
+                  << C_DEF << std::endl;
+
     }
     else
     {
-        std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
+        std::cout << C_RED << "Pub: COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
         --throughput_publisher_.command_discovery_count_;
     }
 
+    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2) )
+    {
+        throughput_publisher_.command_discovery_cv_.notify_one();
+    }
+
     lock.unlock();
-    throughput_publisher_.command_discovery_cv_.notify_one();
 }
 
 // *******************************************************************************************
@@ -162,6 +181,7 @@ ThroughputPublisher::ThroughputPublisher(
     , export_csv_(export_csv)
     , xml_config_file_(xml_config_file)
     , recoveries_file_(recoveries_file)
+    , subscribers_(1)
 #pragma warning(disable:4355)
     , data_pub_listener_(*this)
     , command_pub_listener_(*this)
@@ -334,6 +354,7 @@ ThroughputPublisher::ThroughputPublisher(
 ThroughputPublisher::~ThroughputPublisher()
 {
     Domain::removeParticipant(participant_);
+    std::cout << "Pub: Participant removed" << std::endl;
 }
 
 bool ThroughputPublisher::ready()
@@ -345,8 +366,11 @@ void ThroughputPublisher::run(
         uint32_t test_time,
         uint32_t recovery_time_ms,
         int demand,
-        int msg_size)
+        int msg_size,
+        uint32_t subscribers)
 {
+    subscribers_ = subscribers;
+
     if (!ready_)
     {
         return;
@@ -398,15 +422,15 @@ void ThroughputPublisher::run(
         data_file.close();
     }
 
-    std::cout << "Pub Waiting for command discovery" << std::endl;
+    std::cout << "Pub: Waiting for command discovery" << std::endl;
     {
         std::unique_lock<std::mutex> disc_lock(command_mutex_);
         command_discovery_cv_.wait(disc_lock, [&]()
-        {
-            return command_discovery_count_ == 2;
-        });
+                {
+                    return command_discovery_count_ == static_cast<int>(subscribers_ * 2);
+                });
     }
-    std::cout << "Pub Discovery command complete" << std::endl;
+    std::cout << "Pub: Discovery command complete" << std::endl;
 
     ThroughputCommandType command;
     SampleInfo_t info;
@@ -450,15 +474,27 @@ void ThroughputPublisher::run(
                 command.m_size = sit->first;
                 command.m_demand = *dit;
                 command_publisher_->write((void*)&command);
-                command_subscriber_->wait_for_unread_samples({20, 0});
-                command_subscriber_->takeNextData((void*)&command, &info);
-                if (command.m_command == BEGIN)
+                uint32_t subscribers_ready_ = 0;
+                while (subscribers_ready_ < subscribers_)
                 {
-                    if (!test(test_time, recovery_times_[i], *dit, sit->first))
+                    command_subscriber_->wait_for_unread_samples({20, 0});
+                    command_subscriber_->takeNextData((void*)&command, &info);
+                    if (command.m_command == BEGIN)
                     {
-                        command.m_command = ALL_STOPS;
-                        command_publisher_->write((void*)&command);
-                        return;
+                        subscribers_ready_++;
+
+                        if (subscribers_ready_ == subscribers_ &&
+                                !test(test_time, recovery_times_[i], *dit, sit->first))
+                        {
+                            command.m_command = ALL_STOPS;
+                            command_publisher_->write((void*)&command);
+                            return;
+                        }
+
+                        // Reset data discovery counter
+                        std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
+                        data_discovery_count_ = 0;
+                        data_disc_lock.unlock();
                     }
                 }
             }
@@ -476,12 +512,21 @@ void ThroughputPublisher::run(
     }
     else
     {
-        // Wait for the subscriber unmatch.
+        // Wait for the disposal of all ThroughputSubscriber publihsers and subscribers. Wait for 5s, checking status
+        // every 100 ms. If after 5 s the entities have not been disposed, shutdown ThroughputPublisher without
+        // receiving them.
         std::unique_lock<std::mutex> disc_lock(command_mutex_);
-        command_discovery_cv_.wait(disc_lock, [&]()
+        for (uint16_t i = 0; i <= 50; i++)
+        {
+            if (command_discovery_cv_.wait_for(disc_lock, std::chrono::milliseconds(100), [&]()
+                    {
+                        return command_discovery_count_ == 0;
+                    }))
             {
-                return command_discovery_count_ == 0;
-            });
+                std::cout << "Pub: All ThroughputSubscriber publishers and subscribers unmatched" << std::endl;
+                break;
+            }
+        }
     }
 }
 
@@ -521,16 +566,16 @@ bool ThroughputPublisher::test(
     {
         throughput_data_type_ = new ThroughputDataType(msg_size);
         Domain::registerType(participant_, throughput_data_type_);
-        throughput_type_ = new ThroughputType((uint16_t)msg_size);
+        throughput_type_ = new ThroughputType(msg_size);
     }
 
     data_publisher_ = Domain::createPublisher(participant_, pub_attrs_, &data_pub_listener_);
 
     std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
     data_discovery_cv_.wait(data_disc_lock, [&]()
-    {
-        return data_discovery_count_ > 0;
-    });
+            {
+                return data_discovery_count_ > 0;
+            });
     data_disc_lock.unlock();
 
     // Declare test time variables
@@ -623,63 +668,85 @@ bool ThroughputPublisher::test(
         delete throughput_data_type_;
     }
 
-    command_subscriber_->wait_for_unread_samples({20, 0});
-    if (command_subscriber_->takeNextData((void*)&command_sample, &info))
+    uint32_t num_results_received = 0;
+    bool results_error = false;
+    while ( !results_error && num_results_received < subscribers_ )
     {
-        if (command_sample.m_command == TEST_RESULTS)
+        command_subscriber_->wait_for_unread_samples({20, 0});
+        if (command_subscriber_->takeNextData((void*)&command_sample, &info))
         {
-            TroughputResults result;
-            result.payload_size = msg_size + 4 + 4;
-            result.demand = demand;
-            result.recovery_time_ms = recovery_time_ms;
-
-            result.publisher.send_samples = samples;
-            result.publisher.totaltime_us =
-                    std::chrono::duration<double, std::micro>(t_end_ - t_start_) - clock_overhead;
-
-            result.subscriber.recv_samples = command_sample.m_lastrecsample - command_sample.m_lostsamples;
-            result.subscriber.lost_samples = command_sample.m_lostsamples;
-            result.subscriber.totaltime_us =
-                    std::chrono::microseconds(command_sample.m_totaltime) - test_start_ack_duration - clock_overhead;
-
-            result.compute();
-            results_.push_back(result);
-
-            /* Log data to CSV file */
-            if (export_csv_ != "")
+            if (command_sample.m_command == TEST_RESULTS)
             {
-                std::ofstream data_file;
-                data_file.open(export_csv_, std::fstream::app);
-                data_file << std::fixed << std::setprecision(3)
-                          << result.payload_size << ","
-                          << result.demand << ","
-                          << result.recovery_time_ms << ","
-                          << result.publisher.send_samples << ","
-                          << result.publisher.totaltime_us.count() << ","
-                          << result.publisher.Packssec << ","
-                          << result.publisher.MBitssec << ","
-                          << result.subscriber.recv_samples << ","
-                          << result.subscriber.lost_samples << ","
-                          << result.subscriber.totaltime_us.count() << ","
-                          << result.subscriber.Packssec << ","
-                          << result.subscriber.MBitssec << std::endl;
-                data_file.flush();
-                data_file.close();
+                num_results_received++;
+
+                TroughputResults result;
+                result.payload_size = msg_size + 4 + 4;
+                result.demand = demand;
+                result.recovery_time_ms = recovery_time_ms;
+
+                result.publisher.send_samples = samples;
+                result.publisher.totaltime_us =
+                        std::chrono::duration<double, std::micro>(t_end_ - t_start_) - clock_overhead;
+
+                result.subscriber.recv_samples = command_sample.m_lastrecsample - command_sample.m_lostsamples;
+                result.subscriber.lost_samples = command_sample.m_lostsamples;
+                result.subscriber.totaltime_us =
+                        std::chrono::microseconds(command_sample.m_totaltime)
+                        - test_start_ack_duration - clock_overhead;
+
+                result.compute();
+
+                if (num_results_received == 1)
+                {
+                    results_.push_back(result);
+                }
+                else
+                {
+                    auto& results_entry = results_.back();
+                    results_entry.publisher.send_samples += result.publisher.send_samples;
+                    results_entry.subscriber.recv_samples += result.subscriber.recv_samples;
+                    results_entry.subscriber.lost_samples += result.subscriber.lost_samples;
+                    results_entry.subscriber.MBitssec += result.subscriber.MBitssec;
+                    results_entry.subscriber.Packssec += result.subscriber.Packssec;
+                }
+
+                /* Log data to CSV file */
+                if (export_csv_ != "")
+                {
+                    std::ofstream data_file;
+                    data_file.open(export_csv_, std::fstream::app);
+                    data_file << std::fixed << std::setprecision(3)
+                              << result.payload_size << ","
+                              << result.demand << ","
+                              << result.recovery_time_ms << ","
+                              << result.publisher.send_samples << ","
+                              << result.publisher.totaltime_us.count() << ","
+                              << result.publisher.Packssec << ","
+                              << result.publisher.MBitssec << ","
+                              << result.subscriber.recv_samples << ","
+                              << result.subscriber.lost_samples << ","
+                              << result.subscriber.totaltime_us.count() << ","
+                              << result.subscriber.Packssec << ","
+                              << result.subscriber.MBitssec << std::endl;
+                    data_file.flush();
+                    data_file.close();
+                }
+                command_publisher_->removeAllChange(&aux);
             }
-            command_publisher_->removeAllChange(&aux);
-            return true;
+            else
+            {
+                std::cout << "The test expected results, stopping" << std::endl;
+                results_error = true;
+            }
         }
         else
         {
-            std::cout << "The test expected results, stopping" << std::endl;
+            std::cout << "PROBLEM READING RESULTS;" << std::endl;
+            results_error = true;
         }
     }
-    else
-    {
-        std::cout << "PROBLEM READING RESULTS;" << std::endl;
-    }
 
-    return false;
+    return !results_error;
 }
 
 bool ThroughputPublisher::load_demands_payload()

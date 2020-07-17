@@ -26,12 +26,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
-
-uint32_t datassub[] = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
-uint32_t datassub_large[] = {63996, 131068};
-
-std::vector<uint32_t> data_size_sub;
-
 LatencyTestSubscriber::LatencyTestSubscriber()
     : participant_(nullptr)
     , data_publisher_(nullptr)
@@ -71,20 +65,12 @@ bool LatencyTestSubscriber::init(
         bool hostname,
         const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy,
-        bool large_data,
         const std::string& xml_config_file,
         bool dynamic_data,
-        int forced_domain)
+        int forced_domain,
+        LatencyDataSizes& latency_data_sizes)
 {
-    // Payloads for which the test runs
-    if (!large_data)
-    {
-        data_size_sub.assign(datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
-    }
-    else
-    {
-        data_size_sub.assign(datassub_large, datassub_large + sizeof(datassub_large) / sizeof(uint32_t) );
-    }
+    data_size_sub_ = latency_data_sizes.sample_sizes();
 
     xml_config_file_ = xml_config_file;
     echo_ = echo;
@@ -102,7 +88,7 @@ bool LatencyTestSubscriber::init(
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
                 DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub.back()
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub_.back()
                     ));
         struct_type_builder->set_name("LatencyType");
 
@@ -188,11 +174,7 @@ bool LatencyTestSubscriber::init(
     }
     publisher_data_attributes.properties = property_policy;
 
-    if (large_data)
-    {
-        publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        publisher_data_attributes.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
-    }
+    publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {
@@ -230,11 +212,7 @@ bool LatencyTestSubscriber::init(
     }
     subscriber_data_attributes.properties = property_policy;
 
-    if (large_data)
-    {
-        subscriber_data_attributes.historyMemoryPolicy =
-                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    }
+    subscriber_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {
@@ -453,9 +431,9 @@ void LatencyTestSubscriber::run()
     }
     disc_lock.unlock();
 
-    std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
+    std::cout << C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF << std::endl;
 
-    for (std::vector<uint32_t>::iterator payload = data_size_sub.begin(); payload != data_size_sub.end(); ++payload)
+    for (std::vector<uint32_t>::iterator payload = data_size_sub_.begin(); payload != data_size_sub_.end(); ++payload)
     {
         if (!this->test(*payload))
         {
@@ -503,9 +481,9 @@ bool LatencyTestSubscriber::test(
 
     lock.lock();
     command_msg_cv_.wait(lock, [&]()
-    {
-        return command_msg_count_ > 0;
-    });
+            {
+                return command_msg_count_ > 0;
+            });
     --command_msg_count_;
     lock.unlock();
 

@@ -27,6 +27,13 @@ if __name__ == '__main__':
         required=False
     )
     parser.add_argument(
+        '-f',
+        '--demands_file',
+        help='Filename of the demands configuration file',
+        required=False,
+        default=None
+    )
+    parser.add_argument(
         '-n',
         '--number_of_samples',
         help='The number of measurements to take for each payload',
@@ -67,6 +74,18 @@ if __name__ == '__main__':
             )
         )
         exit(1)  # Exit with error
+
+    # Demands files options
+    demands_options = []
+    if args.demands_file:
+        if not os.path.isfile(args.demands_file):
+            print('Demands file "{}" is NOT a file'.format(args.demands_file))
+            exit(1)  # Exit with error
+        else:
+            demands_options = [
+                '--file',
+                args.demands_file,
+            ]
 
     # XML options
     reliability = 'default'
@@ -145,8 +164,11 @@ if __name__ == '__main__':
 
         pub_command += domain_options
         pub_command += xml_options
+        pub_command += demands_options
+
         sub_command += domain_options
         sub_command += xml_options
+        sub_command += demands_options
 
         print('Publisher command: {}'.format(
             ' '.join(element for element in pub_command)),
@@ -195,6 +217,7 @@ if __name__ == '__main__':
 
         command += domain_options
         command += xml_options
+        command += demands_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),

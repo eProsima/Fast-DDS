@@ -91,10 +91,10 @@ public:
             std::string raw_data_file,
             const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-            bool large_data,
             const std::string& xml_config_file,
             bool dynamic_data,
-            int forced_domain);
+            int forced_domain,
+            LatencyDataSizes& latency_data_sizes);
 
     void run();
 
@@ -105,10 +105,16 @@ public:
             uint32_t datasize);
 
     void print_stats(
+            uint32_t data_index,
             TimeStats& TS);
 
     void export_raw_data(
             uint32_t datasize);
+
+    void export_csv(
+            const std::string& data_name,
+            const std::string& str_reliable,
+            const std::stringstream& data_stream);
 
     /* Entities */
     eprosima::fastrtps::Participant* participant_;
@@ -121,7 +127,7 @@ public:
     std::chrono::steady_clock::time_point start_time_;
     std::chrono::steady_clock::time_point end_time_;
     std::chrono::duration<double, std::micro> overhead_time_;
-    std::vector<std::chrono::duration<double, std::micro>> times_;
+    std::vector<std::chrono::duration<double, std::micro> > times_;
 
     /* Data */
     eprosima::fastrtps::SampleInfo_t sampleinfo_;
@@ -140,21 +146,10 @@ public:
     int test_status_;
 
     /* Files */
-    std::stringstream output_file_minimum_;
-    std::stringstream output_file_average_;
-    std::stringstream output_file_16_;
-    std::stringstream output_file_32_;
-    std::stringstream output_file_64_;
-    std::stringstream output_file_128_;
-    std::stringstream output_file_256_;
-    std::stringstream output_file_512_;
-    std::stringstream output_file_1024_;
-    std::stringstream output_file_2048_;
-    std::stringstream output_file_4096_;
-    std::stringstream output_file_8192_;
-    std::stringstream output_file_16384_;
-    std::stringstream output_file_64000_;
-    std::stringstream output_file_131072_;
+    constexpr static uint32_t MINIMUM_INDEX = 0;
+    constexpr static uint32_t AVERAGE_INDEX = 1;
+    constexpr static uint32_t DATA_BASE_INDEX = 2;
+    std::vector<std::shared_ptr<std::stringstream> > output_files_;
     std::string xml_config_file_;
     std::string raw_data_file_;
     std::string export_prefix_;
@@ -179,6 +174,8 @@ public:
     eprosima::fastrtps::types::DynamicPubSubType dynamic_pub_sub_type_;
     eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
 
+    std::vector<uint32_t> data_size_pub_;
+
     /* Data Listeners */
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {
@@ -201,7 +198,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } data_pub_listener_;
+    }
+    data_pub_listener_;
 
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -227,7 +225,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } data_sub_listener_;
+    }
+    data_sub_listener_;
 
     /* Command Listeners */
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
@@ -251,7 +250,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } command_pub_listener_;
+    }
+    command_pub_listener_;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -276,7 +276,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } command_sub_listener_;
+    }
+    command_sub_listener_;
 };
 
 #endif /* LATENCYPUBLISHER_H_ */

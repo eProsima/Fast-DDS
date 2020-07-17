@@ -70,7 +70,7 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(
     std::unique_lock<std::mutex> lock(throughput_subscriber_.data_mutex_);
     if (match_info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "DATA Sub Matched" << C_DEF << std::endl;
+        std::cout << C_RED << "Sub: DATA Sub Matched" << C_DEF << std::endl;
         ++throughput_subscriber_.data_discovery_count_;
     }
     else
@@ -156,12 +156,12 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(
     std::unique_lock<std::mutex> lock(throughput_subscriber_.command_mutex_);
     if (match_info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "COMMAND Sub Matched" << C_DEF << std::endl;
+        std::cout << C_RED << "Sub: COMMAND Sub Matched" << C_DEF << std::endl;
         ++throughput_subscriber_.command_discovery_count_;
     }
     else
     {
-        std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
+        std::cout << C_RED << "Sub: COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
         --throughput_subscriber_.command_discovery_count_;
     }
 
@@ -194,12 +194,12 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
     std::unique_lock<std::mutex> lock(throughput_subscriber_.command_mutex_);
     if (info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "COMMAND Pub Matched" << C_DEF << std::endl;
+        std::cout << C_RED << "Sub: COMMAND Pub Matched" << C_DEF << std::endl;
         ++throughput_subscriber_.command_discovery_count_;
     }
     else
     {
-        std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
+        std::cout << C_RED << "Sub: COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
         --throughput_subscriber_.command_discovery_count_;
     }
     lock.unlock();
@@ -212,7 +212,8 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
 
 ThroughputSubscriber::~ThroughputSubscriber()
 {
-    Domain::stopAll();
+    Domain::removeParticipant(participant_);
+    std::cout << "Sub: Participant removed" << std::endl;
 }
 
 ThroughputSubscriber::ThroughputSubscriber(
@@ -455,7 +456,7 @@ void ThroughputSubscriber::process_message()
 
                         throughput_data_type_ = new ThroughputDataType(data_size_);
                         Domain::registerType(participant_, throughput_data_type_);
-                        throughput_type_ = new ThroughputType((uint16_t)data_size_);
+                        throughput_type_ = new ThroughputType(data_size_);
                     }
 
                     data_subscriber_ = Domain::createSubscriber(participant_, sub_attrs_, &data_sub_listener_);
@@ -468,9 +469,9 @@ void ThroughputSubscriber::process_message()
                     std::cout << "Waiting for data discovery" << std::endl;
                     std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
                     data_discovery_cv_.wait(data_disc_lock, [&]()
-                    {
-                        return data_discovery_count_ > 0;
-                    });
+                            {
+                                return data_discovery_count_ > 0;
+                            });
                     data_disc_lock.unlock();
                     std::cout << "Discovery data complete" << std::endl;
                     break;
@@ -509,6 +510,7 @@ void ThroughputSubscriber::process_message()
                     stop_count_ = 2;
                     lock.unlock();
                     std::cout << "Command: ALL_STOPS" << std::endl;
+                    break;
                 }
                 default:
                 {
@@ -534,9 +536,9 @@ void ThroughputSubscriber::run()
     {
         std::unique_lock<std::mutex> lock(command_mutex_);
         command_discovery_cv_.wait(lock, [&]()
-        {
-            return command_discovery_count_ >= 2;
-        });
+                {
+                    return command_discovery_count_ >= 2;
+                });
     }
     std::cout << "Sub Discovery command complete" << std::endl;
 
@@ -549,9 +551,9 @@ void ThroughputSubscriber::run()
             std::cout << "Waiting for data matching removal" << std::endl;
             std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
             data_discovery_cv_.wait(data_disc_lock, [&]()
-            {
-                return data_discovery_count_ == 0;
-            });
+                    {
+                        return data_discovery_count_ == 0;
+                    });
             data_disc_lock.unlock();
 
             std::cout << "Waiting clean state" << std::endl;
@@ -597,8 +599,10 @@ void ThroughputSubscriber::run()
             stop_count_ = 0;
 
             Domain::removeSubscriber(data_subscriber_);
+            std::cout << "Sub: Data subscriber removed" << std::endl;
             data_subscriber_ = nullptr;
             Domain::unregisterType(participant_, "ThroughputType");
+            std::cout << "Sub: ThroughputType unregistered" << std::endl;
 
             if (!dynamic_data_)
             {
@@ -608,6 +612,15 @@ void ThroughputSubscriber::run()
             std::cout << "-----------------------------------------------------------------------" << std::endl;
         }
     } while (stop_count_ != 2);
+
+    // ThroughputPublisher is waiting for all ThroughputSubscriber publishers and subscribers to unmatch. Leaving the
+    // destruction of the entities to ~ThroughputSubscriber() is not enough for the intraprocess case, because
+    // main_ThroughputTests first joins the publisher run thread and only then it joins this thread. This means that
+    // ~ThroughputSubscriber() is only called when all the ThroughputSubscriber publishers and subscribers are disposed.
+    Domain::removePublisher(command_publisher_);
+    std::cout << "Sub: Command publisher removed" << std::endl;
+    Domain::removeSubscriber(command_subscriber_);
+    std::cout << "Sub: Command subscriber removed" << std::endl;
 
     return;
 }

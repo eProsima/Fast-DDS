@@ -49,10 +49,10 @@ public:
             bool hostname,
             const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-            bool large_data,
             const std::string& xml_config_file,
             bool dynamic_data,
-            int forced_domain);
+            int forced_domain,
+            LatencyDataSizes& latency_data_sizes);
 
     void run();
 
@@ -97,6 +97,8 @@ public:
     eprosima::fastrtps::types::DynamicPubSubType dynamic_data_pub_sub_type_;
     eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
 
+    std::vector<uint32_t> data_size_sub_;
+
     /* Data Listeners */
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {
@@ -117,7 +119,8 @@ public:
                 eprosima::fastrtps::rtps::MatchingInfo& info);
 
         LatencyTestSubscriber* latency_publisher_;
-    } data_pub_listener_;
+    }
+    data_pub_listener_;
 
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -141,7 +144,8 @@ public:
                 eprosima::fastrtps::Subscriber* sub);
 
         LatencyTestSubscriber* latency_publisher_;
-    } data_sub_listener_;
+    }
+    data_sub_listener_;
 
     /* Command Listeners */
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
@@ -163,7 +167,8 @@ public:
                 eprosima::fastrtps::rtps::MatchingInfo& info);
 
         LatencyTestSubscriber* latency_publisher_;
-    } command_pub_listener_;
+    }
+    command_pub_listener_;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -187,7 +192,8 @@ public:
                 eprosima::fastrtps::Subscriber* sub);
 
         LatencyTestSubscriber* latency_publisher_;
-    } command_sub_listener_;
+    }
+    command_sub_listener_;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */

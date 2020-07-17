@@ -36,8 +36,10 @@ target_link_libraries(
 ###########################################################################
 set(
     LATENCY_TEST_LIST
-    interprocess_best_effort
-    interprocess_reliable
+    intraprocess_best_effort
+    intraprocess_reliable
+    interprocess_best_effort_udp
+    interprocess_reliable_udp
     interprocess_best_effort_tcp
     interprocess_reliable_tcp
     interprocess_best_effort_shm
@@ -76,6 +78,7 @@ if(PYTHONINTERP_FOUND)
             ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
             ${LATENCY_TEST_BIN}
             --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+            --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
             ${interproces_flag}
         )
 
@@ -114,6 +117,7 @@ if(PYTHONINTERP_FOUND)
                 ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                 ${LATENCY_TEST_BIN}
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --security
                 ${interproces_flag}
             )

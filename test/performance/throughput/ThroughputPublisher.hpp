@@ -70,7 +70,8 @@ public:
             uint32_t test_time,
             uint32_t recovery_time_ms,
             int demand,
-            int msg_size);
+            int msg_size,
+            uint32_t subscribers);
 
 private:
 
@@ -125,7 +126,7 @@ private:
     // Test configuration
     int forced_domain_;
     uint32_t payload_;
-    std::map<uint32_t,std::vector<uint32_t>> demand_payload_;
+    std::map<uint32_t, std::vector<uint32_t> > demand_payload_;
     std::vector<uint32_t> recovery_times_;
 
     // Files
@@ -133,6 +134,8 @@ private:
     std::string export_csv_;
     std::string xml_config_file_;
     std::string recoveries_file_;
+
+    uint32_t subscribers_;
 
     // Data listener
     class DataPubListener : public eprosima::fastrtps::PublisherListener
@@ -151,14 +154,17 @@ private:
         ThroughputPublisher& throughput_publisher_;
 
     private:
-        DataPubListener& operator=(
+
+        DataPubListener& operator =(
                 const DataPubListener&);
-    } data_pub_listener_;
+    }
+    data_pub_listener_;
 
     // Command listeners
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
+
         CommandPubListener(
                 ThroughputPublisher& throughput_publisher);
 
@@ -171,9 +177,11 @@ private:
         ThroughputPublisher& throughput_publisher_;
 
     private:
-        CommandPubListener& operator=(
+
+        CommandPubListener& operator =(
                 const CommandPubListener&);
-    } command_pub_listener_;
+    }
+    command_pub_listener_;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
@@ -191,8 +199,10 @@ private:
         ThroughputPublisher& throughput_publisher_;
 
     private:
-        CommandSubListener& operator=(
+
+        CommandSubListener& operator =(
                 const CommandSubListener&);
-    } command_sub_listener_;
+    }
+    command_sub_listener_;
 };
 #endif /* THROUGHPUTPUBLISHER_H_ */

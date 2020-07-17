@@ -32,7 +32,7 @@
 #if defined(_MSC_VER)
 #pragma warning (push)
 #pragma warning (disable:4512)
-#endif
+#endif // if defined(_MSC_VER)
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -41,20 +41,25 @@ using namespace eprosima::fastrtps::rtps;
 #define COPYSTR strcpy_s
 #else
 #define COPYSTR strcpy
-#endif
+#endif // if defined(_WIN32)
 
 
 struct Arg : public option::Arg
 {
 
-    static void print_error(const char* msg1, const option::Option& opt, const char* msg2)
+    static void print_error(
+            const char* msg1,
+            const option::Option& opt,
+            const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
         fprintf(stderr, "%s", msg2);
     }
 
-    static option::ArgStatus Unknown(const option::Option& option, bool msg)
+    static option::ArgStatus Unknown(
+            const option::Option& option,
+            bool msg)
     {
         if (msg)
         {
@@ -63,7 +68,9 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Required(const option::Option& option, bool msg)
+    static option::ArgStatus Required(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
         {
@@ -77,12 +84,14 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Numeric(const option::Option& option, bool msg)
+    static option::ArgStatus Numeric(
+            const option::Option& option,
+            bool msg)
     {
         char* endptr = 0;
         if (option.arg != 0 && strtol(option.arg, &endptr, 10))
         {
-        };
+        }
         if (endptr != option.arg && *endptr == 0)
         {
             return option::ARG_OK;
@@ -95,7 +104,9 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus String(const option::Option& option, bool msg)
+    static option::ArgStatus String(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0)
         {
@@ -107,9 +118,11 @@ struct Arg : public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
 };
 
-enum  optionIndex {
+enum  optionIndex
+{
     UNKNOWN_OPT,
     HELP,
     RELIABILITY,
@@ -126,7 +139,8 @@ enum  optionIndex {
     CERTS_PATH,
     XML_FILE,
     DYNAMIC_TYPES,
-    FORCED_DOMAIN
+    FORCED_DOMAIN,
+    SUBSCRIBERS
 };
 
 enum TestAgent
@@ -137,32 +151,58 @@ enum TestAgent
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT,   0, "",  "",                Arg::None,     "Usage: ThroughputTest <publisher|subscriber|both>\n\nGeneral options:" },
-    { HELP,          0, "h", "help",            Arg::None,     "  -h         --help                   Produce help message." },
-    { RELIABILITY,   0, "r", "reliability",     Arg::Required, "  -r <arg>,  --reliability=<arg>      Set reliability (\"reliable\"/\"besteffort\")."},
-    { SEED,          0, "",  "seed",            Arg::Numeric,  "             --seed=<num>             Seed to calculate domain and topic, to isolate test." },
-    { HOSTNAME,      0, "",  "hostname",        Arg::None,     "             --hostname               Append hostname to the topic." },
-    { XML_FILE,      0, "",  "xml",             Arg::String,   "             --xml                    XML Configuration file." },
-    { DYNAMIC_TYPES, 0, "",  "dynamic_types",   Arg::None,     "             --dynamic_types          Use dynamic types." },
-    { FORCED_DOMAIN, 0, "",  "domain",          Arg::Numeric,  "             --domain                 Set the domain to connect." },
+    { UNKNOWN_OPT,   0, "",  "",                Arg::None,
+      "Usage: ThroughputTest <publisher|subscriber|both>\n\nGeneral options:" },
+    { HELP,          0, "h", "help",            Arg::None,
+      "  -h         --help                   Produce help message." },
+    { RELIABILITY,   0, "r", "reliability",     Arg::Required,
+      "  -r <arg>,  --reliability=<arg>      Set reliability (\"reliable\"/\"besteffort\")."},
+    { SEED,          0, "",  "seed",            Arg::Numeric,
+      "             --seed=<num>             Seed to calculate domain and topic, to isolate test." },
+    { HOSTNAME,      0, "",  "hostname",        Arg::None,
+      "             --hostname               Append hostname to the topic." },
+    { XML_FILE,      0, "",  "xml",             Arg::String,
+      "             --xml                    XML Configuration file." },
+    { DYNAMIC_TYPES, 0, "",  "dynamic_types",   Arg::None,
+      "             --dynamic_types          Use dynamic types." },
+    { FORCED_DOMAIN, 0, "",  "domain",          Arg::Numeric,
+      "             --domain                 Set the domain to connect." },
 #if HAVE_SECURITY
-    { USE_SECURITY,  0, "",  "security",        Arg::Required, "             --security <arg>         Echo mode (\"true\"/\"false\")." },
-    { CERTS_PATH,    0, "",  "certs",           Arg::Required, "             --certs <arg>            Path where located certificates." },
-#endif
-    { UNKNOWN_OPT,   0, "",  "",                Arg::None,     "\nPublisher/Both options:"},
-    { TIME,          0, "t", "time",            Arg::Numeric,  "  -t <num>,  --time=<num>             Time of the test in seconds." },
-    { RECOVERY_TIME, 0, "",  "recovery_time",   Arg::Numeric,  "             --recovery_time=<num>    If a demand takes shorter to send than <recovery_time>, sleep the rest" },
-    { RECOVERIES,    0, "",  "recoveries_file", Arg::String,   "             --recoveries_file=<num>  A CSV file with recovery times" },
-    { DEMAND,        0, "d", "demand",          Arg::Numeric,  "  -d <num>,  --demand=<num>           Number of samples sent in block (Defaults: 10000)." },
-    { MSG_SIZE,      0, "s", "msg_size",        Arg::Numeric,  "  -s <num>,  --msg_size=<num>         Size of the message in bits (Defaults: 1024)." },
-    { FILE_R,        0, "f", "file",            Arg::Required, "  -f <arg>,  --file=<arg>             File to read the payload demands from." },
-    { EXPORT_CSV,    0, "",  "export_csv",      Arg::String,   "             --export_csv             Flag to export a CVS file." },
-    { UNKNOWN_OPT,   0, "",   "",               Arg::None,     "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
+    {
+        USE_SECURITY,  0, "",  "security",        Arg::Required,
+        "             --security <arg>         Echo mode (\"true\"/\"false\")."
+    },
+    { CERTS_PATH,    0, "",  "certs",           Arg::Required,
+      "             --certs <arg>            Path where located certificates." },
+#endif // if HAVE_SECURITY
+    {
+        UNKNOWN_OPT,   0, "",  "",                Arg::None,     "\nPublisher/Both options:"
+    },
+    { SUBSCRIBERS,     0, "n", "subscribers",     Arg::Numeric,
+      "  -n <num>,    --subscribers=<arg>   Number of subscribers." },
+    { TIME,          0, "t", "time",            Arg::Numeric,
+      "  -t <num>,  --time=<num>             Time of the test in seconds." },
+    { RECOVERY_TIME, 0, "",  "recovery_time",   Arg::Numeric,
+      "             --recovery_time=<num>    If a demand takes shorter to send than <recovery_time>, sleep the rest" },
+    { RECOVERIES,    0, "",  "recoveries_file", Arg::String,
+      "             --recoveries_file=<num>  A CSV file with recovery times" },
+    { DEMAND,        0, "d", "demand",          Arg::Numeric,
+      "  -d <num>,  --demand=<num>           Number of samples sent in block (Defaults: 10000)." },
+    { MSG_SIZE,      0, "s", "msg_size",        Arg::Numeric,
+      "  -s <num>,  --msg_size=<num>         Size of the message in bits (Defaults: 1024)." },
+    { FILE_R,        0, "f", "file",            Arg::Required,
+      "  -f <arg>,  --file=<arg>             File to read the payload demands from." },
+    { EXPORT_CSV,    0, "",  "export_csv",      Arg::String,
+      "             --export_csv             Flag to export a CVS file." },
+    { UNKNOWN_OPT,   0, "",   "",               Arg::None,
+      "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
     { 0, 0, 0, 0, 0, 0 }
 };
 
 
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int columns;
 
@@ -180,7 +220,7 @@ int main(int argc, char** argv)
     }
 #else
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
-#endif
+#endif // if defined(_WIN32)
 
     TestAgent test_agent = TestAgent::BOTH;
     uint32_t test_time_sec = 5;
@@ -196,10 +236,11 @@ int main(int argc, char** argv)
     std::string recoveries_file = "";
     bool dynamic_types = false;
     int forced_domain = -1;
+    uint32_t subscribers = 1;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
-#endif
+#endif // if HAVE_SECURITY
 
     argc -= (argc > 0); argv += (argc > 0); // skip program name argv[0] if present
     if (argc)
@@ -301,6 +342,10 @@ int main(int argc, char** argv)
                 hostname = true;
                 break;
 
+            case SUBSCRIBERS:
+                subscribers = strtol(opt.arg, nullptr, 10);
+                break;
+
             case EXPORT_CSV:
                 if (opt.arg != nullptr)
                 {
@@ -351,7 +396,7 @@ int main(int argc, char** argv)
             case CERTS_PATH:
                 certs_path = opt.arg;
                 break;
-#endif
+#endif // if HAVE_SECURITY
 
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
@@ -376,20 +421,20 @@ int main(int argc, char** argv)
         std::cout << "certs_path: " << certs_path << std::endl;
 
         sub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
+                    "dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
         sub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + certs_path + "/maincacert.pem"));
+                    "dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + certs_path + "/maincacert.pem"));
         sub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + certs_path + "/mainsubcert.pem"));
+                    "dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + certs_path + "/mainsubcert.pem"));
         sub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + certs_path + "/mainsubkey.pem"));
+                    "dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + certs_path + "/mainsubkey.pem"));
         sub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
+                    "dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
         sub_part_property_policy.properties().emplace_back(
             "rtps.participant.rtps_protection_kind",
             "ENCRYPT");
@@ -401,20 +446,20 @@ int main(int argc, char** argv)
             "ENCRYPT");
 
         pub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
+                    "dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
         pub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + certs_path + "/maincacert.pem"));
+                    "dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + certs_path + "/maincacert.pem"));
         pub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + certs_path + "/mainpubcert.pem"));
+                    "dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + certs_path + "/mainpubcert.pem"));
         pub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + certs_path + "/mainpubkey.pem"));
+                    "dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + certs_path + "/mainpubkey.pem"));
         pub_part_property_policy.properties().emplace_back(Property(
-            "dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
+                    "dds.sec.crypto.plugin",
+                    "builtin.AES-GCM-GMAC"));
         pub_part_property_policy.properties().emplace_back(
             "rtps.participant.rtps_protection_kind",
             "ENCRYPT");
@@ -425,7 +470,7 @@ int main(int argc, char** argv)
             "rtps.endpoint.payload_protection_kind",
             "ENCRYPT");
     }
-#endif
+#endif // if HAVE_SECURITY
 
     // The presence of a demands file overrides specific demands and payloads.
     if (file_name != "")
@@ -450,7 +495,7 @@ int main(int argc, char** argv)
 
         if (throughput_publisher.ready())
         {
-            throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size);
+            throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size, subscribers);
         }
         else
         {
@@ -482,18 +527,38 @@ int main(int argc, char** argv)
         ThroughputPublisher throughput_publisher(reliable, seed, hostname, export_csv, pub_part_property_policy,
                 pub_property_policy, xml_config_file, file_name, recoveries_file, dynamic_types, forced_domain);
 
-        // Initialize subscriber
-        ThroughputSubscriber throughput_subscriber(reliable, seed, hostname, sub_part_property_policy,
-                sub_property_policy, xml_config_file, dynamic_types, forced_domain);
+        // Initialize subscribers
+        std::vector<std::shared_ptr<ThroughputSubscriber> > throughput_subscribers;
+
+        bool are_subscribers_ready = true;
+        for (uint32_t i = 0; i < subscribers; i++)
+        {
+            throughput_subscribers.push_back(std::make_shared<ThroughputSubscriber>(reliable,
+                    seed, hostname, sub_part_property_policy, sub_property_policy,
+                    xml_config_file, dynamic_types, forced_domain));
+
+            are_subscribers_ready &= throughput_subscribers.back()->ready();
+        }
 
         // Spawn run threads
-        if (throughput_publisher.ready() && throughput_subscriber.ready())
+        if (throughput_publisher.ready() && are_subscribers_ready)
         {
             std::thread pub_thread(&ThroughputPublisher::run, &throughput_publisher, test_time_sec, recovery_time_ms,
-                    demand, msg_size);
-            std::thread sub_thread(&ThroughputSubscriber::run, &throughput_subscriber);
+                    demand, msg_size, subscribers);
+
+            std::vector<std::thread> sub_threads;
+
+            for (auto& sub : throughput_subscribers)
+            {
+                sub_threads.emplace_back(&ThroughputSubscriber::run, sub.get());
+            }
+
             pub_thread.join();
-            sub_thread.join();
+
+            for (auto& sub : sub_threads)
+            {
+                sub.join();
+            }
         }
         else
         {
@@ -504,11 +569,11 @@ int main(int argc, char** argv)
     Domain::stopAll();
     if (return_code == 0)
     {
-        std::cout << "EVERYTHING STOPPED FINE" << std::endl;
+        std::cout << C_GREEN << "EVERYTHING STOPPED FINE" << C_DEF << std::endl;
     }
     else
     {
-        std::cout << "SOMETHING WENT WRONG" << std::endl;
+        std::cout << C_RED << "SOMETHING WENT WRONG" << C_DEF << std::endl;
     }
 
     return return_code;
@@ -516,4 +581,4 @@ int main(int argc, char** argv)
 
 #if defined(_MSC_VER)
 #pragma warning (pop)
-#endif
+#endif // if defined(_MSC_VER)

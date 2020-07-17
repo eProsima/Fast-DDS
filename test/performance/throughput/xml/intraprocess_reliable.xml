@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <profiles>
-        <!-- TRANSPORT -->
-        <transport_descriptors>
-            <transport_descriptor>
-                <transport_id>shm_transport</transport_id>
-                <type>SHM</type>
-            </transport_descriptor>            
-        </transport_descriptors>
+    <library_settings>
+        <intraprocess_delivery>FULL</intraprocess_delivery>
+    </library_settings>
 
+    <profiles>
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
             <domainId>222</domainId>
             <rtps>
-                <userTransports>
-                    <transport_id>shm_transport</transport_id>
-                </userTransports>
-                <useBuiltinTransports>false</useBuiltinTransports>
+                <builtin>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_DIFFERENT_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <leaseAnnouncement>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseAnnouncement>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                        <initialAnnouncements>
+                            <count>0</count>
+                        </initialAnnouncements>
+                    </discovery_config>
+                </builtin>
                 <name>throughput_test_publisher</name>
             </rtps>
         </participant>
@@ -24,10 +30,20 @@
         <participant profile_name="sub_participant_profile">
             <domainId>222</domainId>
             <rtps>
-                <userTransports>
-                    <transport_id>shm_transport</transport_id>
-                </userTransports>
-                <useBuiltinTransports>false</useBuiltinTransports>
+                <builtin>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_DIFFERENT_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <leaseAnnouncement>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseAnnouncement>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                        <initialAnnouncements>
+                            <count>0</count>
+                        </initialAnnouncements>
+                    </discovery_config>
+                </builtin>
                 <name>throughput_test_subscriber</name>
             </rtps>
         </participant>
