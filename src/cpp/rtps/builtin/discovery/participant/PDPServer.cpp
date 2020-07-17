@@ -853,7 +853,8 @@ void PDPServer::processPersistentData()
                 // remember to reset guid and sid before calling the lambda
                 ParameterPropertyList_t pl;
 
-                if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg,
+                                plength))
                 {
                     return false;
                 }
@@ -1180,7 +1181,8 @@ void PDPServer::announceParticipantState(
         // the assumption that own discovery data is the first one.
         CacheChange_t* pPD = nullptr;
         // we search in reverse order to get the last update if multiple
-        for (auto it = mp_PDPWriterHistory->changesRbegin(); it != mp_PDPWriterHistory->changesRend(); ++it, pPD = nullptr)
+        for (auto it = mp_PDPWriterHistory->changesRbegin(); it != mp_PDPWriterHistory->changesRend();
+                ++it, pPD = nullptr)
         {
             pPD = *it;
             if (pPD->write_params.sample_identity().writer_guid() == mp_PDPWriter->getGuid())

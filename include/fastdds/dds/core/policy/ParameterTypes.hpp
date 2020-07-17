@@ -30,7 +30,7 @@
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <string>
 #include <vector>
@@ -40,8 +40,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 struct CDRMessage_t;
-}
-}
+} // namespace rtps
+} // namespace fastrtps
 
 namespace fastdds {
 namespace dds {
@@ -994,7 +994,7 @@ public:
 
     class iterator
     {
-public:
+    public:
 
         typedef iterator self_type;
         typedef ParameterProperty_t value_type;
@@ -1050,7 +1050,7 @@ public:
             return ptr_ != rhs.ptr_;
         }
 
-protected:
+    protected:
 
         /**
          * @brief Shift the pointer to the next value
@@ -1070,7 +1070,7 @@ protected:
             return ptr_;
         }
 
-private:
+    private:
 
         //!Pointer
         fastrtps::rtps::octet* ptr_;
@@ -1080,7 +1080,7 @@ private:
 
     class const_iterator
     {
-public:
+    public:
 
         typedef const_iterator self_type;
         typedef const ParameterProperty_t value_type;
@@ -1136,7 +1136,7 @@ public:
             return ptr_ != rhs.ptr_;
         }
 
-protected:
+    protected:
 
         /**
          * @brief Shift the pointer to the next value
@@ -1156,7 +1156,7 @@ protected:
             return ptr_;
         }
 
-private:
+    private:
 
         //!Pointer
         const fastrtps::rtps::octet* ptr_;
@@ -1570,12 +1570,15 @@ public:
 
 };
 
-#endif
+#endif // if HAVE_SECURITY
 
 ///@}
 
 template<class T, class PL>
-void set_proxy_property(const T& p, const char* PID, PL& properties)
+void set_proxy_property(
+        const T& p,
+        const char* PID,
+        PL& properties)
 {
     // only valid values
     if (p == T::unknown())
@@ -1596,14 +1599,14 @@ void set_proxy_property(const T& p, const char* PID, PL& properties)
         properties.begin(),
         properties.end(),
         [&pair](const typename PL::const_iterator::reference p)
-                {
-                    return pair.first == p.first();
-                });
+        {
+            return pair.first == p.first();
+        });
 
     if (it != properties.end())
     {
         // it->modify(pair);
-        properties.set_property(it,pair);
+        properties.set_property(it, pair);
     }
     else
     {
@@ -1613,7 +1616,9 @@ void set_proxy_property(const T& p, const char* PID, PL& properties)
 }
 
 template<class T, class PL>
-T get_proxy_property(const char* const PID, PL& properties)
+T get_proxy_property(
+        const char* const PID,
+        PL& properties)
 {
     T property;
 
@@ -1621,9 +1626,9 @@ T get_proxy_property(const char* const PID, PL& properties)
         properties.begin(),
         properties.end(),
         [PID](const typename PL::const_iterator::reference p)
-                {
-                    return PID == p.first();
-                });
+        {
+            return PID == p.first();
+        });
 
     if (it != properties.end())
     {
@@ -1638,5 +1643,5 @@ T get_proxy_property(const char* const PID, PL& properties)
 } //namespace fastdds
 } //namespace eprosima
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif // _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_

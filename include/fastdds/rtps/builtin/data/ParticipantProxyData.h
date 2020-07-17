@@ -31,7 +31,7 @@
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <chrono>
 
@@ -126,7 +126,7 @@ public:
     security::ParticipantSecurityAttributesMask security_attributes_;
     //!
     security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
     //!
     bool isAlive;
     //!
@@ -204,7 +204,7 @@ public:
      * @param sid valid SampleIdentity
      */
     void set_sample_identity(
-        const SampleIdentity& sid);
+            const SampleIdentity& sid);
 
     /**
      * Retrieve participant SampleIdentity
@@ -217,7 +217,7 @@ public:
      * @param guid valid backup server GUID
      */
     void set_backup_stamp(
-        const GUID_t& guid);
+            const GUID_t& guid);
 
     /**
      * Retrieves BACKUP server stamp. On deserialization hints if lease duration must be enforced
@@ -250,6 +250,6 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_

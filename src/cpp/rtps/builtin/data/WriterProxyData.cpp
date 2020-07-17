@@ -42,7 +42,7 @@ WriterProxyData::WriterProxyData(
     , remote_locators_(max_unicast_locators, max_multicast_locators)
 #else
     : remote_locators_(max_unicast_locators, max_multicast_locators)
-#endif
+#endif // if HAVE_SECURITY
     , m_userDefinedId(0)
     , m_typeMaxSerialized(0)
     , m_topicKind(NO_KEY)
@@ -71,7 +71,7 @@ WriterProxyData::WriterProxyData(
     , m_guid(writerInfo.m_guid)
 #else
     : m_guid(writerInfo.m_guid)
-#endif
+#endif // if HAVE_SECURITY
     , remote_locators_(writerInfo.remote_locators_)
     , m_key(writerInfo.m_key)
     , m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey)
@@ -119,7 +119,7 @@ WriterProxyData& WriterProxyData::operator =(
 #if HAVE_SECURITY
     security_attributes_ = writerInfo.security_attributes_;
     plugin_security_attributes_ = writerInfo.plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
     m_guid = writerInfo.m_guid;
     remote_locators_ = writerInfo.remote_locators_;
     m_key = writerInfo.m_key;
@@ -306,7 +306,7 @@ uint32_t WriterProxyData::get_serialized_size(
     {
         ret_val += 4 + PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     // PID_SENTINEL
     return ret_val + 4;
@@ -566,7 +566,7 @@ bool WriterProxyData::writeToCDRMessage(
             return false;
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 
     /* TODO - Enable when implement XCDR, XCDR2 and/or XML
        if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
@@ -923,7 +923,7 @@ bool WriterProxyData::readFromCDRMessage(
                         plugin_security_attributes_ = p.plugin_security_attributes;
                         break;
                     }
-#endif
+#endif // if HAVE_SECURITY
                     case fastdds::dds::PID_DATA_REPRESENTATION:
                     {
                         if (!fastdds::dds::QosPoliciesSerializer<DataRepresentationQosPolicy>::read_from_cdr_message(
@@ -1070,7 +1070,7 @@ bool WriterProxyData::is_update_allowed(
 #if HAVE_SECURITY
             (security_attributes_ != wdata.security_attributes_) ||
             (plugin_security_attributes_ != wdata.security_attributes_) ||
-#endif
+#endif // if HAVE_SECURITY
             (m_typeName != wdata.m_typeName) ||
             (m_topicName != wdata.m_topicName))
     {
