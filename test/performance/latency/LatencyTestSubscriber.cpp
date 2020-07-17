@@ -212,8 +212,7 @@ bool LatencyTestSubscriber::init(
     }
     subscriber_data_attributes.properties = property_policy;
 
-    subscriber_data_attributes.historyMemoryPolicy =
-            eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    subscriber_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     if (xml_config_file_.length() > 0)
     {

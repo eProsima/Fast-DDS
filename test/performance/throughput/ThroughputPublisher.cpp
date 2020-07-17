@@ -70,12 +70,11 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
         --throughput_publisher_.data_discovery_count_;
     }
 
-    lock.unlock();
-
     if (throughput_publisher_.data_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_))
     {
         throughput_publisher_.data_discovery_cv_.notify_one();
     }
+    lock.unlock();
 }
 
 // *******************************************************************************************
