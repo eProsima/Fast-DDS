@@ -126,7 +126,7 @@ void PDPServerListener::onNewCacheChangeAdded(
 
                 // Create a new one when not found
                 pdata = parent_pdp_->createParticipantProxyData(local_data, writer_guid);
-                    lock.unlock();
+                lock.unlock();
 
                 if (pdata != nullptr)
                 {
@@ -152,10 +152,10 @@ void PDPServerListener::onNewCacheChangeAdded(
                 // Included for symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
                 // right now servers update matching on clients that were previously relayed by a server
                 if ( previous_lease_check_status != pdata->should_check_lease_duration
-                     || parent_pdp_->updateInfoMatchesEDP() )
+                        || parent_pdp_->updateInfoMatchesEDP() )
                 {
-                        parent_pdp_->assignRemoteEndpoints(pdata);
-                        parent_server_pdp_->queueParticipantForEDPMatch(pdata);
+                    parent_pdp_->assignRemoteEndpoints(pdata);
+                    parent_server_pdp_->queueParticipantForEDPMatch(pdata);
                 }
             }
 
@@ -189,7 +189,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             return;
         }
 
-        if(parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
+        if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
             // all changes related with this participant have been removed from history by removeRemoteParticipant
             return;
