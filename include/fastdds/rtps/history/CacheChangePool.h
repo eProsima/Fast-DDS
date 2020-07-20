@@ -22,6 +22,8 @@
 #ifndef _FASTDDS_RTPS_CACHECHANGEPOOL_H_
 #define _FASTDDS_RTPS_CACHECHANGEPOOL_H_
 
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 #include <vector>
@@ -32,7 +34,7 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 struct CacheChange_t;
@@ -41,60 +43,105 @@ struct CacheChange_t;
  * Class CacheChangePool, used by the HistoryCache to pre-reserve a number of CacheChange_t to avoid dynamically reserving memory in the middle of execution loops.
  * @ingroup COMMON_MODULE
  */
-class CacheChangePool {
-    public:
-        virtual ~CacheChangePool();
-        /**
-         * Constructor.
-         * @param pool_size The initial pool size
-         * @param payload_size The initial payload size associated with the pool.
-         * @param max_pool_size Maximum payload size. If set to 0 the pool will keep reserving until something breaks.
-         * @param memoryPolicy Memory management policy.
-         */
-        CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy);
+class CacheChangePool : public IChangePool, public IPayloadPool
+{
+public:
 
-        /*!
-         * @brief Reserves a CacheChange from the pool.
-         * @param chan Returned pointer to the reserved CacheChange.
-         * @param calculateSizeFunc Function that returns the size of the data which will go into the CacheChange.
-         * This function is executed depending on the memory management policy (DYNAMIC_RESERVE_MEMORY_MODE and
-         * PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
-         * @return True whether the CacheChange could be allocated. In other case returns false.
-         */
-        bool reserve_Cache(CacheChange_t** chan, const std::function<uint32_t()>& calculateSizeFunc);
+    virtual ~CacheChangePool();
+    /**
+     * Constructor.
+     * @param pool_size The initial pool size
+     * @param payload_size The initial payload size associated with the pool.
+     * @param max_pool_size Maximum payload size. If set to 0 the pool will keep reserving until something breaks.
+     * @param memoryPolicy Memory management policy.
+     */
+    CacheChangePool(
+            int32_t pool_size,
+            uint32_t payload_size,
+            int32_t max_pool_size,
+            MemoryManagementPolicy_t memoryPolicy);
 
-        /*!
-         * @brief Reserves a CacheChange from the pool.
-         * @param chan Returned pointer to the reserved CacheChange.
-         * @param dataSize Size of the data which will go into the CacheChange if it is necessary (on memory management
-         * policy DYNAMIC_RESERVE_MEMORY_MODE and PREALLOCATED_WITH_REALLOC_MEMORY_MODE). In other case this variable is not used.
-         * @return True whether the CacheChange could be allocated. In other case returns false.
-         */
-        bool reserve_Cache(CacheChange_t** chan, uint32_t dataSize);
+    /*!
+     * @brief Reserves a CacheChange from the pool.
+     * @param chan Returned pointer to the reserved CacheChange.
+     * @param calculateSizeFunc Function that returns the size of the data which will go into the CacheChange.
+     * This function is executed depending on the memory management policy (DYNAMIC_RESERVE_MEMORY_MODE and
+     * PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+     * @return True whether the CacheChange could be allocated. In other case returns false.
+     */
+    bool reserve_Cache(
+            CacheChange_t** chan,
+            const std::function<uint32_t()>& calculateSizeFunc);
 
-        //!Release a Cache back to the pool.
-        void release_Cache(CacheChange_t*);
-        //!Get the size of the cache vector; all of them (reserved and not reserved).
-        size_t get_allCachesSize(){return m_allCaches.size();}
-        //!Get the number of frre caches.
-        size_t get_freeCachesSize(){return m_freeCaches.size();}
-        //!Get the initial payload size associated with the Pool.
-        inline uint32_t getInitialPayloadSize(){return m_initial_payload_size;};
-    private:
-        //! Returns a CacheChange to the free caches pool
-        void return_cache_to_pool(CacheChange_t* ch);
+    /*!
+     * @brief Reserves a CacheChange from the pool.
+     * @param chan Returned pointer to the reserved CacheChange.
+     * @param dataSize Size of the data which will go into the CacheChange if it is necessary (on memory management
+     * policy DYNAMIC_RESERVE_MEMORY_MODE and PREALLOCATED_WITH_REALLOC_MEMORY_MODE). In other case this variable is not used.
+     * @return True whether the CacheChange could be allocated. In other case returns false.
+     */
+    bool reserve_Cache(
+            CacheChange_t** chan,
+            uint32_t dataSize);
 
-        uint32_t m_initial_payload_size;
-        uint32_t m_payload_size;
-        uint32_t m_pool_size;
-        uint32_t m_max_pool_size;
-        std::vector<CacheChange_t*> m_freeCaches;
-        std::vector<CacheChange_t*> m_allCaches;
-        bool allocateGroup(uint32_t pool_size);
-        CacheChange_t* allocateSingle(uint32_t dataSize);
-        MemoryManagementPolicy_t memoryMode;
+    //!Release a Cache back to the pool.
+    void release_Cache(
+            CacheChange_t*);
+
+    bool reserve_cache(
+            CacheChange_t*& cache_change) override;
+
+    bool release_cache(
+            CacheChange_t* cache_change) override;
+
+    bool get_payload(
+            uint32_t data_size,
+            CacheChange_t& cache_change) override;
+
+    bool get_payload(
+            const SerializedPayload_t& data,
+            CacheChange_t& cache_change) override;
+
+    bool release_payload(
+            CacheChange_t& cache_change) override;
+
+    //!Get the size of the cache vector; all of them (reserved and not reserved).
+    size_t get_allCachesSize()
+    {
+        return m_allCaches.size();
+    }
+
+    //!Get the number of frre caches.
+    size_t get_freeCachesSize()
+    {
+        return m_freeCaches.size();
+    }
+
+    //!Get the initial payload size associated with the Pool.
+    inline uint32_t getInitialPayloadSize()
+    {
+        return m_initial_payload_size;
+    }
+
+private:
+
+    //! Returns a CacheChange to the free caches pool
+    void return_cache_to_pool(
+            CacheChange_t* ch);
+
+    uint32_t m_initial_payload_size;
+    uint32_t m_payload_size;
+    uint32_t m_pool_size;
+    uint32_t m_max_pool_size;
+    std::vector<CacheChange_t*> m_freeCaches;
+    std::vector<CacheChange_t*> m_allCaches;
+    bool allocateGroup(
+            uint32_t pool_size);
+    CacheChange_t* allocateSingle(
+            uint32_t dataSize);
+    MemoryManagementPolicy_t memoryMode;
 };
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 

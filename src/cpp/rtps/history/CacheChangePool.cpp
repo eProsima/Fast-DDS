@@ -295,6 +295,38 @@ CacheChange_t* CacheChangePool::allocateSingle(uint32_t dataSize)
     return ch;
 }
 
+bool CacheChangePool::reserve_cache(
+        CacheChange_t*& cache_change)
+{
+    return false;
 }
+
+bool CacheChangePool::release_cache(
+        CacheChange_t* cache_change)
+{
+    return false;
+}
+
+bool CacheChangePool::get_payload(
+        uint32_t data_size,
+        CacheChange_t& cache_change)
+{
+    return false;
+}
+
+bool CacheChangePool::get_payload(
+        const SerializedPayload_t& data,
+        CacheChange_t& cache_change)
+{
+    return false;
+}
+
+bool CacheChangePool::release_payload(
+        CacheChange_t& cache_change)
+{
+    return false;
+}
+
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
