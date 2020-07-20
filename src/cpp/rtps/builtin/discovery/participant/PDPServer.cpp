@@ -40,7 +40,6 @@
 #include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPServer.h>
 
-
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 
