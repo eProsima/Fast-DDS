@@ -112,7 +112,7 @@ class RTPSMessageCreator
         static bool addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& guidprefix, const CacheChange_t* change, uint32_t fragment_number,
                 TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, InlineQosWriter* inlineQos);
         static bool addSubmessageDataFrag(CDRMessage_t* msg, const CacheChange_t* change, uint32_t fragment_number,
-                uint32_t sample_size, TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos,
+                const SerializedPayload_t& data, TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos,
                 InlineQosWriter* inlineQos);
 
         static bool addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
