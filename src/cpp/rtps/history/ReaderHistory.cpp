@@ -114,7 +114,7 @@ bool ReaderHistory::remove_change(
         {
             logInfo(RTPS_HISTORY, "Removing change " << a_change->sequenceNumber);
             mp_reader->change_removed_by_history(a_change);
-            m_changePool.release_Cache(a_change);
+            do_release_cache(a_change);
             m_changes.erase(chit);
             return true;
         }
@@ -130,7 +130,7 @@ History::const_iterator ReaderHistory::remove_change_nts(
     (void)a_change;
     assert(nullptr != a_change);
     assert((*position) == a_change);
-    m_changePool.release_Cache(a_change);
+    do_release_cache(a_change);
     return m_changes.erase(position);
 }
 
@@ -191,7 +191,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
                 {
                     logInfo(RTPS_HISTORY, "Removing change " << item->sequenceNumber);
                     mp_reader->change_removed_by_history(item);
-                    m_changePool.release_Cache(item);
+                    do_release_cache(item);
                     chit = m_changes.erase(chit);
                     continue;
                 }

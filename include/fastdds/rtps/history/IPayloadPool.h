@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_IPAYLOADPOOL_H_
 
 #include <cstdint>
+#include <functional>
 
 namespace eprosima {
 namespace fastrtps {
@@ -35,7 +36,7 @@ public:
     virtual ~IPayloadPool() = default;
 
     virtual bool get_payload(
-            uint32_t data_size,
+            const std::function<uint32_t()>& size_function,
             CacheChange_t& cache_change) = 0;
 
     virtual bool get_payload(

@@ -22,12 +22,15 @@
 
 #include <fastrtps/fastrtps_dll.h>
 
-#include <fastdds/rtps/history/CacheChangePool.h>
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/utils/TimedMutex.hpp>
+
+#include <mutex>
 
 #include <cassert>
 
@@ -70,15 +73,26 @@ public:
             const std::function<uint32_t()>& calculateSizeFunc)
     {
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        return m_changePool.reserve_Cache(change, calculateSizeFunc);
+        CacheChange_t* reserved_change = nullptr;
+        if (change_pool_->reserve_cache(reserved_change))
+        {
+            if (payload_pool_->get_payload(calculateSizeFunc, *reserved_change))
+            {
+                *change = reserved_change;
+                return true;
+            }
+
+            change_pool_->release_cache(reserved_change);
+        }
+
+        return false;
     }
 
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
             uint32_t dataSize)
     {
-        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        return m_changePool.reserve_Cache(change, dataSize);
+        return reserve_Cache(change, [dataSize]() {return dataSize; });
     }
 
     /**
@@ -89,7 +103,7 @@ public:
             CacheChange_t* ch)
     {
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        return m_changePool.release_Cache(ch);
+        do_release_cache(ch);
     }
 
     /**
@@ -175,7 +189,7 @@ public:
      */
     RTPS_DllAPI inline uint32_t getTypeMaxSerialized()
     {
-        return m_changePool.getInitialPayloadSize();
+        return max_payload_size_;
     }
 
     /*!
@@ -215,7 +229,10 @@ protected:
     bool m_isHistoryFull;
 
     //!Pool of cache changes reserved when the History is created.
-    CacheChangePool m_changePool;
+    std::shared_ptr<IChangePool> change_pool_;
+    std::shared_ptr<IPayloadPool> payload_pool_;
+
+    uint32_t max_payload_size_;
 
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
@@ -223,6 +240,8 @@ protected:
     //!Mutex for the History.
     RecursiveTimedMutex* mp_mutex;
 
+    void do_release_cache(
+            CacheChange_t* ch);
 };
 
 }

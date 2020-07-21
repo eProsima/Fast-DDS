@@ -331,33 +331,14 @@ CacheChange_t* CacheChangePool::allocateSingle(
 bool CacheChangePool::reserve_cache(
         CacheChange_t*& cache_change)
 {
-    return false;
+    return reserve_Cache(&cache_change, 0);
 }
 
 bool CacheChangePool::release_cache(
         CacheChange_t* cache_change)
 {
-    return false;
-}
-
-bool CacheChangePool::get_payload(
-        uint32_t data_size,
-        CacheChange_t& cache_change)
-{
-    return false;
-}
-
-bool CacheChangePool::get_payload(
-        const SerializedPayload_t& data,
-        CacheChange_t& cache_change)
-{
-    return false;
-}
-
-bool CacheChangePool::release_payload(
-        CacheChange_t& cache_change)
-{
-    return false;
+    release_Cache(cache_change);
+    return true;
 }
 
 } /* namespace rtps */

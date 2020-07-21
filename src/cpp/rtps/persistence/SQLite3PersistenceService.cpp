@@ -143,6 +143,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
         {
             CacheChange_t* change = nullptr;
             int size = sqlite3_column_bytes(load_writer_stmt_, 2);
+            /*
             if (pool->reserve_Cache(&change, size))
             {
                 sqlite3_int64 sn = sqlite3_column_int64(load_writer_stmt_, 0);
@@ -158,6 +159,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
 
                 changes.insert(changes.begin(), change);
             }
+            */
         }
     }
 

@@ -22,10 +22,13 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 
+#include <fastdds/rtps/history/CacheChangePool.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
+
+#include "./BasicPayloadPool.hpp"
 
 namespace eprosima {
 namespace fastrtps {
@@ -35,17 +38,29 @@ History::History(
         const HistoryAttributes& att)
     : m_att(att)
     , m_isHistoryFull(false)
-    , m_changePool(att.initialReservedCaches, att.payloadMaxSize, att.maximumReservedCaches, att.memoryPolicy)
+    , max_payload_size_(att.payloadMaxSize)
     , mp_mutex(nullptr)
 
 {
     m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
+
+    change_pool_ = std::make_shared<CacheChangePool>(att.initialReservedCaches, att.payloadMaxSize, att.maximumReservedCaches, att.memoryPolicy);
+    payload_pool_ = std::make_shared<BasicPayloadPool>(att.memoryPolicy);
 }
 
 History::~History()
 {
     logInfo(RTPS_HISTORY, "");
 }
+
+void History::do_release_cache(
+        CacheChange_t* ch)
+{
+    // TODO (Miguel C): Should use payload pool reference from payload
+    payload_pool_->release_payload(*ch);
+    change_pool_->release_cache(ch);
+}
+
 
 bool History::remove_all_changes()
 {

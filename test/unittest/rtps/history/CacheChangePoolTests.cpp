@@ -66,6 +66,7 @@ protected:
     MemoryManagementPolicy_t memory_policy;
 };
 
+#if 0
 TEST_P(CacheChangePoolTests, init_pool)
 {
     ASSERT_EQ(pool->getInitialPayloadSize(), payload_size);
@@ -258,6 +259,8 @@ TEST_P(CacheChangePoolTests, chage_change)
         ASSERT_EQ(ch->sourceTimestamp.fraction(), 0U);
     }
 }
+
+#endif // 0
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_SUITE_P(x, y, z)

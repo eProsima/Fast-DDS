@@ -23,7 +23,6 @@
 #define _FASTDDS_RTPS_CACHECHANGEPOOL_H_
 
 #include <fastdds/rtps/history/IChangePool.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 #include <vector>
@@ -43,11 +42,12 @@ struct CacheChange_t;
  * Class CacheChangePool, used by the HistoryCache to pre-reserve a number of CacheChange_t to avoid dynamically reserving memory in the middle of execution loops.
  * @ingroup COMMON_MODULE
  */
-class CacheChangePool : public IChangePool, public IPayloadPool
+class CacheChangePool : public IChangePool
 {
 public:
 
     virtual ~CacheChangePool();
+
     /**
      * Constructor.
      * @param pool_size The initial pool size
@@ -60,6 +60,32 @@ public:
             uint32_t payload_size,
             int32_t max_pool_size,
             MemoryManagementPolicy_t memoryPolicy);
+
+    bool reserve_cache(
+            CacheChange_t*& cache_change) override;
+
+    bool release_cache(
+            CacheChange_t* cache_change) override;
+
+    //!Get the size of the cache vector; all of them (reserved and not reserved).
+    size_t get_allCachesSize()
+    {
+        return m_allCaches.size();
+    }
+
+    //!Get the number of frre caches.
+    size_t get_freeCachesSize()
+    {
+        return m_freeCaches.size();
+    }
+
+    //!Get the initial payload size associated with the Pool.
+    inline uint32_t getInitialPayloadSize()
+    {
+        return m_initial_payload_size;
+    }
+
+private:
 
     /*!
      * @brief Reserves a CacheChange from the pool.
@@ -87,43 +113,6 @@ public:
     //!Release a Cache back to the pool.
     void release_Cache(
             CacheChange_t*);
-
-    bool reserve_cache(
-            CacheChange_t*& cache_change) override;
-
-    bool release_cache(
-            CacheChange_t* cache_change) override;
-
-    bool get_payload(
-            uint32_t data_size,
-            CacheChange_t& cache_change) override;
-
-    bool get_payload(
-            const SerializedPayload_t& data,
-            CacheChange_t& cache_change) override;
-
-    bool release_payload(
-            CacheChange_t& cache_change) override;
-
-    //!Get the size of the cache vector; all of them (reserved and not reserved).
-    size_t get_allCachesSize()
-    {
-        return m_allCaches.size();
-    }
-
-    //!Get the number of frre caches.
-    size_t get_freeCachesSize()
-    {
-        return m_freeCaches.size();
-    }
-
-    //!Get the initial payload size associated with the Pool.
-    inline uint32_t getInitialPayloadSize()
-    {
-        return m_initial_payload_size;
-    }
-
-private:
 
     //! Returns a CacheChange to the free caches pool
     void return_cache_to_pool(

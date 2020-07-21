@@ -135,7 +135,7 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
         if((*chit)->sequenceNumber == a_change->sequenceNumber)
         {
             mp_writer->change_removed_by_history(a_change);
-            m_changePool.release_Cache(a_change);
+            do_release_cache(a_change);
             m_changes.erase(chit);
             m_isHistoryFull = false;
             return true;
@@ -166,7 +166,7 @@ bool WriterHistory::remove_change(const SequenceNumber_t& sequence_number)
         if((*chit)->sequenceNumber == sequence_number)
         {
             mp_writer->change_removed_by_history(*chit);
-            m_changePool.release_Cache(*chit);
+            do_release_cache(*chit);
             m_changes.erase(chit);
             m_isHistoryFull = false;
             return true;
