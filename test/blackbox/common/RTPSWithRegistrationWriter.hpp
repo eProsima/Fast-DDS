@@ -36,6 +36,7 @@
 
 #include <string>
 #include <list>
+#include <asio.hpp>
 #include <condition_variable>
 #include <gtest/gtest.h>
 
@@ -279,6 +280,15 @@ public:
             const std::string& value)
     {
         writer_attr_.endpoint.properties.properties().emplace_back(prop, value);
+        return *this;
+    }
+
+    RTPSWithRegistrationWriter& persistence_guid_att(
+           const eprosima::fastrtps::rtps::GuidPrefix_t& guidPrefix,
+           const eprosima::fastrtps::rtps::EntityId_t& entityId)
+    {
+        writer_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
+        writer_attr_.endpoint.persistence_guid.entityId = entityId;
         return *this;
     }
 

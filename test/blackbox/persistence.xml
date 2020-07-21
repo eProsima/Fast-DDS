@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"  ?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <profiles>                                                                                            
+    <profiles>          
         <participant profile_name="persistence_participant">
             <rtps>
                 <propertiesPolicy>
@@ -23,7 +23,25 @@
                 <durability>
                     <kind>TRANSIENT</kind>
                 </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                    <max_blocking_time>
+                        <sec>1</sec>
+                        <nanosec>0</nanosec>
+                    </max_blocking_time>
+                </reliability>
             </qos>
+            <times>
+                <heartbeatPeriod>
+                    <sec>0</sec>
+                    <nanosec>100000000</nanosec>
+                </heartbeatPeriod>
+                <nackResponseDelay>
+                    <sec>0</sec>
+                    <nanosec>100000000</nanosec>
+                </nackResponseDelay>
+            </times>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
             <propertiesPolicy>
                 <properties>
                     <property>
@@ -39,7 +57,17 @@
                 <durability>
                     <kind>TRANSIENT</kind>
                 </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
             </qos>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <times>
+                <heartbeatResponseDelay>
+                    <sec>0</sec>
+                    <nanosec>100000000</nanosec>
+                </heartbeatResponseDelay>
+            </times>
             <propertiesPolicy>
                 <properties>
                     <property>

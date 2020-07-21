@@ -233,6 +233,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriter.xml)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader.xml.in
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/persistence.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/persistence.xml)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
+            ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
 
         if(FASTRTPS_API_TESTS)
             set(BLACKBOXTESTS_FASTRTPS_SOURCE

@@ -357,6 +357,15 @@ public:
         return *this;
     }
 
+    RTPSWithRegistrationReader& persistence_guid_att(
+           const eprosima::fastrtps::rtps::GuidPrefix_t& guidPrefix,
+           const eprosima::fastrtps::rtps::EntityId_t& entityId)
+    {
+        reader_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
+        reader_attr_.endpoint.persistence_guid.entityId = entityId;
+        return *this;
+    }
+
 #if HAVE_SQLITE3
     RTPSWithRegistrationReader& make_persistent(
             const std::string& filename,
