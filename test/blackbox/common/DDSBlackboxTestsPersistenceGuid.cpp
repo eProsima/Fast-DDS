@@ -29,7 +29,6 @@ using namespace eprosima::fastdds::dds;
 
 class PersistenceGuid : public ::testing::TestWithParam<bool>
 {
-public:
 protected:
 
     virtual void SetUp()
@@ -40,6 +39,7 @@ protected:
     {
         std::remove("persistence.db");
     }
+
 };
 
 /*!

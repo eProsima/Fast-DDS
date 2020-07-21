@@ -284,19 +284,18 @@ public:
 
     void init()
     {
-        if(xml_file_ != "")
+        if (xml_file_ != "")
         {
-            if(participant_profile_ != "")
+            if (participant_profile_ != "")
             {
                 DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
                 participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-                            (uint32_t)GET_PID() % 230, participant_profile_, &participant_listener_,
-                            status_mask_);
+                    (uint32_t)GET_PID() % 230, participant_profile_, &participant_listener_, status_mask_);
                 ASSERT_NE(participant_, nullptr);
                 ASSERT_TRUE(participant_->is_enabled());
             }
         }
-        if(participant_ == nullptr)
+        if (participant_ == nullptr)
         {
             participant_ = DomainParticipantFactory::get_instance()->create_participant(
                 (uint32_t)GET_PID() % 230,
@@ -325,16 +324,17 @@ public:
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
-        if(xml_file_ != "")
+        if (xml_file_ != "")
         {
-            if(datawriter_profile_ != "")
+            if (datawriter_profile_ != "")
             {
-                datawriter_ = publisher_->create_datawriter_with_profile(topic_, datawriter_profile_, &listener_, status_mask_);
+                datawriter_ = publisher_->create_datawriter_with_profile(topic_, datawriter_profile_, &listener_,
+                                status_mask_);
                 ASSERT_NE(datawriter_, nullptr);
                 ASSERT_TRUE(datawriter_->is_enabled());
             }
         }
-        if(datawriter_ == nullptr)
+        if (datawriter_ == nullptr)
         {
             datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
             ASSERT_NE(datawriter_, nullptr);
@@ -342,7 +342,7 @@ public:
         }
 
         std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
-                    topic_name_ << std::endl;
+            topic_name_ << std::endl;
 
         initialized_ = datawriter_->is_enabled();
 

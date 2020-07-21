@@ -277,19 +277,18 @@ public:
 
     void init()
     {
-        if(xml_file_ != "")
+        if (xml_file_ != "")
         {
-            if(participant_profile_ != "")
+            if (participant_profile_ != "")
             {
                 DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
                 participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-                            (uint32_t)GET_PID() % 230, participant_profile_, &participant_listener_,
-                            status_mask_);
+                    (uint32_t)GET_PID() % 230, participant_profile_, &participant_listener_, status_mask_);
                 ASSERT_NE(participant_, nullptr);
                 ASSERT_TRUE(participant_->is_enabled());
             }
         }
-        if(participant_ == nullptr)
+        if (participant_ == nullptr)
         {
             participant_ = DomainParticipantFactory::get_instance()->create_participant(
                 (uint32_t)GET_PID() % 230,
@@ -317,16 +316,17 @@ public:
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
-        if(xml_file_ != "")
+        if (xml_file_ != "")
         {
-            if(datareader_profile_ != "")
+            if (datareader_profile_ != "")
             {
-                datareader_ = subscriber_->create_datareader_with_profile(topic_, datareader_profile_, &listener_, status_mask_);
+                datareader_ = subscriber_->create_datareader_with_profile(topic_, datareader_profile_, &listener_,
+                                status_mask_);
                 ASSERT_NE(datareader_, nullptr);
                 ASSERT_TRUE(datareader_->is_enabled());
             }
         }
-        if(datareader_ == nullptr)
+        if (datareader_ == nullptr)
         {
             datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
             ASSERT_NE(datareader_, nullptr);
