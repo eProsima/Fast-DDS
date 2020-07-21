@@ -971,7 +971,7 @@ private:
     {
         //Size of the element (with alignment)
         uint32_t size = *(uint32_t*)ptr;
-        return (4 + ((size + 3u) & ~3u));
+        return (4u + ((size + 3u) & ~3u));
     }
 
 };

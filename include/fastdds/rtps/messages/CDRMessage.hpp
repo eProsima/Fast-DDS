@@ -420,9 +420,7 @@ inline bool CDRMessage::readString(
         *stri = (const char*) &(msg->buffer[msg->pos]);
     }
     msg->pos += str_size;
-    uint32_t rest = (str_size) % 4;
-    rest = rest == 0 ? 0 : 4 - rest;
-    msg->pos += rest;
+    msg->pos = (msg->pos + 3u) & ~3u;
 
     return valid;
 }

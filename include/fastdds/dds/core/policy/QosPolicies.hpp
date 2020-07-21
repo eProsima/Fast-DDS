@@ -736,7 +736,7 @@ public:
         , ResourceLimitedOctetVector()
     {
         assign(data.begin(), data.end());
-        length = static_cast<unsigned short int>((size() + 7u) & static_cast<uint32_t>(~3));
+        length = static_cast<uint16_t>((size() + 7u) & ~3u);
     }
 
     virtual RTPS_DllAPI ~GenericDataQosPolicy() = default;
@@ -760,7 +760,7 @@ public:
             //If the object is size limited, already has max_size() allocated
             //assign() will always stop copying when reaching max_size()
             assign(b.begin(), b.end());
-            length = static_cast<unsigned short int>((size() + 7u) & static_cast<uint32_t>(~3));
+            length = static_cast<uint16_t>((size() + 7u) & ~3u);
             hasChanged = true;
         }
         return *this;
@@ -866,7 +866,7 @@ public:
         if (collection_ != vec)
         {
             assign(vec.begin(), vec.end());
-            length = static_cast<unsigned short int>((size() + 7u) & static_cast<uint32_t>(~3));
+            length = static_cast<uint16_t>((size() + 7u) & ~3u);
             hasChanged = true;
         }
     }
@@ -1282,7 +1282,7 @@ protected:
         {
             //Size of the element (with alignment)
             uint32_t size = *(uint32_t*)ptr_;
-            ptr_ += (4 + ((size + 3u) & ~3u));
+            ptr_ += (4u + ((size + 3u) & ~3u));
             value_ = Partition_t(ptr_);
         }
 

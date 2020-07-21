@@ -162,9 +162,9 @@ public:
         // Size including NUL char at the end
         uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
         // Align to next 4 byte
-        str_siz = (str_siz + 3) & static_cast<uint32_t>(~3);
+        str_siz = (str_siz + 3u) & ~3u;
         // p_id + p_length + str_length + str_data
-        return 2 + 2 + 4 + str_siz;
+        return 2u + 2u + 4u + str_siz;
     }
 
     static inline uint32_t cdr_serialized_size(
