@@ -2531,7 +2531,7 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         case TK_ENUM:
         {
             // TODO Translate from enum value name to integer value
-            apv.enumerated_value(static_cast<uint32_t>(std::stoul(member->get_default_value())));
+            apv.enumerated_value(static_cast<int32_t>(std::stoul(member->get_default_value())));
         }
         break;
         default:

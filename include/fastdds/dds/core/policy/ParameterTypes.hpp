@@ -900,9 +900,9 @@ public:
         uint32_t old_size = size();
 
         uint32_t first_size = (uint32_t)new_value.first.size() + 1;
-        uint32_t first_alignment = ((first_size + 3) & ~3) - first_size;
+        uint32_t first_alignment = ((first_size + 3u) & ~3u) - first_size;
         uint32_t second_size = (uint32_t)new_value.second.size() + 1;
-        uint32_t second_alignment = ((second_size + 3) & ~3) - second_size;
+        uint32_t second_alignment = ((second_size + 3u) & ~3u) - second_size;
         uint32_t new_size = first_size + first_alignment + second_size + second_alignment + 8;
 
         if (old_size != new_size)
@@ -971,7 +971,7 @@ private:
     {
         //Size of the element (with alignment)
         uint32_t size = *(uint32_t*)ptr;
-        return (4 + ((size + 3) & ~3));
+        return (4u + ((size + 3u) & ~3u));
     }
 
 };
@@ -1278,10 +1278,10 @@ public:
     {
         //Realloc if needed;
         uint32_t size1 = (uint32_t) p.first.length() + 1;
-        uint32_t alignment1 = ((size1 + 3) & ~3) - size1;
+        uint32_t alignment1 = ((size1 + 3u) & ~3u) - size1;
 
         uint32_t size2 = (uint32_t) p.second.length() + 1;
-        uint32_t alignment2 = ((size2 + 3) & ~3) - size2;
+        uint32_t alignment2 = ((size2 + 3u) & ~3u) - size2;
 
         if (limit_size_ && (properties_.max_size < properties_.length +
                 size1 + alignment1 + 4 +
@@ -1314,8 +1314,8 @@ public:
             uint32_t str2_size)
     {
         //Realloc if needed;
-        uint32_t alignment1 = ((str1_size + 3) & ~3) - str1_size;
-        uint32_t alignment2 = ((str2_size + 3) & ~3) - str2_size;
+        uint32_t alignment1 = ((str1_size + 3u) & ~3u) - str1_size;
+        uint32_t alignment2 = ((str2_size + 3u) & ~3u) - str2_size;
 
         if (limit_size_ && (properties_.max_size < properties_.length +
                 str1_size + alignment1 + 4 +

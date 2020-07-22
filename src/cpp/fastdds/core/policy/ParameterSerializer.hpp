@@ -162,9 +162,9 @@ public:
         // Size including NUL char at the end
         uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
         // Align to next 4 byte
-        str_siz = (str_siz + 3) & ~3;
+        str_siz = (str_siz + 3u) & ~3u;
         // p_id + p_length + str_length + str_data
-        return 2 + 2 + 4 + str_siz;
+        return 2u + 2u + 4u + str_siz;
     }
 
     static inline uint32_t cdr_serialized_size(
@@ -647,7 +647,7 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
             return false;
         }
         str1_pos = cdr_message->pos;
-        alignment1 = ((property1_size + 3) & ~3) - property1_size;
+        alignment1 = ((property1_size + 3u) & ~3u) - property1_size;
         cdr_message->pos += (property1_size + alignment1);
         valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &property2_size);
         if (!valid)
@@ -658,7 +658,7 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
             &cdr_message->buffer[str1_pos], property1_size,
             &cdr_message->buffer[cdr_message->pos], property2_size);
 
-        alignment2 = ((property2_size + 3) & ~3) - property2_size;
+        alignment2 = ((property2_size + 3u) & ~3u) - property2_size;
         cdr_message->pos += (property2_size + alignment2);
     }
     //Nproperties_ = num_properties;
