@@ -760,7 +760,7 @@ public:
             case TK_ENUM:
             {
                 // TODO Translate from enum value name to integer value
-                enumerated_value(static_cast<uint32_t>(std::stoul(value)));
+                enumerated_value(static_cast<int32_t>(std::stoul(value)));
             }
             break;
             default:

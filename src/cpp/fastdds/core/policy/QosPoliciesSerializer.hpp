@@ -487,7 +487,7 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_mes
         }
 
         qos_policy.push_back ((const char*)&cdr_message->buffer[cdr_message->pos]);
-        alignment = ((partition_size + 3) & ~3) - partition_size;
+        alignment = ((partition_size + 3u) & ~3u) - partition_size;
         cdr_message->pos += (partition_size + alignment);
     }
     //qos_policy.Npartitions_ = num_partitions;
@@ -1063,7 +1063,7 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
     }
 
     // Skip padding
-    cdr_message->pos += ( (len + 3) & ~3) - len;
+    cdr_message->pos += ( (len + 3u) & ~3u) - len;
 
     // Should have consumed whole size
 

@@ -105,8 +105,9 @@ struct RTPS_DllAPI SequenceNumber_t
     SequenceNumber_t& operator +=(
             int inc) noexcept
     {
+        assert(inc >= 0);
         uint32_t aux_low = low;
-        low += inc;
+        low +=  static_cast<uint32_t>(inc);
 
         if (low < aux_low)
         {
