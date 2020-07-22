@@ -45,7 +45,7 @@ class spin_mutex
    bool try_lock();
    bool timed_lock(const boost::posix_time::ptime &abs_time);
    void unlock();
-   void take_ownership(){};
+   void take_ownership(){}
    private:
    volatile boost::uint32_t m_s;
 };
@@ -64,7 +64,21 @@ inline spin_mutex::~spin_mutex()
 }
 
 inline void spin_mutex::lock(void)
-{  return ipcdetail::try_based_lock(*this); }
+{
+#ifdef BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
+	boost::posix_time::ptime wait_time
+		= microsec_clock::universal_time()
+		+ boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS);
+	if (!timed_lock(wait_time))
+	{
+		throw interprocess_exception(timeout_when_locking_error
+			, "Interprocess mutex timeout when locking. Possible deadlock: "
+			"owner died without unlocking?");
+	}
+#else
+   return ipcdetail::try_based_lock(*this);
+#endif
+}
 
 inline bool spin_mutex::try_lock(void)
 {

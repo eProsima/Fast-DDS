@@ -21,6 +21,8 @@
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemLog.hpp>
 
+#include <map>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
