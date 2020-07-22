@@ -16,7 +16,7 @@ import sqlite3
 import sys
 
 """ 
-It returns the apparitions of a guid on a specific table and database.
+Return the number of apparitions of a guid, on a specific table and database.
 
 It takes three arguments: 
     * database_name: The filename of the database
