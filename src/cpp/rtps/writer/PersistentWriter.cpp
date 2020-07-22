@@ -37,17 +37,8 @@ PersistentWriter::PersistentWriter(GUID_t& guid,WriterAttributes& att,WriterHist
      ss << p_guid;
      persistence_guid_ = ss.str();
 
-     // TODO (Miguel C): Update persistence interface
-     /*
-     if (persistence_->load_writer_from_storage(persistence_guid_, guid, hist->m_changes, &(hist->m_changePool)))
-     {
-         CacheChange_t* max_change;
-         if (hist->get_max_change(&max_change))
-         {
-             hist->m_lastCacheChangeSeqNum = max_change->sequenceNumber;
-         }
-     }
-     */
+     persistence_->load_writer_from_storage(persistence_guid_, guid, hist->m_changes,
+         hist->change_pool_, hist->payload_pool_, hist->m_lastCacheChangeSeqNum);
  }
 
 PersistentWriter::~PersistentWriter()

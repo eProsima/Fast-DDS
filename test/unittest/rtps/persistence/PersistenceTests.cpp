@@ -21,10 +21,33 @@
 
 using namespace eprosima::fastrtps::rtps;
 
+class NoOpPayloadPool : public IPayloadPool
+{
+    virtual bool get_payload(
+            const std::function<uint32_t()>&,
+            CacheChange_t&) override
+    {
+        return true;
+    }
+    virtual bool get_payload(
+            const SerializedPayload_t&,
+            CacheChange_t&) override
+    {
+        return true;
+    }
+    virtual bool release_payload(
+            CacheChange_t&) override
+    {
+        return true;
+    }
+};
+
 class PersistenceTest : public ::testing::Test
 {
 protected:
     IPersistenceService * service = nullptr;
+
+    std::shared_ptr<NoOpPayloadPool> payload_pool_ = std::make_shared<NoOpPayloadPool>();
 
     virtual void SetUp()
     {
@@ -56,7 +79,8 @@ TEST_F(PersistenceTest, Writer)
     service = PersistenceFactory::create_persistence_service(policy);
     ASSERT_NE(service, nullptr);
 
-    CacheChangePool pool(10, 128, 0, MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
+    auto pool = std::make_shared<CacheChangePool>(10, 128, 0, MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
+    SequenceNumber_t max_seq;
     CacheChange_t change;
     GUID_t guid(GuidPrefix_t::unknown(), 1U);
     std::vector<CacheChange_t*> changes;
@@ -66,7 +90,7 @@ TEST_F(PersistenceTest, Writer)
 
     // Initial load should return empty vector
     changes.clear();
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, pool, payload_pool_, max_seq));
     ASSERT_EQ(changes.size(), 0u);
 
     // Add two changes
@@ -83,7 +107,7 @@ TEST_F(PersistenceTest, Writer)
 
     // Loading should return two changes (seqs = 1, 2)
     changes.clear();
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, pool, payload_pool_, max_seq));
     ASSERT_EQ(changes.size(), 2u);
     uint32_t i = 0;
     for (auto it : changes)
@@ -99,7 +123,7 @@ TEST_F(PersistenceTest, Writer)
 
     // Loading should return one change (seq = 2)
     changes.clear();
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, pool, payload_pool_, max_seq));
     ASSERT_EQ(changes.size(), 1u);
     ASSERT_EQ((*changes.begin())->sequenceNumber, SequenceNumber_t(0, 2));
 
@@ -107,7 +131,7 @@ TEST_F(PersistenceTest, Writer)
     changes.clear();
     change.sequenceNumber.low = 2;
     ASSERT_TRUE(service->remove_writer_change_from_storage(persist_guid, change));
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, pool, payload_pool_, max_seq));
     ASSERT_EQ(changes.size(), 0u);
 }
 

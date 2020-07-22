@@ -22,6 +22,8 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
@@ -31,8 +33,6 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-class CacheChangePool;
 
 /**
 * Abstract interface representing a persistence service implementaion
@@ -48,15 +48,19 @@ public:
 
     /**
      * Get all data stored for a writer.
-     * @param writer_guid GUID of the writer to load.
-     * @param part_id ID of the RTPSParticipant the writer belongs to.
+     * @param persistence_guid   GUID of the writer used to store samples.
+     * @param writer_guid        GUID of the writer to load.
+     * @param history            Historry of the writer to load.
+     * @param next_sequence      Sequence that should be applied to the next created sample.
      * @return True if operation was successful.
      */
     virtual bool load_writer_from_storage(
             const std::string& persistence_guid,
             const GUID_t& writer_guid,
             std::vector<CacheChange_t*>& changes,
-            CacheChangePool* pool) = 0;
+            const std::shared_ptr<IChangePool>& change_pool,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            SequenceNumber_t& next_sequence) = 0;
 
     /**
      * Add a change to storage.

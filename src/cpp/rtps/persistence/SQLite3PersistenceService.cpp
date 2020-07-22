@@ -19,7 +19,7 @@
 
 #include <rtps/persistence/SQLite3PersistenceService.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/history/CacheChangePool.h>
+#include <fastdds/rtps/history/WriterHistory.h>
 
 #include <rtps/persistence/sqlite3.h>
 
@@ -130,7 +130,9 @@ bool SQLite3PersistenceService::load_writer_from_storage(
         const std::string& persistence_guid,
         const GUID_t& writer_guid,
         std::vector<CacheChange_t*>& changes,
-        CacheChangePool* pool)
+        const std::shared_ptr<IChangePool>& change_pool,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        SequenceNumber_t& next_sequence)
 {
     logInfo(RTPS_PERSISTENCE, "Loading writer " << writer_guid);
 
@@ -139,28 +141,45 @@ bool SQLite3PersistenceService::load_writer_from_storage(
         sqlite3_reset(load_writer_stmt_);
         sqlite3_bind_text(load_writer_stmt_,1,persistence_guid.c_str(),-1,SQLITE_STATIC);
 
+        sqlite3_int64 max_sn = 0;
+
         while (SQLITE_ROW == sqlite3_step(load_writer_stmt_))
         {
+            sqlite3_int64 sn = sqlite3_column_int64(load_writer_stmt_, 0);
+            if (sn > max_sn)
+            {
+                max_sn = sn;
+            }
+
             CacheChange_t* change = nullptr;
             int size = sqlite3_column_bytes(load_writer_stmt_, 2);
-            /*
-            if (pool->reserve_Cache(&change, size))
-            {
-                sqlite3_int64 sn = sqlite3_column_int64(load_writer_stmt_, 0);
-                int instance_size = sqlite3_column_bytes(load_writer_stmt_, 1);
-                instance_size = (instance_size > 16) ? 16 : instance_size;
-                change->kind = ALIVE;
-                change->writerGUID = writer_guid;
-                memcpy(change->instanceHandle.value, sqlite3_column_blob(load_writer_stmt_, 1), instance_size);
-                change->sequenceNumber.high = (int32_t)((sn >> 32) & 0xFFFFFFFF);
-                change->sequenceNumber.low = (int32_t)(sn & 0xFFFFFFFF);
-                change->serializedPayload.length = size;
-                memcpy(change->serializedPayload.data, sqlite3_column_blob(load_writer_stmt_, 2), size);
 
-                changes.insert(changes.begin(), change);
+            if (!change_pool->reserve_cache(change))
+            {
+                continue;
             }
-            */
+
+            if (!payload_pool->get_payload(size, *change))
+            {
+                change_pool->release_cache(change);
+                continue;
+            }
+
+            int instance_size = sqlite3_column_bytes(load_writer_stmt_, 1);
+            instance_size = (instance_size > 16) ? 16 : instance_size;
+            change->kind = ALIVE;
+            change->writerGUID = writer_guid;
+            memcpy(change->instanceHandle.value, sqlite3_column_blob(load_writer_stmt_, 1), instance_size);
+            change->sequenceNumber.high = (int32_t)((sn >> 32) & 0xFFFFFFFF);
+            change->sequenceNumber.low = (int32_t)(sn & 0xFFFFFFFF);
+            change->serializedPayload.length = size;
+            memcpy(change->serializedPayload.data, sqlite3_column_blob(load_writer_stmt_, 2), size);
+
+            changes.insert(changes.begin(), change);
         }
+
+        next_sequence.high = (int32_t)((max_sn >> 32) & 0xFFFFFFFF);
+        next_sequence.low = (int32_t)(max_sn & 0xFFFFFFFF);
     }
 
     return true;
