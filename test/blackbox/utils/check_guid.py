@@ -16,8 +16,7 @@ import sqlite3
 import sys
 
 """ 
-This python returns the number times that a guid appears on a specific table
-of a given database.
+It returns the apparitions of a guid on a specific table and database.
 
 It takes three arguments: 
     * database_name: The filename of the database
@@ -29,16 +28,19 @@ It takes three arguments:
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        sys.exit("Not enough args")
+        sys.exit(255)
     database_name = str(sys.argv[1])
     table_name = str(sys.argv[2])
     check_guid = str(sys.argv[3])
 
-    command = f"SELECT guid FROM "+table_name+" WHERE guid='"+check_guid+"'"
-    connection = sqlite3.connect(database_name)
-    c = connection.cursor()
-    c.execute(command)
-    num = len(c.fetchall())
-    connection.close()
+    command = f"SELECT guid FROM {table_name} WHERE guid='{check_guid}'"
+    try:
+        connection = sqlite3.connect(database_name)
+        c = connection.cursor()
+        c.execute(command)
+        num = len(c.fetchall())
+        connection.close()
+    except sqlite3.DatabaseError as e:
+        sys.exit(255)
 
     sys.exit(num)

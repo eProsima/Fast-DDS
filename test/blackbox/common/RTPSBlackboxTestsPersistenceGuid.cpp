@@ -45,7 +45,7 @@ protected:
 /*!
  * @fn TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
  * @brief This test checks if the persistence guid is set correctly on the RTPSWriter and RTPSReader when it is specified using the
- * property dds.persistence.guid through RTPS layer.
+ * property "dds.persistence.guid" through RTPS-layer API.
  *
  * This test creates a RTPSReader and RTPSWriter configuring for each of them the persistence plugin to use SQLITE3,
  * the database filename and a specific persistence guid.
@@ -90,6 +90,17 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
     reader.startReception(1);
     reader.block_for_all();
 
+#ifdef WIN32
+    //Check if there is one entry in the writers database table with the stated persistence guid
+    int result1 = system(
+        "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+    ASSERT_EQ((result1 >> 8), 1);
+
+    //Check if there is one entry in the readers database table with the stated persistence guid
+    int result2 = system(
+        "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
+    ASSERT_EQ((result2 >> 8), 1);
+#else
     //Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
@@ -99,12 +110,13 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
     int result2 = system(
         "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
+#endif //WIN32
 
 }
 
 /*!
  * @fn TEST(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
- * @brief This test checks which persistence guid prevails the one set manually or the one set using the dds.persistence.guid
+ * @brief This test checks which persistence guid prevails, the one set manually or the one set using the "dds.persistence.guid"
  * property.
  *
  * This test creates a RTPSReader and RTPSWriter configuring for each of them the persistence plugin to use SQLITE3,
@@ -162,6 +174,26 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     reader.startReception(1);
     reader.block_for_all();
 
+#ifdef WIN32
+    //Check if that there is no entry in the writers database table with the stated persistence guid
+    int result1 = system(
+        "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+    ASSERT_EQ((result1 >> 8), 0);
+
+    //Check if there is one entry in the writers database table with the stated persistence guid
+    result1 = system("python check_guid.py 'persistence.db' 'writers' '0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1'");
+    ASSERT_EQ((result1 >> 8), 1);
+
+    //Check if that there is no entry in the readers database table with the stated persistence guid
+    int result2 = system(
+        "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
+    ASSERT_EQ((result2 >> 8), 0);
+
+    //Check if there is one entry in the readers database table with the stated persistence guid
+    result2 = system("python check_guid.py 'persistence.db' 'readers' '0.0.0.0.0.0.0.0.0.0.0.2|0.0.0.1'");
+    ASSERT_EQ((result2 >> 8), 1);
+#else
+
     //Check if that there is no entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
@@ -179,6 +211,7 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     //Check if there is one entry in the readers database table with the stated persistence guid
     result2 = system("python3 check_guid.py 'persistence.db' 'readers' '0.0.0.0.0.0.0.0.0.0.0.2|0.0.0.1'");
     ASSERT_EQ((result2 >> 8), 1);
+#endif //WIN32
 }
 
 INSTANTIATE_TEST_CASE_P(PersistenceGuid,

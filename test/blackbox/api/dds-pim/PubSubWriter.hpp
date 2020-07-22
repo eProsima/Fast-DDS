@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -284,9 +284,9 @@ public:
 
     void init()
     {
-        if (xml_file_ != "")
+        if (!xml_file_.empty())
         {
-            if (participant_profile_ != "")
+            if (!participant_profile_.empty())
             {
                 DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
                 participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
@@ -324,9 +324,9 @@ public:
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
-        if (xml_file_ != "")
+        if (!xml_file_.empty())
         {
-            if (datawriter_profile_ != "")
+            if (!datawriter_profile_.empty())
             {
                 datawriter_ = publisher_->create_datawriter_with_profile(topic_, datawriter_profile_, &listener_,
                                 status_mask_);
