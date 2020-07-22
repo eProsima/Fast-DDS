@@ -21,32 +21,32 @@ extern "C" {
 struct _FILETIME;
 struct _SYSTEMTIME;
 
-BOOST_SYMBOL_IMPORT boost::winapi::VOID_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::VOID_ BOOST_WINAPI_WINAPI_CC
 GetSystemTime(::_SYSTEMTIME* lpSystemTime);
 
 #ifdef BOOST_HAS_GETSYSTEMTIMEASFILETIME  // Windows CE does not define GetSystemTimeAsFileTime
-BOOST_SYMBOL_IMPORT boost::winapi::VOID_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::VOID_ BOOST_WINAPI_WINAPI_CC
 GetSystemTimeAsFileTime(::_FILETIME* lpSystemTimeAsFileTime);
 #endif
 
-BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ BOOST_WINAPI_WINAPI_CC
 SystemTimeToFileTime(
     const ::_SYSTEMTIME* lpSystemTime,
     ::_FILETIME* lpFileTime);
 
-BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ BOOST_WINAPI_WINAPI_CC
 FileTimeToSystemTime(
     const ::_FILETIME* lpFileTime,
     ::_SYSTEMTIME* lpSystemTime);
 
 #if BOOST_WINAPI_PARTITION_APP_SYSTEM
 
-BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ BOOST_WINAPI_WINAPI_CC
 FileTimeToLocalFileTime(
     const ::_FILETIME* lpFileTime,
     ::_FILETIME* lpLocalFileTime);
 
-BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::BOOL_ BOOST_WINAPI_WINAPI_CC
 LocalFileTimeToFileTime(
     const ::_FILETIME* lpLocalFileTime,
     ::_FILETIME* lpFileTime);
@@ -54,12 +54,12 @@ LocalFileTimeToFileTime(
 #endif // BOOST_WINAPI_PARTITION_APP_SYSTEM
 
 #if BOOST_WINAPI_PARTITION_DESKTOP_SYSTEM
-BOOST_SYMBOL_IMPORT boost::winapi::DWORD_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::DWORD_ BOOST_WINAPI_WINAPI_CC
 GetTickCount(BOOST_WINAPI_DETAIL_VOID);
 #endif // BOOST_WINAPI_PARTITION_DESKTOP_SYSTEM
 
 #if BOOST_USE_WINAPI_VERSION >= BOOST_WINAPI_VERSION_WIN6
-BOOST_SYMBOL_IMPORT boost::winapi::ULONGLONG_ WINAPI
+BOOST_SYMBOL_IMPORT boost::winapi::ULONGLONG_ BOOST_WINAPI_WINAPI_CC
 GetTickCount64(BOOST_WINAPI_DETAIL_VOID);
 #endif
 

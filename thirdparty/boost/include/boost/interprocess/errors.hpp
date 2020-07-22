@@ -68,7 +68,7 @@ inline int system_error_code() // artifact of POSIX and WINDOWS error reporting
 inline void fill_system_message(int sys_err_code, std::string &str)
 {
    void *lpMsgBuf;
-   winapi::format_message(
+   unsigned long ret = winapi::format_message(
       winapi::format_message_allocate_buffer |
       winapi::format_message_from_system |
       winapi::format_message_ignore_inserts,
@@ -79,11 +79,16 @@ inline void fill_system_message(int sys_err_code, std::string &str)
       0,
       0
    );
-   str += static_cast<const char*>(lpMsgBuf);
-   winapi::local_free( lpMsgBuf ); // free the buffer
-   while ( str.size()
-      && (str[str.size()-1] == '\n' || str[str.size()-1] == '\r') )
-      str.erase( str.size()-1 );
+   if (ret != 0){
+      str += static_cast<const char*>(lpMsgBuf);
+      winapi::local_free( lpMsgBuf ); // free the buffer
+      while ( str.size()
+         && (str[str.size()-1] == '\n' || str[str.size()-1] == '\r') )
+         str.erase( str.size()-1 );
+   }
+   else{
+      str += "WinApi FormatMessage returned error";
+   }
 }
 # else
 inline void fill_system_message( int system_error, std::string &str)

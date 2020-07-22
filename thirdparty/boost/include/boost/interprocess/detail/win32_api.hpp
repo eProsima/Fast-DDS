@@ -99,17 +99,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-//Ignore -pedantic errors here (anonymous structs, etc.)
+
 #if defined(BOOST_GCC)
+//Ignore -pedantic errors here (anonymous structs, etc.)
 #  if (BOOST_GCC >= 40600)
 #     pragma GCC diagnostic push
-#     if (BOOST_GCC >= 60000)
+#     if (BOOST_GCC >= 40800)
 #        pragma GCC diagnostic ignored "-Wpedantic"
 #     else
 #        pragma GCC diagnostic ignored "-pedantic"
 #     endif
+#     pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #  else
 #     pragma GCC system_header
+#  endif
+//When loading DLLs we have no option but reinterpret casting function types  
+#  if (BOOST_GCC >= 80000)
+#        pragma GCC diagnostic ignored "-Wcast-function-type"
 #  endif
 #endif
 
@@ -1535,7 +1541,6 @@ struct function_address_holder
          , NtOpenFile
          , NtClose
          , NtQueryTimerResolution
-         , NtSetTimerResolution
          , QueryPerformanceCounter
          , QueryPerformanceFrequency
          , NumFunction
@@ -1618,7 +1623,6 @@ const char *function_address_holder<Dummy>::FunctionNames[function_address_holde
    "NtOpenFile",
    "NtClose",
    "NtQueryTimerResolution",
-   "NtSetTimerResolution",
    "QueryPerformanceCounter",
    "QueryPerformanceFrequency"
 };
@@ -1626,7 +1630,6 @@ const char *function_address_holder<Dummy>::FunctionNames[function_address_holde
 template<int Dummy>
 unsigned int function_address_holder<Dummy>::FunctionModules[function_address_holder<Dummy>::NumFunction] =
 {
-   NtDll_dll,
    NtDll_dll,
    NtDll_dll,
    NtDll_dll,
@@ -1675,8 +1678,8 @@ struct library_unloader
 
 inline bool get_system_time_of_day_information(system_timeofday_information &info)
 {
-   NtQuerySystemInformation_t pNtQuerySystemInformation = (NtQuerySystemInformation_t)
-         dll_func::get(dll_func::NtQuerySystemInformation);
+   NtQuerySystemInformation_t pNtQuerySystemInformation = reinterpret_cast<NtQuerySystemInformation_t>
+         (dll_func::get(dll_func::NtQuerySystemInformation));
    unsigned long res;
    long status = pNtQuerySystemInformation(system_time_of_day_information, &info, sizeof(info), &res);
    if(status){
@@ -1859,10 +1862,10 @@ class c_heap_deleter
 
    void realloc_mem(std::size_t num_bytes)
    {
-      void *buf = ::realloc(m_buf, num_bytes);
-      if(!buf){
-         free(m_buf);
-         m_buf = 0;
+      void *oldBuf = m_buf;
+      m_buf = ::realloc(m_buf, num_bytes);
+      if (!m_buf){
+         free(oldBuf);
       }
    }
 
@@ -1892,9 +1895,9 @@ inline bool unlink_file(const char *filename)
    //  file name can't be used to open this file again
    try{
       NtSetInformationFile_t pNtSetInformationFile =
-         (NtSetInformationFile_t)dll_func::get(dll_func::NtSetInformationFile);
+         reinterpret_cast<NtSetInformationFile_t>(dll_func::get(dll_func::NtSetInformationFile));
 
-      NtQueryObject_t pNtQueryObject = (NtQueryObject_t)dll_func::get(dll_func::NtQueryObject);
+      NtQueryObject_t pNtQueryObject = reinterpret_cast<NtQueryObject_t>(dll_func::get(dll_func::NtQueryObject));
 
       //First step: Obtain a handle to the file using Win32 rules. This resolves relative paths
       void *fh = create_file(filename, generic_read | delete_access, open_existing, 0, 0);
@@ -1966,8 +1969,8 @@ inline bool unlink_file(const char *filename)
       {
          //Don't use pNtSetInformationFile with file_disposition_information as it can return STATUS_CANNOT_DELETE
          //if the file is still mapped. Reopen it with NtOpenFile and file_delete_on_close
-         NtOpenFile_t pNtOpenFile = (NtOpenFile_t)dll_func::get(dll_func::NtOpenFile);
-         NtClose_t pNtClose = (NtClose_t)dll_func::get(dll_func::NtClose);
+         NtOpenFile_t pNtOpenFile = reinterpret_cast<NtOpenFile_t>(dll_func::get(dll_func::NtOpenFile));
+         NtClose_t pNtClose = reinterpret_cast<NtClose_t>(dll_func::get(dll_func::NtClose));
          const wchar_t empty_str [] = L"";
          unicode_string_t ustring = { sizeof(empty_str) - sizeof (wchar_t)   //length in bytes without null
                                     , sizeof(empty_str)   //total size in bytes of memory allocated for Buffer.
@@ -2413,7 +2416,7 @@ inline bool is_directory(const char *path)
 inline bool get_file_mapping_size(void *file_mapping_hnd, __int64 &size)
 {
    NtQuerySection_t pNtQuerySection =
-      (NtQuerySection_t)dll_func::get(dll_func::NtQuerySection);
+      reinterpret_cast<NtQuerySection_t>(dll_func::get(dll_func::NtQuerySection));
    //Obtain file name
    interprocess_section_basic_information info;
    unsigned long ntstatus =
@@ -2426,7 +2429,7 @@ inline bool get_semaphore_info(void *handle, long &count, long &limit)
 {
    winapi::interprocess_semaphore_basic_information info;
    winapi::NtQuerySemaphore_t pNtQuerySemaphore =
-         (winapi::NtQuerySemaphore_t)dll_func::get(winapi::dll_func::NtQuerySemaphore);
+         reinterpret_cast<winapi::NtQuerySemaphore_t>(dll_func::get(winapi::dll_func::NtQuerySemaphore));
    unsigned int ret_len;
    long status = pNtQuerySemaphore(handle, winapi::semaphore_basic_information, &info, sizeof(info), &ret_len);
    count = info.count;
@@ -2437,28 +2440,21 @@ inline bool get_semaphore_info(void *handle, long &count, long &limit)
 inline bool query_timer_resolution(unsigned long *lowres, unsigned long *highres, unsigned long *curres)
 {
    winapi::NtQueryTimerResolution_t pNtQueryTimerResolution =
-         (winapi::NtQueryTimerResolution_t)dll_func::get(winapi::dll_func::NtQueryTimerResolution);
+         reinterpret_cast<winapi::NtQueryTimerResolution_t>(dll_func::get(winapi::dll_func::NtQueryTimerResolution));
    return !pNtQueryTimerResolution(lowres, highres, curres);
-}
-
-inline bool set_timer_resolution(unsigned long RequestedResolution, int Set, unsigned long* ActualResolution)
-{
-   winapi::NtSetTimerResolution_t pNtSetTimerResolution =
-         (winapi::NtSetTimerResolution_t)dll_func::get(winapi::dll_func::NtSetTimerResolution);
-   return !pNtSetTimerResolution(RequestedResolution, Set, ActualResolution);
 }
 
 inline bool query_performance_counter(__int64 *lpPerformanceCount)
 {
-   QueryPerformanceCounter_t pQueryPerformanceCounter = (QueryPerformanceCounter_t)
-         dll_func::get(dll_func::QueryPerformanceCounter);
+   QueryPerformanceCounter_t pQueryPerformanceCounter = reinterpret_cast<QueryPerformanceCounter_t>
+         (dll_func::get(dll_func::QueryPerformanceCounter));
    return 0 != pQueryPerformanceCounter(lpPerformanceCount);
 }
 
 inline bool query_performance_frequency(__int64 *lpFrequency)
 {
-   QueryPerformanceCounter_t pQueryPerformanceFrequency = (QueryPerformanceFrequency_t)
-         dll_func::get(dll_func::QueryPerformanceFrequency);
+   QueryPerformanceCounter_t pQueryPerformanceFrequency = reinterpret_cast<QueryPerformanceFrequency_t>
+         (dll_func::get(dll_func::QueryPerformanceFrequency));
    return 0 != pQueryPerformanceFrequency(lpFrequency);
 }
 
