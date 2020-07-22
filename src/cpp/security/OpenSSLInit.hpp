@@ -16,7 +16,7 @@ public:
     {
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
         OpenSSL_add_all_algorithms();
-#endif
+#endif // if OPENSSL_VERSION_NUMBER < 0x10100000L
     }
 
     ~OpenSSLInit()
@@ -25,7 +25,7 @@ public:
         ERR_remove_state(0);
 #elif OPENSSL_VERSION_NUMBER < 0x10100000L
         ERR_remove_thread_state(NULL);
-#endif
+#endif // if OPENSSL_VERSION_NUMBER < 0x10000000L
         ENGINE_cleanup();
         RAND_cleanup();
         CRYPTO_cleanup_all_ex_data();
