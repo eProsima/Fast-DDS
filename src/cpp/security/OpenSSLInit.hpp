@@ -3,13 +3,20 @@
 #include <openssl/rand.h>
 #include <openssl/err.h>
 
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+namespace security {
+
 class OpenSSLInit
 {
 public:
 
     OpenSSLInit()
     {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
         OpenSSL_add_all_algorithms();
+#endif
     }
 
     ~OpenSSLInit()
@@ -28,4 +35,7 @@ public:
 
 };
 
-OpenSSLInit openssl_init;
+} // namespace security
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

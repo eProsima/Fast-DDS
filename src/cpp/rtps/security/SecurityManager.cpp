@@ -17,6 +17,7 @@
  */
 
 #include <rtps/security/SecurityManager.h>
+#include <security/OpenSSLInit.hpp>
 
 // TODO Include relative path and fix SecurityTest
 //#include <fastrtps_deprecated/participant/ParticipantImpl.h>
@@ -114,6 +115,7 @@ SecurityManager::SecurityManager(
         participant->getRTPSParticipantAttributes().allocation.data_limits)
 {
     assert(participant != nullptr);
+    static OpenSSLInit openssl_init;
 }
 
 SecurityManager::~SecurityManager()

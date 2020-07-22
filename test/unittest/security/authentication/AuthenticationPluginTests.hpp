@@ -16,6 +16,7 @@
 #define _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
 
 #include <security/authentication/PKIDH.h>
+#include <security/OpenSSLInit.hpp>
 
 // Include first necessary mocks
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
@@ -38,7 +39,10 @@ class AuthenticationPluginTest : public ::testing::Test
 
     public:
 
-        AuthenticationPluginTest() {}
+        AuthenticationPluginTest()
+        {
+            static eprosima::fastrtps::rtps::security::OpenSSLInit openssl_init;
+        }
 
         static eprosima::fastrtps::rtps::PropertyPolicy get_valid_policy();
         static eprosima::fastrtps::rtps::PropertyPolicy get_wrong_policy();
