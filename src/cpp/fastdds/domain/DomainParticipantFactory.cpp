@@ -295,6 +295,7 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
         XMLProfileManager::loadDefaultXMLFile();
         default_xml_profiles_loaded = true;
 
+        // Only change default participant qos when not explicitly set by the user
         if (default_participant_qos_ == PARTICIPANT_QOS_DEFAULT)
         {
             reset_default_participant_qos();
