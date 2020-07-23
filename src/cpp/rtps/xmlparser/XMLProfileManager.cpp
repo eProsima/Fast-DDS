@@ -16,7 +16,6 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <cstdlib>
 #ifdef _WIN32
@@ -478,8 +477,6 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
         default_participant_attributes = *(emplace.first->second.get() );
-        using namespace eprosima::fastdds::dds;
-        DomainParticipantFactory::get_instance()->set_default_participant_qos(PARTICIPANT_QOS_DEFAULT);
     }
     return XMLP_ret::XML_OK;
 }
