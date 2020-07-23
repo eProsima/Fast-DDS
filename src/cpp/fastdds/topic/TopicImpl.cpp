@@ -20,6 +20,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
@@ -162,6 +163,17 @@ const Topic* TopicImpl::get_topic() const
 const TypeSupport& TopicImpl::get_type() const
 {
     return type_support_;
+}
+
+TopicListener* TopicImpl::get_listener_for(
+        const StatusMask& status)
+{
+    if (listener_ != nullptr &&
+            user_topic_->get_status_mask().is_active(status))
+    {
+        return listener_;
+    }
+    return participant_->get_listener_for(status);
 }
 
 } // dds

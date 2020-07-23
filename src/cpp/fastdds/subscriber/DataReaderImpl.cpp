@@ -21,6 +21,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -386,13 +387,21 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
-        if (data_reader_->listener_ != nullptr)
+        //First check if we can handle with on_data_on_readers
+        SubscriberListener* subscriber_listener =
+                data_reader_->subscriber_->get_listener_for(StatusMask::data_on_readers());
+        if (subscriber_listener != nullptr)
         {
-            data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
+            subscriber_listener->on_data_on_readers(data_reader_->subscriber_->user_subscriber_);
         }
         else
         {
-            data_reader_->subscriber_->subscriber_listener_.on_data_available(data_reader_->user_datareader_);
+            // If not, try with on_data_available
+            DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::data_available());
+            if (listener != nullptr)
+            {
+                listener->on_data_available(data_reader_->user_datareader_);
+            }
         }
     }
 }
@@ -401,13 +410,10 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
-    if (data_reader_->listener_ != nullptr)
+    DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::subscription_matched());
+    if (listener != nullptr)
     {
-        data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
-    }
-    else
-    {
-        data_reader_->subscriber_->subscriber_listener_.on_subscription_matched(data_reader_->user_datareader_, info);
+        listener->on_subscription_matched(data_reader_->user_datareader_, info);
     }
 }
 
@@ -415,19 +421,15 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         RTPSReader* /*reader*/,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    LivelinessChangedStatus& reader_status = data_reader_->update_liveliness_status(status);
-    DataReader* user_reader = data_reader_->user_datareader_;
-
-    if ( (data_reader_->listener_ != nullptr) &&
-            (user_reader->get_status_mask().is_active(StatusMask::liveliness_changed())))
+    data_reader_->update_liveliness_status(status);
+    DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::liveliness_changed());
+    if (listener != nullptr)
     {
         LivelinessChangedStatus callback_status;
-        data_reader_->get_liveliness_changed_status(callback_status);
-        data_reader_->listener_->on_liveliness_changed(user_reader, callback_status);
-    }
-    else
-    {
-        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(user_reader, reader_status);
+        if (data_reader_->get_liveliness_changed_status(callback_status) == ReturnCode_t::RETCODE_OK)
+        {
+            listener->on_liveliness_changed(data_reader_->user_datareader_, callback_status);
+        }
     }
 }
 
@@ -435,17 +437,15 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         RTPSReader* /*reader*/,
         fastdds::dds::PolicyMask qos)
 {
-    RequestedIncompatibleQosStatus& status = data_reader_->update_requested_incompatible_qos(qos);
-    if (data_reader_->listener_ != nullptr  &&
-            (data_reader_->user_datareader_->get_status_mask().is_active(StatusMask::requested_incompatible_qos())))
+    data_reader_->update_requested_incompatible_qos(qos);
+    DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::requested_incompatible_qos());
+    if (listener != nullptr)
     {
-        data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
-        status.total_count_change = 0u;
-    }
-    else
-    {
-        data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_,
-                status);
+        RequestedIncompatibleQosStatus callback_status;
+        if (data_reader_->get_requested_incompatible_qos_status(callback_status) == ReturnCode_t::RETCODE_OK)
+        {
+            listener->on_requested_incompatible_qos(data_reader_->user_datareader_, callback_status);
+        }
     }
 }
 
@@ -968,6 +968,17 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
     topic_att.auto_fill_type_information = type_->auto_fill_type_information();
 
     return topic_att;
+}
+
+DataReaderListener* DataReaderImpl::get_listener_for(
+        const StatusMask& status)
+{
+    if (listener_ != nullptr &&
+            user_datareader_->get_status_mask().is_active(status))
+    {
+        return listener_;
+    }
+    return subscriber_->get_listener_for(status);
 }
 
 } /* namespace dds */

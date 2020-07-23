@@ -32,6 +32,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class ResourceEvent;
+
 class RTPSReader : public Endpoint
 {
 public:
@@ -70,6 +72,13 @@ public:
         return listener_;
     }
 
+    bool setListener(
+            ReaderListener* listener)
+    {
+        listener_ = listener;
+        return true;
+    }
+
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
 
@@ -80,7 +89,71 @@ public:
     MOCK_METHOD1(releaseCache, bool (CacheChange_t* a_change));
 
     MOCK_METHOD0(expectsInlineQos, bool());
+
+    MOCK_METHOD1(wait_for_unread_cache, bool (const eprosima::fastrtps::Duration_t& timeout));
+
     // *INDENT-ON*
+
+
+    virtual bool processDataMsg(
+            CacheChange_t*)
+    {
+        return true;
+    }
+
+    virtual bool processDataFragMsg(
+            CacheChange_t*,
+            uint32_t,
+            uint32_t,
+            uint16_t)
+    {
+        return true;
+    }
+
+    virtual bool processHeartbeatMsg(
+            const GUID_t&,
+            uint32_t,
+            const SequenceNumber_t&,
+            const SequenceNumber_t&,
+            bool,
+            bool)
+    {
+        return true;
+    }
+
+    virtual bool processGapMsg(
+            const GUID_t&,
+            const SequenceNumber_t&,
+            const SequenceNumberSet_t&)
+    {
+        return true;
+    }
+
+    virtual bool change_removed_by_history(
+            CacheChange_t*,
+            WriterProxy*)
+    {
+        return true;
+    }
+
+    virtual bool nextUnreadCache(
+            CacheChange_t**,
+            WriterProxy**)
+    {
+        return true;
+    }
+
+    virtual bool nextUntakenCache(
+            CacheChange_t**,
+            WriterProxy**)
+    {
+        return true;
+    }
+
+    virtual bool isInCleanState()
+    {
+        return true;
+    }
 
     ReaderHistory* getHistory()
     {

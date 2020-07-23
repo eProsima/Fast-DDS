@@ -798,7 +798,8 @@ DomainParticipant* DomainParticipantImpl::get_participant()
 std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 {
     return rtps_participant_ == nullptr ?
-           std::vector<std::string> {} :
+           std::vector<std::string> {}
+           :
            rtps_participant_->getParticipantNames();
 }
 
@@ -1117,7 +1118,6 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 }
 
 #endif // if HAVE_SECURITY
-
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
@@ -1766,6 +1766,16 @@ void DomainParticipantImpl::create_instance_handle(
     handle.value[14] = static_cast<octet>(next_instance_id_ & 0xFF);
     handle.value[13] = static_cast<octet>((next_instance_id_ >> 8) & 0xFF);
     handle.value[12] = static_cast<octet>((next_instance_id_ >> 16) & 0xFF);
+}
+
+DomainParticipantListener* DomainParticipantImpl::get_listener_for(
+        const StatusMask& status)
+{
+    if (participant_->get_status_mask().is_active(status))
+    {
+        return listener_;
+    }
+    return nullptr;
 }
 
 }  // namespace dds

@@ -59,6 +59,8 @@ class Topic;
  */
 class Publisher : public DomainEntity
 {
+protected:
+
     friend class PublisherImpl;
     friend class DomainParticipantImpl;
 
@@ -299,7 +301,7 @@ public:
      */
     RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
-private:
+protected:
 
     PublisherImpl* impl_;
 

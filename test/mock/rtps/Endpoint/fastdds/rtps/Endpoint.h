@@ -26,6 +26,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSParticipantImpl;
+
 class Endpoint
 {
 public:
@@ -34,20 +36,22 @@ public:
 
     inline RecursiveTimedMutex& getMutex()
     {
-        return mutex_;
+        return mp_mutex;
     }
 
     EndpointAttributes& getAttributes()
     {
-        return attributes_;
+        return m_att;
     }
 
 #if HAVE_SECURITY
     bool supports_rtps_protection_;
 #endif // HAVE_SECURITY
 
-    RecursiveTimedMutex mutex_;
-    EndpointAttributes attributes_;
+    mutable RecursiveTimedMutex mp_mutex;
+    EndpointAttributes m_att;
+    RTPSParticipantImpl* mp_RTPSParticipant;
+
 };
 
 } // namespace rtps

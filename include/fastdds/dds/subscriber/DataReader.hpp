@@ -73,6 +73,8 @@ struct SampleInfo;
  */
 class DataReader : public DomainEntity
 {
+protected:
+
     friend class DataReaderImpl;
     friend class SubscriberImpl;
 
@@ -309,7 +311,7 @@ public:
             const fastrtps::Duration_t& max_wait) const;
      */
 
-private:
+protected:
 
     DataReaderImpl* impl_;
 

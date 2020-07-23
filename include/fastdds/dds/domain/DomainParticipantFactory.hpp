@@ -187,9 +187,8 @@ public:
     RTPS_DllAPI ReturnCode_t set_qos(
             const DomainParticipantFactoryQos& qos);
 
-private:
+protected:
 
-    friend class DomainParticipantFactoryReleaser;
     friend class DomainParticipant;
 
     std::map<DomainId_t, std::vector<DomainParticipantImpl*> > participants_;
@@ -198,9 +197,13 @@ private:
 
     virtual ~DomainParticipantFactory();
 
-    void reset_default_participant_qos();
+    DomainParticipantFactory (
+            const DomainParticipantFactory&) = delete;
 
-    static bool delete_instance();
+    void operator= (
+            const DomainParticipantFactory&) = delete;
+
+    void reset_default_participant_qos();
 
     static void set_qos(
             DomainParticipantFactoryQos& to,

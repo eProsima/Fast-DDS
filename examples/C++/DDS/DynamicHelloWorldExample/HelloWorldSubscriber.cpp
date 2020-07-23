@@ -47,7 +47,8 @@ bool HelloWorldSubscriber::init()
 
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener);
+    StatusMask par_mask = StatusMask::subscription_matched() << StatusMask::data_available();
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &m_listener, par_mask);
 
     if (mp_participant == nullptr)
     {
@@ -167,10 +168,12 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         return;
     }
 
+    StatusMask sub_mask = StatusMask::subscription_matched() << StatusMask::data_available();
     DataReader* reader = subscriber_->mp_subscriber->create_datareader(
         topic,
         subscriber_->qos_,
-        &subscriber_->m_listener);
+        &subscriber_->m_listener,
+        sub_mask);
 
     subscriber_->topics_[reader] = topic;
     subscriber_->readers_[reader] = dyn_type;

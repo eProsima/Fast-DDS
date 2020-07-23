@@ -73,7 +73,7 @@ class DomainParticipantImpl
     friend class DomainParticipantFactory;
     friend class DomainParticipant;
 
-private:
+protected:
 
     DomainParticipantImpl(
             DomainParticipant* dp,
@@ -370,7 +370,15 @@ public:
      */
     bool has_active_entities();
 
-private:
+
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    DomainParticipantListener* get_listener_for(
+            const StatusMask& status);
+
+protected:
 
     //!Domain id
     DomainId_t domain_id_;
@@ -438,7 +446,7 @@ private:
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
-public:
+    public:
 
         MyRTPSParticipantListener(
                 DomainParticipantImpl* impl)
@@ -458,7 +466,7 @@ public:
         void onParticipantAuthentication(
                 fastrtps::rtps::RTPSParticipant* participant,
                 fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
-#endif
+#endif // if HAVE_SECURITY
 
         void onReaderDiscovery(
                 fastrtps::rtps::RTPSParticipant* participant,
@@ -489,11 +497,12 @@ public:
 
         DomainParticipantImpl* participant_;
 
-    } rtps_listener_;
+    }
+    rtps_listener_;
 
     void create_instance_handle(
             fastrtps::rtps::InstanceHandle_t& handle);
-    
+
     bool exists_entity_id(
             const fastrtps::rtps::EntityId_t& entity_id) const;
 
@@ -549,5 +558,5 @@ public:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_PARTICIPANTIMPL_HPP_ */

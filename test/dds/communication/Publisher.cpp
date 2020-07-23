@@ -110,7 +110,7 @@ public:
         }
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
 private:
 
@@ -257,6 +257,7 @@ int main(
     type.register_type(participant);
 
     PubListener listener;
+    StatusMask mask = StatusMask::publication_matched();
 
     // Generate topic name
     std::ostringstream topic_name;
@@ -268,7 +269,7 @@ int main(
     wqos.liveliness().announcement_period = 1;
     wqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, &listener, mask);
     if (publisher == nullptr)
     {
         std::cout << "Error creating publisher" << std::endl;
@@ -296,9 +297,10 @@ int main(
     if (wait > 0)
     {
         std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&] {
-            return listener.matched_ >= wait;
-        });
+        listener.cv_.wait(lock, [&]
+                {
+                    return listener.matched_ >= wait;
+                });
     }
 
     types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));

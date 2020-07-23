@@ -82,18 +82,26 @@ public:
 
     const TypeSupport& get_type() const;
 
-private:
+    /**
+     * Returns the most appropriate listener to handle the callback for the given status,
+     * or nullptr if there is no appropriate listener.
+     */
+    TopicListener* get_listener_for(
+            const StatusMask& status);
+
+protected:
 
     DomainParticipantImpl* participant_;
     TypeSupport type_support_;
     TopicQos qos_;
     TopicListener* listener_;
     Topic* user_topic_;
+
 };
 
 } // dds
 } // fastdds
 } // eprosima
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_TOPICIMPL_HPP_ */

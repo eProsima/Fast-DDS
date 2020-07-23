@@ -65,22 +65,6 @@ static void set_qos_from_attributes(
     qos.name() = attr.getName();
 }
 
-class DomainParticipantFactoryReleaser
-{
-public:
-
-    ~DomainParticipantFactoryReleaser()
-    {
-        DomainParticipantFactory::delete_instance();
-    }
-
-};
-
-static bool g_instance_initialized = false;
-static std::mutex g_mtx;
-static DomainParticipantFactoryReleaser s_releaser;
-static DomainParticipantFactory* g_instance = nullptr;
-
 DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
@@ -113,29 +97,8 @@ DomainParticipantFactory::~DomainParticipantFactory()
 
 DomainParticipantFactory* DomainParticipantFactory::get_instance()
 {
-    if (!g_instance_initialized)
-    {
-        std::lock_guard<std::mutex> lock(g_mtx);
-        if (g_instance == nullptr)
-        {
-            g_instance = new DomainParticipantFactory();
-            g_instance_initialized = true;
-        }
-    }
-    return g_instance;
-}
-
-bool DomainParticipantFactory::delete_instance()
-{
-    std::lock_guard<std::mutex> lock(g_mtx);
-    if (g_instance_initialized && g_instance != nullptr)
-    {
-        delete g_instance;
-        g_instance = nullptr;
-        g_instance_initialized = false;
-        return true;
-    }
-    return false;
+    static DomainParticipantFactory instance;
+    return &instance;
 }
 
 ReturnCode_t DomainParticipantFactory::delete_participant(

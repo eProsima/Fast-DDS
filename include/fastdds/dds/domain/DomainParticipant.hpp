@@ -595,7 +595,7 @@ public:
      */
     bool has_active_entities();
 
-private:
+protected:
 
     RTPS_DllAPI DomainParticipant(
             const StatusMask& mask = StatusMask::all());

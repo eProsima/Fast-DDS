@@ -19,15 +19,21 @@
 #ifndef _FASTDDS_RTPS_WRITERHISTORY_H_
 #define _FASTDDS_RTPS_WRITERHISTORY_H_
 
+#include <condition_variable>
+
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
 #include <gmock/gmock.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+class ReaderProxy;
+class RTPSWriter;
 
 class WriterHistory
 {
@@ -68,11 +74,27 @@ public:
             const GUID_t& guid,
             CacheChange_t** change));
 
+    MOCK_METHOD1(get_earliest_change, bool(
+            CacheChange_t** change));
+
     MOCK_METHOD1(remove_change, bool(const SequenceNumber_t&));
 
     MOCK_METHOD1(remove_change_and_reuse, CacheChange_t*(const SequenceNumber_t&));
 
     MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
+
+    MOCK_METHOD0(getHistorySize, size_t());
+
+    MOCK_METHOD0(remove_min_change, bool());
+
+    MOCK_METHOD3(add_change_, bool(
+            CacheChange_t* a_change,
+            WriteParams &wparams,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time));
+
+    MOCK_METHOD2(add_change_, bool(
+            CacheChange_t* a_change,
+            WriteParams &wparams));
     // *INDENT-ON*
 
     bool remove_change(
@@ -112,18 +134,20 @@ public:
 
     inline RecursiveTimedMutex* getMutex()
     {
-        return mutex_;
+        return mp_mutex;
     }
 
     HistoryAttributes m_att;
-
-private:
+    std::vector<CacheChange_t*> m_changes;
 
     std::condition_variable samples_number_cond_;
     std::mutex samples_number_mutex_;
     unsigned int samples_number_;
     SequenceNumber_t last_sequence_number_;
-    RecursiveTimedMutex* mutex_;
+    RecursiveTimedMutex* mp_mutex;
+    bool m_isHistoryFull;
+    RTPSWriter* mp_writer;
+
 };
 
 } // namespace rtps

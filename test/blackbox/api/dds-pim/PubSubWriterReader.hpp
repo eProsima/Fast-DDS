@@ -51,7 +51,7 @@ class PubSubWriterReader
 {
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         ParticipantListener(
                 PubSubWriterReader& wreader)
@@ -78,7 +78,7 @@ public:
             }
         }
 
-#endif
+#endif // if HAVE_SECURITY
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
@@ -165,7 +165,7 @@ public:
             return discovered_subscribers_.size();
         }
 
-private:
+    private:
 
         //! Mutex guarding all info collections
         mutable std::mutex info_mutex_;
@@ -198,11 +198,12 @@ private:
         //! Pointer to the pub sub writer reader
         PubSubWriterReader& wreader_;
 
-    } participant_listener_;
+    }
+    participant_listener_;
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener(
                 PubSubWriterReader& wreader)
@@ -228,18 +229,19 @@ public:
             }
         }
 
-private:
+    private:
 
         PubListener& operator =(
                 const PubListener&) = delete;
 
         PubSubWriterReader& wreader_;
 
-    } pub_listener_;
+    }
+    pub_listener_;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener(
                 PubSubWriterReader& wreader)
@@ -280,13 +282,14 @@ public:
             }
         }
 
-private:
+    private:
 
         SubListener& operator =(
                 const SubListener&) = delete;
 
         PubSubWriterReader& wreader_;
-    } sub_listener_;
+    }
+    sub_listener_;
 
     friend class PubListener;
     friend class SubListener;
@@ -314,7 +317,7 @@ public:
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
-#endif
+#endif // if HAVE_SECURITY
     {
         // Generate topic name
         std::ostringstream t;
@@ -355,7 +358,8 @@ public:
         participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = initial_pdp_count;
 
         participant_ = DomainParticipantFactory::get_instance()->create_participant(
-            (uint32_t)GET_PID() % 230, participant_qos_, &participant_listener_);
+            (uint32_t)GET_PID() % 230, participant_qos_, &participant_listener_,
+            eprosima::fastdds::dds::StatusMask::none());
         ASSERT_NE(participant_, nullptr);
         ASSERT_TRUE(participant_->is_enabled());
 
@@ -544,9 +548,10 @@ public:
 
     void block_for_all()
     {
-        block([this]() -> bool {
-            return number_samples_expected_ == current_received_count_;
-        });
+        block([this]() -> bool
+                {
+                    return number_samples_expected_ == current_received_count_;
+                });
     }
 
     void block(
@@ -619,7 +624,7 @@ public:
         std::cout << "WReader unauthorization finished..." << std::endl;
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     PubSubWriterReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
@@ -750,7 +755,7 @@ private:
         cvAuthentication_.notify_all();
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     PubSubWriterReader& operator =(
             const PubSubWriterReader&) = delete;
@@ -790,7 +795,7 @@ private:
     std::condition_variable cvAuthentication_;
     unsigned int authorized_;
     unsigned int unauthorized_;
-#endif
+#endif // if HAVE_SECURITY
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBWRITER_HPP_
