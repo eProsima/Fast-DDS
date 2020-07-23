@@ -24,7 +24,7 @@ using namespace eprosima::fastrtps::rtps;
 class NoOpPayloadPool : public IPayloadPool
 {
     virtual bool get_payload(
-            const std::function<uint32_t()>&,
+            uint32_t,
             CacheChange_t&) override
     {
         return true;

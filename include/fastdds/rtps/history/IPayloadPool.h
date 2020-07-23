@@ -36,7 +36,7 @@ public:
     virtual ~IPayloadPool() = default;
 
     virtual bool get_payload(
-            const std::function<uint32_t()>& size_function,
+            uint32_t size,
             CacheChange_t& cache_change) = 0;
 
     virtual bool get_payload(

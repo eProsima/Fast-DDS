@@ -37,12 +37,12 @@ public:
     }
 
     bool get_payload(
-            const std::function<uint32_t()>& size_function,
+            uint32_t size,
             CacheChange_t& cache_change) override
     {
         if (policy_ != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
         {
-            cache_change.serializedPayload.reserve(size_function());
+            cache_change.serializedPayload.reserve(size);
         }
 
         return true;
@@ -52,8 +52,7 @@ public:
             const SerializedPayload_t& data,
             CacheChange_t& cache_change) override
     {
-        cache_change.serializedPayload.copy(&data, policy_ == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
-        return true;
+        return cache_change.serializedPayload.copy(&data, policy_ == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
     }
 
     bool release_payload(
