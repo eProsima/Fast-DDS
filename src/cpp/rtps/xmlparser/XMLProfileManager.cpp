@@ -20,7 +20,7 @@
 #include <cstdlib>
 #ifdef _WIN32
 #include <windows.h>
-#endif
+#endif // ifdef _WIN32
 
 using namespace eprosima::fastrtps;
 using namespace ::xmlparser;
@@ -176,7 +176,7 @@ void XMLProfileManager::loadDefaultXMLFile()
     {
         loadXMLFile(file_path);
     }
-#endif
+#endif // ifdef _WIN32
 
     // Try to load the default XML file.
     loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
@@ -654,7 +654,8 @@ XMLP_ret XMLProfileManager::extractRequesterProfile(
 
     profile_name = it->second;
 
-    std::pair<requester_map_iterator_t, bool> emplace = requester_profiles_.emplace(profile_name, node_requester->getData());
+    std::pair<requester_map_iterator_t, bool> emplace = requester_profiles_.emplace(profile_name,
+                    node_requester->getData());
     if (false == emplace.second)
     {
         logError(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");
