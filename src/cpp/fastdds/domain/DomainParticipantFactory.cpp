@@ -293,6 +293,7 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
     if (false == default_xml_profiles_loaded)
     {
         XMLProfileManager::loadDefaultXMLFile();
+        // Only load profile once
         default_xml_profiles_loaded = true;
 
         // Only change default participant qos when not explicitly set by the user
