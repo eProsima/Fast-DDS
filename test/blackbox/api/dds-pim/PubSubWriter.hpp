@@ -286,9 +286,9 @@ public:
     {
         if (!xml_file_.empty())
         {
+            DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
             if (!participant_profile_.empty())
             {
-                DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
                 participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
                     (uint32_t)GET_PID() % 230, participant_profile_, &participant_listener_, status_mask_);
                 ASSERT_NE(participant_, nullptr);
@@ -313,7 +313,7 @@ public:
         // Register type
         ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
-        // Create subscriber
+        // Create publisher
         publisher_ = participant_->create_publisher(publisher_qos_);
         ASSERT_NE(publisher_, nullptr);
         ASSERT_TRUE(publisher_->is_enabled());

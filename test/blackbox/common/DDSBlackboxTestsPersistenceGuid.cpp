@@ -56,13 +56,13 @@ protected:
  */
 TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
 {
-    //Configure Writer Properties
+    // Configure Writer Properties
     PropertyPolicy writer_policy;
     writer_policy.properties().emplace_back("dds.persistence.plugin", "builtin.SQLITE3");
     writer_policy.properties().emplace_back("dds.persistence.sqlite3.filename", "persistence.db");
     writer_policy.properties().emplace_back("dds.persistence.guid", "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64");
 
-    //Create DataWriter and configure the durability and reliability QoS
+    // Create DataWriter and configure the durability and reliability QoS
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.entity_property_policy(writer_policy);
     writer.durability_kind(TRANSIENT_DURABILITY_QOS);
@@ -71,13 +71,13 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    //Configure Reader Properties
+    // Configure Reader Properties
     PropertyPolicy reader_policy;
     reader_policy.properties().emplace_back("dds.persistence.plugin", "builtin.SQLITE3");
     reader_policy.properties().emplace_back("dds.persistence.sqlite3.filename", "persistence.db");
     reader_policy.properties().emplace_back("dds.persistence.guid", "77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65");
 
-    //Create DataReader and configure the durability and reliability QoS
+    // Create DataReader and configure the durability and reliability QoS
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     reader.entity_property_policy(reader_policy);
     reader.durability_kind(TRANSIENT_DURABILITY_QOS);
@@ -86,37 +86,37 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
-    //Wait until both of them are discovered
+    // Wait until both of them are discovered
     reader.wait_discovery();
     writer.wait_discovery();
 
-    //Generate a new data message to send
+    // Generate a new data message to send
     auto data = default_helloworld_data_generator(1);
     auto aux = data;
     writer.send(data);
     reader.startReception(aux);
     reader.block_for_all();
 #ifdef WIN32
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
 #else
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
-#endif //WIN32
+#endif // WIN32
 
 }
 
@@ -135,7 +135,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
  */
 TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
 {
-    //Create DataWriter using XML Profile
+    // Create DataWriter using XML Profile
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.set_xml_filename("persistence.xml");
     writer.set_participant_profile("persistence_participant");
@@ -144,7 +144,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    //Create DataReader using XML Profile
+    // Create DataReader using XML Profile
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     reader.set_xml_filename("persistence.xml");
     reader.set_participant_profile("persistence_participant");
@@ -153,37 +153,37 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
-    //Wait until both of them are discovered
+    // Wait until both of them are discovered
     reader.wait_discovery();
     writer.wait_discovery();
 
-    //Generate a new data message to send
+    // Generate a new data message to send
     auto data = default_helloworld_data_generator(1);
     auto aux = data;
     writer.send(data);
     reader.startReception(aux);
     reader.block_for_all();
 #ifdef WIN32
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
 #else
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
-#endif //WIN32
+#endif // WIN32
 }
 
 INSTANTIATE_TEST_CASE_P(PersistenceGuid,

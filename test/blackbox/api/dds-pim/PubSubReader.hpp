@@ -279,9 +279,9 @@ public:
     {
         if (!xml_file_.empty())
         {
+            DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
             if (!participant_profile_.empty())
             {
-                DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
                 participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
                     (uint32_t)GET_PID() % 230, participant_profile_, &participant_listener_, status_mask_);
                 ASSERT_NE(participant_, nullptr);

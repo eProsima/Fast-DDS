@@ -56,7 +56,7 @@ protected:
  */
 TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
 {
-    //Create RTPSWriter and configure the durability and property list
+    // Create RTPSWriter and configure the durability and property list
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.durability(TRANSIENT);
     writer.reliability(RELIABLE);
@@ -67,7 +67,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    //Create RTPSReader and configure the durability and property list
+    // Create RTPSReader and configure the durability and property list
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     reader.durability(TRANSIENT);
     reader.reliability(RELIABLE);
@@ -78,11 +78,11 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
-    //Wait until both of them are discovered
+    // Wait until both of them are discovered
     reader.wait_discovery();
     writer.wait_discovery();
 
-    //Generate a new data message to send
+    // Generate a new data message to send
     auto data = default_helloworld_data_generator(1);
     auto aux = data;
     writer.send(data);
@@ -91,26 +91,26 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
     reader.block_for_all();
 
 #ifdef WIN32
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
 #else
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 1);
-#endif //WIN32
+#endif // WIN32
 
 }
 
@@ -130,13 +130,13 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
  */
 TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
 {
-    //Create the persistence guid to set manually
+    // Create the persistence guid to set manually
     eprosima::fastrtps::rtps::GuidPrefix_t guidPrefix;
     guidPrefix.value[11] = 1;
     eprosima::fastrtps::rtps::EntityId_t entityId;
     entityId.value[3] = 1;
 
-    //Create RTPSWriter that use the already created attributes
+    // Create RTPSWriter that use the already created attributes
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.durability(TRANSIENT);
     writer.reliability(RELIABLE);
@@ -150,7 +150,7 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
 
     guidPrefix.value[11] = 2;
 
-    //Create RTPSReader that use the already created attributes
+    // Create RTPSReader that use the already created attributes
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     reader.durability(TRANSIENT);
     reader.reliability(RELIABLE);
@@ -162,11 +162,11 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
-    //Wait until both of them are discovered
+    // Wait until both of them are discovered
     reader.wait_discovery();
     writer.wait_discovery();
 
-    //Generate a new data message to send
+    // Generate a new data message to send
     auto data = default_helloworld_data_generator(1);
     auto aux = data;
     writer.send(data);
@@ -175,43 +175,43 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     reader.block_for_all();
 
 #ifdef WIN32
-    //Check if that there is no entry in the writers database table with the stated persistence guid
+    // Check if that there is no entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 0);
 
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     result1 = system("python check_guid.py 'persistence.db' 'writers' '0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if that there is no entry in the readers database table with the stated persistence guid
+    // Check if that there is no entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 0);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     result2 = system("python check_guid.py 'persistence.db' 'readers' '0.0.0.0.0.0.0.0.0.0.0.2|0.0.0.1'");
     ASSERT_EQ((result2 >> 8), 1);
 #else
 
-    //Check if that there is no entry in the writers database table with the stated persistence guid
+    // Check if that there is no entry in the writers database table with the stated persistence guid
     int result1 = system(
         "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 0);
 
-    //Check if there is one entry in the writers database table with the stated persistence guid
+    // Check if there is one entry in the writers database table with the stated persistence guid
     result1 = system("python3 check_guid.py 'persistence.db' 'writers' '0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1'");
     ASSERT_EQ((result1 >> 8), 1);
 
-    //Check if that there is no entry in the readers database table with the stated persistence guid
+    // Check if that there is no entry in the readers database table with the stated persistence guid
     int result2 = system(
         "python3 check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65'");
     ASSERT_EQ((result2 >> 8), 0);
 
-    //Check if there is one entry in the readers database table with the stated persistence guid
+    // Check if there is one entry in the readers database table with the stated persistence guid
     result2 = system("python3 check_guid.py 'persistence.db' 'readers' '0.0.0.0.0.0.0.0.0.0.0.2|0.0.0.1'");
     ASSERT_EQ((result2 >> 8), 1);
-#endif //WIN32
+#endif // WIN32
 }
 
 INSTANTIATE_TEST_CASE_P(PersistenceGuid,
