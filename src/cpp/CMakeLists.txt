@@ -193,7 +193,7 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatelessPersistentReader.cpp
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
-    
+
     utils/IPFinder.cpp
     utils/md5.cpp
     utils/StringMatching.cpp
@@ -239,7 +239,6 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/logging/Logging.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
-    security/OpenSSLInit.cpp
     security/authentication/PKIDH.cpp
     security/accesscontrol/Permissions.cpp
     security/cryptography/AESGCMGMAC.cpp
@@ -355,7 +354,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
     option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
-    
+
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         ${PROJECT_NAME_UPPER}_SOURCE
         BOOST_ASIO_STANDALONE

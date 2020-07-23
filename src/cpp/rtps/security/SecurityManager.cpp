@@ -17,6 +17,7 @@
  */
 
 #include <rtps/security/SecurityManager.h>
+#include <security/OpenSSLInit.hpp>
 
 // TODO Include relative path and fix SecurityTest
 //#include <fastrtps_deprecated/participant/ParticipantImpl.h>
@@ -114,6 +115,7 @@ SecurityManager::SecurityManager(
         participant->getRTPSParticipantAttributes().allocation.data_limits)
 {
     assert(participant != nullptr);
+    static OpenSSLInit openssl_init;
 }
 
 SecurityManager::~SecurityManager()
@@ -147,7 +149,8 @@ bool SecurityManager::init(
             log_options.log_level = LoggingLevel::ERROR_LEVEL;
             log_options.log_file = "";
 
-            const auto init_logging_fail = [this](SecurityException& exception){
+            const auto init_logging_fail = [this](SecurityException& exception)
+                    {
                         logError(SECURITY, "Logging plugin not configured. Security logging will be disabled. ("
                                 << exception.what() << ").");
                         delete logging_plugin_;
@@ -341,9 +344,9 @@ bool SecurityManager::init(
                     {
                         SecurityException logging_exception;
                         logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
-                                             "Cryptography plugin not configured",
-                                             "SecurityManager,init",
-                                             logging_exception);
+                                "Cryptography plugin not configured",
+                                "SecurityManager,init",
+                                logging_exception);
                     }
                     else
                     {
@@ -375,9 +378,9 @@ bool SecurityManager::init(
         {
             SecurityException logging_exception;
             logging_plugin_->log(LoggingLevel::INFORMATIONAL_LEVEL,
-                                 "Authentication plugin not configured. Security will be disable",
-                                 "SecurityManager,init",
-                                 logging_exception);
+                    "Authentication plugin not configured. Security will be disable",
+                    "SecurityManager,init",
+                    logging_exception);
         }
         else
         {
@@ -838,10 +841,10 @@ bool SecurityManager::on_process_handshake(
                         participant_data.m_guid, *handshake_message);
 
         CacheChange_t* change = participant_stateless_message_writer_->new_change([&message]() -> uint32_t
-        {
-            return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-            + 4 /*encapsulation*/);
-        }
+                        {
+                            return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
+                            + 4 /*encapsulation*/);
+                        }
                         , ALIVE, c_InstanceHandle_Unknown);
 
         if (change != nullptr)
@@ -863,7 +866,7 @@ bool SecurityManager::on_process_handshake(
             aux_msg.msg_endian = LITTLEEND;
             change->serializedPayload.encapsulation = PL_CDR_LE;
             CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif
+#endif // if __BIG_ENDIAN__
             CDRMessage::addUInt16(&aux_msg, 0);
 
             if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -939,10 +942,10 @@ bool SecurityManager::on_process_handshake(
                     const GUID_t guid = participant_data.m_guid;
                     remote_participant_info->event_ = new TimedEvent(participant_->getEventResource(),
                                     [&, guid]() -> bool
-                    {
-                        resend_handshake_message_token(guid);
-                        return true;
-                    },
+                                    {
+                                        resend_handshake_message_token(guid);
+                                        return true;
+                                    },
                                     500); // TODO (Ricardo) Configurable
                     remote_participant_info->event_->restart_timer();
                 }
@@ -2012,10 +2015,10 @@ void SecurityManager::exchange_participant_crypto(
 
         CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
             [&message]() -> uint32_t
-        {
-            return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-            + 4 /*encapsulation*/);
-        }
+            {
+                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
+                + 4 /*encapsulation*/);
+            }
             , ALIVE, c_InstanceHandle_Unknown);
 
         if (change != nullptr)
@@ -2037,7 +2040,7 @@ void SecurityManager::exchange_participant_crypto(
             aux_msg.msg_endian = LITTLEEND;
             change->serializedPayload.encapsulation = PL_CDR_LE;
             CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif
+#endif // if __BIG_ENDIAN__
             CDRMessage::addUInt16(&aux_msg, 0);
 
             if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -2779,11 +2782,11 @@ bool SecurityManager::discovered_reader(
 
                                 CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
                                     [&message]() -> uint32_t
-                                {
-                                    return static_cast<uint32_t>(
-                                        ParticipantGenericMessageHelper::serialized_size(message)
-                                        + 4 /*encapsulation*/);
-                                }
+                                    {
+                                        return static_cast<uint32_t>(
+                                            ParticipantGenericMessageHelper::serialized_size(message)
+                                            + 4 /*encapsulation*/);
+                                    }
                                     , ALIVE, c_InstanceHandle_Unknown);
 
                                 if (change != nullptr)
@@ -2805,7 +2808,7 @@ bool SecurityManager::discovered_reader(
                                     aux_msg.msg_endian = LITTLEEND;
                                     change->serializedPayload.encapsulation = PL_CDR_LE;
                                     CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif
+#endif // if __BIG_ENDIAN__
                                     CDRMessage::addUInt16(&aux_msg, 0);
 
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -3116,11 +3119,11 @@ bool SecurityManager::discovered_writer(
 
                                 CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
                                     [&message]() -> uint32_t
-                                {
-                                    return static_cast<uint32_t>(
-                                        ParticipantGenericMessageHelper::serialized_size(message)
-                                        + 4 /*encapsulation*/);
-                                }
+                                    {
+                                        return static_cast<uint32_t>(
+                                            ParticipantGenericMessageHelper::serialized_size(message)
+                                            + 4 /*encapsulation*/);
+                                    }
                                     , ALIVE, c_InstanceHandle_Unknown);
 
                                 if (change != nullptr)
@@ -3142,7 +3145,7 @@ bool SecurityManager::discovered_writer(
                                     aux_msg.msg_endian = LITTLEEND;
                                     change->serializedPayload.encapsulation = PL_CDR_LE;
                                     CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif
+#endif // if __BIG_ENDIAN__
                                     CDRMessage::addUInt16(&aux_msg, 0);
 
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
