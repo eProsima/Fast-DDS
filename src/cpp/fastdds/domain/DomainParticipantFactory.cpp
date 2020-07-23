@@ -206,6 +206,25 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     return nullptr;
 }
 
+DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
+        const std::string& profile_name,
+        DomainParticipantListener* listen,
+        const StatusMask& mask)
+{
+    load_profiles();
+
+    // TODO (Miguel C): Change when we have full XML support for DDS QoS profiles
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
+    {
+        DomainParticipantQos qos = default_participant_qos_;
+        set_qos_from_attributes(qos, attr.rtps);
+        return create_participant(attr.domainId, qos, listen, mask);
+    }
+
+    return nullptr;
+}
+
 DomainParticipant* DomainParticipantFactory::lookup_participant(
         DomainId_t domain_id) const
 {

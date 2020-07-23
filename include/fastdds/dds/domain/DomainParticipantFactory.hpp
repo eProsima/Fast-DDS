@@ -83,6 +83,18 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     /**
+     * Create a Participant.
+     * @param profile_name Participant profile name.
+     * @param listener DomainParticipantListener Pointer (default: nullptr)
+     * @param mask StatusMask Reference (default: all)
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     */
+    RTPS_DllAPI DomainParticipant* create_participant_with_profile(
+            const std::string& profile_name,
+            DomainParticipantListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
      * This operation retrieves a previously created DomainParticipant belonging to specified domain_id.
      * If no such DomainParticipant exists, the operation will return 'nullptr'.
      * If multiple DomainParticipant entities belonging to that domain_id exist,
