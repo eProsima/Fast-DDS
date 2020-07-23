@@ -64,7 +64,6 @@ void History::do_release_cache(
 
 bool History::remove_all_changes()
 {
-
     if (mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");

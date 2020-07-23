@@ -38,6 +38,7 @@ public:
 
     bool get_payload(
             uint32_t size,
+            const SampleIdentity&,
             CacheChange_t& cache_change) override
     {
         if (policy_ != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
@@ -68,9 +69,8 @@ public:
 private:
     MemoryManagementPolicy_t policy_;
 };
-
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif  // RTPS_HISTORY_BASICMEMORYPOOL_HPP
+#endif  // RTPS_HISTORY_BASICMEMORYPOO

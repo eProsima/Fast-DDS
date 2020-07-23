@@ -19,15 +19,14 @@
 #ifndef _FASTDDS_RTPS_IPAYLOADPOOL_H_
 #define _FASTDDS_RTPS_IPAYLOADPOOL_H_
 
+#include <fastdds/rtps/common/CacheChange.h>
+
 #include <cstdint>
 #include <functional>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-struct CacheChange_t;
-struct SerializedPayload_t;
 
 class IPayloadPool
 {
@@ -37,6 +36,7 @@ public:
 
     virtual bool get_payload(
             uint32_t size,
+            const SampleIdentity& sample_identity,
             CacheChange_t& cache_change) = 0;
 
     virtual bool get_payload(

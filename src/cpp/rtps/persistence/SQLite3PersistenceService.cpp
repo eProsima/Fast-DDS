@@ -159,7 +159,11 @@ bool SQLite3PersistenceService::load_writer_from_storage(
                 continue;
             }
 
-            if (!payload_pool->get_payload(size, *change))
+            SampleIdentity identity;
+            identity.writer_guid(writer_guid);
+            identity.sequence_number().high = static_cast<int32_t>((sn >> 32) & 0xFFFFFFFF);
+            identity.sequence_number().low = static_cast<uint32_t>(sn & 0xFFFFFFFF);
+            if (!payload_pool->get_payload(size, identity, *change))
             {
                 change_pool->release_cache(change);
                 continue;
@@ -170,8 +174,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             change->kind = ALIVE;
             change->writerGUID = writer_guid;
             memcpy(change->instanceHandle.value, sqlite3_column_blob(load_writer_stmt_, 1), instance_size);
-            change->sequenceNumber.high = (int32_t)((sn >> 32) & 0xFFFFFFFF);
-            change->sequenceNumber.low = (int32_t)(sn & 0xFFFFFFFF);
+            change->sequenceNumber = identity.sequence_number();
             change->serializedPayload.length = size;
             memcpy(change->serializedPayload.data, sqlite3_column_blob(load_writer_stmt_, 2), size);
 
