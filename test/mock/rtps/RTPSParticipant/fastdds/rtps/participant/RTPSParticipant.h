@@ -145,8 +145,8 @@ public:
     ResourceEvent mp_event_thr;
 };
 
-} // namespace rtps
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_RTPSParticipant_H_ */
