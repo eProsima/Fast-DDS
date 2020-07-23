@@ -362,14 +362,44 @@ bool RTPSMessageGroup::add_data(
 #endif
     const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
 
+    CacheChange_t change_to_add;
+    change_to_add.copy_not_memcpy(&change);
+    change_to_add.serializedPayload.data = change.serializedPayload.data;
+    change_to_add.serializedPayload.length = change.serializedPayload.length;
+
+#if HAVE_SECURITY
+    if (endpoint_->getAttributes().security_attributes().is_payload_protected)
+    {
+        SerializedPayload_t encrypt_payload;
+        encrypt_payload.data = encrypt_msg_->buffer;
+        encrypt_payload.max_size = encrypt_msg_->max_size;
+
+        // If payload protection, encode payload
+        if (!participant_->security_manager().encode_serialized_payload(change_to_add.serializedPayload,
+            encrypt_payload, endpoint_->getGuid()))
+        {
+            logError(RTPS_WRITER, "Error encoding change " << change.sequenceNumber);
+            change_to_add.serializedPayload.data = nullptr;
+            encrypt_payload.data = nullptr;
+            return false;
+        }
+
+        change_to_add.serializedPayload.data = encrypt_msg_->buffer;
+        encrypt_payload.data = nullptr;
+        change_to_add.serializedPayload.length = encrypt_payload.length;
+    }
+#endif
+
     // TODO (Ricardo). Check to create special wrapper.
     bool is_big_submessage;
-    if (!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change, endpoint_->getAttributes().topicKind,
+    if (!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change_to_add, endpoint_->getAttributes().topicKind,
             readerId, expectsInlineQos, inlineQos, &is_big_submessage))
     {
         logError(RTPS_WRITER, "Cannot add DATA submsg to the CDRMessage. Buffer too small");
+        change_to_add.serializedPayload.data = nullptr;
         return false;
     }
+    change_to_add.serializedPayload.data = nullptr;
 
 #if HAVE_SECURITY
     if (endpoint_->getAttributes().security_attributes().is_submessage_protected)

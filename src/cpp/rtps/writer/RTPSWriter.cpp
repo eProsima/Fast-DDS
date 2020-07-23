@@ -30,7 +30,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 RTPSWriter::RTPSWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,
@@ -46,9 +45,6 @@ RTPSWriter::RTPSWriter(
     , locator_selector_(att.matched_readers_allocation)
     , all_remote_readers_(att.matched_readers_allocation)
     , all_remote_participants_(att.matched_readers_allocation)
-#if HAVE_SECURITY
-    , encrypt_payload_(mp_history->getTypeMaxSerialized())
-#endif
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
@@ -210,56 +206,6 @@ void RTPSWriter::update_cached_info_nts()
     locator_selector_.reset(true);
     mp_RTPSParticipant->network_factory().select_locators(locator_selector_);
 }
-
-#if HAVE_SECURITY
-bool RTPSWriter::encrypt_cachechange(
-        CacheChange_t* change)
-{
-    if (getAttributes().security_attributes().is_payload_protected && change->getFragmentCount() == 0)
-    {
-        if (encrypt_payload_.max_size < change->serializedPayload.length +
-            // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-            +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
-            + 16 + 4 /*SecureDataTag*/ &&
-            (mp_history->m_att.memoryPolicy != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE))
-        {
-            encrypt_payload_.data = (octet*)realloc(encrypt_payload_.data, change->serializedPayload.length +
-                            // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-                            +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
-                            + 16 + 4 /*SecureDataTag*/);
-            encrypt_payload_.max_size = change->serializedPayload.length +
-                    // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-                    +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
-                    + 16 + 4 /*SecureDataTag*/;
-        }
-
-        if (!mp_RTPSParticipant->security_manager().encode_serialized_payload(change->serializedPayload,
-                encrypt_payload_, m_guid))
-        {
-            logError(RTPS_WRITER, "Error encoding change " << change->sequenceNumber);
-            return false;
-        }
-
-        octet* data = change->serializedPayload.data;
-        uint32_t max_size = change->serializedPayload.max_size;
-
-        change->serializedPayload.length = encrypt_payload_.length;
-        change->serializedPayload.data = encrypt_payload_.data;
-        change->serializedPayload.max_size = encrypt_payload_.max_size;
-        change->serializedPayload.pos = encrypt_payload_.pos;
-
-        encrypt_payload_.data = data;
-        encrypt_payload_.length = 0;
-        encrypt_payload_.max_size = max_size;
-        encrypt_payload_.pos = 0;
-
-        change->setFragmentSize(change->getFragmentSize());
-    }
-
-    return true;
-}
-
-#endif
 
 bool RTPSWriter::destinations_have_changed() const
 {

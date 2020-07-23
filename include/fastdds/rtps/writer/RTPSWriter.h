@@ -408,13 +408,6 @@ protected:
     virtual bool change_removed_by_history(
             CacheChange_t* a_change) = 0;
 
-#if HAVE_SECURITY
-    SerializedPayload_t encrypt_payload_;
-
-    bool encrypt_cachechange(
-            CacheChange_t* change);
-#endif
-
     //! The liveliness kind of this writer
     LivelinessQosPolicyKind liveliness_kind_;
     //! The liveliness lease duration of this writer

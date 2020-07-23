@@ -200,10 +200,6 @@ void StatelessWriter::unsent_change_added_to_history(
             liveliness_lease_duration_);
     }
 
-#if HAVE_SECURITY
-    encrypt_cachechange(change);
-#endif
-
     if (!fixed_locators_.empty() || matched_readers_.size() > 0)
     {
         if (!isAsync())
