@@ -77,7 +77,7 @@ struct RTPS_DllAPI SerializedPayload_t
     /**
      * @param len Maximum size of the payload
      */
-    SerializedPayload_t(
+    explicit SerializedPayload_t(
             uint32_t len)
         : SerializedPayload_t()
     {
