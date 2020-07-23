@@ -212,7 +212,7 @@ protected:
     DomainParticipantFactory (
             const DomainParticipantFactory&) = delete;
 
-    void operator= (
+    void operator = (
             const DomainParticipantFactory&) = delete;
 
     void reset_default_participant_qos();
