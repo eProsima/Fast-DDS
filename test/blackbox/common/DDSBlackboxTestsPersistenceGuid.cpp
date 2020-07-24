@@ -99,13 +99,13 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f^|67.75.69.64'");
-    ASSERT_EQ((result1 >> 8), 1);
+        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+    ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
-        "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f^|68.76.70.65'");
-    ASSERT_EQ((result2 >> 8), 1);
+        "python check_guid.py \"persistence.db\" \"readers\" \"77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65\"");
+    ASSERT_EQ(result2, 1);
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
@@ -166,13 +166,13 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f^|67.75.69.64'");
-    ASSERT_EQ((result1 >> 8), 1);
+        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+    ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
     int result2 = system(
-        "python check_guid.py 'persistence.db' 'readers' '77.65.61.64.65.72.5f.70.65.72.73.5f^|68.76.70.65'");
-    ASSERT_EQ((result2 >> 8), 1);
+        "python check_guid.py \"persistence.db\" \"readers\" \"77.65.61.64.65.72.5f.70.65.72.73.5f|68.76.70.65\"");
+    ASSERT_EQ(result2, 1);
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
