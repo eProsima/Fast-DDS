@@ -586,19 +586,20 @@ TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnEndpointDiscoveryFunction([&writer](const WriterDiscoveryInfo& info) -> bool {
-        if (info.info.guid() == writer.datawriter_guid())
-        {
-            std::cout << "Received USER_DATA from the writer: ";
-            for (auto i: info.info.m_qos.m_userData)
+    reader.setOnEndpointDiscoveryFunction([&writer](const WriterDiscoveryInfo& info) -> bool
             {
-                std::cout << i << ' ';
-            }
-            return info.info.m_qos.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
-        }
+                if (info.info.guid() == writer.datawriter_guid())
+                {
+                    std::cout << "Received USER_DATA from the writer: ";
+                    for (auto i: info.info.m_qos.m_userData)
+                    {
+                        std::cout << i << ' ';
+                    }
+                    return info.info.m_qos.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+                }
 
-        return false;
-    });
+                return false;
+            });
 
     reader.history_depth(100).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
