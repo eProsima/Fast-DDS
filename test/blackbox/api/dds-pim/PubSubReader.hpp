@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -277,13 +277,30 @@ public:
 
     void init()
     {
-        participant_ = DomainParticipantFactory::get_instance()->create_participant(
-            (uint32_t)GET_PID() % 230,
-            participant_qos_,
-            &participant_listener_,
-            eprosima::fastdds::dds::StatusMask::none());
-        ASSERT_NE(participant_, nullptr);
-        ASSERT_TRUE(participant_->is_enabled());
+        if (!xml_file_.empty())
+        {
+            DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
+            if (!participant_profile_.empty())
+            {
+                participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+                    (uint32_t)GET_PID() % 230,
+                    participant_profile_,
+                    &participant_listener_,
+                    eprosima::fastdds::dds::StatusMask::none());
+                ASSERT_NE(participant_, nullptr);
+                ASSERT_TRUE(participant_->is_enabled());
+            }
+        }
+        if (participant_ == nullptr)
+        {
+            participant_ = DomainParticipantFactory::get_instance()->create_participant(
+                (uint32_t)GET_PID() % 230,
+                participant_qos_,
+                &participant_listener_,
+                eprosima::fastdds::dds::StatusMask::none());
+            ASSERT_NE(participant_, nullptr);
+            ASSERT_TRUE(participant_->is_enabled());
+        }
 
         participant_guid_ = participant_->guid();
 
@@ -302,9 +319,22 @@ public:
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
-        datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
-        ASSERT_NE(datareader_, nullptr);
-        ASSERT_TRUE(datareader_->is_enabled());
+        if (!xml_file_.empty())
+        {
+            if (!datareader_profile_.empty())
+            {
+                datareader_ = subscriber_->create_datareader_with_profile(topic_, datareader_profile_, &listener_,
+                                status_mask_);
+                ASSERT_NE(datareader_, nullptr);
+                ASSERT_TRUE(datareader_->is_enabled());
+            }
+        }
+        if (datareader_ == nullptr)
+        {
+            datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
+            ASSERT_NE(datareader_, nullptr);
+            ASSERT_TRUE(datareader_->is_enabled());
+        }
 
         std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
             topic_name_ << std::endl;
@@ -1124,6 +1154,24 @@ public:
         return matched_ > 0;
     }
 
+    void set_xml_filename(
+            const std::string& name)
+    {
+        xml_file_ = name;
+    }
+
+    void set_participant_profile(
+            const std::string& profile)
+    {
+        participant_profile_ = profile;
+    }
+
+    void set_datareader_profile(
+            const std::string& profile)
+    {
+        datareader_profile_ = profile;
+    }
+
 private:
 
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
@@ -1240,6 +1288,10 @@ private:
     size_t current_received_count_;
     size_t number_samples_expected_;
     bool discovery_result_;
+
+    std::string xml_file_ = "";
+    std::string participant_profile_ = "";
+    std::string datareader_profile_ = "";
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
