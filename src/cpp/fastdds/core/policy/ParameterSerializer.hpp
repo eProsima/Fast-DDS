@@ -806,7 +806,7 @@ inline bool ParameterSerializer<ParameterEndpointSecurityInfo_t>::read_content_f
     return valid;
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 } //namespace dds
 } //namespace fastdds
