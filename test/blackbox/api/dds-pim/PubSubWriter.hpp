@@ -302,50 +302,51 @@ public:
                 participant_qos_,
                 &participant_listener_,
                 status_mask_);
-            ASSERT_NE(participant_, nullptr);
-            ASSERT_TRUE(participant_->is_enabled());
         }
 
-        participant_guid_ = participant_->guid();
-
-        type_.reset(new type_support());
-
-        // Register type
-        ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
-
-        // Create publisher
-        publisher_ = participant_->create_publisher(publisher_qos_);
-        ASSERT_NE(publisher_, nullptr);
-        ASSERT_TRUE(publisher_->is_enabled());
-
-        // Create topic
-        topic_ = participant_->create_topic(topic_name_, type_->getName(),
-                        eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-        ASSERT_NE(topic_, nullptr);
-        ASSERT_TRUE(topic_->is_enabled());
-
-        if (!xml_file_.empty())
+        if (participant_ != nullptr)
         {
-            if (!datawriter_profile_.empty())
+            participant_guid_ = participant_->guid();
+
+            type_.reset(new type_support());
+
+            // Register type
+            ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+
+            // Create publisher
+            publisher_ = participant_->create_publisher(publisher_qos_);
+            ASSERT_NE(publisher_, nullptr);
+            ASSERT_TRUE(publisher_->is_enabled());
+
+            // Create topic
+            topic_ = participant_->create_topic(topic_name_, type_->getName(),
+                            eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+            ASSERT_NE(topic_, nullptr);
+            ASSERT_TRUE(topic_->is_enabled());
+
+            if (!xml_file_.empty())
             {
-                datawriter_ = publisher_->create_datawriter_with_profile(topic_, datawriter_profile_, &listener_,
-                                status_mask_);
-                ASSERT_NE(datawriter_, nullptr);
-                ASSERT_TRUE(datawriter_->is_enabled());
+                if (!datawriter_profile_.empty())
+                {
+                    datawriter_ = publisher_->create_datawriter_with_profile(topic_, datawriter_profile_, &listener_,
+                                    status_mask_);
+                    ASSERT_NE(datawriter_, nullptr);
+                    ASSERT_TRUE(datawriter_->is_enabled());
+                }
+            }
+            if (datawriter_ == nullptr)
+            {
+                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
+            }
+
+            if (datawriter_ != nullptr)
+            {
+                std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
+                    topic_name_ << std::endl;
+
+                initialized_ = datawriter_->is_enabled();
             }
         }
-        if (datawriter_ == nullptr)
-        {
-            datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
-            ASSERT_NE(datawriter_, nullptr);
-            ASSERT_TRUE(datawriter_->is_enabled());
-        }
-
-        std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
-            topic_name_ << std::endl;
-
-        initialized_ = datawriter_->is_enabled();
-
         return;
     }
 
