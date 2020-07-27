@@ -127,7 +127,7 @@ void LifespanSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->take_next_sample(&hello, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->read_next_sample(&hello, &info) == ReturnCode_t::RETCODE_OK)
     {
         if (info.instance_state == eprosima::fastdds::dds::ALIVE)
         {
