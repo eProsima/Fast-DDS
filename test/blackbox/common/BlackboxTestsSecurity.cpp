@@ -1451,6 +1451,47 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
     wreader.block_for_all();
 }
 
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participant_300kb)
+{
+    PubSubWriterReader<Data1mbType> wreader(TEST_TOPIC_NAME);
+
+    PropertyPolicy pub_property_policy, sub_property_policy,
+        property_policy;
+
+    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+        "builtin.PKI-DH"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+        "file://" + std::string(certs_path) + "/maincacert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+        "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+        "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+        "builtin.AES-GCM-GMAC"));
+    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+
+    wreader.property_policy(property_policy).
+        pub_property_policy(pub_property_policy).
+        sub_property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(wreader.isInitialized());
+
+    // Wait for discovery.
+    wreader.wait_discovery();
+
+    auto data = default_data300kb_data_generator();
+
+    wreader.startReception(data);
+
+    // Send data
+    wreader.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    wreader.block_for_all();
+}
+
 TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
