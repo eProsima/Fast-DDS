@@ -16,6 +16,7 @@
  * @file SubscriberImpl.cpp
  *
  */
+#include <fastrtps/config.h>
 
 #include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>

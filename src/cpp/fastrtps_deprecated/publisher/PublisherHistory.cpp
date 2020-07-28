@@ -16,6 +16,7 @@
  * @file PublisherHistory.cpp
  *
  */
+#include <fastrtps/config.h>
 
 #include <mutex>
 

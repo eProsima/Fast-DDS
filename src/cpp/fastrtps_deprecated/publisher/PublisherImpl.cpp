@@ -16,6 +16,7 @@
  * Publisher.cpp
  *
  */
+#include <fastrtps/config.h>
 
 #include <fastrtps_deprecated/publisher/PublisherImpl.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
