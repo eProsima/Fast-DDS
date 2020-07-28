@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -284,11 +284,28 @@ public:
 
     void init()
     {
-        participant_ = DomainParticipantFactory::get_instance()->create_participant(
-            (uint32_t)GET_PID() % 230,
-            participant_qos_,
-            &participant_listener_,
-            eprosima::fastdds::dds::StatusMask::none());
+        if (!xml_file_.empty())
+        {
+            DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
+            if (!participant_profile_.empty())
+            {
+                participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+                    (uint32_t)GET_PID() % 230,
+                    participant_profile_,
+                    &participant_listener_,
+                    eprosima::fastdds::dds::StatusMask::none());
+                ASSERT_NE(participant_, nullptr);
+                ASSERT_TRUE(participant_->is_enabled());
+            }
+        }
+        if (participant_ == nullptr)
+        {
+            participant_ = DomainParticipantFactory::get_instance()->create_participant(
+                (uint32_t)GET_PID() % 230,
+                participant_qos_,
+                &participant_listener_,
+                eprosima::fastdds::dds::StatusMask::none());
+        }
 
         if (participant_ != nullptr)
         {
@@ -299,37 +316,41 @@ public:
             // Register type
             ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
-            // Create subscriber
+            // Create publisher
             publisher_ = participant_->create_publisher(publisher_qos_);
+            ASSERT_NE(publisher_, nullptr);
+            ASSERT_TRUE(publisher_->is_enabled());
 
             // Create topic
             topic_ = participant_->create_topic(topic_name_, type_->getName(),
                             eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+            ASSERT_NE(topic_, nullptr);
+            ASSERT_TRUE(topic_->is_enabled());
 
-            if (publisher_ != nullptr && topic_ != nullptr)
+            if (!xml_file_.empty())
             {
-                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
-                if (datawriter_ != nullptr)
+                if (!datawriter_profile_.empty())
                 {
-                    std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
-                        topic_name_ << std::endl;
-                    initialized_ = datawriter_->is_enabled();
-                    return;
+                    datawriter_ = publisher_->create_datawriter_with_profile(topic_, datawriter_profile_, &listener_,
+                                    status_mask_);
+                    ASSERT_NE(datawriter_, nullptr);
+                    ASSERT_TRUE(datawriter_->is_enabled());
                 }
             }
-            if (publisher_ != nullptr)
+            if (datawriter_ == nullptr)
             {
-                participant_->delete_publisher(publisher_);
-                publisher_ = nullptr;
+                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
             }
-            if (topic_ != nullptr)
+
+            if (datawriter_ != nullptr)
             {
-                participant_->delete_topic(topic_);
-                topic_ = nullptr;
+                std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
+                    topic_name_ << std::endl;
+
+                initialized_ = datawriter_->is_enabled();
             }
-            DomainParticipantFactory::get_instance()->delete_participant(participant_);
-            participant_ = nullptr;
         }
+        return;
     }
 
     bool isInitialized() const
@@ -1112,6 +1133,24 @@ public:
         return status;
     }
 
+    void set_xml_filename(
+            const std::string& name)
+    {
+        xml_file_ = name;
+    }
+
+    void set_participant_profile(
+            const std::string& profile)
+    {
+        participant_profile_ = profile;
+    }
+
+    void set_datawriter_profile(
+            const std::string& profile)
+    {
+        datawriter_profile_ = profile;
+    }
+
 private:
 
     void participant_matched()
@@ -1384,6 +1423,10 @@ private:
     std::map<std::string,  int> mapTopicCountList_;
     std::map<std::string,  int> mapPartitionCountList_;
     bool discovery_result_;
+
+    std::string xml_file_ = "";
+    std::string participant_profile_ = "";
+    std::string datawriter_profile_ = "";
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
