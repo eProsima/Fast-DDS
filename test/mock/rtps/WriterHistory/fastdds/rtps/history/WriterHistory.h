@@ -50,6 +50,8 @@ public:
     {
     }
 
+    using iterator = std::vector<CacheChange_t*>::iterator;
+
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(release_Cache, bool(CacheChange_t* change));
 
