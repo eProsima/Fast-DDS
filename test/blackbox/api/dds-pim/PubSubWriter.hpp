@@ -1163,6 +1163,7 @@ public:
 
         return *this;
     }
+
 #endif // if HAVE_SQLITE3
 
 private:
