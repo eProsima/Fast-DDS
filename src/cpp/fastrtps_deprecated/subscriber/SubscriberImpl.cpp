@@ -66,16 +66,16 @@ SubscriberImpl::SubscriberImpl(
 {
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
                     [&]() -> bool
-            {
-                return deadline_missed();
-            },
+                    {
+                        return deadline_missed();
+                    },
                     att.qos.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
                     [&]() -> bool
-            {
-                return lifespan_expired();
-            },
+                    {
+                        return lifespan_expired();
+                    },
                     att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }
 
@@ -108,7 +108,7 @@ bool SubscriberImpl::readNextData(
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
 #else
             std::chrono::hours(24);
-#endif
+#endif // if HAVE_STRICT_REALTIME
     return this->m_history.readNextData(data, info, max_blocking_time);
 }
 
@@ -121,7 +121,7 @@ bool SubscriberImpl::takeNextData(
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
 #else
             std::chrono::hours(24);
-#endif
+#endif // if HAVE_STRICT_REALTIME
     return this->m_history.takeNextData(data, info, max_blocking_time);
 }
 
