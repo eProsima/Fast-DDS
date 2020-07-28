@@ -40,7 +40,7 @@ PublisherHistory::PublisherHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-            // *INDENT-OFF* uncrastify does not recognize the ? operator
+    // *INDENT-OFF* uncrastify does not recognize the ? operator
             topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
                     topic_att.resourceLimitsQos.allocated_samples :
                     topic_att.getTopicKind() == NO_KEY ?
@@ -52,18 +52,18 @@ PublisherHistory::PublisherHistory(
                     topic_att.getTopicKind() == NO_KEY ?
                         topic_att.historyQos.depth :
                         topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
-            // *INDENT-ON*
+    // *INDENT-ON*
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
 {
 }
 
-PublisherHistory::~PublisherHistory()
+    PublisherHistory::~PublisherHistory()
 {
 }
 
-bool PublisherHistory::register_instance(
+    bool PublisherHistory::register_instance(
         const InstanceHandle_t& instance_handle,
         std::unique_lock<RecursiveTimedMutex>&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
@@ -78,11 +78,11 @@ bool PublisherHistory::register_instance(
     return find_or_add_key(instance_handle, &vit);
 }
 
-bool PublisherHistory::add_pub_change(
-        CacheChange_t* change,
-        WriteParams& wparams,
-        std::unique_lock<RecursiveTimedMutex>& lock,
-        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    bool PublisherHistory::add_pub_change(
+        CacheChange_t * change,
+        WriteParams & wparams,
+        std::unique_lock<RecursiveTimedMutex>&lock,
+        const std::chrono::time_point<std::chrono::steady_clock>&max_blocking_time)
 {
     if (m_isHistoryFull)
     {
@@ -131,7 +131,7 @@ bool PublisherHistory::add_pub_change(
             if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
             {
                 if (static_cast<int32_t>(vit->second.cache_changes.size()) <
-                        resource_limited_qos_.max_samples_per_instance)
+                resource_limited_qos_.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -165,9 +165,9 @@ bool PublisherHistory::add_pub_change(
 #endif // if HAVE_STRICT_REALTIME
                 {
                     logInfo(RTPS_HISTORY,
-                            topic_att_.getTopicDataType()
-                            << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
-                            << " and " << change->serializedPayload.length << " bytes");
+                    topic_att_.getTopicDataType()
+                    << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
+                    << " and " << change->serializedPayload.length << " bytes");
                     returnedValue =  true;
                 }
             }
@@ -178,7 +178,7 @@ bool PublisherHistory::add_pub_change(
     return returnedValue;
 }
 
-bool PublisherHistory::find_or_add_key(
+    bool PublisherHistory::find_or_add_key(
         const InstanceHandle_t& instance_handle,
         t_m_Inst_Caches::iterator* vit_out)
 {
@@ -199,8 +199,8 @@ bool PublisherHistory::find_or_add_key(
     return false;
 }
 
-bool PublisherHistory::removeAllChange(
-        size_t* removed)
+    bool PublisherHistory::removeAllChange(
+        size_t * removed)
 {
 
     size_t rem = 0;
@@ -228,7 +228,7 @@ bool PublisherHistory::removeAllChange(
     return false;
 }
 
-bool PublisherHistory::removeMinChange()
+    bool PublisherHistory::removeMinChange()
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -244,8 +244,8 @@ bool PublisherHistory::removeMinChange()
     return false;
 }
 
-bool PublisherHistory::remove_change_pub(
-        CacheChange_t* change)
+    bool PublisherHistory::remove_change_pub(
+        CacheChange_t * change)
 {
 
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -290,13 +290,13 @@ bool PublisherHistory::remove_change_pub(
     return false;
 }
 
-bool PublisherHistory::remove_change_g(
-        CacheChange_t* a_change)
+    bool PublisherHistory::remove_change_g(
+        CacheChange_t * a_change)
 {
     return remove_change_pub(a_change);
 }
 
-bool PublisherHistory::remove_instance_changes(
+    bool PublisherHistory::remove_instance_changes(
         const rtps::InstanceHandle_t& handle,
         const rtps::SequenceNumber_t& seq_up_to)
 {
@@ -340,7 +340,7 @@ bool PublisherHistory::remove_instance_changes(
     return true;
 }
 
-bool PublisherHistory::set_next_deadline(
+    bool PublisherHistory::set_next_deadline(
         const InstanceHandle_t& handle,
         const std::chrono::steady_clock::time_point& next_deadline_us)
 {
@@ -370,8 +370,8 @@ bool PublisherHistory::set_next_deadline(
     return false;
 }
 
-bool PublisherHistory::get_next_deadline(
-        InstanceHandle_t& handle,
+    bool PublisherHistory::get_next_deadline(
+        InstanceHandle_t & handle,
         std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -406,7 +406,7 @@ bool PublisherHistory::get_next_deadline(
     return false;
 }
 
-bool PublisherHistory::is_key_registered(
+    bool PublisherHistory::is_key_registered(
         const InstanceHandle_t& handle)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -418,10 +418,10 @@ bool PublisherHistory::is_key_registered(
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(handle);
     return (vit != keyed_changes_.end() &&
-           (vit->second.cache_changes.empty() ||
-           (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
-           NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
-           )
-           )
-           );
+    (vit->second.cache_changes.empty() ||
+    (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
+    NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
+    )
+    )
+    );
 }
