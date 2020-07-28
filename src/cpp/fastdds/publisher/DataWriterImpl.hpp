@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -396,6 +396,11 @@ protected:
      */
     DataWriterListener* get_listener_for(
             const StatusMask& status);
+
+    void set_fragment_size_on_change(
+            fastrtps::rtps::WriteParams& wparams,
+            fastrtps::rtps::CacheChange_t* ch,
+            const uint32_t& high_mark_for_frag);
 };
 
 } /* namespace dds */

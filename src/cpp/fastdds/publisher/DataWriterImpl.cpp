@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include <functional>
 #include <iostream>
@@ -146,6 +147,32 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     writer_ = writer;
+
+    //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
+    if (high_mark_for_frag_ == 0)
+    {
+        RTPSParticipant* part = publisher_->rtps_participant();
+        uint32_t max_data_size = writer_->getMaxDataSize();
+        uint32_t writer_throughput_controller_bytes =
+                writer_->calculateMaxDataSize(qos_.throughput_controller().bytesPerPeriod);
+        uint32_t participant_throughput_controller_bytes =
+                writer_->calculateMaxDataSize(
+            part->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
+
+        high_mark_for_frag_ =
+                max_data_size > writer_throughput_controller_bytes ?
+                writer_throughput_controller_bytes :
+                (max_data_size > participant_throughput_controller_bytes ?
+                participant_throughput_controller_bytes :
+                max_data_size);
+        high_mark_for_frag_ &= ~3;
+    }
+
+    for (PublisherHistory::iterator it = history_.changesBegin(); it != history_.changesEnd(); it++)
+    {
+        WriteParams wparams;
+        set_fragment_size_on_change(wparams, *it, high_mark_for_frag_);
+    }
 
     deadline_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
                     [&]() -> bool
@@ -431,42 +458,7 @@ bool DataWriterImpl::perform_create_new_change(
                 }
             }
 
-            //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
-            if (high_mark_for_frag_ == 0)
-            {
-                RTPSParticipant* part = publisher_->rtps_participant();
-                uint32_t max_data_size = writer_->getMaxDataSize();
-                uint32_t writer_throughput_controller_bytes =
-                        writer_->calculateMaxDataSize(qos_.throughput_controller().bytesPerPeriod);
-                uint32_t participant_throughput_controller_bytes =
-                        writer_->calculateMaxDataSize(
-                    part->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
-
-                high_mark_for_frag_ =
-                        max_data_size > writer_throughput_controller_bytes ?
-                        writer_throughput_controller_bytes :
-                        (max_data_size > participant_throughput_controller_bytes ?
-                        participant_throughput_controller_bytes :
-                        max_data_size);
-                high_mark_for_frag_ &= ~3;
-            }
-
-            uint32_t final_high_mark_for_frag = high_mark_for_frag_;
-
-            // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
-            if (wparams.related_sample_identity() != SampleIdentity::unknown())
-            {
-                final_high_mark_for_frag -= 32;
-            }
-
-            // If it is big data, fragment it.
-            if (ch->serializedPayload.length > final_high_mark_for_frag)
-            {
-                // Fragment the data.
-                // Set the fragment size to the cachechange.
-                ch->setFragmentSize(static_cast<uint16_t>(
-                            (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
-            }
+            set_fragment_size_on_change(wparams, ch, high_mark_for_frag_);
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
@@ -1146,6 +1138,31 @@ DataWriterListener* DataWriterImpl::get_listener_for(
         return listener_;
     }
     return publisher_->get_listener_for(status);
+}
+
+void DataWriterImpl::set_fragment_size_on_change(
+        WriteParams& wparams,
+        CacheChange_t* ch,
+        const uint32_t& high_mark_for_frag)
+{
+    uint32_t final_high_mark_for_frag = high_mark_for_frag;
+
+    // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
+    if (wparams.related_sample_identity() != SampleIdentity::unknown())
+    {
+        final_high_mark_for_frag -= (
+            ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE +
+            ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
+    }
+
+    // If it is big data, fragment it.
+    if (ch->serializedPayload.length > final_high_mark_for_frag)
+    {
+        // Fragment the data.
+        // Set the fragment size to the cachechange.
+        ch->setFragmentSize(static_cast<uint16_t>(
+                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
+    }
 }
 
 } // namespace dds

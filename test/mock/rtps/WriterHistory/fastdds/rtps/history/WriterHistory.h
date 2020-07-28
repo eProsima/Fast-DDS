@@ -50,6 +50,8 @@ public:
     {
     }
 
+    using iterator = std::vector<CacheChange_t*>::iterator;
+
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(release_Cache, bool(CacheChange_t* change));
 
@@ -124,13 +126,25 @@ public:
         return last_sequence_number_ + 1;
     }
 
-    MOCK_METHOD0(changesBegin, std::vector<CacheChange_t*>::iterator());
+    std::vector<CacheChange_t*>::iterator changesBegin()
+    {
+        return m_changes.begin();
+    }
 
-    MOCK_METHOD0(changesRbegin, std::vector<CacheChange_t*>::reverse_iterator());
+    std::vector<CacheChange_t*>::reverse_iterator changesRbegin()
+    {
+        return m_changes.rbegin();
+    }
 
-    MOCK_METHOD0(changesEnd, std::vector<CacheChange_t*>::iterator());
+    std::vector<CacheChange_t*>::iterator changesEnd()
+    {
+        return m_changes.end();
+    }
 
-    MOCK_METHOD0(changesRend, std::vector<CacheChange_t*>::reverse_iterator());
+    std::vector<CacheChange_t*>::reverse_iterator changesRend()
+    {
+        return m_changes.rend();
+    }
 
     inline RecursiveTimedMutex* getMutex()
     {

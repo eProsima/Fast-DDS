@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2018, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -131,6 +131,9 @@ std::list<String> default_large_string_data_generator(
         size_t max = 0);
 
 std::list<Data64kb> default_data64kb_data_generator(
+        size_t max = 0);
+
+std::list<Data1mb> default_data16kb_data_generator(
         size_t max = 0);
 
 std::list<Data1mb> default_data300kb_data_generator(

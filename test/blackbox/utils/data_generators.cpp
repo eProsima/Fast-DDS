@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -115,6 +115,30 @@ std::list<Data64kb> default_data64kb_data_generator(
                 data.data().resize(data64kb_length);
                 data.data()[0] = index;
                 for (size_t i = 1; i < data64kb_length; ++i)
+                {
+                    data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
+                }
+                ++index;
+                return data;
+            });
+
+    return returnedValue;
+}
+
+const size_t data16kb_length = 16384;
+std::list<Data1mb> default_data16kb_data_generator(
+        size_t max)
+{
+    unsigned char index = 1;
+    size_t maximum = max ? max : 10;
+    std::list<Data1mb> returnedValue(maximum);
+
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index]
+            {
+                Data1mb data;
+                data.data().resize(data16kb_length);
+                data.data()[0] = index;
+                for (size_t i = 1; i < data16kb_length; ++i)
                 {
                     data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
                 }
