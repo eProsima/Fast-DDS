@@ -137,12 +137,15 @@ public:
                 const TopicAttributes& topicAtt,
                 const ReaderQos& rqos));
 
-    MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes& ());
-
+    const RTPSParticipantAttributes& getRTPSParticipantAttributes()
+    {
+        return attributes_;
+    }
 
     RTPSParticipantListener* listener_;
     const GUID_t m_guid;
     ResourceEvent mp_event_thr;
+    RTPSParticipantAttributes attributes_;
 };
 
 } /* namespace rtps */
