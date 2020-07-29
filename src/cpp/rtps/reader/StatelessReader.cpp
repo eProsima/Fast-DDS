@@ -323,25 +323,6 @@ bool StatelessReader::processDataFragMsg(
 
                 CacheChange_t* change_to_add = incomingChange;
 
-#if HAVE_SECURITY
-                if (getAttributes().security_attributes().is_payload_protected)
-                {
-                    // Reserve a new cache from the corresponding cache pool
-                    if (reserveCache(&change_to_add, incomingChange->serializedPayload.length))
-                    {
-                        change_to_add->copy_not_memcpy(incomingChange);
-                        if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
-                                    incomingChange->serializedPayload,
-                                    change_to_add->serializedPayload, m_guid, writer_guid))
-                        {
-                            releaseCache(change_to_add);
-                            logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                            return false;
-                        }
-                    }
-                }
-#endif // if HAVE_SECURITY
-
                 // Check if pending fragmented change should be dropped
                 if (work_change != nullptr)
                 {
@@ -396,13 +377,6 @@ bool StatelessReader::processDataFragMsg(
                 }
 
                 writer.fragmented_change = work_change;
-
-#if HAVE_SECURITY
-                if (getAttributes().security_attributes().is_payload_protected)
-                {
-                    releaseCache(change_to_add);
-                }
-#endif // if HAVE_SECURITY
 
                 // If the change was completed, process it.
                 if (change_completed != nullptr)
