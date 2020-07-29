@@ -91,7 +91,7 @@ private:
 #if HAVE_SECURITY
     CDRMessage_t crypto_msg_;
     SerializedPayload_t crypto_payload_;
-#endif
+#endif // if HAVE_SECURITY
 
     //!Reset the MessageReceiver to process a new message.
     void reset();
@@ -185,5 +185,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_ */

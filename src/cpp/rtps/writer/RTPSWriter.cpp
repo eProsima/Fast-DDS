@@ -170,7 +170,7 @@ uint32_t RTPSWriter::calculateMaxDataSize(
     {
         maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
     }
-#endif
+#endif // if HAVE_SECURITY
 
     return maxDataSize;
 }

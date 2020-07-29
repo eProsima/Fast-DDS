@@ -1455,25 +1455,23 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
 {
     PubSubWriterReader<Data1mbType> wreader(TEST_TOPIC_NAME);
 
-    PropertyPolicy pub_property_policy, sub_property_policy,
-        property_policy;
+    PropertyPolicy pub_property_policy, sub_property_policy, property_policy;
 
-    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-        "builtin.PKI-DH"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin", "builtin.PKI-DH"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-        "file://" + std::string(certs_path) + "/maincacert.pem"));
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-        "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+            "file://" + std::string(certs_path) + "/mainpubcert.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-        "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+            "file://" + std::string(certs_path) + "/mainpubkey.pem"));
     property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-        "builtin.AES-GCM-GMAC"));
+            "builtin.AES-GCM-GMAC"));
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     wreader.property_policy(property_policy).
-        pub_property_policy(pub_property_policy).
-        sub_property_policy(sub_property_policy).init();
+    pub_property_policy(pub_property_policy).
+    sub_property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(wreader.isInitialized());
 
