@@ -45,7 +45,7 @@ class PubSubWriterReader
 {
     class ParticipantListener : public eprosima::fastrtps::ParticipantListener
     {
-public:
+    public:
 
         ParticipantListener(
                 PubSubWriterReader& wreader)
@@ -72,7 +72,7 @@ public:
             }
         }
 
-#endif
+#endif // if HAVE_SECURITY
         void onParticipantDiscovery(
                 eprosima::fastrtps::Participant* participant,
                 eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
@@ -159,7 +159,7 @@ public:
             return discovered_subscribers_.size();
         }
 
-private:
+    private:
 
         //! Mutex guarding all info collections
         mutable std::mutex info_mutex_;
@@ -192,11 +192,12 @@ private:
         //! Pointer to the pub sub writer reader
         PubSubWriterReader& wreader_;
 
-    } participant_listener_;
+    }
+    participant_listener_;
 
     class PubListener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         PubListener(
                 PubSubWriterReader& wreader)
@@ -222,18 +223,19 @@ public:
             }
         }
 
-private:
+    private:
 
         PubListener& operator =(
                 const PubListener&) = delete;
 
         PubSubWriterReader& wreader_;
 
-    } pub_listener_;
+    }
+    pub_listener_;
 
     class SubListener : public eprosima::fastrtps::SubscriberListener
     {
-public:
+    public:
 
         SubListener(
                 PubSubWriterReader& wreader)
@@ -274,13 +276,14 @@ public:
             }
         }
 
-private:
+    private:
 
         SubListener& operator =(
                 const SubListener&) = delete;
 
         PubSubWriterReader& wreader_;
-    } sub_listener_;
+    }
+    sub_listener_;
 
     friend class PubListener;
     friend class SubListener;
@@ -305,7 +308,7 @@ public:
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
-#endif
+#endif // if HAVE_SECURITY
     {
         publisher_attr_.topic.topicDataType = type_.getName();
         subscriber_attr_.topic.topicDataType = type_.getName();
@@ -483,9 +486,10 @@ public:
 
     void block_for_all()
     {
-        block([this]() -> bool {
-            return number_samples_expected_ == current_received_count_;
-        });
+        block([this]() -> bool
+                {
+                    return number_samples_expected_ == current_received_count_;
+                });
     }
 
     void block(
@@ -558,7 +562,7 @@ public:
         std::cout << "WReader unauthorization finished..." << std::endl;
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     PubSubWriterReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
@@ -689,7 +693,7 @@ private:
         cvAuthentication_.notify_all();
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     PubSubWriterReader& operator =(
             const PubSubWriterReader&) = delete;
@@ -722,7 +726,7 @@ private:
     std::condition_variable cvAuthentication_;
     unsigned int authorized_;
     unsigned int unauthorized_;
-#endif
+#endif // if HAVE_SECURITY
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBWRITER_HPP_
