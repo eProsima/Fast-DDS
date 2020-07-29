@@ -266,22 +266,6 @@ bool StatelessReader::processDataMsg(
         //Reserve a new cache from the corresponding cache pool
         if (reserveCache(&change_to_add, change->serializedPayload.length))
         {
-#if HAVE_SECURITY
-            if (getAttributes().security_attributes().is_payload_protected)
-            {
-                change_to_add->copy_not_memcpy(change);
-                if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
-                            change->serializedPayload,
-                            change_to_add->serializedPayload, m_guid, change->writerGUID))
-                {
-                    releaseCache(change_to_add);
-                    logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                    return false;
-                }
-            }
-            else
-            {
-#endif // if HAVE_SECURITY
             if (!change_to_add->copy(change))
             {
                 logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
@@ -290,9 +274,6 @@ bool StatelessReader::processDataMsg(
                 releaseCache(change_to_add);
                 return false;
             }
-#if HAVE_SECURITY
-        }
-#endif // if HAVE_SECURITY
         }
         else
         {

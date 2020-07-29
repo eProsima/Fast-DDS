@@ -90,6 +90,7 @@ private:
 
 #if HAVE_SECURITY
     CDRMessage_t crypto_msg_;
+    SerializedPayload_t crypto_payload_;
 #endif
 
     //!Reset the MessageReceiver to process a new message.
@@ -117,7 +118,8 @@ private:
      * to the given entity ID.
      */
     bool willAReaderAcceptMsgDirectedTo(
-            const EntityId_t& readerID);
+            const EntityId_t& readerID,
+            RTPSReader*& first_reader);
 
     /**
      * Find all readers (in associated_readers_), with the given entity ID, and call the

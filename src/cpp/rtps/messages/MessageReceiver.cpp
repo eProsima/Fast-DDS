@@ -53,6 +53,7 @@ MessageReceiver::MessageReceiver(
     , timestamp_(c_TimeInvalid)
 #if HAVE_SECURITY
     , crypto_msg_(participant->is_secure() ? rec_buffer_size : 0)
+    , crypto_payload_(participant->is_secure() ? rec_buffer_size : 0)
 #endif
 {
     (void)rec_buffer_size;
@@ -442,8 +443,10 @@ bool MessageReceiver::readSubmessageHeader(
 }
 
 bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
-        const EntityId_t& readerID)
+        const EntityId_t& readerID,
+        RTPSReader*& first_reader)
 {
+    first_reader = nullptr;
     if (associated_readers_.empty())
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Data received when NO readers are listening");
@@ -455,6 +458,7 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         const auto readers = associated_readers_.find(readerID);
         if (readers != associated_readers_.end())
         {
+            first_reader = readers->second.front();
             return true;
         }
     }
@@ -471,6 +475,7 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
             {
                 if (it->m_acceptMessagesToUnknownReaders)
                 {
+                    first_reader = it;
                     return true;
                 }
             }
@@ -553,11 +558,12 @@ bool MessageReceiver::proc_Submsg_Data(
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
+    RTPSReader* first_reader = nullptr;
     EntityId_t readerID;
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-    if (!willAReaderAcceptMsgDirectedTo(readerID))
+    if (!willAReaderAcceptMsgDirectedTo(readerID, first_reader))
     {
         return false;
     }
@@ -656,6 +662,17 @@ bool MessageReceiver::proc_Submsg_Data(
         ch.sourceTimestamp = timestamp_;
     }
 
+#if HAVE_SECURITY
+    if (first_reader->getAttributes().security_attributes().is_payload_protected)
+    {
+        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_, first_reader->getGuid(), ch.writerGUID))
+        {
+            ch.serializedPayload.data = crypto_payload_.data;
+            ch.serializedPayload.length = crypto_payload_.length;
+        }
+    }
+#endif  // HAVE_SECURITY
+
     logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
         associated_readers_.size());
 
@@ -709,11 +726,12 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
+    RTPSReader* first_reader = nullptr;
     EntityId_t readerID;
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-    if (!willAReaderAcceptMsgDirectedTo(readerID))
+    if (!willAReaderAcceptMsgDirectedTo(readerID, first_reader))
     {
         return false;
     }
