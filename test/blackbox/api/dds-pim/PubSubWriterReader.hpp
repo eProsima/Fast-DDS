@@ -342,6 +342,8 @@ public:
         // By default, heartbeat period delay is 100 milliseconds.
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 0;
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 100000000;
+
+        datareader_qos_.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
     }
 
     ~PubSubWriterReader()

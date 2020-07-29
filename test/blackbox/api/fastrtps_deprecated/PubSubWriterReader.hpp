@@ -339,6 +339,8 @@ public:
         // By default, heartbeat period delay is 100 milliseconds.
         subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
         subscriber_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
+
+        subscriber_attr_.qos.m_reliability.kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
     }
 
     ~PubSubWriterReader()
