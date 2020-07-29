@@ -343,7 +343,7 @@ public:
         subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
         subscriber_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
 
-        subscriber_attr_.qos.m_reliability.kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+        subscriber_attr_.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
     }
 
     ~PubSubWriterReader()

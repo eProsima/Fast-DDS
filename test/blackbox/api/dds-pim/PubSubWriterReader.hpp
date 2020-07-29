@@ -343,7 +343,8 @@ public:
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 0;
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 100000000;
 
-        datareader_qos_.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+        datareader_qos_.reliability().kind =
+                eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
     }
 
     ~PubSubWriterReader()
