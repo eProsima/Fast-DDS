@@ -342,8 +342,6 @@ public:
         // By default, heartbeat period delay is 100 milliseconds.
         subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
         subscriber_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
-
-        subscriber_attr_.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
     }
 
     ~PubSubWriterReader()
@@ -563,6 +561,48 @@ public:
     }
 
 #endif // if HAVE_SECURITY
+
+    PubSubWriterReader& pub_reliability(
+            const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+    {
+        publisher_attr_.qos.m_reliability.kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_reliability(
+            const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+    {
+        subscriber_attr_.qos.m_reliability.kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& pub_history_kind(
+            const eprosima::fastrtps::HistoryQosPolicyKind kind)
+    {
+        publisher_attr_.topic.historyQos.kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_history_kind(
+            const eprosima::fastrtps::HistoryQosPolicyKind kind)
+    {
+        subscriber_attr_.topic.historyQos.kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& pub_history_depth(
+            const int32_t depth)
+    {
+        publisher_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_history_depth(
+            const int32_t depth)
+    {
+        subscriber_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
 
     PubSubWriterReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
