@@ -626,6 +626,20 @@ public:
 
 #endif // if HAVE_SECURITY
 
+    PubSubWriterReader& pub_durability_kind(
+            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+    {
+        datawriter_qos_.durability().kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_durability_kind(
+            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+    {
+        datareader_qos_.durability().kind = kind;
+        return *this;
+    }
+
     PubSubWriterReader& pub_reliability(
             const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
     {
