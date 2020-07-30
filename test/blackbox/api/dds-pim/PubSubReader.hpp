@@ -377,7 +377,7 @@ public:
         return total_msgs_;
     }
 
-    void startReception(
+    eprosima::fastrtps::rtps::SequenceNumber_t startReception(
             std::list<type>& msgs)
     {
         mutex_.lock();
@@ -395,6 +395,7 @@ public:
         while (ret);
 
         receiving_.store(true);
+        return last_seq;
     }
 
     void stopReception()
@@ -407,6 +408,15 @@ public:
         block([this]() -> bool
                 {
                     return number_samples_expected_ == current_received_count_;
+                });
+    }
+
+    void block_for_seq(
+            eprosima::fastrtps::rtps::SequenceNumber_t seq)
+    {
+        block([this, seq]() -> bool
+                {
+                    return last_seq == seq;
                 });
     }
 
@@ -596,6 +606,11 @@ public:
     size_t getReceivedCount() const
     {
         return current_received_count_;
+    }
+
+    eprosima::fastrtps::rtps::SequenceNumber_t get_last_sequence_received()
+    {
+        return last_seq;
     }
 
     PubSubReader& deactivate_status_listener(
