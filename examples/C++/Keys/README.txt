@@ -7,7 +7,7 @@
 
 eProsima Fast RTPS provides users with a wide range of configuration options. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours on the Publisher/Subscriber scheme.
 
-This example is a supplement to the UseCaseLauncher example, consisting on an application which ilustrates how keys work.
+This example is a supplement to the UseCaseLauncher example, consisting on an application which illustrates how keys work.
 
 2 - Configuration options
 --------------------------
@@ -62,19 +62,19 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 
 - Instance size
 
-    As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
+    As it happens with depth, you can define a maximum number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
 3. Application behaviour
 ------------------------
 
-This application spawns a Publisher and a Subscriber set up to use 5 key. The Publisher posts 10 samples on each key and then 10 more on key number 3. After eximining the contents of the history you will see how each key has had a separate treatment: samples from a key are not overwritten by samples belonging to another key, even when they belong to the same topic.
+This application spawns a Publisher and a Subscriber set up to use 5 key. The Publisher posts 10 samples on each key and then 10 more on key number 3. After examining the contents of the history you will see how each key has had a separate treatment: samples from a key are not overwritten by samples belonging to another key, even when they belong to the same topic.
 
 4. Built-in tests
 -----------------
 
 Other than this application, he Use Case set of examples contains the following pre-defined demonstrators:
 
-* Historykind: Shows how a Keep-All Subscriber stores all samples in its History and a Keep-Last subscriber starts to overwrite when it reacher its depth.
+* Historykind: Shows how a Keep-All Subscriber stores all samples in its History and a Keep-Last subscriber starts to overwrite when it reaches its depth.
 * Latejoiners: Shows how a Transient-Local Subscriber receives past samples while Volatile starts receiving from the moment of its creation.
 * SampleConfig: Provides a basic Publish-Subscribe example for the three sample configurations specified in section 5.
 

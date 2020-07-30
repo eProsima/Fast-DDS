@@ -1647,7 +1647,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
 
         // Check output_buffer contains enough memory to cypher.
         // - EVP_EncryptUpdate needs at maximum: plain_buffer_len + cipher_block_size - 1.
-        // - EVP_EncryptFinal needs ad maximun cipher_block_size.
+        // - EVP_EncryptFinal needs ad maximum cipher_block_size.
         if ((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
                 (plain_buffer_len + (2 * cipher_block_size) - 1))
         {

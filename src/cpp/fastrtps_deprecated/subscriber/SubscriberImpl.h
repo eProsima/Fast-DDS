@@ -71,7 +71,7 @@ public:
 
     /*!
      * Method to block the current thread until an unread sasmple is available.
-     * @param timeout Maximun time the function will be blocked if any sample is received.
+     * @param timeout maximum time the function will be blocked if any sample is received.
      */
     bool wait_for_unread_samples(
             const eprosima::fastrtps::Duration_t& timeout);

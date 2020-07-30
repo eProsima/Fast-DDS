@@ -67,7 +67,7 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 
 - Instance size
 
-    As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
+    As it happens with depth, you can define a maximum number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
 3. Recommended tests 
 ---------------------
@@ -116,7 +116,7 @@ You can take multiple of the previous cases and combine the test subject configu
 
 In addition to this Publisher and Subscriber, the examples folder of this distribution comes with a number of preset tests to exemplify the most behaviour-changing parameters:
 
-* HistoryKind: Shows how a Keep-All Subscriber stores all samples in its History and a Keep-Last subscriber starts to overwrite when it reacher its depth.
+* HistoryKind: Shows how a Keep-All Subscriber stores all samples in its History and a Keep-Last subscriber starts to overwrite when it reaches its depth.
 * LateJoiners: Shows how a Transient-Local Subscriber receives past samples while Volatile starts receiving from the moment of its creation.
 * Keys: Provides a working example of how data can be split into multiple endpoints based of keys.
 * SampleConfig: Provides a basic Publish-Subscribe example for the three sample configurations specified in section 5.
@@ -131,7 +131,7 @@ The following list provides examples configurations for real-life scenarios, as 
 
 Audio and Video transmission have a common characteristic: Having a stable, high datarate feed is more important than having a 100% lossless transmission.
 
-	Reliability: Best-Effort. We want to have a fast tranmission. If a sample is lost, it can be recovered via error-correcting algorithms.
+	Reliability: Best-Effort. We want to have a fast transmission. If a sample is lost, it can be recovered via error-correcting algorithms.
 	Durability: Volatile. We do not mind data from the past, we want to stream what is happening in the present.
 	History: Keep-Last with Low Depth. Once displayed or recorded on the receiving application, they are not needed in the History.
 	note: In the case of video, depth can be as low as 1. A missing sample of a 50 frames per second stream represents virtually no information loss. 

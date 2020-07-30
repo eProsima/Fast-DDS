@@ -7,7 +7,7 @@
 
 eProsima Fast RTPS provides users with a wide range of configuration options. This example has the objective of providing a testing ground where you can experiment and see the influence different combinations of parameters can have on the behaviours on the Publisher/Subscriber scheme.
 
-This example is a supplement to the UseCaseLauncher example, consisting on an application which ilustrates the effect the different kinds of Subscriber Histories have on sample storage.
+This example is a supplement to the UseCaseLauncher example, consisting on an application which illustrates the effect the different kinds of Subscriber Histories have on sample storage.
 
 2 - Configuration options
 --------------------------
@@ -62,7 +62,7 @@ This parameter affects cases of "late-joining" Subscribers: Subscribers that com
 
 - Instance size
 
-    As it happens with depth, you can define a maximun number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
+    As it happens with depth, you can define a maximum number of past samples to be stored. If you set one Instance and an instance size more restrictive than the depth, the instance size will be the limiting factor.
 
 5. Application examples
 ----------------------
@@ -73,7 +73,7 @@ The following list provides examples configurations for real-life scenarios, inc
 
 Audio and Video transmission have a common characteristic: Having a stable, high datarate feed is more important than having a 100% lossless transmission.
 
-	Reliability: Best-Effort. We want to have a fast tranmission. If a sample is lost, it can be recovered via error-correcting algorithms.
+	Reliability: Best-Effort. We want to have a fast transmission. If a sample is lost, it can be recovered via error-correcting algorithms.
 	Durability: Volatile. We do not mind data from the past, we want to stream what is happening in the present.
 	History: Keep-Last with Low Depth. Once displayed or recorded on the receiving application, they are not needed in the History.
 	note: In the case of video, depth can be as low as 1. A missing sample of a 50 frames per second stream represents virtually no information loss. 

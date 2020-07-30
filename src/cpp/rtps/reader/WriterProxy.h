@@ -245,7 +245,7 @@ public:
      * @param final_flag Final flag of the heartbeat message.
      * @param liveliness_flag Liveliness flag of the heartbeat message.
      * @param disable_positive True if positive ACKs are disabled.
-     * @param [out] assert_liveliness Returns true when liveliness shoud be asserted on this writer
+     * @param [out] assert_liveliness Returns true when liveliness should be asserted on this writer
      * @return true if the message is processed, false if the message is ignored.
      */
     bool process_heartbeat(
