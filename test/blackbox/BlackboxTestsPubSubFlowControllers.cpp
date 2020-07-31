@@ -163,7 +163,7 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
     ASSERT_FALSE(writer.isInitialized());
 }
 
-INSTANTIATE_TEST_CASE_P(PubSubFlowControllers,
+INSTANTIATE_TEST_SUITE_P(PubSubFlowControllers,
         PubSubFlowControllers,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info) {

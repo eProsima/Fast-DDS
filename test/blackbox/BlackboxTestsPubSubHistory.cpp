@@ -472,7 +472,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     ASSERT_EQ(received.index(), 3u);
 }
 
-INSTANTIATE_TEST_CASE_P(PubSubHistory,
+INSTANTIATE_TEST_SUITE_P(PubSubHistory,
         PubSubHistory,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PubSubHistory::ParamType>& info) {

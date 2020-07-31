@@ -286,7 +286,7 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
     reader.block_for_all();
 }
 
-INSTANTIATE_TEST_CASE_P(PubSubBasic,
+INSTANTIATE_TEST_SUITE_P(PubSubBasic,
         PubSubBasic,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PubSubBasic::ParamType>& info) {

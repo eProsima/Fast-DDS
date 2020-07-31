@@ -717,7 +717,7 @@ TEST_P(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
     discoverParticipantsSeveralEndpointsTest(true, 20, 20, 20, TEST_TOPIC_NAME);
 }
 
-INSTANTIATE_TEST_CASE_P(Discovery,
+INSTANTIATE_TEST_SUITE_P(Discovery,
         Discovery,
         testing::Values(false, true),
         [](const testing::TestParamInfo<Discovery::ParamType>& info) {

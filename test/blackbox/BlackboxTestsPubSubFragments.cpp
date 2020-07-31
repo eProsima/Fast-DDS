@@ -374,8 +374,7 @@ TEST(PubSubFragments, AsyncFragmentSizeTest)
     }
 }
 
-
-INSTANTIATE_TEST_CASE_P(PubSubFragments,
+INSTANTIATE_TEST_SUITE_P(PubSubFragments,
         PubSubFragments,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PubSubFragments::ParamType>& info) {

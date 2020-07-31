@@ -2830,7 +2830,7 @@ void blackbox_security_init()
     }
 }
 
-INSTANTIATE_TEST_CASE_P(Security,
+INSTANTIATE_TEST_SUITE_P(Security,
         Security,
         testing::Values(false, true),
         [](const testing::TestParamInfo<Security::ParamType>& info) {

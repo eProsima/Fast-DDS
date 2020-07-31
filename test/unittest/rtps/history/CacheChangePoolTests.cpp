@@ -237,7 +237,7 @@ TEST_P(CacheChangePoolTests, chage_change)
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     instance_1,
     CacheChangePoolTests,
     Combine(Values(0, 10, 20, 30),

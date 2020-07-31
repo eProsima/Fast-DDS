@@ -357,7 +357,7 @@ TEST_P(RTPS, RTPSAsReliableVolatileSocket)
     ASSERT_TRUE(writer.is_history_empty());
 }
 
-INSTANTIATE_TEST_CASE_P(RTPS,
+INSTANTIATE_TEST_SUITE_P(RTPS,
         RTPS,
         testing::Values(false, true),
         [](const testing::TestParamInfo<RTPS::ParamType>& info) {
