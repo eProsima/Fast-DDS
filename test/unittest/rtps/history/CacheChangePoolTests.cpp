@@ -245,7 +245,7 @@ INSTANTIATE_TEST_SUITE_P(
             Values(128, 256, 512, 1024),
             Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
                    MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)), );
+                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)));
 
 int main(int argc, char **argv)
 {
