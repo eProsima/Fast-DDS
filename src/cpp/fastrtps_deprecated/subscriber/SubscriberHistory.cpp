@@ -57,17 +57,19 @@ SubscriberHistory::SubscriberHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
     : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,
+    // *INDENT-OFF* uncrustify does not recognize the ? operator
             topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.allocated_samples :
-            topic_att.getTopicKind() == NO_KEY ?
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-            * topic_att.resourceLimitsQos.max_instances),
+                topic_att.resourceLimitsQos.allocated_samples :
+                topic_att.getTopicKind() == NO_KEY ?
+                    std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
+                    std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
+                            * topic_att.resourceLimitsQos.max_instances),
             topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-            topic_att.resourceLimitsQos.max_samples :
-            topic_att.getTopicKind() == NO_KEY ?
-            topic_att.historyQos.depth :
-            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+                topic_att.resourceLimitsQos.max_samples :
+                topic_att.getTopicKind() == NO_KEY ?
+                    topic_att.historyQos.depth :
+                    topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+    // *INDENT-ON*
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)

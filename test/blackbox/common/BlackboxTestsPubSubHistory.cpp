@@ -618,7 +618,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1)
     seq.low = 10;
     reader.block_for_seq(seq);
 
-    ASSERT_EQ(reader.get_last_sequence_received().low, 10);
+    ASSERT_EQ(reader.get_last_sequence_received().low, 10u);
 }
 
 TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
@@ -643,10 +643,8 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
     ASSERT_FALSE(reader_data.empty());
 
     reader
-    .socket_buffer_size(1048576)        // accomodate large and fast fragments
     .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
     .history_depth(1)
-    //.resource_limits_max_samples(1)
     .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
     .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
     .init();
@@ -663,7 +661,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
     seq.low = 10;
     reader.block_for_seq(seq);
 
-    ASSERT_EQ(reader.get_last_sequence_received().low, 10);
+    ASSERT_EQ(reader.get_last_sequence_received().low, 10u);
 }
 
 
