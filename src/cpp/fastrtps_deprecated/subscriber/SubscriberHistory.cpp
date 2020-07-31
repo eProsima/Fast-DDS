@@ -50,26 +50,35 @@ static void get_sample_info(
     info->related_sample_identity = change->write_params.sample_identity();
 }
 
+static HistoryAttributes to_history_attributes(
+        const TopicAttributes& topic_att,
+        uint32_t payloadMaxSize,
+        MemoryManagementPolicy_t mempolicy)
+{
+    auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
+    auto max_samples = topic_att.resourceLimitsQos.max_samples;
+
+    if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
+    {
+        max_samples = topic_att.historyQos.depth;
+        if (topic_att.getTopicKind() != NO_KEY)
+        {
+            max_samples *= topic_att.resourceLimitsQos.max_instances;
+        }
+
+        initial_samples = std::min(initial_samples, max_samples);
+    }
+
+    return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples);
+}
+
 SubscriberHistory::SubscriberHistory(
         const TopicAttributes& topic_att,
         TopicDataType* type,
         const ReaderQos& qos,
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
-    : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-    // *INDENT-OFF* uncrustify does not recognize the ? operator
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                topic_att.resourceLimitsQos.allocated_samples :
-                topic_att.getTopicKind() == NO_KEY ?
-                    std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-                    std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-                            * topic_att.resourceLimitsQos.max_instances),
-            topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                topic_att.resourceLimitsQos.max_samples :
-                topic_att.getTopicKind() == NO_KEY ?
-                    topic_att.historyQos.depth :
-                    topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
-    // *INDENT-ON*
+    : ReaderHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
