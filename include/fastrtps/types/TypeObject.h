@@ -225,7 +225,7 @@ private:
 typedef std::vector<MinimalStructMember> MinimalStructMemberSeq;
 
 /*struct AppliedBuiltinTypeAnnotations {
-	AppliedVerbatimAnnotation verbatim;  // @verbatim(...) // @optional
+	AppliedVerbatimAnnotation verbatim;  // verbatim(...) // optional
 };*/
 class AppliedBuiltinTypeAnnotations
 {
@@ -273,8 +273,8 @@ private:
 };
 
 /*struct CompleteTypeDetail final{
-	AppliedBuiltinTypeAnnotations  ann_builtin; // @optional
-	AppliedAnnotationSeq           ann_custom; // @optional
+	AppliedBuiltinTypeAnnotations  ann_builtin; // optional
+	AppliedAnnotationSeq           ann_custom; // optional
 	QualifiedTypeName                        type_name;
 };*/
 class CompleteTypeDetail
@@ -3174,7 +3174,6 @@ public:
     RTPS_DllAPI inline void complete(TypeIdentifierWithDependencies &&_complete) { m_complete = std::move(_complete); }
     RTPS_DllAPI inline const TypeIdentifierWithDependencies& complete() const { return m_complete; }
     RTPS_DllAPI inline TypeIdentifierWithDependencies& complete() { return m_complete; }
-
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeInformation& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
