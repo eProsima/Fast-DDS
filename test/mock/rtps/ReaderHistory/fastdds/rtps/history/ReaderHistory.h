@@ -51,6 +51,7 @@ class ReaderHistory
 
         RTPSReader* mp_reader;
         RecursiveTimedMutex* mp_mutex;
+        HistoryAttributes m_att;
 };
 
 } // namespace rtps
