@@ -16,7 +16,7 @@ macro(check_stdcxx)
     # Check C++11
     include(CheckCXXCompilerFlag)
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
-        CMAKE_CXX_COMPILER_ID MATCHES "Clang"OR
+        CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
         CMAKE_CXX_COMPILER_ID MATCHES "QCC")
         check_cxx_compiler_flag(-std=c++14 SUPPORTS_CXX14)
         set(HAVE_CXX14 0)
