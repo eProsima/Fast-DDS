@@ -42,7 +42,15 @@ IPersistenceService* PersistenceFactory::create_persistence_service(const Proper
             const std::string* filename_property = PropertyPolicyHelper::find_property(property_policy, "dds.persistence.sqlite3.filename");
             const char* filename = (filename_property == nullptr) ?
                 "persistence.db" : filename_property->c_str();
-            ret_val = create_SQLite3_persistence_service(filename);
+            bool update_schema = false;
+            const std::string* update_schema_value = PropertyPolicyHelper::find_property(property_policy, "dds.persistence.update_schema");
+            if (update_schema_value != nullptr &&
+                ((update_schema_value->compare("TRUE") == 0) ||
+                (update_schema_value->compare("true") == 0)))
+            {
+                update_schema = true;
+            }
+            ret_val = create_SQLite3_persistence_service(filename, update_schema);
         }
 #endif
     }

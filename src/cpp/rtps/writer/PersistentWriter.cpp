@@ -37,7 +37,7 @@ PersistentWriter::PersistentWriter(GUID_t& guid,WriterAttributes& att,WriterHist
      ss << p_guid;
      persistence_guid_ = ss.str();
 
-     if (persistence_->load_writer_from_storage(persistence_guid_, guid, hist->m_changes, &(hist->m_changePool)))
+     if (persistence_->load_writer_from_storage(persistence_guid_, guid, hist->m_changes, &(hist->m_changePool), &(hist->m_lastCacheChangeSeqNum)))
      {
          CacheChange_t* max_change;
          if (hist->get_max_change(&max_change))
