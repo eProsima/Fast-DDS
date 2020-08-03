@@ -23,6 +23,7 @@ if(PYTHONINTERP_FOUND)
     set(TESTS
         test_fastdds_installed
         test_fastdds_discovery
+        test_ros_discovery
         test_fastdds_shm
     )
 
@@ -34,6 +35,13 @@ if(PYTHONINTERP_FOUND)
                 ${CMAKE_INSTALL_PREFIX}
                 ${TEST}
             )
+
+        # Set test properties
+        set_property(
+            TEST system.tools.fastdds.${TEST}
+            PROPERTY LABELS "NoMemoryCheck"
+        )
+
     endforeach()
 
 endif()

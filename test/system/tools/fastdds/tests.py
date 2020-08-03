@@ -120,6 +120,16 @@ def test_fastdds_discovery(install_path, setup_script_path):
         print('test_fastdds_discovery FAILED')
         sys.exit(ret)
 
+def test_ros_discovery(install_path, setup_script_path):
+    """Test that discovery command runs."""
+    ret = subprocess.call(
+        cmd(install_path=install_path,
+            setup_script_path=setup_script_path),
+        shell=True)
+
+    if 0 != ret:
+        print('test_fastdds_discovery FAILED')
+        sys.exit(ret)
 
 def get_paths(install_path):
     """
@@ -172,6 +182,8 @@ if __name__ == '__main__':
         'test_fastdds_installed': lambda: test_fastdds_installed(tool_path),
         'test_fastdds_discovery': lambda: test_fastdds_discovery(
             tool_path, setup_script_path),
+        'test_ros_discovery': lambda: test_ros_discovery(tool_path,
+            setup_script_path),
         'test_fastdds_shm': lambda: test_fastdds_shm(tool_path)
     }
 

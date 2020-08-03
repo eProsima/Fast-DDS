@@ -32,6 +32,7 @@ if (MSVC)
 
     # Windows
     install(FILES ${PROJECT_SOURCE_DIR}/fastdds.bat
+        ${PROJECT_SOURCE_DIR}/ros-discovery.bat
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
     )
 
@@ -39,6 +40,7 @@ else()
 
     # POSIX
     install(FILES ${PROJECT_SOURCE_DIR}/fastdds
+        ${PROJECT_SOURCE_DIR}/ros-discovery
         PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
     )
