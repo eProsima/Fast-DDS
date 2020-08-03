@@ -60,13 +60,14 @@ TEST_F(PersistenceTest, Writer)
     CacheChange_t change;
     GUID_t guid(GuidPrefix_t::unknown(), 1U);
     std::vector<CacheChange_t*> changes;
+    SequenceNumber_t last_seq_number;
     change.kind = ALIVE;
     change.writerGUID = guid;
     change.serializedPayload.length = 0;
 
     // Initial load should return empty vector
     changes.clear();
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool, &last_seq_number));
     ASSERT_EQ(changes.size(), 0u);
 
     // Add two changes
@@ -83,8 +84,9 @@ TEST_F(PersistenceTest, Writer)
 
     // Loading should return two changes (seqs = 1, 2)
     changes.clear();
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool, &last_seq_number));
     ASSERT_EQ(changes.size(), 2u);
+    ASSERT_EQ(last_seq_number, SequenceNumber_t(0, 2u));
     uint32_t i = 0;
     for (auto it : changes)
     {
@@ -99,16 +101,18 @@ TEST_F(PersistenceTest, Writer)
 
     // Loading should return one change (seq = 2)
     changes.clear();
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool, &last_seq_number));
     ASSERT_EQ(changes.size(), 1u);
     ASSERT_EQ((*changes.begin())->sequenceNumber, SequenceNumber_t(0, 2));
+    ASSERT_EQ(last_seq_number, SequenceNumber_t(0, 2u));
 
     // Remove seq = 2, and check that load returns empty vector
     changes.clear();
     change.sequenceNumber.low = 2;
     ASSERT_TRUE(service->remove_writer_change_from_storage(persist_guid, change));
-    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
+    ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool, &last_seq_number));
     ASSERT_EQ(changes.size(), 0u);
+    ASSERT_EQ(last_seq_number, SequenceNumber_t(0, 2u));
 }
 
 /*!
