@@ -237,15 +237,21 @@ TEST_P(CacheChangePoolTests, chage_change)
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
-    instance_1,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_SUITE_P(x, y, z)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_CASE_P(x, y, z, )
+#endif
+
+GTEST_INSTANTIATE_TEST_MACRO(
+    CacheChangePoolTests,
     CacheChangePoolTests,
     Combine(Values(0, 10, 20, 30),
-            Values(0, 10, 20, 30),
-            Values(128, 256, 512, 1024),
-            Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
-                   MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)), );
+    Values(0, 10, 20, 30),
+    Values(128, 256, 512, 1024),
+    Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
+    MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+    MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)));
 
 int main(int argc, char **argv)
 {
