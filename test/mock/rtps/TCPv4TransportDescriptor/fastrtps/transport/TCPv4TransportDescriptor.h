@@ -29,6 +29,12 @@ class TCPTransportInterface;
 typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
     virtual ~TCPv4TransportDescriptor(){}
 
+    TCPv4TransportDescriptor& operator =(
+            const TCPv4TransportDescriptor& ) = default;
+
+    TCPv4TransportDescriptor& operator =(
+            TCPv4TransportDescriptor&& ) = default;
+
     virtual TransportInterface* create_transport() const override   {   return nullptr; }
 
     octet wan_addr[4];
