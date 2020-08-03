@@ -123,6 +123,7 @@ TEST_F(PersistenceTest, Writer)
     changes.clear();
     ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, pool, payload_pool_, max_seq));
     ASSERT_EQ(changes.size(), 2u);
+    ASSERT_EQ(max_seq, SequenceNumber_t(0, 2u));
     uint32_t i = 0;
     for (auto it : changes)
     {
@@ -140,6 +141,7 @@ TEST_F(PersistenceTest, Writer)
     ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, pool, payload_pool_, max_seq));
     ASSERT_EQ(changes.size(), 1u);
     ASSERT_EQ((*changes.begin())->sequenceNumber, SequenceNumber_t(0, 2));
+    ASSERT_EQ(max_seq, SequenceNumber_t(0, 2u));
 
     // Remove seq = 2, and check that load returns empty vector
     changes.clear();
@@ -147,6 +149,7 @@ TEST_F(PersistenceTest, Writer)
     ASSERT_TRUE(service->remove_writer_change_from_storage(persist_guid, change));
     ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, pool, payload_pool_, max_seq));
     ASSERT_EQ(changes.size(), 0u);
+    ASSERT_EQ(max_seq, SequenceNumber_t(0, 2u));
 }
 
 /*!
