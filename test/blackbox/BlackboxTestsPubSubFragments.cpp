@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,6 +69,49 @@ TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
     ASSERT_FALSE(data.empty());
 }
 
+
+TEST_P(PubSubFragments, PubSubAsNonReliableVolatileData300kb)
+{
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    writer
+    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+    .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_data300kb_data_generator(1);
+    // Send data
+    writer.send(data);
+    // In this test data is not sent.
+    ASSERT_FALSE(data.empty());
+}
+
+TEST_P(PubSubFragments, PubSubAsNonReliableTransientLocalData300kb)
+{
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    writer
+    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+    .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_data300kb_data_generator(1);
+    // Send data
+    writer.send(data);
+    // In this test data is not sent.
+    ASSERT_FALSE(data.empty());
+}
+
 TEST_P(PubSubFragments, PubSubAsReliableData300kb)
 {
     // Mutes an expected error
@@ -77,6 +120,47 @@ TEST_P(PubSubFragments, PubSubAsReliableData300kb)
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     writer.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_data300kb_data_generator(1);
+    // Send data
+    writer.send(data);
+    // In this test data is not sent.
+    ASSERT_FALSE(data.empty());
+}
+
+
+TEST_P(PubSubFragments, PubSubAsReliableVolatileData300kb)
+{
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    writer
+    .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+    .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_data300kb_data_generator(1);
+    // Send data
+    writer.send(data);
+    // In this test data is not sent.
+    ASSERT_FALSE(data.empty());
+}
+
+TEST_P(PubSubFragments, PubSubAsReliableTransientLocalData300kb)
+{
+    // Mutes an expected error
+    Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
+
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    writer
+    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+    .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -124,6 +208,86 @@ TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)
     reader.block_for_at_least(2);
 }
 
+TEST_P(PubSubFragments, AsyncPubSubAsNonReliableVolatileData300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
+    writer.history_depth(10).
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator();
+
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsNonReliableTransientLocalData300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+    init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
+    writer.history_depth(10).
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator();
+
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
+}
+
 TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
@@ -140,6 +304,86 @@ TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kb)
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsReliableVolatileData300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(5).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
+    writer.history_depth(5).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+TEST_P(PubSubFragments, AsyncPubSubAsReliableTransientLocalData300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(5).
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
+    writer.history_depth(5).
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
     asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
     add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
@@ -216,8 +460,63 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditions)
         testTransport->dropLogLength);
 }
 
+TEST(PubSubFragments, AsyncPubSubAsReliableVolatileData300kbInLossyConditions)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(5).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 300000;
+    uint32_t periodInMs = 200;
+    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
+
+    // To simulate lossy conditions, we are going to remove the default
+    // bultin transport, and instead use a lossy shim layer variant.
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = 65536;
+    testTransport->receiveBufferSize = 65536;
+    // We drop 20% of all data frags
+    testTransport->dropDataFragMessagesPercentage = 20;
+    testTransport->dropLogLength = 1;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.history_depth(5).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+
+    // Sanity check. Make sure we have dropped a few packets
+    ASSERT_EQ(
+        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->dropLogLength);
+}
+
 // Test introduced to verify the fix of the bug (#7609 Do not reuse cache change if sample does not fit)
-// detected in relase 1.9.4 
+// detected in relase 1.9.4
 TEST(PubSubFragments, AsyncPubSubAsBestEffortAlternateSizeInLossyConditions)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
@@ -227,12 +526,12 @@ TEST(PubSubFragments, AsyncPubSubAsBestEffortAlternateSizeInLossyConditions)
     reader_transport->interfaceWhiteList.push_back("127.0.0.1");
 
     reader
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(reader_transport)
-        .history_depth(5)
-        .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-        .mem_policy(eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(reader_transport)
+    .history_depth(5)
+    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    .mem_policy(eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -249,11 +548,11 @@ TEST(PubSubFragments, AsyncPubSubAsBestEffortAlternateSizeInLossyConditions)
     testTransport->interfaceWhiteList.push_back("127.0.0.1");
 
     writer
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(testTransport)
-        .history_depth(5)
-        .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
-        .init();
+    .disable_builtin_transport()
+    .add_user_transport_to_pparams(testTransport)
+    .history_depth(5)
+    .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+    .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -263,19 +562,76 @@ TEST(PubSubFragments, AsyncPubSubAsBestEffortAlternateSizeInLossyConditions)
     reader.wait_discovery();
 
     auto data = default_data96kb_data300kb_data_generator(2);
-    
+
     reader.startReception(data);
     writer.send(data);
 
     // All data has 7 fragments so when 3 has been lost all data has been sent
     // Wait until then
-    while(eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size() < 3)
+    while (eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size() < 3)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     // A second should be enough time to assure all data has been received
     std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
+TEST(PubSubFragments, AsyncPubSubAsReliableVolatileData300kbInLossyConditionsSmallFragments)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(5).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 300000;
+    uint32_t periodInMs = 200;
+    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
+
+    // To simulate lossy conditions, we are going to remove the default
+    // bultin transport, and instead use a lossy shim layer variant.
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = 1024;
+    testTransport->maxMessageSize = 1024;
+    testTransport->receiveBufferSize = 65536;
+    // We are sending around 300 fragments per sample.
+    // We drop 1% of all data frags
+    testTransport->dropDataFragMessagesPercentage = 1;
+    testTransport->dropLogLength = 1;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.history_depth(5).
+    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data300kb_data_generator(5);
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+
+    // Sanity check. Make sure we have dropped a few packets
+    ASSERT_EQ(
+        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->dropLogLength);
 }
 
 TEST(PubSubFragments, AsyncFragmentSizeTest)
@@ -377,7 +733,8 @@ TEST(PubSubFragments, AsyncFragmentSizeTest)
 INSTANTIATE_TEST_CASE_P(PubSubFragments,
         PubSubFragments,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<PubSubFragments::ParamType>& info) {
+        [](const testing::TestParamInfo<PubSubFragments::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";
