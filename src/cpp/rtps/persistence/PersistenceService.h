@@ -56,7 +56,8 @@ public:
             const std::string& persistence_guid,
             const GUID_t& writer_guid,
             std::vector<CacheChange_t*>& changes,
-            CacheChangePool* pool) = 0;
+            CacheChangePool* pool,
+            SequenceNumber_t* last_seq_num) = 0;
 
     /**
      * Add a change to storage.
