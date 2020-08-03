@@ -147,11 +147,13 @@ public:
     {
     }
 
+    Parameter_t& operator =(
+            const Parameter_t& p) = default;
+
     bool operator ==(
             const Parameter_t& b) const
     {
-        return (this->Pid == b.Pid) &&
-               (this->length == b.length);
+        return Pid == b.Pid && length == b.length;
     }
 
     /**
@@ -807,6 +809,12 @@ public:
     {
         properties.assign(parameter_properties.properties.begin(), parameter_properties.properties.end());
     }
+
+    ParameterPropertyList_t& operator =(
+            const ParameterPropertyList_t& pl) = default;
+
+    ParameterPropertyList_t& operator =(
+            ParameterPropertyList_t&& pl) = default;
 
     /**
      * Add the parameter to a CDRMessage_t message.

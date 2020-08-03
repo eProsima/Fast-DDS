@@ -190,7 +190,7 @@ void EDPSimple::processPersistentData(
     auto param_process = [&si, &kind](const Parameter_t* param)
             {
                 // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
-                if (param->Pid == PID_PARTICIPANT_GUID )
+                if (param->Pid == PID_PARTICIPANT_GUID)
                 {
                     kind = ALIVE;
                     return true;
@@ -253,7 +253,7 @@ void EDPSimple::processPersistentData(
                 }
 
                 // mark for removal endpoints from unknown participants
-                if ( known_participants.find(handle) == known_participants.end() )
+                if (known_participants.find(handle) == known_participants.end())
                 {
                     demises.insert(change->instanceHandle);
                     return;

@@ -107,7 +107,7 @@ public:
             RTPSWriter* W) override;
 
     /**
-     * Some History data is flagged for deferred removal till every client
+     * Some History data is flagged for deferred removal until every client
      * acknowledges reception
      * @return True if trimming must be done
      */
@@ -128,7 +128,6 @@ public:
 
     /**
      * Trigger the participant CacheChange_t removal system
-     * @return True if successfully modified WriterHistory
      */
     void removePublisherFromHistory(
             const InstanceHandle_t&);

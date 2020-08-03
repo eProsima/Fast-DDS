@@ -119,18 +119,18 @@ public:
 	 */
 	bool processLocalWriterProxyData(RTPSWriter* writer, WriterProxyData* wdata) override;
 
-	/**
-	 * New Remote Writer has been found and this method process it and calls the pairing methods.
-	 * @param participant_guid  GUID of the participant.
+    /**
+     * New Remote Writer has been found and this method process it and calls the pairing methods.
+     * @param participant_guid  GUID of the participant.
      * @param participant_name  Name of the participant.
-	 * @param user_id           User Id.
-	 * @param ent_id            Entity Id.
-	 * @return True if correct.
-	 */
-	bool newRemoteWriter(
-            const GUID_t& participant_guid, 
+     * @param user_id           User Id.
+     * @param ent_id            Entity Id.
+     * @return True if correct.
+     */
+    bool newRemoteWriter(
+            const GUID_t& participant_guid,
             const string_255& participant_name,
-            uint16_t user_id, 
+            uint16_t user_id,
             EntityId_t ent_id = c_EntityId_Unknown);
 	/**
 	 * New Remote Reader has been found and this method process it and calls the pairing methods.

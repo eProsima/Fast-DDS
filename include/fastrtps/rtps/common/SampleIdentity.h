@@ -45,43 +45,25 @@ public:
      * @brief Copy constructor.
      */
     SampleIdentity(
-            const SampleIdentity& sample_id)
-        : writer_guid_(sample_id.writer_guid_)
-        , sequence_number_(sample_id.sequence_number_)
-    {
-    }
+            const SampleIdentity& sample_id) = default;
 
     /*!
      * @brief Move constructor.
      */
     SampleIdentity(
-            SampleIdentity&& sample_id)
-        : writer_guid_(std::move(sample_id.writer_guid_))
-        , sequence_number_(std::move(sample_id.sequence_number_))
-    {
-    }
+            SampleIdentity&& sample_id) = default;
 
     /*!
      * @brief Assignment operator.
      */
     SampleIdentity& operator =(
-            const SampleIdentity& sample_id)
-    {
-        writer_guid_ = sample_id.writer_guid_;
-        sequence_number_ = sample_id.sequence_number_;
-        return *this;
-    }
+            const SampleIdentity& sample_id) = default;
 
     /*!
      * @brief Move constructor.
      */
     SampleIdentity& operator =(
-            SampleIdentity&& sample_id)
-    {
-        writer_guid_ = std::move(sample_id.writer_guid_);
-        sequence_number_ = std::move(sample_id.sequence_number_);
-        return *this;
-    }
+            SampleIdentity&& sample_id) = default;
 
     /*!
      * @brief

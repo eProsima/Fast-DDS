@@ -27,9 +27,9 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSWriter;
 
@@ -50,7 +50,6 @@ public:
     /*!
      * @brief Unregister a writer if it is waiting to be processed.
      * @param writer Asynchronous writer to be removed.
-     * @return Result of the operation.
      * @note Always call this function from writer's destructor.
      */
     void unregister_writer(
@@ -75,8 +74,10 @@ public:
 
 private:
 
-    AsyncWriterThread(const AsyncWriterThread&) = delete;
-    const AsyncWriterThread& operator=(const AsyncWriterThread&) = delete;
+    AsyncWriterThread(
+            const AsyncWriterThread&) = delete;
+    const AsyncWriterThread& operator =(
+            const AsyncWriterThread&) = delete;
 
     //! @brief runs main method
     void run();

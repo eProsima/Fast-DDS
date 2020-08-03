@@ -61,7 +61,7 @@ struct RTPS_DllAPI SequenceNumber_t
     }
 
     /*!
-     * @param 64long
+     * @param u
      */
     explicit
     SequenceNumber_t(
