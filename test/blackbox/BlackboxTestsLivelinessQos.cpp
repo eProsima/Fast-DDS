@@ -1610,7 +1610,7 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
 }
 
-INSTANTIATE_TEST_SUITE_P(LivelinessQos,
+INSTANTIATE_TEST_CASE_P(LivelinessQos,
         LivelinessQos,
         testing::Values(false, true),
         [](const testing::TestParamInfo<LivelinessQos::ParamType>& info) {

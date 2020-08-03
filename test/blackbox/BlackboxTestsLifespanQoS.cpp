@@ -153,7 +153,7 @@ TEST_P(LifespanQos, ShortLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
 }
 
-INSTANTIATE_TEST_SUITE_P(LifespanQos,
+INSTANTIATE_TEST_CASE_P(LifespanQos,
         LifespanQos,
         testing::Values(false, true),
         [](const testing::TestParamInfo<LifespanQos::ParamType>& info) {

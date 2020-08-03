@@ -231,7 +231,7 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
 }
 
-INSTANTIATE_TEST_SUITE_P(DeadlineQos,
+INSTANTIATE_TEST_CASE_P(DeadlineQos,
         DeadlineQos,
         testing::Values(false, true),
         [](const testing::TestParamInfo<DeadlineQos::ParamType>& info) {

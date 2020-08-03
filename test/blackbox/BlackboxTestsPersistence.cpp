@@ -291,7 +291,7 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-INSTANTIATE_TEST_SUITE_P(Persistence,
+INSTANTIATE_TEST_CASE_P(Persistence,
         Persistence,
         testing::Values(false, true),
         [](const testing::TestParamInfo<Persistence::ParamType>& info) {

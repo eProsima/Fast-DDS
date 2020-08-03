@@ -572,7 +572,7 @@ TEST_P(RealtimeAllocations, AsyncPubSubBestEffortWithLimitedPublishers)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(RealtimeAllocations,
+INSTANTIATE_TEST_CASE_P(RealtimeAllocations,
         RealtimeAllocations,
         testing::Values(false, true),
         [](const testing::TestParamInfo<RealtimeAllocations::ParamType>& info) {

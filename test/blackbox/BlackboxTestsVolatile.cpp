@@ -311,7 +311,7 @@ TEST_P(Volatile, AsyncVolatileSubBetweenPubs)
 	reader.block_for_all();
 }
 
-INSTANTIATE_TEST_SUITE_P(Volatile,
+INSTANTIATE_TEST_CASE_P(Volatile,
         Volatile,
         testing::Values(false, true),
         [](const testing::TestParamInfo<Volatile::ParamType>& info) {
