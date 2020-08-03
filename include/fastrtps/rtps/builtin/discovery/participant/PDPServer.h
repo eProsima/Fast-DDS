@@ -141,7 +141,6 @@ public:
     /**
      * Trigger the participant CacheChange_t removal system
      * @param h instanceHandle associated with participants CacheChange_ts
-     * @return True if successfully modified WriterHistory
      */
     void removeParticipantFromHistory(
             const InstanceHandle_t& h);

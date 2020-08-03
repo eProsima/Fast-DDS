@@ -17,17 +17,20 @@
 
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class TCPTransportInterface;
 /**
  * Transport configuration
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
-    virtual ~TCPv4TransportDescriptor(){}
+typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
+{
+    virtual ~TCPv4TransportDescriptor()
+    {
+    }
 
     TCPv4TransportDescriptor& operator =(
             const TCPv4TransportDescriptor& ) = default;
@@ -35,21 +38,30 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
     TCPv4TransportDescriptor& operator =(
             TCPv4TransportDescriptor&& ) = default;
 
-    virtual TransportInterface* create_transport() const override   {   return nullptr; }
+    virtual TransportInterface* create_transport() const override
+    {
+        return nullptr;
+    }
 
     octet wan_addr[4];
 
-    void set_WAN_address(octet o1,octet o2,octet o3,octet o4){
+    void set_WAN_address(
+            octet o1,
+            octet o2,
+            octet o3,
+            octet o4)
+    {
         wan_addr[0] = o1;
         wan_addr[1] = o2;
         wan_addr[2] = o3;
         wan_addr[3] = o4;
     }
 
-    void set_WAN_address(const std::string& in_address)
+    void set_WAN_address(
+            const std::string& in_address)
     {
         std::stringstream ss(in_address);
-        int a,b,c,d; //to store the 4 ints
+        int a, b, c, d; //to store the 4 ints
         char ch; //to temporarily store the '.'
         ss >> a >> ch >> b >> ch >> c >> ch >> d;
         wan_addr[0] = (octet)a;
@@ -63,7 +75,9 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
 
     }
 
-    RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& /*t*/) : TCPv4TransportDescriptor()
+    RTPS_DllAPI TCPv4TransportDescriptor(
+            const TCPv4TransportDescriptor& /*t*/)
+        : TCPv4TransportDescriptor()
     {
 
     }
@@ -74,4 +88,4 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef TCPV4_TRANSPORT_DESCRIPTOR
