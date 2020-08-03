@@ -158,7 +158,7 @@ def get_paths(install_path):
             print(f'setup_script NOT FOUND')
             sys.exit(1)
 
-    return setup_script_path, tool_install_path / 'fastdds'
+    return setup_script_path, tool_install_path
 
 
 if __name__ == '__main__':
@@ -176,15 +176,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     setup_script_path, tool_path = get_paths(Path(args.install_path))
+    
+    fastdds_tool_path = tool_path / 'fastdds'
+    ros_disc_tool_path = tool_path / 'ros-discovery'
 
     # Tests dictionary
     tests = {
-        'test_fastdds_installed': lambda: test_fastdds_installed(tool_path),
+        'test_fastdds_installed': lambda: test_fastdds_installed(fastdds_tool_path),
         'test_fastdds_discovery': lambda: test_fastdds_discovery(
-            tool_path, setup_script_path),
-        'test_ros_discovery': lambda: test_ros_discovery(tool_path,
+            fastdds_tool_path, setup_script_path),
+        'test_ros_discovery': lambda: test_ros_discovery(ros_disc_tool_path,
             setup_script_path),
-        'test_fastdds_shm': lambda: test_fastdds_shm(tool_path)
+        'test_fastdds_shm': lambda: test_fastdds_shm(fastdds_tool_path)
     }
 
     tests[args.test_name]()
