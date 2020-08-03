@@ -59,7 +59,7 @@ private:
 
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         ParticipantListener(
                 PubSubReader& reader)
@@ -111,17 +111,18 @@ public:
 
 #endif // if HAVE_SECURITY
 
-private:
+    private:
 
         ParticipantListener& operator =(
                 const ParticipantListener&) = delete;
         PubSubReader& reader_;
 
-    } participant_listener_;
+    }
+    participant_listener_;
 
     class Listener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         Listener(
                 PubSubReader& reader)
@@ -199,7 +200,7 @@ public:
             return times_deadline_missed_;
         }
 
-private:
+    private:
 
         Listener& operator =(
                 const Listener&) = delete;
@@ -209,7 +210,8 @@ private:
         //! Number of times deadline was missed
         unsigned int times_deadline_missed_;
 
-    } listener_;
+    }
+    listener_;
 
     friend class Listener;
 
