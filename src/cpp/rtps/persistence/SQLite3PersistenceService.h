@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
-* @file SQLite3PersistenceService.h
-*/
+ * @file SQLite3PersistenceService.h
+ */
 
 #ifndef SQLITE3PERSISTENCESERVICE_H_
 #define SQLITE3PERSISTENCESERVICE_H_
@@ -27,20 +27,24 @@ namespace fastrtps {
 namespace rtps {
 
 /**
-* Create a new SQLite3 implementation of persistence service
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
-IPersistenceService* create_SQLite3_persistence_service(const char* filename, bool update_schema);
+ * Create a new SQLite3 implementation of persistence service
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
+IPersistenceService* create_SQLite3_persistence_service(
+        const char* filename,
+        bool update_schema);
 
 
 /**
-* Persistence service implementation over SQLite3
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
+ * Persistence service implementation over SQLite3
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
 class SQLite3PersistenceService : public IPersistenceService
 {
 public:
-    SQLite3PersistenceService(sqlite3* db);
+
+    SQLite3PersistenceService(
+            sqlite3* db);
     virtual ~SQLite3PersistenceService() override;
 
     /**
@@ -96,6 +100,7 @@ public:
             const SequenceNumber_t& seq_number) final;
 
 private:
+
     sqlite3* db_;
 
     sqlite3_stmt* load_writer_stmt_;
