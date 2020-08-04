@@ -335,14 +335,14 @@ TEST(Discovery, ParticipantLivelinessAssertion)
     test_UDPv4Transport::always_drop_participant_builtin_topic_data = true;
 
     std::thread thread([&writer]()
-    {
-        HelloWorld msg;
-        for (int count = 0; count < 20; ++count)
-        {
-            writer.send_sample(msg);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    });
+            {
+                HelloWorld msg;
+                for (int count = 0; count < 20; ++count)
+                {
+                    writer.send_sample(msg);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+            });
 
     EXPECT_FALSE(reader.wait_participant_undiscovery(std::chrono::seconds(1)));
     EXPECT_FALSE(writer.wait_participant_undiscovery(std::chrono::seconds(1)));
@@ -503,24 +503,25 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     int count = 0;
-    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool {
-        if (info.info.m_guid == writer.participant_guid())
-        {
-            if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool
             {
-                std::cout << "Discovered participant " << info.info.m_guid << std::endl;
-                ++count;
-            }
-            else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-            info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
-            {
-                std::cout << "Removed participant " << info.info.m_guid << std::endl;
-                return ++count == 2;
-            }
-        }
+                if (info.info.m_guid == writer.participant_guid())
+                {
+                    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+                    {
+                        std::cout << "Discovered participant " << info.info.m_guid << std::endl;
+                        ++count;
+                    }
+                    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                    info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+                    {
+                        std::cout << "Removed participant " << info.info.m_guid << std::endl;
+                        return ++count == 2;
+                    }
+                }
 
-        return false;
-    });
+                return false;
+            });
 
     reader.history_depth(100).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -547,19 +548,20 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool {
-        if (info.info.m_guid == writer.participant_guid())
-        {
-            std::cout << "Received USER_DATA from the writer: ";
-            for (auto i: info.info.m_userData)
+    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool
             {
-                std::cout << i << ' ';
-            }
-            return info.info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
-        }
+                if (info.info.m_guid == writer.participant_guid())
+                {
+                    std::cout << "Received USER_DATA from the writer: ";
+                    for (auto i: info.info.m_userData)
+                    {
+                        std::cout << i << ' ';
+                    }
+                    return info.info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+                }
 
-        return false;
-    });
+                return false;
+            });
 
     reader.history_depth(100).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -728,18 +730,18 @@ TEST_P(Discovery, RepeatPubGuid)
     PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
 
     reader
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .participant_id(2)
-        .init();
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(10)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .participant_id(2)
+    .init();
 
     writer
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .participant_id(1)
-        .init();
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(10)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .participant_id(1)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -763,11 +765,11 @@ TEST_P(Discovery, RepeatPubGuid)
     reader.wait_participant_undiscovery();
 
     writer2
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .participant_id(1)
-        .init();
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(10)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .participant_id(1)
+    .init();
 
     ASSERT_TRUE(writer2.isInitialized());
 
@@ -797,13 +799,13 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
     participant_1.init();
 
     auto endpoint_creation_process = [&creation_sleep, &stop, &participant_1]()
-    {
-        while (!stop)
-        {
-            std::this_thread::sleep_for(creation_sleep);
-            EXPECT_NO_THROW(participant_1.create_additional_topics(1));
-        }
-    };
+            {
+                while (!stop)
+                {
+                    std::this_thread::sleep_for(creation_sleep);
+                    EXPECT_NO_THROW(participant_1.create_additional_topics(1));
+                }
+            };
 
     // Start thread creating endpoints every 250ms
     std::thread endpoint_thr(endpoint_creation_process);
@@ -812,20 +814,20 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
     // When this participant is removed, the first one should stop sending
     // intraprocess delivery messages to the builtin endpoints of the second one.
     auto second_participant_process = [&participant_1]()
-    {
-        {
-            PubSubWriterReader<HelloWorldType> participant_2(TEST_TOPIC_NAME);
-            participant_2.init();
+            {
+                {
+                    PubSubWriterReader<HelloWorldType> participant_2(TEST_TOPIC_NAME);
+                    participant_2.init();
 
-            // Ensure first participant has discovered the second one
-            participant_1.wait_discovery();
-        }
+                    // Ensure first participant has discovered the second one
+                    participant_1.wait_discovery();
+                }
 
-        // Additional endpoints created just after the second participant.
-        // This gives the first participant very few time to receive the undiscovery,
-        // and makes the intraprocess delivery on a deleted builtin reader.
-        participant_1.create_additional_topics(1);
-    };
+                // Additional endpoints created just after the second participant.
+                // This gives the first participant very few time to receive the undiscovery,
+                // and makes the intraprocess delivery on a deleted builtin reader.
+                participant_1.create_additional_topics(1);
+            };
     EXPECT_NO_THROW(second_participant_process());
 
     // Stop endpoint creation thread
@@ -836,7 +838,8 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
 INSTANTIATE_TEST_CASE_P(Discovery,
         Discovery,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<Discovery::ParamType>& info) {
+        [](const testing::TestParamInfo<Discovery::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";
