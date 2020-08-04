@@ -58,3 +58,10 @@ endif()
 if(PERFORMANCE_TESTS)
     add_subdirectory(performance)
 endif()
+
+###############################################################################
+# System tests
+###############################################################################
+if(PERFORMANCE_TESTS)
+    add_subdirectory(system/tools/fastdds)
+endif()
