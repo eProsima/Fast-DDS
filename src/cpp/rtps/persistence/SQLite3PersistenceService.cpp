@@ -29,18 +29,61 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-static int database_version(
+static const char* create_statement =
+        R"(
+PRAGMA user_version = 2;
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS writers_states(
+    guid TEXT PRIMARY KEY, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
+    last_seq_num INTEGER CHECK(last_seq_num > 0)
+) WITHOUT ROWID;
+
+CREATE TABLE IF NOT EXISTS writers_histories(
+    guid TEXT, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
+    seq_num INTEGER CHECK(seq_num > 0),
+    instance BLOB CHECK(length(instance)=16),
+    payload BLOB,
+    PRIMARY KEY(guid, seq_num DESC), 
+    FOREIGN KEY (guid)
+        REFERENCES writers_states(guid)
+) WITHOUT ROWID;
+
+CREATE TABLE IF NOT EXISTS readers(
+    guid text,
+    writer_guid_prefix binary(12),
+    writer_guid_entity binary(4),
+    seq_num integer,
+    PRIMARY KEY(guid, writer_guid_prefix, writer_guid_entity)
+) WITHOUT ROWID;
+
+)";
+
+/**
+ * @brief Retrieve the schema version of the database
+ * @param db [IN] Database of which we want to get the schema version
+ * @return Integer representing the schema version. Zero if an error occurs during the processing.
+ */
+static unsigned int database_version(
         sqlite3* db)
 {
     sqlite3_stmt* version_stmt;
-    int version = 0;
-    sqlite3_prepare_v2(db, "PRAGMA user_version;", -1, &version_stmt, NULL);
-    while (SQLITE_ROW == sqlite3_step(version_stmt))
+    unsigned int version = 1;
+    if (sqlite3_prepare_v2(db, "PRAGMA user_version;", -1, &version_stmt, NULL) != SQLITE_OK)
+    {
+        return 0;
+    }
+
+    if (SQLITE_ROW == sqlite3_step(version_stmt))
     {
         version = sqlite3_column_int(version_stmt, 0);
+        if (version == 0)
+        {
+            //No version information. It really means version 1
+            version = 1;
+        }
     }
     sqlite3_finalize(version_stmt);
-    version_stmt = nullptr;
     return version;
 }
 
@@ -91,7 +134,7 @@ static int upgrade(
         return SQLITE_OK;
     }
 
-    if ((from == 0 || from == 1) && to == 2)
+    if (from == 1 && to == 2)
     {
         return upgrade_version_1_to_version_2(db);
     }
@@ -130,6 +173,12 @@ static sqlite3* open_or_create_database(
     {
         // Find the database version and handle upgrades
         int db_version = database_version(db);
+        if (db_version == 0)
+        {
+            logError(RTPS_PERSISTENCE, "Error retrieving version on database " << filename);
+            sqlite3_close(db);
+            return NULL;
+        }
         if (db_version != version)
         {
             if (update_schema)
@@ -152,35 +201,6 @@ static sqlite3* open_or_create_database(
     }
 
     // Create tables if they don't exist
-    const char* create_statement =
-            R"(
-PRAGMA user_version = 2;
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE IF NOT EXISTS writers_states(
-    guid TEXT PRIMARY KEY, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    last_seq_num INTEGER CHECK(last_seq_num > 0)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS writers_histories(
-    guid TEXT, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    seq_num INTEGER CHECK(seq_num > 0),
-    instance BLOB CHECK(length(instance)=16),
-    payload BLOB,
-    PRIMARY KEY(guid, seq_num DESC), 
-    FOREIGN KEY (guid)
-        REFERENCES writers_states(guid)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS readers(
-    guid text,
-    writer_guid_prefix binary(12),
-    writer_guid_entity binary(4),
-    seq_num integer,
-    PRIMARY KEY(guid, writer_guid_prefix, writer_guid_entity)
-) WITHOUT ROWID;
-
-)";
     rc = sqlite3_exec(db, create_statement, 0, 0, 0);
     if (rc != SQLITE_OK)
     {
@@ -327,7 +347,7 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
 
     if (add_writer_change_stmt_ != NULL)
     {
-        //First add the last seq number, it is needed for the foreign kew on writers_histories
+        //First add the last seq number, it is needed for the foreign key on writers_histories
         sqlite3_reset(update_writer_last_seq_num_stmt_);
         sqlite3_bind_text(update_writer_last_seq_num_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_int64(update_writer_last_seq_num_stmt_, 2, change.sequenceNumber.to64long());
