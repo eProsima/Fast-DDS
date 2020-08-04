@@ -17,3 +17,5 @@ set(fastrtps_FOUND TRUE)
 cmake_policy(PUSH)
 add_subdirectory(fds)
 cmake_policy(POP)
+
+add_subdirectory(fastdds)
