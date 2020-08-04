@@ -33,23 +33,37 @@ namespace fastrtps {
 
 using namespace rtps;
 
+static HistoryAttributes to_history_attributes(
+        const HistoryQosPolicy& history,
+        const ResourceLimitsQosPolicy& resource,
+        SubscriberImpl* simpl,
+        uint32_t payloadMaxSize,
+        MemoryManagementPolicy_t mempolicy)
+{
+    auto initial_samples = resource.allocated_samples;
+    auto max_samples = resource.max_samples;
+
+    if (history.kind != KEEP_ALL_HISTORY_QOS)
+    {
+        max_samples = history.depth;
+        if (simpl->getAttributes().topic.getTopicKind() != NO_KEY)
+        {
+            max_samples *= resource.max_instances;
+        }
+
+        initial_samples = std::min(initial_samples, max_samples);
+    }
+
+    return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples);
+}
+
 SubscriberHistory::SubscriberHistory(
         SubscriberImpl* simpl,
         uint32_t payloadMaxSize,
         const HistoryQosPolicy& history,
         const ResourceLimitsQosPolicy& resource,
         MemoryManagementPolicy_t mempolicy)
-    : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-                history.kind == KEEP_ALL_HISTORY_QOS ?
-                        resource.allocated_samples :
-                        simpl->getAttributes().topic.getTopicKind() == NO_KEY ?
-                            std::min(resource.allocated_samples, history.depth) :
-                            std::min(resource.allocated_samples, history.depth * resource.max_instances),
-                history.kind == KEEP_ALL_HISTORY_QOS ?
-                        resource.max_samples :
-                        simpl->getAttributes().topic.getTopicKind() == NO_KEY ?
-                            history.depth :
-                            history.depth * resource.max_instances))
+    : ReaderHistory(to_history_attributes(history, resource, simpl, payloadMaxSize, mempolicy))
     , m_unreadCacheCount(0)
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
@@ -67,14 +81,14 @@ SubscriberHistory::SubscriberHistory(
     if (simpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
         receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ?
-            std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
-            std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
+                std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
+                std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
     }
 }
 
@@ -153,7 +167,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
 
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance";);
+        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance"; );
     }
 
     return false;
@@ -202,14 +216,14 @@ bool SubscriberHistory::add_received_change(
     if (add_change(a_change))
     {
         increaseUnreadCount();
-        if (m_changes.size() == static_cast<size_t>(m_resourceLimitsQos.max_samples) )
+        if (m_changes.size() == static_cast<size_t>(m_att.maximumReservedCaches))
         {
             m_isHistoryFull = true;
         }
 
         logInfo(SUBSCRIBER, mp_subImpl->getGuid().entityId
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID; );
 
         return true;
     }
@@ -231,7 +245,7 @@ bool SubscriberHistory::add_received_change_with_key(
     if (add_change(a_change))
     {
         increaseUnreadCount();
-        if (m_changes.size() == static_cast<size_t>(m_resourceLimitsQos.max_samples))
+        if (m_changes.size() == static_cast<size_t>(m_att.maximumReservedCaches))
         {
             m_isHistoryFull = true;
         }
@@ -243,8 +257,8 @@ bool SubscriberHistory::add_received_change_with_key(
         instance_changes.push_back(a_change);
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
-            << ": Change " << a_change->sequenceNumber << " added from: "
-            << a_change->writerGUID << " with KEY: " << a_change->instanceHandle;);
+                << ": Change " << a_change->sequenceNumber << " added from: "
+                << a_change->writerGUID << " with KEY: " << a_change->instanceHandle; );
 
         return true;
     }
@@ -263,7 +277,7 @@ bool SubscriberHistory::find_key_for_change(
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
-#endif
+#endif // if HAVE_SECURITY
         if (!mp_subImpl->getType()->getKey(mp_getKeyObject, &a_change->instanceHandle, is_key_protected))
         {
             return false;
@@ -272,7 +286,7 @@ bool SubscriberHistory::find_key_for_change(
     else if (!a_change->instanceHandle.isDefined())
     {
         logWarning(RTPS_HISTORY, "NO KEY in topic: " << mp_subImpl->getAttributes().topic.topicName
-            << " and no method to obtain it";);
+                                                     << " and no method to obtain it"; );
         return false;
     }
 
@@ -298,13 +312,13 @@ void SubscriberHistory::deserialize_change(
         info->sourceTimestamp = change->sourceTimestamp;
         info->ownershipStrength = ownership_strength;
         if (mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
-            change->instanceHandle == c_InstanceHandle_Unknown &&
-            change->kind == ALIVE)
+                change->instanceHandle == c_InstanceHandle_Unknown &&
+                change->kind == ALIVE)
         {
             bool is_key_protected = false;
 #if HAVE_SECURITY
             is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
-#endif
+#endif // if HAVE_SECURITY
             mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
         }
         info->iHandle = change->instanceHandle;
@@ -312,7 +326,9 @@ void SubscriberHistory::deserialize_change(
     }
 }
 
-bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
+bool SubscriberHistory::readNextData(
+        void* data,
+        SampleInfo_t* info)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -330,15 +346,16 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
         uint16_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
-            wp->m_att.ownershipStrength : 0;
+                wp->m_att.ownershipStrength : 0;
         deserialize_change(change, ownership, data, info);
         return true;
     }
     return false;
 }
 
-
-bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
+bool SubscriberHistory::takeNextData(
+        void* data,
+        SampleInfo_t* info)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -359,7 +376,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                 " from writer: " << change->writerGUID);
         uint16_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
-            wp->m_att.ownershipStrength : 0;
+                wp->m_att.ownershipStrength : 0;
         deserialize_change(change, ownership, data, info);
         remove_change_sub(change);
         return true;
@@ -387,7 +404,7 @@ bool SubscriberHistory::find_key(
     }
     else
     {
-        for (vit = keyed_changes_.begin(); vit!= keyed_changes_.end(); ++vit)
+        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
         {
             if (vit->second.cache_changes.size() == 0)
             {
@@ -400,7 +417,6 @@ bool SubscriberHistory::find_key(
     }
     return false;
 }
-
 
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change)
@@ -486,8 +502,8 @@ bool SubscriberHistory::set_next_deadline(
 }
 
 bool SubscriberHistory::get_next_deadline(
-        InstanceHandle_t &handle,
-        std::chrono::steady_clock::time_point &next_deadline_us)
+        InstanceHandle_t& handle,
+        std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -504,11 +520,13 @@ bool SubscriberHistory::get_next_deadline(
     else if (mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
         auto min = std::min_element(keyed_changes_.begin(),
-                                    keyed_changes_.end(),
-                                    [](
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
-        { return lhs.second.next_deadline_us < rhs.second.next_deadline_us; });
+                        keyed_changes_.end(),
+                        [](
+                            const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                            const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+                        {
+                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                        });
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
         return true;

@@ -27,9 +27,9 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-        history_depth(2).
-        resource_limits_allocated_samples(2).
-        resource_limits_max_samples(2).init();
+    history_depth(2).
+    resource_limits_allocated_samples(2).
+    resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -44,7 +44,7 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 
     auto data = default_helloworld_data_generator();
 
-    while(data.size() > 1)
+    while (data.size() > 1)
     {
         auto expected_data(data);
 
@@ -110,10 +110,10 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-        history_depth(2).
-        resource_limits_allocated_samples(2).
-        resource_limits_max_samples(2).init();
+    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+    history_depth(2).
+    resource_limits_allocated_samples(2).
+    resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -128,7 +128,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 
     auto data = default_helloworld_data_generator();
 
-    while(data.size() > 1)
+    while (data.size() > 1)
     {
         auto data_backup(data);
         decltype(data) expected_data;
@@ -160,8 +160,8 @@ TEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.
-        history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-        history_depth(2).init();
+    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+    history_depth(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -189,16 +189,16 @@ TEST(BlackBox, PubSubKeepAll)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        resource_limits_allocated_samples(2).
-        resource_limits_max_samples(2).init();
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    resource_limits_allocated_samples(2).
+    resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        max_blocking_time({0, 0}).
-        resource_limits_allocated_samples(2).
-        resource_limits_max_samples(2).init();
+    max_blocking_time({0, 0}).
+    resource_limits_allocated_samples(2).
+    resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -209,15 +209,17 @@ TEST(BlackBox, PubSubKeepAll)
 
     auto data = default_helloworld_data_generator();
 
-    while(!data.empty())
+    while (!data.empty())
     {
         auto expected_data(data);
 
         // Send data
         writer.send(data);
 
-        for(auto& value : data)
+        for (auto& value : data)
+        {
             expected_data.remove(value);
+        }
 
         // In this test the history has 20 max_samples.
         ASSERT_LE(expected_data.size(), 2u);
@@ -236,17 +238,17 @@ TEST(BlackBox, PubSubKeepAllTransient)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        resource_limits_allocated_samples(2).
-        resource_limits_max_samples(2).init();
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    resource_limits_allocated_samples(2).
+    resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-        max_blocking_time({0, 0}).
-        resource_limits_allocated_samples(2).
-        resource_limits_max_samples(2).init();
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+    max_blocking_time({0, 0}).
+    resource_limits_allocated_samples(2).
+    resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -257,15 +259,17 @@ TEST(BlackBox, PubSubKeepAllTransient)
 
     auto data = default_helloworld_data_generator();
 
-    while(!data.empty())
+    while (!data.empty())
     {
         auto expected_data(data);
 
         // Send data
         writer.send(data);
 
-        for(auto& value : data)
+        for (auto& value : data)
+        {
             expected_data.remove(value);
+        }
 
         // In this test the history has 20 max_samples.
         ASSERT_LE(expected_data.size(), 2u);
@@ -287,9 +291,9 @@ TEST(BlackBox, PubReliableKeepAllSubNonReliable)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        resource_limits_allocated_samples(1).
-        resource_limits_max_samples(1).init();
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    resource_limits_allocated_samples(1).
+    resource_limits_max_samples(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -314,10 +318,10 @@ TEST(BlackBox, StatefulReaderCacheChangeRelease){
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(2).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
     writer.history_depth(2).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(writer.isInitialized());
 
     writer.wait_discovery();
@@ -337,7 +341,9 @@ TEST(BlackBox, StatefulReaderCacheChangeRelease){
 }
 
 template<typename T>
-void send_async_data(PubSubWriter<T>& writer, std::list<typename T::type> data_to_send)
+void send_async_data(
+        PubSubWriter<T>& writer,
+        std::list<typename T::type> data_to_send)
 {
     // Send data
     writer.send(data_to_send);
@@ -351,7 +357,7 @@ TEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(1).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -391,11 +397,11 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
 
     reader
-        .reliability(RELIABLE_RELIABILITY_QOS)
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(1)
-        .resource_limits_allocated_samples(1)
-        .resource_limits_max_samples(1);
+    .reliability(RELIABLE_RELIABILITY_QOS)
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(1)
+    .resource_limits_allocated_samples(1)
+    .resource_limits_max_samples(1);
 
     writer.max_blocking_time({ 120, 0 });
     writer2.max_blocking_time({ 120, 0 });
@@ -442,4 +448,109 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     ASSERT_TRUE(reader.takeNextData(&received, nullptr));
     ASSERT_EQ(received.index(), 3u);
 }
+
+bool comparator(
+        HelloWorld first,
+        HelloWorld second)
+{
+    return first.index() < second.index();
+}
+
+/*!
+ * @fn TEST(PubSubHistory, ReliableTransientLocalKeepLast1)
+ * @brief This test checks the correct functionality of transient local, keep last 1 late-joiners.
+ *
+ * The test creates a Reliable, Transient Local Writer with a Keep Last 10 history, and send ten samples throughout the
+ * network.
+ * Then it creates a Reliable, Transient Local Reader with a Keep Last 1 history and waits until both of them discover
+ * each other.
+ * When the Writer discovers the late-joiner, resends the samples it has on the history (in this case all). And the
+ * reader upon receiving them, as it is Keep Last 1, discards all the samples except the last one.
+ * Finally, the test checks that the last sequence number received is the one corresponding to the tenth sample.
+ */
+TEST(PubSubHistory, ReliableTransientLocalKeepLast1)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+    .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(10)
+    .resource_limits_allocated_samples(10)
+    .resource_limits_max_samples(10).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_helloworld_data_generator();
+    auto expected_data = data;
+    writer.send(data);
+
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(1).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_FALSE(expected_data.empty());
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    reader.startReception(expected_data);
+    eprosima::fastrtps::rtps::SequenceNumber_t seq;
+    seq.low = 10;
+    reader.block_for_seq(seq);
+
+    ASSERT_EQ(reader.get_last_sequence_received().low, 10u);
+}
+
+TEST(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    auto data = default_data300kb_data_generator();
+    auto reader_data = data;
+
+    writer
+    .history_depth(static_cast<int32_t>(data.size()))
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+    .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+    .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Send data
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    ASSERT_FALSE(reader_data.empty());
+
+    reader
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(1)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+    .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(reader_data);
+    eprosima::fastrtps::rtps::SequenceNumber_t seq;
+    seq.low = 10;
+    reader.block_for_seq(seq);
+
+    ASSERT_EQ(reader.get_last_sequence_received().low, 10u);
+}
+
+
 
