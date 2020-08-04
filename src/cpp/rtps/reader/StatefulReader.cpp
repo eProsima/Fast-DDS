@@ -334,21 +334,6 @@ bool StatefulReader::processDataMsg(
 
             if (reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
             {
-#if HAVE_SECURITY
-                if (getAttributes().security_attributes().is_payload_protected)
-                {
-                    change_to_add->copy_not_memcpy(change);
-                    if (!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
-                            change_to_add->serializedPayload, m_guid, change->writerGUID))
-                    {
-                        releaseCache(change_to_add);
-                        logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                        return false;
-                    }
-                }
-                else
-                {
-#endif // if HAVE_SECURITY
                 if (!change_to_add->copy(change))
                 {
                     logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: " << change->serializedPayload.length
@@ -357,9 +342,6 @@ bool StatefulReader::processDataMsg(
                     releaseCache(change_to_add);
                     return false;
                 }
-#if HAVE_SECURITY
-            }
-#endif // if HAVE_SECURITY
             }
             else
             {
@@ -423,24 +405,6 @@ bool StatefulReader::processDataFragMsg(
 
             CacheChange_t* change_to_add = incomingChange;
 
-#if HAVE_SECURITY
-            if (getAttributes().security_attributes().is_payload_protected)
-            {
-                if (reserveCache(&change_to_add, incomingChange->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
-                {
-                    change_to_add->copy_not_memcpy(incomingChange);
-                    if (!getRTPSParticipant()->security_manager().decode_serialized_payload(incomingChange->
-                            serializedPayload,
-                            change_to_add->serializedPayload, m_guid, incomingChange->writerGUID))
-                    {
-                        releaseCache(change_to_add);
-                        logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                        return false;
-                    }
-                }
-            }
-#endif // if HAVE_SECURITY
-
             CacheChange_t* change_created = nullptr;
             CacheChange_t* work_change = nullptr;
             if (!mp_history->get_change(change_to_add->sequenceNumber, change_to_add->writerGUID, &work_change))
@@ -468,13 +432,6 @@ bool StatefulReader::processDataFragMsg(
                 work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
                         fragmentsInSubmessage);
             }
-
-#if HAVE_SECURITY
-            if (getAttributes().security_attributes().is_payload_protected)
-            {
-                releaseCache(change_to_add);
-            }
-#endif // if HAVE_SECURITY
 
             // If this is the first time we have received fragments for this change, add it to history
             if (change_created != nullptr)

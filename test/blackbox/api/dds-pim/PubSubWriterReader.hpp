@@ -626,6 +626,62 @@ public:
 
 #endif // if HAVE_SECURITY
 
+    PubSubWriterReader& pub_durability_kind(
+            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+    {
+        datawriter_qos_.durability().kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_durability_kind(
+            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+    {
+        datareader_qos_.durability().kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& pub_reliability(
+            const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+    {
+        datawriter_qos_.reliability().kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_reliability(
+            const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+    {
+        datareader_qos_.reliability().kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& pub_history_kind(
+            const eprosima::fastrtps::HistoryQosPolicyKind kind)
+    {
+        datawriter_qos_.history().kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_history_kind(
+            const eprosima::fastrtps::HistoryQosPolicyKind kind)
+    {
+        datareader_qos_.history().kind = kind;
+        return *this;
+    }
+
+    PubSubWriterReader& pub_history_depth(
+            const int32_t depth)
+    {
+        datawriter_qos_.history().depth = depth;
+        return *this;
+    }
+
+    PubSubWriterReader& sub_history_depth(
+            const int32_t depth)
+    {
+        datareader_qos_.history().depth = depth;
+        return *this;
+    }
+
     PubSubWriterReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {

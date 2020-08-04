@@ -133,7 +133,7 @@ void StatelessWriter::get_builtin_guid()
     {
         add_guid(GUID_t { GuidPrefix_t(), participant_stateless_message_reader_entity_id });
     }
-#endif
+#endif // if HAVE_SECURITY
 }
 
 bool StatelessWriter::has_builtin_guid()
@@ -147,7 +147,7 @@ bool StatelessWriter::has_builtin_guid()
     {
         return true;
     }
-#endif
+#endif // if HAVE_SECURITY
     return false;
 }
 
@@ -174,9 +174,9 @@ void StatelessWriter::update_reader_info(
     {
         RTPSParticipantImpl* part = mp_RTPSParticipant;
         locator_selector_.for_each([part](const Locator_t& loc)
-                    {
-                        part->createSenderResources(loc);
-                    });
+                {
+                    part->createSenderResources(loc);
+                });
     }
 }
 
@@ -199,10 +199,6 @@ void StatelessWriter::unsent_change_added_to_history(
             liveliness_kind_,
             liveliness_lease_duration_);
     }
-
-#if HAVE_SECURITY
-    encrypt_cachechange(change);
-#endif
 
     if (!fixed_locators_.empty() || matched_readers_.size() > 0)
     {
@@ -332,10 +328,10 @@ bool StatelessWriter::change_removed_by_history(
 
     unsent_changes_.remove_if(
         [change](ChangeForReader_t& cptr)
-                {
-                    return cptr.getChange() == change ||
-                    cptr.getChange()->sequenceNumber == change->sequenceNumber;
-                });
+        {
+            return cptr.getChange() == change ||
+            cptr.getChange()->sequenceNumber == change->sequenceNumber;
+        });
 
     return true;
 }
@@ -352,9 +348,9 @@ bool StatelessWriter::is_acked_by_all(
         auto it = std::find_if(unsent_changes_.begin(),
                         unsent_changes_.end(),
                         [change](const ChangeForReader_t& unsent_change)
-                    {
-                        return change == unsent_change.getChange();
-                    });
+                        {
+                            return change == unsent_change.getChange();
+                        });
 
         return it == unsent_changes_.end();
     }
@@ -740,7 +736,7 @@ bool StatelessWriter::set_fixed_locators(
         logError(RTPS_WRITER, "A secure besteffort writer cannot add a lonely locator");
         return false;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
@@ -783,9 +779,9 @@ bool StatelessWriter::matched_reader_is_matched(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     return std::any_of(matched_readers_.begin(), matched_readers_.end(),
                    [reader_guid](const ReaderLocator& item)
-                {
-                    return item.remote_guid() == reader_guid;
-                });
+                   {
+                       return item.remote_guid() == reader_guid;
+                   });
 }
 
 void StatelessWriter::unsent_changes_reset()

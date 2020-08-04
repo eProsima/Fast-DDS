@@ -78,9 +78,10 @@ public:
             ChangeKind_t changeKind,
             InstanceHandle_t handle = c_InstanceHandle_Unknown)
     {
-        return new_change([data]() -> uint32_t {
-                        return (uint32_t)T::getCdrSerializedSize(data);
-                    }, changeKind, handle);
+        return new_change([data]() -> uint32_t
+                       {
+                           return (uint32_t)T::getCdrSerializedSize(data);
+                       }, changeKind, handle);
     }
 
     RTPS_DllAPI CacheChange_t* new_change(
@@ -408,13 +409,6 @@ protected:
     virtual bool change_removed_by_history(
             CacheChange_t* a_change) = 0;
 
-#if HAVE_SECURITY
-    SerializedPayload_t encrypt_payload_;
-
-    bool encrypt_cachechange(
-            CacheChange_t* change);
-#endif
-
     //! The liveliness kind of this writer
     LivelinessQosPolicyKind liveliness_kind_;
     //! The liveliness lease duration of this writer
@@ -430,8 +424,8 @@ private:
     RTPSWriter* next_[2];
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_RTPSWRITER_H_ */

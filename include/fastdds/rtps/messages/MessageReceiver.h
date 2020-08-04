@@ -90,7 +90,8 @@ private:
 
 #if HAVE_SECURITY
     CDRMessage_t crypto_msg_;
-#endif
+    SerializedPayload_t crypto_payload_;
+#endif // if HAVE_SECURITY
 
     //!Reset the MessageReceiver to process a new message.
     void reset();
@@ -117,7 +118,8 @@ private:
      * to the given entity ID.
      */
     bool willAReaderAcceptMsgDirectedTo(
-            const EntityId_t& readerID);
+            const EntityId_t& readerID,
+            RTPSReader*& first_reader);
 
     /**
      * Find all readers (in associated_readers_), with the given entity ID, and call the
@@ -183,5 +185,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_ */
