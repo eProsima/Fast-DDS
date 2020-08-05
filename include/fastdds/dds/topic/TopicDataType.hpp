@@ -264,6 +264,22 @@ public:
         type_information_ = std::move(info);
     }
 
+    /**
+     * Checks if the type is bounded.
+     */
+    RTPS_DllAPI virtual inline bool is_bounded() const
+    {
+        return false;
+    }
+
+    /**
+     * Checks if the type is plain.
+     */
+    RTPS_DllAPI virtual inline bool is_plain() const
+    {
+        return false;
+    }
+
     //! Maximum serialized size of the type in bytes.
     //! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
     uint32_t m_typeSize;
