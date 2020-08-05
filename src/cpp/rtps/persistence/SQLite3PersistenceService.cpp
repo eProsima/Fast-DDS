@@ -18,6 +18,7 @@
  */
 
 #include <rtps/persistence/SQLite3PersistenceService.h>
+#include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 
@@ -29,39 +30,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-<<<<<<< HEAD
-static int database_version(sqlite3* db)
-=======
-static const char* create_statement =
-        R"(
-PRAGMA user_version = 2;
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE IF NOT EXISTS writers_states(
-    guid TEXT PRIMARY KEY, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    last_seq_num INTEGER CHECK(last_seq_num > 0)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS writers_histories(
-    guid TEXT, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    seq_num INTEGER CHECK(seq_num > 0),
-    instance BLOB CHECK(length(instance)=16),
-    payload BLOB,
-    PRIMARY KEY(guid, seq_num DESC), 
-    FOREIGN KEY (guid)
-        REFERENCES writers_states(guid)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS readers(
-    guid text,
-    writer_guid_prefix binary(12),
-    writer_guid_entity binary(4),
-    seq_num integer,
-    PRIMARY KEY(guid, writer_guid_prefix, writer_guid_entity)
-) WITHOUT ROWID;
-
-)";
-
 /**
  * @brief Retrieve the schema version of the database
  * @param db [IN] Database of which we want to get the schema version
@@ -69,7 +37,6 @@ CREATE TABLE IF NOT EXISTS readers(
  */
 static unsigned int database_version(
         sqlite3* db)
->>>>>>> refs 8878. Apply review suggestions
 {
     sqlite3_stmt* version_stmt;
     unsigned int version = 1;
@@ -91,41 +58,6 @@ static unsigned int database_version(
     return version;
 }
 
-static int upgrade_version_1_to_version_2(sqlite3* db)
-{
-    const char* update_statement = R"(
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE IF NOT EXISTS writers_states(
-    guid TEXT PRIMARY KEY, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    last_seq_num INTEGER CHECK(last_seq_num > 0)) WITHOUT ROWID;
-
--- Populate the writers_states with information available in the old writers table. Note the assumption that
--- last_seq_num would be the largest seq_num associated to a history cache is not always true
-INSERT INTO writers_states SELECT guid, MAX(seq_num) FROM writers GROUP BY guid;    
-
-CREATE TABLE IF NOT EXISTS writers_histories(
-    guid TEXT, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    seq_num INTEGER CHECK(seq_num > 0),
-    instance BLOB CHECK(length(instance)=16),
-    payload BLOB,
-    PRIMARY KEY(guid, seq_num DESC), 
-    FOREIGN KEY (guid)
-       REFERENCES writers_states(guid) ) WITHOUT ROWID;
-
--- Copy the contents of writers to the new table
-INSERT INTO writers_histories SELECT guid, seq_num, instance, payload FROM writers;
-
--- Remove the old table, since it is no longer required
-DROP TABLE writers;
-
--- Once the upgrade has succeded add the version number
-PRAGMA user_version = 2;
-)";
-
-    return sqlite3_exec(db,update_statement,0,0,0);
-}
-
 static int upgrade(sqlite3* db, int from, int to)
 {
     if (from == to)
@@ -135,7 +67,7 @@ static int upgrade(sqlite3* db, int from, int to)
 
     if (from == 1 && to == 2)
     {
-        return upgrade_version_1_to_version_2(db);
+        return sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::update_from_v1_statement().c_str(), 0, 0, 0);
     }
 
     // unsupported upgrade path
@@ -198,7 +130,7 @@ static sqlite3* open_or_create_database(const char* filename, bool update_schema
     }
     
     // Create tables if they don't exist
-    rc = sqlite3_exec(db, create_statement, 0, 0, 0);
+    rc = sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::database_create_statement().c_str(), 0, 0, 0);
     if (rc != SQLITE_OK)
     {
         sqlite3_close(db);
