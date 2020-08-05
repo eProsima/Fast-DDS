@@ -184,8 +184,7 @@ void EDPSimple::processPersistentData(
             known_participants.insert(pD->m_key);
         });
 
-    // We have not processed any PDP message yet but any lease duration callback may have modified demises
-    // already
+    // We have not processed any PDP message yet but any lease duration callback may have already modified demises
 
     // aux lambda to retrieve sample identity
     // update format for 2.0.x port

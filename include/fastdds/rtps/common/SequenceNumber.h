@@ -60,13 +60,13 @@ struct RTPS_DllAPI SequenceNumber_t
     }
 
     /*!
-     * @param 64long
+     * @param u
      */
     explicit
     SequenceNumber_t(
             uint64_t u) noexcept
-        : high( static_cast<int32_t>(u >> 32u) )
-        , low( static_cast<uint32_t>(u) )
+        : high(static_cast<int32_t>(u >> 32u))
+        , low(static_cast<uint32_t>(u))
     {
     }
 
