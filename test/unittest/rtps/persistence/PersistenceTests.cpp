@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "rtps/persistence/PersistenceService.h"
+#include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/rtps/history/CacheChangePool.h>
 #include <rtps/persistence/sqlite3.h>
@@ -52,10 +53,10 @@ protected:
         {
             case 0:
             case 1:
-                create_statement = create_statement_v1;
+                create_statement = SQLite3PersistenceServiceSchemaV1::database_create_statement().c_str();
                 break;
             case 2:
-                create_statement = create_statement_v2;
+                create_statement = SQLite3PersistenceServiceSchemaV2::database_create_statement().c_str();
                 break;
             default:
                 FAIL() << "unsuppoerted database version " << version;
@@ -151,53 +152,6 @@ protected:
     }
 
     const char* dbfile = "text.db";
-    const char* create_statement_v1 =
-            R"(
-CREATE TABLE IF NOT EXISTS writers(
-    guid text,
-    seq_num integer,
-    instance binary(16),
-    payload blob,
-    PRIMARY KEY(guid, seq_num DESC)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS readers(
-    guid text,
-    writer_guid_prefix binary(12),
-    writer_guid_entity binary(4),
-    seq_num integer,
-    PRIMARY KEY(guid, writer_guid_prefix, writer_guid_entity)
-) WITHOUT ROWID;
-)";
-    const char* create_statement_v2 =
-            R"(
-PRAGMA user_version = 2;
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE IF NOT EXISTS writers_states(
-    guid TEXT PRIMARY KEY, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    last_seq_num INTEGER CHECK(last_seq_num > 0)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS writers_histories(
-    guid TEXT, -- CHECK(guid REGEXP '([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}\|([0-9a-fA-F]{1,2}\.){3}[0-9a-fA-F]{1,2}'),
-    seq_num INTEGER CHECK(seq_num > 0),
-    instance BLOB CHECK(length(instance)=16),
-    payload BLOB,
-    PRIMARY KEY(guid, seq_num DESC), 
-    FOREIGN KEY (guid)
-        REFERENCES writers_states(guid)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS readers(
-    guid text,
-    writer_guid_prefix binary(12),
-    writer_guid_entity binary(4),
-    seq_num integer,
-    PRIMARY KEY(guid, writer_guid_prefix, writer_guid_entity)
-) WITHOUT ROWID;
-)";
-
 };
 
 /*!
