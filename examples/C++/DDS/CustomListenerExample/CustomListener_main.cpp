@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file HelloWorld_main.cpp
+ * @file World_main.cpp
  *
  */
 
@@ -43,14 +43,6 @@ int main(
         if (strcmp(argv[1], "publisher") == 0)
         {
             type = 1;
-            if (argc >= 4)
-            {
-                count = atoi(argv[2]);
-                if (argc == 5)
-                {
-                    sleep = atoi(argv[3]);
-                }
-            }
         }
         else if (strcmp(argv[1], "subscriber") == 0)
         {

@@ -20,7 +20,7 @@
 #ifndef CUSTOMLISTENERSUBSCRIBER_H_
 #define CUSTOMLISTENERSUBSCRIBER_H_
 
-#include "HelloWorldPubSubTypes.h"
+#include "TopicTypes.h"
 #include "CustomListeners.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>

@@ -35,7 +35,7 @@ CustomListenerSubscriber::CustomListenerSubscriber()
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new TopicType())
 {
 }
 
@@ -65,8 +65,8 @@ bool CustomListenerSubscriber::init(bool use_dr)
 
     //CREATE THE TOPIC
     topic_ = participant_->create_topic(
-            "HelloWorldTopic",
-            "HelloWorld",
+            "TopicTopic",
+            "Topic",
             TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)

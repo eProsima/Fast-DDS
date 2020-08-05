@@ -11,7 +11,7 @@ DataWriterListener -> PublisherListener -> DomainParticipantListener
 
 To launch this test open two different consoles:
 
-In the first one launch: `./DDSCustomListener publisher 1`  
+In the first one launch: `./DDSCustomListener publisher 1`
 In the second one launch: `./DDSCustomListener subscriber 1`
 
 The above will launch publisher and subscriber with the listener of the bottom most entities activated.
@@ -20,17 +20,17 @@ The above will launch publisher and subscriber with the listener of the bottom m
 
 In this application, the publisher sends a number of samples to the subscriber. In the publisher application both the
 DomainParticipant and the DataWriter have listeners with the `on_publication_matched` callback implemented defined.
-When the ENABLE_LOWESTLISTENER argument is set to false the DataWriterListener is given a `StatusMask::none()` which
+When the ENABLE_LOWEST_LISTENER argument is set to false the DataWriterListener is given a `StatusMask::none()` which
 disables all of its callbacks.
 These callbacks are therefor intercepted by the next implemented callback. In this case the DomainParticipant.
 The subscriber works similarly with the `on_subscription_matched` and `on_data_available`
 callbacks.
 
-When a listener is executing a callback it will identify it self in parenthesis. Whether or not the lowest listener is
-used can be changed with the ENABLE_LOWESTLISTENER option.
+When a listener is executing a callback it will identify itself in parenthesis. Whether or not the lowest listener is
+used can be changed with the ENABLE_LOWEST_LISTENER option.
 
 
 ```bash
-$ ./DDSCustomListener publisher|subscriber ENABLE_LOWESTLISTENER
+$ ./DDSCustomListener publisher|subscriber ENABLE_LOWEST_LISTENER
 ```
 

@@ -20,7 +20,7 @@
 #ifndef CUSTOMLISTENERS_H_
 #define CUSTOMLISTENERS_H_
 
-#include "HelloWorldPubSubTypes.h"
+#include "TopicTypes.h"
 
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
@@ -84,7 +84,7 @@ class CustomDataReaderListener : public eprosima::fastdds::dds::DataReaderListen
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        HelloWorld hello_;
+        Topic hello_;
 
         int matched_;
 
@@ -111,7 +111,7 @@ class CustomDomainParticipantListener : public eprosima::fastdds::dds::DomainPar
             eprosima::fastdds::dds::DataReader* reader,
             const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        HelloWorld hello_;
+        Topic hello_;
 
         int matched_ = 0;
 

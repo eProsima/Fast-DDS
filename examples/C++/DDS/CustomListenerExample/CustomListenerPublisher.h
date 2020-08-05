@@ -20,7 +20,7 @@
 #ifndef CUSTOMLISTENERPUBLISHER_H_
 #define CUSTOMLISTENERPUBLISHER_H_
 
-#include "HelloWorldPubSubTypes.h"
+#include "TopicTypes.h"
 #include "CustomListeners.h"
 
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -49,7 +49,7 @@ public:
 
 private:
 
-    HelloWorld hello_;
+    Topic hello_;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 

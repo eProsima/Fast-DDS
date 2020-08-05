@@ -35,14 +35,14 @@ CustomListenerPublisher::CustomListenerPublisher()
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new TopicType())
 {
 }
 
 bool CustomListenerPublisher::init(bool use_dw)
 {
     hello_.index(0);
-    hello_.message("HelloWorld");
+    hello_.message("Topic");
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &p_listener_);
@@ -63,7 +63,7 @@ bool CustomListenerPublisher::init(bool use_dw)
         return false;
     }
 
-    topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic("TopicTopic", "Topic", TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
