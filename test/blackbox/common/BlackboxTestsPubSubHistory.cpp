@@ -686,8 +686,8 @@ TEST_P(PubSubHistory, WriterWithoutReadersTransientLocal)
     .history_kind(KEEP_ALL_HISTORY_QOS)
     .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
     .reliability(RELIABLE_RELIABILITY_QOS)
-    .resource_limits_allocated_samples(1300)
-    .resource_limits_max_samples(1300)
+    .resource_limits_allocated_samples(13)
+    .resource_limits_max_samples(13)
     .init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -705,10 +705,10 @@ TEST_P(PubSubHistory, WriterWithoutReadersTransientLocal)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    auto data1 = default_data300kb_data_generator(1300);
-    auto data2 = default_data300kb_data_generator(300);
+    auto data1 = default_data300kb_data_generator(13);
+    auto data2 = default_data300kb_data_generator(3);
 
-    auto unreceived_data = default_data300kb_data_generator(1600);
+    auto unreceived_data = default_data300kb_data_generator(16);
 
     // Send data
     writer.send(data1);

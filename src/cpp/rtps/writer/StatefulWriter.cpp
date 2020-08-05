@@ -410,6 +410,7 @@ void StatefulWriter::unsent_change_added_to_history(
     {
         logInfo(RTPS_WRITER, "No reader proxy to add change.");
         check_acked_status();
+
     }
 }
 
@@ -1452,7 +1453,6 @@ bool StatefulWriter::matched_reader_remove(
         return true;
     }
 
-    check_acked_status();
     logInfo(RTPS_HISTORY, "Reader Proxy doesn't exist in this writer");
     return false;
 }
