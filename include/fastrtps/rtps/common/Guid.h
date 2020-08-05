@@ -187,7 +187,7 @@ inline bool operator <(
     return false;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 const GUID_t c_Guid_Unknown;
 
@@ -234,8 +234,13 @@ inline std::istream& operator >>(
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> guid.guidPrefix;
-            input >> guid.entityId;
+            char sep;
+            input >> guid.guidPrefix >> sep >> guid.entityId;
+
+            if (sep != '|')
+            {
+                input.setstate(std::ios_base::failbit);
+            }
         }
         catch (std::ios_base::failure&)
         {
@@ -249,7 +254,7 @@ inline std::istream& operator >>(
     return input;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
 } // namespace fastrtps

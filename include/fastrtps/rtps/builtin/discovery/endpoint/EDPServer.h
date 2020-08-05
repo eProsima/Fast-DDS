@@ -30,7 +30,7 @@
 #include <set>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class EDPServerPUBListener;
@@ -46,15 +46,13 @@ class EDPServer : public EDPSimple
     friend class EDPServerPUBListener;
     friend class EDPServerSUBListener;
 
-    typedef std::set<InstanceHandle_t> key_list;
-
     //! Keys to wipe out from WriterHistory because its related Participants have been removed
     key_list _PUBdemises, _SUBdemises;
 
     //! TRANSIENT or TRANSIENT_LOCAL durability;
     DurabilityKind_t _durability;
 
-    public:
+public:
 
     /**
      * Constructor.
@@ -63,25 +61,27 @@ class EDPServer : public EDPSimple
      * @param durability_kind the kind of persistence we want for the discovery data
      */
     EDPServer(
-        PDP* p,
-        RTPSParticipantImpl* part,
-        DurabilityKind_t durability_kind)
+            PDP* p,
+            RTPSParticipantImpl* part,
+            DurabilityKind_t durability_kind)
         : EDPSimple(p, part)
         , _durability(durability_kind)
     {
     }
 
-    ~EDPServer() override {}
+    ~EDPServer() override
+    {
+    }
 
     /**
-      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
-      * @param reader Pointer to the Reader object.
-      * @param rdata Pointer to the ReaderProxyData object.
-      * @return true if correct.
-      */
+     * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
+     * @param reader Pointer to the Reader object.
+     * @param rdata Pointer to the ReaderProxyData object.
+     * @return true if correct.
+     */
     bool processLocalReaderProxyData(
-        RTPSReader* reader,
-        ReaderProxyData* rdata) override;
+            RTPSReader* reader,
+            ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
      * @param writer Pointer to the Writer object.
@@ -89,85 +89,82 @@ class EDPServer : public EDPSimple
      * @return true if correct.
      */
     bool processLocalWriterProxyData(
-        RTPSWriter* writer,
-        WriterProxyData* wdata) override;
+            RTPSWriter* writer,
+            WriterProxyData* wdata) override;
     /**
      * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
-    bool removeLocalReader(RTPSReader*R) override;
+    bool removeLocalReader(
+            RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
-    bool removeLocalWriter(RTPSWriter*W) override;
+    bool removeLocalWriter(
+            RTPSWriter* W) override;
 
     /**
-    * Some History data is flag for defer removal till every client
-    * acknowledges reception
-    * @return True if trimming must be done
-    */
+     * Some History data is flagged for deferred removal until every client
+     * acknowledges reception
+     * @return True if trimming must be done
+     */
     inline bool pendingHistoryCleaning()
     {
         return !(_PUBdemises.empty() && _SUBdemises.empty());
     }
 
     //! Callback to remove unnecesary WriterHistory info
-    bool trimPUBWriterHistory()
-    {
-        return trimWriterHistory<ResourceLimitedVector<WriterProxyData*>>(_PUBdemises,
-            *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
-    }
+    bool trimPUBWriterHistory();
+    bool trimSUBWriterHistory();
 
-    bool trimSUBWriterHistory()
-    {
-        return trimWriterHistory<ResourceLimitedVector<ReaderProxyData*>>(_SUBdemises,
-            *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
-    }
+    //! returns true if loading info from persistency database
+    bool ongoingDeserialization();
 
-    protected:
+    //! Process the info recorded in the persistence database
+    void processPersistentData();
 
     /**
-        * Add participant CacheChange_ts from reader to writer
-        * @return True if successfully modified WriterHistory
-        */
-    bool addPublisherFromHistory( CacheChange_t& c)
-    {
-        return addEndpointFromHistory(*publications_writer_.first, *publications_writer_.second, c);
-    }
+     * Trigger the participant CacheChange_t removal system
+     */
+    void removePublisherFromHistory(
+            const InstanceHandle_t&);
+    void removeSubscriberFromHistory(
+            const InstanceHandle_t&);
 
-    bool addSubscriberFromHistory( CacheChange_t& c)
-    {
-        return addEndpointFromHistory(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
-    }
+protected:
 
     /**
-    * Trigger the participant CacheChange_t removal system
-    * @return True if successfully modified WriterHistory
-    */
-    void removePublisherFromHistory(const InstanceHandle_t&);
-    void removeSubscriberFromHistory(const InstanceHandle_t&);
+     * Add participant CacheChange_ts from reader to writer
+     * @return True if successfully modified WriterHistory
+     */
+    bool addPublisherFromHistory(
+            CacheChange_t& c);
 
-    private:
+    bool addSubscriberFromHistory(
+            CacheChange_t& c);
+
+private:
 
     /**
-    * Callback to remove unnecesary WriterHistory info common implementation
-    * @return True if trim is finished
-    */
-    template<class ProxyCont> 
+     * Callback to remove unnecesary WriterHistory info common implementation
+     * @return True if trim is finished
+     */
+    template<class ProxyCont>
     bool trimWriterHistory(
-        key_list& _demises,
-        StatefulWriter& writer,
-        WriterHistory& history,
-        ProxyCont ParticipantProxyData::* pCont);
+            key_list& _demises,
+            StatefulWriter& writer,
+            WriterHistory& history,
+            ProxyCont ParticipantProxyData::* pCont);
 
     //! addPublisherFromHistory and addSubscriberFromHistory common implementation
+    template<class Proxy>
     bool addEndpointFromHistory(
-        StatefulWriter& writer,
-        WriterHistory& history,
-        CacheChange_t& c);
+            StatefulWriter& writer,
+            WriterHistory& history,
+            CacheChange_t& c);
 
     /**
      * Create local SEDP Endpoints based on the DiscoveryAttributes.
@@ -181,5 +178,5 @@ class EDPServer : public EDPSimple
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* EDPSERVER_H_ */
