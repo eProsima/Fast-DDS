@@ -34,21 +34,19 @@ namespace fastrtps {
 using namespace rtps;
 
 static HistoryAttributes to_history_attributes(
-        const HistoryQosPolicy& history,
-        const ResourceLimitsQosPolicy& resource,
-        SubscriberImpl* simpl,
+        const TopicAttributes& topic_att,
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
 {
-    auto initial_samples = resource.allocated_samples;
-    auto max_samples = resource.max_samples;
+    auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
+    auto max_samples = topic_att.resourceLimitsQos.max_samples;
 
-    if (history.kind != KEEP_ALL_HISTORY_QOS)
+    if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
     {
-        max_samples = history.depth;
-        if (simpl->getAttributes().topic.getTopicKind() != NO_KEY)
+        max_samples = topic_att.historyQos.depth;
+        if (topic_att.getTopicKind() != NO_KEY)
         {
-            max_samples *= resource.max_instances;
+            max_samples *= topic_att.resourceLimitsQos.max_instances;
         }
 
         initial_samples = std::min(initial_samples, max_samples);
@@ -63,7 +61,7 @@ SubscriberHistory::SubscriberHistory(
         const HistoryQosPolicy& history,
         const ResourceLimitsQosPolicy& resource,
         MemoryManagementPolicy_t mempolicy)
-    : ReaderHistory(to_history_attributes(history, resource, simpl, payloadMaxSize, mempolicy))
+    : ReaderHistory(to_history_attributes(simpl->getAttributes().topic, payloadMaxSize, mempolicy))
     , m_unreadCacheCount(0)
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
