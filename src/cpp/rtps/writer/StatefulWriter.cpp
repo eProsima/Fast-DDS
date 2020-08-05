@@ -949,7 +949,7 @@ bool StatefulWriter::try_remove_change(
 
     SequenceNumber_t min_low_mark;
 
-    min_low_mark = next_all_acked_notify_sequence_;
+    min_low_mark = next_all_acked_notify_sequence_ - 1;
 
     SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
             (min_low_mark - get_seq_num_min()) + 1;
