@@ -1452,7 +1452,6 @@ bool StatefulWriter::matched_reader_remove(
         return true;
     }
 
-    check_acked_status();
     logInfo(RTPS_HISTORY, "Reader Proxy doesn't exist in this writer");
     return false;
 }
