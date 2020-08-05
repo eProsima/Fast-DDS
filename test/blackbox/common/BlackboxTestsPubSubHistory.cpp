@@ -670,10 +670,10 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
  * @brief This test checks that the writer doesn't fill its history while there are no readers matched.
  *
  * The test creates a Reliable, Transient Local Writer with a Keep All history, and its resources limited to
- * 1300 samples.
+ * 13 samples.
  * Then it creates a Reliable, Transient Local Reader with a Keep Last 1 history and waits until both of them discover
  * each other.
- * When both of them are matched, the writer sends 1300 samples, asserting that all of them have been sent and the
+ * When both of them are matched, the writer sends 13 samples, asserting that all of them have been sent and the
  * reader starts its reception.
  * After that, the reader is destroyed, meaning that the writer runs out of readers. Even if there are no readers,
  * it has to continue sending the remaining samples, deleting the old ones if the history is fulled.
