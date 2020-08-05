@@ -75,12 +75,10 @@ bool CustomListenerSubscriber::init(bool use_dr)
     }
 
     // CREATE THE READER
-    StatusMask none_mask = StatusMask::none();
-    StatusMask all_mask = StatusMask::all();
-    dr_mask_ = use_dr ? all_mask : none_mask;
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    reader_ = subscriber_->create_datareader(topic_, rqos, &dr_listener_, dr_mask_);
+    reader_ = subscriber_->create_datareader(topic_, rqos, &dr_listener_,
+                                             use_dr ? StatusMask::all() : StatusMask::none());
 
     if (reader_ == nullptr)
     {

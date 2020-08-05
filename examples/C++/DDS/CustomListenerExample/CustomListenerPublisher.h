@@ -59,8 +59,6 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
-    eprosima::fastdds::dds::StatusMask dw_mask_;
-
     bool stop_;
 
     CustomDataWriterListener dw_listener_;

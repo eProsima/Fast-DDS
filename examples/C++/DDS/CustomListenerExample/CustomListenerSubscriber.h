@@ -59,8 +59,6 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
-    eprosima::fastdds::dds::StatusMask dr_mask_;
-
     eprosima::fastdds::dds::StatusMask p_mask_;
 
     CustomDataReaderListener dr_listener_;

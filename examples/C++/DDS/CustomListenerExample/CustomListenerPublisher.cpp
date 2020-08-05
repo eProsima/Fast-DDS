@@ -71,11 +71,8 @@ bool CustomListenerPublisher::init(bool use_dw)
     }
 
     // CREATE THE WRITER
-    StatusMask none_mask = StatusMask::none();
-    StatusMask all_mask = StatusMask::all();
-    dw_mask_ = use_dw ? all_mask : none_mask;
-    
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &dw_listener_, dw_mask_);
+    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &dw_listener_,
+                                            use_dw ? StatusMask::all() : StatusMask::none());
 
     if (writer_ == nullptr)
     {
@@ -159,8 +156,7 @@ void CustomListenerPublisher::run(
 bool CustomListenerPublisher::publish(
         bool waitForListener)
 {
-    if (dw_listener_.firstConnected_ || !waitForListener || dw_listener_.matched_ > 0 ||
-        p_listener_.firstConnected_  || p_listener_.matched_ > 0)
+    if (dw_listener_.firstConnected_ || !waitForListener || p_listener_.firstConnected_)
     {
         hello_.index(hello_.index() + 1);
         writer_->write(&hello_);

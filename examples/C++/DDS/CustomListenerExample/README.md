@@ -22,7 +22,7 @@ In this application, the publisher sends a number of samples to the subscriber. 
 DomainParticipant and the DataWriter have listeners with the `on_publication_matched` callback implemented defined.
 When the ENABLE_LOWEST_LISTENER argument is set to false the DataWriterListener is given a `StatusMask::none()` which
 disables all of its callbacks.
-These callbacks are therefor intercepted by the next implemented callback. In this case the DomainParticipant.
+These callbacks are therefore intercepted by the next implemented callback. In this case the DomainParticipant.
 The subscriber works similarly with the `on_subscription_matched` and `on_data_available`
 callbacks.
 
