@@ -177,9 +177,9 @@ bool EDPServer::trimWriterHistory(
     // sweep away any resurrected endpoint
     for (auto iD = mp_PDP->ParticipantProxiesBegin(); iD != mp_PDP->ParticipantProxiesEnd(); ++iD)
     {
-        ProxyCont& readers = *(*iD->*pC);
+        ProxyCont& endpoints = *(*iD->*pC);
 
-        for (auto iE : readers)
+        for (auto iE : endpoints)
         {
             disposal.insert(iE.second->key());
         }
