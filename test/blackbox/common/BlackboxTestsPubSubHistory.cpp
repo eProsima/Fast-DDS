@@ -676,7 +676,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
  * When both of them are matched, the writer sends 13 samples, asserting that all of them have been sent and the
  * reader starts its reception.
  * After that, the reader is destroyed, meaning that the writer runs out of readers. Even if there are no readers,
- * it has to continue sending the remaining samples, deleting the old ones if the history is fulled.
+ * it has to continue sending the remaining samples, deleting the old ones if the history is filled up.
  */
 TEST_P(PubSubHistory, WriterWithoutReadersTransientLocal)
 {
@@ -706,9 +706,9 @@ TEST_P(PubSubHistory, WriterWithoutReadersTransientLocal)
     reader.wait_discovery();
 
     auto data1 = default_data300kb_data_generator(13);
-    auto data2 = default_data300kb_data_generator(3);
+    auto data2 = default_data300kb_data_generator(14);
 
-    auto unreceived_data = default_data300kb_data_generator(16);
+    auto unreceived_data = default_data300kb_data_generator(27);
 
     // Send data
     writer.send(data1);
