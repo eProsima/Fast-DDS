@@ -356,15 +356,12 @@ void StatefulWriter::unsent_change_added_to_history(
                     periodic_hb_event_->restart_timer(max_blocking_time);
                 }
 
-                if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
-                {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
-                }
-
                 if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
                 {
                     last_sequence_number_ = change->sequenceNumber;
                 }
+
+                check_acked_status();
             }
             catch (const RTPSMessageGroup::timeout&)
             {
