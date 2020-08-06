@@ -28,6 +28,8 @@
 
             shm           Shared-memory commands
 
+            xml           XML commands
+
         fastdds <command> [-h] shows command usage
 
 
@@ -46,6 +48,8 @@ from discovery.parser import Parser as DiscoveryParser
 
 from shm.parser import Parser as ShmParser
 
+from xml_ci.parser import XMLParser
+
 
 class FastDDSParser:
     """FastDDS tool parser."""
@@ -56,6 +60,7 @@ class FastDDSParser:
     Commands:\n\n
     \tdiscovery     Server-Client discovery auxiliary generator\n
     \tshm           Shared-memory commands\n
+    \txml           XML commands\n
     fastdds <command> [-h] shows command usage
     """
 
@@ -106,6 +111,9 @@ class FastDDSParser:
         """Discovery server command handler."""
         DiscoveryParser(sys.argv[2:])
 
+    def xml(self):
+        """Discovery server command handler."""
+        XMLParser(sys.argv[2:])
 
 if __name__ == '__main__':
 
