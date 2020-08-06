@@ -49,14 +49,16 @@ int main(
             type = 2;
         }
 
-        if (strcmp(argv[2],"1") == 0)
+        if (strcmp(argv[2], "1") == 0)
         {
             use_d = true;
         }
         else if (strcmp(argv[2], "0") == 0)
         {
             use_d = false;
-        }else{
+        }
+        else
+        {
             std::cout << "Second argument must be 1 (true) or 0 (false)" << std::endl;
             Log::Reset();
             return 0;
@@ -70,27 +72,27 @@ int main(
         return 0;
     }
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            CustomListenerPublisher mypub;
+
+            if (mypub.init(use_d))
             {
-                CustomListenerPublisher mypub;
-                
-                if(mypub.init(use_d))
-                {
-                    mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
-                }
-                break;
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
+            break;
+        }
         case 2:
+        {
+            CustomListenerSubscriber mysub;
+            if (mysub.init(use_d))
             {
-                CustomListenerSubscriber mysub;
-                if(mysub.init(use_d))
-                {
-                    mysub.run();
-                }
-                break;
+                mysub.run();
             }
+            break;
+        }
     }
     Log::Reset();
     return 0;
