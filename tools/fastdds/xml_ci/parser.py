@@ -1,0 +1,97 @@
+# Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+    fastdds xml sub-command.
+
+    This verb ...
+
+    usage: fastdds xml [<xml-command>]
+
+    xml-commands:
+
+        validate    validate XML profiles files using an XSD schema
+
+    positional arguments:
+        command     xml-command to run
+
+    optional arguments:
+        -h, --help  show this help message and exit
+
+"""
+
+import argparse
+import os.path
+
+from xml_ci.validate import Validate
+
+
+class XMLParser:
+    """XML sub-commands parser."""
+
+    def __init__(self, argv):
+        """Parse the sub-command and dispatch to the appropriate handler.
+
+        Shows usage if no sub-command is specified.
+
+        Supported sub-commands:
+
+            validate   validate XML profiles files using an XSD scheme
+
+        param argv list(str):
+            list containing the arguments for the command
+        """
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            description="""
+                Script to generate the xml test configurations and the JSON
+                topology files for all posible configurations.
+            """,
+            usage='fastdds xml [<xml-command>]',
+        )
+        parser.add_argument(
+            'xml_command',
+            nargs='*',
+            help='validate XML profiles files using an XSD scheme'
+        )
+        parser.add_argument(
+            '-d',
+            '--debug',
+            action='store_true',
+            help='print debug info'
+        )
+        parser.add_argument(
+            '-x',
+            '--xsd-file',
+            default='../../resources/xsd/fastRTPS_profiles.xsd',
+            help='Fast DDS XSD schema for validation'
+        )
+        args = parser.parse_args(argv)
+
+        print(os.getcwd())
+
+        args.xsd_file = os.path.abspath(args.xsd_file)
+        if not os.path.isfile(args.xsd_file):
+            print(f'The XSD schema does not exist: {args.xsd_file}')
+            exit(1)
+
+        if args.xml_command:
+            if args.xml_command[0] == 'validate':
+                args.xml_command.pop(0)
+                Validate(args.xsd_file).run(args.xml_command)
+            else:
+                print(f'xml-command "{args.xml_command[0]}" is not valid')
+        else:
+            parser.print_help()
+            exit(1)
