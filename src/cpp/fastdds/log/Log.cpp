@@ -1,9 +1,24 @@
+// Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include <chrono>
 #include <iomanip>
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/dds/log/Colors.hpp>
 #include <iostream>
 
@@ -22,7 +37,7 @@ Log::Resources::Resources()
     ,functions(true)
     ,verbosity(Log::Error)
 {
-    resources_.consumers.emplace_back(new StdoutConsumer);
+    resources_.consumers.emplace_back(new StdoutErrConsumer);
 }
 
 Log::Resources::~Resources()
@@ -59,7 +74,7 @@ void Log::Reset()
     resources_.functions = true;
     resources_.verbosity = Log::Error;
     resources_.consumers.clear();
-    resources_.consumers.emplace_back(new StdoutConsumer);
+    resources_.consumers.emplace_back(new StdoutErrConsumer);
 }
 
 void Log::Flush()
@@ -287,16 +302,16 @@ void Log::get_timestamp(
 }
 
 void LogConsumer::print_timestamp(
-        std::ostream& stream,
+        std::ostream* stream,
         const Log::Entry& entry,
         bool color) const
 {
     std::string white = (color) ? C_B_WHITE : "";
-    stream << white << entry.timestamp;
+    *stream << white << entry.timestamp;
 }
 
 void LogConsumer::print_header(
-        std::ostream& stream,
+        std::ostream* stream,
         const Log::Entry& entry,
         bool color) const
 {
@@ -311,49 +326,49 @@ void LogConsumer::print_header(
             (entry.kind == Log::Kind::Warning) ? "Warning" :
             (entry.kind == Log::Kind::Info) ? "Info" : "";
 
-    stream << c_b_color << "[" << white << entry.context.category << c_b_color << " " << kind << "] ";
+    *stream << c_b_color << "[" << white << entry.context.category << c_b_color << " " << kind << "] ";
 }
 
 void LogConsumer::print_context(
-        std::ostream& stream,
+        std::ostream* stream,
         const Log::Entry& entry,
         bool color) const
 {
     if (color)
     {
-        stream << C_B_BLUE;
+        *stream << C_B_BLUE;
     }
     if (entry.context.filename)
     {
-        stream << " (" << entry.context.filename;
-        stream << ":" << entry.context.line << ")";
+        *stream << " (" << entry.context.filename;
+        *stream << ":" << entry.context.line << ")";
     }
     if (entry.context.function)
     {
-        stream << " -> Function ";
+        *stream << " -> Function ";
         if (color)
         {
-            stream << C_CYAN;
+            *stream << C_CYAN;
         }
-        stream << entry.context.function;
+        *stream << entry.context.function;
     }
 }
 
 void LogConsumer::print_message(
-        std::ostream& stream,
+        std::ostream* stream,
         const Log::Entry& entry,
         bool color) const
 {
     std::string white = (color) ? C_WHITE : "";
-    stream << white << entry.message;
+    *stream << white << entry.message;
 }
 
 void LogConsumer::print_new_line(
-        std::ostream& stream,
+        std::ostream* stream,
         bool color) const
 {
     std::string def = (color) ? C_DEF : "";
-    stream << def << std::endl;
+    *stream << def << std::endl;
 }
 
 } //namespace dds

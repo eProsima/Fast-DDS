@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2016, 2017, 2018, 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
@@ -84,13 +85,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/subscriber/SubscriberHistory.cpp
             )
 
-        # External sources 
+        # External sources
         if(TINYXML2_SOURCE_DIR)
             list(APPEND LISTENERTESTS_SOURCE
                 ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
                 )
         endif()
-        
+
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         if(WIN32)
@@ -129,7 +130,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-            
+
         target_link_libraries(ListenerTests fastcdr foonathan_memory
             ${TINYXML2_LIBRARY}
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}

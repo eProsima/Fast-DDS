@@ -1,4 +1,4 @@
-# Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
 
     fastdds/log/Log.cpp
+    fastdds/log/StdoutErrConsumer.cpp
     fastdds/log/StdoutConsumer.cpp
     fastdds/log/FileConsumer.cpp
 

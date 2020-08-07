@@ -54,6 +54,12 @@ class LogConsumer
 class Log
 {
     public:
+        enum Kind
+        {
+            Error,
+            Warning,
+            Info,
+        };
 
         static std::function<void(std::unique_ptr<LogConsumer>&&)> RegisterConsumerFunc;
         static void RegisterConsumer(std::unique_ptr<LogConsumer>&& c) { RegisterConsumerFunc(std::move(c)); }

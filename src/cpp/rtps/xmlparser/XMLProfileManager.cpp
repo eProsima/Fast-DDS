@@ -1,4 +1,4 @@
-// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2017, 2018, 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -311,6 +311,11 @@ XMLP_ret XMLProfileManager::loadXMLFile(
         return loaded_ret;
     }
 
+    if (NodeType::LOG == root_node->getType())
+    {
+        return loaded_ret;
+    }
+
     if (NodeType::ROOT == root_node->getType())
     {
         for (auto&& child: root_node->getChildren())
@@ -318,6 +323,14 @@ XMLP_ret XMLProfileManager::loadXMLFile(
             if (NodeType::PROFILES == child.get()->getType())
             {
                 return XMLProfileManager::extractProfiles(std::move(child), filename);
+            }
+            else if (NodeType::TYPES == child.get()->getType())
+            {
+                return loaded_ret;
+            }
+            else if (NodeType::LOG == child.get()->getType())
+            {
+                return loaded_ret;
             }
         }
     }

@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016, 2017, 2018, 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include "mock/MockConsumer.h"
 #include <gtest/gtest.h>
 #include <memory>
@@ -27,27 +28,35 @@ using namespace std;
 
 class LogTests: public ::testing::Test
 {
-   public:
-   LogTests()
-   {
-       mockConsumer = new MockConsumer();
+    public:
+    LogTests()
+    {
+        mockConsumer = new MockConsumer();
 
-       Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
-       Log::SetVerbosity(Log::Info);
-   }
+        Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+        Log::SetVerbosity(Log::Info);
+    }
 
-   ~LogTests()
-   {
-       Log::Reset();
-       Log::KillThread();
-   }
+    ~LogTests()
+    {
+        Log::Reset();
+        Log::KillThread();
+    }
 
-   MockConsumer* mockConsumer;
+    void Reset()
+    {
+        Log::ClearConsumers();
+        mockConsumer = new MockConsumer();
+        Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+        Log::SetVerbosity(Log::Info);
+    }
 
-   const uint32_t AsyncTries = 5;
-   const uint32_t AsyncWaitMs = 25;
+    MockConsumer* mockConsumer;
 
-   std::vector<Log::Entry> HELPER_WaitForEntries(uint32_t amount);
+    const uint32_t AsyncTries = 5;
+    const uint32_t AsyncWaitMs = 25;
+
+    std::vector<Log::Entry> HELPER_WaitForEntries(uint32_t amount);
 };
 
 TEST_F(LogTests, asynchronous_logging)
@@ -143,7 +152,7 @@ TEST_F(LogTests, multiple_verbosity_levels)
     ASSERT_EQ(3u, consumedEntries.size());
 }
 
-// 'logless_flush_call' tests rif the Flush() operation may deadlock with an idle log 
+// 'logless_flush_call' tests rif the Flush() operation may deadlock with an idle log
 TEST_F(LogTests, logless_flush_call)
 {
     // 1. without any entry log mechanism is deactivated. This shouldn block the Flush()
@@ -159,7 +168,7 @@ TEST_F(LogTests, logless_flush_call)
     GTEST_SUCCESS_("If we are here there was no deadlock.");
 }
 
-/* 
+/*
     'validate_single_flush_call' tests if the Flush() operation:
     + assures all log entries make to this point are consumed
     + do not deadlocks under heavy log load. Meaning that returns when there is still non consumed entries but that
@@ -183,7 +192,7 @@ TEST_F(LogTests, validate_single_flush_call)
     // std::atomic<int> committed = 0; // only works on msvc and icc
     std::atomic<int> committed;
     committed = 0;
-    
+
     // Populate the consumer from multiple threads
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i < threads_number; i++)
@@ -208,7 +217,7 @@ TEST_F(LogTests, validate_single_flush_call)
 
         // committed value before the Flush
         commited_before_flush = committed;
-    } 
+    }
 
     // Wait till the queues are empty
     Log::Flush();
@@ -221,7 +230,7 @@ TEST_F(LogTests, validate_single_flush_call)
     logWarning(flush_ckecks, "Flushing successful, consumed: "
         << consumed << " commited till flush " << commited_before_flush);
 
-    done = true; // direct threads to shut-down 
+    done = true; // direct threads to shut-down
 
     for (auto& thread : threads) {
         thread->join();
@@ -306,11 +315,128 @@ TEST_F(LogTests, validate_multithread_flush_calls)
         }));
     }
 
-    done = true; // direct threads to shut-down 
+    done = true; // direct threads to shut-down
 
     for (auto& thread : threads) {
         thread->join();
     }
+}
+
+/*
+* This test checks that the log messages go to the appropriate buffer (STDOUT) when using a StdoutConsumer.
+* 1. Set a StdoutConsumer as the only log consumer.
+* 2. Redirect std::cout to a stream buffer.
+* 3. Log a messages in every log level and wait until all logs are consumed.
+* 4. Reset std::cout to STDOUT.
+* 5. Check the number of messages in the stream buffer.
+*/
+TEST_F(LogTests, stdout_consumer_stream)
+{
+    /*
+    * Set a StdoutConsumer consumer
+    *   1. Remove all previous consumers
+    *   2. Create a StdoutConsumer
+    *   3. Register the consumer
+    */
+    Log::ClearConsumers();
+    StdoutConsumer* consumer = new StdoutConsumer;
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(consumer));
+
+    // Redirect std::cout to a stream buffer
+    std::stringstream out_stream_out;
+    streambuf* stream_buffer_out = std::cout.rdbuf(out_stream_out.rdbuf());
+
+    // Log messages on all levels and wait until they are all consumed
+    logError(stdout_consumer_stream, "Error message");
+    logWarning(stdout_consumer_stream, "Warning message");
+    logInfo(stdout_consumer_stream, "Info message");
+    Log::Flush();
+
+    // Reset std::cout to STDOUT
+    std::cout.rdbuf(stream_buffer_out);
+
+    // Count number of lines in the buffer. There is one line per each log message output to that buffer
+    std::string out_string_out = out_stream_out.str();
+    uint32_t lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+
+    // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
+    // then there should be 3 messages in the out buffer, one for the logError, one for the logWarning, and another one
+    // for the logInfo.
+    // Else, there should only be 2 messagea in the out buffer, corresponding to logError and logWarning.
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
+        (!defined(LOG_NO_INFO))
+    ASSERT_EQ(3u, lines_out);
+#else
+    ASSERT_EQ(2u, lines_out);
+#endif
+    std::cout << "Number of messesages in the out buffer is correct: " << lines_out << std::endl;
+
+    // Reset the log module to the test default
+    Reset();
+}
+
+/*
+* This test checks that the log messages go to the appropriate buffer (STDOUT or STDERR) when using a StdoutErrConsumer.
+* 1. Set a StdoutErrConsumer as the only log consumer, setting the STDERR threshold level to Error.
+* 2. Redirect std::cout and std::cerr to two stream buffers.
+* 3. Log a messages in every log level and wait until all logs are consumed.
+* 4. Reset std::cout and std::cerr to STDOUT and STDERR respectively.
+* 5. Check the number of messages in each of the stream buffers.
+*/
+TEST_F(LogTests, stdouterr_consumer_stream)
+{
+    /*
+    * Set a StdoutErrConsumer consumer
+    *   1. Remove all previous consumers
+    *   2. Create a StdoutErrConsumer
+    *   3. Set STDERR threshold to Error. This way Error and more severe event will be output to STDERR, whilst less
+    *      severe will be output to STDOUT
+    *   4. Register the consumer
+    */
+    Log::ClearConsumers();
+    StdoutErrConsumer* consumer = new StdoutErrConsumer;
+    consumer->stderr_threshold(Log::Kind::Error);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(consumer));
+
+    // Redirect std::cout and std::cerr to stream buffers
+    std::stringstream out_stream_err;
+    std::stringstream out_stream_out;
+    streambuf* stream_buffer_err = std::cerr.rdbuf(out_stream_err.rdbuf());
+    streambuf* stream_buffer_out = std::cout.rdbuf(out_stream_out.rdbuf());
+
+    // Log messages on all levels and wait until they are all consumed
+    logError(stdouterr_consumer_stream, "Error message");
+    logWarning(stdouterr_consumer_stream, "Warning message");
+    logInfo(stdouterr_consumer_stream, "Info message");
+    Log::Flush();
+
+    // Reset std::cout and std::cerr to STDOUT and STDERR respectively
+    std::cerr.rdbuf(stream_buffer_err);
+    std::cout.rdbuf(stream_buffer_out);
+
+    // Count number of lines in each of the buffers. There is one line per each log message output to that buffer
+    std::string out_string_err = out_stream_err.str();
+    std::string out_string_out = out_stream_out.str();
+    uint32_t lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
+    uint32_t lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+
+    // Only the logError message should be in the error buffer, since stderr_threshold was set to Log::Kind::Error.
+    ASSERT_EQ(1u, lines_err);
+    std::cout << "Number of messesages in the error buffer is correct: " << lines_err << std::endl;
+
+    // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
+    // then there should be 2 messages in the out buffer, one for the logWarning, and another one for the logInfo.
+    // Else, there should only be 1 message in the out buffer, corresponding to the logWarning.
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
+        (!defined(LOG_NO_INFO))
+    ASSERT_EQ(2u, lines_out);
+#else
+    ASSERT_EQ(1u, lines_out);
+#endif
+    std::cout << "Number of messesages in the out buffer is correct: " << lines_out << std::endl;
+
+    // Reset the log module to the test default
+    Reset();
 }
 
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)

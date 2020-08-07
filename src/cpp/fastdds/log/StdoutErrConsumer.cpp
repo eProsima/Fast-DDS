@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,34 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/log/StdoutConsumer.hpp>
-#include <iostream>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <iomanip>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-void StdoutConsumer::Consume(
+void StdoutErrConsumer::Consume(
         const Log::Entry& entry)
 {
+    // If Log::Kind is stderr_threshold_ or more severe, then use STDERR, else use STDOUT
+    if (entry.kind <= stderr_threshold_)
+    {
+        stream_ = &std::cerr;
+    }
+    else
+    {
+        stream_ = &std::cout;
+    }
+
     print_header(entry);
-    print_message(&std::cout, entry, true);
+    print_message(stream_, entry, true);
     print_context(entry);
-    print_new_line(&std::cout, true);
+    print_new_line(stream_, true);
 }
 
-void StdoutConsumer::print_header(
-        const Log::Entry& entry) const
+void StdoutErrConsumer::stderr_threshold(
+        const Log::Kind& kind)
 {
-    print_timestamp(&std::cout, entry, true);
-    LogConsumer::print_header(&std::cout, entry, true);
+    stderr_threshold_ = kind;
 }
 
-void StdoutConsumer::print_context(
+Log::Kind StdoutErrConsumer::stderr_threshold() const
+{
+    return stderr_threshold_;
+}
+
+void StdoutErrConsumer::print_header(
         const Log::Entry& entry) const
 {
-    LogConsumer::print_context(&std::cout, entry, true);
+    print_timestamp(stream_, entry, true);
+    LogConsumer::print_header(stream_, entry, true);
+}
+
+void StdoutErrConsumer::print_context(
+        const Log::Entry& entry) const
+{
+    LogConsumer::print_context(stream_, entry, true);
 }
 
 } // Namespace dds

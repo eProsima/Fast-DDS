@@ -53,20 +53,20 @@ public:
      * @param Log::Entry to consume.
      */
     RTPS_DllAPI virtual void Consume(
-            const Log::Entry&);
+            const Log::Entry& entry);
 
     virtual ~FileConsumer();
 
 private:
 
     void print_header(
-            const Log::Entry&);
+            const Log::Entry& entry);
 
     void print_context(
-            const Log::Entry&);
+            const Log::Entry& entry);
 
     std::string output_file_;
-    std::ofstream file_;
+    std::ofstream* file_;
     bool append_;
 };
 
