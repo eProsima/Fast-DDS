@@ -68,10 +68,16 @@ static void guid_prefix_create(
     guidP.value[5] = octet(pid >> 8);
     guidP.value[6] = octet(pid >> 16);
     guidP.value[7] = octet(pid >> 24);
-    guidP.value[8] = octet(ID);
-    guidP.value[9] = octet(ID >> 8);
-    guidP.value[10] = octet(ID >> 16);
-    guidP.value[11] = octet(ID >> 24);
+
+    auto dur = std::chrono::system_clock::now().time_since_epoch();
+    auto dur_sec = std::chrono::duration_cast<std::chrono::seconds>(dur);
+    auto count = static_cast<uint32_t>(dur_sec.count());
+    uint32_t id_temp = ID + count;
+
+    guidP.value[8] = octet(id_temp);
+    guidP.value[9] = octet(id_temp >> 8);
+    guidP.value[10] = octet(id_temp >> 16);
+    guidP.value[11] = octet(id_temp >> 24);
 }
 
 // environment variables that forces server-client discovery
