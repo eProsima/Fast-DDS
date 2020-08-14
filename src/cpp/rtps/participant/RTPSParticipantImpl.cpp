@@ -67,6 +67,8 @@ using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
 using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
 using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
 
+const char* LOCALHOST_ENV_VAR = "ROS_LOCALHOST_ONLY";
+
 static EntityId_t TrustedWriter(
         const EntityId_t& reader)
 {
@@ -120,10 +122,20 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
     , has_shm_transport_(false)
 {
+    uint8_t TTL = eprosima::fastdds::rtps::s_defaultTTL;
+    char *localHostOnly = std::getenv(LOCALHOST_ENV_VAR);
+    if (localHostOnly != nullptr && strcmp(localHostOnly, "1") == 0) {
+        m_att.builtin.metatrafficUnicastLocatorList.clear();
+        m_att.builtin.initialPeersList.clear();
+        TTL = 0;
+    }
+
     // Builtin transports by default
     if (PParam.useBuiltinTransports)
     {
         UDPv4TransportDescriptor descriptor;
+
+        descriptor.TTL = TTL;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
         m_network_Factory.RegisterTransport(&descriptor);
