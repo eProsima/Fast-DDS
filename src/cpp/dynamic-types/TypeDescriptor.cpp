@@ -250,7 +250,7 @@ bool TypeDescriptor::is_type_name_consistent(
         const std::string& sName) const
 {
     // The first letter must start with a letter ( uppercase or lowercase )
-    if (!sName.empty() > 0 && std::isalpha(sName[0]))
+    if (!sName.empty() && std::isalpha(sName[0]))
     {
         // All characters must be letters, numbers, underscore, or colon.
         for (size_t i = 1; i < sName.length(); ++i)
