@@ -253,7 +253,7 @@ bool TypeDescriptor::is_type_name_consistent(
     if (!sName.empty() > 0 && std::isalpha(sName[0]))
     {
         // All characters must be letters, numbers, underscore, or colon.
-        for (uint32_t i = 1; i < sName.length(); ++i)
+        for (size_t i = 1; i < sName.length(); ++i)
         {
             if (!std::isalnum(sName[i]) && sName[i] != 95 && sName[i] != 58)
             {
