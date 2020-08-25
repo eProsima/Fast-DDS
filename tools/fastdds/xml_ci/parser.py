@@ -15,7 +15,7 @@
 """
     fastdds xml sub-command.
 
-    This verb ...
+    This verb validates the Fast DDS XML profiles files.
 
     usage: fastdds xml [<xml-command>]
 
@@ -47,7 +47,7 @@ class XMLParser:
 
         Supported sub-commands:
 
-            validate   validate XML profiles files using an XSD scheme
+            validate   validate XML profiles files using an XSD schema
 
         param argv list(str):
             list containing the arguments for the command
@@ -55,15 +55,15 @@ class XMLParser:
         parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description="""
-                Script to generate the xml test configurations and the JSON
-                topology files for all posible configurations.
+                Script for the validation of the XML files that define the
+                profiles of the DDS entities in Fast DDS.
             """,
             usage='fastdds xml [<xml-command>]',
         )
         parser.add_argument(
             'xml_command',
             nargs='*',
-            help='validate XML profiles files using an XSD scheme'
+            help='validate XML profiles files using an XSD schema'
         )
         parser.add_argument(
             '-d',
@@ -79,9 +79,8 @@ class XMLParser:
         )
         args = parser.parse_args(argv)
 
-        print(os.getcwd())
-
         args.xsd_file = os.path.abspath(args.xsd_file)
+        print(args.xsd_file)
         if not os.path.isfile(args.xsd_file):
             print(f'The XSD schema does not exist: {args.xsd_file}')
             exit(1)

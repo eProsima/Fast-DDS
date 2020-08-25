@@ -13,31 +13,24 @@
 # limitations under the License.
 
 """
-.
+    Sub-Command Validate implementation.
+
+    This sub-command validates the Fast DDS XML configuration files using an
+    XSD schema.
+
 """
 
 import os
-import platform
-import re
-from pathlib import Path
-
-if os.name == 'posix':
-    import fcntl
-elif os.name == 'nt':
-    import win32con
-    import win32file
-    import pywintypes
-    import msvcrt
-
-from xmlschema import XMLSchema, XMLSchemaValidationError
 
 from lxml import etree
 
+from xmlschema import XMLSchema, XMLSchemaKeyError, XMLSchemaValidationError
+
+
 class Validate:
-    """."""
+    """Fast DDS XML configuration files validator."""
 
     def __init__(self, xsd_file):
-        """."""
         self.xsd_file = xsd_file
         self.__visited_dirs = []
 
@@ -48,9 +41,10 @@ class Validate:
 
     @xsd_file.setter
     def xsd_file(self, xsd_file):
-        # if os.path.isfile(xsd_file):
-        #     print(f'The XSD schema does not exist: {xsd_file}')
-        #     exit(1)
+        """XSD schema setter."""
+        if not os.path.isfile(xsd_file):
+            print(f'The XSD schema does not exist: {xsd_file}')
+            exit(1)
 
         if isinstance(xsd_file, XMLSchema):
             self.__xsd_file = xsd_file
@@ -62,7 +56,11 @@ class Validate:
                 exit(1)
 
     def run(self, validate_list):
-        """."""
+        """
+        Run Fast DDS XML configuration files validation.
+
+        :param validate_list: List with the directories and files to validate.
+        """
         self.__visited_dirs.clear()
         for element in validate_list:
             element = os.path.abspath(element)
@@ -75,24 +73,35 @@ class Validate:
                     print(f'The file is not an XML file: {element}')
 
     def __validate_xml_from_dir(self, directory, recursive=True):
-        for root, _, files in os.walk(directory):
+        """
+        Validate XML files from a given directory.
+
+        :param directory: The directory containing the XML files.
+        :param recursive: True to do an iterative search for XML files
+            through all the directories contained in the given directory.
+        """
+        for root, dirs, files in os.walk(directory):
+            print(f'Scanning directory {root}')
             if root not in self.__visited_dirs:
                 self.__visited_dirs.append(root)
                 for f in files:
                     if self.__is_xml(f):
-                        self.__validate_xml_file(os.path.abspath(f))
-                if recursive:
+                        self.__validate_xml_file(os.path.join(root, f))
+                if not recursive:
                     break
 
-
     def __validate_xml_file(self, file):
+        """
+        Validate a single Fast DDS XML configuration file.
+
+        :param file: The Fast DDS XML configuration file.
+        """
         xml_etree = etree.parse(file)
         xml_etree_encoded = etree.fromstring(etree.tostring(xml_etree))
-
         try:
             self.xsd_file.validate(xml_etree_encoded)
             print(f'Valid XML file: {file}')
-        except XMLSchemaValidationError as error:
+        except (XMLSchemaValidationError, XMLSchemaKeyError) as error:
             print(f'NOT valid XML file: {file}')
             print(error)
 
