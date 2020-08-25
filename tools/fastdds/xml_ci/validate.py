@@ -27,6 +27,7 @@ from lxml import etree
 from xmlschema import XMLSchema, XMLSchemaValidationError
 from xmlschema.exceptions import XMLSchemaKeyError
 
+
 class Validate:
     """Fast DDS XML configuration files validator."""
 

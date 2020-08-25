@@ -33,6 +33,7 @@
 
 import argparse
 import os.path
+import platform
 
 from xml_ci.validate import Validate
 
@@ -74,13 +75,13 @@ class XMLParser:
         parser.add_argument(
             '-x',
             '--xsd-file',
-            default='../../resources/xsd/fastRTPS_profiles.xsd',
+            required=True,
             help='Fast DDS XSD schema for validation'
         )
         args = parser.parse_args(argv)
 
-        args.xsd_file = os.path.abspath(args.xsd_file)
-        print(args.xsd_file)
+        # args.xsd_file = self.__xsd_dir()
+
         if not os.path.isfile(args.xsd_file):
             print(f'The XSD schema does not exist: {args.xsd_file}')
             exit(1)
@@ -94,3 +95,25 @@ class XMLParser:
         else:
             parser.print_help()
             exit(1)
+
+    def __xsd_dir(self):
+        """
+        Calculate the xsd directory.
+
+        :return: The path to the platform specific the XSD directory
+
+        """
+        # Windows
+        if os.name == 'nt':
+            xsd_path = 'c:\\path\\to\\fastRTPS_profiles.xsd\\'
+        elif os.name == 'posix':
+            # MAC
+            if platform.mac_ver()[0] != '':
+                xsd_path = 'path/to/fastRTPS_profiles.xsd'
+            # Linux
+            else:
+                xsd_path = 'path/to/fastRTPS_profiles.xsd'
+        else:
+            raise RuntimeError(f'{os.name} not supported')
+
+        return xsd_path
