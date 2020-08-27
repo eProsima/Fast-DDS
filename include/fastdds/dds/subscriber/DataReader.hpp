@@ -208,7 +208,7 @@ public:
      * Get TopicDescription
      * @return TopicDescription pointer
      */
-    const TopicDescription* get_topicdescription() const;
+    RTPS_DllAPI const TopicDescription* get_topicdescription() const;
 
     /**
      * @brief Get the requested deadline missed status
