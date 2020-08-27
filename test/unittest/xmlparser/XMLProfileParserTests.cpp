@@ -26,6 +26,7 @@
 #include <chrono>
 #include <sstream>
 #include <fstream>
+#include <stdlib.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -872,6 +873,24 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
     tinyxml2::XMLDocument xml_doc;
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+}
+
+//! Tests whether the SKIP_DEFAULT_XML_FILE variable prevents the xmlparser from loading the default XML file.
+//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
+//! The expected return value is XMLP_ret::XML_ERROR.
+TEST_F(XMLProfileParserTests, skip_default_xml)
+{
+    ParticipantAttributes participant_atts_none;
+    setenv("SKIP_DEFAULT_XML_FILE", "1",1);
+    xmlparser::XMLProfileManager::loadDefaultXMLFile();
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
+
+    ParticipantAttributes participant_atts_default;
+    setenv("SKIP_DEFAULT_XML_FILE", "0",1);
+    xmlparser::XMLProfileManager::loadDefaultXMLFile();
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
+
+    ASSERT_NE(participant_atts_default,participant_atts_none);
 }
 
 int main(

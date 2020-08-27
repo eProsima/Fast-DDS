@@ -181,7 +181,7 @@ void XMLProfileManager::loadDefaultXMLFile()
         loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
     }
 #else
-    logInfo(DOCUMENTATION_CATEGORY, "This is an info message");
+
     if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
     {
         loadXMLFile(file_path);
