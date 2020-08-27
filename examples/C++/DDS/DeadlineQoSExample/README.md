@@ -2,12 +2,12 @@
 
 ## Application description
 
-This example illustrates the Deadline QoS feature on a FastRTPS Application.
+This example illustrates the Deadline QoS feature on a FastDDS Application.
 
 To launch this example open two different consoles:
 
-In the first one launch: ./DeadlineQoSExample publisher  
-In the second one launch: ./DeadlineQoSExample subscriber
+In the first one launch: ./DDSDeadlineQoSExample publisher  
+In the second one launch: ./DDSDeadlineQoSExample subscriber
 
 ## Application behaviour
 
@@ -19,12 +19,12 @@ that the third instance misses the deadline 50% of the time. The number of sampl
 
 The default behaviour can be changed by providing the following command line arguments:
 
-./DeadlineQoSExample publisher [--deadline &lt;deadline_ms&gt;] [--sleep &lt;writer_sleep_ms&gt;] [--samples &lt;samples&gt;]  
-./DeadlineQoSExample subscriber [--deadline &lt;deadline_ms&gt;]
+./DDSDeadlineQoSExample publisher [--deadline &lt;deadline_ms&gt;] [--sleep &lt;writer_sleep_ms&gt;] [--samples &lt;samples&gt;]  
+./DDSDeadlineQoSExample subscriber [--deadline &lt;deadline_ms&gt;]
 
 For example:
 
-./DeadlineQoSExample publisher --deadline 1000 --sleep 500 --samples 5  
-./DeadlineQosExample subscriber --deadline 1000
+./DDSDeadlineQoSExample publisher --deadline 1000 --sleep 500 --samples 5  
+./DDSDeadlineQosExample subscriber --deadline 1000
 
 will setup the publisher and subscriber to use a deadline period of 1000 ms, the publisher will write a new sample every 500 ms for the first two keys and every 1000 ms for the third one, and a total of 5 samples will be sent.

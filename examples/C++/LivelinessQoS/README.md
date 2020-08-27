@@ -1,6 +1,6 @@
 ## Liveliness QoS example
 
-This example illustrates the Liveliness QoS feature on a Fast-RTPS application.
+This example illustrates the Liveliness QoS feature on a Fast DDS application.
 
 To launch this example open two different consoles:
 

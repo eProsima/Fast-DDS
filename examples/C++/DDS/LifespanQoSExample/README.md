@@ -1,11 +1,11 @@
 # Lifespan QoS example
 
-This example illustrates how to use the Lifespan QoS in a Fast-RTPS application.
+This example illustrates how to use the Lifespan QoS in a Fast DDS application.
 
 To launch this test open two different consoles:
 
-In the first one launch: ./LifespanQoSExample publisher  
-In the second one launch: ./LifespanQoSExample subscriber
+In the first one launch: ./DDSLifespanQoSExample publisher  
+In the second one launch: ./DDSLifespanQoSExample subscriber
 
 ## Application behaviour
 
@@ -17,7 +17,7 @@ The subscriber waits until it receives a specified number of samples from the pu
 
 The default parameters are 500ms for the lifespan, 2000 ms for the wait time and 10 for the number of samples. You can change these defaults by executing:
 
-./LifespanQoSExample publisher &lt;lifespan_ms&gt; &lt;sleep_ms&gt; &lt;samples&gt;  
-./LifespanQoSExample subscriber &lt;lifespan_ms&gt; &lt;sleep_ms&gt;
+./DDSLifespanQoSExample publisher &lt;lifespan_ms&gt; &lt;sleep_ms&gt; &lt;samples&gt;  
+./DDSLifespanQoSExample subscriber &lt;lifespan_ms&gt; &lt;sleep_ms&gt;
 
 for publisher and subscriber respectively.

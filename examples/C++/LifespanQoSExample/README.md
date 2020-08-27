@@ -1,6 +1,6 @@
 # Lifespan QoS example
 
-This example illustrates how to use the Lifespan QoS in a Fast-RTPS application.
+This example illustrates how to use the Lifespan QoS in a Fast DDS application.
 
 To launch this test open two different consoles:
 

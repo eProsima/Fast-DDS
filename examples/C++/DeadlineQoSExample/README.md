@@ -2,7 +2,7 @@
 
 ## Application description
 
-This example illustrates the Deadline QoS feature on a FastRTPS Application.
+This example illustrates the Deadline QoS feature on a Fast DDS Application.
 
 To launch this example open two different consoles:
 

@@ -1,9 +1,9 @@
 To launch this test open two or more consoles:
 
-1) "$OwnershipStrengthQosExample subscriber" 
+1) "$./OwnershipStrengthQosExample subscriber" 
     (or "OwnershipStrengthQosExample.exe subscriber" on Windows). 
 
-2..*) "$OwnershipStrengthQosExample publisher XX" 
+2) "$./OwnershipStrengthQosExample publisher XX" 
       (or "OwnershipStrengthQosExample.exe publisher XX" on Windows).
 
 For the publishers, XX represents an Ownership Strength QoS number. 
