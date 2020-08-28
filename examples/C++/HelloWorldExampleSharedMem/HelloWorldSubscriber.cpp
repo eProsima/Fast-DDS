@@ -71,7 +71,7 @@ bool HelloWorldSubscriber::init()
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
-    Rparam.topic.topicDataType = "HelloWorldSharedMem";
+    Rparam.topic.topicDataType = "HelloWorld";
     Rparam.topic.topicName = "HelloWorldSharedMemTopic";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;

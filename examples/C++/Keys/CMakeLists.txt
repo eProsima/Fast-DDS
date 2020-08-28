@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(keys ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} keys.cpp)
-target_link_libraries(keys fastrtps fastcdr foonathan_memory)
-install(TARGETS keys
+add_executable(Keys ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} keys.cpp)
+target_link_libraries(Keys fastrtps fastcdr foonathan_memory)
+install(TARGETS Keys
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )

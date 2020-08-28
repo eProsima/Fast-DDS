@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring DDS SampleConfig_Events example...")
 file(GLOB DDS_SAMPLECONFIG_EVENTS_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(DDSSampleConfigEvents ${DDS_SAMPLECONFIG_EVENTS_EXAMPLE_SOURCES} sampleconfig_triggers.cpp)
-target_link_libraries(DDSSampleConfigEvents fastrtps fastcdr foonathan_memory)
-install(TARGETS DDSSampleConfigEvents
+add_executable(DDSSampleConfig_Events ${DDS_SAMPLECONFIG_EVENTS_EXAMPLE_SOURCES} sampleconfig_triggers.cpp)
+target_link_libraries(DDSSampleConfig_Events fastrtps fastcdr foonathan_memory)
+install(TARGETS DDSSampleConfig_Events
     RUNTIME DESTINATION examples/C++/DDS/SampleConfig_Events/${BIN_INSTALL_DIR}
     )

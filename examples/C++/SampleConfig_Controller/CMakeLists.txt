@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(sampleconfig_controller ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_safest.cpp)
-target_link_libraries(sampleconfig_controller fastrtps fastcdr foonathan_memory)
-install(TARGETS sampleconfig_controller
+add_executable(SampleConfig_Controller ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} sampleconfig_safest.cpp)
+target_link_libraries(SampleConfig_Controller fastrtps fastcdr foonathan_memory)
+install(TARGETS SampleConfig_Controller
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )

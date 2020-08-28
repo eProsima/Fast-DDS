@@ -77,7 +77,7 @@ bool HelloWorldPublisher::init()
     //CREATE THE PUBLISHER
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
-    Wparam.topic.topicDataType = "HelloWorldSharedMem";
+    Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "HelloWorldSharedMemTopic";
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
