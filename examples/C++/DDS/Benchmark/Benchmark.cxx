@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Benchmark.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -25,7 +25,6 @@ namespace { char dummy; }
 #endif
 
 #include "Benchmark.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -35,7 +34,9 @@ using namespace eprosima::fastcdr::exception;
 
 BenchMark::BenchMark()
 {
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@3c130745
     m_index = 0;
+
 }
 
 BenchMark::~BenchMark()
@@ -54,32 +55,37 @@ BenchMark::BenchMark(BenchMark &&x)
 
 BenchMark& BenchMark::operator=(const BenchMark &x)
 {
+
     m_index = x.m_index;
-    
+
     return *this;
 }
 
 BenchMark& BenchMark::operator=(BenchMark &&x)
 {
+
     m_index = x.m_index;
-    
+
     return *this;
 }
 
 size_t BenchMark::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     return current_alignment - initial_alignment;
 }
 
-size_t BenchMark::getCdrSerializedSize(const BenchMark&, size_t current_alignment)
+size_t BenchMark::getCdrSerializedSize(const BenchMark& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
-            
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
@@ -88,28 +94,60 @@ size_t BenchMark::getCdrSerializedSize(const BenchMark&, size_t current_alignmen
 
 void BenchMark::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+
     scdr << m_index;
 }
 
 void BenchMark::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+
     dcdr >> m_index;
 }
 
+/*!
+ * @brief This function sets a value in member index
+ * @param _index New value for member index
+ */
+void BenchMark::index(uint32_t _index)
+{
+m_index = _index;
+}
+
+/*!
+ * @brief This function returns the value of member index
+ * @return Value of member index
+ */
+uint32_t BenchMark::index() const
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function returns a reference to member index
+ * @return Reference to member index
+ */
+uint32_t& BenchMark::index()
+{
+    return m_index;
+}
+
+
 size_t BenchMark::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
+
+
 
     return current_align;
 }
 
 bool BenchMark::isKeyDefined()
 {
-    return false;
+   return false;
 }
 
-void BenchMark::serializeKey(eprosima::fastcdr::Cdr &) const
+void BenchMark::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
-	 
+    (void) scdr;
+     
 }

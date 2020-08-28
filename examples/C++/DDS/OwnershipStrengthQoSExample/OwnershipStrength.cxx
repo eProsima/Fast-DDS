@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file OwnershipStrength.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -25,7 +25,6 @@ namespace { char dummy; }
 #endif
 
 #include "OwnershipStrength.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -35,13 +34,20 @@ using namespace eprosima::fastcdr::exception;
 
 ExampleMessage::ExampleMessage()
 {
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2e4b8173
     m_index = 0;
+    // m_ownershipStrength com.eprosima.idl.parser.typecode.PrimitiveTypeCode@70e8f8e
     m_ownershipStrength = 0;
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@17046283
+    m_message ="";
 
 }
 
 ExampleMessage::~ExampleMessage()
 {
+
+
+
 }
 
 ExampleMessage::ExampleMessage(const ExampleMessage &x)
@@ -60,29 +66,34 @@ ExampleMessage::ExampleMessage(ExampleMessage &&x)
 
 ExampleMessage& ExampleMessage::operator=(const ExampleMessage &x)
 {
+
     m_index = x.m_index;
     m_ownershipStrength = x.m_ownershipStrength;
     m_message = x.m_message;
-    
+
     return *this;
 }
 
 ExampleMessage& ExampleMessage::operator=(ExampleMessage &&x)
 {
+
     m_index = x.m_index;
     m_ownershipStrength = x.m_ownershipStrength;
     m_message = std::move(x.m_message);
-    
+
     return *this;
 }
 
 size_t ExampleMessage::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
@@ -92,11 +103,15 @@ size_t ExampleMessage::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t ExampleMessage::getCdrSerializedSize(const ExampleMessage& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
-            
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
@@ -106,27 +121,115 @@ size_t ExampleMessage::getCdrSerializedSize(const ExampleMessage& data, size_t c
 
 void ExampleMessage::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+
     scdr << m_index;
-
     scdr << m_ownershipStrength;
-
-    if(m_message.length() <= 255)
     scdr << m_message;
-    else
-        throw eprosima::fastcdr::exception::BadParamException("message field exceeds the maximum length");
 }
 
 void ExampleMessage::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+
     dcdr >> m_index;
     dcdr >> m_ownershipStrength;
     dcdr >> m_message;
 }
 
+/*!
+ * @brief This function sets a value in member index
+ * @param _index New value for member index
+ */
+void ExampleMessage::index(uint32_t _index)
+{
+m_index = _index;
+}
+
+/*!
+ * @brief This function returns the value of member index
+ * @return Value of member index
+ */
+uint32_t ExampleMessage::index() const
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function returns a reference to member index
+ * @return Reference to member index
+ */
+uint32_t& ExampleMessage::index()
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function sets a value in member ownershipStrength
+ * @param _ownershipStrength New value for member ownershipStrength
+ */
+void ExampleMessage::ownershipStrength(uint32_t _ownershipStrength)
+{
+m_ownershipStrength = _ownershipStrength;
+}
+
+/*!
+ * @brief This function returns the value of member ownershipStrength
+ * @return Value of member ownershipStrength
+ */
+uint32_t ExampleMessage::ownershipStrength() const
+{
+    return m_ownershipStrength;
+}
+
+/*!
+ * @brief This function returns a reference to member ownershipStrength
+ * @return Reference to member ownershipStrength
+ */
+uint32_t& ExampleMessage::ownershipStrength()
+{
+    return m_ownershipStrength;
+}
+
+/*!
+ * @brief This function copies the value in member message
+ * @param _message New value to be copied in member message
+ */
+void ExampleMessage::message(const std::string &_message)
+{
+m_message = _message;
+}
+
+/*!
+ * @brief This function moves the value in member message
+ * @param _message New value to be moved in member message
+ */
+void ExampleMessage::message(std::string &&_message)
+{
+m_message = std::move(_message);
+}
+
+/*!
+ * @brief This function returns a constant reference to member message
+ * @return Constant reference to member message
+ */
+const std::string& ExampleMessage::message() const
+{
+    return m_message;
+}
+
+/*!
+ * @brief This function returns a reference to member message
+ * @return Reference to member message
+ */
+std::string& ExampleMessage::message()
+{
+    return m_message;
+}
+
 size_t ExampleMessage::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
+
+
 
 
 
@@ -136,12 +239,13 @@ size_t ExampleMessage::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool ExampleMessage::isKeyDefined()
 {
-    return false;
+   return false;
 }
 
-void ExampleMessage::serializeKey(eprosima::fastcdr::Cdr&) const
+void ExampleMessage::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
-	 
-	 
-	 
+    (void) scdr;
+     
+     
+     
 }

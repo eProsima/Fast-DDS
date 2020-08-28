@@ -20,7 +20,7 @@
 #ifndef LivelinessPublisher_H_
 #define LivelinessPublisher_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>

@@ -21,7 +21,7 @@
 #define HELLOWORLDPUBLISHER_H_
 
 #include "Lifespan.h"
-#include "LifespanTypes.h"
+#include "LifespanPubSubTypes.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>

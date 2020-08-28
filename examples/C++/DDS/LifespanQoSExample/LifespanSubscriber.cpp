@@ -31,7 +31,7 @@ LifespanSubscriber::LifespanSubscriber()
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new LifespanType())
+    , type_(new LifespanPubSubType())
 {
 }
 
@@ -152,7 +152,7 @@ void LifespanSubscriber::run(
     std::cout << std::endl << "Subscriber waiting for " << sleep_ms << " milliseconds" << std::endl << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
 
-    LifespanType::type data;
+    LifespanPubSubType::type data;
     SampleInfo info;
 
     for ( uint32_t i = 0; i < listener.n_samples; i++ )

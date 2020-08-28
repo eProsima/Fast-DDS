@@ -20,7 +20,7 @@
 #ifndef DisablePositiveACKsSubscriber_H_
 #define DisablePositiveACKsSubscriber_H_
 
-#include "TopicTypes.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>

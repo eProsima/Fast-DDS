@@ -43,7 +43,7 @@ all: $(DIRECTORIES) LivelinessQoS
 LIVELINESSQOS_TARGET= bin/LivelinessQoS
 
 LIVELINESSQOS_SRC_CXXFILES= LivelinessQoS/Topic.cxx \
-				LivelinessQoS/TopicType.cxx
+				LivelinessQoS/TopicPubSubType.cxx
 
 LIVELINESSQOS_SRC_CPPFILES= LivelinessQoS/LivelinessPublisher.cpp \
 				LivelinessQoS/LivelinessSubscriber.cpp \

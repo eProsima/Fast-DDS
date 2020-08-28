@@ -20,7 +20,7 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
-#include "LifespanTypes.h"
+#include "LifespanPubSubTypes.h"
 #include "Lifespan.h"
 
 #include <fastrtps/fastrtps_fwd.h>
@@ -60,7 +60,7 @@ private:
 
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Subscriber* subscriber_;
-    LifespanType type_;
+    LifespanPubSubType type_;
 
 public:
 	class SubListener:public eprosima::fastrtps::SubscriberListener

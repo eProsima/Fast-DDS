@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file FilteringExample.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -25,7 +25,6 @@ namespace { char dummy; }
 #endif
 
 #include "FilteringExample.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -35,7 +34,9 @@ using namespace eprosima::fastcdr::exception;
 
 FilteringExample::FilteringExample()
 {
+    // m_sampleNumber com.eprosima.idl.parser.typecode.PrimitiveTypeCode@72a7c7e0
     m_sampleNumber = 0;
+
 }
 
 FilteringExample::~FilteringExample()
@@ -54,32 +55,37 @@ FilteringExample::FilteringExample(FilteringExample &&x)
 
 FilteringExample& FilteringExample::operator=(const FilteringExample &x)
 {
+
     m_sampleNumber = x.m_sampleNumber;
-    
+
     return *this;
 }
 
 FilteringExample& FilteringExample::operator=(FilteringExample &&x)
 {
+
     m_sampleNumber = x.m_sampleNumber;
-    
+
     return *this;
 }
 
 size_t FilteringExample::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     return current_alignment - initial_alignment;
 }
 
-size_t FilteringExample::getCdrSerializedSize(const FilteringExample&, size_t current_alignment)
+size_t FilteringExample::getCdrSerializedSize(const FilteringExample& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
-            
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
@@ -88,29 +94,60 @@ size_t FilteringExample::getCdrSerializedSize(const FilteringExample&, size_t cu
 
 void FilteringExample::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << m_sampleNumber;
 
+    scdr << m_sampleNumber;
 }
 
 void FilteringExample::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+
     dcdr >> m_sampleNumber;
 }
 
+/*!
+ * @brief This function sets a value in member sampleNumber
+ * @param _sampleNumber New value for member sampleNumber
+ */
+void FilteringExample::sampleNumber(int32_t _sampleNumber)
+{
+m_sampleNumber = _sampleNumber;
+}
+
+/*!
+ * @brief This function returns the value of member sampleNumber
+ * @return Value of member sampleNumber
+ */
+int32_t FilteringExample::sampleNumber() const
+{
+    return m_sampleNumber;
+}
+
+/*!
+ * @brief This function returns a reference to member sampleNumber
+ * @return Reference to member sampleNumber
+ */
+int32_t& FilteringExample::sampleNumber()
+{
+    return m_sampleNumber;
+}
+
+
 size_t FilteringExample::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
+
+
 
     return current_align;
 }
 
 bool FilteringExample::isKeyDefined()
 {
-    return false;
+   return false;
 }
 
-void FilteringExample::serializeKey(eprosima::fastcdr::Cdr&) const
+void FilteringExample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
-	 
+    (void) scdr;
+     
 }

@@ -31,7 +31,7 @@ LifespanPublisher::LifespanPublisher()
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
-    , type_(new LifespanType())
+    , type_(new LifespanPubSubType())
 {
 }
 
