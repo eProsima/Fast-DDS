@@ -20,6 +20,8 @@
 #ifndef STRINGMATCHING_H_
 #define STRINGMATCHING_H_
 
+#include <fastrtps/fastrtps_dll.h>
+
 #include <string>
 #include <vector>
 #include <stdint.h>
@@ -33,7 +35,7 @@ namespace rtps {
    section B.6).
    @ingroup UTILITIES_MODULE
  */
-class StringMatching
+class RTPS_DllAPI StringMatching
 {
 public:
 

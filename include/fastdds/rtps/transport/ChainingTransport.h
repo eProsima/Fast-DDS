@@ -33,7 +33,7 @@ class ChainingReceiverResource;
  *    - Has a pointer to the low level transport
  * @ingroup TRANSPORT_MODULE
  */
-class ChainingTransport : public TransportInterface
+class RTPS_DllAPI ChainingTransport : public TransportInterface
 {
 
 public:

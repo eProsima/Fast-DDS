@@ -49,7 +49,7 @@ using SendResourceList = std::vector<std::unique_ptr<fastrtps::rtps::SenderResou
  * locators can map to the same port, and hence the same channel.
  * @ingroup TRANSPORT_MODULE
  * */
-class TransportInterface
+class RTPS_DllAPI TransportInterface
 {
 public:
 
