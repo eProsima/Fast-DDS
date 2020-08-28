@@ -20,7 +20,7 @@
 #ifndef LIVELINESSSUBSCRIBER_H_
 #define LIVELINESSSUBSCRIBER_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>

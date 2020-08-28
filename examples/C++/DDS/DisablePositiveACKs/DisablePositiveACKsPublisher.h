@@ -21,7 +21,7 @@
 #define DisablePositiveACKsPublisher_H_
 
 #include "Topic.h"
-#include "TopicTypes.h"
+#include "TopicPubSubTypes.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>

@@ -30,7 +30,7 @@ DisablePositiveACKsSubscriber::DisablePositiveACKsSubscriber()
     , subscriber_(nullptr)
     , reader_(nullptr)
     , topic_(nullptr)
-    , type_(new TopicType())
+    , type_(new TopicPubSubType())
 {
 }
 

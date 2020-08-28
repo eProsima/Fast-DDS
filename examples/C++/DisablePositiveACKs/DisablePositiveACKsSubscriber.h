@@ -20,7 +20,7 @@
 #ifndef DisablePositiveACKsSubscriber_H_
 #define DisablePositiveACKsSubscriber_H_
 
-#include "TopicTypes.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastrtps/fastrtps_fwd.h>
@@ -57,7 +57,7 @@ private:
 
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Subscriber* subscriber_;
-    TopicType type_;
+    TopicPubSubType type_;
 
 public:
     class SubListener:public eprosima::fastrtps::SubscriberListener

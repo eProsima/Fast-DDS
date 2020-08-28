@@ -21,7 +21,7 @@
 #define DisablePositiveACKsPublisher_H_
 
 #include "Topic.h"
-#include "TopicTypes.h"
+#include "TopicPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -89,7 +89,7 @@ private:
         int n_matched;
     }listener;
 
-    TopicType type_;
+    TopicPubSubType type_;
 };
 
 

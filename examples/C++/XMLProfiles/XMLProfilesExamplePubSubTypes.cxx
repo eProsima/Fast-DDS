@@ -28,21 +28,26 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-XMLProfilesExamplePubSubType::XMLProfilesExamplePubSubType() {
+XMLProfilesExamplePubSubType::XMLProfilesExamplePubSubType()
+{
     setName("XMLProfilesExample");
-    m_typeSize = (uint32_t)XMLProfilesExample::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
+    m_typeSize = static_cast<uint32_t>(XMLProfilesExample::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
     m_isGetKeyDefined = XMLProfilesExample::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(XMLProfilesExample::getKeyMaxCdrSerializedSize()>16 ? XMLProfilesExample::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = XMLProfilesExample::getKeyMaxCdrSerializedSize()>16 ? XMLProfilesExample::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
+    memset(m_keyBuffer, 0, keyLength);
 }
 
-XMLProfilesExamplePubSubType::~XMLProfilesExamplePubSubType() {
+XMLProfilesExamplePubSubType::~XMLProfilesExamplePubSubType()
+{
     if(m_keyBuffer!=nullptr)
         free(m_keyBuffer);
 }
 
-bool XMLProfilesExamplePubSubType::serialize(void *data, SerializedPayload_t *payload) {
-    XMLProfilesExample *p_type = (XMLProfilesExample*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+bool XMLProfilesExamplePubSubType::serialize(void *data, SerializedPayload_t *payload)
+{
+    XMLProfilesExample *p_type = static_cast<XMLProfilesExample*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -58,13 +63,14 @@ bool XMLProfilesExamplePubSubType::serialize(void *data, SerializedPayload_t *pa
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength()); //Get the serialized length
     return true;
 }
 
-bool XMLProfilesExamplePubSubType::deserialize(SerializedPayload_t* payload, void* data) {
-    XMLProfilesExample* p_type = (XMLProfilesExample*) data; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+bool XMLProfilesExamplePubSubType::deserialize(SerializedPayload_t* payload, void* data)
+{
+    XMLProfilesExample* p_type = static_cast<XMLProfilesExample*>(data); //Convert DATA to pointer of your type
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -83,40 +89,45 @@ bool XMLProfilesExamplePubSubType::deserialize(SerializedPayload_t* payload, voi
     return true;
 }
 
-std::function<uint32_t()> XMLProfilesExamplePubSubType::getSerializedSizeProvider(void* data) {
+std::function<uint32_t()> XMLProfilesExamplePubSubType::getSerializedSizeProvider(void* data)
+{
     return [data]() -> uint32_t
     {
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<XMLProfilesExample*>(data)) + 4 /*encapsulation*/;
+        return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<XMLProfilesExample*>(data))) + 4 /*encapsulation*/;
     };
 }
 
-void* XMLProfilesExamplePubSubType::createData() {
-    return (void*)new XMLProfilesExample();
+void* XMLProfilesExamplePubSubType::createData()
+{
+    return reinterpret_cast<void*>(new XMLProfilesExample());
 }
 
-void XMLProfilesExamplePubSubType::deleteData(void* data) {
-    delete((XMLProfilesExample*)data);
+void XMLProfilesExamplePubSubType::deleteData(void* data)
+{
+    delete(reinterpret_cast<XMLProfilesExample*>(data));
 }
 
-bool XMLProfilesExamplePubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool XMLProfilesExamplePubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
-    XMLProfilesExample* p_type = (XMLProfilesExample*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,XMLProfilesExample::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
+    XMLProfilesExample* p_type = static_cast<XMLProfilesExample*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),XMLProfilesExample::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(force_md5 || XMLProfilesExample::getKeyMaxCdrSerializedSize()>16)	{
+    if(force_md5 || XMLProfilesExample::getKeyMaxCdrSerializedSize()>16)    {
         m_md5.init();
-        m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
-        for(uint8_t i = 0;i<16;++i)    	{
+        for(uint8_t i = 0;i<16;++i)        {
             handle->value[i] = m_md5.digest[i];
         }
     }
     else    {
-        for(uint8_t i = 0;i<16;++i)    	{
+        for(uint8_t i = 0;i<16;++i)        {
             handle->value[i] = m_keyBuffer[i];
         }
     }
     return true;
 }
+

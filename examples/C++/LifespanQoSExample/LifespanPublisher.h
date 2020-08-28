@@ -21,7 +21,7 @@
 #define HELLOWORLDPUBLISHER_H_
 
 #include "Lifespan.h"
-#include "LifespanTypes.h"
+#include "LifespanPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -95,7 +95,7 @@ private:
             uint32_t number,
             uint32_t sleep);
 
-    LifespanType type_;
+    LifespanPubSubType type_;
 };
 
 

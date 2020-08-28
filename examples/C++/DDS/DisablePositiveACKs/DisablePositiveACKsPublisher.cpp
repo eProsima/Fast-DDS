@@ -31,7 +31,7 @@ DisablePositiveACKsPublisher::DisablePositiveACKsPublisher()
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
-    , type_(new TopicType())
+    , type_(new TopicPubSubType())
 {
 }
 

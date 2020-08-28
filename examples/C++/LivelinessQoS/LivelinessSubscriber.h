@@ -20,7 +20,7 @@
 #ifndef LIVELINESSSUBSCRIBER_H_
 #define LIVELINESSSUBSCRIBER_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastrtps/fastrtps_fwd.h>
@@ -53,7 +53,7 @@ public:
 
 private:
 
-    TopicType type_;
+    TopicPubSubType type_;
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Subscriber* subscriber_;
 

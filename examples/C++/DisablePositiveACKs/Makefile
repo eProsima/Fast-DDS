@@ -44,7 +44,7 @@ DISABLEPOSITIVEACKSEXAMPLE_TARGET= bin/DisablePositiveACKs
 
 DISABLEPOSITIVEACKSEXAMPLE_SRC_CXXFILES= \
 DisablePositiveACKs/Topic.cxx \
-DisablePositiveACKs/TopicTypes.cxx
+DisablePositiveACKs/TopicPubSubTypes.cxx
 
 DISABLEPOSITIVEACKSEXAMPLE_SRC_CPPFILES= \
 DisablePositiveACKs/DisablePositiveACKsPublisher.cpp \

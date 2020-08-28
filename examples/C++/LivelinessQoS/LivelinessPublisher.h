@@ -20,7 +20,7 @@
 #ifndef LivelinessPublisher_H_
 #define LivelinessPublisher_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastrtps/fastrtps_fwd.h>
@@ -54,7 +54,7 @@ public:
 private:
 
     Topic topic_;
-    TopicType type_;
+    TopicPubSubType type_;
 
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Publisher* publisher_;

@@ -23,11 +23,14 @@
 #ifndef _OWNERSHIPSTRENGTH_PUBSUBTYPES_H_
 #define _OWNERSHIPSTRENGTH_PUBSUBTYPES_H_
 
+#include <fastrtps/config.h>
 #include <fastrtps/TopicDataType.h>
 
-
-
 #include "OwnershipStrength.h"
+
+#if !defined(GEN_API_VER) || (GEN_API_VER != 1)
+#error Generated OwnershipStrength is not compatible with current installed Fast-RTPS. Please, regenerate it with fastrtpsgen.
+#endif
 
 /*!
  * @brief This class represents the TopicDataType of the type ExampleMessage defined by the user in the IDL file.
@@ -35,18 +38,20 @@
  */
 class ExampleMessagePubSubType : public eprosima::fastrtps::TopicDataType {
 public:
-        typedef ExampleMessage type;
+    typedef ExampleMessage type;
 
-	ExampleMessagePubSubType();
-	virtual ~ExampleMessagePubSubType();
-	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
-	void* createData();
-	void deleteData(void * data);
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    eProsima_user_DllExport ExampleMessagePubSubType();
+
+    eProsima_user_DllExport virtual ~ExampleMessagePubSubType();
+    eProsima_user_DllExport virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    eProsima_user_DllExport virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+    eProsima_user_DllExport virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    eProsima_user_DllExport virtual void* createData() override;
+    eProsima_user_DllExport virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 
-#endif // _OwnershipStrength_PUBSUBTYPE_H_
+#endif // _OWNERSHIPSTRENGTH_PUBSUBTYPES_H_

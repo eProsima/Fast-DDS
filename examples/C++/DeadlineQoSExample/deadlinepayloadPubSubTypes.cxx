@@ -28,23 +28,28 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-HelloMsgPubSubType::HelloMsgPubSubType() {
+HelloMsgPubSubType::HelloMsgPubSubType()
+{
     setName("HelloMsg");
-    m_typeSize = (uint32_t)HelloMsg::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
+    m_typeSize = static_cast<uint32_t>(HelloMsg::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
     m_isGetKeyDefined = HelloMsg::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(HelloMsg::getKeyMaxCdrSerializedSize()>16 ? HelloMsg::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = HelloMsg::getKeyMaxCdrSerializedSize()>16 ? HelloMsg::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
+    memset(m_keyBuffer, 0, keyLength);
 }
 
-HelloMsgPubSubType::~HelloMsgPubSubType() {
+HelloMsgPubSubType::~HelloMsgPubSubType()
+{
     if(m_keyBuffer!=nullptr)
         free(m_keyBuffer);
 }
 
-bool HelloMsgPubSubType::serialize(void *data, SerializedPayload_t *payload) {
-    HelloMsg *p_type = (HelloMsg*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+bool HelloMsgPubSubType::serialize(void *data, SerializedPayload_t *payload)
+{
+    HelloMsg *p_type = static_cast<HelloMsg*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR);
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     // Serialize encapsulation
     ser.serialize_encapsulation();
@@ -58,13 +63,14 @@ bool HelloMsgPubSubType::serialize(void *data, SerializedPayload_t *payload) {
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength()); //Get the serialized length
     return true;
 }
 
-bool HelloMsgPubSubType::deserialize(SerializedPayload_t* payload, void* data) {
-    HelloMsg* p_type = (HelloMsg*) data; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
+bool HelloMsgPubSubType::deserialize(SerializedPayload_t* payload, void* data)
+{
+    HelloMsg* p_type = static_cast<HelloMsg*>(data); //Convert DATA to pointer of your type
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -83,39 +89,45 @@ bool HelloMsgPubSubType::deserialize(SerializedPayload_t* payload, void* data) {
     return true;
 }
 
-std::function<uint32_t()> HelloMsgPubSubType::getSerializedSizeProvider(void* data) {
-    return [data]() -> uint32_t {
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<HelloMsg*>(data)) + 4 /*encapsulation*/;
+std::function<uint32_t()> HelloMsgPubSubType::getSerializedSizeProvider(void* data)
+{
+    return [data]() -> uint32_t
+    {
+        return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<HelloMsg*>(data))) + 4 /*encapsulation*/;
     };
 }
 
-void* HelloMsgPubSubType::createData() {
-    return (void*)new HelloMsg();
+void* HelloMsgPubSubType::createData()
+{
+    return reinterpret_cast<void*>(new HelloMsg());
 }
 
-void HelloMsgPubSubType::deleteData(void* data) {
-    delete((HelloMsg*)data);
+void HelloMsgPubSubType::deleteData(void* data)
+{
+    delete(reinterpret_cast<HelloMsg*>(data));
 }
 
-bool HelloMsgPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool HelloMsgPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
-    HelloMsg* p_type = (HelloMsg*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,HelloMsg::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
+    HelloMsg* p_type = static_cast<HelloMsg*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),HelloMsg::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(force_md5 || HelloMsg::getKeyMaxCdrSerializedSize()>16)	{
+    if(force_md5 || HelloMsg::getKeyMaxCdrSerializedSize()>16)    {
         m_md5.init();
-        m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
-        for(uint8_t i = 0;i<16;++i)    	{
+        for(uint8_t i = 0;i<16;++i)        {
             handle->value[i] = m_md5.digest[i];
         }
     }
     else    {
-        for(uint8_t i = 0;i<16;++i)    	{
+        for(uint8_t i = 0;i<16;++i)        {
             handle->value[i] = m_keyBuffer[i];
         }
     }
     return true;
 }
+
