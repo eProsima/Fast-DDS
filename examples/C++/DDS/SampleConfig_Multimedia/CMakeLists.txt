@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring DDS SampleCondig_Multimedia example...")
 file(GLOB DDS_SAMPLECONFIG_MULTIMEDIA_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(DDSSampleConfigMultimedia ${DDS_SAMPLECONFIG_MULTIMEDIA_EXAMPLE_SOURCES} sampleconfig_fastest.cpp)
-target_link_libraries(DDSSampleConfigMultimedia fastrtps fastcdr foonathan_memory)
-install(TARGETS DDSSampleConfigMultimedia
+add_executable(DDSSampleConfig_Multimedia ${DDS_SAMPLECONFIG_MULTIMEDIA_EXAMPLE_SOURCES} sampleconfig_fastest.cpp)
+target_link_libraries(DDSSampleConfig_Multimedia fastrtps fastcdr foonathan_memory)
+install(TARGETS DDSSampleConfig_Multimedia
     RUNTIME DESTINATION examples/C++/DDS/SampleConfig_Multimedia/${BIN_INSTALL_DIR}
     )

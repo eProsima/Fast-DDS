@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring DDSFiltering example...")
 file(GLOB DDS_FILTERING_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(DDSFilteringExample ${DDS_FILTERING_EXAMPLE_SOURCES})
-target_link_libraries(DDSFilteringExample fastrtps fastcdr foonathan_memory)
-install(TARGETS DDSFilteringExample
-    RUNTIME DESTINATION examples/C++/DDS/FilteringExample/${BIN_INSTALL_DIR}
+add_executable(DDSFiltering ${DDS_FILTERING_EXAMPLE_SOURCES})
+target_link_libraries(DDSFiltering fastrtps fastcdr foonathan_memory)
+install(TARGETS DDSFiltering
+    RUNTIME DESTINATION examples/C++/DDS/Filtering/${BIN_INSTALL_DIR}
     )

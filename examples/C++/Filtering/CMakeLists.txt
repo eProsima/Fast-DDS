@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring Filtering example...")
 file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(FilteringExample ${DEADLINEQOS_EXAMPLE_SOURCES})
-target_link_libraries(FilteringExample fastrtps fastcdr foonathan_memory)
-install(TARGETS FilteringExample
-    RUNTIME DESTINATION examples/C++/FilteringExample/${BIN_INSTALL_DIR}
+add_executable(Filtering ${DEADLINEQOS_EXAMPLE_SOURCES})
+target_link_libraries(Filtering fastrtps fastcdr foonathan_memory)
+install(TARGETS Filtering
+    RUNTIME DESTINATION examples/C++/Filtering/${BIN_INSTALL_DIR}
     )
