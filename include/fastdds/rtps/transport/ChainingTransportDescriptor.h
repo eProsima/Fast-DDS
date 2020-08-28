@@ -34,7 +34,7 @@ namespace rtps {
  * - low_level_descriptor: Descriptor for lower level transport.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
+typedef struct RTPS_DllAPI ChainingTransportDescriptor : public TransportDescriptorInterface
 {
     ChainingTransportDescriptor(
             std::shared_ptr<TransportDescriptorInterface> low_level)
