@@ -186,9 +186,10 @@ void XMLProfileManager::loadDefaultXMLFile()
     {
         loadXMLFile(file_path);
     }
-    
+
     // Try to load the default XML file unless set to false
-    if (!std::getenv("SKIP_DEFAULT_XML_FILE")){
+    if (!std::getenv("SKIP_DEFAULT_XML_FILE"))
+    {
         loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
     }
 #endif // ifdef _WIN32

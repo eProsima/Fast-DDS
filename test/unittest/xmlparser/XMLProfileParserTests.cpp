@@ -673,7 +673,7 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     EXPECT_EQ(sub_bin_props[1].propagate(), false);
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
@@ -798,7 +798,8 @@ TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
 //! The expected return value is XMLP_ret::XML_OK.
 TEST_F(XMLProfileParserTests, extract_profiles_ok)
 {
-    const char* xml = "                                                                                                \
+    const char* xml =
+            "                                                                                                \
         <profiles>                                                                                                     \
             <participant profile_name=\"participant_prof\">                                                            \
                 <rtps></rtps>                                                                                          \
@@ -823,7 +824,8 @@ TEST_F(XMLProfileParserTests, extract_profiles_ok)
 //! The expected return value is XMLP_ret::XML_NOK.
 TEST_F(XMLProfileParserTests, extract_profiles_nok)
 {
-    const char* xml = "                                                                                                \
+    const char* xml =
+            "                                                                                                \
         <profiles>                                                                                                     \
             <!-- OK PROFILE -->                                                                                        \
             <participant profile_name=\"participant_prof\">                                                            \
@@ -858,7 +860,8 @@ TEST_F(XMLProfileParserTests, extract_profiles_nok)
 TEST_F(XMLProfileParserTests, extract_profiles_error)
 {
 
-    const char* xml = "                                                                                                \
+    const char* xml =
+            "                                                                                                \
         <profiles>                                                                                                     \
             <participant>                                                                                              \
             </participant>                                                                                             \
@@ -880,7 +883,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
 //! participant_atts_default contains the attributes in the default file in this folder which should be different.
 TEST_F(XMLProfileParserTests, skip_default_xml)
 {
-    setenv("SKIP_DEFAULT_XML_FILE", "1",1);
+    setenv("SKIP_DEFAULT_XML_FILE", "1", 1);
     ParticipantAttributes participant_atts_none;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
@@ -891,27 +894,27 @@ TEST_F(XMLProfileParserTests, skip_default_xml)
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
 
     EXPECT_NE(participant_atts_default.rtps.allocation.participants.initial,
-              participant_atts_none.rtps.allocation.participants.initial);
+            participant_atts_none.rtps.allocation.participants.initial);
     EXPECT_NE(participant_atts_default.rtps.allocation.participants.maximum,
-              participant_atts_none.rtps.allocation.participants.maximum);
+            participant_atts_none.rtps.allocation.participants.maximum);
     EXPECT_NE(participant_atts_default.rtps.allocation.participants.increment,
-              participant_atts_none.rtps.allocation.participants.increment);
+            participant_atts_none.rtps.allocation.participants.increment);
     EXPECT_NE(participant_atts_default.rtps.allocation.readers.initial,
-              participant_atts_none.rtps.allocation.readers.initial);
+            participant_atts_none.rtps.allocation.readers.initial);
     EXPECT_NE(participant_atts_default.rtps.allocation.readers.maximum,
-              participant_atts_none.rtps.allocation.readers.maximum);
+            participant_atts_none.rtps.allocation.readers.maximum);
     EXPECT_NE(participant_atts_default.rtps.allocation.readers.increment,
-              participant_atts_none.rtps.allocation.readers.increment);
+            participant_atts_none.rtps.allocation.readers.increment);
     EXPECT_NE(participant_atts_default.rtps.allocation.writers.initial,
-              participant_atts_none.rtps.allocation.writers.initial);
+            participant_atts_none.rtps.allocation.writers.initial);
     EXPECT_NE(participant_atts_default.rtps.allocation.writers.maximum,
-              participant_atts_none.rtps.allocation.writers.maximum);
+            participant_atts_none.rtps.allocation.writers.maximum);
     EXPECT_NE(participant_atts_default.rtps.allocation.writers.increment,
-              participant_atts_none.rtps.allocation.writers.increment);
+            participant_atts_none.rtps.allocation.writers.increment);
     EXPECT_NE(participant_atts_default.rtps.allocation.send_buffers.preallocated_number,
-              participant_atts_none.rtps.allocation.send_buffers.preallocated_number);
+            participant_atts_none.rtps.allocation.send_buffers.preallocated_number);
     EXPECT_NE(participant_atts_default.rtps.allocation.send_buffers.dynamic,
-              participant_atts_none.rtps.allocation.send_buffers.dynamic);
+            participant_atts_none.rtps.allocation.send_buffers.dynamic);
 }
 
 int main(
