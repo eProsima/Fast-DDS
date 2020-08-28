@@ -876,21 +876,42 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
 }
 
 //! Tests whether the SKIP_DEFAULT_XML_FILE variable prevents the xmlparser from loading the default XML file.
-//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
-//! The expected return value is XMLP_ret::XML_ERROR.
+//! participant_atts_none skips the default and obtains the values from the constructors.
+//! participant_atts_default contains the attributes in the default file in this folder which should be different.
 TEST_F(XMLProfileParserTests, skip_default_xml)
 {
-    ParticipantAttributes participant_atts_none;
     setenv("SKIP_DEFAULT_XML_FILE", "1",1);
+    ParticipantAttributes participant_atts_none;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
 
+    unsetenv("SKIP_DEFAULT_XML_FILE");
     ParticipantAttributes participant_atts_default;
-    setenv("SKIP_DEFAULT_XML_FILE", "0",1);
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
 
-    ASSERT_NE(participant_atts_default,participant_atts_none);
+    EXPECT_NE(participant_atts_default.rtps.allocation.participants.initial,
+              participant_atts_none.rtps.allocation.participants.initial);
+    EXPECT_NE(participant_atts_default.rtps.allocation.participants.maximum,
+              participant_atts_none.rtps.allocation.participants.maximum);
+    EXPECT_NE(participant_atts_default.rtps.allocation.participants.increment,
+              participant_atts_none.rtps.allocation.participants.increment);
+    EXPECT_NE(participant_atts_default.rtps.allocation.readers.initial,
+              participant_atts_none.rtps.allocation.readers.initial);
+    EXPECT_NE(participant_atts_default.rtps.allocation.readers.maximum,
+              participant_atts_none.rtps.allocation.readers.maximum);
+    EXPECT_NE(participant_atts_default.rtps.allocation.readers.increment,
+              participant_atts_none.rtps.allocation.readers.increment);
+    EXPECT_NE(participant_atts_default.rtps.allocation.writers.initial,
+              participant_atts_none.rtps.allocation.writers.initial);
+    EXPECT_NE(participant_atts_default.rtps.allocation.writers.maximum,
+              participant_atts_none.rtps.allocation.writers.maximum);
+    EXPECT_NE(participant_atts_default.rtps.allocation.writers.increment,
+              participant_atts_none.rtps.allocation.writers.increment);
+    EXPECT_NE(participant_atts_default.rtps.allocation.send_buffers.preallocated_number,
+              participant_atts_none.rtps.allocation.send_buffers.preallocated_number);
+    EXPECT_NE(participant_atts_default.rtps.allocation.send_buffers.dynamic,
+              participant_atts_none.rtps.allocation.send_buffers.dynamic);
 }
 
 int main(
