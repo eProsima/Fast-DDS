@@ -460,6 +460,11 @@ bool ParticipantImpl::unregisterType(
             retValue =  false;
         }
     }
+    else
+    {
+        retValue = false;
+    }
+    
 
     return retValue;
 }
