@@ -174,9 +174,9 @@ void XMLProfileManager::loadDefaultXMLFile()
 
     char skip_xml[1];
     size = 1;
-    error_t ret = getenv_s(&size, skip_xml, size, "SKIP_DEFAULT_XML_FILE");
 
-    if (ret == 0 && skip_xml[0] == "1")
+    // Try to load the default XML file if variable does not exist or is no set to '1'
+    if (!(getenv_s(&size, skip_xml, size, "SKIP_DEFAULT_XML_FILE") == 0 && skip_xml[0] == '1'))
     {
         loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
     }
@@ -187,11 +187,14 @@ void XMLProfileManager::loadDefaultXMLFile()
         loadXMLFile(file_path);
     }
 
-    // Try to load the default XML file unless set to false
-    if (!std::getenv("SKIP_DEFAULT_XML_FILE"))
+    const char* skip_xml = std::getenv("SKIP_DEFAULT_XML_FILE");
+
+    // Try to load the default XML file if variable does not exist or is no set to '1'
+    if (!(skip_xml != nullptr && skip_xml[0] == '1'))
     {
         loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
     }
+
 #endif // ifdef _WIN32
 }
 
