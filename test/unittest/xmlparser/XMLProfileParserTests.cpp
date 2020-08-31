@@ -883,6 +883,17 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
 //! participant_atts_default contains the attributes in the default file in this folder which should be different.
 TEST_F(XMLProfileParserTests, skip_default_xml)
 {
+#ifdef _WIN32
+    _putenv_s(("SKIP_DEFAULT_XML_FILE", "1");
+    ParticipantAttributes participant_atts_none;
+    xmlparser::XMLProfileManager::loadDefaultXMLFile();
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
+
+    _putenv_s("SKIP_DEFAULT_XML_FILE", "");
+    ParticipantAttributes participant_atts_default;
+    xmlparser::XMLProfileManager::loadDefaultXMLFile();
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
+#else
     setenv("SKIP_DEFAULT_XML_FILE", "1", 1);
     ParticipantAttributes participant_atts_none;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
@@ -892,6 +903,7 @@ TEST_F(XMLProfileParserTests, skip_default_xml)
     ParticipantAttributes participant_atts_default;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
+#endif // ifdef _WIN32
 
     EXPECT_NE(participant_atts_default.rtps.allocation.participants.initial,
             participant_atts_none.rtps.allocation.participants.initial);
