@@ -884,7 +884,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
 TEST_F(XMLProfileParserTests, skip_default_xml)
 {
 #ifdef _WIN32
-    _putenv_s(("SKIP_DEFAULT_XML_FILE", "1");
+    _putenv_s("SKIP_DEFAULT_XML_FILE", "1");
     ParticipantAttributes participant_atts_none;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
