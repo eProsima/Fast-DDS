@@ -133,7 +133,7 @@ void pastsamples()
     DataReaderQos rqos1;
     rqos1.endpoint().history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
     rqos1.history().kind = KEEP_ALL_HISTORY_QOS;
-    rqos1.durability().kind = VOLATILE_DURABILITY_QOS;
+    rqos1.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     rqos1.reliability().kind = RELIABLE_RELIABILITY_QOS;
     rqos1.history().depth =  50;
     rqos1.resource_limits().max_samples = 100;
@@ -155,7 +155,7 @@ void pastsamples()
     DataReaderQos rqos2;
     rqos2.endpoint().history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
     rqos2.history().kind = KEEP_LAST_HISTORY_QOS;
-    rqos2.durability().kind = VOLATILE_DURABILITY_QOS;
+    rqos2.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     rqos2.reliability().kind = RELIABLE_RELIABILITY_QOS;
     rqos2.history().depth =  10;
     rqos2.resource_limits().max_samples = 100;
@@ -184,6 +184,7 @@ void pastsamples()
         std::cout << std::to_string(my_sample.index()) << " ";
     }
     std::cout << std::endl;
+
     std::cout << "The Keep Last (Depth 10) Subscriber holds: " << std::endl;
     while (myReader2->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
     {
