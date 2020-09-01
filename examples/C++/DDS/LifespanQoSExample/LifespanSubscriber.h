@@ -76,7 +76,7 @@ public:
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
             : n_matched(0)
@@ -101,7 +101,8 @@ public:
 
         uint32_t n_samples;
 
-    } listener;
+    }
+    listener;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

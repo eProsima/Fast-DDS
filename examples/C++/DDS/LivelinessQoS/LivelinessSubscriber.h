@@ -67,7 +67,7 @@ private:
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
             : n_matched(0)
@@ -110,4 +110,4 @@ public:
 
 };
 
-#endif
+#endif // ifndef LIVELINESSSUBSCRIBER_H_

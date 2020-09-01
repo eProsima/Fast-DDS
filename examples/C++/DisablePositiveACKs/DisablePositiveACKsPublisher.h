@@ -27,7 +27,8 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
 
-class DisablePositiveACKsPublisher {
+class DisablePositiveACKsPublisher
+{
 public:
 
     /**
@@ -55,7 +56,8 @@ public:
      * @param waitForListener True to wait until a listener exists
      * @return True if sample was written succesfully
      */
-    bool publish(bool waitForListener = true);
+    bool publish(
+            bool waitForListener = true);
 
     /**
      * @brief Runs the publisher
@@ -65,14 +67,16 @@ public:
     void run(
             uint32_t number,
             uint32_t write_sleep_ms);
+
 private:
 
     Topic hello_;
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Publisher* publisher_;
-    class PubListener:public eprosima::fastrtps::PublisherListener
+    class PubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
+
         PubListener()
             : n_matched(0)
         {
@@ -87,7 +91,8 @@ private:
                 eprosima::fastrtps::rtps::MatchingInfo& info);
 
         int n_matched;
-    }listener;
+    }
+    listener;
 
     TopicPubSubType type_;
 };
