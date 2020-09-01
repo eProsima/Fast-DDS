@@ -364,7 +364,7 @@ inline bool ParameterSerializer<ParameterProtocolVersion_t>::read_content_from_c
     parameter.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, &parameter.protocolVersion.m_major);
     valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &parameter.protocolVersion.m_minor);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, 0); //padding
+    cdr_message->pos += 2; //padding
     return valid;
 }
 
@@ -392,7 +392,7 @@ inline bool ParameterSerializer<ParameterVendorId_t>::read_content_from_cdr_mess
     parameter.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, &parameter.vendorId[0]);
     valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &parameter.vendorId[1]);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, 0); //padding
+    cdr_message->pos += 2; //padding
     return valid;
 }
 
