@@ -38,7 +38,7 @@ bool RTPSMessageCreator::addMessageGap(
 }
 
 bool RTPSMessageCreator::addSubmessageGap(
-        CDRMessage_t* msg, 
+        CDRMessage_t* msg,
         const SequenceNumber_t& seqNumFirst,
         const SequenceNumberSet_t& seqNumList,
         const EntityId_t& readerId,
@@ -46,7 +46,7 @@ bool RTPSMessageCreator::addSubmessageGap(
 {
     octet flags = 0x0;
     Endianness_t old_endianess = msg->msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

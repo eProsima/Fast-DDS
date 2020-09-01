@@ -227,7 +227,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     std::array<uint8_t, 4> session_id;
     memcpy(session_id.data(), &(session->session_id), 4);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     octet flags = 0x0;
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else
@@ -367,7 +367,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     std::array<uint8_t, 4> session_id;
     memcpy(session_id.data(), &(session->session_id), 4);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     octet flags = 0x0;
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else
@@ -508,7 +508,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     std::array<uint8_t, 4> session_id;
     memcpy(session_id.data(), &(local_participant->session_id), 4);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     octet flags = 0x0;
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else
@@ -1614,7 +1614,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
     }
     else
     {
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         octet flags = 0x0;
         serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else

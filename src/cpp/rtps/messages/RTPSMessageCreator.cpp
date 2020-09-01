@@ -85,7 +85,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(
 {
     octet flags = 0x0;
     uint16_t size = 8;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -115,7 +115,7 @@ bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolV
 {
     octet flags = 0x0;
     uint16_t size = 20;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -141,7 +141,7 @@ bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, const GuidPrefi
 {
     octet flags = 0x0;
     uint16_t size = 12;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

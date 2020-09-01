@@ -850,7 +850,7 @@ bool WLP::send_liveliness_message(
     if (change != nullptr)
     {
         change->serializedPayload.data[0] = 0;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
         change->serializedPayload.data[1] = PL_CDR_BE;
 #else

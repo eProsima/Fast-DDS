@@ -83,7 +83,7 @@ macro(check_endianness)
     # Test endianness
     include(TestBigEndian)
     test_big_endian(BIG_ENDIAN)
-    set(__BIG_ENDIAN__ ${BIG_ENDIAN})
+    set(FASTDDS_IS_BIG_ENDIAN_TARGET ${BIG_ENDIAN})
 endmacro()
 
 macro(check_msvc_arch)

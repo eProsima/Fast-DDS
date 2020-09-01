@@ -81,7 +81,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_not_remote_participa
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -126,7 +126,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_message_class_id
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -186,7 +186,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_not_expecting_reques
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -238,7 +238,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_begin_handshake
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -299,7 +299,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_begin_handshake_r
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -381,7 +381,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_new_change_fail)
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -446,7 +446,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_add_change_fail)
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -553,7 +553,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -640,7 +640,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -698,7 +698,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -774,7 +774,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -832,7 +832,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -914,7 +914,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -966,7 +966,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_guid)
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -1015,7 +1015,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_sequence
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -1064,7 +1064,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -1122,7 +1122,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);

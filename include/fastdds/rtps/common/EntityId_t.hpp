@@ -82,7 +82,7 @@ struct RTPS_DllAPI EntityId_t
             uint32_t id)
     {
         memcpy(value, &id, size);
-#if !__BIG_ENDIAN__
+#if !FASTDDS_IS_BIG_ENDIAN_TARGET
         reverse();
 #endif
     }
@@ -127,13 +127,13 @@ struct RTPS_DllAPI EntityId_t
             uint32_t id)
     {
         memcpy(value, &id, size);
-#if !__BIG_ENDIAN__
+#if !FASTDDS_IS_BIG_ENDIAN_TARGET
         reverse();
 #endif
         return *this;
         //return id;
     }
-#if !__BIG_ENDIAN__
+#if !FASTDDS_IS_BIG_ENDIAN_TARGET
     //!
     void reverse(){
         octet oaux;
@@ -164,11 +164,11 @@ inline bool operator ==(
         EntityId_t& id1,
         const uint32_t id2)
 {
-#if !__BIG_ENDIAN__
+#if !FASTDDS_IS_BIG_ENDIAN_TARGET
     id1.reverse();
 #endif
     const bool result = 0 == memcmp(id1.value, &id2, sizeof(id2));
-#if !__BIG_ENDIAN__
+#if !FASTDDS_IS_BIG_ENDIAN_TARGET
     id1.reverse();
 #endif
     return result;
@@ -319,7 +319,7 @@ struct hash<eprosima::fastrtps::rtps::EntityId_t>
         // recover the participant entity counter
         eprosima::fastrtps::rtps::octet value[4];
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         value[3] = k.value[2];
         value[2] = k.value[1];
         value[1] = k.value[0];

@@ -86,7 +86,7 @@ struct RTPS_DllAPI CDRMessage_t final
         max_size = size;
         reserved_size = size;
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;
@@ -144,7 +144,7 @@ struct RTPS_DllAPI CDRMessage_t final
         reserved_size = message.reserved_size;
         message.reserved_size = 0;
         msg_endian = message.msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         message.msg_endian = BIGEND;
 #else
         message.msg_endian = LITTLEEND;
@@ -167,7 +167,7 @@ struct RTPS_DllAPI CDRMessage_t final
         reserved_size = message.reserved_size;
         message.reserved_size = 0;
         msg_endian = message.msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         message.msg_endian = BIGEND;
 #else
         message.msg_endian = LITTLEEND;
@@ -190,7 +190,7 @@ struct RTPS_DllAPI CDRMessage_t final
         max_size = size;
         reserved_size = size;
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;

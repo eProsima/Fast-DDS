@@ -74,7 +74,7 @@ typedef enum TopicKind_t
     WITH_KEY
 }TopicKind_t;
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #else
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;

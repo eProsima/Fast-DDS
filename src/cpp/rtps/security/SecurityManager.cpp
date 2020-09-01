@@ -858,7 +858,7 @@ bool SecurityManager::on_process_handshake(
 
             // Serialize encapsulation
             CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
             aux_msg.msg_endian = BIGEND;
             change->serializedPayload.encapsulation = PL_CDR_BE;
             CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -866,7 +866,7 @@ bool SecurityManager::on_process_handshake(
             aux_msg.msg_endian = LITTLEEND;
             change->serializedPayload.encapsulation = PL_CDR_LE;
             CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
             CDRMessage::addUInt16(&aux_msg, 0);
 
             if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -2032,7 +2032,7 @@ void SecurityManager::exchange_participant_crypto(
 
             // Serialize encapsulation
             CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
             aux_msg.msg_endian = BIGEND;
             change->serializedPayload.encapsulation = PL_CDR_BE;
             CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -2040,7 +2040,7 @@ void SecurityManager::exchange_participant_crypto(
             aux_msg.msg_endian = LITTLEEND;
             change->serializedPayload.encapsulation = PL_CDR_LE;
             CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
             CDRMessage::addUInt16(&aux_msg, 0);
 
             if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -2800,7 +2800,7 @@ bool SecurityManager::discovered_reader(
 
                                     // Serialize encapsulation
                                     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
                                     aux_msg.msg_endian = BIGEND;
                                     change->serializedPayload.encapsulation = PL_CDR_BE;
                                     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -2808,7 +2808,7 @@ bool SecurityManager::discovered_reader(
                                     aux_msg.msg_endian = LITTLEEND;
                                     change->serializedPayload.encapsulation = PL_CDR_LE;
                                     CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
                                     CDRMessage::addUInt16(&aux_msg, 0);
 
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -3137,7 +3137,7 @@ bool SecurityManager::discovered_writer(
 
                                     // Serialize encapsulation
                                     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
                                     aux_msg.msg_endian = BIGEND;
                                     change->serializedPayload.encapsulation = PL_CDR_BE;
                                     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -3145,7 +3145,7 @@ bool SecurityManager::discovered_writer(
                                     aux_msg.msg_endian = LITTLEEND;
                                     change->serializedPayload.encapsulation = PL_CDR_LE;
                                     CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
                                     CDRMessage::addUInt16(&aux_msg, 0);
 
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))

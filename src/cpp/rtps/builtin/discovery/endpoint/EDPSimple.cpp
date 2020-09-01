@@ -172,7 +172,7 @@ void EDPSimple::processPersistentData(t_p_StatefulReader & reader, t_p_StatefulW
 
         if (!change_to_add->copy(change))
         {
-            logWarning(RTPS_EDP,"Problem copying CacheChange, received data is: " 
+            logWarning(RTPS_EDP,"Problem copying CacheChange, received data is: "
                 << change->serializedPayload.length << " bytes and max size in EDPServer reader"
                 << " is " << change_to_add->serializedPayload.max_size);
 
@@ -591,7 +591,7 @@ bool EDPSimple::serialize_proxy_data(
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
             aux_msg.msg_endian = BIGEND;
 #else

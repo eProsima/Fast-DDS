@@ -22,7 +22,7 @@ namespace fastrtps {
 namespace rtps {
 
 bool RTPSMessageCreator::addMessageHeartbeat(
-        CDRMessage_t* msg, 
+        CDRMessage_t* msg,
         const GuidPrefix_t& guidprefix,
         const EntityId_t& readerId,
         const EntityId_t& writerId,
@@ -47,7 +47,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(
         const SequenceNumber_t& firstSN,
         const SequenceNumber_t& lastSN,
         Count_t count,
-        bool isFinal, 
+        bool isFinal,
         bool livelinessFlag)
 {
     RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -70,7 +70,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(
     octet flags = 0x0;
 
     Endianness_t old_endianess = msg->msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -141,7 +141,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(
 {
     octet flags = 0x0;
     Endianness_t old_endianess = msg->msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

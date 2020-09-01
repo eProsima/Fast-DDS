@@ -65,7 +65,7 @@ bool RTPSMessageCreator::addSubmessageData(
     bool inlineQosFlag = false;
 
     Endianness_t old_endianess = msg->msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -297,7 +297,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     bool inlineQosFlag = false;
 
     Endianness_t old_endianess = msg->msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

@@ -547,7 +547,7 @@ bool TypeLookupManager::send_request(
         CDRMessage_t msg(change->serializedPayload);
 
         bool valid = CDRMessage::addOctet(&msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_CDR_BE);
         msg.msg_endian = BIGEND;
         valid &= CDRMessage::addOctet(&msg, PL_CDR_BE);
@@ -594,7 +594,7 @@ bool TypeLookupManager::send_reply(
         CDRMessage_t msg(change->serializedPayload);
 
         bool valid = CDRMessage::addOctet(&msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_CDR_BE);
         msg.msg_endian = BIGEND;
         valid &= CDRMessage::addOctet(&msg, PL_CDR_BE);

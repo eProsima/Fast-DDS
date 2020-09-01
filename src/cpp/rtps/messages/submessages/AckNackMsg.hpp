@@ -48,7 +48,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(
 {
     octet flags = 0x0;
     Endianness_t old_endianess = msg->msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
@@ -120,7 +120,7 @@ bool RTPSMessageCreator::addSubmessageNackFrag(
 {
     octet flags = 0x0;
     Endianness_t old_endianess = msg->msg_endian;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);

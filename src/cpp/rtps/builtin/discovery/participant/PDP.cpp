@@ -410,7 +410,7 @@ void PDP::announceParticipantState(
             {
                 CDRMessage_t aux_msg(change->serializedPayload);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
                 change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
                 aux_msg.msg_endian = BIGEND;
 #else
@@ -453,7 +453,7 @@ void PDP::announceParticipantState(
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
             aux_msg.msg_endian = BIGEND;
 #else

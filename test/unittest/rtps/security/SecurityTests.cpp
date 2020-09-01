@@ -117,7 +117,7 @@ void SecurityTest::reply_process_ok(CacheChange_t** reply_message_change)
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);
@@ -179,10 +179,10 @@ void SecurityTest::final_message_process_ok(CacheChange_t** final_message_change
     aux_msg.wraps = true;
     aux_msg.buffer = change->serializedPayload.data;
     aux_msg.max_size = change->serializedPayload.max_size;
-    // 
+    //
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     aux_msg.msg_endian = BIGEND;
     change->serializedPayload.encapsulation = PL_CDR_BE;
     CDRMessage::addOctet(&aux_msg, CDR_BE);

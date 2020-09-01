@@ -41,7 +41,7 @@ inline bool CDRMessage::initCDRMsg(
     }
     msg->pos = 0;
     msg->length = 0;
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     msg->msg_endian = LITTLEEND;
@@ -62,7 +62,7 @@ inline bool CDRMessage::wrapVector(
     msg->buffer = vectorToWrap.data();
     msg->length = (uint32_t)vectorToWrap.size();
     msg->max_size = (uint32_t)vectorToWrap.capacity();
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     msg->msg_endian = BIGEND;
 #else
     msg->msg_endian = LITTLEEND;
