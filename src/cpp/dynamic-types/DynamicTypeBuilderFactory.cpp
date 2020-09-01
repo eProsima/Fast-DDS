@@ -27,6 +27,7 @@
 
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/string_convert.hpp>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
@@ -2513,8 +2514,7 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         break;
         case TK_CHAR16:
         {
-            std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-            apv.wchar_value(conv.from_bytes(member->get_default_value()).c_str()[0]);
+            apv.wchar_value(wstring_from_bytes(member->get_default_value()).c_str()[0]);
         }
         break;
         case TK_STRING8:
@@ -2524,8 +2524,7 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         break;
         case TK_STRING16:
         {
-            std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-            apv.string16_value(conv.from_bytes(member->get_default_value()));
+            apv.string16_value(wstring_from_bytes(member->get_default_value()));
         }
         break;
         case TK_ENUM:

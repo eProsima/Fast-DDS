@@ -200,6 +200,7 @@ set(${PROJECT_NAME}_source_files
     utils/IPLocator.cpp
     utils/System.cpp
     utils/TimedConditionVariable.cpp
+    utils/string_convert.cpp
 
     dds/core/types.cpp
     dds/core/Exception.cpp
@@ -370,6 +371,8 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
         $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
         )
+
+    target_compile_options(${PROJECT_NAME} PRIVATE /std:c++17)
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC

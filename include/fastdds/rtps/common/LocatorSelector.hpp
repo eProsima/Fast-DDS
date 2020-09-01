@@ -288,14 +288,16 @@ public:
         Locator_t* locator;
     };
 
-    class iterator : public std::iterator<
-            std::input_iterator_tag,                    // iterator_category
-            Locator_t,                                  // value_type
-            IteratorIndex,                              // difference_type
-            Locator_t*,                                 // pointer
-            Locator_t&>,                                 // reference
-        public LocatorsIterator
+    class iterator :
+            public LocatorsIterator
     {
+        // use of std::iterator to introduce the following aliases is deprecated
+        using iterator_category = std::input_iterator_tag;
+        using value_type        = Locator_t;
+        using difference_type   = IteratorIndex;
+        using pointer           = Locator_t*;
+        using reference         = Locator_t&;
+
         const LocatorSelector& locator_selector_;
         IteratorIndex current_;
 

@@ -24,12 +24,10 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/utils/string_convert.hpp>
 #include <stdint.h>
 #include <array>
-#include <string>
 #include <vector>
-#include <codecvt>
-#include <locale>
 
 namespace eprosima
 {
@@ -615,8 +613,7 @@ public:
                 return std::to_string(m_enumerated_value);
             case TK_STRING16:
             {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                return conv.to_bytes(m_string16_value);
+                return wstring_to_bytes(m_string16_value);
             }
             case TK_STRING8:
             case TK_NONE: // Cheat!
@@ -698,8 +695,7 @@ public:
             break;
             case TK_CHAR16:
             {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                wchar_value(conv.from_bytes(value).c_str()[0]);
+                wchar_value(wstring_from_bytes(value).c_str()[0]);
             }
             break;
             case TK_STRING8:
@@ -710,8 +706,7 @@ public:
             break;
             case TK_STRING16:
             {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                string16_value(conv.from_bytes(value));
+                string16_value(wstring_from_bytes(value));
             }
             break;
             case TK_ENUM:
