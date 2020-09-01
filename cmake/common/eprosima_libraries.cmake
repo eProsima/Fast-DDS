@@ -78,12 +78,14 @@ macro(eprosima_find_thirdparty package thirdparty_name)
         option(THIRDPARTY_UPDATE "Activate the auto update of internal thirdparties" ON)
         option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
 
-        if(THIRDPARTY_UPDATE AND (THIRDPARTY OR THIRDPARTY_${package}))
-            execute_process(
-                COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                RESULT_VARIABLE EXECUTE_RESULT
-                )
+        if(THIRDPARTY OR THIRDPARTY_${package})
+            if(THIRDPARTY_UPDATE)
+                execute_process(
+                    COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    RESULT_VARIABLE EXECUTE_RESULT
+                    )
+            endif()
 
             if(EXECUTE_RESULT EQUAL 0)
             else()
