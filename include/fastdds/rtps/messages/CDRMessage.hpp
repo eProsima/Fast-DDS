@@ -227,15 +227,23 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
     SequenceNumberSet_t sns(seqNum);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
-    uint32_t n_longs = (numBits + 31ul) / 32ul;
-    uint32_t bitmap[8];
-    for (uint32_t i = 0; i < n_longs; ++i)
+    if (numBits > 256u)
     {
-        valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
+        sns.base(c_SequenceNumber_Unknown);
+        valid = false;
     }
-    if (valid)
+    else
     {
-        sns.bitmap_set(numBits, bitmap);
+        uint32_t n_longs = (numBits + 31ul) / 32ul;
+        uint32_t bitmap[8];
+        for (uint32_t i = 0; i < n_longs; ++i)
+        {
+            valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
+        }
+        if (valid)
+        {
+            sns.bitmap_set(numBits, bitmap);
+        }
     }
 
     return sns;
@@ -251,15 +259,22 @@ inline bool CDRMessage::readFragmentNumberSet(
     fns->base(base);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
-    uint32_t n_longs = (numBits + 31ul) / 32ul;
-    uint32_t bitmap[8];
-    for (uint32_t i = 0; i < n_longs; ++i)
+    if (numBits > 256u)
     {
-        valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
+        valid = false;
     }
-    if (valid)
+    else
     {
-        fns->bitmap_set(numBits, bitmap);
+        uint32_t n_longs = (numBits + 31ul) / 32ul;
+        uint32_t bitmap[8];
+        for (uint32_t i = 0; i < n_longs; ++i)
+        {
+            valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
+        }
+        if (valid)
+        {
+            fns->bitmap_set(numBits, bitmap);
+        }
     }
     return valid;
 }
