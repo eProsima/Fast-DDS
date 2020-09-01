@@ -22,16 +22,18 @@
 #include <stdexcept>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 template<typename ochar, typename ichar>
-std::basic_string<ochar> string_convert(const ichar * pbeg, const ichar * pend)
+std::basic_string<ochar> string_convert(
+        const ichar* pbeg,
+        const ichar* pend)
 {
     using namespace std;
     using ostring = std::basic_string<ochar>;
 
     locale loc;
-    auto& conv_facet = use_facet<codecvt<ochar,ichar,mbstate_t>>(loc);
+    auto& conv_facet = use_facet<codecvt<ochar, ichar, mbstate_t> >(loc);
 
     const unsigned int buffer_size = 256;
     ochar buffer[buffer_size];
@@ -47,20 +49,20 @@ std::basic_string<ochar> string_convert(const ichar * pbeg, const ichar * pend)
     while (processing)
     {
         codecvt_base::result res =
-            conv_facet.in(mb, from_next, pend, from_next, buffer, buffer + buffer_size, to_next);
+                conv_facet.in(mb, from_next, pend, from_next, buffer, buffer + buffer_size, to_next);
 
-        switch(res)
+        switch (res)
         {
             case codecvt_base::ok:
                 // we are done
                 processing = false;
                 // append the contents remember
-                output.append(buffer,to_next-buffer);
+                output.append(buffer, to_next - buffer);
                 break;
 
             case codecvt_base::partial:
                 // insert current buffer content
-                output.append(buffer,buffer_size);
+                output.append(buffer, buffer_size);
                 break;
 
             case codecvt_base::error:
@@ -73,15 +75,17 @@ std::basic_string<ochar> string_convert(const ichar * pbeg, const ichar * pend)
     return output;
 }
 
-std::wstring wstring_from_bytes(const std::string & str)
+std::wstring wstring_from_bytes(
+        const std::string& str)
 {
-    const char * pbeg = str.c_str();
+    const char* pbeg = str.c_str();
     return string_convert<wchar_t>(pbeg, pbeg + str.size());
 }
 
-std::string wstring_to_bytes(const std::wstring & str)
+std::string wstring_to_bytes(
+        const std::wstring& str)
 {
-    const wchar_t * pbeg = str.c_str();
+    const wchar_t* pbeg = str.c_str();
     return string_convert<char>(pbeg, pbeg + str.size());
 }
 
