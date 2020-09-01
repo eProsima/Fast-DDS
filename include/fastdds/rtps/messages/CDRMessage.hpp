@@ -913,7 +913,7 @@ inline bool CDRMessage::addBinaryPropertySeq(
                     --number_to_serialize;
                     returnedValue =
                             CDRMessage::addBinaryProperty(msg, *it,
-                                    add_final_padding || (number_to_serialize != 0) );
+                                    add_final_padding || (number_to_serialize != 0));
                 }
             }
         }
@@ -953,7 +953,7 @@ inline bool CDRMessage::addBinaryPropertySeq(
                     --number_to_serialize;
                     returnedValue =
                             CDRMessage::addBinaryProperty(msg, *it,
-                                    add_final_padding || (number_to_serialize != 0) );
+                                    add_final_padding || (number_to_serialize != 0));
                 }
             }
         }

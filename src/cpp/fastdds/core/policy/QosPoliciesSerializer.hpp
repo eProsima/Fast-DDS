@@ -1048,8 +1048,8 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
         return false;
     }
 
-    if ( (len + sizeof(uint32_t) > parameter_length)  // Exceeds parameter length
-            || (len > qos_policy.max_size()) )         // Exceeds size limit
+    if ((len + sizeof(uint32_t) > parameter_length)   // Exceeds parameter length
+            || (len > qos_policy.max_size()))         // Exceeds size limit
     {
         return false;
     }
@@ -1063,7 +1063,7 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
     }
 
     // Skip padding
-    cdr_message->pos += ( (len + 3u) & ~3u) - len;
+    cdr_message->pos += ((len + 3u) & ~3u) - len;
 
     // Should have consumed whole size
 

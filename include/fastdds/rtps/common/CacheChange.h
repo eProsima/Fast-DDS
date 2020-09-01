@@ -350,7 +350,7 @@ private:
     {
         bool at_least_one_changed = false;
 
-        if ( (fragment_size_ > 0) && (initial_fragment < fragment_count_) )
+        if ((fragment_size_ > 0) && (initial_fragment < fragment_count_))
         {
             uint32_t last_fragment = initial_fragment + num_of_fragments;
             if (last_fragment > fragment_count_)

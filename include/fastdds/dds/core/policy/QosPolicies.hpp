@@ -2659,7 +2659,7 @@ public:
     }
 
     //!User defined transports to use alongside or in place of builtins.
-    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > user_transports;
+    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> user_transports;
 
     //!Set as false to disable the default UDPv4 implementation. <br> By default, true.
     bool use_builtin_transports;

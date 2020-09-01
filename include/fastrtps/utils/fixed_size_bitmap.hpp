@@ -38,8 +38,10 @@ using std::uint32_t;
 template <class T>
 struct DiffFunction
 {
-    constexpr auto operator () (T a, T b) const
-        -> decltype(a - b)
+    constexpr auto operator () (
+            T a,
+            T b) const
+    -> decltype(a - b)
     {
         return a - b;
     }
@@ -198,7 +200,7 @@ public:
                 uint32_t offset = 31u ^ bit;
 #else
                 uint32_t offset = static_cast<uint32_t>(__builtin_clz(bits));
-#endif
+#endif // if _MSC_VER
 
                 // Found first bit set in bitmap
                 return item + offset;
@@ -258,7 +260,7 @@ public:
             num_bits_ = std::max(diff + 1, num_bits_);
             uint32_t pos = diff >> 5;
             diff &= 31u;
-            bitmap_[pos] |= (1u << (31u - diff) );
+            bitmap_[pos] |= (1u << (31u - diff));
             return true;
         }
 
@@ -418,7 +420,7 @@ public:
 #else
                 uint32_t offset = static_cast<uint32_t>(__builtin_clz(bits));
                 uint32_t bit = 31u ^ offset;
-#endif
+#endif // if _MSC_VER
 
                 // Call the function for the corresponding item
                 f(item + offset);
@@ -558,12 +560,13 @@ private:
                 uint32_t offset = (31u ^ bit) + 1;
 #else
                 uint32_t offset = static_cast<uint32_t>(__builtin_clz(bits)) + 1u;
-#endif
+#endif // if _MSC_VER
                 num_bits_ = (i << 5u) + offset;
                 break;
             }
         }
     }
+
 };
 
 }   // namespace fastrtps

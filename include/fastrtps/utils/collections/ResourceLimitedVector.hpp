@@ -54,7 +54,7 @@ template <
     typename _KeepOrderEnabler = std::false_type,
     typename _LimitsConfig = ResourceLimitedContainerConfig,
     typename _Alloc = std::allocator<_Ty>,
-    typename _Collection = std::vector<_Ty, _Alloc> >
+    typename _Collection = std::vector<_Ty, _Alloc>>
 class ResourceLimitedVector
 {
 public:
@@ -461,7 +461,10 @@ public:
      *
      * @return const reference to the underlying collection.
      */
-    operator const collection_type& () const noexcept { return collection_; }
+    operator const collection_type& () const noexcept
+    {
+        return collection_;
+    }
 
 protected:
 
