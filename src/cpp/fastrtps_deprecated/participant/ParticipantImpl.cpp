@@ -464,7 +464,7 @@ bool ParticipantImpl::unregisterType(
     {
         retValue = false;
     }
-    
+
 
     return retValue;
 }
@@ -492,7 +492,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(
     }
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
