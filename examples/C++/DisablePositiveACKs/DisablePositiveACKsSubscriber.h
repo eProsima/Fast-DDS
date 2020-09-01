@@ -28,8 +28,10 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-class DisablePositiveACKsSubscriber {
+class DisablePositiveACKsSubscriber
+{
 public:
+
     /**
      * @brief DisablePositiveACKsSubscriber
      */
@@ -45,13 +47,15 @@ public:
      * @param disable_positive_acks True to disable positive acks
      * @return True if initialisation was successful
      */
-    bool init(bool disable_positive_acks);
+    bool init(
+            bool disable_positive_acks);
 
     /**
      * @brief Runs the subscriber
      * @param number The number of samples the subscriber expects to receive
      */
-    void run(uint32_t number);
+    void run(
+            uint32_t number);
 
 private:
 
@@ -60,9 +64,11 @@ private:
     TopicPubSubType type_;
 
 public:
-    class SubListener:public eprosima::fastrtps::SubscriberListener
+
+    class SubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
+
         SubListener()
             : n_matched(0)
             , n_samples(0)
@@ -76,13 +82,15 @@ public:
         void onSubscriptionMatched(
                 eprosima::fastrtps::Subscriber* sub,
                 eprosima::fastrtps::rtps::MatchingInfo& info);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
 
         Topic hello;
         eprosima::fastrtps::SampleInfo_t info;
         int n_matched;
         uint32_t n_samples;
-    }listener;
+    }
+    listener;
 };
 
 #endif /* DisablePositiveACKsSubscriber_H_ */
