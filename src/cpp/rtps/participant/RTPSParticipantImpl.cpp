@@ -1529,7 +1529,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     {
         // use of std::unary_function to introduce the following aliases is deprecated
         // using argument_type = Locator_t;
-        using result_type   = Locator_t&;
+        // using result_type   = Locator_t&;
 
         typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > Transports;
 

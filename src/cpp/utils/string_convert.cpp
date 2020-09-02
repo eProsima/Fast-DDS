@@ -20,7 +20,6 @@
 #include <fastrtps/utils/string_convert.hpp>
 #include <locale>
 #include <stdexcept>
-#include <codecvt> // deprecated but old compilers require it
 
 namespace eprosima {
 namespace fastrtps {
