@@ -1473,6 +1473,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     wreader.sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    wreader.pub_history_depth(10).pub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     wreader.sub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.pub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).
