@@ -20,6 +20,7 @@
 #ifndef FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
 #define FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
 
+#include <cstdint>
 #include <array>
 #include <cstdint>
 #include <string.h>
@@ -31,6 +32,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
 namespace fastrtps {
+
+using std::uint32_t;
 
 template <class T>
 struct DiffFunction

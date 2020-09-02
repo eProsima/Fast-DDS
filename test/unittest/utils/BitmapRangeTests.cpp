@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdint>
 #include <fastrtps/utils/fixed_size_bitmap.hpp>
 #include <gtest/gtest.h>
 
@@ -19,6 +20,7 @@
 #include <vector>
 #include <set>
 
+using namespace std;
 using ValueType = uint32_t;
 using TestType = eprosima::fastrtps::BitmapRange<ValueType>;
 
@@ -113,7 +115,7 @@ struct TestCase
     void Test(ValueType base, TestType& uut) const
     {
         ASSERT_TRUE(initialization.Check(initialization.result, uut));
-        
+
         for (auto step : steps)
         {
             bool result = step.input.perform_input(base, uut);
