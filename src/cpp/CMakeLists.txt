@@ -372,8 +372,6 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
         )
 
-    target_compile_options(${PROJECT_NAME} PRIVATE /std:c++17)
-
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
