@@ -45,7 +45,7 @@ inline bool CDRMessage::initCDRMsg(
     msg->msg_endian = BIGEND;
 #else
     msg->msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
     return true;
 }
 
@@ -66,7 +66,7 @@ inline bool CDRMessage::wrapVector(
     msg->msg_endian = BIGEND;
 #else
     msg->msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
     return true;
 }
 
@@ -1220,7 +1220,7 @@ inline bool CDRMessage::readParticipantGenericMessage(
     return true;
 }
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 

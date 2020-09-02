@@ -90,7 +90,7 @@ struct RTPS_DllAPI CDRMessage_t final
         msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
     }
 
     /**
@@ -148,7 +148,7 @@ struct RTPS_DllAPI CDRMessage_t final
         message.msg_endian = BIGEND;
 #else
         message.msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
         buffer = message.buffer;
         message.buffer = nullptr;
     }
@@ -171,7 +171,7 @@ struct RTPS_DllAPI CDRMessage_t final
         message.msg_endian = BIGEND;
 #else
         message.msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
         buffer = message.buffer;
         message.buffer = nullptr;
 
@@ -194,7 +194,7 @@ struct RTPS_DllAPI CDRMessage_t final
         msg_endian = BIGEND;
 #else
         msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
     }
 
     void reserve(

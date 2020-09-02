@@ -32,8 +32,9 @@ bool RTPSMessageCreator::addMessageHeartbeat(
         bool isFinal,
         bool livelinessFlag)
 {
-    RTPSMessageCreator::addHeader(msg,guidprefix);
-    RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+    RTPSMessageCreator::addHeader(msg, guidprefix);
+    RTPSMessageCreator::addSubmessageHeartbeat(msg, readerId, writerId, firstSN, lastSN, count, isFinal,
+            livelinessFlag);
     msg->length = msg->pos;
     return true;
 }
@@ -50,9 +51,10 @@ bool RTPSMessageCreator::addMessageHeartbeat(
         bool isFinal,
         bool livelinessFlag)
 {
-    RTPSMessageCreator::addHeader(msg,guidprefix);
+    RTPSMessageCreator::addHeader(msg, guidprefix);
     RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidprefix);
-    RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+    RTPSMessageCreator::addSubmessageHeartbeat(msg, readerId, writerId, firstSN, lastSN, count, isFinal,
+            livelinessFlag);
     msg->length = msg->pos;
     return true;
 }
@@ -75,12 +77,16 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(
 #else
     flags = flags | BIT(0);
     msg->msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    if(isFinal)
+    if (isFinal)
+    {
         flags = flags | BIT(1);
-    if(livelinessFlag)
+    }
+    if (livelinessFlag)
+    {
         flags = flags | BIT(2);
+    }
 
     // Submessage header.
     CDRMessage::addOctet(msg, HEARTBEAT);
@@ -95,20 +101,20 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(
     //Add Sequence Number
     CDRMessage::addSequenceNumber(msg, &firstSN);
     CDRMessage::addSequenceNumber(msg, &lastSN);
-    CDRMessage::addInt32(msg,(int32_t)count);
+    CDRMessage::addInt32(msg, (int32_t)count);
 
     //TODO(Ricardo) Improve.
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= reinterpret_cast<octet*>(&submessage_size);
-    if(msg->msg_endian == DEFAULT_ENDIAN)
+    octet* o = reinterpret_cast<octet*>(&submessage_size);
+    if (msg->msg_endian == DEFAULT_ENDIAN)
     {
         msg->buffer[submessage_size_pos] = *(o);
-        msg->buffer[submessage_size_pos+1] = *(o+1);
+        msg->buffer[submessage_size_pos + 1] = *(o + 1);
     }
     else
     {
-        msg->buffer[submessage_size_pos] = *(o+1);
-        msg->buffer[submessage_size_pos+1] = *(o);
+        msg->buffer[submessage_size_pos] = *(o + 1);
+        msg->buffer[submessage_size_pos + 1] = *(o);
     }
 
     msg->msg_endian = old_endianess;
@@ -146,7 +152,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(
 #else
     flags = flags | BIT(0);
     msg->msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     // Submessage header.
     CDRMessage::addOctet(msg, HEARTBEAT_FRAG);
@@ -165,16 +171,16 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(
 
     //TODO(Ricardo) Improve.
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= reinterpret_cast<octet*>(&submessage_size);
-    if(msg->msg_endian == DEFAULT_ENDIAN)
+    octet* o = reinterpret_cast<octet*>(&submessage_size);
+    if (msg->msg_endian == DEFAULT_ENDIAN)
     {
         msg->buffer[submessage_size_pos] = *(o);
-        msg->buffer[submessage_size_pos+1] = *(o+1);
+        msg->buffer[submessage_size_pos + 1] = *(o + 1);
     }
     else
     {
-        msg->buffer[submessage_size_pos] = *(o+1);
-        msg->buffer[submessage_size_pos+1] = *(o);
+        msg->buffer[submessage_size_pos] = *(o + 1);
+        msg->buffer[submessage_size_pos + 1] = *(o);
     }
 
     msg->msg_endian = old_endianess;
@@ -182,6 +188,6 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

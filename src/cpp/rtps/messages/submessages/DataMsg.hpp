@@ -70,7 +70,7 @@ bool RTPSMessageCreator::addSubmessageData(
 #else
     flags = flags | BIT(0);
     msg->msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     if (change->kind == ALIVE && change->serializedPayload.length > 0 && change->serializedPayload.data != NULL)
     {
@@ -302,7 +302,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
 #else
     flags = flags | BIT(0);
     msg->msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     if (change->kind == ALIVE && change->serializedPayload.length > 0 && change->serializedPayload.data != NULL)
     {
@@ -426,7 +426,8 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
                         change->serializedPayload.length);
     }
     else
-    {   // keyflag = 1 means that the serializedPayload SubmessageElement contains the serialized Key
+    {
+        // keyflag = 1 means that the serializedPayload SubmessageElement contains the serialized Key
         /*
             added_no_error &= CDRMessage::addOctet(&submsgElem, 0); //ENCAPSULATION
             if (submsgElem.msg_endian == BIGEND)
@@ -469,6 +470,6 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     return added_no_error;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

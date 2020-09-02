@@ -32,7 +32,7 @@
 #if defined(_MSC_VER)
 #pragma warning (push)
 #pragma warning (disable:4512)
-#endif
+#endif // if defined(_MSC_VER)
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -44,40 +44,57 @@ using std::endl;
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #else
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
 #if defined(_WIN32)
 #define COPYSTR strcpy_s
 #else
 #define COPYSTR strcpy
-#endif
+#endif // if defined(_WIN32)
 
 
-struct Arg: public option::Arg
+struct Arg : public option::Arg
 {
-    static void printError(const char* msg1, const option::Option& opt, const char* msg2)
+    static void printError(
+            const char* msg1,
+            const option::Option& opt,
+            const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
         fprintf(stderr, "%s", msg2);
     }
 
-    static option::ArgStatus Unknown(const option::Option& option, bool msg)
+    static option::ArgStatus Unknown(
+            const option::Option& option,
+            bool msg)
     {
-        if (msg) printError("Unknown option '", option, "'\n");
+        if (msg)
+        {
+            printError("Unknown option '", option, "'\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Required(const option::Option& option, bool msg)
+    static option::ArgStatus Required(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
-        return option::ARG_OK;
+        {
+            return option::ARG_OK;
+        }
 
-        if (msg) printError("Option '", option, "' requires an argument\n");
+        if (msg)
+        {
+            printError("Option '", option, "' requires an argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Numeric(const option::Option& option, bool msg)
+    static option::ArgStatus Numeric(
+            const option::Option& option,
+            bool msg)
     {
         char* endptr = 0;
         if (option.arg != 0 && strtol(option.arg, &endptr, 10))
@@ -88,11 +105,16 @@ struct Arg: public option::Arg
             return option::ARG_OK;
         }
 
-        if (msg) printError("Option '", option, "' requires a numeric argument\n");
+        if (msg)
+        {
+            printError("Option '", option, "' requires a numeric argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus String(const option::Option& option, bool msg)
+    static option::ArgStatus String(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0)
         {
@@ -104,9 +126,11 @@ struct Arg: public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
 };
 
-enum  optionIndex {
+enum  optionIndex
+{
     UNKNOWN_OPT,
     HELP,
     RELIABILITY,
@@ -126,32 +150,44 @@ enum  optionIndex {
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: MemoryTest <publisher|subscriber>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
-    { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
-    { SAMPLES,0,"s","samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
-    { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
-    { TIME, 0,"t","time",                   Arg::Numeric,   "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
-    { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
-    { ECHO_OPT, 0,"e","echo",               Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
-    { HOSTNAME,0,"","hostname",             Arg::None,      "" },
-    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "" },
-    { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,
+      "Usage: MemoryTest <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
+    { RELIABILITY, 0, "r", "reliability",      Arg::Required,
+      "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
+    { SAMPLES, 0, "s", "samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
+    { SEED, 0, "", "seed",                     Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
+    { TIME, 0, "t", "time",                   Arg::Numeric,
+      "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
+    { SUBSCRIBERS, 0, "n", "subscribers",      Arg::Numeric,
+      "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
+    { ECHO_OPT, 0, "e", "echo",               Arg::Required,
+      "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
+    { HOSTNAME, 0, "", "hostname",             Arg::None,      "" },
+    { EXPORT_CSV, 0, "", "export_csv",         Arg::None,      "" },
+    { EXPORT_PREFIX, 0, "", "export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
 #if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",      Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    {
+        USE_SECURITY, 0, "", "security",      Arg::Required,
+        "  --security <arg>  \tEcho mode (\"true\"/\"false\")."
+    },
     { CERTS_PATH, 0, "", "certs",           Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
-#endif
-    { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
+#endif // if HAVE_SECURITY
+    {
+        XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file."
+    },
     { DATA_SIZE, 0, "", "size",             Arg::Numeric,   "\t--size\tData size." },
-    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
+    { DYNAMIC_TYPES, 0, "", "dynamic_types", Arg::None,      "\t--dynamic_types \tUse dynamic types." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
 const int c_n_samples = 10000;
 
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int columns;
 
@@ -169,7 +205,7 @@ int main(int argc, char** argv)
     }
 #else
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
-#endif
+#endif // if defined(_WIN32)
 
     bool pub_sub = false;
     int sub_number = 1;
@@ -177,7 +213,7 @@ int main(int argc, char** argv)
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
-#endif
+#endif // if HAVE_SECURITY
     bool echo = false;
     bool reliable = false;
     uint32_t seed = 80;
@@ -220,7 +256,9 @@ int main(int argc, char** argv)
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
 
     if (parse.error())
+    {
         return 1;
+    }
 
     if (options[HELP])
     {
@@ -345,7 +383,7 @@ int main(int argc, char** argv)
             case CERTS_PATH:
                 certs_path = opt.arg;
                 break;
-#endif
+#endif // if HAVE_SECURITY
 
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
@@ -355,7 +393,7 @@ int main(int argc, char** argv)
     }
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-        pub_property_policy, sub_property_policy;
+            pub_property_policy, sub_property_policy;
 
 #if HAVE_SECURITY
     if (use_security)
@@ -367,34 +405,34 @@ int main(int argc, char** argv)
         }
 
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
+                "builtin.PKI-DH"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + certs_path + "/maincacert.pem"));
+                "file://" + certs_path + "/maincacert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + certs_path + "/mainsubcert.pem"));
+                "file://" + certs_path + "/mainsubcert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + certs_path + "/mainsubkey.pem"));
+                "file://" + certs_path + "/mainsubkey.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
+                "builtin.AES-GCM-GMAC"));
         sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
         sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
+                "builtin.PKI-DH"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + certs_path + "/maincacert.pem"));
+                "file://" + certs_path + "/maincacert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + certs_path + "/mainpubcert.pem"));
+                "file://" + certs_path + "/mainpubcert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + certs_path + "/mainpubkey.pem"));
+                "file://" + certs_path + "/mainpubkey.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
+                "builtin.AES-GCM-GMAC"));
         pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     }
-#endif
+#endif // if HAVE_SECURITY
 
     // Load an XML file with predefined profiles for publisher and subscriber
     if (sXMLConfigFile.length() > 0)
@@ -407,14 +445,14 @@ int main(int argc, char** argv)
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         MemoryTestPublisher memoryPub;
         memoryPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
-            pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size, dynamic_types);
+                pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size, dynamic_types);
         memoryPub.run(test_time_sec);
     }
     else
     {
         MemoryTestSubscriber memorySub;
         memorySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            sXMLConfigFile, data_size, dynamic_types);
+                sXMLConfigFile, data_size, dynamic_types);
         memorySub.run();
     }
 
@@ -427,4 +465,4 @@ int main(int argc, char** argv)
 
 #if defined(_MSC_VER)
 #pragma warning (pop)
-#endif
+#endif // if defined(_MSC_VER)

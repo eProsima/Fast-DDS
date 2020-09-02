@@ -17,9 +17,9 @@
  *
  */
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 bool RTPSMessageCreator::addMessageAcknack(
         CDRMessage_t* msg,
@@ -31,9 +31,9 @@ bool RTPSMessageCreator::addMessageAcknack(
         int32_t count,
         bool finalFlag)
 {
-    RTPSMessageCreator::addHeader(msg,guidprefix);
+    RTPSMessageCreator::addHeader(msg, guidprefix);
     RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
-    RTPSMessageCreator::addSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
+    RTPSMessageCreator::addSubmessageAcknack(msg, readerId, writerId, SNSet, count, finalFlag);
     msg->length = msg->pos;
     return true;
 }
@@ -53,9 +53,9 @@ bool RTPSMessageCreator::addSubmessageAcknack(
 #else
     flags = flags | BIT(0);
     msg->msg_endian  = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    if(finalFlag)
+    if (finalFlag)
     {
         flags = flags | BIT(1);
     }
@@ -76,16 +76,16 @@ bool RTPSMessageCreator::addSubmessageAcknack(
 
     //TODO(Ricardo) Improve.
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= (octet*)&submessage_size;
-    if(msg->msg_endian == DEFAULT_ENDIAN)
+    octet* o = (octet*)&submessage_size;
+    if (msg->msg_endian == DEFAULT_ENDIAN)
     {
         msg->buffer[submessage_size_pos] = *(o);
-        msg->buffer[submessage_size_pos+1] = *(o+1);
+        msg->buffer[submessage_size_pos + 1] = *(o + 1);
     }
     else
     {
-        msg->buffer[submessage_size_pos] = *(o+1);
-        msg->buffer[submessage_size_pos+1] = *(o);
+        msg->buffer[submessage_size_pos] = *(o + 1);
+        msg->buffer[submessage_size_pos + 1] = *(o);
     }
 
     msg->msg_endian = old_endianess;
@@ -125,7 +125,7 @@ bool RTPSMessageCreator::addSubmessageNackFrag(
 #else
     flags = flags | BIT(0);
     msg->msg_endian = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     // Submessage header.
     CDRMessage::addOctet(msg, NACK_FRAG);
@@ -145,16 +145,16 @@ bool RTPSMessageCreator::addSubmessageNackFrag(
 
     //TODO(Ricardo) Improve.
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= (octet*)&submessage_size;
-    if(msg->msg_endian == DEFAULT_ENDIAN)
+    octet* o = (octet*)&submessage_size;
+    if (msg->msg_endian == DEFAULT_ENDIAN)
     {
         msg->buffer[submessage_size_pos] = *(o);
-        msg->buffer[submessage_size_pos+1] = *(o+1);
+        msg->buffer[submessage_size_pos + 1] = *(o + 1);
     }
     else
     {
-        msg->buffer[submessage_size_pos] = *(o+1);
-        msg->buffer[submessage_size_pos+1] = *(o);
+        msg->buffer[submessage_size_pos] = *(o + 1);
+        msg->buffer[submessage_size_pos + 1] = *(o);
     }
 
     msg->msg_endian = old_endianess;
@@ -162,6 +162,6 @@ bool RTPSMessageCreator::addSubmessageNackFrag(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

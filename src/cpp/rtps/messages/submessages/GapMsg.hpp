@@ -17,9 +17,9 @@
  *
  */
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 bool RTPSMessageCreator::addMessageGap(
         CDRMessage_t* msg,
@@ -32,8 +32,8 @@ bool RTPSMessageCreator::addMessageGap(
 {
     RTPSMessageCreator::addHeader(msg, guidprefix);
     RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
-    RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
-    RTPSMessageCreator::addSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
+    RTPSMessageCreator::addSubmessageInfoTS_Now(msg, false);
+    RTPSMessageCreator::addSubmessageGap(msg, seqNumFirst, seqNumList, readerId, writerId);
     return true;
 }
 
@@ -51,7 +51,7 @@ bool RTPSMessageCreator::addSubmessageGap(
 #else
     flags = flags | BIT(0);
     msg->msg_endian   = LITTLEEND;
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     // Submessage header.
     CDRMessage::addOctet(msg, GAP);
@@ -69,16 +69,16 @@ bool RTPSMessageCreator::addSubmessageGap(
 
     //TODO(Ricardo) Improve.
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= reinterpret_cast<octet*>(&submessage_size);
-    if(msg->msg_endian == DEFAULT_ENDIAN)
+    octet* o = reinterpret_cast<octet*>(&submessage_size);
+    if (msg->msg_endian == DEFAULT_ENDIAN)
     {
         msg->buffer[submessage_size_pos] = *(o);
-        msg->buffer[submessage_size_pos+1] = *(o+1);
+        msg->buffer[submessage_size_pos + 1] = *(o + 1);
     }
     else
     {
-        msg->buffer[submessage_size_pos] = *(o+1);
-        msg->buffer[submessage_size_pos+1] = *(o);
+        msg->buffer[submessage_size_pos] = *(o + 1);
+        msg->buffer[submessage_size_pos + 1] = *(o);
     }
 
     msg->msg_endian = old_endianess;
@@ -86,6 +86,6 @@ bool RTPSMessageCreator::addSubmessageGap(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
