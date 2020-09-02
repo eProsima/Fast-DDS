@@ -420,7 +420,7 @@ bool ParticipantImpl::registerType(
 bool ParticipantImpl::unregisterType(
         const char* typeName)
 {
-    bool retValue = true;
+    bool retValue = false;
     std::vector<TopicDataType*>::iterator typeit;
 
     for (typeit = m_types.begin(); typeit != m_types.end(); ++typeit)
@@ -454,17 +454,9 @@ bool ParticipantImpl::unregisterType(
         if (!inUse)
         {
             m_types.erase(typeit);
-        }
-        else
-        {
-            retValue =  false;
+            retValue = true;
         }
     }
-    else
-    {
-        retValue = false;
-    }
-
 
     return retValue;
 }
