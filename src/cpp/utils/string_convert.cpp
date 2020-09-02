@@ -75,23 +75,26 @@ std::basic_string<ochar> string_convert(
     return output;
 }
 
-// Partial specialization for mac's STL lazy implementation sake :(
-template<typename ichar>
+// Specialization for mac's STL lazy implementation sake :(
+// TODO (Barro): remove when mac STL gets updated
+#ifdef __clang__
+
+template<>
 std::string string_convert(
-        const ichar* pbeg,
-        const ichar* pend)
+        const wchar_t* pbeg,
+        const wchar_t* pend)
 {
     using namespace std;
 
     locale loc;
-    // on mac STL all codecvt partial specializations use char as external type
-    auto& conv_facet = use_facet<codecvt<ichar, char, mbstate_t> >(loc);
+    // on mac STL ALL codecvt partial specializations use char as external type
+    auto& conv_facet = use_facet<codecvt<wchar_t, char, mbstate_t> >(loc);
 
     const unsigned int buffer_size = 256;
     char buffer[buffer_size];
 
     mbstate_t mb;
-    const ichar* from_next;
+    const wchar_t* from_next;
     char* to_next;
     string output;
 
@@ -126,6 +129,8 @@ std::string string_convert(
 
     return output;
 }
+
+#endif // __clang__
 
 std::wstring wstring_from_bytes(
         const std::string& str)
