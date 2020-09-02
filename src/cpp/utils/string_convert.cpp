@@ -75,6 +75,58 @@ std::basic_string<ochar> string_convert(
     return output;
 }
 
+// Partial specialization for mac's STL lazy implementation sake :(
+template<typename ichar>
+std::string string_convert(
+        const ichar* pbeg,
+        const ichar* pend)
+{
+    using namespace std;
+
+    locale loc;
+    // on mac STL all codecvt partial specializations use char as external type
+    auto& conv_facet = use_facet<codecvt<ichar, char, mbstate_t> >(loc);
+
+    const unsigned int buffer_size = 256;
+    char buffer[buffer_size];
+
+    mbstate_t mb;
+    const ichar* from_next;
+    char* to_next;
+    string output;
+
+    bool processing = true;
+    from_next = pbeg;
+    // iterate if buffer gets filled
+    while (processing)
+    {
+        codecvt_base::result res =
+                conv_facet.out(mb, from_next, pend, from_next, buffer, buffer + buffer_size, to_next);
+
+        switch (res)
+        {
+            case codecvt_base::ok:
+                // we are done
+                processing = false;
+                // append the contents remember
+                output.append(buffer, to_next - buffer);
+                break;
+
+            case codecvt_base::partial:
+                // insert current buffer content
+                output.append(buffer, buffer_size);
+                break;
+
+            case codecvt_base::error:
+                throw std::range_error("this facet is non-converting, no output written");
+            case codecvt_base::noconv:
+                throw std::range_error("encountered a character that could not be converted");
+        }
+    }
+
+    return output;
+}
+
 std::wstring wstring_from_bytes(
         const std::string& str)
 {

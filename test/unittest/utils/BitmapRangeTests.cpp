@@ -33,7 +33,9 @@ struct TestResult
     uint32_t num_longs;
     TestType::bitmap_type bitmap;
 
-    bool Check(bool ret_val, TestType& uut) const
+    bool Check(
+            bool ret_val,
+            TestType& uut) const
     {
         if (result != ret_val)
         {
@@ -58,16 +60,20 @@ struct TestResult
 
         return std::equal(bitmap.cbegin(), bitmap.cbegin() + num_longs, check.bitmap.cbegin());
     }
+
 };
 
 struct TestInputAdd
 {
     uint32_t offset;
 
-    bool perform_input(ValueType base, TestType& uut) const
+    bool perform_input(
+            ValueType base,
+            TestType& uut) const
     {
         return uut.add(base + offset);
     }
+
 };
 
 struct TestInputAddRange
@@ -75,11 +81,14 @@ struct TestInputAddRange
     uint32_t offset_from;
     uint32_t offset_to;
 
-    bool perform_input(ValueType base, TestType& uut) const
+    bool perform_input(
+            ValueType base,
+            TestType& uut) const
     {
         uut.add_range(base + offset_from, base + offset_to);
         return true;
     }
+
 };
 
 struct TestInputRemove
@@ -87,7 +96,9 @@ struct TestInputRemove
     uint32_t offset_begin;
     uint32_t offset_end;
 
-    bool perform_input(ValueType base, TestType& uut) const
+    bool perform_input(
+            ValueType base,
+            TestType& uut) const
     {
         for (uint32_t offset = offset_begin; offset < offset_end; ++offset)
         {
@@ -95,10 +106,11 @@ struct TestInputRemove
         }
         return true;
     }
+
 };
 
 template<
-        typename InputType>
+    typename InputType>
 struct TestStep
 {
     InputType input;
@@ -106,13 +118,15 @@ struct TestStep
 };
 
 template<
-        typename InputType>
+    typename InputType>
 struct TestCase
 {
     TestResult initialization;
-    std::vector<TestStep<InputType>> steps;
+    std::vector<TestStep<InputType> > steps;
 
-    void Test(ValueType base, TestType& uut) const
+    void Test(
+            ValueType base,
+            TestType& uut) const
     {
         ASSERT_TRUE(initialization.Check(initialization.result, uut));
 
@@ -123,243 +137,247 @@ struct TestCase
             ASSERT_EQ(base + step.expected_result.num_bits - 1, uut.max());
         }
     }
+
 };
 
-class BitmapRangeTests: public ::testing::Test
+class BitmapRangeTests : public ::testing::Test
 {
-    public:
-        const ValueType explicit_base = 123UL;
-        const ValueType sliding_base = 513UL;
+public:
 
-        const TestCase<TestInputAdd> test0 =
+    const ValueType explicit_base = 123UL;
+    const ValueType sliding_base = 513UL;
+
+    const TestCase<TestInputAdd> test0 =
+    {
+        // initialization
         {
-            // initialization
+            true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+        },
+        // steps
+        {
+            // Adding base
             {
-                true, 0, 0, 0, 0, {0,0,0,0,0,0,0,0}
+                {0},
+                {
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
             },
-            // steps
+            // Adding base again
             {
-                // Adding base
+                {0},
                 {
-                    {0},
-                    {
-                        true, 0, 0, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // Adding base again
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Adding out of range
+            {
+                {256},
                 {
-                    {0},
-                    {
-                        true, 0, 0, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // Adding out of range
+                    false, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Middle of first word
+            {
+                {16},
                 {
-                    {256},
-                    {
-                        false, 0, 0, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // Middle of first word
+                    true, 0, 16, 17, 1, {0x80008000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Before previous one
+            {
+                {15},
                 {
-                    {16},
-                    {
-                        true, 0, 16, 17, 1, {0x80008000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // Before previous one
+                    true, 0, 16, 17, 1, {0x80018000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // On third word
+            {
+                {67},
                 {
-                    {15},
-                    {
-                        true, 0, 16, 17, 1, {0x80018000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // On third word
+                    true, 0, 67, 68, 3, {0x80018000UL, 0, 0x10000000UL, 0, 0, 0, 0, 0}
+                }
+            },
+            // Before last on third word
+            {
+                {94},
                 {
-                    {67},
-                    {
-                        true, 0, 67, 68, 3, {0x80018000UL,0,0x10000000UL,0,0,0,0,0}
-                    }
-                },
-                // Before last on third word
+                    true, 0, 94, 95, 3, {0x80018000UL, 0, 0x10000002UL, 0, 0, 0, 0, 0}
+                }
+            },
+            // Last on third word
+            {
+                {95},
                 {
-                    {94},
-                    {
-                        true, 0, 94, 95, 3, {0x80018000UL,0,0x10000002UL,0,0,0,0,0}
-                    }
-                },
-                // Last on third word
+                    true, 0, 95, 96, 3, {0x80018000UL, 0, 0x10000003UL, 0, 0, 0, 0, 0}
+                }
+            },
+            // Last possible item
+            {
+                {255},
                 {
-                    {95},
-                    {
-                        true, 0, 95, 96, 3, {0x80018000UL,0,0x10000003UL,0,0,0,0,0}
-                    }
-                },
-                // Last possible item
-                {
-                    {255},
-                    {
-                        true, 0, 255, 256, 8, {0x80018000UL,0,0x10000003UL,0,0,0,0,0x00000001UL}
-                    }
+                    true, 0, 255, 256, 8, {0x80018000UL, 0, 0x10000003UL, 0, 0, 0, 0, 0x00000001UL}
                 }
             }
-        };
+        }
+    };
 
-        const TestResult all_ones =
-        {
-            true,
-            0UL,
-            255UL,
-            256UL,
-            8UL,
-            { 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL }
-        };
+    const TestResult all_ones =
+    {
+        true,
+        0UL,
+        255UL,
+        256UL,
+        8UL,
+        { 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL,
+          0xFFFFFFFFUL }
+    };
 
-        const TestCase<TestInputAddRange> test_range0 =
+    const TestCase<TestInputAddRange> test_range0 =
+    {
+        // initialization
         {
-            // initialization
+            true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+        },
+        // steps
+        {
+            // Empty input
             {
-                true, 0, 0, 0, 0, {0,0,0,0,0,0,0,0}
+                {0, 0},
+                {
+                    true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+                }
             },
-            // steps
+            // Adding base
             {
-                // Empty input
+                {0, 1},
                 {
-                    {0, 0},
-                    {
-                        true, 0, 0, 0, 0, {0,0,0,0,0,0,0,0}
-                    }
-                },
-                // Adding base
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Wrong order params
+            {
+                {10, 1},
                 {
-                    {0, 1},
-                    {
-                        true, 0, 0, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // Wrong order params
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Adding out of range
+            {
+                {256, 257},
                 {
-                    {10, 1},
-                    {
-                        true, 0, 0, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // Adding out of range
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Middle of first word
+            {
+                {15, 17},
                 {
-                    {256, 257},
-                    {
-                        true, 0, 0, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // Middle of first word
+                    true, 0, 16, 17, 1, {0x80018000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // On second and third word
+            {
+                {35, 68},
                 {
-                    {15, 17},
-                    {
-                        true, 0, 16, 17, 1, {0x80018000UL,0,0,0,0,0,0,0}
-                    }
-                },
-                // On second and third word
+                    true, 0, 67, 68, 3, {0x80018000UL, 0x1FFFFFFF, 0xF0000000, 0, 0, 0, 0, 0}
+                }
+            },
+            // Crossing more than one word
+            {
+                {94, 133},
                 {
-                    {35, 68},
-                    {
-                        true, 0, 67, 68, 3, {0x80018000UL,0x1FFFFFFF,0xF0000000,0,0,0,0,0}
-                    }
-                },
-                // Crossing more than one word
+                    true, 0, 132, 133, 5, {0x80018000UL, 0x1FFFFFFF, 0xF0000003, 0xFFFFFFFF, 0xF8000000, 0, 0, 0}
+                }
+            },
+            // Exactly one word
+            {
+                {64, 96},
                 {
-                    {94, 133},
-                    {
-                        true, 0, 132, 133, 5, {0x80018000UL,0x1FFFFFFF,0xF0000003,0xFFFFFFFF,0xF8000000,0,0,0}
-                    }
-                },
-                // Exactly one word
+                    true, 0, 132, 133, 5, {0x80018000UL, 0x1FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xF8000000, 0, 0, 0}
+                }
+            },
+            // Exactly two words
+            {
+                {128, 192},
                 {
-                    {64, 96},
-                    {
-                        true, 0, 132, 133, 5, {0x80018000UL,0x1FFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xF8000000,0,0,0}
-                    }
-                },
-                // Exactly two words
+                    true, 0, 191, 192, 6,
+                    {0x80018000UL, 0x1FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0, 0}
+                }
+            },
+            // Full range
+            {
+                {0, 512},
+                all_ones
+            }
+        }
+    };
+
+    const TestCase<TestInputRemove> test_remove0 =
+    {
+        // initialization (starts from full word)
+        {
+            true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+        },
+        // steps
+        {
+            // Removing out of range
+            {
+                {32, 33},
                 {
-                    {128, 192},
-                    {
-                        true, 0, 191, 192, 6, {0x80018000UL,0x1FFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0,0}
-                    }
-                },
-                // Full range
+                    true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Removing single in the middle
+            {
+                {5, 6},
                 {
-                    {0, 512},
-                    all_ones
+                    true, 0, 31, 32, 1, {0xFBFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Removing several in the middle
+            {
+                {6, 31},
+                {
+                    true, 0, 31, 32, 1, {0xF8000001UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Removing last
+            {
+                {31, 32},
+                {
+                    true, 0, 4, 5, 1, {0xF8000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Removing first
+            {
+                {0, 1},
+                {
+                    true, 1, 4, 5, 1, {0x78000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Removing all except first and last
+            {
+                {2, 4},
+                {
+                    true, 1, 4, 5, 1, {0x48000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Removing last
+            {
+                {4, 5},
+                {
+                    true, 1, 1, 2, 1, {0x40000000UL, 0, 0, 0, 0, 0, 0, 0}
+                }
+            },
+            // Removing first
+            {
+                {1, 2},
+                {
+                    true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
                 }
             }
-        };
-
-        const TestCase<TestInputRemove> test_remove0 =
-        {
-            // initialization (starts from full word)
-            {
-                true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
-            },
-            // steps
-            {
-                // Removing out of range
-                {
-                    {32, 33},
-                    {
-                        true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                },
-                // Removing single in the middle
-                {
-                    {5, 6},
-                    {
-                        true, 0, 31, 32, 1, {0xFBFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                },
-                // Removing several in the middle
-                {
-                    {6, 31},
-                    {
-                        true, 0, 31, 32, 1, {0xF8000001UL, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                },
-                // Removing last
-                {
-                    {31, 32},
-                    {
-                        true, 0, 4, 5, 1, {0xF8000000UL, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                },
-                // Removing first
-                {
-                    {0, 1},
-                    {
-                        true, 1, 4, 5, 1, {0x78000000UL, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                },
-                // Removing all except first and last
-                {
-                    {2, 4},
-                    {
-                        true, 1, 4, 5, 1, {0x48000000UL, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                },
-                // Removing last
-                {
-                    {4, 5},
-                    {
-                        true, 1, 1, 2, 1, {0x40000000UL, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                },
-                // Removing first
-                {
-                    {1, 2},
-                    {
-                        true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
-                    }
-                }
-            }
-        };
+        }
+    };
 
 };
 
@@ -448,10 +466,10 @@ TEST_F(BitmapRangeTests, traversal)
 
     // Functor should only be called for items in the set, which are removed
     uut.for_each([&](const ValueType& t)
-    {
-        ASSERT_NE(items.find(t), items.end());
-        items.erase(t);
-    });
+            {
+                ASSERT_NE(items.find(t), items.end());
+                items.erase(t);
+            });
 
     // All items should have been processed
     ASSERT_TRUE(items.empty());
@@ -496,7 +514,9 @@ TEST_F(BitmapRangeTests, remove)
     test_remove0.Test(explicit_base, uut);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
