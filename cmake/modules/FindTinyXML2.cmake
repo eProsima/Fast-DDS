@@ -46,3 +46,7 @@ else()
         mark_as_advanced(TINYXML2_INCLUDE_DIR TINYXML2_LIBRARY)
     endif()
 endif()
+
+if(TinyXML2_FOUND)
+    set(TINYXML2_LIBRARY tinyxml2)
+endif()
