@@ -39,12 +39,13 @@ CustomListenerSubscriber::CustomListenerSubscriber()
 {
 }
 
-bool CustomListenerSubscriber::init(bool use_dr)
+bool CustomListenerSubscriber::init(
+        bool use_dr)
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
     p_mask_ = StatusMask::all();
-    p_mask_.set(9,false);
+    p_mask_.set(9, false);
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &p_listener_, p_mask_);
 
     if (participant_ == nullptr)
@@ -65,9 +66,9 @@ bool CustomListenerSubscriber::init(bool use_dr)
 
     //CREATE THE TOPIC
     topic_ = participant_->create_topic(
-            "TopicTopic",
-            "Topic",
-            TOPIC_QOS_DEFAULT);
+        "TopicTopic",
+        "Topic",
+        TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -78,7 +79,7 @@ bool CustomListenerSubscriber::init(bool use_dr)
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     reader_ = subscriber_->create_datareader(topic_, rqos, &dr_listener_,
-                                             use_dr ? StatusMask::all() : StatusMask::none());
+                    use_dr ? StatusMask::all() : StatusMask::none());
 
     if (reader_ == nullptr)
     {

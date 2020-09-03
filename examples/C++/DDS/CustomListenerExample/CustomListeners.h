@@ -45,7 +45,7 @@ class CustomDataWriterListener : public eprosima::fastdds::dds::DataWriterListen
 public:
 
     CustomDataWriterListener()
-    : eprosima::fastdds::dds::DataWriterListener()
+        : eprosima::fastdds::dds::DataWriterListener()
     {
     }
 
@@ -54,8 +54,8 @@ public:
     }
 
     void on_publication_matched(
-        eprosima::fastdds::dds::DataWriter* writer,
-        const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+            eprosima::fastdds::dds::DataWriter* writer,
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
     int matched_ = 0;
 
@@ -65,59 +65,60 @@ public:
 class CustomDataReaderListener : public eprosima::fastdds::dds::DataReaderListener
 {
 
-    public:
+public:
 
-        CustomDataReaderListener()
-            : matched_(0)
-            , samples_(0)
-        {
-        }
+    CustomDataReaderListener()
+        : matched_(0)
+        , samples_(0)
+    {
+    }
 
-        ~CustomDataReaderListener() override
-        {
-        }
+    ~CustomDataReaderListener() override
+    {
+    }
 
-        void on_data_available(
-                eprosima::fastdds::dds::DataReader* reader) override;
-
-        void on_subscription_matched(
-                eprosima::fastdds::dds::DataReader* reader,
-                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
-
-        Topic hello_;
-
-        int matched_;
-
-        uint32_t samples_;
- };
-
-
-class CustomDomainParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener 
-{
-    public:
-        CustomDomainParticipantListener();
-
-        ~CustomDomainParticipantListener() override;
-
-        void on_publication_matched(
-            eprosima::fastdds::dds::DataWriter* writer,
-            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
-
-        void on_data_available(
+    void on_data_available(
             eprosima::fastdds::dds::DataReader* reader) override;
 
-
-        void on_subscription_matched(
+    void on_subscription_matched(
             eprosima::fastdds::dds::DataReader* reader,
             const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        Topic hello_;
+    Topic hello_;
 
-        int matched_ = 0;
+    int matched_;
 
-        bool firstConnected_  = false;
+    uint32_t samples_;
+};
 
-        uint32_t samples_ = 0;
+
+class CustomDomainParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
+{
+public:
+
+    CustomDomainParticipantListener();
+
+    ~CustomDomainParticipantListener() override;
+
+    void on_publication_matched(
+            eprosima::fastdds::dds::DataWriter* writer,
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+
+    void on_data_available(
+            eprosima::fastdds::dds::DataReader* reader) override;
+
+
+    void on_subscription_matched(
+            eprosima::fastdds::dds::DataReader* reader,
+            const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+    Topic hello_;
+
+    int matched_ = 0;
+
+    bool firstConnected_  = false;
+
+    uint32_t samples_ = 0;
 };
 
 #endif /* CUSTOMLISTENERS_H_ */

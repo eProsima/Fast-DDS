@@ -36,7 +36,8 @@ public:
     virtual ~CustomListenerPublisher();
 
     //!Initialize
-    bool init(bool use_dw);
+    bool init(
+            bool use_dw);
 
     //!Publish a sample
     bool publish(
