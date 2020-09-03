@@ -91,7 +91,7 @@ void CustomDataReaderListener::on_data_available(
             samples_++;
             // Print your structure data here.
             std::cout << "(CustomDataReaderListener) " << hello_.message() << " " << hello_.index() << " RECEIVED" <<
-                    std::endl;
+                std::endl;
         }
     }
 }
@@ -159,7 +159,7 @@ void CustomDomainParticipantListener::on_data_available(
             samples_++;
             // Print your structure data here.
             std::cout << "(CustomDomainParticipantListener) " << hello_.message() << " " << hello_.index() <<
-                    " RECEIVED" << std::endl;
+                " RECEIVED" << std::endl;
         }
     }
 }
