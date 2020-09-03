@@ -23,6 +23,8 @@
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastdds/rtps/attributes/ServerAttributes.h>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -333,14 +335,14 @@ TEST(Discovery, ParticipantLivelinessAssertion)
     test_UDPv4Transport::always_drop_participant_builtin_topic_data = true;
 
     std::thread thread([&writer]()
-    {
-        HelloWorld msg;
-        for (int count = 0; count < 20; ++count)
-        {
-            writer.send_sample(msg);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    });
+            {
+                HelloWorld msg;
+                for (int count = 0; count < 20; ++count)
+                {
+                    writer.send_sample(msg);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+            });
 
     EXPECT_FALSE(reader.wait_participant_undiscovery(std::chrono::seconds(1)));
     EXPECT_FALSE(writer.wait_participant_undiscovery(std::chrono::seconds(1)));
@@ -501,24 +503,25 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     int count = 0;
-    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool {
-        if (info.info.m_guid == writer.participant_guid())
-        {
-            if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool
             {
-                std::cout << "Discovered participant " << info.info.m_guid << std::endl;
-                ++count;
-            }
-            else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-            info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
-            {
-                std::cout << "Removed participant " << info.info.m_guid << std::endl;
-                return ++count == 2;
-            }
-        }
+                if (info.info.m_guid == writer.participant_guid())
+                {
+                    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+                    {
+                        std::cout << "Discovered participant " << info.info.m_guid << std::endl;
+                        ++count;
+                    }
+                    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                    info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+                    {
+                        std::cout << "Removed participant " << info.info.m_guid << std::endl;
+                        return ++count == 2;
+                    }
+                }
 
-        return false;
-    });
+                return false;
+            });
 
     reader.history_depth(100).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -545,19 +548,20 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool {
-        if (info.info.m_guid == writer.participant_guid())
-        {
-            std::cout << "Received USER_DATA from the writer: ";
-            for (auto i: info.info.m_userData)
+    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool
             {
-                std::cout << i << ' ';
-            }
-            return info.info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
-        }
+                if (info.info.m_guid == writer.participant_guid())
+                {
+                    std::cout << "Received USER_DATA from the writer: ";
+                    for (auto i: info.info.m_userData)
+                    {
+                        std::cout << i << ' ';
+                    }
+                    return info.info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+                }
 
-        return false;
-    });
+                return false;
+            });
 
     reader.history_depth(100).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
@@ -726,18 +730,18 @@ TEST_P(Discovery, RepeatPubGuid)
     PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
 
     reader
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .participant_id(2)
-        .init();
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(10)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .participant_id(2)
+    .init();
 
     writer
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .participant_id(1)
-        .init();
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(10)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .participant_id(1)
+    .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -761,11 +765,11 @@ TEST_P(Discovery, RepeatPubGuid)
     reader.wait_participant_undiscovery();
 
     writer2
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .participant_id(1)
-        .init();
+    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    .history_depth(10)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .participant_id(1)
+    .init();
 
     ASSERT_TRUE(writer2.isInitialized());
 
@@ -795,13 +799,13 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
     participant_1.init();
 
     auto endpoint_creation_process = [&creation_sleep, &stop, &participant_1]()
-    {
-        while (!stop)
-        {
-            std::this_thread::sleep_for(creation_sleep);
-            EXPECT_NO_THROW(participant_1.create_additional_topics(1));
-        }
-    };
+            {
+                while (!stop)
+                {
+                    std::this_thread::sleep_for(creation_sleep);
+                    EXPECT_NO_THROW(participant_1.create_additional_topics(1));
+                }
+            };
 
     // Start thread creating endpoints every 250ms
     std::thread endpoint_thr(endpoint_creation_process);
@@ -810,20 +814,20 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
     // When this participant is removed, the first one should stop sending
     // intraprocess delivery messages to the builtin endpoints of the second one.
     auto second_participant_process = [&participant_1]()
-    {
-        {
-            PubSubWriterReader<HelloWorldType> participant_2(TEST_TOPIC_NAME);
-            participant_2.init();
+            {
+                {
+                    PubSubWriterReader<HelloWorldType> participant_2(TEST_TOPIC_NAME);
+                    participant_2.init();
 
-            // Ensure first participant has discovered the second one
-            participant_1.wait_discovery();
-        }
+                    // Ensure first participant has discovered the second one
+                    participant_1.wait_discovery();
+                }
 
-        // Additional endpoints created just after the second participant.
-        // This gives the first participant very few time to receive the undiscovery,
-        // and makes the intraprocess delivery on a deleted builtin reader.
-        participant_1.create_additional_topics(1);
-    };
+                // Additional endpoints created just after the second participant.
+                // This gives the first participant very few time to receive the undiscovery,
+                // and makes the intraprocess delivery on a deleted builtin reader.
+                participant_1.create_additional_topics(1);
+            };
     EXPECT_NO_THROW(second_participant_process());
 
     // Stop endpoint creation thread
@@ -834,7 +838,8 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
 INSTANTIATE_TEST_CASE_P(Discovery,
         Discovery,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<Discovery::ParamType>& info) {
+        [](const testing::TestParamInfo<Discovery::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";
@@ -842,5 +847,145 @@ INSTANTIATE_TEST_CASE_P(Discovery,
             return "NonIntraprocess";
         });
 
+//! Tests the server-client setup using environment variable works fine
+TEST(Discovery, ServerClientEnvironmentSetUp)
+{
+    using namespace std;
 
+    RemoteServerList_t output, standard;
+    RemoteServerAttributes att;
+    Locator_t loc;
 
+    // We are going to use several test string and check they are properly parsed and turn into RemoteServerList_t
+    // 1. single server address without specific port provided
+    string text = "192.168.36.34";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, text);
+    IPLocator::setPhysicalPort(loc, DEFAULT_ROS2_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 2. single server address specifying a custom listening port
+    text = "192.168.36.34:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, text);
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 3. check any locator is turned into localhost
+    text = "0.0.0.0:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc, string("127.0.0.1"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 4. check empty string scenario is handled
+    text = "";
+    output.clear();
+
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+    // 5. check at least one server be present scenario is hadled
+    text = ";;;;";
+    output.clear();
+
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+    // 6. check several server scenario
+    text = "192.168.36.34:14520;172.29.55.77:8783;172.30.80.1:31090";
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.29.55.77"));
+    IPLocator::setPhysicalPort(loc, 8783);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(1, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.30.80.1"));
+    IPLocator::setPhysicalPort(loc, 31090);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(2, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 7. check ignore some servers scenario
+    text = ";192.168.36.34:14520;;172.29.55.77:8783;172.30.80.1:31090;";
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(1, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.29.55.77"));
+    IPLocator::setPhysicalPort(loc, 8783);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(3, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("172.30.80.1"));
+    IPLocator::setPhysicalPort(loc, 31090);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(4, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 7. check ignore some servers scenario
+    text = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+            ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+            ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;192.168.36.34:14520";
+    output.clear();
+
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+    // 8. check non-consistent addresses scenario
+    text = "192.168.36.34:14520;localhost:12345;172.30.80.1:31090;";
+
+    output.clear();
+    ASSERT_FALSE(load_environment_server_info(text, output));
+
+}
