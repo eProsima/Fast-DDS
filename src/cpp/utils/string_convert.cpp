@@ -66,9 +66,13 @@ std::basic_string<ochar> string_convert(
                 break;
 
             case codecvt_base::error:
-                throw std::range_error("this facet is non-converting, no output written");
-            case codecvt_base::noconv:
                 throw std::range_error("encountered a character that could not be converted");
+
+            case codecvt_base::noconv:
+                // plainly return a copy if ichar == ochar
+                return ostring(
+                    reinterpret_cast<const ochar*>(pbeg),
+                    reinterpret_cast<const ochar*>(pend));
         }
     }
 
@@ -121,9 +125,9 @@ std::string string_convert(
                 break;
 
             case codecvt_base::error:
-                throw std::range_error("this facet is non-converting, no output written");
-            case codecvt_base::noconv:
                 throw std::range_error("encountered a character that could not be converted");
+
+            // case codecvt_base::noconv doesn't apply in this overload
         }
     }
 
