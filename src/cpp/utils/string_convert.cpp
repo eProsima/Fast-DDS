@@ -127,7 +127,9 @@ std::string string_convert(
             case codecvt_base::error:
                 throw std::range_error("encountered a character that could not be converted");
 
-                // case codecvt_base::noconv doesn't apply in this overload
+            case codecvt_base::noconv:
+                break;
+                // case codecvt_base::noconv doesn't apply in this overload but not including it arises a warning
         }
     }
 
