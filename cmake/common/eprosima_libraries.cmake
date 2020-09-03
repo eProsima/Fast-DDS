@@ -37,7 +37,7 @@ macro(eprosima_find_package package)
         if(NOT ${package}_FOUND AND (THIRDPARTY OR THIRDPARTY_${package}))
             set(SUBDIRECTORY_EXIST TRUE)
             if(THIRDPARTY_UPDATE OR NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
-                message(STATUS "${package} thirdparty is being updated...")
+                message(STATUS "Updating submodule thirdparty/${package}")
                 execute_process(
                     COMMAND git submodule update --recursive --init "thirdparty/${package}"
                     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -73,29 +73,48 @@ macro(eprosima_find_package package)
     endif()
 endmacro()
 
+# TODO (Eduardo Ponz): Document macro
 macro(eprosima_find_thirdparty package thirdparty_name)
+    option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
+    option(THIRDPARTY_UPDATE "Activate the auto update of internal thirdparties" ON)
+    option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
+
+    # eProsima build sets thirdparty to ON
+    if(EPROSIMA_BUILD)
+        set(THIRDPARTY ON)
+    endif()
+
+    # For the case of Windows installer, we don't want to look for the packge outside thirdparty. This way we use
+    # thirdparty, meaning we have more control over what is built.
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
-        option(THIRDPARTY_UPDATE "Activate the auto update of internal thirdparties" ON)
-        option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
+        # Try to quetly find the package outside thridparty first.
+        find_package(${package} REQUIRED QUIET)
+    endif()
 
-        if(THIRDPARTY OR THIRDPARTY_${package})
-            if(THIRDPARTY_UPDATE)
-                execute_process(
-                    COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                    RESULT_VARIABLE EXECUTE_RESULT
-                    )
-            endif()
-
-            if(EXECUTE_RESULT EQUAL 0)
-            else()
+    # Only use thirdparty if the package is not found elsewhere
+    if(NOT ${package}_FOUND AND (THIRDPARTY OR THIRDPARTY_${package}))
+        if(THIRDPARTY_UPDATE)
+            # Update submodule
+            message(STATUS "Updating submodule thirdparty/${thirdparty_name}")
+            execute_process(
+                COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                RESULT_VARIABLE EXECUTE_RESULT
+                )
+            # A result different than 0 means that the submodule could not be updated.
+            if(EXECUTE_RESULT)
                 message(FATAL_ERROR "Cannot configure Git submodule ${package}")
             endif()
-            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name})
-            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name})
         endif()
 
-        find_package(${package} REQUIRED QUIET)
+        # Add package thirdparty directory to CMAKE_PREFIX_PATH
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name})
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name})
+        find_package(${package} REQUIRED)
+    endif()
 
+    # If the package was still not found, then we throw an error
+    if(NOT ${package}_FOUND)
+        message(ERROR "Cannot find package ${package}")
     endif()
 endmacro()
