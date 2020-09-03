@@ -30,27 +30,30 @@
  * @brief This class represents the TopicDataType of the type Topic defined by the user in the IDL file.
  * @ingroup HELLOWORLD
  */
-class TopicType : public  eprosima::fastrtps::TopicDataType
+class TopicType : public eprosima::fastrtps::TopicDataType
 {
 public:
+
     typedef Topic type;
 
     TopicType();
     virtual ~TopicType();
 
     bool serialize(
-            void *data,
-            eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
     bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t *payload,
-            void *data);
-    std::function<uint32_t()> getSerializedSizeProvider(void* data);
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
     bool getKey(
-            void *data,
-            eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
             bool force_md5);
-	void* createData();
-	void deleteData(void * data);
+    void* createData();
+    void deleteData(
+            void* data);
     MD5 md5;
     unsigned char* key_buffer;
 };

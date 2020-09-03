@@ -37,7 +37,8 @@ public:
     virtual ~CustomListenerSubscriber();
 
     //!Initialize the subscriber
-    bool init(bool use_dr);
+    bool init(
+            bool use_dr);
 
     //!RUN the subscriber
     void run();
@@ -47,7 +48,6 @@ public:
             uint32_t number);
 
 private:
-
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 

@@ -59,7 +59,6 @@ void CustomDataWriterListener::on_publication_matched(
     }
 }
 
-
 void CustomDataReaderListener::on_subscription_matched(
         DataReader*,
         const SubscriptionMatchedStatus& info)
@@ -91,21 +90,20 @@ void CustomDataReaderListener::on_data_available(
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "(CustomDataReaderListener) " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            std::cout << "(CustomDataReaderListener) " << hello_.message() << " " << hello_.index() << " RECEIVED" <<
+                std::endl;
         }
     }
 }
 
-
 CustomDomainParticipantListener::CustomDomainParticipantListener()
-: DomainParticipantListener()
+    : DomainParticipantListener()
 {
 }
 
 CustomDomainParticipantListener::~CustomDomainParticipantListener()
 {
 }
-
 
 void CustomDomainParticipantListener::on_publication_matched(
         DataWriter*,
@@ -160,7 +158,8 @@ void CustomDomainParticipantListener::on_data_available(
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "(CustomDomainParticipantListener) " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            std::cout << "(CustomDomainParticipantListener) " << hello_.message() << " " << hello_.index() <<
+                " RECEIVED" << std::endl;
         }
     }
 }

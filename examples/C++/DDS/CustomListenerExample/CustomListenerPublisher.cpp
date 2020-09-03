@@ -39,7 +39,8 @@ CustomListenerPublisher::CustomListenerPublisher()
 {
 }
 
-bool CustomListenerPublisher::init(bool use_dw)
+bool CustomListenerPublisher::init(
+        bool use_dw)
 {
     hello_.index(0);
     hello_.message("Topic");
@@ -72,7 +73,7 @@ bool CustomListenerPublisher::init(bool use_dw)
 
     // CREATE THE WRITER
     writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &dw_listener_,
-                                            use_dw ? StatusMask::all() : StatusMask::none());
+                    use_dw ? StatusMask::all() : StatusMask::none());
 
     if (writer_ == nullptr)
     {
@@ -131,8 +132,6 @@ void CustomListenerPublisher::runThread(
         }
     }
 }
-
-
 
 void CustomListenerPublisher::run(
         uint32_t samples,
