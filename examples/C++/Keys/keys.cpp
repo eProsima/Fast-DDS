@@ -19,10 +19,22 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 //Enums and configuration structure
-enum Reliability_type { Best_Effort, Reliable };
-enum Durability_type { Transient_Local, Volatile };
-enum HistoryKind_type { Keep_Last, Keep_All };
-enum Key_type { No_Key, With_Key};
+enum Reliability_type
+{
+    Best_Effort, Reliable
+};
+enum Durability_type
+{
+    Transient_Local, Volatile
+};
+enum HistoryKind_type
+{
+    Keep_Last, Keep_All
+};
+enum Key_type
+{
+    No_Key, With_Key
+};
 
 typedef struct
 {
@@ -173,7 +185,6 @@ Publisher* initPublisher(
         PubListener& listener)
 {
     ParticipantAttributes PparamPub;
-    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant* PubParticipant = Domain::createParticipant(PparamPub);
@@ -188,16 +199,10 @@ Publisher* initPublisher(
     PublisherAttributes Pparam;
     Pparam.topic.topicDataType = sampleType.getName();
     Pparam.topic.topicName = "samplePubSubTopic";
-    Pparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 
     Pparam.topic.topicKind = WITH_KEY;
     Pparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Pparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
     Pparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Pparam.topic.resourceLimitsQos.max_samples = 100;
-    Pparam.topic.resourceLimitsQos.allocated_samples = 100;
-    Pparam.topic.resourceLimitsQos.max_instances = 5;
-    Pparam.topic.resourceLimitsQos.max_samples_per_instance = 20;
 
     std::cout << "Creating Publisher..." << std::endl;
     Publisher* myPub = Domain::createPublisher(PubParticipant, Pparam, &listener);
@@ -213,7 +218,6 @@ Subscriber* initSubscriber(
         SubListener* listener)
 {
     ParticipantAttributes PparamSub;
-    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant* SubParticipant = Domain::createParticipant(PparamSub);
@@ -228,16 +232,9 @@ Subscriber* initSubscriber(
     SubscriberAttributes Rparam;
     Rparam.topic.topicDataType = sampleType.getName();
     Rparam.topic.topicName = "samplePubSubTopic";
-    Rparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
     Rparam.topic.topicKind = WITH_KEY;
     Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Rparam.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
-    Rparam.topic.resourceLimitsQos.max_samples = 100;
-    Rparam.topic.resourceLimitsQos.allocated_samples = 100;
-    Rparam.topic.resourceLimitsQos.max_instances = 5;
-    Rparam.topic.resourceLimitsQos.max_samples_per_instance = 20;
 
     std::cout << "Creating Subscriber..." << std::endl;
     Subscriber* mySub = Domain::createSubscriber(SubParticipant, Rparam, listener);
@@ -254,6 +251,7 @@ void keys()
     sample my_sample;
     SampleInfo_t sample_info;
     PubListener pubListener;
+    InstanceHandle_t key_instances[5];
 
     Publisher* myPub = initPublisher(sampleType, pubListener);
     Subscriber* mySub = initSubscriber(sampleType, nullptr);
@@ -261,15 +259,15 @@ void keys()
     // wait for the connection
     std::unique_lock<std::mutex> lock(pubListener.mutex_);
     pubListener.cv_.wait(lock, [&pubListener]()
-    {
-        return pubListener.n_matched > 0;
-    });
+            {
+                return pubListener.n_matched > 0;
+            });
 
     // Registering 5 instances.
     for (uint8_t i = 0; i < 5; i++)
     {
         my_sample.key_value(i + 1);
-        myPub->register_instance(&my_sample);
+        key_instances[i] = myPub->register_instance(&my_sample);
     }
 
     //Send 10 samples
@@ -318,6 +316,32 @@ void keys()
     }
     std::cout << std::endl;
 
+    std::cout << "Disposing all keys ..." << std::endl;
+    for (uint8_t i = 0; i < 5; i++)
+    {
+        my_sample.key_value(i + 1);
+        myPub->dispose(&my_sample, key_instances[i]);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+
+    while (mySub->readNextData(&my_sample, &sample_info))
+    {
+        if (ChangeKind_t::NOT_ALIVE_DISPOSED == sample_info.sampleKind)
+        {
+            for (uint8_t i = 0; i < 5; i++)
+            {
+                if (key_instances[i] == sample_info.iHandle)
+                {
+                    std::cout << "  Key " << std::to_string(i + 1) << " was disposed" << std::endl;
+                    break;
+                }
+            }
+        }
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+
     Domain::stopAll();
 }
 
@@ -333,9 +357,9 @@ void publisherKeys()
     // wait for the connection
     std::unique_lock<std::mutex> lock(pubListener.mutex_);
     pubListener.cv_.wait(lock, [&pubListener]()
-    {
-        return pubListener.n_matched > 0;
-    });
+            {
+                return pubListener.n_matched > 0;
+            });
 
     // Registering 5 instances.
     for (uint8_t i = 0; i < 5; i++)
@@ -382,9 +406,9 @@ void subscriberKeys()
 
     std::unique_lock<std::mutex> lock(subListener.mutex_);
     subListener.cv_.wait(lock, [&subListener]()
-    {
-        return subListener.n_matched > 0;
-    });
+            {
+                return subListener.n_matched > 0;
+            });
 
     std::cin.ignore();
 
