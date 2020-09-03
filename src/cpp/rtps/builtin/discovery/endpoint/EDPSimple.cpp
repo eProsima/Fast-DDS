@@ -593,13 +593,8 @@ bool EDPSimple::serialize_proxy_data(
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian = LITTLEEND;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+            change->serializedPayload.encapsulation = (uint16_t)PL_DEFAULT_ENCAPSULATION;
+            aux_msg.msg_endian = DEFAULT_ENDIAN;
 
             data.writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;

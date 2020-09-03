@@ -76,9 +76,9 @@ typedef enum TopicKind_t
 }TopicKind_t;
 
 #if FASTDDS_IS_BIG_ENDIAN_TARGET
-const Endianness_t DEFAULT_ENDIAN = BIGEND;
+constexpr Endianness_t DEFAULT_ENDIAN = BIGEND;
 #else
-const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
+constexpr Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
 using octet = unsigned char;

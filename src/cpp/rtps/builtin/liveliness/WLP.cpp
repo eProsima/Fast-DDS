@@ -849,14 +849,9 @@ bool WLP::send_liveliness_message(
 
     if (change != nullptr)
     {
+        change->serializedPayload.encapsulation = (uint16_t)PL_DEFAULT_ENCAPSULATION;
         change->serializedPayload.data[0] = 0;
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-        change->serializedPayload.data[1] = PL_CDR_BE;
-#else
-        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-        change->serializedPayload.data[1] = PL_CDR_LE;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+        change->serializedPayload.data[1] = PL_DEFAULT_ENCAPSULATION;
         change->serializedPayload.data[2] = 0;
         change->serializedPayload.data[3] = 0;
 

@@ -127,15 +127,9 @@ void SecurityTest::reply_process_ok(
 
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-    aux_msg.msg_endian = BIGEND;
-    change->serializedPayload.encapsulation = PL_CDR_BE;
-    CDRMessage::addOctet(&aux_msg, CDR_BE);
-#else
-    aux_msg.msg_endian = LITTLEEND;
-    change->serializedPayload.encapsulation = PL_CDR_LE;
-    CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+    aux_msg.msg_endian = DEFAULT_ENDIAN;
+    change->serializedPayload.encapsulation = PL_DEFAULT_ENCAPSULATION;
+    CDRMessage::addOctet(&aux_msg, DEFAULT_ENCAPSULATION);
     CDRMessage::addUInt16(&aux_msg, 0);
 
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
@@ -197,15 +191,9 @@ void SecurityTest::final_message_process_ok(
     //
     // Serialize encapsulation
     CDRMessage::addOctet(&aux_msg, 0);
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-    aux_msg.msg_endian = BIGEND;
-    change->serializedPayload.encapsulation = PL_CDR_BE;
-    CDRMessage::addOctet(&aux_msg, CDR_BE);
-#else
-    aux_msg.msg_endian = LITTLEEND;
-    change->serializedPayload.encapsulation = PL_CDR_LE;
-    CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+    aux_msg.msg_endian = DEFAULT_ENDIAN;
+    change->serializedPayload.encapsulation = PL_DEFAULT_ENCAPSULATION;
+    CDRMessage::addOctet(&aux_msg, DEFAULT_ENCAPSULATION);
     CDRMessage::addUInt16(&aux_msg, 0);
 
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));

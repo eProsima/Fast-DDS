@@ -41,11 +41,7 @@ inline bool CDRMessage::initCDRMsg(
     }
     msg->pos = 0;
     msg->length = 0;
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-    msg->msg_endian = BIGEND;
-#else
-    msg->msg_endian = LITTLEEND;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+    msg->msg_endian = DEFAULT_ENDIAN;
     return true;
 }
 
@@ -62,11 +58,7 @@ inline bool CDRMessage::wrapVector(
     msg->buffer = vectorToWrap.data();
     msg->length = (uint32_t)vectorToWrap.size();
     msg->max_size = (uint32_t)vectorToWrap.capacity();
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-    msg->msg_endian = BIGEND;
-#else
-    msg->msg_endian = LITTLEEND;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+    msg->msg_endian = DEFAULT_ENDIAN;
     return true;
 }
 
@@ -1221,7 +1213,7 @@ inline bool CDRMessage::readParticipantGenericMessage(
 }
 
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */

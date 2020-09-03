@@ -32,14 +32,7 @@ bool ParameterList::writeEncapsulationToCDRMsg(
         fastrtps::rtps::CDRMessage_t* msg)
 {
     bool valid = fastrtps::rtps::CDRMessage::addOctet(msg, 0);
-    if (msg->msg_endian == fastrtps::rtps::Endianness_t::BIGEND)
-    {
-        valid &= fastrtps::rtps::CDRMessage::addOctet(msg, PL_CDR_BE);
-    }
-    else
-    {
-        valid &= fastrtps::rtps::CDRMessage::addOctet(msg, PL_CDR_LE);
-    }
+    valid &= fastrtps::rtps::CDRMessage::addOctet(msg, static_cast<fastrtps::rtps::octet>(PL_CDR_LE - msg->msg_endian));
     valid &= fastrtps::rtps::CDRMessage::addUInt16(msg, 0);
     return valid;
 }
@@ -53,67 +46,67 @@ bool ParameterList::updateCacheChangeFromInlineQos(
         fastrtps::rtps::CDRMessage_t* msg,
         const ParameterId_t pid,
         uint16_t plength)
-    {
-        switch (pid)
-        {
-            case PID_KEY_HASH:
             {
-                ParameterKey_t p(pid, plength);
-                if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
+                switch (pid)
                 {
-                    return false;
-                }
-
-                change.instanceHandle = p.key;
-                break;
-            }
-
-            case PID_RELATED_SAMPLE_IDENTITY:
-            {
-                if (plength >= 24)
-                {
-                    ParameterSampleIdentity_t p(pid, plength);
-                    if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
-                            msg, plength))
+                    case PID_KEY_HASH:
                     {
-                        return false;
+                        ParameterKey_t p(pid, plength);
+                        if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
+                        {
+                            return false;
+                        }
+
+                        change.instanceHandle = p.key;
+                        break;
                     }
 
-                    change.write_params.sample_identity(p.sample_id);
-                }
-                break;
-            }
+                    case PID_RELATED_SAMPLE_IDENTITY:
+                    {
+                        if (plength >= 24)
+                        {
+                            ParameterSampleIdentity_t p(pid, plength);
+                            if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
+                                    msg, plength))
+                            {
+                                return false;
+                            }
 
-            case PID_STATUS_INFO:
-            {
-                ParameterStatusInfo_t p(pid, plength);
-                if (!fastdds::dds::ParameterSerializer<ParameterStatusInfo_t>::read_from_cdr_message(p, msg,
-                        plength))
-                {
-                    return false;
+                            change.write_params.sample_identity(p.sample_id);
+                        }
+                        break;
+                    }
+
+                    case PID_STATUS_INFO:
+                    {
+                        ParameterStatusInfo_t p(pid, plength);
+                        if (!fastdds::dds::ParameterSerializer<ParameterStatusInfo_t>::read_from_cdr_message(p, msg,
+                                plength))
+                        {
+                            return false;
+                        }
+
+                        if (p.status == 1)
+                        {
+                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
+                        }
+                        else if (p.status == 2)
+                        {
+                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
+                        }
+                        else if (p.status == 3)
+                        {
+                            change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
+                        }
+                        break;
+                    }
+
+                    default:
+                        break;
                 }
 
-                if (p.status == 1)
-                {
-                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED;
-                }
-                else if (p.status == 2)
-                {
-                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED;
-                }
-                else if (p.status == 3)
-                {
-                    change.kind = fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
-                }
-                break;
-            }
-
-            default:
-                break;
-        }
-
-        return true;
-    };
+                return true;
+            };
 
     return readParameterListfromCDRMsg(*msg, parameter_process, false, qos_size);
 }
