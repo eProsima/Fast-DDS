@@ -125,7 +125,7 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(
             // Print your structure data here.
             std::cout << "Message " << m_Hello->message() << " " << m_Hello->index()
                       << " RECEIVED With " << data_size << "(bytes) of Data. DataEnd = " <<
-            (char*)&m_Hello->data()[data_size - 9]
+                (char*)&m_Hello->data()[data_size - 9]
                       << std::endl;
         }
     }
