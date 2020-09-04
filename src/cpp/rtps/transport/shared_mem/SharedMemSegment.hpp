@@ -23,13 +23,13 @@
 #pragma GCC diagnostic error "-Wdeprecated-copy"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-copy"
-#endif
+#endif // if defined(__GNUC__) && ( __GNUC__ >= 9)
 
 #include <boost/interprocess/managed_shared_memory.hpp>
-            
+
 #if defined (__GNUC__) && ( __GNUC__ >= 9)
 #pragma GCC diagnostic pop
-#endif
+#endif // if defined (__GNUC__) && ( __GNUC__ >= 9)
 
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
@@ -53,7 +53,7 @@ using Log = fastdds::dds::Log;
 class SharedMemSegment
 {
 public:
-    
+
     typedef RobustInterprocessCondition condition_variable;
     typedef boost::interprocess::interprocess_mutex mutex;
     typedef boost::interprocess::named_mutex named_mutex;
@@ -62,11 +62,11 @@ public:
     // Offset must be the same size for 32/64-bit versions, so no size_t used here.
     typedef std::uint32_t Offset;
     typedef boost::interprocess::offset_ptr<void, Offset, std::uint64_t> VoidPointerT;
-	typedef boost::interprocess::basic_managed_shared_memory<
-        char, 
-        boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family, 
-        VoidPointerT>, 
-        boost::interprocess::iset_index> managed_shared_memory_type;
+    typedef boost::interprocess::basic_managed_shared_memory<
+                char,
+                boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
+                VoidPointerT>,
+                boost::interprocess::iset_index> managed_shared_memory_type;
 
     static constexpr boost::interprocess::open_only_t open_only = boost::interprocess::open_only_t();
     static constexpr boost::interprocess::create_only_t create_only = boost::interprocess::create_only_t();
@@ -84,8 +84,8 @@ public:
         : name_(name)
     {
         segment_ = std::unique_ptr<managed_shared_memory_type>(
-            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), 
-                static_cast<Offset>(size + EXTRA_SEGMENT_SIZE)));
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(),
+            static_cast<Offset>(size + EXTRA_SEGMENT_SIZE)));
     }
 
     SharedMemSegment(
@@ -113,7 +113,7 @@ public:
         {
             segment_.reset();
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
             logWarning(RTPS_TRANSPORT_SHM, e.what());
         }
@@ -131,7 +131,10 @@ public:
         return segment_->get_handle_from_address(address);
     }
 
-    managed_shared_memory_type& get() { return *segment_;}
+    managed_shared_memory_type& get()
+    {
+        return *segment_;
+    }
 
     static void remove(
             const std::string& name)
@@ -168,7 +171,7 @@ public:
                 {
                     boost::interprocess::managed_shared_memory
                             test_segment(boost::interprocess::create_only, name.c_str(),
-                                (std::max)((size_t)1024, allocation_alignment* 4));
+                            (std::max)((size_t)1024, allocation_alignment * 4));
 
                     auto m1 = test_segment.get_free_memory();
                     test_segment.allocate_aligned(1, allocation_alignment);
@@ -201,7 +204,7 @@ public:
 
         boost::posix_time::ptime wait_time
             = boost::posix_time::microsec_clock::universal_time()
-                + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS*2);
+                + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS * 2);
         if (!named_mutex->timed_lock(wait_time))
         {
             // Interprocess mutex timeout when locking. Possible deadlock: owner died without unlocking?
@@ -230,7 +233,7 @@ public:
 
         boost::posix_time::ptime wait_time
             = boost::posix_time::microsec_clock::universal_time()
-                + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS*2);
+                + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS * 2);
         if (!named_mutex->timed_lock(wait_time))
         {
             throw std::runtime_error("Couldn't lock name_mutex: " + mutex_name);
@@ -259,6 +262,14 @@ public:
     bool check_sanity()
     {
         return segment_->check_sanity();
+    }
+
+    /**
+     * @return The segment's size in bytes, including internal structures overhead.
+     */
+    Offset mem_size() const
+    {
+        return segment_->get_size();
     }
 
     /**
@@ -335,7 +346,9 @@ private:
         {
             SharedMemEnvironment::get().init();
         }
-    } shared_mem_environment_initializer_;
+
+    }
+    shared_mem_environment_initializer_;
 
     std::unique_ptr<managed_shared_memory_type> segment_;
 

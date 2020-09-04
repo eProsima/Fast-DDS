@@ -19,7 +19,7 @@
 #include <io.h>
 #else
 #include <sys/file.h>
-#endif
+#endif // ifdef  _MSC_VER
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -42,7 +42,7 @@ public:
     /**
      * Open or create and acquire the interprocess lock.
      * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
-     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created 
+     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created
      * or it already exist.
      * @throw std::exception if lock coulnd't be acquired
      */
@@ -52,7 +52,10 @@ public:
     {
         auto file_path = RobustLock::get_file_path(name);
 
-        fd_ = open_and_lock_file(file_path, was_lock_created);
+        if ((fd_ = open_and_lock_file(file_path, was_lock_created)) == -1)
+        {
+            throw std::runtime_error("open_and_lock_file failed");
+        }
 
         name_ = name;
     }
@@ -69,9 +72,34 @@ public:
 
         auto file_path = RobustLock::get_file_path(name);
 
-        fd_ = open_and_lock_file(file_path, &was_lock_created);
+        if ((fd_ = open_and_lock_file(file_path, &was_lock_created)) == -1)
+        {
+            throw std::runtime_error("open_and_lock_file failed");
+        }
 
         name_ = name;
+    }
+
+    /**
+     * Checks whether the file is locked.
+     * @param in name Is the object interprocess global name, visible for all processes in the same machine.
+     */
+    static bool is_locked(
+            const std::string& name)
+    {
+        bool was_lock_created;
+
+        auto file_path = RobustLock::get_file_path(name);
+
+        int fd;
+        if ((fd = open_and_lock_file(file_path, &was_lock_created)) == -1)
+        {
+            return true;
+        }
+
+        unlock_and_close(fd, name);
+
+        return false;
     }
 
     /**
@@ -79,7 +107,7 @@ public:
      */
     ~RobustExclusiveLock()
     {
-        unlock_and_close();
+        unlock_and_close(fd_, name_);
     }
 
     /**
@@ -99,9 +127,9 @@ private:
 
 #ifdef _MSC_VER
 
-    int open_and_lock_file(
+    static int open_and_lock_file(
             const std::string& file_path,
-            bool* was_lock_created) const
+            bool* was_lock_created)
     {
         int test_exist;
         auto ret = _sopen_s(&test_exist, file_path.c_str(), O_RDONLY, _SH_DENYRW, _S_IREAD | _S_IWRITE);
@@ -117,9 +145,7 @@ private:
 
         if (ret != 0)
         {
-            char errmsg[1024];
-            strerror_s(errmsg, sizeof(errmsg), errno);
-            throw std::runtime_error("failed to open/create " + file_path + " " + std::string(errmsg));
+            return -1;
         }
 
         *was_lock_created = true;
@@ -127,21 +153,23 @@ private:
         return fd;
     }
 
-    void unlock_and_close()
+    static void unlock_and_close(
+            int fd,
+            const std::string& name)
     {
-        _close(fd_);
+        _close(fd);
 
-        if (0 != std::remove(RobustLock::get_file_path(name_).c_str()))
+        if (0 != std::remove(RobustLock::get_file_path(name).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name_));
+            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name));
         }
     }
 
 #else
 
-    int open_and_lock_file(
+    static int open_and_lock_file(
             const std::string& file_path,
-            bool* was_lock_created) const
+            bool* was_lock_created)
     {
         auto fd = open(file_path.c_str(), O_RDONLY, 0666);
 
@@ -157,31 +185,33 @@ private:
 
         if (fd == -1)
         {
-            throw std::runtime_error(("failed to open/create " + file_path + " " + std::strerror(errno)).c_str());
+            return -1;
         }
 
         // Lock the file
         if (0 != flock(fd, LOCK_EX | LOCK_NB))
         {
             close(fd);
-            throw std::runtime_error(("failed to lock " + file_path).c_str());
+            return -1;
         }
 
         return fd;
     }
 
-    void unlock_and_close()
+    static void unlock_and_close(
+            int fd,
+            const std::string& name)
     {
-        flock(fd_, LOCK_UN | LOCK_NB);
-        close(fd_);
+        flock(fd, LOCK_UN | LOCK_NB);
+        close(fd);
 
-        if (0 != std::remove(RobustLock::get_file_path(name_).c_str()))
+        if (0 != std::remove(RobustLock::get_file_path(name).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name_));
+            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name));
         }
     }
 
-#endif
+#endif // ifdef _MSC_VER
 
 };
 

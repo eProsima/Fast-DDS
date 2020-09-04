@@ -21,6 +21,7 @@
 
 #include <rtps/transport/shared_mem/SharedMemGlobal.hpp>
 #include <rtps/transport/shared_mem/RobustSharedLock.hpp>
+#include <rtps/transport/shared_mem/SharedMemWatchdog.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -34,7 +35,8 @@ using Log = fastdds::dds::Log;
  *  Open shared-memory ports.
  *  Create shared memory segments.
  */
-class SharedMemManager
+class SharedMemManager :
+    public std::enable_shared_from_this<SharedMemManager>
 {
 private:
 
@@ -223,11 +225,10 @@ private:
 
     };
 
-public:
-
     SharedMemManager(
             const std::string& domain_name)
-        : global_segment_(domain_name)
+        : segments_mem_(0)
+        , global_segment_(domain_name)
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
 
@@ -243,6 +244,19 @@ public:
         per_allocation_extra_size_ =
                 SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value,
                         domain_name);
+    }
+
+public:
+
+    static std::shared_ptr<SharedMemManager> create(
+            const std::string& domain_name)
+    {
+        return std::shared_ptr<SharedMemManager>(new SharedMemManager(domain_name));
+    }
+
+    ~SharedMemManager()
+    {
+        remove_segments_from_watch();
     }
 
     class Buffer
@@ -461,6 +475,11 @@ public:
             }
 
             return new_buffer;
+        }
+
+        uint64_t mem_size()
+        {
+            return segment_->mem_size();
         }
 
     private:
@@ -917,6 +936,16 @@ public:
         return &global_segment_;
     }
 
+    /**
+     * @return The total mem size, in bytes, used by remote mapped segments.
+     */
+    uint64_t segments_mem()
+    {
+        std::lock_guard<std::mutex> lock(ids_segments_mutex_);
+
+        return segments_mem_;
+    }
+
 private:
 
     std::shared_ptr<Port> regenerate_port(
@@ -938,22 +967,17 @@ private:
         }
 
         SegmentWrapper(
+                std::weak_ptr<SharedMemManager> shared_mem_manager,
                 std::shared_ptr<SharedMemSegment> segment_,
+                SharedMemSegment::Id segment_id,
                 const std::string& segment_name)
-            : segment_(segment_)
+            : shared_mem_manager_(shared_mem_manager)
+            , segment_(segment_)
+            , segment_id_(segment_id)
             , segment_name_(segment_name)
         {
-        }
-
-        SegmentWrapper& operator =(
-                SegmentWrapper&& other)
-        {
-            segment_ = other.segment_;
-            segment_name_ = other.segment_name_;
-
-            other.segment_.reset();
-
-            return *this;
+            lock_file_name_ = segment_name + "_el";
+            update_alive_time(std::chrono::steady_clock::now());
         }
 
         std::shared_ptr<SharedMemSegment> segment()
@@ -961,44 +985,266 @@ private:
             return segment_;
         }
 
+        void update_alive_time(
+                const std::chrono::steady_clock::time_point& time)
+        {
+            last_alive_check_time_.store(time.time_since_epoch().count());
+        }
+
+        /**
+         * Singleton task, for SharedMemWatchdog, that periodically checks opened segments
+         * to garbage collect those closed by the origin
+         */
+        class WatchTask : public SharedMemWatchdog::Task
+        {
+        public:
+
+            static WatchTask& get()
+            {
+                static WatchTask watch_task;
+                return watch_task;
+            }
+
+            void add_segment(
+                    std::shared_ptr<SegmentWrapper> segment)
+            {
+                // Add added segments to the watched set
+                std::lock_guard<std::mutex> lock(to_add_remove_mutex_);
+
+                to_add_.push_back(segment);
+            }
+
+            void remove_segment(
+                    std::shared_ptr<SegmentWrapper> segment)
+            {
+                // Add added segments to the watched set
+                std::lock_guard<std::mutex> lock(to_add_remove_mutex_);
+
+                to_remove_.push_back(segment);
+            }
+
+        private:
+
+            std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t> watched_segments_;
+            std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t>::iterator watched_it_;
+
+            std::mutex to_add_remove_mutex_;
+            std::vector<std::shared_ptr<SegmentWrapper> > to_add_;
+            std::vector<std::shared_ptr<SegmentWrapper> > to_remove_;
+
+            WatchTask()
+                : watched_it_(watched_segments_.end())
+            {
+                SharedMemWatchdog::get().add_task(this);
+            }
+
+            ~WatchTask()
+            {
+                SharedMemWatchdog::get().remove_task(this);
+            }
+
+            void update_watched_segments()
+            {
+                // Add / remove segments to the watched map
+                std::lock_guard<std::mutex> lock(to_add_remove_mutex_);
+
+                for (auto& segment : to_add_)
+                {
+                    auto segment_it = watched_segments_.find(segment);
+                    if (segment_it != watched_segments_.end())
+                    {
+                        // The segment already exists, just increase the references
+                        (*segment_it).second++;
+                    }
+                    else // New segment
+                    {
+                        watched_segments_.insert({segment, 1});
+                    }
+                }
+
+                to_add_.clear();
+
+                for (auto& segment : to_remove_)
+                {
+                    auto segment_it = watched_segments_.find(segment);
+                    if (segment_it != watched_segments_.end())
+                    {
+                        (*segment_it).second--;
+
+                        if ((*segment_it).second == 0)
+                        {
+                            watched_segments_.erase(segment_it);
+                        }
+                    }
+                }
+
+                to_remove_.clear();
+            }
+
+            void run()
+            {
+                constexpr uint32_t MAX_CHECKS_PER_BATCH {100};
+                constexpr std::chrono::milliseconds PER_BATCH_SLEEP_TIME {10};
+
+                auto now = std::chrono::steady_clock::now();
+
+                // Segments check was completed in the last run
+                if (watched_it_ == watched_segments_.end())
+                {
+                    // Add / remove requested segments
+                    update_watched_segments();
+                    watched_it_ = watched_segments_.begin();
+                }
+
+                auto now_t = std::chrono::steady_clock::now();
+                // Maximum time for checking half the watchdog period
+                auto limit_t = now_t + SharedMemWatchdog::period() / 2;
+                uint32_t batch_count = 0;
+
+                while (watched_it_ != watched_segments_.end() && now_t < limit_t)
+                {
+                    auto& segment = (*watched_it_).first;
+                    // The segment has not been check for much time...
+                    if (segment->alive_check_timeout(now))
+                    {
+                        if (!(*watched_it_).first->check_alive())
+                        {
+                            watched_it_ = watched_segments_.erase(watched_it_);
+                        }
+                        else
+                        {
+                            watched_it_++;
+                        }
+                    }
+                    else
+                    {
+                        watched_it_++;
+                    }
+
+                    // Every batch a sleep is performed to avoid high resources consumption
+                    if (++batch_count ==  MAX_CHECKS_PER_BATCH)
+                    {
+                        batch_count = 0;
+                        std::this_thread::sleep_for(PER_BATCH_SLEEP_TIME);
+                        now_t = std::chrono::steady_clock::now();
+                    }
+                }
+            }
+
+        };
+
     private:
 
+        std::weak_ptr<SharedMemManager> shared_mem_manager_;
         std::shared_ptr<SharedMemSegment> segment_;
+        SharedMemSegment::Id segment_id_;
         std::string segment_name_;
+        std::string lock_file_name_;
+        std::atomic<std::chrono::steady_clock::time_point::rep> last_alive_check_time_;
+
+        static constexpr uint32_t ALIVE_CHECK_TIMEOUT_SECS {5};
+
+        bool check_alive()
+        {
+            if (!RobustExclusiveLock::is_locked(lock_file_name_))
+            {
+                // The segment is not locked so the origin is no longer active
+                close_and_remove();
+
+                return false;
+            }
+
+            update_alive_time(std::chrono::steady_clock::now());
+
+            return true;
+        }
+
+        bool alive_check_timeout(
+                const std::chrono::steady_clock::time_point& now) const
+        {
+            std::chrono::steady_clock::time_point last_check_time(
+                std::chrono::nanoseconds(last_alive_check_time_.load()));
+
+            return std::chrono::duration_cast<std::chrono::seconds>(now - last_check_time).count()
+                   >= ALIVE_CHECK_TIMEOUT_SECS;
+        }
+
+        void close_and_remove()
+        {
+            // Remove from the namespace (just in case the origin didn't do it)
+            SharedMemSegment::remove(segment_name_.c_str());
+
+            if (auto shared_mem_manager = shared_mem_manager_.lock())
+            {
+                shared_mem_manager->release_segment(segment_id_);
+            }
+        }
+
     };
 
     uint32_t per_allocation_extra_size_;
 
-    std::unordered_map<SharedMemSegment::Id::type, SegmentWrapper,
+    std::unordered_map<SharedMemSegment::Id::type, std::shared_ptr<SegmentWrapper>,
             std::hash<SharedMemSegment::Id::type> > ids_segments_;
     std::mutex ids_segments_mutex_;
+    uint64_t segments_mem_;
 
     SharedMemGlobal global_segment_;
 
     std::shared_ptr<SharedMemSegment> find_segment(
             SharedMemSegment::Id id)
     {
+        std::shared_ptr<SharedMemSegment> segment;
         std::lock_guard<std::mutex> lock(ids_segments_mutex_);
 
-        std::shared_ptr<SharedMemSegment> segment;
+        auto segment_it = ids_segments_.find(id.get());
 
-        // TODO(Adolfo): Garbage collector for opened but unused segments????
-
-        try
+        if (segment_it != ids_segments_.end())
         {
-            SegmentWrapper& segment_wrapper = ids_segments_.at(id.get());
-            segment = segment_wrapper.segment();
+            segment = (*segment_it).second->segment();
         }
-        catch (std::out_of_range&)
+        else // Is a new segment
         {
             auto segment_name = global_segment_.domain_name() + "_" + id.to_string();
             segment = std::make_shared<SharedMemSegment>(boost::interprocess::open_only, segment_name);
-            SegmentWrapper segment_wrapper(segment, segment_name);
+            auto segment_wrapper = std::make_shared<SegmentWrapper>(shared_from_this(), segment, id, segment_name);
 
-            ids_segments_[id.get()] = std::move(segment_wrapper);
+            ids_segments_[id.get()] = segment_wrapper;
+            segments_mem_ += segment->mem_size();
+
+            SegmentWrapper::WatchTask::get().add_segment(segment_wrapper);
         }
 
         return segment;
+    }
+
+    void release_segment(
+            SharedMemSegment::Id id)
+    {
+        std::lock_guard<std::mutex> lock(ids_segments_mutex_);
+
+        auto segment_it = ids_segments_.find(id.get());
+
+        if (segment_it != ids_segments_.end())
+        {
+            segments_mem_ -= (*segment_it).second->segment()->mem_size();
+            ids_segments_.erase(segment_it);
+        }
+    }
+
+    /**
+     * Remove all the opened remote segments from the watchdog.
+     * This function should be called before destroying the SharedMemManager.
+     * Because ids_segments_ is about to be clear, all the segments will be released.
+     */
+    void remove_segments_from_watch()
+    {
+        std::lock_guard<std::mutex> lock(ids_segments_mutex_);
+
+        for (auto segment : ids_segments_)
+        {
+            SegmentWrapper::WatchTask::get().remove_segment(segment.second);
+        }
     }
 
 };
