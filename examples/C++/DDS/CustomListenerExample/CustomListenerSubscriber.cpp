@@ -35,7 +35,7 @@ CustomListenerSubscriber::CustomListenerSubscriber()
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new TopicType())
+    , type_(new TopicPubSubType())
 {
 }
 
