@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*!
  * @file FlowControlExamplePubSubTypes.h
  * This header file contains the declaration of the serialization functions.
  *
@@ -23,26 +23,35 @@
 #ifndef _FLOWCONTROLEXAMPLE_PUBSUBTYPES_H_
 #define _FLOWCONTROLEXAMPLE_PUBSUBTYPES_H_
 
+#include <fastrtps/config.h>
 #include <fastrtps/TopicDataType.h>
 
 #include "FlowControlExample.h"
+
+#if !defined(GEN_API_VER) || (GEN_API_VER != 1)
+#error Generated FlowControlExample is not compatible with current installed Fast-RTPS. Please, regenerate it with fastrtpsgen.
+#endif
 
 /*!
  * @brief This class represents the TopicDataType of the type FlowControlExample defined by the user in the IDL file.
  * @ingroup FLOWCONTROLEXAMPLE
  */
-class FlowControlExamplePubSubType : public eprosima::fastrtps::TopicDataType{
+class FlowControlExamplePubSubType : public eprosima::fastrtps::TopicDataType {
 public:
-    FlowControlExamplePubSubType();
-    virtual ~FlowControlExamplePubSubType();
-    bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-    std::function<uint32_t()> getSerializedSizeProvider(void* data);
-    bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
-    void* createData();
-    void deleteData(void * data);
+    typedef FlowControlExample type;
+
+    eProsima_user_DllExport FlowControlExamplePubSubType();
+
+    eProsima_user_DllExport virtual ~FlowControlExamplePubSubType();
+    eProsima_user_DllExport virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    eProsima_user_DllExport virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+    eProsima_user_DllExport virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    eProsima_user_DllExport virtual void* createData() override;
+    eProsima_user_DllExport virtual void deleteData(void * data) override;
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 };
 
-#endif // _FlowControlExample_PUBSUBTYPE_H_
+#endif // _FLOWCONTROLEXAMPLE_PUBSUBTYPES_H_

@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring DDS SampleConfig_Controller example...")
 file(GLOB DDS_SAMPLECONFIG_CONTROLLER_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(DDSSampleConfigController ${DDS_SAMPLECONFIG_CONTROLLER_EXAMPLE_SOURCES} sampleconfig_safest.cpp)
-target_link_libraries(DDSSampleConfigController fastrtps fastcdr foonathan_memory)
-install(TARGETS DDSSampleConfigController
+add_executable(DDSSampleConfig_Controller ${DDS_SAMPLECONFIG_CONTROLLER_EXAMPLE_SOURCES} sampleconfig_safest.cpp)
+target_link_libraries(DDSSampleConfig_Controller fastrtps fastcdr foonathan_memory)
+install(TARGETS DDSSampleConfig_Controller
     RUNTIME DESTINATION examples/C++/DDS/SampleConfig_Controller/${BIN_INSTALL_DIR}
     )

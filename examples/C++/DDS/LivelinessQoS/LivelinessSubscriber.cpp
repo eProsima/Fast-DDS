@@ -27,7 +27,7 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
 LivelinessSubscriber::LivelinessSubscriber()
-    : type_(new TopicType())
+    : type_(new TopicPubSubType())
     , participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)

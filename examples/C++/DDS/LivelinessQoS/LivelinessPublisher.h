@@ -20,7 +20,7 @@
 #ifndef LivelinessPublisher_H_
 #define LivelinessPublisher_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -72,7 +72,7 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
             : n_matched(0)

@@ -20,7 +20,7 @@
 #ifndef LivelinessPublisher_H_
 #define LivelinessPublisher_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastrtps/fastrtps_fwd.h>
@@ -29,7 +29,8 @@
 
 #include <mutex>
 
-class LivelinessPublisher {
+class LivelinessPublisher
+{
 public:
 
     //! Constructor
@@ -49,26 +50,31 @@ public:
             bool waitForListener = true);
 
     //! Run for number samples
-	void run(uint32_t number, uint32_t sleep);
+    void run(
+            uint32_t number,
+            uint32_t sleep);
 
 private:
 
     Topic topic_;
-    TopicType type_;
+    TopicPubSubType type_;
 
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Publisher* publisher_;
 
     class PubListener : public eprosima::fastrtps::PublisherListener
-	{
-	public:
+    {
+    public:
+
         PubListener()
             : n_matched(0)
             , first_connected(false)
-        {}
+        {
+        }
 
         ~PubListener()
-        {}
+        {
+        }
 
         void onPublicationMatched(
                 eprosima::fastrtps::Publisher* pub,
@@ -78,13 +84,13 @@ private:
                 eprosima::fastrtps::Publisher* pub,
                 const eprosima::fastrtps::LivelinessLostStatus& status) override;
 
-		int n_matched;
+        int n_matched;
         bool first_connected;
     };
     PubListener listener_;
 
     void runThread(
-            eprosima::fastrtps::Publisher *pub,
+            eprosima::fastrtps::Publisher* pub,
             uint32_t number,
             uint32_t sleep);
 };

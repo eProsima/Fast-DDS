@@ -44,7 +44,7 @@ LIFESPANEXAMPLE_TARGET= bin/LifespanQoSExample
 
 LIFESPANEXAMPLE_SRC_CXXFILES= \
 			      LifespanQoSExample/Lifespan.cxx \
-			      LifespanQoSExample/LifespanTypes.cxx
+			      LifespanQoSExample/LifespanPubSubTypes.cxx
 
 LIFESPANEXAMPLE_SRC_CPPFILES= \
 LifespanQoSExample/LifespanPublisher.cpp \

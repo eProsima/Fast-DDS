@@ -45,7 +45,7 @@ message(STATUS "Configuring HelloWorld example...")
 file(GLOB POSITIVEACKS_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB POSITIVEACKS_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(DisablePositiveACKsQoS ${POSITIVEACKS_EXAMPLE_SOURCES_CXX} ${POSITIVEACKS_EXAMPLE_SOURCES_CPP})
-target_link_libraries(DisablePositiveACKsQoS fastrtps fastcdr)
-install(TARGETS DisablePositiveACKsQoS
-    RUNTIME DESTINATION examples/C++/DisablePositiveACKsQoS/${BIN_INSTALL_DIR})
+add_executable(DisablePositiveACKs ${POSITIVEACKS_EXAMPLE_SOURCES_CXX} ${POSITIVEACKS_EXAMPLE_SOURCES_CPP})
+target_link_libraries(DisablePositiveACKs fastrtps fastcdr)
+install(TARGETS DisablePositiveACKs
+    RUNTIME DESTINATION examples/C++/DisablePositiveACKs/${BIN_INSTALL_DIR})

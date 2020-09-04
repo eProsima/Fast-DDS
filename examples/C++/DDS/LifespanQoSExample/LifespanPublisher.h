@@ -21,7 +21,7 @@
 #define HELLOWORLDPUBLISHER_H_
 
 #include "Lifespan.h"
-#include "LifespanTypes.h"
+#include "LifespanPubSubTypes.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -86,7 +86,7 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
             : n_matched(0)
@@ -106,7 +106,8 @@ public:
 
         bool first_connected;
 
-    } listener;
+    }
+    listener;
 
     void runThread(
             uint32_t number,

@@ -20,7 +20,7 @@
 #ifndef CUSTOMLISTENERS_H_
 #define CUSTOMLISTENERS_H_
 
-#include "TopicTypes.h"
+#include "TopicPubSubTypes.h"
 
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>

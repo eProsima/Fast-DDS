@@ -84,7 +84,7 @@ bool HelloWorldPublisher::init()
     }
 
     //CREATE THE TOPIC
-    topic_ = participant_->create_topic("HelloWorldSharedMemTopic", "HelloWorldSharedMem", TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic("HelloWorldSharedMemTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {

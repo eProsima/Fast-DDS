@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Lifespan.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -25,90 +25,183 @@ namespace { char dummy; }
 #endif
 
 #include "Lifespan.h"
-
 #include <fastcdr/Cdr.h>
 
+#include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
 Lifespan::Lifespan()
-    : index_(0)
-    , message_()
 {
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1622f1b
+    m_index = 0;
+    // m_message com.eprosima.idl.parser.typecode.StringTypeCode@70e8f8e
+    m_message ="";
+
 }
 
 Lifespan::~Lifespan()
 {
+
+
 }
 
 Lifespan::Lifespan(const Lifespan &x)
 {
-    index_ = x.index_;
-    message_ = x.message_;
+    m_index = x.m_index;
+    m_message = x.m_message;
 }
 
 Lifespan::Lifespan(Lifespan &&x)
 {
-    index_ = x.index_;
-    message_ = std::move(x.message_);
+    m_index = x.m_index;
+    m_message = std::move(x.m_message);
 }
 
 Lifespan& Lifespan::operator=(const Lifespan &x)
 {
-    index_ = x.index_;
-    message_ = x.message_;
-    
+
+    m_index = x.m_index;
+    m_message = x.m_message;
+
     return *this;
 }
 
 Lifespan& Lifespan::operator=(Lifespan &&x)
 {
-    index_ = x.index_;
-    message_ = std::move(x.message_);
-    
+
+    m_index = x.m_index;
+    m_message = std::move(x.m_message);
+
     return *this;
 }
 
 size_t Lifespan::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+
     return current_alignment - initial_alignment;
 }
 
 size_t Lifespan::getCdrSerializedSize(const Lifespan& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
+
+
     return current_alignment - initial_alignment;
 }
 
 void Lifespan::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << index_;
-    scdr << message_;
+
+    scdr << m_index;
+    scdr << m_message;
 }
 
 void Lifespan::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> index_;
-    dcdr >> message_;
+
+    dcdr >> m_index;
+    dcdr >> m_message;
+}
+
+/*!
+ * @brief This function sets a value in member index
+ * @param _index New value for member index
+ */
+void Lifespan::index(uint32_t _index)
+{
+m_index = _index;
+}
+
+/*!
+ * @brief This function returns the value of member index
+ * @return Value of member index
+ */
+uint32_t Lifespan::index() const
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function returns a reference to member index
+ * @return Reference to member index
+ */
+uint32_t& Lifespan::index()
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function copies the value in member message
+ * @param _message New value to be copied in member message
+ */
+void Lifespan::message(const std::string &_message)
+{
+m_message = _message;
+}
+
+/*!
+ * @brief This function moves the value in member message
+ * @param _message New value to be moved in member message
+ */
+void Lifespan::message(std::string &&_message)
+{
+m_message = std::move(_message);
+}
+
+/*!
+ * @brief This function returns a constant reference to member message
+ * @return Constant reference to member message
+ */
+const std::string& Lifespan::message() const
+{
+    return m_message;
+}
+
+/*!
+ * @brief This function returns a reference to member message
+ * @return Reference to member message
+ */
+std::string& Lifespan::message()
+{
+    return m_message;
 }
 
 size_t Lifespan::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
+    size_t current_align = current_alignment;
+
+
+
+
+
     return current_align;
 }
 
 bool Lifespan::isKeyDefined()
 {
-    return false;
+   return false;
 }
 
-void Lifespan::serializeKey(eprosima::fastcdr::Cdr&) const
+void Lifespan::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
+    (void) scdr;
+     
+     
 }
