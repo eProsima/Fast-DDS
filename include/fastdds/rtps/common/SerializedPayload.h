@@ -170,6 +170,7 @@ struct RTPS_DllAPI SerializedPayload_t
                 free(old_data);
                 throw std::bad_alloc();
             }
+            memset(data + max_size, 0, (new_size - max_size) * sizeof(octet));
         }
         max_size = new_size;
     }
