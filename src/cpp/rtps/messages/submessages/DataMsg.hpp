@@ -204,19 +204,6 @@ bool RTPSMessageCreator::addSubmessageData(
         added_no_error &= fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
     }
 
-    // Align submessage to rtps alignment (4).
-    uint32_t align = (4 - msg->pos % 4) & 3;
-    for (uint32_t count = 0; count < align; ++count)
-    {
-        added_no_error &= CDRMessage::addOctet(msg, 0);
-    }
-
-    //if(align > 0)
-    {
-        //submsgElem.pos += align;
-        //submsgElem.length += align;
-    }
-
     uint32_t size32 = msg->pos - position_size_count_size;
     if (size32 <= std::numeric_limits<uint16_t>::max())
     {
