@@ -408,12 +408,16 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${THIRDPARTY_BOOST_LINK_LIBS}
         )
 
-    message(STATUS " target_link_directories(${PROJECT_NAME} ${PRIVACY} ${TINYXML2_LIB_DIR} )")
-    if(TINYXML2_LIB_DIR)
+    if(${CMAKE_VERSION} VERSION_LESS "3.13.0") 
+        message("You are using CMake version less than 3.13.0. This may cause linking problems when cross compiling")
+    else()
+        if(TINYXML2_LIB_DIR)
         target_link_directories(${PROJECT_NAME} BEFORE PRIVATE
             ${TINYXML2_LIB_DIR}
         )
+        endif()
     endif()
+
 
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
