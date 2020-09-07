@@ -4,6 +4,8 @@
 
 option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast RTPS" OFF)
 
+
+
 if(NOT (TINYXML2_FROM_SOURCE OR THIRDPARTY))
     find_package(TinyXML2 CONFIG QUIET)
 endif()
@@ -47,6 +49,17 @@ else()
     endif()
 endif()
 
-if(TinyXML2_FOUND)
-    set(TINYXML2_LIBRARY tinyxml2)
-endif()
+message(STATUS "++++++++ TINYXML2_SOURCE_DIR = ${TINYXML2_SOURCE_DIR}")
+message(STATUS "++++++++ TINYXML2_INCLUDE_DIR = ${TINYXML2_INCLUDE_DIR}")
+message(STATUS "++++++++ TINYXML2_FROM_SOURCE = ${TINYXML2_FROM_SOURCE}")
+message(STATUS "++++++++ THIRDPARTY = ${THIRDPARTY}")
+message(STATUS "++++++++ ANDROID = ${ANDROID}")
+
+message(STATUS "++++++++ Found TinyXML2: ${TinyXML2_FOUND}")
+message(STATUS "++++++++ TINYXML2_LIBRARY = ${TINYXML2_LIBRARY}")
+message(STATUS "++++++++ TINYXML2_LIB_DIR = ${TINYXML2_LIB_DIR}")
+message(STATUS "++++++++ TINYXML2_LIB_NAME = ${TINYXML2_LIB_NAME}")
+
+
+
+

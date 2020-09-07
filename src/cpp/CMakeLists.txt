@@ -394,14 +394,26 @@ elseif(NOT EPROSIMA_INSTALLER)
         set(PRIVACY "PRIVATE")
     endif()
 
+    if(NOT THIRDPARTY)
+        get_filename_component(TINYXML2_LIB_NAME ${TINYXML2_LIBRARY} NAME)
+        get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY} DIRECTORY)
+    endif()
+
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
-        ${TINYXML2_LIBRARY}
+        ${TINYXML2_LIB_NAME}
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         )
+
+    message(STATUS " target_link_directories(${PROJECT_NAME} ${PRIVACY} ${TINYXML2_LIB_DIR} )")
+    if(TINYXML2_LIB_DIR)
+        target_link_directories(${PROJECT_NAME} BEFORE PRIVATE
+            ${TINYXML2_LIB_DIR}
+        )
+    endif()
 
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
