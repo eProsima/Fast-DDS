@@ -32,7 +32,7 @@
     #define CONSTEXPR_FUNC const
 #else
     #define CONSTEXPR_FUNC constexpr
-#endif
+#endif // if defined(_WIN32) && (_MSC_VER <= 1900)
 
 namespace eprosima {
 namespace utilities {
