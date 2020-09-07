@@ -109,14 +109,8 @@ public:
 
     ~SharedMemSegment()
     {
-        try
-        {
-            segment_.reset();
-        }
-        catch (const std::exception& e)
-        {
-            logWarning(RTPS_TRANSPORT_SHM, e.what());
-        }
+        // no need of exception handling cause never throws
+        segment_.reset();
     }
 
     void* get_address_from_offset(
