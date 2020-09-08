@@ -54,8 +54,8 @@
 #endif
 
 // Endianness defines
-#ifndef __BIG_ENDIAN__
-#define __BIG_ENDIAN__ @__BIG_ENDIAN__@
+#ifndef FASTDDS_IS_BIG_ENDIAN_TARGET
+#define FASTDDS_IS_BIG_ENDIAN_TARGET @FASTDDS_IS_BIG_ENDIAN_TARGET@
 #endif
 
 // Security

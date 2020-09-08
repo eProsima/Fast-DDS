@@ -858,15 +858,9 @@ bool SecurityManager::on_process_handshake(
 
             // Serialize encapsulation
             CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
-            aux_msg.msg_endian = BIGEND;
-            change->serializedPayload.encapsulation = PL_CDR_BE;
-            CDRMessage::addOctet(&aux_msg, CDR_BE);
-#else
-            aux_msg.msg_endian = LITTLEEND;
-            change->serializedPayload.encapsulation = PL_CDR_LE;
-            CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+            aux_msg.msg_endian = DEFAULT_ENDIAN;
+            change->serializedPayload.encapsulation = PL_DEFAULT_ENCAPSULATION;
+            CDRMessage::addOctet(&aux_msg, DEFAULT_ENCAPSULATION);
             CDRMessage::addUInt16(&aux_msg, 0);
 
             if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -2032,15 +2026,9 @@ void SecurityManager::exchange_participant_crypto(
 
             // Serialize encapsulation
             CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
-            aux_msg.msg_endian = BIGEND;
-            change->serializedPayload.encapsulation = PL_CDR_BE;
-            CDRMessage::addOctet(&aux_msg, CDR_BE);
-#else
-            aux_msg.msg_endian = LITTLEEND;
-            change->serializedPayload.encapsulation = PL_CDR_LE;
-            CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+            aux_msg.msg_endian = DEFAULT_ENDIAN;
+            change->serializedPayload.encapsulation = PL_DEFAULT_ENCAPSULATION;
+            CDRMessage::addOctet(&aux_msg, DEFAULT_ENCAPSULATION);
             CDRMessage::addUInt16(&aux_msg, 0);
 
             if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -2800,15 +2788,9 @@ bool SecurityManager::discovered_reader(
 
                                     // Serialize encapsulation
                                     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
-                                    aux_msg.msg_endian = BIGEND;
-                                    change->serializedPayload.encapsulation = PL_CDR_BE;
-                                    CDRMessage::addOctet(&aux_msg, CDR_BE);
-#else
-                                    aux_msg.msg_endian = LITTLEEND;
-                                    change->serializedPayload.encapsulation = PL_CDR_LE;
-                                    CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+                                    aux_msg.msg_endian = DEFAULT_ENDIAN;
+                                    change->serializedPayload.encapsulation = PL_DEFAULT_ENCAPSULATION;
+                                    CDRMessage::addOctet(&aux_msg, DEFAULT_ENCAPSULATION);
                                     CDRMessage::addUInt16(&aux_msg, 0);
 
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
@@ -3137,15 +3119,9 @@ bool SecurityManager::discovered_writer(
 
                                     // Serialize encapsulation
                                     CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
-                                    aux_msg.msg_endian = BIGEND;
-                                    change->serializedPayload.encapsulation = PL_CDR_BE;
-                                    CDRMessage::addOctet(&aux_msg, CDR_BE);
-#else
-                                    aux_msg.msg_endian = LITTLEEND;
-                                    change->serializedPayload.encapsulation = PL_CDR_LE;
-                                    CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif // if __BIG_ENDIAN__
+                                    aux_msg.msg_endian = DEFAULT_ENDIAN;
+                                    change->serializedPayload.encapsulation = PL_DEFAULT_ENCAPSULATION;
+                                    CDRMessage::addOctet(&aux_msg, DEFAULT_ENCAPSULATION);
                                     CDRMessage::addUInt16(&aux_msg, 0);
 
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))

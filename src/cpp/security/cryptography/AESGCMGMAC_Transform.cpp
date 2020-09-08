@@ -30,12 +30,12 @@
 #define IS_OPENSSL_1_1 1
 #else
 #define IS_OPENSSL_1_1 0
-#endif
+#endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
 // Solve error with Win32 macro
 #ifdef WIN32
 #undef max
-#endif
+#endif // ifdef WIN32
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
@@ -227,13 +227,13 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     std::array<uint8_t, 4> session_id;
     memcpy(session_id.data(), &(session->session_id), 4);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     octet flags = 0x0;
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else
     octet flags = BIT(0);
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     //Header
     try
@@ -367,13 +367,13 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     std::array<uint8_t, 4> session_id;
     memcpy(session_id.data(), &(session->session_id), 4);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     octet flags = 0x0;
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else
     octet flags = BIT(0);
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     //Header
     try
@@ -508,13 +508,13 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     std::array<uint8_t, 4> session_id;
     memcpy(session_id.data(), &(local_participant->session_id), 4);
 
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
     octet flags = 0x0;
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else
     octet flags = BIT(0);
     serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
     //Header
     try
@@ -1512,7 +1512,7 @@ void AESGCMGMAC_Transform::compute_sessionkey(
             EVP_MD_CTX_new();
 #else
             (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
+#endif // if IS_OPENSSL_1_1
     EVP_MD_CTX_init(ctx);
     EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
     EVP_DigestSignUpdate(ctx, source, sourceLen);
@@ -1527,7 +1527,7 @@ void AESGCMGMAC_Transform::compute_sessionkey(
 #else
     EVP_MD_CTX_cleanup(ctx);
     free(ctx);
-#endif
+#endif // if IS_OPENSSL_1_1
 }
 
 void AESGCMGMAC_Transform::serialize_SecureDataHeader(
@@ -1614,13 +1614,13 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
     }
     else
     {
-#if __BIG_ENDIAN__
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
         octet flags = 0x0;
         serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 #else
         octet flags = BIT(0);
         serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
-#endif
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
         if (submessage)
         {

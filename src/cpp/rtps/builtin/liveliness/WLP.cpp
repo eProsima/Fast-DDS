@@ -56,7 +56,7 @@ static void set_builtin_reader_history_attributes(
     hatt.payloadMaxSize = is_secure ? 128 : 28;
 
     if ( (allocation.maximum < c_upper_limit) &&
-         (allocation.initial < c_upper_limit) )
+            (allocation.initial < c_upper_limit) )
     {
         hatt.initialReservedCaches = static_cast<uint32_t>(allocation.initial) * 2;
         hatt.maximumReservedCaches = static_cast<uint32_t>(allocation.maximum) * 2;
@@ -102,7 +102,7 @@ WLP::WLP(
     , mp_builtinReaderSecure(nullptr)
     , mp_builtinWriterSecureHistory(nullptr)
     , mp_builtinReaderSecureHistory(nullptr)
-#endif
+#endif // if HAVE_SECURITY
     , temp_reader_proxy_data_(
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
@@ -141,7 +141,7 @@ WLP::~WLP()
         delete this->mp_builtinReaderSecureHistory;
         delete this->mp_builtinWriterSecureHistory;
     }
-#endif
+#endif // if HAVE_SECURITY
     mp_participant->deleteUserEndpoint(mp_builtinReader);
     mp_participant->deleteUserEndpoint(mp_builtinWriter);
     delete this->mp_builtinReaderHistory;
@@ -161,10 +161,10 @@ bool WLP::initWL(
 
     pub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
-            const LivelinessQosPolicyKind& kind,
-            const Duration_t& lease_duration,
-            int alive_count,
-            int not_alive_count) -> void
+        const LivelinessQosPolicyKind& kind,
+        const Duration_t& lease_duration,
+        int alive_count,
+        int not_alive_count) -> void
         {
             pub_liveliness_changed(
                 guid,
@@ -178,10 +178,10 @@ bool WLP::initWL(
 
     sub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
-            const LivelinessQosPolicyKind& kind,
-            const Duration_t& lease_duration,
-            int alive_count,
-            int not_alive_count) -> void
+        const LivelinessQosPolicyKind& kind,
+        const Duration_t& lease_duration,
+        int alive_count,
+        int not_alive_count) -> void
         {
             sub_liveliness_changed(
                 guid,
@@ -198,14 +198,14 @@ bool WLP::initWL(
     {
         retVal = createSecureEndpoints();
     }
-#endif
+#endif // if HAVE_SECURITY
     return retVal;
 }
 
 bool WLP::createEndpoints()
 {
     const ResourceLimitedContainerConfig& participants_allocation =
-        mp_participant->getRTPSParticipantAttributes().allocation.participants;
+            mp_participant->getRTPSParticipantAttributes().allocation.participants;
 
     // Built-in writer history
     HistoryAttributes hatt;
@@ -296,7 +296,7 @@ bool WLP::createEndpoints()
 bool WLP::createSecureEndpoints()
 {
     const ResourceLimitedContainerConfig& participants_allocation =
-        mp_participant->getRTPSParticipantAttributes().allocation.participants;
+            mp_participant->getRTPSParticipantAttributes().allocation.participants;
 
     //CREATE WRITER
     HistoryAttributes hatt;
@@ -429,7 +429,7 @@ bool WLP::pairing_remote_writer_with_local_reader_after_security(
     return false;
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 bool WLP::assignRemoteEndpoints(
         const ParticipantProxyData& pdata)
@@ -508,7 +508,7 @@ bool WLP::assignRemoteEndpoints(
                     mp_builtinWriterSecure->getGuid());
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 
     return true;
 }
@@ -566,7 +566,7 @@ void WLP::removeRemoteEndpoints(
                 mp_builtinWriterSecure->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 }
 
 bool WLP::add_local_writer(
@@ -583,12 +583,12 @@ bool WLP::add_local_writer(
         if (automatic_liveliness_assertion_ == nullptr)
         {
             automatic_liveliness_assertion_ = new TimedEvent(mp_participant->getEventResource(),
-                    [&]() -> bool
-                    {
-                        automatic_liveliness_assertion();
-                        return true;
-                    },
-                    wAnnouncementPeriodMilliSec);
+                            [&]() -> bool
+                            {
+                                automatic_liveliness_assertion();
+                                return true;
+                            },
+                            wAnnouncementPeriodMilliSec);
             automatic_liveliness_assertion_->restart_timer();
             min_automatic_ms_ = wAnnouncementPeriodMilliSec;
         }
@@ -610,12 +610,12 @@ bool WLP::add_local_writer(
         if (manual_liveliness_assertion_ == nullptr)
         {
             manual_liveliness_assertion_ = new TimedEvent(mp_participant->getEventResource(),
-                    [&]() -> bool
-                    {
-                        participant_liveliness_assertion();
-                        return true;
-                    },
-                    wAnnouncementPeriodMilliSec);
+                            [&]() -> bool
+                            {
+                                participant_liveliness_assertion();
+                                return true;
+                            },
+                            wAnnouncementPeriodMilliSec);
             manual_liveliness_assertion_->restart_timer();
             min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
         }
@@ -849,14 +849,9 @@ bool WLP::send_liveliness_message(
 
     if (change != nullptr)
     {
+        change->serializedPayload.encapsulation = (uint16_t)PL_DEFAULT_ENCAPSULATION;
         change->serializedPayload.data[0] = 0;
-#if __BIG_ENDIAN__
-        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-        change->serializedPayload.data[1] = PL_CDR_BE;
-#else
-        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-        change->serializedPayload.data[1] = PL_CDR_LE;
-#endif
+        change->serializedPayload.data[1] = PL_DEFAULT_ENCAPSULATION;
         change->serializedPayload.data[2] = 0;
         change->serializedPayload.data[3] = 0;
 
@@ -894,7 +889,7 @@ StatefulWriter* WLP::builtin_writer()
     {
         ret_val = mp_builtinWriterSecure;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     return ret_val;
 }
@@ -908,7 +903,7 @@ WriterHistory* WLP::builtin_writer_history()
     {
         ret_val = mp_builtinWriterSecureHistory;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     return ret_val;
 }

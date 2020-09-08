@@ -51,8 +51,8 @@ AS_IF([test $HAVE_CXX11 = 1],
 
 # Check endianess
 AC_C_BIGENDIAN(
-  AC_DEFINE(__BIG_ENDIAN__, 1, [machine is bigendian]),
-  AC_DEFINE(__BIG_ENDIAN__, 0, [machine is littleendian]),
+  AC_DEFINE(FASTDDS_IS_BIG_ENDIAN_TARGET, 1, [machine is bigendian]),
+  AC_DEFINE(FASTDDS_IS_BIG_ENDIAN_TARGET, 0, [machine is littleendian]),
   AC_MSG_ERROR(unknown endianess),
   AC_MSG_ERROR(universial endianess not supported)
 )

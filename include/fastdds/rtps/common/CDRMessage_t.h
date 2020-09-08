@@ -85,12 +85,7 @@ struct RTPS_DllAPI CDRMessage_t final
 
         max_size = size;
         reserved_size = size;
-
-#if __BIG_ENDIAN__
-        msg_endian = BIGEND;
-#else
-        msg_endian = LITTLEEND;
-#endif
+        msg_endian = DEFAULT_ENDIAN;
     }
 
     /**
@@ -144,11 +139,7 @@ struct RTPS_DllAPI CDRMessage_t final
         reserved_size = message.reserved_size;
         message.reserved_size = 0;
         msg_endian = message.msg_endian;
-#if __BIG_ENDIAN__
-        message.msg_endian = BIGEND;
-#else
-        message.msg_endian = LITTLEEND;
-#endif
+        message.msg_endian = DEFAULT_ENDIAN;
         buffer = message.buffer;
         message.buffer = nullptr;
     }
@@ -167,11 +158,7 @@ struct RTPS_DllAPI CDRMessage_t final
         reserved_size = message.reserved_size;
         message.reserved_size = 0;
         msg_endian = message.msg_endian;
-#if __BIG_ENDIAN__
-        message.msg_endian = BIGEND;
-#else
-        message.msg_endian = LITTLEEND;
-#endif
+        message.msg_endian = DEFAULT_ENDIAN;
         buffer = message.buffer;
         message.buffer = nullptr;
 
@@ -189,12 +176,7 @@ struct RTPS_DllAPI CDRMessage_t final
         buffer = buffer_ptr;
         max_size = size;
         reserved_size = size;
-
-#if __BIG_ENDIAN__
-        msg_endian = BIGEND;
-#else
-        msg_endian = LITTLEEND;
-#endif
+        msg_endian = DEFAULT_ENDIAN;
     }
 
     void reserve(
