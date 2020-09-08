@@ -227,7 +227,7 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
     valid &= CDRMessage::readSequenceNumber(msg, &seqNum);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
-    valid &= (numBits > 256u);
+    valid &= (numBits <= 256u);
 
     uint32_t n_longs = (numBits + 31ul) / 32ul;
     uint32_t bitmap[8];
@@ -255,7 +255,7 @@ inline bool CDRMessage::readFragmentNumberSet(
     valid &= CDRMessage::readUInt32(msg, &base);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
-    valid &= (numBits > 256u);
+    valid &= (numBits <= 256u);
 
     uint32_t n_longs = (numBits + 31ul) / 32ul;
     uint32_t bitmap[8];
