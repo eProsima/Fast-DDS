@@ -221,29 +221,25 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
         CDRMessage_t* msg)
 {
     bool valid = true;
+    SequenceNumberSet_t sns(c_SequenceNumber_Unknown);
 
     SequenceNumber_t seqNum;
     valid &= CDRMessage::readSequenceNumber(msg, &seqNum);
-    SequenceNumberSet_t sns(seqNum);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
-    if (numBits > 256u)
+    valid &= (numBits > 256u);
+
+    uint32_t n_longs = (numBits + 31ul) / 32ul;
+    uint32_t bitmap[8];
+    for (uint32_t i = 0; valid && (i < n_longs); ++i)
     {
-        sns.base(c_SequenceNumber_Unknown);
-        valid = false;
+        valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
     }
-    else
+
+    if (valid)
     {
-        uint32_t n_longs = (numBits + 31ul) / 32ul;
-        uint32_t bitmap[8];
-        for (uint32_t i = 0; i < n_longs; ++i)
-        {
-            valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
-        }
-        if (valid)
-        {
-            sns.bitmap_set(numBits, bitmap);
-        }
+        sns.base(seqNum);
+        sns.bitmap_set(numBits, bitmap);
     }
 
     return sns;
@@ -254,28 +250,26 @@ inline bool CDRMessage::readFragmentNumberSet(
         FragmentNumberSet_t* fns)
 {
     bool valid = true;
+
     FragmentNumber_t base = 0ul;
     valid &= CDRMessage::readUInt32(msg, &base);
-    fns->base(base);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
-    if (numBits > 256u)
+    valid &= (numBits > 256u);
+
+    uint32_t n_longs = (numBits + 31ul) / 32ul;
+    uint32_t bitmap[8];
+    for (uint32_t i = 0; valid && (i < n_longs); ++i)
     {
-        valid = false;
+        valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
     }
-    else
+
+    if (valid)
     {
-        uint32_t n_longs = (numBits + 31ul) / 32ul;
-        uint32_t bitmap[8];
-        for (uint32_t i = 0; i < n_longs; ++i)
-        {
-            valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
-        }
-        if (valid)
-        {
-            fns->bitmap_set(numBits, bitmap);
-        }
+        fns->base(base);
+        fns->bitmap_set(numBits, bitmap);
     }
+
     return valid;
 }
 
