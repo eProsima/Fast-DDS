@@ -16,6 +16,7 @@
  * @file PublisherHistory.cpp
  *
  */
+#include <fastrtps/config.h>
 
 #include <mutex>
 
@@ -29,27 +30,38 @@
 
 #include <mutex>
 
-extern eprosima::fastrtps::rtps::WriteParams WRITE_PARAM_DEFAULT;
+namespace eprosima {
+namespace fastrtps {
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace rtps;
+
+static HistoryAttributes to_history_attributes(
+        const TopicAttributes& topic_att,
+        uint32_t payloadMaxSize,
+        MemoryManagementPolicy_t mempolicy)
+{
+    auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
+    auto max_samples = topic_att.resourceLimitsQos.max_samples;
+
+    if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
+    {
+        max_samples = topic_att.historyQos.depth;
+        if (topic_att.getTopicKind() != NO_KEY)
+        {
+            max_samples *= topic_att.resourceLimitsQos.max_instances;
+        }
+
+        initial_samples = std::min(initial_samples, max_samples);
+    }
+
+    return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples);
+}
 
 PublisherHistory::PublisherHistory(
         const TopicAttributes& topic_att,
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
-    : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                        topic_att.resourceLimitsQos.allocated_samples :
-                        topic_att.getTopicKind() == NO_KEY ?
-                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
-                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
-                                     * topic_att.resourceLimitsQos.max_instances),
-                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
-                        topic_att.resourceLimitsQos.max_samples :
-                        topic_att.getTopicKind() == NO_KEY ?
-                            topic_att.historyQos.depth :
-                            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+    : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
@@ -112,7 +124,7 @@ bool PublisherHistory::add_pub_change(
         if (this->add_change_(change, wparams, max_blocking_time))
 #else
         if (this->add_change_(change, wparams))
-#endif
+#endif // if HAVE_STRICT_REALTIME
         {
             returnedValue = true;
         }
@@ -159,7 +171,7 @@ bool PublisherHistory::add_pub_change(
                 if (this->add_change_(change, wparams, max_blocking_time))
 #else
                 if (this->add_change_(change, wparams))
-#endif
+#endif // if HAVE_STRICT_REALTIME
                 {
                     logInfo(RTPS_HISTORY,
                             topic_att_.getTopicDataType()
@@ -329,7 +341,7 @@ bool PublisherHistory::remove_instance_changes(
 
     vit->second.cache_changes.erase(vit->second.cache_changes.begin(), chit);
 
-    if(vit->second.cache_changes.empty())
+    if (vit->second.cache_changes.empty())
     {
         keyed_changes_.erase(vit);
     }
@@ -386,9 +398,9 @@ bool PublisherHistory::get_next_deadline(
             [](
                 const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
                 const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
-        {
-            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-        });
+            {
+                return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+            });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
@@ -415,10 +427,13 @@ bool PublisherHistory::is_key_registered(
     t_m_Inst_Caches::iterator vit;
     vit = keyed_changes_.find(handle);
     return (vit != keyed_changes_.end() &&
-            (vit->second.cache_changes.empty() ||
-                (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
-                NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
-                )
-            )
+           (vit->second.cache_changes.empty() ||
+           (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
+           NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
+           )
+           )
            );
 }
+
+}  // namespace fastrtps
+}  // namespace eprosima

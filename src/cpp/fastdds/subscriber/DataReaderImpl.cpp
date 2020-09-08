@@ -16,6 +16,7 @@
  * @file DataReaderImpl.cpp
  *
  */
+#include <fastrtps/config.h>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>

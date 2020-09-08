@@ -16,6 +16,7 @@
  * Publisher.cpp
  *
  */
+#include <fastrtps/config.h>
 
 #include <fastrtps_deprecated/publisher/PublisherImpl.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
@@ -59,7 +60,7 @@ PublisherImpl::PublisherImpl(
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
             + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
-#endif
+#endif // if HAVE_SECURITY
             , att.historyMemoryPolicy)
     , mp_listener(listen)
 #pragma warning (disable : 4355 )
@@ -74,16 +75,16 @@ PublisherImpl::PublisherImpl(
 {
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
                     [&]() -> bool
-    {
-        return deadline_missed();
-    },
+                    {
+                        return deadline_missed();
+                    },
                     att.qos.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
                     [&]() -> bool
-    {
-        return lifespan_expired();
-    },
+                    {
+                        return lifespan_expired();
+                    },
                     m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }
 
@@ -120,7 +121,7 @@ bool PublisherImpl::create_new_change_with_params(
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
-#endif
+#endif // if HAVE_SECURITY
         mp_type->getKey(data, &handle, is_key_protected);
     }
 
@@ -159,7 +160,7 @@ bool PublisherImpl::create_new_change_with_params(
     if (lock.try_lock_until(max_blocking_time))
 #else
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
-#endif
+#endif // if HAVE_STRICT_REALTIME
     {
         CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
         if (ch != nullptr)
@@ -274,7 +275,7 @@ InstanceHandle_t PublisherImpl::register_instance(
     bool is_key_protected = false;
 #if HAVE_SECURITY
     is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
-#endif
+#endif // if HAVE_SECURITY
     mp_type->getKey(instance, &instance_handle, is_key_protected);
 
     // Block lowlevel writer
@@ -286,7 +287,7 @@ InstanceHandle_t PublisherImpl::register_instance(
     if (lock.try_lock_until(max_blocking_time))
 #else
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
-#endif
+#endif // if HAVE_STRICT_REALTIME
     {
         if (m_history.register_instance(instance_handle, lock, max_blocking_time))
         {
@@ -320,12 +321,12 @@ bool PublisherImpl::unregister_instance(
 
 #if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown == ih)
-#endif
+#endif // if !defined(NDEBUG)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
-#endif
+#endif // if HAVE_SECURITY
         mp_type->getKey(instance, &ih, is_key_protected);
     }
 
@@ -335,7 +336,7 @@ bool PublisherImpl::unregister_instance(
         logError(PUBLISHER, "handle differs from data's key.");
         return false;
     }
-#endif
+#endif // if !defined(NDEBUG)
 
     if (m_history.is_key_registered(ih))
     {

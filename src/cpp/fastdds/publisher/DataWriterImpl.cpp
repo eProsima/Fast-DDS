@@ -16,6 +16,7 @@
  * DataWriterImpl.cpp
  *
  */
+#include <fastrtps/config.h>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
