@@ -251,7 +251,7 @@ bool NetworkFactory::getDefaultMetatrafficMulticastLocators(
         }
     }
 
-    if(locators.size() == 0 && shm_transport)
+    if(shm_transport)
     {
         result |= shm_transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
     }
