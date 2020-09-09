@@ -145,9 +145,11 @@ ReturnCode_t DataReaderImpl::enable()
     {
         property.name("partitions");
         std::string partitions;
+        bool is_first_partition = true;
         for (auto partition : subscriber_->get_qos().partition().names())
         {
-            partitions += partition + ";";
+            partitions += (is_first_partition ? "" : ";") + partition;
+            is_first_partition = false;
         }
         property.value(std::move(partitions));
         att.endpoint.properties.properties().push_back(std::move(property));
