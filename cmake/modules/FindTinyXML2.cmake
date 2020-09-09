@@ -6,7 +6,10 @@ option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast RTPS" OF
 
 # Option for evaluating whether we are looking in for tinyxml2 in submodule
 set(TINYXML2_FROM_THIRDPARTY OFF)
-if (THIRDPARTY OR THIRDPARTY_FORCE OR THIRDPARTY_TinyXML2)
+if (
+    (THIRDPARTY_TinyXML2 STREQUAL "ON") OR
+    (THIRDPARTY_TinyXML2 STREQUAL "FORCE")
+)
     set(TINYXML2_FROM_THIRDPARTY ON)
 endif()
 
