@@ -1313,7 +1313,8 @@ bool Permissions::check_remote_datawriter(
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if ((attributes = is_topic_in_sec_attributes(publication_data.topicName().c_str(), rah->governance_topic_rules_))
+    if ((attributes =
+            is_topic_in_sec_attributes(publication_data.topicName().c_str(), rah->governance_topic_rules_))
             != nullptr)
     {
         if (!attributes->is_write_protected)
@@ -1382,7 +1383,8 @@ bool Permissions::check_remote_datareader(
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if ((attributes = is_topic_in_sec_attributes(subscription_data.topicName().c_str(), rah->governance_topic_rules_))
+    if ((attributes =
+            is_topic_in_sec_attributes(subscription_data.topicName().c_str(), rah->governance_topic_rules_))
             != nullptr)
     {
         if (!attributes->is_read_protected)
