@@ -332,14 +332,15 @@ public:
         if (datareader_ == nullptr)
         {
             datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
-            ASSERT_NE(datareader_, nullptr);
-            ASSERT_TRUE(datareader_->is_enabled());
         }
 
-        std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
-            topic_name_ << std::endl;
+        if (datareader_ != nullptr)
+        {
+            std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
+                topic_name_ << std::endl;
 
-        initialized_ = true;
+            initialized_ = true;
+        }
     }
 
     bool isInitialized() const
