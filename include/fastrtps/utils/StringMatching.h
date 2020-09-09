@@ -34,9 +34,14 @@ class StringMatching
         StringMatching();
         virtual ~StringMatching();
         /** Static method to match two strings.
+         * It checks if the input strings match. Any of the strings or both can be a pattern.
+         */
+        static bool matchString(const char* input1,const char* input2);
+
+        /** Static method to match a string to a pattern.
          * It checks the string specified by the input argument to see if it matches the pattern specified by the pattern argument.
          */
-        static bool matchString(const char* pattern,const char* input);
+        static bool matchPattern(const char* pattern,const char* input);
 };
 }
 } /* namespace rtps */
