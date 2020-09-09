@@ -2578,6 +2578,282 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_multiple_endpoint
     }
 }
 
+// Regression test of Refs #5346, Github #441.
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_fail_on_topic_wildcards)
+{
+    {
+        // Wildcards are only considered on PERMISSIONS, Topic values should be treated as plain strings
+        PubSubReader<HelloWorldType> reader("*");
+        PubSubWriter<HelloWorldType> writer("*");
+        std::string governance_file("governance_helloworld_all_enable.smime");
+
+        PropertyPolicy pub_property_policy, sub_property_policy;
+
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+
+        reader.setManualTopicName("*").
+                property_policy(sub_property_policy).init();
+        ASSERT_FALSE(reader.isInitialized());
+
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+
+        writer.setManualTopicName("*").
+                property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+
+    {
+        // Wildcards are only considered on PERMISSIONS, Topic values should be treated as plain strings
+        PubSubReader<HelloWorldType> reader("HelloWorldTopic");
+        PubSubWriter<HelloWorldType> writer("HelloWorldTopic");
+        std::string governance_file("governance_helloworld_all_enable.smime");
+
+        PropertyPolicy pub_property_policy, sub_property_policy;
+
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+
+        reader.history_depth(10).
+                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+                property_policy(sub_property_policy).init();
+
+        ASSERT_TRUE(reader.isInitialized());
+
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+
+        writer.history_depth(10).
+                property_policy(pub_property_policy).init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.waitAuthorized();
+        writer.waitAuthorized();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_helloworld_data_generator();
+
+        reader.startReception(data);
+
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+    }
+}
+
+// Regression test of Refs #5346, Github #441.
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_fail_on_partition_wildcards)
+{
+    {
+        // Wildcards are only considered on PERMISSIONS, partition values should be treated as plain strings
+        PubSubReader<HelloWorldType> reader("HelloWorldTopic");
+        PubSubWriter<HelloWorldType> writer("HelloWorldTopic");
+        std::string governance_file("governance_helloworld_all_enable.smime");
+
+        PropertyPolicy pub_property_policy, sub_property_policy;
+
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld_partitions.smime"));
+
+        reader.partition("*").
+                property_policy(sub_property_policy).init();
+        ASSERT_FALSE(reader.isInitialized());
+
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld_partitions.smime"));
+
+        writer.partition("*").
+                property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+
+    {
+        // Wildcards are only considered on PERMISSIONS, partition values should be treated as plain strings
+        PubSubReader<HelloWorldType> reader("HelloWorldTopic");
+        PubSubWriter<HelloWorldType> writer("HelloWorldTopic");
+        std::string governance_file("governance_helloworld_all_enable.smime");
+
+        PropertyPolicy pub_property_policy, sub_property_policy;
+
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld_partitions.smime"));
+
+        reader.history_depth(10).
+                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+                property_policy(sub_property_policy).
+                partition("Partition1").init();
+
+        ASSERT_TRUE(reader.isInitialized());
+
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/permissions_helloworld_partitions.smime"));
+
+        writer.history_depth(10).
+                property_policy(pub_property_policy).
+                partition("Partition*").init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.waitAuthorized();
+        writer.waitAuthorized();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_helloworld_data_generator();
+
+        reader.startReception(data);
+
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+    }
+}
+
 static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
         PubSubReader<HelloWorldType>& reader,
         PubSubWriter<HelloWorldType>& writer,
