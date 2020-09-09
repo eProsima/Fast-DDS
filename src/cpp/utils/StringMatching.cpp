@@ -50,31 +50,32 @@ void replace_all(std::string & subject, const std::string & search, const std::s
 	}
 }
 
-bool StringMatching::matchString(const char* str1, const char* str2)
+bool StringMatching::matchPattern(const char* pattern, const char* str)
 {
-	std::string path(str1);
-	std::string spec(str2);
+	std::string path(pattern);
+	std::string spec(str);
 
-	std::string base_path(path);
-	std::string base_spec(spec);
+	replace_all(pattern, "*", ".*");
+	replace_all(pattern, "?", ".");
 
-	replace_all(base_spec, "*", ".*");
-	replace_all(base_spec, "?", ".");
-
-	std::regex base_spec_regex(base_spec);
-	std::smatch base_spec_match;
-	if (std::regex_match(path, base_spec_match, base_spec_regex))
+	std::regex path_regex(path);
+	std::smatch spec_match;
+	if (std::regex_match(spec, spec_match, path_regex))
 	{
 		return true;
 	}
 
-	replace_all(base_path, "*", ".*");
-	replace_all(base_path, "?", ".");
+	return false;
+}
 
-	std::regex base_path_regex(base_path);
-	std::smatch base_path_match;
+bool StringMatching::matchString(const char* str1, const char* str2)
+{
+	if (StringMatching::matchPattern(str1, str2))
+	{
+		return true;
+	}
 
-	if (std::regex_match(spec, base_path_match, base_path_regex))
+	if (StringMatching::matchPattern(str2, str1))
 	{
 		return true;
 	}
@@ -83,6 +84,13 @@ bool StringMatching::matchString(const char* str1, const char* str2)
 }
 
 #elif defined(_WIN32)
+bool StringMatching::matchPattern(const char* pattern, const char* str)
+{
+	 if(PathMatchSpec(str, pattern))
+		 return true;
+	 return false;
+}
+
 bool StringMatching::matchString(const char* str1, const char* str2)
 {
 	 if(PathMatchSpec(str1,str2))
@@ -93,6 +101,15 @@ bool StringMatching::matchString(const char* str1, const char* str2)
 }
 
 #else
+bool StringMatching::matchPattern(const char* pattern, const char* str)
+{
+	if(fnmatch(pattern, str, FNM_NOESCAPE) == 0)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool StringMatching::matchString(const char* str1, const char* str2)
 {
 	if(fnmatch(str1,str2,FNM_NOESCAPE)==0)

@@ -109,7 +109,7 @@ static bool is_topic_in_criterias(const char * topic_name, const std::vector<Cri
     {
         for(auto topic : (*criteria_it).topics)
         {
-            if(StringMatching::matchString(topic.c_str(), topic_name))
+            if(StringMatching::matchPattern(topic.c_str(), topic_name))
             {
                 returned_value = true;
                 break;
@@ -129,7 +129,7 @@ static bool is_partition_in_criterias(const std::string& partition, const std::v
     {
         for(auto part : (*criteria_it).partitions)
         {
-            if(StringMatching::matchString(partition.c_str(), part.c_str()))
+            if(StringMatching::matchPattern(part.c_str(), partition.c_str()))
             {
                 returned_value = true;
                 break;
