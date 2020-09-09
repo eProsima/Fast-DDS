@@ -120,9 +120,11 @@ ReturnCode_t DataWriterImpl::enable()
     {
         property.name("partitions");
         std::string partitions;
+        bool is_first_partition = true;
         for (auto partition : publisher_->get_qos().partition().names())
         {
-            partitions += partition + ";";
+            partitions += (is_first_partition ? "" : ";") + partition;
+            is_first_partition = false;
         }
         property.value(std::move(partitions));
         w_att.endpoint.properties.properties().push_back(std::move(property));
