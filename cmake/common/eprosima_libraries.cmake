@@ -24,10 +24,10 @@
 #            * ON -> Use submodules only if package is not found elsewhere in the system.
 #            * OFF -> Do not use submodules.
 #            * FORCE -> Force the use submodules regarless of what is installed in the system.
-#   :THIRDPARTY_${package}: Speciallization of THIRDPARTY for a specific ${package}. Same possibilities as THIRDPARTY.
-#        Unless specified otherwise, it has the same value as THIRDPARTY. It's value has preference over that of
+#   :THIRDPARTY_${package}: Specialization of THIRDPARTY for a specific ${package}. Same possibilities as THIRDPARTY.
+#        Unless specified otherwise, it has the same value as THIRDPARTY. Its value has preference over that of
 #        THIRDPARTY.
-#   :THIRDPARTY_UPDATE: Activate the auto update of internal thirdparties [Defaults: ON]. Possible values: ON/OFF.
+#   :THIRDPARTY_UPDATE: Activate the auto-update of internal thirdparties [Defaults: ON]. Possible values: ON/OFF.
 #
 # The macro's procedure is as follows:
 #   1. Try to find the package with find_package.
@@ -81,7 +81,7 @@ macro(eprosima_find_package package)
     # 2. For the case of Windows installer, we don't want to look for the package outside thirdparty. This way we
     #    use thirdparty, meaning we have more control over what is built.
     if((NOT (THIRDPARTY_${package} STREQUAL "FORCE")) AND NOT EPROSIMA_INSTALLER)
-        # Try to quetly find the package outside thridparty first.
+        # Try to quietly find the package outside thridparty first.
         find_package(${package} QUIET)
 
         # Show message if package is found here.
@@ -150,7 +150,7 @@ endmacro()
 #            * ON -> Use submodules only if package is not found elsewhere in the system.
 #            * OFF -> Do not use submodules.
 #            * FORCE -> Force the use submodules regarless of what is installed in the system.
-#   :THIRDPARTY_${package}: Speciallization of THIRDPARTY for a specific ${package}. Same possibilities as THIRDPARTY.
+#   :THIRDPARTY_${package}: Specialization of THIRDPARTY for a specific ${package}. Same possibilities as THIRDPARTY.
 #        Unless specified otherwise, it has the same value as THIRDPARTY. It's value has preference over that of
 #        THIRDPARTY.
 #   :THIRDPARTY_UPDATE: Activate the auto update of internal thirdparties [Defaults: ON]. Possible values: ON/OFF.
@@ -202,7 +202,7 @@ macro(eprosima_find_thirdparty package thirdparty_name)
     # 2. For the case of Windows installer, we don't want to look for the package outside thirdparty. This way we
     #    use thirdparty, meaning we have more control over what is built.
     if((NOT (THIRDPARTY_${package} STREQUAL "FORCE")) AND (NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE))))
-        # Try to quetly find the package outside thridparty first.
+        # Try to quietly find the package outside thridparty first.
         find_package(${package} QUIET)
 
         # Show message if package is found here.
