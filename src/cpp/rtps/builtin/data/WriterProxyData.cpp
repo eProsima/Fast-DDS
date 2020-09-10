@@ -781,18 +781,6 @@ bool WriterProxyData::readFromCDRMessage(
                         m_typeName = p.getName();
                         break;
                     }
-                    case fastdds::dds::PID_PARTICIPANT_GUID:
-                    {
-                        ParameterGuid_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(p, msg, plength))
-                        {
-                            return false;
-                        }
-
-                        memcpy(m_RTPSParticipantKey.value, p.guid.guidPrefix.value, 12);
-                        memcpy(m_RTPSParticipantKey.value + 12, p.guid.entityId.value, 4);
-                        break;
-                    }
                     case fastdds::dds::PID_ENDPOINT_GUID:
                     {
                         ParameterGuid_t p(pid, plength);
@@ -804,6 +792,10 @@ bool WriterProxyData::readFromCDRMessage(
                         m_guid = p.guid;
                         memcpy(m_key.value, p.guid.guidPrefix.value, 12);
                         memcpy(m_key.value + 12, p.guid.entityId.value, 4);
+
+                        p.guid.entityId = c_EntityId_RTPSParticipant;
+                        memcpy(m_RTPSParticipantKey.value, p.guid.guidPrefix.value, 12);
+                        memcpy(m_RTPSParticipantKey.value + 12, p.guid.entityId.value, 4);
                         break;
                     }
                     case fastdds::dds::PID_PERSISTENCE_GUID:
