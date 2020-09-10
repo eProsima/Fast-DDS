@@ -352,15 +352,13 @@ void StatefulWriter::unsent_change_added_to_history(
                     periodic_hb_event_->restart_timer(max_blocking_time);
                 }
 
-                if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
-                {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
-                }
-
                 if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
                 {
                     last_sequence_number_ = change->sequenceNumber;
                 }
+
+                check_acked_status();
+
             }
             catch (const RTPSMessageGroup::timeout&)
             {
@@ -405,10 +403,8 @@ void StatefulWriter::unsent_change_added_to_history(
     else
     {
         logInfo(RTPS_WRITER, "No reader proxy to add change.");
-        if (mp_listener != nullptr)
-        {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
-        }
+        check_acked_status();
+
     }
 }
 
@@ -1550,7 +1546,8 @@ void StatefulWriter::check_acked_status()
 
     bool all_acked = true;
     bool has_min_low_mark = false;
-    SequenceNumber_t min_low_mark;
+    // #8945 If no readers matched, notify all old changes.
+    SequenceNumber_t min_low_mark = mp_history->next_sequence_number() - 1;
 
     for (const ReaderProxy* it : matched_readers_)
     {
@@ -1653,14 +1650,7 @@ bool StatefulWriter::try_remove_change(
 
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        for (ReaderProxy* it : matched_readers_)
-        {
-            SequenceNumber_t reader_low_mark = it->changes_low_mark();
-            if (min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
-            {
-                min_low_mark = reader_low_mark;
-            }
-        }
+        min_low_mark = next_all_acked_notify_sequence_ - 1;
     }
 
     SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
