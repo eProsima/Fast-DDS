@@ -147,8 +147,12 @@ static bool is_partition_in_criterias(
     return returned_value;
 }
 
-static bool check_rule(const char* topic_name, const Rule& rule, const std::vector<std::string>& partitions, 
-    const std::vector<Criteria>& criterias, SecurityException& exception)
+static bool check_rule(
+        const char* topic_name,
+        const Rule& rule,
+        const std::vector<std::string>& partitions,
+        const std::vector<Criteria>& criterias,
+        SecurityException& exception)
 {
     bool returned_value = false;
 
@@ -168,7 +172,7 @@ static bool check_rule(const char* topic_name, const Rule& rule, const std::vect
         {
             // Search partitions
             for (auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
-                ++partition_it)
+                    ++partition_it)
             {
                 if (!is_partition_in_criterias(*partition_it, criterias))
                 {
@@ -1206,7 +1210,7 @@ bool Permissions::check_create_datawriter(
         }
     }
 
-    if(!returned_value)
+    if (!returned_value)
     {
         if (strlen(exception.what()) == 0)
         {
@@ -1260,7 +1264,7 @@ bool Permissions::check_create_datareader(
         }
     }
 
-    if(!returned_value)
+    if (!returned_value)
     {
         if (strlen(exception.what()) == 0)
         {
@@ -1311,16 +1315,16 @@ bool Permissions::check_remote_datawriter(
     {
         if (is_domain_in_set(domain_id, rule.domains))
         {
-            if(is_topic_in_criterias(topic_name, rule.publishes))
+            if (is_topic_in_criterias(topic_name, rule.publishes))
             {
                 returned_value = check_rule(topic_name, rule, publication_data.m_qos.m_partition.getNames(),
-                    rule.publishes, exception);
+                                rule.publishes, exception);
                 break;
             }
         }
     }
 
-    if(!returned_value)
+    if (!returned_value)
     {
         if (strlen(exception.what()) == 0)
         {
@@ -1375,7 +1379,7 @@ bool Permissions::check_remote_datareader(
         if (is_domain_in_set(domain_id, rule.domains))
         {
             const std::vector<std::string>& partitions = subscription_data.m_qos.m_partition.getNames();
-            if(is_topic_in_criterias(topic_name, rule.subscribes))
+            if (is_topic_in_criterias(topic_name, rule.subscribes))
             {
                 returned_value = check_rule(topic_name, rule, partitions, rule.subscribes, exception);
                 break;
@@ -1394,7 +1398,7 @@ bool Permissions::check_remote_datareader(
         }
     }
 
-    if(!returned_value)
+    if (!returned_value)
     {
         if (strlen(exception.what()) == 0)
         {
