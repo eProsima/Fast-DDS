@@ -881,6 +881,25 @@ public:
         names_ = nam; hasChanged = true;
     }
 
+    /**
+     * Returns partition names.
+     * @return Vector of partition name strings.
+     */
+    RTPS_DllAPI inline const std::vector<std::string> getNames() const
+    {
+        return names();
+    }
+
+    /**
+     * Overrides partition names
+     * @param nam Vector of partition name strings.
+     */
+    RTPS_DllAPI inline void setNames(
+            std::vector<std::string>& nam)
+    {
+        names(nam);
+    }
+
 private:
 
     std::vector<std::string> names_;
