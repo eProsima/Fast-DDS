@@ -42,7 +42,7 @@ WriterProxyData::WriterProxyData(
     , remote_locators_(max_unicast_locators, max_multicast_locators)
 #else
     : remote_locators_(max_unicast_locators, max_multicast_locators)
-#endif
+#endif // if HAVE_SECURITY
     , m_userDefinedId(0)
     , m_typeMaxSerialized(0)
     , m_topicKind(NO_KEY)
@@ -60,6 +60,7 @@ WriterProxyData::WriterProxyData(
 {
     m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
     m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
+    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 }
 
 WriterProxyData::WriterProxyData(
@@ -70,7 +71,7 @@ WriterProxyData::WriterProxyData(
     , m_guid(writerInfo.m_guid)
 #else
     : m_guid(writerInfo.m_guid)
-#endif
+#endif // if HAVE_SECURITY
     , remote_locators_(writerInfo.remote_locators_)
     , m_key(writerInfo.m_key)
     , m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey)
@@ -83,6 +84,7 @@ WriterProxyData::WriterProxyData(
     , m_type_id(nullptr)
     , m_type(nullptr)
     , m_type_information(nullptr)
+    , m_properties(writerInfo.m_properties)
 {
     if (writerInfo.m_type_id)
     {
@@ -117,7 +119,7 @@ WriterProxyData& WriterProxyData::operator =(
 #if HAVE_SECURITY
     security_attributes_ = writerInfo.security_attributes_;
     plugin_security_attributes_ = writerInfo.plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
     m_guid = writerInfo.m_guid;
     remote_locators_ = writerInfo.remote_locators_;
     m_key = writerInfo.m_key;
@@ -129,6 +131,7 @@ WriterProxyData& WriterProxyData::operator =(
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
+    m_properties = writerInfo.m_properties;
 
     if (writerInfo.m_type_id)
     {
@@ -292,12 +295,18 @@ uint32_t WriterProxyData::get_serialized_size(
                 fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(*m_type_information);
     }
 
+    if (m_properties.size() > 0)
+    {
+        // PID_PROPERTY_LIST
+        ret_val += fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(m_properties);
+    }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
         ret_val += 4 + PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     // PID_SENTINEL
     return ret_val + 4;
@@ -538,6 +547,14 @@ bool WriterProxyData::writeToCDRMessage(
         }
     }
 
+    if (m_properties.size() > 0)
+    {
+        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
+        {
+            return false;
+        }
+    }
+
 #if HAVE_SECURITY
     if ((security_attributes_ != 0UL) || (plugin_security_attributes_ != 0UL))
     {
@@ -549,7 +566,7 @@ bool WriterProxyData::writeToCDRMessage(
             return false;
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 
     /* TODO - Enable when implement XCDR, XCDR2 and/or XML
        if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
@@ -906,7 +923,7 @@ bool WriterProxyData::readFromCDRMessage(
                         plugin_security_attributes_ = p.plugin_security_attributes;
                         break;
                     }
-#endif
+#endif // if HAVE_SECURITY
                     case fastdds::dds::PID_DATA_REPRESENTATION:
                     {
                         if (!fastdds::dds::QosPoliciesSerializer<DataRepresentationQosPolicy>::read_from_cdr_message(
@@ -922,6 +939,17 @@ bool WriterProxyData::readFromCDRMessage(
                                 "Received TypeConsistencyEnforcementQos from a writer, but they haven't.");
                         break;
                     }
+
+                    case fastdds::dds::PID_PROPERTY_LIST:
+                    {
+                        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(
+                                    m_properties, msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
+
                     default:
                     {
                         break;
@@ -970,6 +998,8 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
+    m_properties.clear();
+    m_properties.length = 0;
 
     if (m_type_id)
     {
@@ -999,6 +1029,7 @@ void WriterProxyData::copy(
     m_typeMaxSerialized = wdata->m_typeMaxSerialized;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
+    m_properties = wdata->m_properties;
 
     if (wdata->m_type_id)
     {
@@ -1039,7 +1070,7 @@ bool WriterProxyData::is_update_allowed(
 #if HAVE_SECURITY
             (security_attributes_ != wdata.security_attributes_) ||
             (plugin_security_attributes_ != wdata.security_attributes_) ||
-#endif
+#endif // if HAVE_SECURITY
             (m_typeName != wdata.m_typeName) ||
             (m_topicName != wdata.m_topicName))
     {

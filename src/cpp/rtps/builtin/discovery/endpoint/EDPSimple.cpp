@@ -17,6 +17,7 @@
  *
  */
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
@@ -37,6 +38,10 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
+#include <forward_list>
+#include <algorithm>
+
+using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
 namespace fastrtps {
@@ -95,7 +100,7 @@ EDPSimple::~EDPSimple()
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_secure_reader_.first);
         delete(subscriptions_secure_reader_.second);
     }
-#endif
+#endif // if HAVE_SECURITY
 
     if (this->publications_reader_.first != nullptr)
     {
@@ -147,48 +152,164 @@ bool EDPSimple::initEDP(
         logError(RTPS_EDP, "Problem creation SimpleEDP endpoints");
         return false;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     return true;
 }
 
 //! Process the info recorded in the persistence database
-void EDPSimple::processPersistentData(t_p_StatefulReader & reader, t_p_StatefulWriter & writer)
+void EDPSimple::processPersistentData(
+        t_p_StatefulReader& reader,
+        t_p_StatefulWriter& writer,
+        key_list& demises)
 {
     std::lock_guard<RecursiveTimedMutex> guardR(reader.first->getMutex());
     std::lock_guard<RecursiveTimedMutex> guardW(writer.first->getMutex());
+    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+
+    // own server instance
+    InstanceHandle_t server_key = mp_PDP->getLocalParticipantProxyData()->m_key;
+
+    // reference own references from writer history
+    std::forward_list<CacheChange_t*> removal;
+
+    // List known participants
+    key_list known_participants;
+
+    std::for_each(
+        mp_PDP->ParticipantProxiesBegin(),
+        mp_PDP->ParticipantProxiesEnd(),
+        [&known_participants](const ParticipantProxyData* pD)
+        {
+            known_participants.insert(pD->m_key);
+        });
+
+    // We have not processed any PDP message yet but any lease duration callback may have modified demises
+    // already
+
+    // aux lambda to retrieve sample identity
+    // update format for 2.0.x port
+    uint32_t qos_size;
+    SampleIdentity si;
+    ChangeKind_t kind;
+
+    auto param_process = [&si, &kind](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
+            {
+                // we use the PID_PARTICIPANT_GUID to identify a DATA(r|w)
+                if (pid == fastdds::dds::PID_PARTICIPANT_GUID )
+                {
+                    kind = ALIVE;
+                    return true;
+                }
+
+                if (pid == fastdds::dds::PID_PROPERTY_LIST)
+                {
+                    ParameterPropertyList_t pl;
+                    si = SampleIdentity::unknown();
+
+                    if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(pl, msg,
+                            plength))
+                    {
+                        return false;
+                    }
+
+                    ParameterPropertyList_t::iterator it = pl.begin();
+                    it = std::find_if( it, pl.end(),
+                                    [](ParameterPropertyList_t::iterator::reference p)
+                                    {
+                                        return "PID_CLIENT_SERVER_KEY" == p.first();
+                                    });
+
+                    if (it != pl.end())
+                    {
+                        std::istringstream in(it->second());
+                        in >> si;
+                    }
+                }
+
+                return true;
+            };
+
 
     std::for_each(writer.second->changesBegin(),
-        writer.second->changesEnd(),
-        [&reader](CacheChange_t* change)
+            writer.second->changesEnd(),
+            [&](CacheChange_t* change)
+            {
+                // Reset the variables referenced by the lambda
+                si = SampleIdentity::unknown();
+                kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
+
+                // We must retrieve the identity info from the payload and update the WriteParams
+                CDRMessage_t msg(change->serializedPayload);
+                ParameterList::readParameterListfromCDRMsg(msg, param_process, true, qos_size);
+
+                // determine kind
+                change->kind = kind;
+
+                // recover sample identity
+                if (si != SampleIdentity::unknown())
+                {
+                    change->write_params.sample_identity(si);
+                    change->write_params.related_sample_identity(si);
+                }
+
+                // Get Participant InstanceHandle
+                InstanceHandle_t handle;
+                {
+                    GUID_t guid = iHandle2GUID(change->instanceHandle);
+                    guid.entityId = c_EntityId_RTPSParticipant;
+                    handle = guid;
+                }
+
+                // mark for removal endpoints from unknown participants
+                if ( known_participants.find(handle) == known_participants.end() )
+                {
+                    demises.insert(change->instanceHandle);
+                    return;
+                }
+
+                // check if its own data: mark for removal and ignore
+                if ( handle == server_key)
+                {
+                    removal.push_front(change);
+                    return;
+                }
+
+                CacheChange_t* change_to_add = nullptr;
+
+                if (!reader.first->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+                {
+                    logError(RTPS_EDP, "Problem reserving CacheChange in EDPServer reader");
+                    return;
+                }
+
+                if (!change_to_add->copy(change))
+                {
+                    logWarning(RTPS_EDP, "Problem copying CacheChange, received data is: "
+                        << change->serializedPayload.length << " bytes and max size in EDPServer reader"
+                        << " is " << change_to_add->serializedPayload.max_size);
+
+                    reader.first->releaseCache(change_to_add);
+                    return;
+                }
+
+                if (!reader.first->change_received(change_to_add, nullptr))
+                {
+                    logInfo(RTPS_EDP, "EDPServer couldn't process database data not add change "
+                        << change_to_add->sequenceNumber);
+                    reader.first->releaseCache(change_to_add);
+                }
+
+                // change_to_add would be released within change_received
+            });
+
+    // remove our own old server samples
+    for (auto pC : removal)
     {
-        CacheChange_t* change_to_add = nullptr;
+        writer.second->remove_change(pC);
+    }
 
-        if (!reader.first->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
-        {
-            logError(RTPS_EDP, "Problem reserving CacheChange in EDPServer reader");
-            return;
-        }
-
-        if (!change_to_add->copy(change))
-        {
-            logWarning(RTPS_EDP,"Problem copying CacheChange, received data is: " 
-                << change->serializedPayload.length << " bytes and max size in EDPServer reader"
-                << " is " << change_to_add->serializedPayload.max_size);
-
-            reader.first->releaseCache(change_to_add);
-            return ;
-        }
-
-        if (!reader.first->change_received(change_to_add, nullptr))
-        {
-            logInfo(RTPS_EDP, "EDPServer couldn't process database data not add change "
-                << change_to_add->sequenceNumber);
-            reader.first->releaseCache(change_to_add);
-        }
-
-        // change_to_add would be released within change_received
-    });
+    // We don't need to awake the server thread because we are in it
 }
 
 void EDPSimple::set_builtin_reader_history_attributes(
@@ -499,7 +620,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
     return created;
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 bool EDPSimple::processLocalReaderProxyData(
         RTPSReader* local_reader,
@@ -515,7 +636,7 @@ bool EDPSimple::processLocalReaderProxyData(
     {
         writer = &subscriptions_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
     CacheChange_t* change = nullptr;
     bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
     if (change != nullptr)
@@ -539,7 +660,7 @@ bool EDPSimple::processLocalWriterProxyData(
     {
         writer = &publications_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     CacheChange_t* change = nullptr;
     bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
@@ -597,12 +718,12 @@ bool EDPSimple::serialize_proxy_data(
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
             aux_msg.msg_endian = LITTLEEND;
-#endif
+#endif // if __BIG_ENDIAN__
 
             data.writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-            if(remove_same_instance)
+            if (remove_same_instance)
             {
                 std::unique_lock<RecursiveTimedMutex> lock(*writer.second->getMutex());
                 for (auto ch = writer.second->changesBegin(); ch != writer.second->changesEnd(); ++ch)
@@ -634,7 +755,7 @@ bool EDPSimple::removeLocalWriter(
     {
         writer = &publications_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     if (writer->first != nullptr)
     {
@@ -679,7 +800,7 @@ bool EDPSimple::removeLocalReader(
     {
         writer = &subscriptions_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     if (writer->first != nullptr)
     {
@@ -848,7 +969,7 @@ void EDPSimple::assignRemoteEndpoints(
                     subscriptions_secure_writer_.first->getGuid());
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 }
 
 void EDPSimple::removeRemoteEndpoints(
@@ -956,7 +1077,7 @@ void EDPSimple::removeRemoteEndpoints(
                 subscriptions_secure_writer_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 }
 
 bool EDPSimple::areRemoteEndpointsMatched(
@@ -1064,7 +1185,7 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(
     return returned_value;
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 } /* namespace rtps */
 } /* namespace fastrtps */

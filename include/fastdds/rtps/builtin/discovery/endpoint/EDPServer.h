@@ -44,8 +44,6 @@ class EDPServer : public EDPSimple
     friend class EDPServerPUBListener;
     friend class EDPServerSUBListener;
 
-    typedef std::set<InstanceHandle_t> key_list;
-
     //! Keys to wipe out from WriterHistory because its related Participants have been removed
     key_list _PUBdemises, _SUBdemises;
 
@@ -107,7 +105,7 @@ public:
             RTPSWriter* W) override;
 
     /**
-     * Some History data is flag for defer removal till every client
+     * Some History data is flagged for deferred removal till every client
      * acknowledges reception
      * @return True if trimming must be done
      */
@@ -117,17 +115,8 @@ public:
     }
 
     //! Callback to remove unnecesary WriterHistory info
-    bool trimPUBWriterHistory()
-    {
-        return trimWriterHistory<ProxyHashTable<WriterProxyData>*>(_PUBdemises,
-                       *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
-    }
-
-    bool trimSUBWriterHistory()
-    {
-        return trimWriterHistory<ProxyHashTable<ReaderProxyData>*>(_SUBdemises,
-                       *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
-    }
+    bool trimPUBWriterHistory();
+    bool trimSUBWriterHistory();
 
     //! returns true if loading info from persistency database
     bool ongoingDeserialization();
@@ -144,23 +133,15 @@ public:
     void removeSubscriberFromHistory(
             const InstanceHandle_t&);
 
-protected:
-
     /**
      * Add participant CacheChange_ts from reader to writer
      * @return True if successfully modified WriterHistory
      */
     bool addPublisherFromHistory(
-            CacheChange_t& c)
-    {
-        return addEndpointFromHistory(*publications_writer_.first, *publications_writer_.second, c);
-    }
+            CacheChange_t& c);
 
     bool addSubscriberFromHistory(
-            CacheChange_t& c)
-    {
-        return addEndpointFromHistory(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
-    }
+            CacheChange_t& c);
 
 private:
 
@@ -173,9 +154,10 @@ private:
             key_list& _demises,
             StatefulWriter& writer,
             WriterHistory& history,
-            ProxyCont ParticipantProxyData::* pCont);
+            ProxyCont* ParticipantProxyData::* pCont);
 
     //! addPublisherFromHistory and addSubscriberFromHistory common implementation
+    template<class Proxy>
     bool addEndpointFromHistory(
             StatefulWriter& writer,
             WriterHistory& history,

@@ -25,11 +25,11 @@
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
 
- // TODO: remove when the Writer API issue is resolved
+// TODO: remove when the Writer API issue is resolved
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class StatefulWriter;
@@ -44,8 +44,6 @@ class PDPServer : public PDP
 {
     friend class DServerEvent;
     friend class PDPServerListener;
-
-    friend class InPDPCallback;
 
     typedef std::set<const ParticipantProxyData*> pending_matches_list;
     typedef std::set<InstanceHandle_t> key_list;
@@ -77,14 +75,16 @@ public:
             DurabilityKind_t durability_kind = TRANSIENT_LOCAL);
     ~PDPServer();
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
+    void initializeParticipantProxyData(
+            ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
      * @param part Pointer to the RTPSParticipant.
      * @return True on success
      */
-    bool init(RTPSParticipantImpl* part) override;
+    bool init(
+            RTPSParticipantImpl* part) override;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -93,8 +93,8 @@ public:
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
-        const ParticipantProxyData& p,
-        const GUID_t& writer_guid) override;
+            const ParticipantProxyData& p,
+            const GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -134,14 +134,16 @@ public:
      * @param c metatraffic CacheChange_t
      * @return True if successfully modified WriterHistory
      */
-    bool addRelayedChangeToHistory(CacheChange_t& c);
+    bool addRelayedChangeToHistory(
+            CacheChange_t& c);
 
     /**
      * Trigger the participant CacheChange_t removal system
      * @param h instanceHandle associated with participants CacheChange_ts
      * @return True if successfully modified WriterHistory
      */
-    void removeParticipantFromHistory(const InstanceHandle_t& h);
+    void removeParticipantFromHistory(
+            const InstanceHandle_t& h);
 
     /**
      * Methods to synchronize EDP matching
@@ -151,13 +153,15 @@ public:
      * Add a participant to the queue of pending participants to EDP matching
      * @param p ParticipantProxyData associated with the new participant
      */
-    void queueParticipantForEDPMatch(const ParticipantProxyData* p);
+    void queueParticipantForEDPMatch(
+            const ParticipantProxyData* p);
 
     /**
      * Remove a participant from the queue of pending participants to EDP matching
      * @param guid GUID associated with the new participant
      */
-    void removeParticipantForEDPMatch(const GUID_t& guid);
+    void removeParticipantForEDPMatch(
+            const GUID_t& guid);
 
     /**
      * Check if all client have acknowledge the server PDP data
@@ -184,10 +188,10 @@ public:
      */
 
     /**
-    * Check if all servers have acknowledge this server PDP data
-    * This method must be called from a mutex protected context.
-    * @return True if all can reach the client
-    */
+     * Check if all servers have acknowledge this server PDP data
+     * This method must be called from a mutex protected context.
+     * @return True if all can reach the client
+     */
     bool all_servers_acknowledge_PDP();
 
     /**
@@ -210,23 +214,26 @@ public:
      * @param wparams allows to identify the change
      */
     void announceParticipantState(
-        bool new_change,
-        bool dispose = false,
-        WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+            bool new_change,
+            bool dispose = false,
+            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)
      * but must be implemented to solve server shutdown situations.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
-    void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
-    void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
-    void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
+    void assignRemoteEndpoints(
+            ParticipantProxyData* pdata) override;
+    void removeRemoteEndpoints(
+            ParticipantProxyData* pdata) override;
+    void notifyAboveRemoteEndpoints(
+            const ParticipantProxyData& pdata) override;
 
 #if HAVE_SQLITE3
     //! Get filename for persistence database file
     std::string GetPersistenceFileName();
-#endif
+#endif // if HAVE_SQLITE3
 
     //! returns true if loading info from persistency database
     bool ongoingDeserialization();
@@ -234,27 +241,19 @@ public:
     //! Process the info recorded in the persistence database
     void processPersistentData();
 
+    //! adds identity info to DATA(p[UD])s in order to keep it through persistance serialization process
+    static bool set_data_disposal_payload(
+            CDRMessage_t* msg,
+            const SampleIdentity& sid);
+
+    //! returns the DATA(p[UD])s size to hint payload allocation
+    static uint32_t get_data_disposal_payload_serialized_size();
+
     //! Wakes up the DServerEvent for new matching or trimming
-    void awakeServerThread() { mp_sync->restart_timer(); }
-
-    // The following struct and two methods solve a callback synchronization issue
-
-    class InPDPCallback
+    void awakeServerThread()
     {
-        friend class PDPServer;
-        PDPServer & server_;
-
-    public:
-
-        InPDPCallback(PDPServer & svr);
-        ~InPDPCallback();
-    };
-
-    // ! returns a unique_ptr to an object that handles PDP_callback_ in a RAII fashion
-    std::unique_ptr<InPDPCallback> signalCallback();
-
-    // ! calls PDP Reader matched_writer_remove preventing deadlocks
-    bool safe_PDP_matched_writer_remove(const GUID_t& wguid);
+        mp_sync->restart_timer();
+    }
 
 private:
 
@@ -265,19 +264,15 @@ private:
     bool trimPDPWriterHistory();
 
     /**
-    * TimedEvent for server synchronization:
-    *   first stage: periodically resend the local RTPSParticipant information until all servers have acknowledge reception
-    *   second stage: waiting PDP info is up to date before allowing EDP matching
-    */
+     * TimedEvent for server synchronization:
+     *   first stage: periodically resend the local RTPSParticipant information until all servers have acknowledge reception
+     *   second stage: waiting PDP info is up to date before allowing EDP matching
+     */
     DServerEvent* mp_sync;
-
-    // ! on PDP DATA(p[UD]) callback. Only modified by transport threads which are
-    // serialized for PDP reader
-    volatile bool PDP_callback_;
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PDPSERVER_H_ */

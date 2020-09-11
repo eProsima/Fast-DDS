@@ -29,7 +29,7 @@
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 
@@ -367,13 +367,32 @@ public:
     //!WriterQOS
     WriterQos m_qos;
 
+    /**
+     * Set participant client server sample identity
+     * @param sid valid SampleIdentity
+     */
+    void set_sample_identity(
+            const SampleIdentity& sid)
+    {
+        fastdds::dds::set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", m_properties);
+    }
+
+    /**
+     * Retrieve participant SampleIdentity
+     * @return SampleIdentity
+     */
+    SampleIdentity get_sample_identity() const
+    {
+        return fastdds::dds::get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", m_properties);
+    }
+
 #if HAVE_SECURITY
     //!EndpointSecurityInfo.endpoint_security_attributes
     security::EndpointSecurityAttributesMask security_attributes_;
 
     //!EndpointSecurityInfo.plugin_endpoint_security_attributes
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
 
     //!Clear the information and return the object to the default state.
     void clear();
@@ -456,11 +475,14 @@ private:
 
     //!Type Information
     xtypes::TypeInformation* m_type_information;
+
+    //!
+    ParameterPropertyList_t m_properties;
 };
 
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_

@@ -114,13 +114,14 @@ struct RTPS_DllAPI GUID_t
     static GUID_t unknown() noexcept
     {
         return GUID_t();
-    };
+    }
 
     // TODO Review this conversion once InstanceHandle_t is implemented as DDS standard defines
     explicit operator const InstanceHandle_t&() const
     {
         return *reinterpret_cast<const InstanceHandle_t*>(this);
     }
+
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -193,7 +194,8 @@ inline bool operator <(
     }
     return false;
 }
-#endif
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 const GUID_t c_Guid_Unknown;
 
@@ -209,7 +211,7 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const GUID_t& guid)
 {
-    if (guid !=c_Guid_Unknown)
+    if (guid != c_Guid_Unknown)
     {
         output << guid.guidPrefix << "|" << guid.entityId;
     }
@@ -240,8 +242,13 @@ inline std::istream& operator >>(
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> guid.guidPrefix;
-            input >> guid.entityId;
+            char sep;
+            input >> guid.guidPrefix >> sep >> guid.entityId;
+
+            if (sep != '|')
+            {
+                input.setstate(std::ios_base::failbit);
+            }
         }
         catch (std::ios_base::failure&)
         {
@@ -255,7 +262,7 @@ inline std::istream& operator >>(
     return input;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
 } // namespace fastrtps

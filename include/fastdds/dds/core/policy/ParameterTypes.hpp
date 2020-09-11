@@ -30,7 +30,7 @@
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <string>
 #include <vector>
@@ -40,8 +40,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 struct CDRMessage_t;
-}
-}
+} // namespace rtps
+} // namespace fastrtps
 
 namespace fastdds {
 namespace dds {
@@ -994,11 +994,11 @@ public:
 
     class iterator
     {
-public:
+    public:
 
         typedef iterator self_type;
         typedef ParameterProperty_t value_type;
-        typedef ParameterProperty_t reference;
+        typedef ParameterProperty_t& reference;
         typedef ParameterProperty_t* pointer;
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
@@ -1050,7 +1050,7 @@ public:
             return ptr_ != rhs.ptr_;
         }
 
-protected:
+    protected:
 
         /**
          * @brief Shift the pointer to the next value
@@ -1070,7 +1070,7 @@ protected:
             return ptr_;
         }
 
-private:
+    private:
 
         //!Pointer
         fastrtps::rtps::octet* ptr_;
@@ -1080,11 +1080,11 @@ private:
 
     class const_iterator
     {
-public:
+    public:
 
         typedef const_iterator self_type;
         typedef const ParameterProperty_t value_type;
-        typedef const ParameterProperty_t reference;
+        typedef const ParameterProperty_t& reference;
         typedef const ParameterProperty_t* pointer;
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
@@ -1136,7 +1136,7 @@ public:
             return ptr_ != rhs.ptr_;
         }
 
-protected:
+    protected:
 
         /**
          * @brief Shift the pointer to the next value
@@ -1156,7 +1156,7 @@ protected:
             return ptr_;
         }
 
-private:
+    private:
 
         //!Pointer
         const fastrtps::rtps::octet* ptr_;
@@ -1570,13 +1570,78 @@ public:
 
 };
 
-#endif
+#endif // if HAVE_SECURITY
 
 ///@}
+
+template<class T, class PL>
+void set_proxy_property(
+        const T& p,
+        const char* PID,
+        PL& properties)
+{
+    // only valid values
+    if (p == T::unknown())
+    {
+        return;
+    }
+
+    // generate pair
+    std::pair<std::string, std::string> pair;
+    pair.first = PID;
+
+    std::ostringstream data;
+    data << p;
+    pair.second = data.str();
+
+    // if exists replace
+    auto it = std::find_if(
+        properties.begin(),
+        properties.end(),
+        [&pair](const typename PL::const_iterator::reference p)
+        {
+            return pair.first == p.first();
+        });
+
+    if (it != properties.end())
+    {
+        // it->modify(pair);
+        properties.set_property(it, pair);
+    }
+    else
+    {
+        // if not exists add
+        properties.push_back(pair);
+    }
+}
+
+template<class T, class PL>
+T get_proxy_property(
+        const char* const PID,
+        PL& properties)
+{
+    T property;
+
+    auto it = std::find_if(
+        properties.begin(),
+        properties.end(),
+        [PID](const typename PL::const_iterator::reference p)
+        {
+            return PID == p.first();
+        });
+
+    if (it != properties.end())
+    {
+        std::istringstream in(it->second());
+        in >> property;
+    }
+
+    return property;
+}
 
 } //namespace dds
 } //namespace fastdds
 } //namespace eprosima
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif // _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
