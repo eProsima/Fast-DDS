@@ -47,22 +47,34 @@ protected:
     {
     }
 
-    void fill_common_participant_security_attributes(RTPSParticipantAttributes& participant_attr);
-    void fill_publisher_participant_security_attributes(RTPSParticipantAttributes& participant_attr);
-    void fill_subscriber_participant_security_attributes(RTPSParticipantAttributes& participant_attr);
+    void fill_common_participant_security_attributes(
+            RTPSParticipantAttributes& participant_attr);
+    void fill_publisher_participant_security_attributes(
+            RTPSParticipantAttributes& participant_attr);
+    void fill_subscriber_participant_security_attributes(
+            RTPSParticipantAttributes& participant_attr);
 
-    void get_access_handle(const RTPSParticipantAttributes& participant_attr,
-        PermissionsHandle** access_handle);
+    void get_access_handle(
+            const RTPSParticipantAttributes& participant_attr,
+            PermissionsHandle** access_handle);
     void fill_candidate_participant_key();
 
     GUID_t candidate_participant_key;
 
 public:
 
-    void check_local_datawriter(const RTPSParticipantAttributes& participant_attr, bool success);
-    void check_local_datareader(const RTPSParticipantAttributes& participant_attr, bool success);
-    void check_remote_datawriter(const RTPSParticipantAttributes& participant_attr, bool success);
-    void check_remote_datareader(const RTPSParticipantAttributes& participant_attr, bool success);
+    void check_local_datawriter(
+            const RTPSParticipantAttributes& participant_attr,
+            bool success);
+    void check_local_datareader(
+            const RTPSParticipantAttributes& participant_attr,
+            bool success);
+    void check_remote_datawriter(
+            const RTPSParticipantAttributes& participant_attr,
+            bool success);
+    void check_remote_datareader(
+            const RTPSParticipantAttributes& participant_attr,
+            bool success);
 
     PKIDH authentication_plugin;
     Permissions access_plugin;
@@ -93,87 +105,88 @@ void AccessControlTest::fill_candidate_participant_key()
 }
 
 void AccessControlTest::fill_subscriber_participant_security_attributes(
-    RTPSParticipantAttributes& participant_attr)
+        RTPSParticipantAttributes& participant_attr)
 {
     fill_common_participant_security_attributes(participant_attr);
 
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainsubcert.pem"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
- }
+    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+}
 
 void AccessControlTest::fill_publisher_participant_security_attributes(
-    RTPSParticipantAttributes& participant_attr)
+        RTPSParticipantAttributes& participant_attr)
 {
     fill_common_participant_security_attributes(participant_attr);
 
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainpubcert.pem"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 }
 
 void AccessControlTest::fill_common_participant_security_attributes(
-    RTPSParticipantAttributes& participant_attr)
+        RTPSParticipantAttributes& participant_attr)
 {
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password", "testkey"));
+    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password", "testkey"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.access.authentication_plugin", "builtin.Access-Permissions"));
+    emplace_back(Property("dds.sec.access.authentication_plugin", "builtin.Access-Permissions"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-                    "file://" + std::string(certs_path) + "/governance_helloworld_all_enable.smime"));
+    emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/governance_helloworld_all_enable.smime"));
     participant_attr.properties.properties().
-        emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-                    "file://" + std::string(certs_path) + "/" + permissions_file));
+    emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file));
 }
+
 void AccessControlTest::get_access_handle(
-    const RTPSParticipantAttributes& participant_attr,
-    PermissionsHandle** access_handle)
+        const RTPSParticipantAttributes& participant_attr,
+        PermissionsHandle** access_handle)
 {
     IdentityHandle* identity_handle = nullptr;
 
-    ValidationResult_t result= ValidationResult_t::VALIDATION_FAILED;
+    ValidationResult_t result = ValidationResult_t::VALIDATION_FAILED;
     SecurityException exception;
     GUID_t adjusted_participant_key;
 
     result = authentication_plugin.validate_local_identity(
-            &identity_handle,
-            adjusted_participant_key,
-            domain_id,
-            participant_attr,
-            candidate_participant_key,
-            exception);
+        &identity_handle,
+        adjusted_participant_key,
+        domain_id,
+        participant_attr,
+        candidate_participant_key,
+        exception);
 
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_OK) << exception.what();
     ASSERT_TRUE(identity_handle != nullptr) << exception.what();
     ASSERT_TRUE(adjusted_participant_key != GUID_t::unknown());
 
     *access_handle = access_plugin.validate_local_permissions(
-                    authentication_plugin,
-                    *identity_handle,
-                    domain_id,
-                    participant_attr,
-                    exception);
+        authentication_plugin,
+        *identity_handle,
+        domain_id,
+        participant_attr,
+        exception);
 
     ASSERT_TRUE(*access_handle != nullptr) << exception.what();
     ASSERT_TRUE(authentication_plugin.return_identity_handle(identity_handle, exception)) << exception.what();
 }
 
 void AccessControlTest::check_local_datareader(
-    const RTPSParticipantAttributes& participant_attr,
-    bool success)
+        const RTPSParticipantAttributes& participant_attr,
+        bool success)
 {
     PermissionsHandle* access_handle;
     get_access_handle(participant_attr, &access_handle);
@@ -181,11 +194,11 @@ void AccessControlTest::check_local_datareader(
     SecurityException exception;
 
     bool result = access_plugin.check_create_datareader(
-                    *access_handle,
-                    domain_id,
-                    topic_name,
-                    partitions,
-                    exception);
+        *access_handle,
+        domain_id,
+        topic_name,
+        partitions,
+        exception);
 
     if (success)
     {
@@ -198,8 +211,9 @@ void AccessControlTest::check_local_datareader(
     }
 }
 
-void AccessControlTest::check_remote_datareader(const RTPSParticipantAttributes& participant_attr,
-    bool success)
+void AccessControlTest::check_remote_datareader(
+        const RTPSParticipantAttributes& participant_attr,
+        bool success)
 {
     PermissionsHandle* access_handle;
     get_access_handle(participant_attr, &access_handle);
@@ -211,11 +225,11 @@ void AccessControlTest::check_remote_datareader(const RTPSParticipantAttributes&
     reader_proxy_data.m_qos.m_partition.setNames(partitions);
     bool relay_only;
     bool result = access_plugin.check_remote_datareader(
-                    *access_handle,
-                    domain_id,
-                    reader_proxy_data,
-                    relay_only,
-                    exception);
+        *access_handle,
+        domain_id,
+        reader_proxy_data,
+        relay_only,
+        exception);
 
     if (success)
     {
@@ -228,8 +242,9 @@ void AccessControlTest::check_remote_datareader(const RTPSParticipantAttributes&
     }
 }
 
-void AccessControlTest::check_local_datawriter(const RTPSParticipantAttributes& participant_attr,
-    bool success)
+void AccessControlTest::check_local_datawriter(
+        const RTPSParticipantAttributes& participant_attr,
+        bool success)
 {
     PermissionsHandle* access_handle;
     get_access_handle(participant_attr, &access_handle);
@@ -237,11 +252,11 @@ void AccessControlTest::check_local_datawriter(const RTPSParticipantAttributes& 
     SecurityException exception;
 
     bool result = access_plugin.check_create_datawriter(
-                    *access_handle,
-                    domain_id,
-                    topic_name,
-                    partitions,
-                    exception);
+        *access_handle,
+        domain_id,
+        topic_name,
+        partitions,
+        exception);
 
     if (success)
     {
@@ -254,8 +269,9 @@ void AccessControlTest::check_local_datawriter(const RTPSParticipantAttributes& 
     }
 }
 
-void AccessControlTest::check_remote_datawriter(const RTPSParticipantAttributes& participant_attr,
-    bool success)
+void AccessControlTest::check_remote_datawriter(
+        const RTPSParticipantAttributes& participant_attr,
+        bool success)
 {
     PermissionsHandle* access_handle;
     get_access_handle(participant_attr, &access_handle);
@@ -266,10 +282,10 @@ void AccessControlTest::check_remote_datawriter(const RTPSParticipantAttributes&
     writer_proxy_data.topicName(topic_name.c_str());
     writer_proxy_data.m_qos.m_partition.setNames(partitions);
     bool result = access_plugin.check_remote_datawriter(
-                    *access_handle,
-                    domain_id,
-                    writer_proxy_data,
-                    exception);
+        *access_handle,
+        domain_id,
+        writer_proxy_data,
+        exception);
 
     if (success)
     {
@@ -426,13 +442,15 @@ TEST_F(AccessControlTest, validate_partition_access_ok_on_permission_wildcards)
     check_remote_datawriter(publisher_participant_attr, true);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
 
     certs_path = std::getenv("CERTS_PATH");
 
-    if(certs_path == nullptr)
+    if (certs_path == nullptr)
     {
         std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
         exit(-1);
