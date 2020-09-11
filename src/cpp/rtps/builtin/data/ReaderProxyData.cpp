@@ -788,13 +788,6 @@ bool ReaderProxyData::readFromCDRMessage(
                         m_guid = p.guid;
                         memcpy(m_key.value, p.guid.guidPrefix.value, 12);
                         memcpy(m_key.value + 12, p.guid.entityId.value, 4);
-
-                        if (!m_RTPSParticipantKey.isDefined())
-                        {
-                            p.guid.entityId = c_EntityId_RTPSParticipant;
-                            memcpy(m_RTPSParticipantKey.value, p.guid.guidPrefix.value, 12);
-                            memcpy(m_RTPSParticipantKey.value + 12, p.guid.entityId.value, 4);
-                        }
                         break;
                     }
                     case fastdds::dds::PID_UNICAST_LOCATOR:
@@ -969,6 +962,18 @@ bool ReaderProxyData::readFromCDRMessage(
             else if (m_guid.entityId.value[3] == 0x07)
             {
                 m_topicKind = WITH_KEY;
+            }
+
+            /* Some vendors (i.e. CycloneDDS) do not follow DDSI-RTPS and omit PID_PARTICIPANT_GUID
+             * In that case we use a default value relying on the prefix from m_guid and the default
+             * participant entity id
+             */
+            if (!m_RTPSParticipantKey.isDefined())
+            {
+                GUID_t tmp_guid = m_guid;
+                tmp_guid.entityId = c_EntityId_RTPSParticipant;
+                memcpy(m_RTPSParticipantKey.value, tmp_guid.guidPrefix.value, 12);
+                memcpy(m_RTPSParticipantKey.value + 12, tmp_guid.entityId.value, 4);
             }
 
             return true;
