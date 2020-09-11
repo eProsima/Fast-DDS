@@ -398,7 +398,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
-        $<$<BOOL:${TINYXML2_LIBRARY}>:${TINYXML2_LIBRARY}>
+        ${TINYXML2_LIBRARY}
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
