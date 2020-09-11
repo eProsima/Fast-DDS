@@ -936,6 +936,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         break;
                     }
 #endif // if HAVE_SECURITY
+
                     case fastdds::dds::PID_PROPERTY_LIST:
                     {
                         if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(
