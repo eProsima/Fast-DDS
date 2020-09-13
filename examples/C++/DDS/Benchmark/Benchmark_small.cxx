@@ -98,10 +98,7 @@ size_t BenchMarkSmall::getCdrSerializedSize(const BenchMarkSmall& data, size_t c
     size_t initial_alignment = current_alignment;
 
 
-    if ((16384) > 0)
-    {
-        current_alignment += ((16384) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    }
+    current_alignment += ((16384) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
