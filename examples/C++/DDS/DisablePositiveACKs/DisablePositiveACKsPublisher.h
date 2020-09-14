@@ -21,7 +21,7 @@
 #define DisablePositiveACKsPublisher_H_
 
 #include "Topic.h"
-#include "TopicTypes.h"
+#include "TopicPubSubTypes.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -84,7 +84,7 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
             : n_matched(0)
@@ -101,7 +101,8 @@ public:
 
         int n_matched;
 
-    } listener;
+    }
+    listener;
 
     eprosima::fastdds::dds::TypeSupport type_;
 };

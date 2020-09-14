@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*************************************************************************
+/*!
  * @file FlowControlExample.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -25,7 +25,6 @@ namespace { char dummy; }
 #endif
 
 #include "FlowControlExample.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -35,12 +34,17 @@ using namespace eprosima::fastcdr::exception;
 
 FlowControlExample::FlowControlExample()
 {
-
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@703580bf
+    memset(&m_message, 0, (600000) * 1);
+    // m_wasFast com.eprosima.idl.parser.typecode.PrimitiveTypeCode@72a7c7e0
     m_wasFast = 0;
+
 }
 
 FlowControlExample::~FlowControlExample()
 {
+
+
 }
 
 FlowControlExample::FlowControlExample(const FlowControlExample &x)
@@ -57,27 +61,47 @@ FlowControlExample::FlowControlExample(FlowControlExample &&x)
 
 FlowControlExample& FlowControlExample::operator=(const FlowControlExample &x)
 {
+
     m_message = x.m_message;
     m_wasFast = x.m_wasFast;
-    
+
     return *this;
 }
 
 FlowControlExample& FlowControlExample::operator=(FlowControlExample &&x)
 {
+
     m_message = std::move(x.m_message);
     m_wasFast = x.m_wasFast;
-    
+
     return *this;
 }
 
 size_t FlowControlExample::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
+
+    current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t FlowControlExample::getCdrSerializedSize(const FlowControlExample& data, size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+
     current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
 
     return current_alignment - initial_alignment;
@@ -85,22 +109,88 @@ size_t FlowControlExample::getMaxCdrSerializedSize(size_t current_alignment)
 
 void FlowControlExample::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+
     scdr << m_message;
 
     scdr << m_wasFast;
-
 }
 
 void FlowControlExample::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+
     dcdr >> m_message;
+
     dcdr >> m_wasFast;
 }
 
+/*!
+ * @brief This function copies the value in member message
+ * @param _message New value to be copied in member message
+ */
+void FlowControlExample::message(const std::array<char, 600000> &_message)
+{
+m_message = _message;
+}
+
+/*!
+ * @brief This function moves the value in member message
+ * @param _message New value to be moved in member message
+ */
+void FlowControlExample::message(std::array<char, 600000> &&_message)
+{
+m_message = std::move(_message);
+}
+
+/*!
+ * @brief This function returns a constant reference to member message
+ * @return Constant reference to member message
+ */
+const std::array<char, 600000>& FlowControlExample::message() const
+{
+    return m_message;
+}
+
+/*!
+ * @brief This function returns a reference to member message
+ * @return Reference to member message
+ */
+std::array<char, 600000>& FlowControlExample::message()
+{
+    return m_message;
+}
+/*!
+ * @brief This function sets a value in member wasFast
+ * @param _wasFast New value for member wasFast
+ */
+void FlowControlExample::wasFast(char _wasFast)
+{
+m_wasFast = _wasFast;
+}
+
+/*!
+ * @brief This function returns the value of member wasFast
+ * @return Value of member wasFast
+ */
+char FlowControlExample::wasFast() const
+{
+    return m_wasFast;
+}
+
+/*!
+ * @brief This function returns a reference to member wasFast
+ * @return Reference to member wasFast
+ */
+char& FlowControlExample::wasFast()
+{
+    return m_wasFast;
+}
+
+
 size_t FlowControlExample::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
+
+
 
 
 
@@ -109,11 +199,12 @@ size_t FlowControlExample::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool FlowControlExample::isKeyDefined()
 {
-    return false;
+   return false;
 }
 
-void FlowControlExample::serializeKey(eprosima::fastcdr::Cdr&) const
+void FlowControlExample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
-	 
-	 
+    (void) scdr;
+     
+     
 }

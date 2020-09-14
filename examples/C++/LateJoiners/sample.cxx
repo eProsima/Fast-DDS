@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file sample.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -25,7 +25,6 @@ namespace { char dummy; }
 #endif
 
 #include "sample.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -35,12 +34,17 @@ using namespace eprosima::fastcdr::exception;
 
 sample::sample()
 {
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6356695f
     m_index = 0;
+    // m_key_value com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1fa268de
     m_key_value = 0;
+
 }
 
 sample::~sample()
 {
+
+
 }
 
 sample::sample(const sample &x)
@@ -57,39 +61,48 @@ sample::sample(sample &&x)
 
 sample& sample::operator=(const sample &x)
 {
+
     m_index = x.m_index;
     m_key_value = x.m_key_value;
-    
+
     return *this;
 }
 
 sample& sample::operator=(sample &&x)
 {
+
     m_index = x.m_index;
     m_key_value = x.m_key_value;
-    
+
     return *this;
 }
 
 size_t sample::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
 
     return current_alignment - initial_alignment;
 }
 
-size_t sample::getCdrSerializedSize(const sample&, size_t current_alignment)
+size_t sample::getCdrSerializedSize(const sample& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
-            
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
 
     return current_alignment - initial_alignment;
@@ -97,24 +110,81 @@ size_t sample::getCdrSerializedSize(const sample&, size_t current_alignment)
 
 void sample::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+
     scdr << m_index;
-
     scdr << m_key_value;
-
 }
 
 void sample::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+
     dcdr >> m_index;
     dcdr >> m_key_value;
 }
 
+/*!
+ * @brief This function sets a value in member index
+ * @param _index New value for member index
+ */
+void sample::index(uint8_t _index)
+{
+m_index = _index;
+}
+
+/*!
+ * @brief This function returns the value of member index
+ * @return Value of member index
+ */
+uint8_t sample::index() const
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function returns a reference to member index
+ * @return Reference to member index
+ */
+uint8_t& sample::index()
+{
+    return m_index;
+}
+
+/*!
+ * @brief This function sets a value in member key_value
+ * @param _key_value New value for member key_value
+ */
+void sample::key_value(uint8_t _key_value)
+{
+m_key_value = _key_value;
+}
+
+/*!
+ * @brief This function returns the value of member key_value
+ * @return Value of member key_value
+ */
+uint8_t sample::key_value() const
+{
+    return m_key_value;
+}
+
+/*!
+ * @brief This function returns a reference to member key_value
+ * @return Reference to member key_value
+ */
+uint8_t& sample::key_value()
+{
+    return m_key_value;
+}
+
+
 size_t sample::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
+
+
 
      current_align += 1 + eprosima::fastcdr::Cdr::alignment(current_align, 1);
+
      
 
     return current_align;
@@ -122,12 +192,12 @@ size_t sample::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool sample::isKeyDefined()
 {
-    return true;
+   return true;
 }
 
 void sample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
-	 
-	 scdr << m_key_value;
-	  
+    (void) scdr;
+     
+     scdr << m_key_value;  
 }

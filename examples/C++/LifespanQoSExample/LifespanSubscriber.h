@@ -20,7 +20,7 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
-#include "LifespanTypes.h"
+#include "LifespanPubSubTypes.h"
 #include "Lifespan.h"
 
 #include <fastrtps/fastrtps_fwd.h>
@@ -28,24 +28,27 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-class LifespanSubscriber {
+class LifespanSubscriber
+{
 public:
+
     /**
      * @brief LifespanSubscriber
      */
-	LifespanSubscriber();
+    LifespanSubscriber();
 
     /**
      * @brief ~LifespanSubscriber
      */
-	virtual ~LifespanSubscriber();
+    virtual ~LifespanSubscriber();
 
     /**
      * @brief Initialises the subscriber
      * @param lifespan_ms The lifespan in ms
      * @return True if initialisation was successful
      */
-    bool init(uint32_t lifespan_ms);
+    bool init(
+            uint32_t lifespan_ms);
 
     /**
      * @brief Runs the subscriber
@@ -60,12 +63,14 @@ private:
 
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Subscriber* subscriber_;
-    LifespanType type_;
+    LifespanPubSubType type_;
 
 public:
-	class SubListener:public eprosima::fastrtps::SubscriberListener
-	{
-	public:
+
+    class SubListener : public eprosima::fastrtps::SubscriberListener
+    {
+    public:
+
         SubListener()
             : n_matched(0)
             , n_samples(0)
@@ -79,13 +84,15 @@ public:
         void onSubscriptionMatched(
                 eprosima::fastrtps::Subscriber* sub,
                 eprosima::fastrtps::rtps::MatchingInfo& info);
-		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
 
         Lifespan hello;
         eprosima::fastrtps::SampleInfo_t info;
-		int n_matched;
-		uint32_t n_samples;
-    }listener;
+        int n_matched;
+        uint32_t n_samples;
+    }
+    listener;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

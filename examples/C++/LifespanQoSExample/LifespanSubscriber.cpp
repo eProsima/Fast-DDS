@@ -114,7 +114,7 @@ void LifespanSubscriber::run(
     std::cout << std::endl << "Subscriber waiting for " << sleep_ms << " milliseconds" << std::endl << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
 
-    LifespanType::type data;
+    LifespanPubSubType::type data;
     SampleInfo_t info;
 
     for ( uint32_t i = 0; i < listener.n_samples; i++ )

@@ -20,7 +20,7 @@
 #ifndef LIVELINESSSUBSCRIBER_H_
 #define LIVELINESSSUBSCRIBER_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -67,7 +67,7 @@ private:
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
             : n_matched(0)
@@ -110,4 +110,4 @@ public:
 
 };
 
-#endif
+#endif // ifndef LIVELINESSSUBSCRIBER_H_

@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(latejoiners ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} latejoiners.cpp)
-target_link_libraries(latejoiners fastrtps fastcdr foonathan_memory)
-install(TARGETS latejoiners
+add_executable(LateJoiners ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} latejoiners.cpp)
+target_link_libraries(LateJoiners fastrtps fastcdr foonathan_memory)
+install(TARGETS LateJoiners
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )

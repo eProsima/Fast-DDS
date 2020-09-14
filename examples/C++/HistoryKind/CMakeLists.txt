@@ -48,8 +48,8 @@ endif()
 message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
-add_executable(historykind ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} pastsamples.cpp)
-target_link_libraries(historykind fastrtps fastcdr foonathan_memory)
-install(TARGETS historykind
+add_executable(HistoryKind ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} pastsamples.cpp)
+target_link_libraries(HistoryKind fastrtps fastcdr foonathan_memory)
+install(TARGETS HistoryKind
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )

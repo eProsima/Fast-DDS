@@ -56,7 +56,7 @@ bool HelloWorldPublisher::init()
     PParam.rtps.useBuiltinTransports = false;
 
     auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
-    shm_transport->segment_size(2*1024*1024);
+    shm_transport->segment_size(2 * 1024 * 1024);
     PParam.rtps.userTransports.push_back(shm_transport);
 
     // UDP
@@ -77,7 +77,7 @@ bool HelloWorldPublisher::init()
     //CREATE THE PUBLISHER
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
-    Wparam.topic.topicDataType = "HelloWorldSharedMem";
+    Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "HelloWorldSharedMemTopic";
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
@@ -130,7 +130,7 @@ void HelloWorldPublisher::runThread(
             if (publish(false))
             {
                 std::cout << "Message: " << m_Hello->message() << " with index: " << m_Hello->index() << " SENT" <<
-                        std::endl;
+                    std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
@@ -146,7 +146,7 @@ void HelloWorldPublisher::runThread(
             else
             {
                 std::cout << "Message: " << m_Hello->message() << " with index: " << m_Hello->index() << " SENT" <<
-                        std::endl;
+                    std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }

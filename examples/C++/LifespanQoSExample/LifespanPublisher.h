@@ -21,38 +21,41 @@
 #define HELLOWORLDPUBLISHER_H_
 
 #include "Lifespan.h"
-#include "LifespanTypes.h"
+#include "LifespanPubSubTypes.h"
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
 
-class LifespanPublisher {
+class LifespanPublisher
+{
 public:
 
     /**
      * @brief LifespanPublisher
      */
-	LifespanPublisher();
+    LifespanPublisher();
 
     /**
      * @brief ~LifespanPublisher
      */
-	virtual ~LifespanPublisher();
+    virtual ~LifespanPublisher();
 
     /**
      * @brief Initialises the publisher
      * @param lifespan_ms The lifespan in ms
      * @return True if initialization was successful
      */
-	bool init(uint32_t lifespan_ms);
+    bool init(
+            uint32_t lifespan_ms);
 
     /**
      * @brief Publishes a new sample
      * @param waitForListener True to wait until a listener exists
      * @return True if sample was written succesfully
      */
-    bool publish(bool waitForListener = true);
+    bool publish(
+            bool waitForListener = true);
 
     /**
      * @brief Runs the publisher
@@ -64,15 +67,17 @@ public:
             uint32_t number,
             uint32_t write_sleep_ms,
             uint32_t sleep_ms);
+
 private:
 
     Lifespan hello_;
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Publisher* publisher_;
-	bool stop;
-	class PubListener:public eprosima::fastrtps::PublisherListener
-	{
-	public:
+    bool stop;
+    class PubListener : public eprosima::fastrtps::PublisherListener
+    {
+    public:
+
         PubListener()
             : n_matched(0)
             , first_connected(false)
@@ -87,15 +92,16 @@ private:
                 eprosima::fastrtps::Publisher* pub,
                 eprosima::fastrtps::rtps::MatchingInfo& info);
 
-		int n_matched;
+        int n_matched;
         bool first_connected;
-    }listener;
+    }
+    listener;
 
     void runThread(
             uint32_t number,
             uint32_t sleep);
 
-    LifespanType type_;
+    LifespanPubSubType type_;
 };
 
 

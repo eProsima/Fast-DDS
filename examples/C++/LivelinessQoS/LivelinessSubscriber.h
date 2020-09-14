@@ -20,7 +20,7 @@
 #ifndef LIVELINESSSUBSCRIBER_H_
 #define LIVELINESSSUBSCRIBER_H_
 
-#include "TopicType.h"
+#include "TopicPubSubTypes.h"
 #include "Topic.h"
 
 #include <fastrtps/fastrtps_fwd.h>
@@ -46,54 +46,59 @@ public:
             int liveliness_ms);
 
     //! RUN the subscriber
-	void run();
+    void run();
 
     //! Run the subscriber until number samples have been recevied.
-	void run(uint32_t number);
+    void run(
+            uint32_t number);
 
 private:
 
-    TopicType type_;
+    TopicPubSubType type_;
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Subscriber* subscriber_;
 
     class SubListener : public eprosima::fastrtps::SubscriberListener
-	{
-	public:
+    {
+    public:
 
         SubListener()
             : n_matched(0)
             , n_samples(0)
-        {}
+        {
+        }
 
         ~SubListener()
-        {}
+        {
+        }
 
         void onSubscriptionMatched(
                 eprosima::fastrtps::Subscriber* sub,
                 eprosima::fastrtps::rtps::MatchingInfo& info) override;
 
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub) override;
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub) override;
 
         void on_liveliness_changed(
                 eprosima::fastrtps::Subscriber* sub,
                 const eprosima::fastrtps::LivelinessChangedStatus& status) override;
 
 
-		eprosima::fastrtps::SampleInfo_t m_info;
-		int n_matched;
-		uint32_t n_samples;
+        eprosima::fastrtps::SampleInfo_t m_info;
+        int n_matched;
+        uint32_t n_samples;
         Topic topic;
     };
     SubListener listener_;
 
     class PartListener : public eprosima::fastrtps::ParticipantListener
     {
-        virtual void onParticipantDiscovery(eprosima::fastrtps::Participant* participant,
-                                            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+        virtual void onParticipantDiscovery(
+                eprosima::fastrtps::Participant* participant,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
     };
     PartListener part_listener_;
 
 };
 
-#endif
+#endif // ifndef LIVELINESSSUBSCRIBER_H_

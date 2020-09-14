@@ -45,7 +45,7 @@ message(STATUS "Configuring CustomListener example...")
 file(GLOB DDS_CUSTOMLISTENER_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB DDS_CUSTOMLISTENER_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(DDSCustomListener ${DDS_CUSTOMLISTENER_EXAMPLE_SOURCES_CXX} ${DDS_CUSTOMLISTENER_EXAMPLE_SOURCES_CPP})
-target_link_libraries(DDSCustomListener fastrtps fastcdr)
-install(TARGETS DDSCustomListener
+add_executable(DDSCustomListenerExample ${DDS_CUSTOMLISTENER_EXAMPLE_SOURCES_CXX} ${DDS_CUSTOMLISTENER_EXAMPLE_SOURCES_CPP})
+target_link_libraries(DDSCustomListenerExample fastrtps fastcdr)
+install(TARGETS DDSCustomListenerExample
     RUNTIME DESTINATION examples/C++/DDS/CustomListenerExample/${BIN_INSTALL_DIR})

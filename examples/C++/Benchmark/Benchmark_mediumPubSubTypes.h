@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Benchmark_mediumPubSubTypes.h
  * This header file contains the declaration of the serialization functions.
  *
@@ -23,9 +23,14 @@
 #ifndef _BENCHMARK_MEDIUM_PUBSUBTYPES_H_
 #define _BENCHMARK_MEDIUM_PUBSUBTYPES_H_
 
+#include <fastrtps/config.h>
 #include <fastrtps/TopicDataType.h>
 
 #include "Benchmark_medium.h"
+
+#if !defined(GEN_API_VER) || (GEN_API_VER != 1)
+#error Generated Benchmark_medium is not compatible with current installed Fast-RTPS. Please, regenerate it with fastrtpsgen.
+#endif
 
 /*!
  * @brief This class represents the TopicDataType of the type BenchMarkMedium defined by the user in the IDL file.
@@ -33,18 +38,20 @@
  */
 class BenchMarkMediumPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
-        typedef BenchMarkMedium type;
+    typedef BenchMarkMedium type;
 
-	BenchMarkMediumPubSubType();
-	virtual ~BenchMarkMediumPubSubType();
-	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5=false);
-	void* createData();
-	void deleteData(void * data);
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    eProsima_user_DllExport BenchMarkMediumPubSubType();
+
+    eProsima_user_DllExport virtual ~BenchMarkMediumPubSubType();
+    eProsima_user_DllExport virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    eProsima_user_DllExport virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+    eProsima_user_DllExport virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    eProsima_user_DllExport virtual void* createData() override;
+    eProsima_user_DllExport virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 
-#endif // _Benchmark_medium_PUBSUBTYPE_H_
+#endif // _BENCHMARK_MEDIUM_PUBSUBTYPES_H_
