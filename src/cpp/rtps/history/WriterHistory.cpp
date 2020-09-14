@@ -73,7 +73,7 @@ bool WriterHistory::add_change_(
     {
         logError(RTPS_HISTORY,
                 "Change writerGUID " << a_change->writerGUID << " different than Writer GUID " <<
-                            mp_writer->getGuid());
+                mp_writer->getGuid());
         return false;
     }
     if ((m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE) && a_change->serializedPayload.length > m_att.payloadMaxSize)
@@ -137,7 +137,7 @@ bool WriterHistory::remove_change(
         // cout << "writer: "<< mp_writer->getGuid()<<endl;
         logError(RTPS_HISTORY,
                 "Change writerGUID " << a_change->writerGUID << " different than Writer GUID " <<
-                            mp_writer->getGuid());
+                mp_writer->getGuid());
         return false;
     }
 
