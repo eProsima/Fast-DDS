@@ -92,6 +92,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             )
 
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(AccessControlTests ${PRIVACY} iphlpapi Shlwapi)
+        endif()
+
+
         add_gtest(AccessControlTests
             SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
