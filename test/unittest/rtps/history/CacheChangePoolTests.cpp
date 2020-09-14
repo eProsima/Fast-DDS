@@ -48,7 +48,6 @@ protected:
 
         pool = new CacheChangePool(
             pool_size,
-            payload_size,
             max_pool_size,
             memory_policy);
     }

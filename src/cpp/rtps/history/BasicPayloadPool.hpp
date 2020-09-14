@@ -42,7 +42,8 @@ public:
             const SampleIdentity&,
             CacheChange_t& cache_change) override
     {
-        if (policy_ != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
+        if ( (cache_change.serializedPayload.data == nullptr) ||
+                (policy_ != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE) )
         {
             cache_change.serializedPayload.reserve(size);
         }
@@ -65,6 +66,11 @@ public:
         {
             cache_change.serializedPayload.empty();
         }
+        else
+        {
+            cache_change.serializedPayload.length = 0;
+            cache_change.serializedPayload.pos = 0;
+        }
         return true;
     }
 
@@ -72,6 +78,7 @@ private:
 
     MemoryManagementPolicy_t policy_;
 };
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

@@ -87,7 +87,12 @@ TEST_F(PersistenceTest, Writer)
     service = PersistenceFactory::create_persistence_service(policy);
     ASSERT_NE(service, nullptr);
 
-    auto pool = std::make_shared<CacheChangePool>(10, 128, 0, MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
+    auto init_cache = [](CacheChange_t* item)
+            {
+                item->serializedPayload.reserve(128);
+            };
+    auto pool =
+            std::make_shared<CacheChangePool>(10, 0, MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE, init_cache);
     SequenceNumber_t max_seq;
     CacheChange_t change;
     GUID_t guid(GuidPrefix_t::unknown(), 1U);

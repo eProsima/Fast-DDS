@@ -44,9 +44,17 @@ History::History(
 {
     m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
 
-    change_pool_ = std::make_shared<CacheChangePool>(att.initialReservedCaches, att.payloadMaxSize,
-                    att.maximumReservedCaches, att.memoryPolicy);
     payload_pool_ = std::make_shared<BasicPayloadPool>(att.memoryPolicy);
+
+    auto init_cache = [this](
+        CacheChange_t* item)
+            {
+                SampleIdentity sample_identity;
+                payload_pool_->get_payload(m_att.payloadMaxSize, sample_identity, *item);
+            };
+
+    change_pool_ = std::make_shared<CacheChangePool>(att.initialReservedCaches,
+                    att.maximumReservedCaches, att.memoryPolicy, init_cache);
 }
 
 History::~History()
