@@ -30,9 +30,9 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/utils/TimedMutex.hpp>
 
-#include <mutex>
-
 #include <cassert>
+#include <memory>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {
