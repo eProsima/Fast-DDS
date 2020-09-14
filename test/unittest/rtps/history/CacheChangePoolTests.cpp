@@ -112,9 +112,10 @@ TEST_P(CacheChangePoolTests, reserve_cache)
     for (uint32_t i = 0; i < num_inserts; i++)
     {
         uint32_t data_size = i * 16;
-        ASSERT_TRUE(pool->reserve_Cache(&ch, [data_size]() -> uint32_t {
-            return data_size;
-        }));
+        ASSERT_TRUE(pool->reserve_Cache(&ch, [data_size]() -> uint32_t
+                {
+                    return data_size;
+                }));
         ASSERT_EQ(pool->getInitialPayloadSize(), payload);
         ASSERT_GE(pool->get_freeCachesSize(), 0U);
 
@@ -161,9 +162,10 @@ TEST_P(CacheChangePoolTests, release_cache)
         size_t free_caches_size = pool->get_freeCachesSize();
         uint32_t data_size = i * 16;
 
-        pool->reserve_Cache(&ch, [data_size]() -> uint32_t {
-            return data_size;
-        });
+        pool->reserve_Cache(&ch, [data_size]() -> uint32_t
+                {
+                    return data_size;
+                });
 
         if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE ||
                 memory_policy == MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)
@@ -203,9 +205,10 @@ TEST_P(CacheChangePoolTests, chage_change)
 
     uint32_t data_size = 16;
 
-    pool->reserve_Cache(&ch, [data_size]() -> uint32_t {
-        return data_size;
-    });
+    pool->reserve_Cache(&ch, [data_size]() -> uint32_t
+            {
+                return data_size;
+            });
 
     // Check that cache change is initilized
     ASSERT_EQ(ch->kind, ALIVE);
@@ -266,7 +269,7 @@ TEST_P(CacheChangePoolTests, chage_change)
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_SUITE_P(x, y, z)
 #else
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_CASE_P(x, y, z, )
-#endif
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
 
 GTEST_INSTANTIATE_TEST_MACRO(
     CacheChangePoolTests,

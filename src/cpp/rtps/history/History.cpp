@@ -44,7 +44,8 @@ History::History(
 {
     m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
 
-    change_pool_ = std::make_shared<CacheChangePool>(att.initialReservedCaches, att.payloadMaxSize, att.maximumReservedCaches, att.memoryPolicy);
+    change_pool_ = std::make_shared<CacheChangePool>(att.initialReservedCaches, att.payloadMaxSize,
+                    att.maximumReservedCaches, att.memoryPolicy);
     payload_pool_ = std::make_shared<BasicPayloadPool>(att.memoryPolicy);
 }
 
@@ -60,7 +61,6 @@ void History::do_release_cache(
     payload_pool_->release_payload(*ch);
     change_pool_->release_cache(ch);
 }
-
 
 bool History::remove_all_changes()
 {
@@ -172,9 +172,9 @@ bool History::get_earliest_change(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 
 //TODO Remove if you want.
@@ -196,6 +196,6 @@ void History::print_changes_seqNum2()
     std::cout << ss.str();
 }
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

@@ -37,17 +37,20 @@ class NoOpPayloadPool : public IPayloadPool
     {
         return true;
     }
+
     virtual bool release_payload(
             CacheChange_t&) override
     {
         return true;
     }
+
 };
 
 class PersistenceTest : public ::testing::Test
 {
 protected:
-    IPersistenceService * service = nullptr;
+
+    IPersistenceService* service = nullptr;
 
     std::shared_ptr<NoOpPayloadPool> payload_pool_ = std::make_shared<NoOpPayloadPool>();
 
@@ -59,16 +62,19 @@ protected:
     virtual void TearDown()
     {
         if (service != nullptr)
+        {
             delete service;
+        }
 
         std::remove("test.db");
     }
+
 };
 
 /*!
-* @fn TEST_F(PersistenceTest, Writer)
-* @brief This test checks the writer persistence interface of the persistence service.
-*/
+ * @fn TEST_F(PersistenceTest, Writer)
+ * @brief This test checks the writer persistence interface of the persistence service.
+ */
 TEST_F(PersistenceTest, Writer)
 {
     const std::string persist_guid("TEST_WRITER");
@@ -138,9 +144,9 @@ TEST_F(PersistenceTest, Writer)
 }
 
 /*!
-* @fn TEST_F(PersistenceTest, Reader)
-* @brief This test checks the reader persistence interface of the persistence service.
-*/
+ * @fn TEST_F(PersistenceTest, Reader)
+ * @brief This test checks the reader persistence interface of the persistence service.
+ */
 TEST_F(PersistenceTest, Reader)
 {
     const std::string persist_guid("TEST_READER");
@@ -191,7 +197,9 @@ TEST_F(PersistenceTest, Reader)
     ASSERT_EQ(seq_map_loaded, seq_map);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

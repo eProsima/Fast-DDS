@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
-* @file PersistenceService.h
-*/
+ * @file PersistenceService.h
+ */
 
 #ifndef PERSISTENCESERVICE_H_
 #define PERSISTENCESERVICE_H_
@@ -35,14 +35,15 @@ namespace fastrtps {
 namespace rtps {
 
 /**
-* Abstract interface representing a persistence service implementaion
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
+ * Abstract interface representing a persistence service implementaion
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
 class IPersistenceService
 {
 public:
-    using map_allocator_t = 
-        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+
+    using map_allocator_t =
+            foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
     virtual ~IPersistenceService() = default;
 
@@ -77,7 +78,7 @@ public:
      * @return True if operation was successful.
      */
     virtual bool remove_writer_change_from_storage(
-            const std::string& persistence_guid, 
+            const std::string& persistence_guid,
             const CacheChange_t& change) = 0;
 
     /**
@@ -86,7 +87,7 @@ public:
      * @return True if operation was successful.
      */
     virtual bool load_reader_from_storage(
-            const std::string& reader_guid, 
+            const std::string& reader_guid,
             foonathan::memory::map<GUID_t, SequenceNumber_t, map_allocator_t>& seq_map) = 0;
 
     /**
@@ -104,18 +105,20 @@ public:
 };
 
 /**
-* Abstract factory to create a persistence service from participant or endpoint properties
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
+ * Abstract factory to create a persistence service from participant or endpoint properties
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
 class PersistenceFactory
 {
 public:
+
     /**
      * Create a persistence service implementation
      * @param property_policy PropertyPolicy where the persistence configuration will be searched
      * @return A pointer to a persistence service implementation. nullptr when policy does not contain the necessary properties or if persistence service could not be created
      */
-    static IPersistenceService* create_persistence_service(const PropertyPolicy& property_policy);
+    static IPersistenceService* create_persistence_service(
+            const PropertyPolicy& property_policy);
 };
 
 

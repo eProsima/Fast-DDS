@@ -78,7 +78,7 @@ public:
         {
             SampleIdentity sample_identity;
             uint32_t payload_size = m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE ?
-                max_payload_size_ : calculateSizeFunc();
+                    max_payload_size_ : calculateSizeFunc();
             if (payload_pool_->get_payload(payload_size, sample_identity, *reserved_change))
             {
                 *change = reserved_change;
@@ -95,7 +95,10 @@ public:
             CacheChange_t** change,
             uint32_t dataSize)
     {
-        return reserve_Cache(change, [dataSize]() {return dataSize; });
+        return reserve_Cache(change, [dataSize]()
+                       {
+                           return dataSize;
+                       });
     }
 
     /**
@@ -247,7 +250,7 @@ protected:
             CacheChange_t* ch);
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 

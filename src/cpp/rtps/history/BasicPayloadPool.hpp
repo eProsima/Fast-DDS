@@ -30,6 +30,7 @@ namespace rtps {
 class BasicPayloadPool : public IPayloadPool
 {
 public:
+
     explicit BasicPayloadPool(
             MemoryManagementPolicy_t policy)
         : policy_(policy)
@@ -53,7 +54,8 @@ public:
             const SerializedPayload_t& data,
             CacheChange_t& cache_change) override
     {
-        return cache_change.serializedPayload.copy(&data, policy_ == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
+        return cache_change.serializedPayload.copy(&data,
+                       policy_ == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
     }
 
     bool release_payload(
@@ -67,6 +69,7 @@ public:
     }
 
 private:
+
     MemoryManagementPolicy_t policy_;
 };
 } /* namespace rtps */

@@ -303,7 +303,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     msg->msg_endian = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-    if (change->kind == ALIVE && payload.length>0 && payload.data != NULL)
+    if (change->kind == ALIVE && payload.length > 0 && payload.data != NULL)
     {
         keyFlag = false;
     }

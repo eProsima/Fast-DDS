@@ -490,7 +490,7 @@ bool RTPSMessageGroup::add_data_frag(
 #endif // if HAVE_SECURITY
 
     if (!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
-        change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
+            change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
             expectsInlineQos, inlineQos))
     {
         logError(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");

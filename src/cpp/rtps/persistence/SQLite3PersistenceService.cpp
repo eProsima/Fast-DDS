@@ -26,17 +26,18 @@
 #include <string.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-static sqlite3* open_or_create_database(const char* filename)
+static sqlite3* open_or_create_database(
+        const char* filename)
 {
     sqlite3* db = NULL;
     int rc;
 
     // Open database
     int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
-                SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
+            SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
     rc = sqlite3_open_v2(filename, &db, flags, 0);
     if (rc != SQLITE_OK)
     {
@@ -45,7 +46,8 @@ static sqlite3* open_or_create_database(const char* filename)
     }
 
     // Create tables if they don't exist
-    const char* create_statement = R"(
+    const char* create_statement =
+            R"(
 CREATE TABLE IF NOT EXISTS writers(
     guid text,
     seq_num integer,
@@ -63,7 +65,7 @@ CREATE TABLE IF NOT EXISTS readers(
 ) WITHOUT ROWID;
 
 )";
-    rc = sqlite3_exec(db,create_statement,0,0,0);
+    rc = sqlite3_exec(db, create_statement, 0, 0, 0);
     if (rc != SQLITE_OK)
     {
         sqlite3_close(db);
@@ -73,7 +75,8 @@ CREATE TABLE IF NOT EXISTS readers(
     return db;
 }
 
-static void finalize_statement(sqlite3_stmt*& stmt)
+static void finalize_statement(
+        sqlite3_stmt*& stmt)
 {
     if (stmt != NULL)
     {
@@ -82,28 +85,35 @@ static void finalize_statement(sqlite3_stmt*& stmt)
     }
 }
 
-IPersistenceService* create_SQLite3_persistence_service(const char* filename)
+IPersistenceService* create_SQLite3_persistence_service(
+        const char* filename)
 {
     sqlite3* db = open_or_create_database(filename);
     return (db == NULL) ? nullptr : new SQLite3PersistenceService(db);
 }
 
-SQLite3PersistenceService::SQLite3PersistenceService(sqlite3* db):
-    db_(db),
-    load_writer_stmt_(NULL),
-    add_writer_change_stmt_(NULL),
-    remove_writer_change_stmt_(NULL),
-    load_reader_stmt_(NULL),
-    update_reader_stmt_(NULL)
+SQLite3PersistenceService::SQLite3PersistenceService(
+        sqlite3* db)
+    : db_(db)
+    , load_writer_stmt_(NULL)
+    , add_writer_change_stmt_(NULL)
+    , remove_writer_change_stmt_(NULL)
+    , load_reader_stmt_(NULL)
+    , update_reader_stmt_(NULL)
 {
     // Prepare writer statements
-    sqlite3_prepare_v3(db_,"SELECT seq_num,instance,payload FROM writers WHERE guid=?;",-1,SQLITE_PREPARE_PERSISTENT,&load_writer_stmt_,NULL);
-    sqlite3_prepare_v3(db_,"INSERT INTO writers VALUES(?,?,?,?);",-1,SQLITE_PREPARE_PERSISTENT,&add_writer_change_stmt_,NULL);
-    sqlite3_prepare_v3(db_,"DELETE FROM writers WHERE guid=? AND seq_num=?;",-1,SQLITE_PREPARE_PERSISTENT,&remove_writer_change_stmt_,NULL);
+    sqlite3_prepare_v3(db_, "SELECT seq_num,instance,payload FROM writers WHERE guid=?;", -1, SQLITE_PREPARE_PERSISTENT,
+            &load_writer_stmt_, NULL);
+    sqlite3_prepare_v3(db_, "INSERT INTO writers VALUES(?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
+            &add_writer_change_stmt_, NULL);
+    sqlite3_prepare_v3(db_, "DELETE FROM writers WHERE guid=? AND seq_num=?;", -1, SQLITE_PREPARE_PERSISTENT,
+            &remove_writer_change_stmt_, NULL);
 
     // Prepare reader statements
-    sqlite3_prepare_v3(db_, "SELECT writer_guid_prefix,writer_guid_entity,seq_num FROM readers WHERE guid=?;", -1, SQLITE_PREPARE_PERSISTENT, &load_reader_stmt_, NULL);
-    sqlite3_prepare_v3(db_, "INSERT OR REPLACE INTO readers VALUES(?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT, &update_reader_stmt_, NULL);
+    sqlite3_prepare_v3(db_, "SELECT writer_guid_prefix,writer_guid_entity,seq_num FROM readers WHERE guid=?;", -1,
+            SQLITE_PREPARE_PERSISTENT, &load_reader_stmt_, NULL);
+    sqlite3_prepare_v3(db_, "INSERT OR REPLACE INTO readers VALUES(?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
+            &update_reader_stmt_, NULL);
 }
 
 SQLite3PersistenceService::~SQLite3PersistenceService()
@@ -122,10 +132,10 @@ SQLite3PersistenceService::~SQLite3PersistenceService()
 }
 
 /**
-* Get all data stored for a writer.
-* @param writer_guid GUID of the writer to load.
-* @return True if operation was successful.
-*/
+ * Get all data stored for a writer.
+ * @param writer_guid GUID of the writer to load.
+ * @return True if operation was successful.
+ */
 bool SQLite3PersistenceService::load_writer_from_storage(
         const std::string& persistence_guid,
         const GUID_t& writer_guid,
@@ -139,7 +149,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
     if (load_writer_stmt_ != NULL)
     {
         sqlite3_reset(load_writer_stmt_);
-        sqlite3_bind_text(load_writer_stmt_,1,persistence_guid.c_str(),-1,SQLITE_STATIC);
+        sqlite3_bind_text(load_writer_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
 
         sqlite3_int64 max_sn = 0;
 
@@ -189,10 +199,10 @@ bool SQLite3PersistenceService::load_writer_from_storage(
 }
 
 /**
-* Add a change to storage.
-* @param change The cache change to add.
-* @return True if operation was successful.
-*/
+ * Add a change to storage.
+ * @param change The cache change to add.
+ * @return True if operation was successful.
+ */
 bool SQLite3PersistenceService::add_writer_change_to_storage(
         const std::string& persistence_guid,
         const CacheChange_t& change)
@@ -212,7 +222,8 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
         {
             sqlite3_bind_zeroblob(add_writer_change_stmt_, 3, 16);
         }
-        sqlite3_bind_blob(add_writer_change_stmt_, 4, change.serializedPayload.data, change.serializedPayload.length, SQLITE_STATIC);
+        sqlite3_bind_blob(add_writer_change_stmt_, 4, change.serializedPayload.data, change.serializedPayload.length,
+                SQLITE_STATIC);
         return sqlite3_step(add_writer_change_stmt_) == SQLITE_DONE;
     }
 
@@ -220,10 +231,10 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
 }
 
 /**
-* Remove a change from storage.
-* @param change The cache change to remove.
-* @return True if operation was successful.
-*/
+ * Remove a change from storage.
+ * @param change The cache change to remove.
+ * @return True if operation was successful.
+ */
 bool SQLite3PersistenceService::remove_writer_change_from_storage(
         const std::string& persistence_guid,
         const CacheChange_t& change)
@@ -242,10 +253,10 @@ bool SQLite3PersistenceService::remove_writer_change_from_storage(
 }
 
 /**
-* Get all data stored for a reader.
-* @param reader_guid GUID of the reader to load.
-* @return True if operation was successful.
-*/
+ * Get all data stored for a reader.
+ * @param reader_guid GUID of the reader to load.
+ * @return True if operation was successful.
+ */
 bool SQLite3PersistenceService::load_reader_from_storage(
         const std::string& reader_guid,
         foonathan::memory::map<GUID_t, SequenceNumber_t, IPersistenceService::map_allocator_t>& seq_map)
@@ -272,18 +283,19 @@ bool SQLite3PersistenceService::load_reader_from_storage(
 }
 
 /**
-* Update the sequence number associated to a writer on a reader.
-* @param reader_guid GUID of the reader to update.
-* @param writer_guid GUID of the associated writer to update.
-* @param seq_number New sequence number value to set for the associated writer.
-* @return True if operation was successful.
-*/
+ * Update the sequence number associated to a writer on a reader.
+ * @param reader_guid GUID of the reader to update.
+ * @param writer_guid GUID of the associated writer to update.
+ * @param seq_number New sequence number value to set for the associated writer.
+ * @return True if operation was successful.
+ */
 bool SQLite3PersistenceService::update_writer_seq_on_storage(
         const std::string& reader_guid,
         const GUID_t& writer_guid,
         const SequenceNumber_t& seq_number)
 {
-    logInfo(RTPS_PERSISTENCE, "Reader " << reader_guid << " setting seq for writer " << writer_guid << " to " << seq_number);
+    logInfo(RTPS_PERSISTENCE,
+            "Reader " << reader_guid << " setting seq for writer " << writer_guid << " to " << seq_number);
 
     if (update_reader_stmt_ != NULL)
     {

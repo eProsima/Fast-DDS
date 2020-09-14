@@ -186,7 +186,7 @@ bool CacheChangePool::reserve_Cache(
                 {
                     logError(RTPS_HISTORY,
                             "Failed to allocate memory for the serializedPayload, exception caught: " <<
-                                    ex.what());
+                            ex.what());
                     delete(*chan);
                     *chan = nullptr;
                     return false;
