@@ -23,7 +23,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 #include <vector>
-#include <functional>
+#include <algorithm>
 #include <cstdint>
 #include <cstddef>
 
