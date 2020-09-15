@@ -112,7 +112,7 @@ public:
     //! Initial peers
     LocatorList_t m_initialPeersList;
     //! Known discovery and backup server container
-    std::list<RemoteServerAttributes> m_DiscoveryServers;
+    std::list<eprosima::fastdds::rtps::RemoteServerAttributes> m_DiscoveryServers;
 
     /**
      * Add a local Writer to the BuiltinProtocols.
