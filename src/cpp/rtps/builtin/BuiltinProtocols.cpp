@@ -159,7 +159,7 @@ bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
 void BuiltinProtocols::transform_server_remote_locators(
         NetworkFactory & nf)
 {
-    for(RemoteServerAttributes & rs : m_DiscoveryServers)
+    for(eprosima::fastdds::rtps::RemoteServerAttributes & rs : m_DiscoveryServers)
     {
         for(Locator_t & loc : rs.metatrafficUnicastLocatorList)
         {
