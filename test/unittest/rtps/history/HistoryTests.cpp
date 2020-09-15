@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ protected:
     class HistoryForTest : public History
     {
     public:
+
         explicit HistoryForTest(
                 const HistoryAttributes& att)
             : History(att)
@@ -61,6 +62,7 @@ protected:
         }
 
     private:
+
         eprosima::fastrtps::RecursiveTimedMutex mutex_;
     };
 
