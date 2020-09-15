@@ -1357,12 +1357,43 @@ bool Permissions::check_remote_datareader(
         bool& relay_only,
         SecurityException& exception)
 {
+std::cout << "ILG: subscription_data address [" << &subscription_data << "]" << std::endl;
+std::cout << "ILG: subscription_data topic address [" << &subscription_data.topicName() << "]" << std::endl;
+std::cout << "ILG: subscription_data string address [" << (void*)subscription_data.topicName().c_str() << "]" << std::endl;
+
+    relay_only = false;
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
     const char* topic_name = subscription_data.topicName().c_str();
+//    std::string mytopic = subscription_data.topicName().to_string();
+//    const char* topic_name = mytopic.c_str();
+int s = strlen(topic_name);
+const char* kk = topic_name - 20;
+for (int i = 0; i < 20; ++i)
+{
+    unsigned char c = kk[i];
+    if (c >= 32 && c <= 126)
+        std::cout << "\"" << c << "\"" << std::endl;
+    else
+        std::cout << std::hex << (int)c << std::dec << std::endl;
+}
+std::cout << "=======" << std::endl;
+
+for (int i = 0; i < s; ++i)
+{
+    unsigned char c = topic_name[i];
+    if (c >= 32 && c <= 126)
+        std::cout << "\"" << c << "\"" << std::endl;
+    else
+        std::cout << std::hex << (int)c << std::dec << std::endl;
+}
+std::cout << "ILG: subscription_data address [" << &subscription_data << "]" << std::endl;
+std::cout << "ILG: subscription_data topic address [" << &subscription_data.topicName() << "]" << std::endl;
+std::cout << "ILG: subscription_data string address [" << (void*)subscription_data.topicName().c_str() << "]" << std::endl;
 std::cout << "ILG: received [" << subscription_data.topicName() << "]" << std::endl;
 std::cout << "ILG: extracted [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
-    relay_only = false;
+std::cout << "ILG: after relay [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
+std::cout << "ILG: received second[" << subscription_data.topicName() << "]" << std::endl;
 
     if (rah.nil())
     {
@@ -1370,6 +1401,7 @@ std::cout << "ILG: extracted [" << topic_name << "]" << "[" << (void*)topic_name
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
         return false;
     }
+std::cout << "ILG: after rah [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
 
     const EndpointSecurityAttributes* attributes = nullptr;
 

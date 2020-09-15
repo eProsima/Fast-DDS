@@ -147,7 +147,7 @@ public:
     void topicName(
             const string_255& topicName)
     {
-        topic_name_ = topicName;
+        topic_name_ = topicName.c_str();
     }
 
     string_255 topicName() const

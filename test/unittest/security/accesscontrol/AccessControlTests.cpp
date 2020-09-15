@@ -209,12 +209,13 @@ void AccessControlTest::check_local_datareader(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 void AccessControlTest::check_remote_datareader(
@@ -226,10 +227,19 @@ void AccessControlTest::check_remote_datareader(
 
     SecurityException exception;
 
+
     std::cout << "ILG: Original [" << topic_name << "]" << std::endl;
     ReaderProxyData reader_proxy_data(1, 1);
-    reader_proxy_data.topicName(eprosima::fastrtps::string_255(topic_name));
+    eprosima::fastrtps::string_255 topic(topic_name);
+    std::cout << "ILG: string255 address [" << &topic << "]" << std::endl;
+    std::cout << "ILG: string255 string address [" << (void*)topic.c_str() << "]" << std::endl;
+
+    std::cout << "ILG: reader_proxy_data [" << &reader_proxy_data << "]" << std::endl;
+    reader_proxy_data.topicName(topic);
     std::cout << "ILG: before partitions [" << reader_proxy_data.topicName() << "]" << std::endl;
+    std::cout << "ILG: reader_proxy_data address [" << &reader_proxy_data << "]" << std::endl;
+    std::cout << "ILG: reader_proxy_data topic address [" << &reader_proxy_data.topicName() << "]" << std::endl;
+    std::cout << "ILG: reader_proxy_data string address [" << (void*)reader_proxy_data.topicName().c_str() << "]" << std::endl;
     reader_proxy_data.m_qos.m_partition.setNames(partitions);
     std::cout << "ILG: after partitions [" << reader_proxy_data.topicName() << "]" << std::endl;
     bool relay_only;
@@ -244,12 +254,13 @@ void AccessControlTest::check_remote_datareader(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 void AccessControlTest::check_local_datawriter(
@@ -271,12 +282,13 @@ void AccessControlTest::check_local_datawriter(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 void AccessControlTest::check_remote_datawriter(
@@ -300,12 +312,13 @@ void AccessControlTest::check_remote_datawriter(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 TEST_F(AccessControlTest, validate_topic_access_ok_no_partitions)
