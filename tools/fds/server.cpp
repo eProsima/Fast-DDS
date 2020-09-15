@@ -22,12 +22,62 @@
 #include <regex>
 #include <vector>
 
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <signal.h>
+
 #include <fastrtps/Domain.h>
 #include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima;
 using namespace fastrtps;
 using namespace std;
+
+static mutex* signal_mutex {nullptr};
+
+static condition_variable* signal_cv {nullptr};
+
+// use to make cv safer
+static atomic_bool sigint_arrive {false};
+static atomic_bool all_removed {false};
+
+void sigint_handler(int /*signum*/) {
+
+    { // free the thread process to destroy everything
+        lock_guard<std::mutex> lck(*signal_mutex);
+        sigint_arrive.store(true);
+        signal_cv->notify_all();
+    }
+
+    unique_lock<mutex> lk(*signal_mutex);
+    signal_cv->wait(lk, []{ return all_removed.load(); });
+}
+
+
+void signal_handler_function(Participant* pServer ) {
+
+    // make thread ignore SIGINT
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGINT);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
+
+    // waits fot the signal free it
+    unique_lock<mutex> lk(*signal_mutex);
+    signal_cv->wait(lk, []{ return sigint_arrive.load(); });
+
+    // Properly close the library
+    Domain::removeParticipant(pServer);    
+    fastdds::dds::Log::Flush();
+    Domain::stopAll();
+
+    cout << endl << "Everything shutted down correctly" << endl;
+
+    // lock_guard<std::mutex> lck(*signal_mutex);
+    all_removed.store(true);
+    signal_cv->notify_all();
+}
 
 int main (
         int argc,
@@ -40,6 +90,22 @@ int main (
     vector<option::Option> options(stats.options_max);
     vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
+
+    // initialize mutex and condition variable
+    mutex m;
+    condition_variable cv;
+
+    signal_cv = &cv;
+    signal_mutex = &m;
+
+    // handle signal SIGINT for every thread
+    struct sigaction action;
+    memset( &action, 0, sizeof(action) );
+    action.sa_handler = sigint_handler;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    sigaction(SIGINT, &action, NULL);
+    
 
     // check the command line options
     if (parse.error())
@@ -184,22 +250,26 @@ int main (
     if ( nullptr == pServer )
     {
         cout << "Server creation failed with the given settings. Please review locators setup." << endl;
-        return_value = 1;
+
+        fastdds::dds::Log::Flush();
+        Domain::stopAll();
+
+        return 1;
+
     }
     else
     {
-        // Wait for user command
-        cout << "\n### Server is running, press any key to quit ###" << std::endl;
-        cout.flush();
-        cin.ignore();
 
-        // Remove the server
-        Domain::removeParticipant(pServer);
+        // throw a thread to erase info
+        thread signal_handler_thread_(signal_handler_function, pServer);
+
+        cout << "\n### Server is running ###" << std::endl;
+
+        // waits for clousere 
+        signal_handler_thread_.join();
+
+        cout << "\n### Server shutted down ###" << std::endl;
     }
-
-    // Properly close the library
-    fastdds::dds::Log::Flush();
-    Domain::stopAll();
 
     return return_value;
 }
