@@ -852,6 +852,7 @@ INSTANTIATE_TEST_CASE_P(Discovery,
 TEST(Discovery, ServerClientEnvironmentSetUp)
 {
     using namespace std;
+    using namespace eprosima::fastdds::rtps;
 
     RemoteServerList_t output, standard;
     RemoteServerAttributes att;

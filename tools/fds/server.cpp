@@ -100,7 +100,7 @@ int main (
         // validation have been already done
         // Name the server according with the identifier
         if ( !( is >> server_id
-                && rtps::get_server_client_default_guidPrefix(server_id, rtps.prefix) ) )
+                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id, rtps.prefix) ) )
         {
             cout << "The provided server identifier is not valid" << endl;
             return 1;
@@ -117,7 +117,7 @@ int main (
 
     // Set up listening locators.
     // If the number of specify ports doesn't match the number of IPs the last port is used.
-    rtps::Locator_t locator(rtps::DEFAULT_ROS2_SERVER_PORT);
+    rtps::Locator_t locator(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_PORT);
     rtps::IPLocator::setIPv4(locator, 0, 0, 0, 0);
 
     option::Option* pO_port = options[PORT];
