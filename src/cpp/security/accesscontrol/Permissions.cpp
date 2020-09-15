@@ -90,6 +90,7 @@ static const EndpointSecurityAttributes* is_topic_in_sec_attributes(
         const std::map<std::string, EndpointSecurityAttributes>& attributes)
 {
     const EndpointSecurityAttributes* returned_value = nullptr;
+std::cout << "ILG: into sec [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
 
     for (auto& topic : attributes)
     {
@@ -99,6 +100,7 @@ static const EndpointSecurityAttributes* is_topic_in_sec_attributes(
             break;
         }
     }
+std::cout << "ILG: outto sec [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
 
     return returned_value;
 }
@@ -1358,7 +1360,8 @@ bool Permissions::check_remote_datareader(
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
     const char* topic_name = subscription_data.topicName().c_str();
-
+std::cout << "ILG: received [" << subscription_data.topicName() << "]" << std::endl;
+std::cout << "ILG: extracted [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
     relay_only = false;
 
     if (rah.nil())
@@ -1370,9 +1373,11 @@ bool Permissions::check_remote_datareader(
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
+std::cout << "ILG: right before sec [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
     if ((attributes = is_topic_in_sec_attributes(topic_name, rah->governance_reader_topic_rules_))
             != nullptr)
     {
+std::cout << "ILG: right after sec [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
         if (!attributes->is_read_protected)
         {
             return true;
@@ -1380,30 +1385,35 @@ bool Permissions::check_remote_datareader(
     }
     else
     {
+std::cout << "ILG: right after sec2 [" << topic_name << "]" << "[" << (void*)topic_name << "]" << std::endl;
         exception = _SecurityException_(
             "Not found topic access rule for topic " + subscription_data.topicName().to_string());
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
         return false;
     }
-
+std::cout << "ILG: after_sec [" << topic_name << "]" << std::endl;
     for (auto rule : rah->grant.rules)
     {
         if (is_domain_in_set(domain_id, rule.domains))
         {
             const std::vector<std::string>& partitions = subscription_data.m_qos.m_partition.getNames();
+std::cout << "ILG: Checking criterias [" << topic_name << "]" << std::endl;
             if (is_topic_in_criterias(topic_name, rule.subscribes))
             {
                 returned_value = check_rule(topic_name, rule, partitions, rule.subscribes, exception);
                 break;
             }
 
+std::cout << "ILG: Checking criterias2 [" << topic_name << "]" << std::endl;
             if (is_topic_in_criterias(topic_name, rule.relays))
             {
+std::cout << "ILG: Checking rule [" << topic_name << "]" << std::endl;
                 returned_value = check_rule(topic_name, rule, partitions, rule.relays, exception);
                 if (returned_value)
                 {
                     relay_only = true;
                 }
+std::cout << "ILG: after Checking rule [" << topic_name << "]" << std::endl;
 
                 break;
             }
@@ -1414,6 +1424,7 @@ bool Permissions::check_remote_datareader(
     {
         if (strlen(exception.what()) == 0)
         {
+std::cout << "ILG: Building exception [" << topic_name << "]" << std::endl;
             exception = _SecurityException_(topic_name + std::string(" topic not found in allow rule."));
         }
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());

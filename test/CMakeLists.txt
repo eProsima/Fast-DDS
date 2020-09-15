@@ -33,37 +33,6 @@ set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FIL
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
-    add_subdirectory(blackbox)
-    add_subdirectory(communication)
     add_subdirectory(unittest)
-    add_subdirectory(xtypes)
-    add_subdirectory(dds/communication)
-
-    if(UNIX AND NOT APPLE AND STRICT_REALTIME)
-        add_subdirectory(realtime)
-    endif()
 endif()
 
-###############################################################################
-# Profiling tests using valgrind
-###############################################################################
-if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
-   find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
-   if(CTEST_MEMORYCHECK_COMMAND)
-      add_subdirectory(profiling)
-   endif()
-endif()
-
-###############################################################################
-# Performance tests
-###############################################################################
-if(PERFORMANCE_TESTS)
-    add_subdirectory(performance)
-endif()
-
-###############################################################################
-# System tests
-###############################################################################
-if(SYSTEM_TESTS)
-    add_subdirectory(system/tools/fastdds)
-endif()

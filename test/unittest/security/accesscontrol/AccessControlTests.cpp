@@ -226,9 +226,12 @@ void AccessControlTest::check_remote_datareader(
 
     SecurityException exception;
 
+    std::cout << "ILG: Original [" << topic_name << "]" << std::endl;
     ReaderProxyData reader_proxy_data(1, 1);
     reader_proxy_data.topicName(eprosima::fastrtps::string_255(topic_name));
+    std::cout << "ILG: before partitions [" << reader_proxy_data.topicName() << "]" << std::endl;
     reader_proxy_data.m_qos.m_partition.setNames(partitions);
+    std::cout << "ILG: after partitions [" << reader_proxy_data.topicName() << "]" << std::endl;
     bool relay_only;
     bool result = access_plugin.check_remote_datareader(
         *access_handle,
@@ -236,6 +239,7 @@ void AccessControlTest::check_remote_datareader(
         reader_proxy_data,
         relay_only,
         exception);
+    std::cout << "ILG: after check [" << reader_proxy_data.topicName() << "]" << std::endl;
 
     if (success)
     {
