@@ -214,7 +214,7 @@ public:
     Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
 
     //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
-    RemoteServerList_t m_DiscoveryServers;
+    eprosima::fastdds::rtps::RemoteServerList_t m_DiscoveryServers;
 
     //! Filtering participants out depending on location
     ParticipantFilteringFlags_t ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
