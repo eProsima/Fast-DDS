@@ -555,7 +555,7 @@ protected:
 
     RTPS_DllAPI static XMLP_ret getXMLList(
             tinyxml2::XMLElement* elem,
-            rtps::RemoteServerList_t& list,
+            eprosima::fastdds::rtps::RemoteServerList_t& list,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLEnum(
@@ -565,7 +565,7 @@ protected:
 
     RTPS_DllAPI static XMLP_ret getXMLRemoteServer(
             tinyxml2::XMLElement* elem,
-            rtps::RemoteServerAttributes& server,
+            eprosima::fastdds::rtps::RemoteServerAttributes& server,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLString(

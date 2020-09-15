@@ -23,6 +23,7 @@
 #include <array>
 #include <cstdint>
 #include <string.h>
+#include <cstdint>
 
 #if _MSC_VER
 #include <intrin.h>
