@@ -16,71 +16,65 @@
  * @file BasicPayloadPool.hpp
  */
 
-#ifndef RTPS_HISTORY_BASICMEMORYPOOL_HPP
-#define RTPS_HISTORY_BASICMEMORYPOOL_HPP
+#ifndef RTPS_HISTORY_BASICPAYLOADPOOL_HPP
+#define RTPS_HISTORY_BASICPAYLOADPOOL_HPP
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
+#include <memory>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class BasicPayloadPool : public IPayloadPool
+namespace BasicPayloadPool {
+
+#include "./BasicPayloadPool_impl/Base.hpp"
+
+#include "./BasicPayloadPool_impl/Dynamic.hpp"
+#include "./BasicPayloadPool_impl/DynamicReusable.hpp"
+#include "./BasicPayloadPool_impl/Preallocated.hpp"
+#include "./BasicPayloadPool_impl/PreallocatedWithRealloc.hpp"
+
+namespace {
+struct DefaultSizeGrowCalculator
 {
-public:
-
-    explicit BasicPayloadPool(
-            MemoryManagementPolicy_t policy)
-        : policy_(policy)
+    uint32_t operator () (
+            uint32_t current_size,
+            uint32_t /*max_size*/) const
     {
+        return (current_size / 10u) + 10u;
     }
 
-    bool get_payload(
-            uint32_t size,
-            const SampleIdentity&,
-            CacheChange_t& cache_change) override
-    {
-        if ( (cache_change.serializedPayload.data == nullptr) ||
-                (policy_ != MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE) )
-        {
-            cache_change.serializedPayload.reserve(size);
-        }
-
-        return true;
-    }
-
-    bool get_payload(
-            const SerializedPayload_t& data,
-            CacheChange_t& cache_change) override
-    {
-        return cache_change.serializedPayload.copy(&data,
-                       policy_ == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE);
-    }
-
-    bool release_payload(
-            CacheChange_t& cache_change) override
-    {
-        if (policy_ == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
-        {
-            cache_change.serializedPayload.empty();
-        }
-        else
-        {
-            cache_change.serializedPayload.length = 0;
-            cache_change.serializedPayload.pos = 0;
-        }
-        return true;
-    }
-
-private:
-
-    MemoryManagementPolicy_t policy_;
 };
+} // namespace
 
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
+template <class SizeGrowCalculator = DefaultSizeGrowCalculator>
+std::shared_ptr<IPayloadPool> get(
+        MemoryManagementPolicy_t policy,
+        uint32_t payload_size)
+{
+    switch (policy)
+    {
+        case PREALLOCATED_MEMORY_MODE:
+            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_MEMORY_MODE> >(payload_size);
+        case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(payload_size);
+        case DYNAMIC_RESERVE_MEMORY_MODE:
+            return std::make_shared<Impl<SizeGrowCalculator, DYNAMIC_RESERVE_MEMORY_MODE> >();
+        case DYNAMIC_REUSABLE_MEMORY_MODE:
+            return std::make_shared<Impl<SizeGrowCalculator, DYNAMIC_REUSABLE_MEMORY_MODE> >();
+    }
 
-#endif  // RTPS_HISTORY_BASICMEMORYPOO
+    return nullptr;
+}
+
+}  // namespace BasicPayloadPool
+
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
+
+#endif  // RTPS_HISTORY_BASICPAYLOADPOOL_HPP
