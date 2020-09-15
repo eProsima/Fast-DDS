@@ -48,7 +48,6 @@
 
 using namespace eprosima::fastrtps;
 
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -169,7 +168,7 @@ bool PDPServer::createPDPEndpoints()
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
 
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        for (const RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
             temp_writer_data_.clear();
             temp_writer_data_.guid(it.GetPDPWriter());
@@ -224,7 +223,7 @@ bool PDPServer::createPDPEndpoints()
             nullptr, c_EntityId_SPDPWriter, true))
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        for (const RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
             temp_reader_data_.clear();
             temp_reader_data_.guid(it.GetPDPReader());
@@ -372,7 +371,7 @@ void PDPServer::removeRemoteEndpoints(
     {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-        for (RemoteServerAttributes& svr : mp_builtin->m_DiscoveryServers)
+        for (eprosima::fastdds::rtps::RemoteServerAttributes& svr : mp_builtin->m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
