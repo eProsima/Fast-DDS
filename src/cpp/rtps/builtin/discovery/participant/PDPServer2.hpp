@@ -40,7 +40,7 @@ class PDPServer2 : public aux::PDP
     friend class DServerEvent2;
     friend class PDPServerListener2;
 
-    public:
+public:
 
     /**
      * Constructor
