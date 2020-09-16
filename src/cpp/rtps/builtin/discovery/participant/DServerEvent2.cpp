@@ -36,14 +36,14 @@ DServerEvent2::DServerEvent2(
         PDPServer2* p_PDP,
         double interval)
     : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
-        [this]()
-        {
-            return event();
-        }, interval)
+            [this]()
+            {
+                return event();
+            }, interval)
     , mp_PDP(p_PDP)
-    {
+{
 
-    }
+}
 
 DServerEvent2::~DServerEvent2()
 {

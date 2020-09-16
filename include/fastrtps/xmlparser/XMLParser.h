@@ -44,8 +44,8 @@ template <class T> class DataNode;
 typedef std::unique_ptr<BaseNode>              up_base_node_t;
 typedef std::vector<up_base_node_t>            up_base_node_vector_t;
 typedef std::map<std::string, std::string>     node_att_map_t;
-typedef node_att_map_t::iterator               node_att_map_it_t;
-typedef node_att_map_t::const_iterator         node_att_map_cit_t;
+typedef node_att_map_t::iterator node_att_map_it_t;
+typedef node_att_map_t::const_iterator node_att_map_cit_t;
 
 typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
@@ -198,12 +198,12 @@ protected:
             BaseNode& rootNode);
 
     RTPS_DllAPI static XMLP_ret parseXMLRequesterProf(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode);
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode);
 
     RTPS_DllAPI static XMLP_ret parseXMLReplierProf(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode);
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode);
 
     RTPS_DllAPI static XMLP_ret parseXMLTransportData(
             tinyxml2::XMLElement* p_root);
@@ -217,8 +217,8 @@ protected:
             sp_transport_t p_transport);
 
     RTPS_DllAPI static XMLP_ret parseXMLCommonSharedMemTransportData(
-        tinyxml2::XMLElement* p_root,
-        sp_transport_t p_transport);
+            tinyxml2::XMLElement* p_root,
+            sp_transport_t p_transport);
 
     RTPS_DllAPI static XMLP_ret parse_tls_config(
             tinyxml2::XMLElement* p_root,
@@ -301,12 +301,12 @@ protected:
             DataNode<TopicAttributes>& topic_node);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(
-        tinyxml2::XMLElement* node,
-        DataNode<RequesterAttributes>& requester_node);
+            tinyxml2::XMLElement* node,
+            DataNode<RequesterAttributes>& requester_node);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(
-        tinyxml2::XMLElement* node,
-        DataNode<ReplierAttributes>& replier_node);
+            tinyxml2::XMLElement* node,
+            DataNode<ReplierAttributes>& replier_node);
 
     template <typename T>
     RTPS_DllAPI static void addAllAttributes(
@@ -315,7 +315,7 @@ protected:
 
     RTPS_DllAPI static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
-            fastrtps::IntraprocessDeliveryType * e,
+            fastrtps::IntraprocessDeliveryType* e,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(
@@ -504,9 +504,9 @@ protected:
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLSendBuffersAllocationAttributes(
-        tinyxml2::XMLElement* elem,
-        rtps::SendBuffersAllocationAttributes& allocation,
-        uint8_t ident);
+            tinyxml2::XMLElement* elem,
+            rtps::SendBuffersAllocationAttributes& allocation,
+            uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLDiscoverySettings(
             tinyxml2::XMLElement* elem,
@@ -559,9 +559,9 @@ protected:
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLEnum(
-        tinyxml2::XMLElement* elem,
-        rtps::ParticipantFilteringFlags_t * e,
-        uint8_t ident);
+            tinyxml2::XMLElement* elem,
+            rtps::ParticipantFilteringFlags_t* e,
+            uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLRemoteServer(
             tinyxml2::XMLElement* elem,
@@ -589,13 +589,13 @@ protected:
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLPublisherAttributes(
-            tinyxml2::XMLElement *elem,
-            PublisherAttributes &publisher,
+            tinyxml2::XMLElement* elem,
+            PublisherAttributes& publisher,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLSubscriberAttributes(
-            tinyxml2::XMLElement *elem,
-            SubscriberAttributes &subscriber,
+            tinyxml2::XMLElement* elem,
+            SubscriberAttributes& subscriber,
             uint8_t ident);
 };
 
@@ -603,4 +603,4 @@ protected:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef XML_PARSER_H_
