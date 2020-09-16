@@ -20,9 +20,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/writer/ReaderLocator.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/writer/ChangeForReader.h>
+#include <fastdds/rtps/writer/ReaderLocator.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <list>
