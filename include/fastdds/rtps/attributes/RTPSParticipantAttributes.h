@@ -116,7 +116,7 @@ public:
     bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
 
     bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
-#endif
+#endif // if HAVE_SECURITY
 
     SimpleEDPAttributes()
         : use_PublicationWriterANDSubscriptionReader(true)
@@ -124,7 +124,7 @@ public:
 #if HAVE_SECURITY
         , enable_builtin_secure_publications_writer_and_subscriptions_reader(true)
         , enable_builtin_secure_subscriptions_writer_and_publications_reader(true)
-#endif
+#endif // if HAVE_SECURITY
     {
     }
 
@@ -137,7 +137,7 @@ public:
                b.enable_builtin_secure_publications_writer_and_subscriptions_reader) &&
                (this->enable_builtin_secure_subscriptions_writer_and_publications_reader ==
                b.enable_builtin_secure_subscriptions_writer_and_publications_reader) &&
-#endif
+#endif // if HAVE_SECURITY
                (this->use_PublicationReaderANDSubscriptionWriter == b.use_PublicationReaderANDSubscriptionWriter);
     }
 

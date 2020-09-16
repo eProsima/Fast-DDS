@@ -62,14 +62,16 @@ public:
             const aux::RTPSParticipantAllocationAttributes& allocation);
     ~PDPClient2();
 
-    void initializeParticipantProxyData(aux::ParticipantProxyData* participant_data) override;
+    void initializeParticipantProxyData(
+            aux::ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
      * @param part Pointer to the RTPSParticipant.
      * @return True on success
      */
-    bool init(aux::RTPSParticipantImpl* part) override;
+    bool init(
+            aux::RTPSParticipantImpl* part) override;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -78,8 +80,8 @@ public:
      * @return new ParticipantProxyData * or nullptr on failure
      */
     aux::ParticipantProxyData* createParticipantProxyData(
-        const aux::ParticipantProxyData& p,
-        const aux::GUID_t& writer_guid) override;
+            const aux::ParticipantProxyData& p,
+            const aux::GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -95,19 +97,22 @@ public:
      * @param wparams allows to identify the change
      */
     void announceParticipantState(
-        bool new_change,
-        bool dispose = false,
-        aux::WriteParams& wparams = aux::WriteParams::WRITE_PARAM_DEFAULT) override;
+            bool new_change,
+            bool dispose = false,
+            aux::WriteParams& wparams = aux::WriteParams::WRITE_PARAM_DEFAULT) override;
 
-    void assignRemoteEndpoints(aux::ParticipantProxyData* pdata) override;
-    void removeRemoteEndpoints(aux::ParticipantProxyData* pdata) override;
-    void notifyAboveRemoteEndpoints(const aux::ParticipantProxyData& pdata) override;
+    void assignRemoteEndpoints(
+            aux::ParticipantProxyData* pdata) override;
+    void removeRemoteEndpoints(
+            aux::ParticipantProxyData* pdata) override;
+    void notifyAboveRemoteEndpoints(
+            const aux::ParticipantProxyData& pdata) override;
 
-    private:
+private:
 
     /**
-    * TimedEvent for client synchronization:
-    */
+     * TimedEvent for client synchronization:
+     */
     DSClientEvent2* mp_sync;
 
 };
@@ -115,5 +120,5 @@ public:
 } // namespace rtps
 } // namepsace fastdds
 } // namespace eprosima
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PDPCLIENT2_H_ */

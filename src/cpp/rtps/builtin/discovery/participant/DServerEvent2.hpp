@@ -33,7 +33,8 @@ class PDPServer2;
  * Class DServerEvent2, TimedEvent used to synchronize discover-server servers
  *@ingroup DISCOVERY_MODULE
  */
-class DServerEvent2 : public fastrtps::rtps::TimedEvent {
+class DServerEvent2 : public fastrtps::rtps::TimedEvent
+{
 public:
 
     /**
@@ -41,13 +42,14 @@ public:
      * @param p_PDP Pointer to the PDPServer.
      * @param interval Interval in ms.
      */
-    DServerEvent2(PDPServer2* p_PDP,
+    DServerEvent2(
+            PDPServer2* p_PDP,
             double interval);
     ~DServerEvent2();
 
     /**
-    * Method invoked when the event occurs.
-    */
+     * Method invoked when the event occurs.
+     */
     bool event();
 
     //!Pointer to the PDPServer object.
@@ -57,5 +59,5 @@ public:
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_DSERVEREVENT2_H_ */

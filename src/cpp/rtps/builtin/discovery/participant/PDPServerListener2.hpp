@@ -40,10 +40,12 @@ class PDPServer2;
 class PDPServerListener2 : public aux::PDPListener
 {
 public:
+
     /**
      * @param in_PDP
      */
-    PDPServerListener2(PDPServer2* in_PDP);
+    PDPServerListener2(
+            PDPServer2* in_PDP);
 
     ~PDPServerListener2() override = default;
 
@@ -65,5 +67,5 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PDPSERVERLISTENER2_H_ */
