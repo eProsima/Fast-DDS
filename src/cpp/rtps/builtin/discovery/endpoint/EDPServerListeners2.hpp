@@ -49,40 +49,43 @@ class EDPServer2;
  */
 class EDPServerPUBListener2 : public aux::EDPBasePUBListener
 {
-    public:
+public:
 
-        /*!
-          Constructor
-         * @param sedp Pointer to the EDPServer associated with this listener.
-         */
-        EDPServerPUBListener2(EDPServer2* sedp);
+    /*!
+       Constructor
+     * @param sedp Pointer to the EDPServer associated with this listener.
+     */
+    EDPServerPUBListener2(
+            EDPServer2* sedp);
 
-        virtual ~EDPServerPUBListener2() {}
+    virtual ~EDPServerPUBListener2()
+    {
+    }
 
-        /**
-         * Virtual method,
-         * @param reader
-         * @param change
-         */
-        void onNewCacheChangeAdded(
-                aux::RTPSReader* reader,
-                const aux::CacheChange_t* const  change) override;
+    /**
+     * Virtual method,
+     * @param reader
+     * @param change
+     */
+    void onNewCacheChangeAdded(
+            aux::RTPSReader* reader,
+            const aux::CacheChange_t* const change) override;
 
 
-        /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache
-         * change has been received.
-         * @param writer Pointer to the RTPSWriter.
-         * @param change Pointer to the affected CacheChange_t.
-         */
-        void onWriterChangeReceivedByAll(
-                aux::RTPSWriter* writer,
-                aux::CacheChange_t* change) override;
+    /*!
+     * This method is called when all the readers matched with this Writer acknowledge that a cache
+     * change has been received.
+     * @param writer Pointer to the RTPSWriter.
+     * @param change Pointer to the affected CacheChange_t.
+     */
+    void onWriterChangeReceivedByAll(
+            aux::RTPSWriter* writer,
+            aux::CacheChange_t* change) override;
 
-    private:
+private:
 
-        //!Pointer to the EDPServer
-        EDPServer2* sedp_;
+    //!Pointer to the EDPServer
+    EDPServer2* sedp_;
 };
 
 /*!
@@ -91,41 +94,42 @@ class EDPServerPUBListener2 : public aux::EDPBasePUBListener
  */
 class EDPServerSUBListener2 : public aux::EDPBaseSUBListener
 {
-    public:
+public:
 
-        /*!
-          Constructor
-         * @param sedp Pointer to the EDPServer associated with this listener.
-         */
-        EDPServerSUBListener2(EDPServer2* sedp);
+    /*!
+       Constructor
+     * @param sedp Pointer to the EDPServer associated with this listener.
+     */
+    EDPServerSUBListener2(
+            EDPServer2* sedp);
 
-        virtual ~EDPServerSUBListener2() = default;
-        /**
-         * @param reader
-         * @param change
-         */
-        void onNewCacheChangeAdded(
-                aux::RTPSReader* reader,
-                const aux::CacheChange_t* const change) override;
+    virtual ~EDPServerSUBListener2() = default;
+    /**
+     * @param reader
+     * @param change
+     */
+    void onNewCacheChangeAdded(
+            aux::RTPSReader* reader,
+            const aux::CacheChange_t* const change) override;
 
-        /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache
-         * change has been received.
-         * @param writer Pointer to the RTPSWriter.
-         * @param change Pointer to the affected CacheChange_t.
-         */
-        void onWriterChangeReceivedByAll(
-                aux::RTPSWriter* writer,
-                aux::CacheChange_t* change) override;
+    /*!
+     * This method is called when all the readers matched with this Writer acknowledge that a cache
+     * change has been received.
+     * @param writer Pointer to the RTPSWriter.
+     * @param change Pointer to the affected CacheChange_t.
+     */
+    void onWriterChangeReceivedByAll(
+            aux::RTPSWriter* writer,
+            aux::CacheChange_t* change) override;
 
-    private:
+private:
 
-        //!Pointer to the EDPServer
-        EDPServer2* sedp_;
+    //!Pointer to the EDPServer
+    EDPServer2* sedp_;
 };
 
 } /* namespace rtps */
-}
+} // namespace fastdds
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* EDPSERVERLISTENER2_H_ */
