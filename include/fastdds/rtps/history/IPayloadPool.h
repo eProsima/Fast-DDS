@@ -16,8 +16,8 @@
  * @file IPayloadPool.h
  */
 
-#ifndef _FASTDDS_RTPS_IPAYLOADPOOL_H_
-#define _FASTDDS_RTPS_IPAYLOADPOOL_H_
+#ifndef _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_
+#define _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_
 
 #include <fastdds/rtps/common/CacheChange.h>
 
@@ -52,4 +52,4 @@ public:
 } /* namespace eprosima */
 
 
-#endif /* _FASTDDS_RTPS_IPAYLOADPOOL_H_ */
+#endif /* _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_ */

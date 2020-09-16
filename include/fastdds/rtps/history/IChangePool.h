@@ -16,8 +16,8 @@
  * @file IChangePool.h
  */
 
-#ifndef _FASTDDS_RTPS_ICHANGEPOOL_H_
-#define _FASTDDS_RTPS_ICHANGEPOOL_H_
+#ifndef _FASTDDS_RTPS_HISTORY_ICHANGEPOOL_H_
+#define _FASTDDS_RTPS_HISTORY_ICHANGEPOOL_H_
 
 namespace eprosima {
 namespace fastrtps {
@@ -43,4 +43,4 @@ public:
 } /* namespace eprosima */
 
 
-#endif /* _FASTDDS_RTPS_ICHANGEPOOL_H_ */
+#endif /* _FASTDDS_RTPS_HISTORY_ICHANGEPOOL_H_ */
