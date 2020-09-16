@@ -67,7 +67,7 @@ protected:
     };
 
     HistoryTests()
-        : pool(nullptr)
+        : history(nullptr)
         , pool_size(10)
         , max_pool_size(0)
         , payload_size(128)
@@ -92,15 +92,15 @@ protected:
         att.payloadMaxSize = payload_size;
         att.memoryPolicy = memory_policy;
 
-        pool = new HistoryForTest(att);
+        history = new HistoryForTest(att);
     }
 
     virtual void TearDown()
     {
-        delete pool;
+        delete history;
     }
 
-    HistoryForTest* pool;
+    HistoryForTest* history;
 
     int32_t pool_size;
     int32_t max_pool_size;
@@ -134,7 +134,7 @@ TEST_P(HistoryTests, reserve_cache)
     for (uint32_t i = 0; i < num_inserts; i++)
     {
         uint32_t data_size = i * 16;
-        ASSERT_TRUE(pool->reserve_Cache(&ch, [data_size]() -> uint32_t
+        ASSERT_TRUE(history->reserve_Cache(&ch, [data_size]() -> uint32_t
                 {
                     return data_size;
                 }));
@@ -158,11 +158,11 @@ TEST_P(HistoryTests, reserve_cache)
 
     if (max_size == 0)
     {
-        ASSERT_TRUE(pool->reserve_Cache(&ch, payload));
+        ASSERT_TRUE(history->reserve_Cache(&ch, payload));
     }
     else
     {
-        ASSERT_FALSE(pool->reserve_Cache(&ch, payload));
+        ASSERT_FALSE(history->reserve_Cache(&ch, payload));
     }
 }
 
@@ -172,7 +172,7 @@ TEST_P(HistoryTests, chage_change)
 
     uint32_t data_size = 16;
 
-    pool->reserve_Cache(&ch, [data_size]() -> uint32_t
+    history->reserve_Cache(&ch, [data_size]() -> uint32_t
             {
                 return data_size;
             });
@@ -208,7 +208,7 @@ TEST_P(HistoryTests, chage_change)
     ch->sourceTimestamp.seconds(1);
     ch->sourceTimestamp.fraction(1);
 
-    pool->release_Cache(ch);
+    history->release_Cache(ch);
 
     if (memory_policy != MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
     {
