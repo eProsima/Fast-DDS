@@ -209,12 +209,12 @@ void AccessControlTest::check_local_datareader(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 void AccessControlTest::check_remote_datareader(
@@ -240,12 +240,12 @@ void AccessControlTest::check_remote_datareader(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 void AccessControlTest::check_local_datawriter(
@@ -267,12 +267,12 @@ void AccessControlTest::check_local_datawriter(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 void AccessControlTest::check_remote_datawriter(
@@ -296,12 +296,12 @@ void AccessControlTest::check_remote_datawriter(
     if (success)
     {
         ASSERT_TRUE(result) << exception.what();
-        ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
     }
     else
     {
         ASSERT_FALSE(result);
     }
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
 }
 
 TEST_F(AccessControlTest, validate_topic_access_ok_no_partitions)
