@@ -166,7 +166,7 @@ TEST_P(CacheChangePoolTests, release_cache)
     }
 }
 
-TEST_P(CacheChangePoolTests, chage_change)
+TEST_P(CacheChangePoolTests, change_reset_on_release)
 {
     CacheChange_t* ch = nullptr;
 

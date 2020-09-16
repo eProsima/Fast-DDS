@@ -166,7 +166,7 @@ TEST_P(HistoryTests, reserve_cache)
     }
 }
 
-TEST_P(HistoryTests, chage_change)
+TEST_P(HistoryTests, change_reset_on_release)
 {
     CacheChange_t* ch = nullptr;
 
