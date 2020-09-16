@@ -51,7 +51,9 @@ public:
      * Get all data stored for a writer.
      * @param persistence_guid   GUID of the writer used to store samples.
      * @param writer_guid        GUID of the writer to load.
-     * @param history            Historry of the writer to load.
+     * @param changes            History of the writer to load.
+     * @param change_pool        Pool where new changes should be obtained from.
+     * @param payload_pool       Pool where payloads should be obtained from.
      * @param next_sequence      Sequence that should be applied to the next created sample.
      * @return True if operation was successful.
      */
@@ -65,7 +67,8 @@ public:
 
     /**
      * Add a change to storage.
-     * @param change The cache change to add.
+     * @param persistence_guid   GUID of the writer used to store samples.
+     * @param change             The cache change to add.
      * @return True if operation was successful.
      */
     virtual bool add_writer_change_to_storage(
@@ -74,7 +77,8 @@ public:
 
     /**
      * Remove a change from storage.
-     * @param change The cache change to remove.
+     * @param persistence_guid   GUID of the writer used to store samples.
+     * @param change             The cache change to remove.
      * @return True if operation was successful.
      */
     virtual bool remove_writer_change_from_storage(
@@ -83,7 +87,8 @@ public:
 
     /**
      * Get all data stored for a reader.
-     * @param reader_guid GUID of the reader to load.
+     * @param reader_guid   GUID of the reader to load.
+     * @param seq_map       History record (map of low marks) to be loaded.
      * @return True if operation was successful.
      */
     virtual bool load_reader_from_storage(
@@ -126,4 +131,4 @@ public:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /*  */
+#endif /* PERSISTENCESERVICE_H_ */
