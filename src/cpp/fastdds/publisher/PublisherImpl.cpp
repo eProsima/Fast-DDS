@@ -157,7 +157,7 @@ ReturnCode_t PublisherImpl::set_qos(
     bool enabled = user_publisher_->is_enabled();
 
     const PublisherQos& qos_to_set = (&qos == &PUBLISHER_QOS_DEFAULT) ?
-        participant_->get_default_publisher_qos() : qos;
+            participant_->get_default_publisher_qos() : qos;
 
     if (&qos != &PUBLISHER_QOS_DEFAULT)
     {

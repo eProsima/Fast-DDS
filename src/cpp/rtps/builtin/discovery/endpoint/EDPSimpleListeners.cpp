@@ -52,8 +52,8 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
     (reader)->getMutex().lock();                                          \
                                                                           \
     if ( (ALIVE != (change)->kind) ||                                     \
-         (seq_num != (change)->sequenceNumber) ||                         \
-         (writer_guid != (change)->writerGUID) )                          \
+            (seq_num != (change)->sequenceNumber) ||                      \
+            (writer_guid != (change)->writerGUID) )                       \
     {                                                                     \
         return;                                                           \
     }                                                                     \
@@ -327,6 +327,6 @@ void EDPSimpleSUBListener::onWriterChangeReceivedByAll(
 
 }
 
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
