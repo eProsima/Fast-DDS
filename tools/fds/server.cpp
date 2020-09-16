@@ -38,17 +38,13 @@ static mutex* signal_mutex {nullptr};
 
 static condition_variable* signal_cv {nullptr};
 
-// use to make cv safer
 static atomic_bool sigint_arrive {false};
 static atomic_bool all_removed {false};
 
 void sigint_handler(int /*signum*/) {
 
-    { // free the thread process to destroy everything
-        lock_guard<std::mutex> lck(*signal_mutex);
-        sigint_arrive.store(true);
-        signal_cv->notify_all();
-    }
+    sigint_arrive.store(true);
+    signal_cv->notify_all();
 
     unique_lock<mutex> lk(*signal_mutex);
     signal_cv->wait(lk, []{ return all_removed.load(); });
@@ -72,9 +68,8 @@ void signal_handler_function(Participant* pServer ) {
     fastdds::dds::Log::Flush();
     Domain::stopAll();
 
-    cout << endl << "Everything shutted down correctly" << endl;
+    cout << endl << "Everything removed correctly" << endl;
 
-    // lock_guard<std::mutex> lck(*signal_mutex);
     all_removed.store(true);
     signal_cv->notify_all();
 }
@@ -99,12 +94,7 @@ int main (
     signal_mutex = &m;
 
     // handle signal SIGINT for every thread
-    struct sigaction action;
-    memset( &action, 0, sizeof(action) );
-    action.sa_handler = sigint_handler;
-    sigemptyset(&action.sa_mask);
-    action.sa_flags = 0;
-    sigaction(SIGINT, &action, NULL);
+    signal(SIGINT, sigint_handler);
     
 
     // check the command line options
