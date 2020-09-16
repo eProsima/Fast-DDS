@@ -554,7 +554,7 @@ public:
         }
         unsentFragments.for_each(
             [this](
-                    FragmentNumber_t element)
+                FragmentNumber_t element)
             {
                 unsent_fragments_.add(element);
             });
@@ -589,8 +589,8 @@ struct ChangeForReaderCmp
 
 };
 
-#endif
-}
-}
-}
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 #endif /* _FASTDDS_RTPS_CACHECHANGE_H_ */
