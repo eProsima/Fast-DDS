@@ -84,31 +84,36 @@ public:
      * @brief Copy constructor.
      * @param x Reference to the object Topic that will be copied.
      */
-    eProsima_user_DllExport Topic(const Topic &x);
+    eProsima_user_DllExport Topic(
+            const Topic& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object Topic that will be copied.
      */
-    eProsima_user_DllExport Topic(Topic &&x);
+    eProsima_user_DllExport Topic(
+            Topic&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object Topic that will be copied.
      */
-    eProsima_user_DllExport Topic& operator=(const Topic &x);
+    eProsima_user_DllExport Topic& operator =(
+            const Topic& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object Topic that will be copied.
      */
-    eProsima_user_DllExport Topic& operator=(Topic &&x);
+    eProsima_user_DllExport Topic& operator =(
+            Topic&& x);
 
     /*!
      * @brief This function sets a value in member index
      * @param _index New value for member index
      */
-    eProsima_user_DllExport void index(uint32_t _index);
+    eProsima_user_DllExport void index(
+            uint32_t _index);
 
     /*!
      * @brief This function returns the value of member index
@@ -126,13 +131,15 @@ public:
      * @brief This function copies the value in member message
      * @param _message New value to be copied in member message
      */
-    eProsima_user_DllExport void message(const std::string &_message);
+    eProsima_user_DllExport void message(
+            const std::string& _message);
 
     /*!
      * @brief This function moves the value in member message
      * @param _message New value to be moved in member message
      */
-    eProsima_user_DllExport void message(std::string &&_message);
+    eProsima_user_DllExport void message(
+            std::string&& _message);
 
     /*!
      * @brief This function returns a constant reference to member message
@@ -200,9 +207,11 @@ public:
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
 private:
+
     uint32_t m_index;
     std::string m_message;
 };
