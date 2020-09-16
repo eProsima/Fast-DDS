@@ -33,7 +33,8 @@ class PDPClient2;
  * Class DSClientEvent2, TimedEvent used to synchronize discover-server clients
  *@ingroup DISCOVERY_MODULE
  */
-class DSClientEvent2 : public fastrtps::rtps::TimedEvent {
+class DSClientEvent2 : public fastrtps::rtps::TimedEvent
+{
 public:
 
     /**
@@ -41,13 +42,14 @@ public:
      * @param p_PDP Pointer to the PDPClient.
      * @param interval Interval in ms.
      */
-    DSClientEvent2(PDPClient2* p_PDP,
+    DSClientEvent2(
+            PDPClient2* p_PDP,
             double interval);
     ~DSClientEvent2();
 
     /**
-    * Method invoked when the event occurs.
-    */
+     * Method invoked when the event occurs.
+     */
     bool event();
 
     //!Pointer to the PDPClient2 object.
@@ -57,5 +59,5 @@ public:
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_DSCLIENTEVENT2_H_ */

@@ -93,7 +93,7 @@ public:
      * @param nf NetworkFactory used to make the translation
      */
     void transform_server_remote_locators(
-            NetworkFactory & nf);
+            NetworkFactory& nf);
 
     //!BuiltinAttributes of the builtin protocols.
     BuiltinAttributes m_att;
@@ -182,8 +182,8 @@ public:
 
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_BUILTINPROTOCOLS_H_ */
