@@ -59,7 +59,9 @@ public:
      * @param change Pointer to the change
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(CacheChange_t* change, size_t);
+    RTPS_DllAPI virtual bool received_change(
+            CacheChange_t* change,
+            size_t);
 
     /**
      * Add a CacheChange_t to the ReaderHistory.
@@ -117,8 +119,8 @@ protected:
     RTPSReader* mp_reader;
 };
 
-}
-} /* namespace rtps */
-} /* namespace eprosima */
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_READERHISTORY_H_ */
