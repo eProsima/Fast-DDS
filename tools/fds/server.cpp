@@ -46,6 +46,7 @@ void sigint_handler(int /*signum*/) {
     sigint_arrive.store(true);
     signal_cv->notify_all();
 
+    // it stops the handler because windows can close process when handler finishes
     unique_lock<mutex> lk(*signal_mutex);
     signal_cv->wait(lk, []{ return all_removed.load(); });
 }
@@ -54,12 +55,14 @@ void sigint_handler(int /*signum*/) {
 void signal_handler_function(Participant* pServer ) {
 
     // make thread ignore SIGINT
+#ifndef _WIN32
     sigset_t set;
     sigemptyset(&set);
     sigaddset(&set, SIGINT);
     pthread_sigmask(SIG_BLOCK, &set, NULL);
+#endif // _WIN32
 
-    // waits fot the signal free it
+    // waits for the handler to free mutex
     unique_lock<mutex> lk(*signal_mutex);
     signal_cv->wait(lk, []{ return sigint_arrive.load(); });
 
@@ -68,8 +71,9 @@ void signal_handler_function(Participant* pServer ) {
     fastdds::dds::Log::Flush();
     Domain::stopAll();
 
-    cout << endl << "Everything removed correctly" << endl;
+    // cout << endl << "Everything removed correctly" << endl;
 
+    // allows handler to finish
     all_removed.store(true);
     signal_cv->notify_all();
 }
@@ -255,7 +259,7 @@ int main (
 
         cout << "\n### Server is running ###" << std::endl;
 
-        // waits for clousere 
+        // waits for the program to close correctly 
         signal_handler_thread_.join();
 
         cout << "\n### Server shutted down ###" << std::endl;
