@@ -31,6 +31,7 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <cassert>
+#include <functional>
 #include <memory>
 #include <mutex>
 
