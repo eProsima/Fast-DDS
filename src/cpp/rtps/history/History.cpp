@@ -53,7 +53,7 @@ History::History(
         static_cast<uint32_t>(max_caches)
     };
 
-    payload_pool_ = BasicPayloadPool::get<>(att.memoryPolicy, att.payloadMaxSize);
+    payload_pool_ = BasicPayloadPool::get<>(pool_config);
 
     if ((att.memoryPolicy == PREALLOCATED_MEMORY_MODE) || (att.memoryPolicy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
     {

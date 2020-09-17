@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
-#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/history/PoolConfig.h>
 
 #include <memory>
 
@@ -39,6 +39,7 @@ namespace BasicPayloadPool {
 #include "./BasicPayloadPool_impl/PreallocatedWithRealloc.hpp"
 
 namespace {
+
 struct DefaultSizeGrowCalculator
 {
     uint32_t operator () (
@@ -49,19 +50,19 @@ struct DefaultSizeGrowCalculator
     }
 
 };
+
 } // namespace
 
 template <class SizeGrowCalculator = DefaultSizeGrowCalculator>
 std::shared_ptr<IPayloadPool> get(
-        MemoryManagementPolicy_t policy,
-        uint32_t payload_size)
+        PoolConfig config)
 {
-    switch (policy)
+    switch (config.memory_policy)
     {
         case PREALLOCATED_MEMORY_MODE:
-            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_MEMORY_MODE> >(payload_size);
+            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(payload_size);
+            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(config.payload_initial_size);
         case DYNAMIC_RESERVE_MEMORY_MODE:
             return std::make_shared<Impl<SizeGrowCalculator, DYNAMIC_RESERVE_MEMORY_MODE> >();
         case DYNAMIC_REUSABLE_MEMORY_MODE:
