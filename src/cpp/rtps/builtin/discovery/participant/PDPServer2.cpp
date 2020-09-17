@@ -132,8 +132,8 @@ bool PDPServer2::createPDPEndpoints()
     logInfo(RTPS_PDP, "Beginning PDPServer Endpoints creation");
 
     /***********************************
-     * PDP READER
-     ***********************************/
+    * PDP READER
+    ***********************************/
     // PDP Reader History
     HistoryAttributes hatt;
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
@@ -174,8 +174,8 @@ bool PDPServer2::createPDPEndpoints()
     }
 
     /***********************************
-     * PDP WRITER
-     ***********************************/
+    * PDP WRITER
+    ***********************************/
 
     // PDP Writer History
     hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
