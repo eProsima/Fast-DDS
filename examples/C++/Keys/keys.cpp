@@ -18,6 +18,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+constexpr int max_instances = 5;
+
 //Enums and configuration structure
 enum Reliability_type
 {
@@ -251,7 +253,7 @@ void keys()
     sample my_sample;
     SampleInfo_t sample_info;
     PubListener pubListener;
-    InstanceHandle_t key_instances[5];
+    InstanceHandle_t key_instances[max_instances];
 
     Publisher* myPub = initPublisher(sampleType, pubListener);
     Subscriber* mySub = initSubscriber(sampleType, nullptr);
@@ -263,18 +265,18 @@ void keys()
                 return pubListener.n_matched > 0;
             });
 
-    // Registering 5 instances.
-    for (uint8_t i = 0; i < 5; i++)
+    // Registering 'max_instances' instances.
+    for (int i = 0; i < max_instances; i++)
     {
         my_sample.key_value(i + 1);
         key_instances[i] = myPub->register_instance(&my_sample);
     }
 
     //Send 10 samples
-    std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
-    for (uint8_t i = 0; i < 5; i++)
+    std::cout << "Publishing " << max_instances << " keys, 10 samples per key..." << std::endl;
+    for (int i = 0; i < max_instances; i++)
     {
-        for (uint8_t j = 0; j < 10; j++)
+        for (int j = 0; j < 10; j++)
         {
             my_sample.index(j + 1);
             my_sample.key_value(i + 1);
@@ -302,7 +304,7 @@ void keys()
         sampleList.push_back(std::pair<int, int>(my_sample.index(), my_sample.key_value()));
     }
 
-    for (int key = 1; key <= 5; key++)
+    for (int key = 1; key <= max_instances; key++)
     {
         std::cout << "  On key " << std::to_string(key) << ": ";
         for (std::pair<int, int> n : sampleList)
@@ -317,7 +319,7 @@ void keys()
     std::cout << std::endl;
 
     std::cout << "Disposing all keys ..." << std::endl;
-    for (uint8_t i = 0; i < 5; i++)
+    for (int i = 0; i < max_instances; i++)
     {
         my_sample.key_value(i + 1);
         myPub->dispose(&my_sample, key_instances[i]);
@@ -329,7 +331,7 @@ void keys()
     {
         if (ChangeKind_t::NOT_ALIVE_DISPOSED == sample_info.sampleKind)
         {
-            for (uint8_t i = 0; i < 5; i++)
+            for (int i = 0; i < max_instances; i++)
             {
                 if (key_instances[i] == sample_info.iHandle)
                 {
@@ -361,16 +363,16 @@ void publisherKeys()
                 return pubListener.n_matched > 0;
             });
 
-    // Registering 5 instances.
-    for (uint8_t i = 0; i < 5; i++)
+    // Registering 'max_instances' instances.
+    for (int i = 0; i < max_instances; i++)
     {
         my_sample.key_value(i + 1);
         myPub->register_instance(&my_sample);
     }
 
     //Send 10 samples
-    std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
-    for (uint8_t i = 0; i < 5; i++)
+    std::cout << "Publishing " << max_instances << " keys, 10 samples per key..." << std::endl;
+    for (int i = 0; i < max_instances; i++)
     {
         for (uint8_t j = 0; j < 10; j++)
         {
