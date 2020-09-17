@@ -19,7 +19,9 @@
 #ifndef _FASTDDS_RTPS_CACHECHANGEPOOL_H_
 #define _FASTDDS_RTPS_CACHECHANGEPOOL_H_
 
+#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/PoolConfig.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 #include <vector>
@@ -30,8 +32,6 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-struct CacheChange_t;
 
 /**
  * Class CacheChangePool, used by the HistoryCache to pre-reserve a number of CacheChange_t to avoid dynamically
@@ -46,32 +46,24 @@ public:
 
     /**
      * Constructor.
-     * @param initial_pool_size  Initial number of elements in the pool.
-     * @param max_pool_size      Maximum number of elements in the pool. If set to 0 the pool will keep reserving until something breaks.
-     * @param memory_policy      Memory management policy.
-     * @param f                  Functor to be called on all preallocated elements.
+     * @param config   Pool configuration.
+     * @param f        Functor to be called on all preallocated elements.
      */
     template<class UnaryFunction>
     CacheChangePool(
-            int32_t initial_pool_size,
-            int32_t max_pool_size,
-            MemoryManagementPolicy_t memory_policy,
+            const PoolConfig& config,
             UnaryFunction f)
-        : CacheChangePool(initial_pool_size, max_pool_size, memory_policy)
+        : CacheChangePool(config)
     {
         std::for_each(all_caches_.begin(), all_caches_.end(), f);
     }
 
     /**
      * Constructor.
-     * @param initial_pool_size  Initial number of elements in the pool.
-     * @param max_pool_size      Maximum number of elements in the pool. If set to 0 the pool will keep reserving until something breaks.
-     * @param memory_policy      Memory management policy.
+     * @param config  Pool configuration.
      */
     CacheChangePool(
-            int32_t initial_pool_size,
-            int32_t max_pool_size,
-            MemoryManagementPolicy_t memory_policy);
+            const PoolConfig& config);
 
     bool reserve_cache(
             CacheChange_t*& cache_change) override;

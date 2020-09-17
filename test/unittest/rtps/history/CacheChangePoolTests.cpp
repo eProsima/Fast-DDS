@@ -13,8 +13,10 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
-#include <fastrtps/rtps/history/CacheChangePool.h>
-#include <fastrtps/rtps/common/CacheChange.h>
+
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/history/CacheChangePool.h>
 
 #include <tuple>
 
@@ -22,7 +24,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
 
-class CacheChangePoolTests : public TestWithParam<tuple<int32_t, int32_t, MemoryManagementPolicy_t> >
+class CacheChangePoolTests : public TestWithParam<tuple<uint32_t, uint32_t, MemoryManagementPolicy_t> >
 {
 protected:
 
@@ -44,10 +46,9 @@ protected:
         max_pool_size = get<1>(GetParam());
         memory_policy = get<2>(GetParam());
 
-        pool = new CacheChangePool(
-            pool_size,
-            max_pool_size,
-            memory_policy);
+        PoolConfig config{ memory_policy, 0, pool_size, max_pool_size };
+
+        pool = new CacheChangePool(config);
     }
 
     virtual void TearDown()
@@ -57,8 +58,8 @@ protected:
 
     CacheChangePool* pool;
 
-    int32_t pool_size;
-    int32_t max_pool_size;
+    uint32_t pool_size;
+    uint32_t max_pool_size;
     MemoryManagementPolicy_t memory_policy;
 };
 

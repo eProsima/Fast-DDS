@@ -24,6 +24,7 @@
 #include <mutex>
 #include <cstring>
 #include <cassert>
+#include <limits>
 
 namespace eprosima {
 namespace fastrtps {
@@ -41,12 +42,13 @@ CacheChangePool::~CacheChangePool()
 }
 
 CacheChangePool::CacheChangePool(
-        int32_t pool_size,
-        int32_t max_pool_size,
-        MemoryManagementPolicy_t memoryPolicy)
-    : memory_mode_(memoryPolicy)
+        const PoolConfig& config)
+    : memory_mode_(config.memory_policy)
 {
-    //Common for all modes: Set the payload size (maximum allowed), size and size limit
+    // Common for all modes: Set the pool size and size limit
+    uint32_t pool_size = config.initial_size;
+    uint32_t max_pool_size = config.maximum_size;
+
     ++pool_size;
     logInfo(RTPS_UTILS, "Creating CacheChangePool of size: " << pool_size);
 
@@ -55,16 +57,16 @@ CacheChangePool::CacheChangePool(
     {
         if (pool_size > max_pool_size)
         {
-            max_pool_size_ = (uint32_t)abs(pool_size);
+            max_pool_size_ = pool_size;
         }
         else
         {
-            max_pool_size_ = (uint32_t)abs(max_pool_size + 1);
+            max_pool_size_ = max_pool_size + 1;
         }
     }
     else
     {
-        max_pool_size_ = 0;
+        max_pool_size_ = std::numeric_limits<uint32_t>::max();
     }
 
     switch (memory_mode_)
@@ -113,7 +115,7 @@ bool CacheChangePool::allocateGroup(
     logInfo(RTPS_UTILS, "Allocating group of cache changes of size: " << group_size);
 
     uint32_t desired_size = current_pool_size_ + group_size;
-    if (max_pool_size_ > 0 && desired_size > max_pool_size_)
+    if (desired_size > max_pool_size_)
     {
         desired_size = max_pool_size_;
         group_size = max_pool_size_ - current_pool_size_;
@@ -159,7 +161,7 @@ CacheChange_t* CacheChangePool::allocateSingle()
     assert(memory_mode_ == DYNAMIC_RESERVE_MEMORY_MODE ||
             memory_mode_ == DYNAMIC_REUSABLE_MEMORY_MODE);
 
-    if ((max_pool_size_ == 0) || (current_pool_size_ < max_pool_size_))  //If no limit or current changes < max changes
+    if (current_pool_size_ < max_pool_size_)
     {
         ++current_pool_size_;
         ch = new CacheChange_t();

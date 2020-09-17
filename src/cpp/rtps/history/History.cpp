@@ -42,8 +42,16 @@ History::History(
     , mp_mutex(nullptr)
 
 {
+    int32_t max_caches = std::max(att.maximumReservedCaches, 0);
     int32_t initial_caches = std::max(att.initialReservedCaches, 0);
     m_changes.reserve(static_cast<size_t>(initial_caches));
+
+    PoolConfig pool_config
+    {
+        att.memoryPolicy, att.payloadMaxSize,
+        static_cast<uint32_t>(initial_caches),
+        static_cast<uint32_t>(max_caches)
+    };
 
     payload_pool_ = BasicPayloadPool::get<>(att.memoryPolicy, att.payloadMaxSize);
 
@@ -58,15 +66,11 @@ History::History(
             }
         };
 
-        change_pool_ =
-                std::make_shared<CacheChangePool>(att.initialReservedCaches,
-                        att.maximumReservedCaches, att.memoryPolicy, init_cache);
+        change_pool_ = std::make_shared<CacheChangePool>(pool_config, init_cache);
     }
     else
     {
-        change_pool_ =
-                std::make_shared<CacheChangePool>(att.initialReservedCaches,
-                        att.maximumReservedCaches, att.memoryPolicy);
+        change_pool_ = std::make_shared<CacheChangePool>(pool_config);
     }
 }
 

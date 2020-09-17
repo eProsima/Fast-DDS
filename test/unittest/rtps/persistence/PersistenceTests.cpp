@@ -91,8 +91,8 @@ TEST_F(PersistenceTest, Writer)
             {
                 item->serializedPayload.reserve(128);
             };
-    auto pool =
-            std::make_shared<CacheChangePool>(10, 0, MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE, init_cache);
+    PoolConfig cfg{ MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE, 0, 10, 0 };
+    auto pool = std::make_shared<CacheChangePool>(cfg, init_cache);
     SequenceNumber_t max_seq;
     CacheChange_t change;
     GUID_t guid(GuidPrefix_t::unknown(), 1U);
