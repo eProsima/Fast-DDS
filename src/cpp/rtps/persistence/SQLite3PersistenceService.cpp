@@ -173,7 +173,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             identity.writer_guid(writer_guid);
             identity.sequence_number().high = static_cast<int32_t>((sn >> 32) & 0xFFFFFFFF);
             identity.sequence_number().low = static_cast<uint32_t>(sn & 0xFFFFFFFF);
-            if (!payload_pool->get_payload(size, identity, *change))
+            if (!payload_pool->get_payload(size, *change))
             {
                 change_pool->release_cache(change);
                 continue;

@@ -25,7 +25,6 @@ class NoOpPayloadPool : public IPayloadPool
 {
     virtual bool get_payload(
             uint32_t,
-            const SampleIdentity&,
             CacheChange_t&) override
     {
         return true;
@@ -33,6 +32,7 @@ class NoOpPayloadPool : public IPayloadPool
 
     virtual bool get_payload(
             const SerializedPayload_t&,
+            const IPayloadPool*,
             CacheChange_t&) override
     {
         return true;
