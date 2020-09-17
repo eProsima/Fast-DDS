@@ -25,7 +25,7 @@ enum  optionIndex
     SERVERID,
     IPADDRESS,
     PORT,
-    BACKUP,
+    BACKUP
 };
 
 struct Arg : public option::Arg

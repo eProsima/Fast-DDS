@@ -96,9 +96,6 @@ int main (
 
     signal_cv = &cv;
     signal_mutex = &m;
-
-    // handle signal SIGINT for every thread
-    signal(SIGINT, sigint_handler);
     
 
     // check the command line options
@@ -256,6 +253,9 @@ int main (
 
         // throw a thread to erase info
         thread signal_handler_thread_(signal_handler_function, pServer);
+
+        // handle signal SIGINT for every thread
+        signal(SIGINT, sigint_handler);
 
         cout << "\n### Server is running ###" << std::endl;
 
