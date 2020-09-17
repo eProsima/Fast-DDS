@@ -51,7 +51,7 @@ public:
      *
      * @returns whether the operation succeeded or not
      *
-     * @post 
+     * @post
      *     @li Field @c payload_owner of @c cache_change equals this
      *     @li Field @c serializedPayload.data points to a buffer of at least @c size bytes
      *     @li Field @c serializedPayload.max_size is greater than or equal to @c size
