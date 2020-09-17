@@ -49,8 +49,7 @@ History::History(
     auto init_cache = [this](
         CacheChange_t* item)
             {
-                SampleIdentity sample_identity;
-                payload_pool_->get_payload(m_att.payloadMaxSize, sample_identity, *item);
+                payload_pool_->get_payload(m_att.payloadMaxSize, *item);
             };
 
     change_pool_ = std::make_shared<CacheChangePool>(att.initialReservedCaches,

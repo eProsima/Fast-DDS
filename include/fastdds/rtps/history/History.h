@@ -76,10 +76,9 @@ public:
         CacheChange_t* reserved_change = nullptr;
         if (change_pool_->reserve_cache(reserved_change))
         {
-            SampleIdentity sample_identity;
             uint32_t payload_size = m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE ?
                     max_payload_size_ : calculateSizeFunc();
-            if (payload_pool_->get_payload(payload_size, sample_identity, *reserved_change))
+            if (payload_pool_->get_payload(payload_size, *reserved_change))
             {
                 *change = reserved_change;
                 return true;

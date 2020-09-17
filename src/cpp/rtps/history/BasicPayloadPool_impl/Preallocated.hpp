@@ -29,7 +29,6 @@ public:
 
     bool get_payload(
             uint32_t /* size */,
-            const SampleIdentity& /* sample_identity */,
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.reserve(payload_size_);
@@ -38,6 +37,7 @@ public:
 
     bool get_payload(
             const SerializedPayload_t& data,
+            const IPayloadPool* /* data_owner */,
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.reserve(payload_size_);

@@ -29,7 +29,6 @@ public:
 
     bool get_payload(
             uint32_t size,
-            const SampleIdentity& /* sample_identity */,
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.reserve(std::max(size, min_payload_size_));
