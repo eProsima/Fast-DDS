@@ -42,7 +42,8 @@ History::History(
     , mp_mutex(nullptr)
 
 {
-    m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
+    int32_t initial_caches = std::max(att.initialReservedCaches, 0);
+    m_changes.reserve(static_cast<size_t>(initial_caches));
 
     payload_pool_ = BasicPayloadPool::get<>(att.memoryPolicy, att.payloadMaxSize);
 
