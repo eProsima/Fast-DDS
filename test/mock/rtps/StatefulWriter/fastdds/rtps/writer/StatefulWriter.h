@@ -93,7 +93,8 @@ public:
         return mp_history->next_sequence_number();
     }
 
-    void reader_data_filter(fastdds::rtps::IReaderDataFilter* reader_data_filter)
+    void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* reader_data_filter)
     {
         reader_data_filter_ = reader_data_filter;
     }

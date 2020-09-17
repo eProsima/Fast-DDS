@@ -36,11 +36,14 @@ class PDPDataFilter
     : public IReaderDataFilter
 {
 public:
-    bool is_relevant(const fastrtps::rtps::CacheChange_t& change,
+
+    bool is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const override
     {
         return static_cast<const DiscoveryDataBase*>(this)->pdp_is_relevant(change, reader_guid);
     }
+
 };
 
 /**
@@ -55,11 +58,14 @@ class EDPDataFilter
     : public IReaderDataFilter
 {
 public:
-    bool is_relevant(const fastrtps::rtps::CacheChange_t& change,
+
+    bool is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const override
     {
         return static_cast<const DiscoveryDataBase*>(this)->edp_publications_is_relevant(change, reader_guid);
     }
+
 };
 
 /**
@@ -71,11 +77,14 @@ class EDPDataFilter<DiscoveryDataBase, false>
     : public IReaderDataFilter
 {
 public:
-    bool is_relevant(const fastrtps::rtps::CacheChange_t& change,
+
+    bool is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const override
     {
         return static_cast<const DiscoveryDataBase*>(this)->edp_subscriptions_is_relevant(change, reader_guid);
     }
+
 };
 
 } /* namespace rtps */

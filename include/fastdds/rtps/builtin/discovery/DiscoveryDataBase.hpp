@@ -36,7 +36,9 @@ class DiscoveryDataBase
     , public EDPDataFilter<DiscoveryDataBase, false>
 {
 public:
-    bool pdp_is_relevant(const fastrtps::rtps::CacheChange_t& change,
+
+    bool pdp_is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const
     {
         (void)change;
@@ -44,7 +46,8 @@ public:
         return true;
     }
 
-    bool edp_publications_is_relevant(const fastrtps::rtps::CacheChange_t& change,
+    bool edp_publications_is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const
     {
         (void)change;
@@ -52,13 +55,15 @@ public:
         return true;
     }
 
-    bool edp_subscriptions_is_relevant(const fastrtps::rtps::CacheChange_t& change,
+    bool edp_subscriptions_is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const
     {
         (void)change;
         (void)reader_guid;
         return true;
     }
+
 };
 
 } /* namespace rtps */

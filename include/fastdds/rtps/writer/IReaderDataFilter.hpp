@@ -41,13 +41,15 @@ public:
      * @param change The CacheChange_t to be evaluated
      * @return true if relevant, false otherwise.
      */
-    virtual bool is_relevant(const fastrtps::rtps::CacheChange_t& change,
+    virtual bool is_relevant(
+            const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const
     {
         (void)change;
         (void)reader_guid;
         return true;
     }
+
 };
 
 } /* namespace rtps */
