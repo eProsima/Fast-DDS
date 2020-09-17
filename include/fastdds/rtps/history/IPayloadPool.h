@@ -51,9 +51,10 @@ public:
      *
      * @returns whether the operation succeeded or not
      *
-     * @post @li Field @c payload_owner of @c cache_change equals this
-     * @post @li Field @c serializedPayload.data points to a buffer of at least @c size bytes
-     * @post @li Field @c serializedPayload.max_size is greater than or equal to @c size
+     * @post 
+     *     @li Field @c payload_owner of @c cache_change equals this
+     *     @li Field @c serializedPayload.data points to a buffer of at least @c size bytes
+     *     @li Field @c serializedPayload.max_size is greater than or equal to @c size
      */
     virtual bool get_payload(
             uint32_t size,
@@ -70,9 +71,10 @@ public:
      *
      * @returns whether the operation succeeded or not
      *
-     * @post @li Field @c payload_owner of @c cache_change equals this
-     * @post @li Field @c serializedPayload.data points to a buffer of at least @c data.length bytes
-     * @post @li Field @c serializedPayload.max_size is greater than or equal to @c data.length
+     * @post
+     *     @li Field @c payload_owner of @c cache_change equals this
+     *     @li Field @c serializedPayload.data points to a buffer of at least @c data.length bytes
+     *     @li Field @c serializedPayload.max_size is greater than or equal to @c data.length
      */
     virtual bool get_payload(
             const SerializedPayload_t& data,
