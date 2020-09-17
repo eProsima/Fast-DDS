@@ -92,7 +92,7 @@ public:
      *
      * @pre @li Field @c payload_owner of @c cache_change equals this
      *
-     * @post @li Field @c payload_owner of @c cache_change is
+     * @post @li Field @c payload_owner of @c cache_change is @c nullptr
      */
     virtual bool release_payload(
             CacheChange_t& cache_change) = 0;
