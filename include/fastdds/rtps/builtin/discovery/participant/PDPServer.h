@@ -27,6 +27,7 @@
 
 // TODO: remove when the Writer API issue is resolved
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/discovery/DiscoveryDataBase.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -60,6 +61,8 @@ class PDPServer : public PDP
     //! Temporary locator list to solve new Writer API issue
     // TODO: remove when the Writer API issue is resolved
     std::map<GUID_t, ReaderProxyData> clients_;
+
+    fastdds::rtps::DiscoveryDataBase discovery_database_;
 
 public:
 

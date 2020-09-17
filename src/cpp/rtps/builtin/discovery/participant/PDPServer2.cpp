@@ -50,6 +50,7 @@ PDPServer2::PDPServer2(
         const RTPSParticipantAllocationAttributes& allocation)
     : PDP(builtin, allocation)
     , mp_sync(nullptr)
+    , pdp_filter_(static_cast<PDPDataFilter<DiscoveryDataBase>*>(&discovery_db))
 {
 
 }
@@ -128,6 +129,91 @@ ParticipantProxyData* PDPServer2::createParticipantProxyData(
 
 bool PDPServer2::createPDPEndpoints()
 {
+    logInfo(RTPS_PDP, "Beginning PDPServer Endpoints creation");
+
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+
+    /***********************************
+     * PDP READER
+     ***********************************/
+    // PDP Reader History
+    HistoryAttributes hatt;
+    hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
+    hatt.initialReservedCaches = pdp_initial_reserved_caches;
+    hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
+    mp_PDPReaderHistory = new ReaderHistory(hatt);
+
+    // PDP Reader Attributes
+    ReaderAttributes ratt;
+    ratt.expectsInlineQos = false;
+    ratt.endpoint.endpointKind = READER;
+    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.topicKind = WITH_KEY;
+    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    ratt.endpoint.reliabilityKind = RELIABLE;
+    ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+
+    // PDP Listener
+    mp_listener = new PDPServerListener2(this);
+
+    // Create PDP Reader
+    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory,
+            mp_listener, c_EntityId_SPDPReader, true, false))
+    {
+        // Enable unknown clients to reach this reader
+        mp_PDPReader->enableMessagesFromUnkownWriters(true);
+    }
+    // Could not create PDP Reader, so return false
+    else
+    {
+        logError(RTPS_PDP, "PDPServer Reader creation failed");
+        delete(mp_PDPReaderHistory);
+        mp_PDPReaderHistory = nullptr;
+        delete(mp_listener);
+        mp_listener = nullptr;
+        return false;
+    }
+
+    /***********************************
+     * PDP WRITER
+     ***********************************/
+
+    // PDP Writer History
+    hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
+    hatt.initialReservedCaches = pdp_initial_reserved_caches;
+    hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
+    mp_PDPWriterHistory = new WriterHistory(hatt);
+
+    // PDP Writer Attributes
+    WriterAttributes watt;
+    watt.endpoint.endpointKind = WRITER;
+    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    watt.endpoint.reliabilityKind = RELIABLE;
+    watt.endpoint.topicKind = WITH_KEY;
+    watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+    watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    watt.times.heartbeatPeriod = pdp_heartbeat_period;
+    watt.times.nackResponseDelay = pdp_nack_response_delay;
+    watt.times.nackSupressionDuration = pdp_nack_supression_duration;
+    watt.mode = ASYNCHRONOUS_WRITER;
+
+    // Create PDP Writer
+    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory,
+            nullptr, c_EntityId_SPDPWriter, true))
+    {
+        // Set pdp filter to writer
+        static_cast<StatefulWriter*>(mp_PDPWriter)->reader_data_filter(pdp_filter_);
+    }
+    // Could not create PDP Writer, so return false
+    else
+    {
+        logError(RTPS_PDP, "PDPServer Writer creation failed");
+        delete(mp_PDPWriterHistory);
+        mp_PDPWriterHistory = nullptr;
+        return false;
+    }
+    logInfo(RTPS_PDP, "PDPServer Endpoints creation finished");
     return true;
 }
 

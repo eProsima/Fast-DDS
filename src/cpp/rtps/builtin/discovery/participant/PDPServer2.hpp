@@ -22,6 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/builtin/discovery/DiscoveryDataFilter.hpp>
+#include <fastdds/rtps/builtin/discovery/DiscoveryDataBase.hpp>
 #include "./DServerEvent2.hpp"
 
 // To be eventually removed together with eprosima::fastrtps
@@ -124,12 +126,18 @@ public:
         mp_sync->restart_timer();
     }
 
+    //! Discovery database
+    fastdds::rtps::DiscoveryDataBase discovery_db;
+
 private:
 
     /**
      * TimedEvent for server synchronization
      */
     DServerEvent2* mp_sync;
+
+    //! PDP writer filter
+    IReaderDataFilter* pdp_filter_;
 };
 
 } // namespace rtps
