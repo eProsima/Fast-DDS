@@ -131,8 +131,6 @@ bool PDPServer2::createPDPEndpoints()
 {
     logInfo(RTPS_PDP, "Beginning PDPServer Endpoints creation");
 
-    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-
     /***********************************
      * PDP READER
      ***********************************/
