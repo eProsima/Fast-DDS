@@ -25,6 +25,7 @@ public:
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.empty();
+        cache_change.payload_owner(nullptr);
 
         return true;
     }

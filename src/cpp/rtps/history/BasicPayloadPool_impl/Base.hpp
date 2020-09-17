@@ -23,6 +23,7 @@ class BaseImpl : public IPayloadPool
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.reserve(size);
+        cache_change.payload_owner(this);
         return true;
     }
 
@@ -31,14 +32,22 @@ class BaseImpl : public IPayloadPool
             const IPayloadPool* /* data_owner */,
             CacheChange_t& cache_change) override
     {
-        return cache_change.serializedPayload.copy(&data, false);
+        if (cache_change.serializedPayload.copy(&data, false))
+        {
+            cache_change.payload_owner(this);
+            return true;
+        }
+        return false;
     }
 
     bool release_payload(
             CacheChange_t& cache_change) override
     {
+        assert(cache_change.payload_owner() == this);
+
         cache_change.serializedPayload.length = 0;
         cache_change.serializedPayload.pos = 0;
+        cache_change.payload_owner(nullptr);
 
         return true;
     }

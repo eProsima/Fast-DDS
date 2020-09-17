@@ -32,6 +32,7 @@ public:
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.reserve(std::max(size, min_payload_size_));
+        cache_change.payload_owner(this);
         return true;
     }
 

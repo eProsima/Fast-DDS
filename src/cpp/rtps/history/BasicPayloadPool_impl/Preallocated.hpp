@@ -32,6 +32,7 @@ public:
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.reserve(payload_size_);
+        cache_change.payload_owner(this);
         return true;
     }
 
@@ -41,7 +42,13 @@ public:
             CacheChange_t& cache_change) override
     {
         cache_change.serializedPayload.reserve(payload_size_);
-        return cache_change.serializedPayload.copy(&data, true);
+        if (cache_change.serializedPayload.copy(&data, true))
+        {
+            cache_change.payload_owner(this);
+            return true;
+        }
+
+        return false;
     }
 
 private:
