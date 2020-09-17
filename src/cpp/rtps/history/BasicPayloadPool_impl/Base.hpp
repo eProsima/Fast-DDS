@@ -54,10 +54,7 @@ class BaseImpl : public IPayloadPool
 
 };
 
-template <
-    class SizeGrowCalculator,
-    MemoryManagementPolicy_t policy_>
+template <MemoryManagementPolicy_t policy_>
 class Impl : public BaseImpl
 {
 };
-

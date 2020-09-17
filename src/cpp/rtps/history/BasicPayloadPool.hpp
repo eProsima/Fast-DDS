@@ -38,35 +38,19 @@ namespace BasicPayloadPool {
 #include "./BasicPayloadPool_impl/Preallocated.hpp"
 #include "./BasicPayloadPool_impl/PreallocatedWithRealloc.hpp"
 
-namespace {
-
-struct DefaultSizeGrowCalculator
-{
-    uint32_t operator () (
-            uint32_t current_size,
-            uint32_t /*max_size*/) const
-    {
-        return (current_size / 10u) + 10u;
-    }
-
-};
-
-} // namespace
-
-template <class SizeGrowCalculator = DefaultSizeGrowCalculator>
 std::shared_ptr<IPayloadPool> get(
         PoolConfig config)
 {
     switch (config.memory_policy)
     {
         case PREALLOCATED_MEMORY_MODE:
-            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
+            return std::make_shared<Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            return std::make_shared<Impl<SizeGrowCalculator, PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(config.payload_initial_size);
+            return std::make_shared<Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(config.payload_initial_size);
         case DYNAMIC_RESERVE_MEMORY_MODE:
-            return std::make_shared<Impl<SizeGrowCalculator, DYNAMIC_RESERVE_MEMORY_MODE> >();
+            return std::make_shared<Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
         case DYNAMIC_REUSABLE_MEMORY_MODE:
-            return std::make_shared<Impl<SizeGrowCalculator, DYNAMIC_REUSABLE_MEMORY_MODE> >();
+            return std::make_shared<Impl<DYNAMIC_REUSABLE_MEMORY_MODE> >();
     }
 
     return nullptr;

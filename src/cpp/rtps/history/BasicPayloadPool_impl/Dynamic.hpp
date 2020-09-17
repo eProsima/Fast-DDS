@@ -16,8 +16,8 @@
  * @file Dynamic.hpp
  */
 
-template <class SizeGrowCalculator>
-class Impl<SizeGrowCalculator, DYNAMIC_RESERVE_MEMORY_MODE> : public BaseImpl
+template <>
+class Impl<DYNAMIC_RESERVE_MEMORY_MODE> : public BaseImpl
 {
 public:
 

@@ -16,8 +16,8 @@
  * @file Preallocated.hpp
  */
 
-template <class SizeGrowCalculator>
-class Impl<SizeGrowCalculator, PREALLOCATED_MEMORY_MODE> : public BaseImpl
+template <>
+class Impl<PREALLOCATED_MEMORY_MODE> : public BaseImpl
 {
 public:
 
