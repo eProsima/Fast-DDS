@@ -26,9 +26,13 @@
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
 
+#include <cassert>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+class IPayloadPool;
 
 /**
  * @enum ChangeKind_t, different types of CacheChange_t.
@@ -72,9 +76,7 @@ struct RTPS_DllAPI CacheChange_t
      * @brief Default constructor.
      * Creates an empty CacheChange_t.
      */
-    CacheChange_t()
-    {
-    }
+    CacheChange_t() = default;
 
     CacheChange_t(
             const CacheChange_t&) = delete;
@@ -141,6 +143,7 @@ struct RTPS_DllAPI CacheChange_t
 
     ~CacheChange_t()
     {
+        assert(payload_owner_ == nullptr);
     }
 
     /*!
@@ -273,6 +276,17 @@ struct RTPS_DllAPI CacheChange_t
         return is_fully_assembled();
     }
 
+    IPayloadPool const* payload_owner() const
+    {
+        return payload_owner_;
+    }
+
+    void payload_owner(
+            IPayloadPool* owner)
+    {
+        payload_owner_ = owner;
+    }
+
 private:
 
     // Fragment size
@@ -283,6 +297,9 @@ private:
 
     // First fragment in missing list
     uint32_t first_missing_fragment_ = 0;
+
+    // Pool that created the payload of this cache change
+    IPayloadPool* payload_owner_ = nullptr;
 
     uint32_t get_next_missing_fragment(
             uint32_t fragment_index)
