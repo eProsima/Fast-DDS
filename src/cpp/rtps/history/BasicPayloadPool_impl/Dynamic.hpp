@@ -24,6 +24,8 @@ public:
     bool release_payload(
             CacheChange_t& cache_change) override
     {
+        assert(cache_change.payload_owner() == this);
+
         cache_change.serializedPayload.empty();
         cache_change.payload_owner(nullptr);
 

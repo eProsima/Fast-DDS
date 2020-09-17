@@ -234,9 +234,10 @@ protected:
     //!Variable to know if the history is full without needing to block the History mutex.
     bool m_isHistoryFull;
 
+    std::shared_ptr<IPayloadPool> payload_pool_;
+
     //!Pool of cache changes reserved when the History is created.
     std::shared_ptr<IChangePool> change_pool_;
-    std::shared_ptr<IPayloadPool> payload_pool_;
 
     uint32_t max_payload_size_;
 

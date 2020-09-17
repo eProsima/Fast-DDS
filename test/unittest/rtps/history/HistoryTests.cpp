@@ -58,6 +58,7 @@ protected:
             }
 
             m_changes.erase(it, m_changes.end());
+            do_release_cache(ch);
             return true;
         }
 

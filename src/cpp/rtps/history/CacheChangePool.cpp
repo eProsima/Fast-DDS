@@ -33,10 +33,10 @@ CacheChangePool::~CacheChangePool()
 {
     logInfo(RTPS_UTILS, "ChangePool destructor");
 
-    //Deletion process does not depend on the memory management policy
-    for (std::vector<CacheChange_t*>::iterator it = all_caches_.begin(); it != all_caches_.end(); ++it)
+    // Deletion process does not depend on the memory management policy
+    for (CacheChange_t* cache : all_caches_)
     {
-        delete(*it);
+        delete(cache);
     }
 }
 

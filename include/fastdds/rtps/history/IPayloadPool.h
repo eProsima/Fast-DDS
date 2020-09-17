@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_
 #define _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 
 #include <cstdint>
 #include <memory>
@@ -27,6 +27,8 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+struct CacheChange_t;
 
 /**
  * An interface for classes responsible of serialized payload management.

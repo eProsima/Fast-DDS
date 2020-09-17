@@ -28,11 +28,12 @@
 
 #include <cassert>
 
+#include <fastdds/rtps/history/IPayloadPool.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class IPayloadPool;
 
 /**
  * @enum ChangeKind_t, different types of CacheChange_t.
@@ -143,6 +144,10 @@ struct RTPS_DllAPI CacheChange_t
 
     ~CacheChange_t()
     {
+        if (payload_owner_ != nullptr)
+        {
+            payload_owner_->release_payload(*this);
+        }
         assert(payload_owner_ == nullptr);
     }
 

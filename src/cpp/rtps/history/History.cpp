@@ -60,12 +60,22 @@ History::History(
 History::~History()
 {
     logInfo(RTPS_HISTORY, "");
+
+    for (auto change : m_changes)
+    {
+        do_release_cache(change);
+    }
+
+    // As releasing the change pool will delete the cache changes it owns,
+    // the payload pool may be called to release their payloads, so we should
+    // ensure that the payload pool is destroyed after the change pool.
+    change_pool_.reset();
+    payload_pool_.reset();
 }
 
 void History::do_release_cache(
         CacheChange_t* ch)
 {
-    // TODO (Miguel C): Should use payload pool reference from payload
     payload_pool_->release_payload(*ch);
     change_pool_->release_cache(ch);
 }
