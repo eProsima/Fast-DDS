@@ -41,18 +41,24 @@ static condition_variable* signal_cv {nullptr};
 static atomic_bool sigint_arrive {false};
 static atomic_bool all_removed {false};
 
-void sigint_handler(int /*signum*/) {
+void sigint_handler(
+        int /*signum*/)
+{
 
     sigint_arrive.store(true);
     signal_cv->notify_all();
 
     // it stops the handler because windows can close process when handler finishes
     unique_lock<mutex> lk(*signal_mutex);
-    signal_cv->wait(lk, []{ return all_removed.load(); });
+    signal_cv->wait(lk, []
+            {
+                return all_removed.load();
+            });
 }
 
-
-void signal_handler_function(Participant* pServer ) {
+void signal_handler_function(
+        Participant* pServer )
+{
 
     // make thread ignore SIGINT
 #ifndef _WIN32
@@ -64,10 +70,13 @@ void signal_handler_function(Participant* pServer ) {
 
     // waits for the handler to free mutex
     unique_lock<mutex> lk(*signal_mutex);
-    signal_cv->wait(lk, []{ return sigint_arrive.load(); });
+    signal_cv->wait(lk, []
+            {
+                return sigint_arrive.load();
+            });
 
     // Properly close the library
-    Domain::removeParticipant(pServer);    
+    Domain::removeParticipant(pServer);
     fastdds::dds::Log::Flush();
     Domain::stopAll();
 
@@ -96,7 +105,7 @@ int main (
 
     signal_cv = &cv;
     signal_mutex = &m;
-    
+
 
     // check the command line options
     if (parse.error())
@@ -259,7 +268,7 @@ int main (
 
         cout << "\n### Server is running ###" << std::endl;
 
-        // waits for the program to close correctly 
+        // waits for the program to close correctly
         signal_handler_thread_.join();
 
         cout << "\n### Server shutted down ###" << std::endl;
