@@ -1,10 +1,10 @@
 To launch this test open two different consoles:
 
-In the first one launch: HelloWorldExampleTCP publisher (or HelloWorldExampleTCP.exe publisher on windows).
-In the second one: HelloWorldExampleTCP subscriber.
+In the first one launch: ./HelloWorldExampleTCP publisher (or HelloWorldExampleTCP.exe publisher on windows).
+In the second one: ./HelloWorldExampleTCP subscriber (or HelloWorldExampleTCP.exe subscriber on windows).
 
 
-This example includes additional options to show the capabilities of the TCP Transport on Fast-RPTS,
+This example includes additional options to show the capabilities of the TCP Transport on Fast DDS,
 such as WAN and TLS. In this example the publisher will work as a TCP server and the subscriber as a
 TCP client.
 

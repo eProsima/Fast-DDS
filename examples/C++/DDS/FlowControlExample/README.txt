@@ -1,8 +1,8 @@
 To launch this example open two consoles:
 
- 1) "$ FlowControlExample subscriber" (or "FlowControlExample.exe subscriber" in Windows). 
+ 1) "$ ./DDSFlowControlExample subscriber" (or "DDSFlowControlExample.exe subscriber" in Windows). 
 
- 2..*) "$ FlowControlExample publisher" (or "FlowControlExample.exe publisher XX" in Windows).
+ 2..*) "$ ./DDSFlowControlExample publisher" (or "DDSFlowControlExample.exe publisher" in Windows).
 
 This example illustrates the flow control feature. 
 
@@ -10,7 +10,7 @@ This example illustrates the flow control feature.
                               = Flow Control =
                               ================
 
-In FastRTPS, Flow Control is implemented through objects called Flow Controllers. In 
+In Fast DDS, Flow Control is implemented through objects called Flow Controllers. In 
 particular, we will be looking at the simplest kind, the Throughput Controller.
 
 A throughput controller is univocally defined by a Throughput Controller Descriptor,

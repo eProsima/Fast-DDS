@@ -1,14 +1,14 @@
 To launch this test open two different consoles:
 
-In the first one launch: HelloWorldExampleTCP publisher (or HelloWorldExampleTCP.exe publisher on windows).
-In the second one: HelloWorldExampleTCP subscriber.
+In the first one launch: ./DDSHelloWorldExampleTCP publisher (or DDSHelloWorldExampleTCP.exe publisher on windows).
+In the second one: ./DDSHelloWorldExampleTCP subscriber (or DDSHelloWorldExampleTCP.exe subscriber on windows).
 
 
-This example includes additional options to show the capabilities of the TCP Transport on Fast-RPTS,
+This example includes additional options to show the capabilities of the TCP Transport on Fast DDS,
 such as WAN and TLS. In this example the publisher will work as a TCP server and the subscriber as a
 TCP client.
 
-Usage: HelloWorldExampleTCP <publisher|subscriber>
+Usage: DDSHelloWorldExampleTCP <publisher|subscriber>
 
 General options:
   -h            --help              Produce help message.
@@ -30,15 +30,15 @@ Subscriber options:
 
 WAN Example:
 
-HelloWorldExampleTCP publisher -a <PUBLIC_WAN_ADDR> -p <PORT>
-HelloWorldExampleTCP subscriber -a <SERVER_ADDR> -p <PORT>
+DDSHelloWorldExampleTCP publisher -a <PUBLIC_WAN_ADDR> -p <PORT>
+DDSHelloWorldExampleTCP subscriber -a <SERVER_ADDR> -p <PORT>
 
     For example:
-        HelloWorldExampleTCP publisher -a 80.88.150.120 -p 5500
-        HelloWorldExampleTCP subscriber -a 80.88.150.120 -p 5500
+        DDSHelloWorldExampleTCP publisher -a 80.88.150.120 -p 5500
+        DDSHelloWorldExampleTCP subscriber -a 80.88.150.120 -p 5500
 
 
 TLS Example:
 
-HelloWorldExampleTCP publisher -t
-HelloWorldExampleTCP subscriber -t
+DDSHelloWorldExampleTCP publisher -t
+DDSHelloWorldExampleTCP subscriber -t

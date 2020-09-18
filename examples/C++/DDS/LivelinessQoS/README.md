@@ -1,11 +1,11 @@
 ## Liveliness QoS example
 
-This example illustrates the Liveliness QoS feature on a Fast-RTPS application.
+This example illustrates the Liveliness QoS feature on a Fast DDS application.
 
 To launch this example open two different consoles:
 
-In the first one launch: ./LivelinessQoS publisher
-In the second one launch: ./LivelinessQoS subscriber
+In the first one launch: ./DDSLivelinessQoS publisher
+In the second one launch: ./DDSLivelinessQoS subscriber
 
 ## Application behaviour
 
@@ -22,8 +22,8 @@ The default behaviour can be changed by providing the following command line arg
 
 For example:
 
-./LivelinessQoS publisher --lease_duration 1000 --kind AUTOMATIC --sleep 500 --samples 5  
-./LivelinessQoS subscriber --lease_duration 1000 --kind AUTOMATIC
+./DDSLivelinessQoS publisher --lease_duration 1000 --kind AUTOMATIC --sleep 500 --samples 5  
+./DDSLivelinessQoS subscriber --lease_duration 1000 --kind AUTOMATIC
 
 will setup the publisher and subscriber to use a lease duration of 1000 ms with kind AUTOMATIC, the publisher will
 write a new sample every 500 ms, and a total of 5 samples will be sent.
@@ -36,8 +36,8 @@ Possible values for liveliness kind are AUTOMATIC, MANUAL_BY_PARTICIPANT or MANU
 
 Execute the example with the following parameters:
 
-./LivelinessQoS publisher --lease_duration 100 --kind MANUAL_BY_TOPIC --sleep 500 --samples 5  
-./LivelinessQoS subscriber --lease_duration 300 --kind MANUAL_BY_TOPIC
+./DDSLivelinessQoS publisher --lease_duration 100 --kind MANUAL_BY_TOPIC --sleep 500 --samples 5  
+./DDSLivelinessQoS subscriber --lease_duration 300 --kind MANUAL_BY_TOPIC
 
 As the lease duration for both publisher and subscriber is smaller than the publisher write rate,
 liveliness will be lost after sending a sample and recovered when writing the next one.
@@ -46,8 +46,8 @@ liveliness will be lost after sending a sample and recovered when writing the ne
 
 Execute the example with the following parameters:
 
-./LivelinessQoS publisher --lease_duration 600 --kind MANUAL_BY_TOPIC --sleep 500 --samples 5  
-./LivelinessQoS subscriber --lease_duration 600 --kind MANUAL_BY_TOPIC
+./DDSLivelinessQoS publisher --lease_duration 600 --kind MANUAL_BY_TOPIC --sleep 500 --samples 5  
+./DDSLivelinessQoS subscriber --lease_duration 600 --kind MANUAL_BY_TOPIC
 
 In this case, as the lease duration is greater than the publishwer write rate, liveliness will only be lost after
 sending the last sample.

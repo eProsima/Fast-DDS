@@ -1,6 +1,6 @@
 # Disable Positive ACKs QoS example
 
-This example illustrates how to use the Disable Positive ACKs QoS extension in a Fast-RTPS application. When using this QoS, Acknack messages are only sent by the reader if it is missing any samples. In this way, strict reliability is no longer maintained but the writer keeps samples in its history for a sufficient duration (or keep duration) so that readers can negatively acknowledge it. After this duration, the sample is considered to be acknowledged by all readers and is removed from the writer history.
+This example illustrates how to use the Disable Positive ACKs QoS extension in a Fast DDS application. When using this QoS, Acknack messages are only sent by the reader if it is missing any samples. In this way, strict reliability is no longer maintained but the writer keeps samples in its history for a sufficient duration (or keep duration) so that readers can negatively acknowledge it. After this duration, the sample is considered to be acknowledged by all readers and is removed from the writer history.
 
 To launch this test open two different consoles:
 
