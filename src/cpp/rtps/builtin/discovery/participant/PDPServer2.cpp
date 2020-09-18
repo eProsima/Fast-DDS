@@ -148,7 +148,7 @@ bool PDPServer2::createPDPEndpoints()
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 
@@ -186,7 +186,7 @@ bool PDPServer2::createPDPEndpoints()
     // PDP Writer Attributes
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    watt.endpoint.durabilityKind = VOLATILE;
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -202,6 +202,8 @@ bool PDPServer2::createPDPEndpoints()
     {
         // Set pdp filter to writer
         static_cast<StatefulWriter*>(mp_PDPWriter)->reader_data_filter(pdp_filter_);
+        // Enable separate sending so the filter can be called for each change and reader proxy
+        mp_PDPWriter->set_separate_sending(true);
     }
     // Could not create PDP Writer, so return false
     else

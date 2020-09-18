@@ -599,6 +599,12 @@ void StatefulWriter::send_changes_separatedly(
 
     for (ReaderProxy* remoteReader : matched_readers_)
     {
+        // If there are no changes for this reader, simply jump to the next one
+        if (!remoteReader->has_changes())
+        {
+            continue;
+        }
+
         if (remoteReader->is_local_reader())
         {
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
@@ -642,12 +648,11 @@ void StatefulWriter::send_changes_separatedly(
             SequenceNumber_t min_history_seq = get_seq_num_min();
             if (remoteReader->is_reliable())
             {
-                if (remoteReader->are_there_gaps())
-                {
-                    send_heartbeat_nts_(1u, group, true);
-                }
+                // Add a HEARTBEAT to the datagram with final flag set to false. This way, the reader must send an
+                // ACKNACK message for each DATA that it receives.
+                send_heartbeat_nts_(1u, group, false);
 
-                RTPSGapBuilder gaps(group);
+                RTPSGapBuilder gaps(group, remoteReader->guid());
 
                 uint32_t lastBytesProcessed = 0;
                 auto sent_fun = [this, remoteReader, &lastBytesProcessed, &group](
@@ -1749,7 +1754,7 @@ bool StatefulWriter::send_periodic_heartbeat(
     {
         for (ReaderProxy* it : matched_readers_)
         {
-            if (it->has_unacknowledged() && !it->is_local_reader())
+            if (liveliness || (it->has_changes() && !it->is_local_reader()))
             {
                 send_heartbeat_to_nts(*it, liveliness);
                 unacked_changes = true;
@@ -1820,7 +1825,7 @@ void StatefulWriter::send_heartbeat_to_nts(
         ReaderProxy& remoteReaderProxy,
         bool liveliness)
 {
-    if (remoteReaderProxy.is_remote_and_reliable())
+    if (remoteReaderProxy.is_remote_and_reliable() && (liveliness || remoteReaderProxy.has_changes()))
     {
         try
         {

@@ -47,6 +47,7 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSReader* raux = nullptr;
     set_builtin_reader_history_attributes(reader_history_att);
     set_builtin_reader_attributes(ratt);
+    ratt.endpoint.durabilityKind = VOLATILE;
 
     /* EDP Writers attributes */
     WriterAttributes watt;
@@ -54,7 +55,8 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSWriter* waux = nullptr;
     set_builtin_writer_history_attributes(writer_history_att);
     set_builtin_writer_attributes(watt);
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    watt.endpoint.durabilityKind = VOLATILE;
+    watt.mode = ASYNCHRONOUS_WRITER;
 
     /* EDP Listeners */
     publications_listener_ = new EDPServerPUBListener2(this);
@@ -67,6 +69,7 @@ bool EDPServer2::createSEDPEndpoints()
          * reader to receive information about subscriptions that might match the participant's publications.
          *    1. Create publications writer
          *       1.1. Set writer's data filter
+         *       1.2. Enable separate sending
          *    2. Create subscriptions reader
          */
 
@@ -81,6 +84,8 @@ bool EDPServer2::createSEDPEndpoints()
             publications_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             // 1.1. Set publications writer data filter
             publications_writer_.first->reader_data_filter(edp_publications_filter_);
+            // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
+            publications_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Publications Writer created");
         }
         else
@@ -120,6 +125,7 @@ bool EDPServer2::createSEDPEndpoints()
          * reader to receive information about publications that might match the participant's subscriptions.
          *    1. Create subscriptions writer
          *       1.1. Set writer's data filter
+         *       1.2. Enable separate sending
          *    2. Create publications reader
          */
 
@@ -134,6 +140,8 @@ bool EDPServer2::createSEDPEndpoints()
             subscriptions_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             // 1.1. Set subscriptions writer data filter
             subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter_);
+            // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
+            publications_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Subscriptions Writer created");
 
         }
