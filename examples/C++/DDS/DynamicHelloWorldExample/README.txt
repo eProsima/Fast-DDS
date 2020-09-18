@@ -2,7 +2,8 @@ To launch this test open two different consoles:
 
 In the first one launch: ./DDSDynamicHelloWorldExample publisher
 (or DDSDynamicHelloWorldExample.exe publisher on windows).
-In the second one: ./DDSDynamicHelloWorldExample subscriber.
+In the second one: ./DDSDynamicHelloWorldExample subscriber
+(or DDSDynamicHelloWorldExample.exe subscriber on windows).
 
 In this example, the publisher loads a type from the XML file "example_type.xml".
 The publisher shares the TypeObject so another participants can discover it.

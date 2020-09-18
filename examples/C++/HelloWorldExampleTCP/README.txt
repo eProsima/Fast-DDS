@@ -1,7 +1,7 @@
 To launch this test open two different consoles:
 
 In the first one launch: ./HelloWorldExampleTCP publisher (or HelloWorldExampleTCP.exe publisher on windows).
-In the second one: ./HelloWorldExampleTCP subscriber.
+In the second one: ./HelloWorldExampleTCP subscriber (or HelloWorldExampleTCP.exe subscriber on windows).
 
 
 This example includes additional options to show the capabilities of the TCP Transport on Fast DDS,

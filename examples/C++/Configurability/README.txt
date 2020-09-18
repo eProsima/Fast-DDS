@@ -161,6 +161,6 @@ In these cases it is important that all datagrams reach their destination
 To launch this test open two different consoles:
 
 In the first one launch: './UseCasePublisher' (or UseCasePublisher.exe on windows).
-In the second one: './UseCaseSubscriber'
+In the second one: './UseCaseSubscriber' (or UseCaseSubscriber.exe on windows).
 
 Select the configuration.

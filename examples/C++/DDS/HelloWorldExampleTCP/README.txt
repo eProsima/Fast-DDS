@@ -1,7 +1,7 @@
 To launch this test open two different consoles:
 
 In the first one launch: ./DDSHelloWorldExampleTCP publisher (or DDSHelloWorldExampleTCP.exe publisher on windows).
-In the second one: ./DDSHelloWorldExampleTCP subscriber.
+In the second one: ./DDSHelloWorldExampleTCP subscriber (or DDSHelloWorldExampleTCP.exe subscriber on windows).
 
 
 This example includes additional options to show the capabilities of the TCP Transport on Fast DDS,

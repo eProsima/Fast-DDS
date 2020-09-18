@@ -100,5 +100,4 @@ In these cases it is important that all datagrams reach their destination
 
 6. Run example
 ----------------------
-To launch this test execute: './sampleconfig_multimedia' (or DDSSampleConfigMultimedia.exe on windows).
-
+To launch this test execute: './sampleconfig_multimedia' (or sampleconfig_multimedia.exe on windows).

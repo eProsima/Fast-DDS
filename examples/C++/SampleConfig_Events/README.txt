@@ -100,5 +100,4 @@ In these cases it is important that all datagrams reach their destination
 
 6. Run example
 ----------------------
-To launch this test execute: './sampleconfig_events' (or DDSSampleConfigEvents.exe on windows).
-
+To launch this test execute: './sampleconfig_events' (or sampleconfig_events.exe on windows).

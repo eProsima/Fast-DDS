@@ -6,6 +6,5 @@ example.
 To launch this test open two different consoles:
 
 In the first one launch: ./DDSSecureHelloWorldExample publisher (or DDSSecureHelloWorldExample.exe publisher on windows).
-In the second one: ./DDSSecureHelloWorldExample subscriber.
-
+In the second one: ./DDSSecureHelloWorldExample subscriber (or DDSSecureHelloWorldExample.exe subscriber on windows).
 

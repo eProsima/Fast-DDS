@@ -1,6 +1,5 @@
 To launch this test open two different consoles:
 
 In the first one launch: ./DDSHelloWorldExampleSharedMem publisher (or DDSHelloWorldExampleSharedMem.exe publisher on windows).
-In the second one: ./DDSHelloWorldExampleSharedMem subscriber.
-
+In the second one: ./DDSHelloWorldExampleSharedMem subscriber (or DDSHelloWorldExampleSharedMem.exe subscriber on windows).
 
