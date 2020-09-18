@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_STATEFULWRITER_H_
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 #include <fastrtps/rtps/history/WriterHistory.h>
 
 namespace eprosima {
@@ -80,6 +81,17 @@ public:
         return mp_history->next_sequence_number();
     }
 
+    void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* reader_data_filter)
+    {
+        reader_data_filter_ = reader_data_filter;
+    }
+
+    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const
+    {
+        return reader_data_filter_;
+    }
+
 private:
 
     friend class ReaderProxy;
@@ -87,6 +99,9 @@ private:
     RTPSParticipantImpl* participant_;
 
     WriterHistory* mp_history;
+
+    fastdds::rtps::IReaderDataFilter* reader_data_filter_;
+
 };
 
 } // namespace rtps

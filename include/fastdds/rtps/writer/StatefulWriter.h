@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <condition_variable>
 #include <mutex>
@@ -304,6 +305,18 @@ public:
             const FragmentNumberSet_t fragments_state,
             bool& result) override;
 
+    /**
+     * @brief Set a reader data filter to filter data in ReaderProxies
+     * @param reader_data_filter The reader data filter
+     */
+    void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* reader_data_filter);
+
+    /**
+     * @brief Get the reader data filter used to filter data in ReaderProxies
+     */
+    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const;
+
 private:
 
     void update_reader_info(
@@ -374,6 +387,9 @@ private:
 
     StatefulWriter& operator =(
             const StatefulWriter&) = delete;
+
+    //! The filter for the reader
+    fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
 };
 
 } /* namespace rtps */
