@@ -19,6 +19,7 @@
 
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/resources/AsyncWriterThread.h>
 
@@ -604,7 +605,8 @@ void StatefulWriter::send_changes_separatedly(
             auto unsent_change_process =
                     [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {
-                        if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                        if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
+                                unsentChange->isValid())
                         {
                             if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
@@ -658,7 +660,8 @@ void StatefulWriter::send_changes_separatedly(
                 auto unsent_change_process =
                         [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                         {
-                            if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                            if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
+                                    unsentChange->isValid())
                             {
                                 bool sent_ok = send_data_or_fragments(
                                     group,
@@ -688,7 +691,8 @@ void StatefulWriter::send_changes_separatedly(
                 auto unsent_change_process =
                         [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                         {
-                            if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                            if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
+                                    unsentChange->isValid())
                             {
                                 bool sent_ok = send_data_or_fragments(
                                     group,
@@ -726,7 +730,8 @@ void StatefulWriter::send_all_intraprocess_changes(
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                     {
-                        if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                        if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
+                                unsentChange->isValid())
                         {
                             if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
@@ -947,7 +952,8 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
         RTPSGapBuilder gaps(group, remoteReader->guid());
         auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                 {
-                    if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                    if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
+                            unsentChange->isValid())
                     {
                         relevantChanges.add_change(
                             unsentChange->getChange(), remoteReader, unsentChange->getUnsentFragments());
@@ -2135,6 +2141,17 @@ void StatefulWriter::print_inconsistent_acknack(
             << writer_guid << " next SequenceNumber " << next_sequence_number << ". Remote Reader "
             << reader_guid << " requested range is  [" << min_requested_sequence_number
             << ", " << max_requested_sequence_number << "].");
+}
+
+void StatefulWriter::reader_data_filter(
+        fastdds::rtps::IReaderDataFilter* reader_data_filter)
+{
+    reader_data_filter_ = reader_data_filter;
+}
+
+const fastdds::rtps::IReaderDataFilter* StatefulWriter::reader_data_filter() const
+{
+    return reader_data_filter_;
 }
 
 }  // namespace rtps
