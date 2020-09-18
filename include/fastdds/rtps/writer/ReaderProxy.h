@@ -345,15 +345,12 @@ public:
             const FragmentNumberSet_t& fragments_state);
 
     /**
-     * Filter a CacheChange_t, in this version always returns true.
+     * Filter a CacheChange_t using the StatefulWriter's IReaderDataFilter.
      * @param change
      * @return true if the change is relevant, false otherwise.
      */
-    inline bool rtps_is_relevant(
-            CacheChange_t* change)
-    {
-        (void)change; return true;
-    }
+    bool rtps_is_relevant(
+            CacheChange_t* change);
 
     /**
      * Get the highest fully acknowledged sequence number.
