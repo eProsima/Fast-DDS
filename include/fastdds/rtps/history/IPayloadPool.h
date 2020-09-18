@@ -53,7 +53,7 @@ public:
      *
      * @returns whether the operation succeeded or not
      *
-     * @pre Fields @c writer_guid and @c sequence_number of @c cache_change are either:
+     * @pre Fields @c writerGUID and @c sequenceNumber of @c cache_change are either:
      *     @li Both equal to @c unknown (meaning a writer is creating a new change)
      *     @li Both different from @c unknown (meaning a reader has received the first fragment of a cache change)
      *
@@ -91,8 +91,8 @@ public:
      * @c nullptr is received all fields in @c data should be left unchanged.
      *
      * @pre
-     *     @li Field @c cache_change.writer_guid is not @c unknown
-     *     @li Field @c cache_change.sequence_number is not @c unknown
+     *     @li Field @c cache_change.writerGUID is not @c unknown
+     *     @li Field @c cache_change.sequenceNumber is not @c unknown
      *
      * @post
      *     @li Field @c cache_change.payload_owner equals this
