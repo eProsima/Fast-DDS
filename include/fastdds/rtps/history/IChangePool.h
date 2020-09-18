@@ -25,15 +25,42 @@ namespace rtps {
 
 struct CacheChange_t;
 
+/**
+ * An interface for classes responsible of cache changes allocation management.
+ */
 class IChangePool
 {
 public:
 
     virtual ~IChangePool() = default;
 
+    /**
+     * @brief Get a new cache change from the pool
+     *
+     * @param [out] cache_change   Pointer to the new cache change.
+     *
+     * @returns whether the operation succeeded or not
+     *
+     * @pre @c cache_change is @c nullptr
+     *
+     * @post
+     *     @li @c cache_change is not nullptr
+     *     @li @c *cache_change equals @c CacheChange_t() except for the contents of @c serializedPayload
+     */
     virtual bool reserve_cache(
             CacheChange_t*& cache_change) = 0;
 
+    /**
+     * @brief Return a cache change to the pool
+     *
+     * @param [in] cache_change   Pointer to the cache change to release.
+     *
+     * @returns whether the operation succeeded or not
+     *
+     * @pre
+     *     @li @c cache_change is not @c nullptr
+     *     @li @c cache_change points to a cache change obtained from a call to @c this->reserve_cache
+     */
     virtual bool release_cache(
             CacheChange_t* cache_change) = 0;
 };
