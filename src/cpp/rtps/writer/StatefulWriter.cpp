@@ -241,7 +241,7 @@ void StatefulWriter::unsent_change_added_to_history(
             bool expectsInlineQos = false;
 
             // First step is to add the new CacheChange_t to all reader proxies.
-            // It has to be done before sending, because if a timeout is catched, we will not include the
+            // It has to be done before sending, because if a timeout is caught, we will not include the
             // CacheChange_t in some reader proxies.
             for (ReaderProxy* it : matched_readers_)
             {
@@ -611,8 +611,7 @@ void StatefulWriter::send_changes_separatedly(
             auto unsent_change_process =
                     [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {
-                        if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                                unsentChange->isValid())
+                        if (unsentChange != nullptr && unsentChange->isValid())
                         {
                             if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
@@ -665,8 +664,7 @@ void StatefulWriter::send_changes_separatedly(
                 auto unsent_change_process =
                         [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                         {
-                            if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                                    unsentChange->isValid())
+                            if (unsentChange != nullptr && unsentChange->isValid())
                             {
                                 bool sent_ok = send_data_or_fragments(
                                     group,
@@ -735,8 +733,7 @@ void StatefulWriter::send_all_intraprocess_changes(
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                     {
-                        if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                                unsentChange->isValid())
+                        if (unsentChange != nullptr && unsentChange->isValid())
                         {
                             if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
@@ -957,8 +954,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
         RTPSGapBuilder gaps(group, remoteReader->guid());
         auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                 {
-                    if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                            unsentChange->isValid())
+                    if (unsentChange != nullptr && unsentChange->isValid())
                     {
                         relevantChanges.add_change(
                             unsentChange->getChange(), remoteReader, unsentChange->getUnsentFragments());
