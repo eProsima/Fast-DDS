@@ -48,7 +48,8 @@ History::History(
 
     PoolConfig pool_config
     {
-        att.memoryPolicy, att.payloadMaxSize,
+        att.memoryPolicy,
+        att.payloadMaxSize,
         static_cast<uint32_t>(initial_caches),
         static_cast<uint32_t>(max_caches)
     };

@@ -46,7 +46,7 @@ public:
 
     /**
      * Constructor.
-     * @param config   Pool configuration.
+     * @param config   Pool configuration (member @c payload_initial_size is not being used).
      * @param f        Functor to be called on all preallocated elements.
      */
     template<class UnaryFunction>
@@ -60,7 +60,7 @@ public:
 
     /**
      * Constructor.
-     * @param config  Pool configuration.
+     * @param config   Pool configuration (member @c payload_initial_size is not being used).
      */
     CacheChangePool(
             const PoolConfig& config);
