@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rtps/persistence/PersistenceService.h"
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
-#include <fastrtps/rtps/history/CacheChangePool.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/persistence/PersistenceService.h>
 
 #include <climits>
 #include <gtest/gtest.h>

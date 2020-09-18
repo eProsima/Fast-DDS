@@ -52,6 +52,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
+            ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(ReaderHistoryTests
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
@@ -62,6 +63,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(HistoryTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(HistoryTests PRIVATE
             ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(HistoryTests
             ${GTEST_LIBRARIES}
@@ -72,12 +74,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(CacheChangePoolTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(CacheChangePoolTests PRIVATE
             ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(CacheChangePoolTests
             ${GTEST_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
-
 
     endif()
 endif()

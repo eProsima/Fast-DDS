@@ -17,9 +17,10 @@
  *
  */
 
-#include <fastdds/rtps/history/CacheChangePool.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/dds/log/Log.hpp>
+
+#include <rtps/history/CacheChangePool.h>
 
 #include <mutex>
 #include <cstring>

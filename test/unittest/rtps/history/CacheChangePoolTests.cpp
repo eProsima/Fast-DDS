@@ -16,7 +16,8 @@
 
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/history/CacheChangePool.h>
+
+#include <rtps/history/CacheChangePool.h>
 
 #include <tuple>
 
