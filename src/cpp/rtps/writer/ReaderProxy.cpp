@@ -221,11 +221,6 @@ void ReaderProxy::add_change(
     // Irrelevant changes are not added to the collection
     if (!change.isRelevant())
     {
-        if (changes_for_reader_.empty())
-        {
-            changes_low_mark_ = change.getSequenceNumber();
-        }
-
         return;
     }
 
