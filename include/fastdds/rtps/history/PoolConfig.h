@@ -28,16 +28,16 @@ namespace rtps {
 struct PoolConfig
 {
     //! Memory management policy.
-    MemoryManagementPolicy_t memory_policy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+    MemoryManagementPolicy_t memory_policy;
 
     //! Payload size when preallocating data.
-    uint32_t payload_initial_size = 0;
+    uint32_t payload_initial_size;
 
     //! Initial number of elements when preallocating data.
-    uint32_t initial_size = 0;
+    uint32_t initial_size;
 
     //! Maximum number of elements in the pool. Default value is 0, indicating to make allocations until they fail.
-    uint32_t maximum_size = 0;
+    uint32_t maximum_size;
 };
 
 } /* namespace rtps */
