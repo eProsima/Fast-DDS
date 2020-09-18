@@ -245,7 +245,7 @@ void StatefulWriter::unsent_change_added_to_history(
             bool expectsInlineQos = false;
 
             // First step is to add the new CacheChange_t to all reader proxies.
-            // It has to be done before sending, because if a timeout is catched, we will not include the
+            // It has to be done before sending, because if a timeout is caught, we will not include the
             // CacheChange_t in some reader proxies.
             for (ReaderProxy* it : matched_readers_)
             {
@@ -601,14 +601,19 @@ void StatefulWriter::send_changes_separatedly(
 
     for (ReaderProxy* remoteReader : matched_readers_)
     {
+        // If there are no changes for this reader, simply jump to the next one
+        if (!remoteReader->has_changes())
+        {
+            continue;
+        }
+
         if (remoteReader->is_local_reader())
         {
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             auto unsent_change_process =
                     [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {
-                        if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                                unsentChange->isValid())
+                        if (unsentChange != nullptr && unsentChange->isValid())
                         {
                             if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
@@ -644,12 +649,11 @@ void StatefulWriter::send_changes_separatedly(
             SequenceNumber_t min_history_seq = get_seq_num_min();
             if (remoteReader->is_reliable())
             {
-                if (remoteReader->are_there_gaps())
-                {
-                    send_heartbeat_nts_(1u, group, true);
-                }
+                // Add a HEARTBEAT to the datagram with final flag set to false. This way, the reader must send an
+                // ACKNACK message for each DATA that it receives.
+                send_heartbeat_nts_(1u, group, false);
 
-                RTPSGapBuilder gaps(group);
+                RTPSGapBuilder gaps(group, remoteReader->guid());
 
                 uint32_t lastBytesProcessed = 0;
                 auto sent_fun = [this, remoteReader, &lastBytesProcessed, &group](
@@ -662,8 +666,7 @@ void StatefulWriter::send_changes_separatedly(
                 auto unsent_change_process =
                         [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                         {
-                            if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                                    unsentChange->isValid())
+                            if (unsentChange != nullptr && unsentChange->isValid())
                             {
                                 bool sent_ok = send_data_or_fragments(
                                     group,
@@ -732,8 +735,7 @@ void StatefulWriter::send_all_intraprocess_changes(
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                     {
-                        if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                                unsentChange->isValid())
+                        if (unsentChange != nullptr && unsentChange->isValid())
                         {
                             if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
@@ -954,8 +956,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
         RTPSGapBuilder gaps(group, remoteReader->guid());
         auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                 {
-                    if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                            unsentChange->isValid())
+                    if (unsentChange != nullptr && unsentChange->isValid())
                     {
                         relevantChanges.add_change(
                             unsentChange->getChange(), remoteReader, unsentChange->getUnsentFragments());
@@ -1761,7 +1762,7 @@ bool StatefulWriter::send_periodic_heartbeat(
     {
         for (ReaderProxy* it : matched_readers_)
         {
-            if (it->has_unacknowledged() && !it->is_local_reader())
+            if (liveliness || (it->has_changes() && !it->is_local_reader()))
             {
                 send_heartbeat_to_nts(*it, liveliness);
                 unacked_changes = true;
@@ -1832,7 +1833,7 @@ void StatefulWriter::send_heartbeat_to_nts(
         ReaderProxy& remoteReaderProxy,
         bool liveliness)
 {
-    if (remoteReaderProxy.is_remote_and_reliable())
+    if (remoteReaderProxy.is_remote_and_reliable() && (liveliness || remoteReaderProxy.has_changes()))
     {
         try
         {
