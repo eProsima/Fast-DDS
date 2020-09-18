@@ -16,8 +16,8 @@
  * @file PoolConfig.h
  */
 
-#ifndef _FASTDDS_RTPS_HISTORY_POOLCONFIG_H_
-#define _FASTDDS_RTPS_HISTORY_POOLCONFIG_H_
+#ifndef RTPS_HISTORY_POOLCONFIG_H_
+#define RTPS_HISTORY_POOLCONFIG_H_
 
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
@@ -44,5 +44,4 @@ struct PoolConfig
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-
-#endif /* _FASTDDS_RTPS_HISTORY_POOLCONFIG_H_ */
+#endif /* RTPS_HISTORY_POOLCONFIG_H_ */

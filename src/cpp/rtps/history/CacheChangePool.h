@@ -16,8 +16,8 @@
  * @file CacheChangePool.h
  */
 
-#ifndef _FASTDDS_RTPS_CACHECHANGEPOOL_H_
-#define _FASTDDS_RTPS_CACHECHANGEPOOL_H_
+#ifndef RTPS_HISTORY_CACHECHANGEPOOL_H_
+#define RTPS_HISTORY_CACHECHANGEPOOL_H_
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IChangePool.h>
@@ -108,4 +108,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_CACHECHANGEPOOL_H_ */
+#endif /* RTPS_HISTORY_CACHECHANGEPOOL_H_ */
