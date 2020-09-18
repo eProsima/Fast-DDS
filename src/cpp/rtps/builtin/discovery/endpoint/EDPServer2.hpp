@@ -59,10 +59,6 @@ public:
             aux::PDP* p,
             aux::RTPSParticipantImpl* part)
         : EDPSimple(p, part)
-        , edp_publications_filter_(static_cast<EDPDataFilter<DiscoveryDataBase,
-                true>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db))
-        , edp_subscriptions_filter_(static_cast<EDPDataFilter<DiscoveryDataBase,
-                false>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db))
     {
     }
 
@@ -110,12 +106,6 @@ private:
      * @return True if correct.
      */
     virtual bool createSEDPEndpoints() override;
-
-    //! EDP publications writer filter
-    IReaderDataFilter* edp_publications_filter_;
-
-    //! EDP subscriptions writer filter
-    IReaderDataFilter* edp_subscriptions_filter_;
 
 };
 

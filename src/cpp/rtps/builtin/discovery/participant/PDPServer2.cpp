@@ -50,9 +50,7 @@ PDPServer2::PDPServer2(
         const RTPSParticipantAllocationAttributes& allocation)
     : PDP(builtin, allocation)
     , mp_sync(nullptr)
-    , pdp_filter_(static_cast<PDPDataFilter<DiscoveryDataBase>*>(&discovery_db))
 {
-
 }
 
 PDPServer2::~PDPServer2()
@@ -201,7 +199,8 @@ bool PDPServer2::createPDPEndpoints()
             nullptr, c_EntityId_SPDPWriter, true))
     {
         // Set pdp filter to writer
-        static_cast<StatefulWriter*>(mp_PDPWriter)->reader_data_filter(pdp_filter_);
+        IReaderDataFilter* pdp_filter = static_cast<PDPDataFilter<DiscoveryDataBase>*>(&discovery_db);
+        static_cast<StatefulWriter*>(mp_PDPWriter)->reader_data_filter(pdp_filter);
         // Enable separate sending so the filter can be called for each change and reader proxy
         mp_PDPWriter->set_separate_sending(true);
     }

@@ -136,8 +136,6 @@ private:
      */
     DServerEvent2* mp_sync;
 
-    //! PDP writer filter
-    IReaderDataFilter* pdp_filter_;
 };
 
 } // namespace rtps

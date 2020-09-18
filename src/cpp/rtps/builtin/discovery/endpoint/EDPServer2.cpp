@@ -83,7 +83,10 @@ bool EDPServer2::createSEDPEndpoints()
             // Cast publications writer to a StatefulWriter, since we now that's what it is
             publications_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             // 1.1. Set publications writer data filter
-            publications_writer_.first->reader_data_filter(edp_publications_filter_);
+            IReaderDataFilter* edp_publications_filter =
+                    static_cast<EDPDataFilter<DiscoveryDataBase,
+                            true>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db);
+            publications_writer_.first->reader_data_filter(edp_publications_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
             publications_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Publications Writer created");
@@ -139,7 +142,10 @@ bool EDPServer2::createSEDPEndpoints()
             // Cast subscriptions writer to a StatefulWriter, since we now that's what it is
             subscriptions_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             // 1.1. Set subscriptions writer data filter
-            subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter_);
+            IReaderDataFilter* edp_subscriptions_filter =
+                    static_cast<EDPDataFilter<DiscoveryDataBase,
+                            false>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db);
+            subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
             publications_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Subscriptions Writer created");
