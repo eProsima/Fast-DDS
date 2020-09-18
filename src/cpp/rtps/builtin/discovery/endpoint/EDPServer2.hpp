@@ -23,7 +23,10 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/discovery/DiscoveryDataFilter.hpp>
+#include <fastdds/rtps/builtin/discovery/DiscoveryDataBase.hpp>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include "../participant/PDPServer2.hpp"
 
 // To be eventually removed together with eprosima::fastrtps
 namespace aux = ::eprosima::fastrtps::rtps;
