@@ -21,7 +21,8 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
-#include <fastdds/rtps/history/PoolConfig.h>
+
+#include <rtps/history/PoolConfig.h>
 
 #include <memory>
 
