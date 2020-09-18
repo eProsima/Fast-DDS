@@ -77,6 +77,16 @@ ReaderProxy::ReaderProxy(
     stop();
 }
 
+bool ReaderProxy::rtps_is_relevant(
+        CacheChange_t* change)
+{
+    if (nullptr != writer_->reader_data_filter())
+    {
+        return writer_->reader_data_filter()->is_relevant(*change, guid());
+    }
+    return true;
+}
+
 ReaderProxy::~ReaderProxy()
 {
     if (nack_supression_event_)
