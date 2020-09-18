@@ -41,6 +41,9 @@ public:
             IPayloadPool*& /* data_owner */,
             CacheChange_t& cache_change) override
     {
+        assert(cache_change.writer_guid != GUID_t::unknown());
+        assert(cache_change.sequence_number != SequenceNumber_t::unknown());
+
         cache_change.serializedPayload.reserve(payload_size_);
         if (cache_change.serializedPayload.copy(&data, true))
         {

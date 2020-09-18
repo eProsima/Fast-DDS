@@ -32,6 +32,9 @@ class BaseImpl : public IPayloadPool
             IPayloadPool*& /* data_owner */,
             CacheChange_t& cache_change) override
     {
+        assert(cache_change.writer_guid != GUID_t::unknown());
+        assert(cache_change.sequence_number != SequenceNumber_t::unknown());
+
         if (cache_change.serializedPayload.copy(&data, false))
         {
             cache_change.payload_owner(this);
