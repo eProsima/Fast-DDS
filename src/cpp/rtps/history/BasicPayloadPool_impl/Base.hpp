@@ -28,8 +28,8 @@ class BaseImpl : public IPayloadPool
     }
 
     bool get_payload(
-            const SerializedPayload_t& data,
-            const IPayloadPool* /* data_owner */,
+            SerializedPayload_t& data,
+            IPayloadPool*& /* data_owner */,
             CacheChange_t& cache_change) override
     {
         if (cache_change.serializedPayload.copy(&data, false))
