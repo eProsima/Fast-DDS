@@ -33,13 +33,13 @@
 #else
 #define IS_OPENSSL_1_1 0
 #define OPENSSL_CONST
-#endif
+#endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
 #if OPENSSL_VERSION_NUMBER >= 0x10101040L
 #define IS_OPENSSL_1_1_1d 1
 #else
 #define IS_OPENSSL_1_1_1d 0
-#endif
+#endif // if OPENSSL_VERSION_NUMBER >= 0x10101040L
 
 #include <openssl/pem.h>
 #include <openssl/err.h>
@@ -473,7 +473,7 @@ static bool sign_sha256(
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
 #else
     EVP_MD_CTX* ctx = (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
+#endif // if IS_OPENSSL_1_1
     EVP_MD_CTX_init(ctx);
     EVP_PKEY_CTX* pkey;
 
@@ -528,7 +528,7 @@ static bool sign_sha256(
 #else
     EVP_MD_CTX_cleanup(ctx);
     free(ctx);
-#endif
+#endif // if IS_OPENSSL_1_1
 
     return returnedValue;
 }
@@ -550,7 +550,7 @@ static bool check_sign_sha256(
             EVP_MD_CTX_new();
 #else
             (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
+#endif // if IS_OPENSSL_1_1
     EVP_MD_CTX_init(ctx);
 
     EVP_PKEY* pubkey = X509_get_pubkey(certificate);
@@ -604,7 +604,7 @@ static bool check_sign_sha256(
 #else
     EVP_MD_CTX_cleanup(ctx);
     free(ctx);
-#endif
+#endif // if IS_OPENSSL_1_1
 
     return returnedValue;
 }
@@ -824,7 +824,7 @@ static bool store_dh_public_key(
                 EVP_PKEY_get0_DH(dhkey);
 #else
                 dhkey->pkey.dh;
-#endif
+#endif // if IS_OPENSSL_1_1
 
         if (dh != nullptr)
         {
@@ -835,7 +835,7 @@ static bool store_dh_public_key(
 
 #else
             const BIGNUM* pub_key = dh->pub_key;
-#endif
+#endif // if IS_OPENSSL_1_1
 
             int len = BN_num_bytes(pub_key);
             buffer.resize(len);
@@ -861,7 +861,7 @@ static bool store_dh_public_key(
                 EVP_PKEY_get0_EC_KEY(dhkey);
 #else
                 dhkey->pkey.ec;
-#endif
+#endif // if IS_OPENSSL_1_1
         if (ec != nullptr)
         {
             auto grp = EC_KEY_get0_group(ec);
@@ -908,13 +908,13 @@ static EVP_PKEY* generate_dh_peer_key(
             BIGNUM** pub_key = &pub_key_ptr;
 #else
             BIGNUM** pub_key = &dh->pub_key;
-#endif
+#endif // if IS_OPENSSL_1_1
 
             if ((pointer = BN_deserialize_raw(pub_key, buffer.data(), buffer.size(), exception)) != nullptr)
             {
 #if IS_OPENSSL_1_1
                 DH_set0_key(dh, *pub_key, NULL);
-#endif
+#endif // if IS_OPENSSL_1_1
                 EVP_PKEY* key = EVP_PKEY_new();
 
                 if (key != nullptr)
@@ -924,7 +924,7 @@ static EVP_PKEY* generate_dh_peer_key(
                     if (EVP_PKEY_assign(key, type, dh) > 0)
 #else
                     if (EVP_PKEY_assign_DH(key, dh) > 0)
-#endif
+#endif // if IS_OPENSSL_1_1_1d
                     {
                         return key;
                     }
@@ -962,7 +962,7 @@ static EVP_PKEY* generate_dh_peer_key(
             if (EC_KEY_oct2key(ec, pointer, buffer.size(), NULL) > 0)
 #else
             if (o2i_ECPublicKey(&ec, &pointer, (long) buffer.size()) != nullptr)
-#endif
+#endif // if IS_OPENSSL_1_1
             {
                 EVP_PKEY* key = EVP_PKEY_new();
 

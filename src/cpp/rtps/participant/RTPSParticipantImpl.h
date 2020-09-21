@@ -32,7 +32,7 @@
 #include <process.h>
 #else
 #include <unistd.h>
-#endif
+#endif // if defined(_WIN32)
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -54,7 +54,7 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
-#endif
+#endif // if HAVE_SECURITY
 
 namespace eprosima {
 
@@ -136,7 +136,7 @@ class RTPSParticipantImpl
             }
         }
 
-private:
+    private:
 
         ReceiverControlBlock(
                 const ReceiverControlBlock&) = delete;
@@ -367,7 +367,7 @@ public:
             const GUID_t& local_reader,
             const WriterProxyData& remote_writer_data);
 
-#endif
+#endif // if HAVE_SECURITY
 
     PDPSimple* pdpsimple();
 
@@ -442,8 +442,8 @@ public:
 
     //!Compare metatraffic locators list searching for mutations
     bool did_mutation_took_place_on_meta(
-        const LocatorList_t& MulticastLocatorList,
-        const LocatorList_t& UnicastLocatorList) const;
+            const LocatorList_t& MulticastLocatorList,
+            const LocatorList_t& UnicastLocatorList) const;
 
 private:
 
@@ -490,7 +490,7 @@ private:
     bool m_security_manager_initialized;
     // Security activation flag
     bool m_is_security_active;
-#endif
+#endif // if HAVE_SECURITY
 
     //! Encapsulates all associated resources on a Receiving element.
     std::list<ReceiverControlBlock> m_receiverResourcelist;
@@ -580,7 +580,7 @@ private:
 
 #if HAVE_SECURITY
     security::ParticipantSecurityAttributes security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
 
     //! Indicates whether the participant has shared-memory transport
     bool has_shm_transport_;
@@ -764,10 +764,10 @@ public:
         endpoint->supports_rtps_protection_ = support;
     }
 
-#endif
+#endif // if HAVE_SECURITY
 };
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif //_RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_

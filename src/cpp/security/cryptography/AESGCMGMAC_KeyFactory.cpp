@@ -22,7 +22,7 @@
 #define IS_OPENSSL_1_1 1
 #else
 #define IS_OPENSSL_1_1 0
-#endif
+#endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>
@@ -37,7 +37,7 @@
 // Solve error with Win32 macro
 #ifdef WIN32
 #undef max
-#endif
+#endif // ifdef WIN32
 
 static bool create_kx_key(
         std::array<uint8_t, 32>& out_data,
@@ -67,7 +67,7 @@ static bool create_kx_key(
             EVP_MD_CTX_new();
 #else
             (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
+#endif // if IS_OPENSSL_1_1
     EVP_MD_CTX_init(ctx);
     EVP_DigestSignInit(ctx, nullptr, EVP_sha256(), nullptr, key);
     EVP_DigestSignUpdate(ctx, shared_secret->data(), shared_secret->size());
@@ -81,7 +81,7 @@ static bool create_kx_key(
 #else
         EVP_MD_CTX_cleanup(ctx);
         free(ctx);
-#endif
+#endif // if IS_OPENSSL_1_1
         return false;
     }
     EVP_DigestSignFinal(ctx, out_data.data(), &length);
@@ -91,7 +91,7 @@ static bool create_kx_key(
 #else
     EVP_MD_CTX_cleanup(ctx);
     free(ctx);
-#endif
+#endif // if IS_OPENSSL_1_1
 
     return true;
 }
@@ -217,7 +217,8 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
     (*RPCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */
-    { //scope for temp var buffer
+    {
+        //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
 
         //These values must match the ones in ParticipantKeymaterial
@@ -238,7 +239,8 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
     }
 
     /*Fill values for Participant2ParticipantKxKeyMaterial - Used to encrypt CryptoTokens (exchange of key info) */
-    { //scope for temp var buffer
+    {
+        //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer; //Buffer = Participant2ParticipantKxKeyMaterial
 
         buffer.transformation_kind = c_transfrom_kind_aes256_gcm;
