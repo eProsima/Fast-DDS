@@ -409,7 +409,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         )
 
     if(${CMAKE_VERSION} VERSION_LESS "3.13.0") 
-        message("You are using CMake version less than 3.13.0. This may cause linking problems when cross compiling")
+        message("You are using CMake version lower than 3.13.0. This may cause linking problems when cross-compiling")
     else()
         if(TINYXML2_LIB_DIR)
         target_link_directories(${PROJECT_NAME} BEFORE PRIVATE
