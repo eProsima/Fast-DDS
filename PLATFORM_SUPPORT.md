@@ -36,7 +36,7 @@ Community members may provide assistance with these platforms.
 |amd64       |Tier 1 [a][s]       |Tier 1 [s]          |Tier 1 [a][s]      |Tier 3 [s]        |
 |amd32       |                    |                    |Tier 1 [a][s]      |                  |
 |arm64       |Tier 1 [a][s]       |                    |                   |Tier 3 [s]        |
-|arm32       |Tier 3 [s]          |                    |Tier 2 [s]         |Tier 3 [s]        |
+|arm32       |Tier 3 [s]          |                    |                   |Tier 3 [s]        |
 
 " [a] " Binary releases are provided as a single archive per platform.\
 " [s] " Compilation from source.
