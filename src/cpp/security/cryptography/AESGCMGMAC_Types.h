@@ -32,22 +32,22 @@
 // Fix compilation error on Windows
 #if defined(WIN32) && defined(max)
 #undef max
-#endif
+#endif // if defined(WIN32) && defined(max)
 
 //No encryption, no authentication tag
-#define CRYPTO_TRANSFORMATION_KIND_NONE             { {0,0,0,0} }
+#define CRYPTO_TRANSFORMATION_KIND_NONE             { {0, 0, 0, 0} }
 
 //No encryption, AES128-GMAC authentication
-#define CRYPTO_TRANSFORMATION_KIND_AES128_GMAC      { {0,0,0,1} }
+#define CRYPTO_TRANSFORMATION_KIND_AES128_GMAC      { {0, 0, 0, 1} }
 
 //Authenticated encryption via AES128
-#define CRYPTO_TRANSFORMATION_KIND_AES128_GCM       { {0,0,0,2} }
+#define CRYPTO_TRANSFORMATION_KIND_AES128_GCM       { {0, 0, 0, 2} }
 
 //No encryption, AES256-GMAC authentication
-#define CRYPTO_TRANSFORMATION_KIND_AES256_GMAC      { {0,0,0,3} }
+#define CRYPTO_TRANSFORMATION_KIND_AES256_GMAC      { {0, 0, 0, 3} }
 
 // Authenticated encryption via AES256-GMC
-#define CRYPTO_TRANSFORMATION_KIND_AES256_GCM       { {0,0,0,4} }
+#define CRYPTO_TRANSFORMATION_KIND_AES256_GCM       { {0, 0, 0, 4} }
 
 namespace eprosima {
 namespace fastrtps {
@@ -60,6 +60,9 @@ constexpr CryptoTransformKind c_transfrom_kind_aes128_gcm = CRYPTO_TRANSFORMATIO
 constexpr CryptoTransformKind c_transfrom_kind_aes256_gmac = CRYPTO_TRANSFORMATION_KIND_AES256_GMAC;
 constexpr CryptoTransformKind c_transfrom_kind_aes256_gcm = CRYPTO_TRANSFORMATION_KIND_AES256_GCM;
 
+constexpr std::array<uint8_t, 32> c_empty_key_material =
+{ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, } };
+
 /* Key Storage
  * -----------
  *  Contains common key and specific key
@@ -70,15 +73,16 @@ constexpr CryptoTransformKind c_transfrom_kind_aes256_gcm = CRYPTO_TRANSFORMATIO
  *      -The keys needed to receive a message from another element
  *  Note: Key_Ids are ensured to be unique within a Cryptogaphic domain (Participant)
  */
-struct KeyMaterial_AES_GCM_GMAC{
-    CryptoTransformKind transformation_kind;
-    std::array<uint8_t,32> master_salt;
+struct KeyMaterial_AES_GCM_GMAC
+{
+    CryptoTransformKind transformation_kind = c_transfrom_kind_none;
+    std::array<uint8_t, 32> master_salt = c_empty_key_material;
 
-    CryptoTransformKeyId sender_key_id;
-    std::array<uint8_t, 32> master_sender_key;
+    CryptoTransformKeyId sender_key_id = c_transfrom_kind_none;
+    std::array<uint8_t, 32> master_sender_key = c_empty_key_material;
 
-    CryptoTransformKeyId receiver_specific_key_id;
-    std::array<uint8_t, 32> master_receiver_specific_key;
+    CryptoTransformKeyId receiver_specific_key_id = c_transfrom_kind_none;
+    std::array<uint8_t, 32> master_receiver_specific_key = c_empty_key_material;
 };
 
 typedef std::vector<KeyMaterial_AES_GCM_GMAC> KeyMaterial_AES_GCM_GMAC_Seq;
@@ -96,14 +100,16 @@ struct SecureDataHeader
 };
 
 //Holds the ciphered data
-struct SecureDataBody{
+struct SecureDataBody
+{
     std::vector<uint8_t> secure_data;
 };
 
 //Holds signatures.
 //common_mac->Signature using the common key that every intended receiver had
 //specific_mac->SignatureS made with the specific keys that only each pair of sender/receiver knows
-struct SecureDataTag{
+struct SecureDataTag
+{
     std::array<uint8_t, 16> common_mac;
     CryptoTransformKeyId receiver_mac_key_id;
     std::array<uint8_t, 16> receiver_mac;
@@ -132,78 +138,88 @@ struct KeySessionData
     std::array<uint8_t, 32> SessionKey;
     uint64_t session_block_counter;
 
-    KeySessionData() : session_id(std::numeric_limits<uint32_t>::max()), session_block_counter(0) {}
+    KeySessionData()
+        : session_id(std::numeric_limits<uint32_t>::max())
+        , session_block_counter(0)
+    {
+    }
+
 };
 
-class  EntityKeyHandle
+class EntityKeyHandle
 {
-    public:
-        EntityKeyHandle() : max_blocks_per_session(0)
-        {
-        }
+public:
 
-        ~EntityKeyHandle(){
-        }
+    EntityKeyHandle()
+    {
+    }
 
-        static const char* const class_id_;
+    ~EntityKeyHandle()
+    {
+    }
 
-        //Plugin security options
-        PluginEndpointSecurityAttributesMask EndpointPluginAttributes;
-        //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
-        KeyMaterial_AES_GCM_GMAC_Seq EntityKeyMaterial;
-        //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
-        CryptoTransformKeyId Participant_master_key_id;
-        ParticipantCryptoHandle* Parent_participant;
+    static const char* const class_id_;
 
-        //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
-        KeyMaterial_AES_GCM_GMAC_Seq Entity2RemoteKeyMaterial;
-        //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
-        KeyMaterial_AES_GCM_GMAC_Seq Remote2EntityKeyMaterial;
-        //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
-        // KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
+    //Plugin security options
+    PluginEndpointSecurityAttributesMask EndpointPluginAttributes = 0;
+    //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
+    KeyMaterial_AES_GCM_GMAC_Seq EntityKeyMaterial;
+    //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
+    CryptoTransformKeyId Participant_master_key_id = c_transformKeyIdZero;
+    ParticipantCryptoHandle* Parent_participant = nullptr;
 
-        //Data used to store the current session keys and to determine when it has to be updated
-        KeySessionData Sessions[2];
-        uint64_t max_blocks_per_session;
-        std::mutex mutex_;
+    //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
+    KeyMaterial_AES_GCM_GMAC_Seq Entity2RemoteKeyMaterial;
+    //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
+    KeyMaterial_AES_GCM_GMAC_Seq Remote2EntityKeyMaterial;
+    //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
+    // KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
+
+    //Data used to store the current session keys and to determine when it has to be updated
+    KeySessionData Sessions[2];
+    uint64_t max_blocks_per_session = 0;
+    std::mutex mutex_;
 };
 typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_WriterCryptoHandle;
 typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_ReaderCryptoHandle;
 typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_EntityCryptoHandle;
 
 
-class  ParticipantKeyHandle
+class ParticipantKeyHandle
 {
-    public:
+public:
 
-        ParticipantKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
-                session_block_counter(0), max_blocks_per_session(0){}
+    ParticipantKeyHandle()
+    {
+    }
 
-        ~ParticipantKeyHandle(){}
+    ~ParticipantKeyHandle()
+    {
+    }
 
-        static const char* const class_id_;
+    static const char* const class_id_;
 
-        //Plugin security options
-        PluginParticipantSecurityAttributesMask ParticipantPluginAttributes;
-        //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
-        KeyMaterial_AES_GCM_GMAC ParticipantKeyMaterial;
-        //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
-        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
-        //Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
-        std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
-        //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
-        std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
-        //List of Pointers to the CryptoHandles of all matched Writers
-        std::vector<DatawriterCryptoHandle *> Writers;
-        //List of Pointers to the CryptoHandles of all matched Readers
-        std::vector<DatareaderCryptoHandle *> Readers;
+    //Plugin security options
+    PluginParticipantSecurityAttributesMask ParticipantPluginAttributes = 0;
+    //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
+    KeyMaterial_AES_GCM_GMAC ParticipantKeyMaterial;
+    //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
+    std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
+    //Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
+    std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
+    //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
+    std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
+    //List of Pointers to the CryptoHandles of all matched Writers
+    std::vector<DatawriterCryptoHandle*> Writers;
+    //List of Pointers to the CryptoHandles of all matched Readers
+    std::vector<DatareaderCryptoHandle*> Readers;
 
-        //Data used to store the current session keys and to determine when it has to be updated
-        uint32_t session_id;
-        std::array<uint8_t,32> SessionKey;
-        uint64_t session_block_counter;
-        uint64_t max_blocks_per_session;
-        std::mutex mutex_;
+    //Data used to store the current session keys and to determine when it has to be updated
+    uint32_t session_id = std::numeric_limits<uint32_t>::max();
+    std::array<uint8_t, 32> SessionKey;
+    uint64_t session_block_counter = 0;
+    uint64_t max_blocks_per_session = 0;
+    std::mutex mutex_;
 };
 
 typedef HandleImpl<ParticipantKeyHandle> AESGCMGMAC_ParticipantCryptoHandle;

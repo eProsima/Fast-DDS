@@ -715,15 +715,7 @@ bool AESGCMGMAC_KeyFactory::unregister_participant(
         return false;
     }
 
-    for (std::vector<CryptoTransformKeyId>::iterator it = m_CryptoTransformKeyIds.begin();
-            it != m_CryptoTransformKeyIds.end();
-            ++it)
-    {
-        if ((*it) == local_participant->ParticipantKeyMaterial.sender_key_id)
-        {
-            m_CryptoTransformKeyIds.erase(it);
-        }
-    }
+    release_key_id(local_participant->ParticipantKeyMaterial.sender_key_id);
 
     //Unregister all writers and readers
     std::vector<DatawriterCryptoHandle*>::iterator wit = local_participant->Writers.begin();
@@ -880,18 +872,21 @@ CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId()
     while (!unique)
     {
         RAND_bytes(buffer.data(), 4);
-        unique = true;
-        //Iterate existing KeyIds to see if one is matching
-        for (std::vector<CryptoTransformKeyId>::iterator it = m_CryptoTransformKeyIds.begin();
-                it != m_CryptoTransformKeyIds.end();
-                ++it)
-        {
-            if (*it == buffer)
-            {
-                unique = false;
-            }
-        }
+        unique = std::find(m_CryptoTransformKeyIds.begin(), m_CryptoTransformKeyIds.end(), buffer) == m_CryptoTransformKeyIds.end();
     }
 
+    m_CryptoTransformKeyIds.push_back(buffer);
+
     return buffer;
+}
+
+void AESGCMGMAC_KeyFactory::release_key_id(
+        CryptoTransformKeyId key)
+{
+    std::vector<CryptoTransformKeyId>::iterator it;
+    it = std::find(m_CryptoTransformKeyIds.begin(), m_CryptoTransformKeyIds.end(), key);
+    if (it != m_CryptoTransformKeyIds.end())
+    {
+        m_CryptoTransformKeyIds.erase(it);
+    }
 }
