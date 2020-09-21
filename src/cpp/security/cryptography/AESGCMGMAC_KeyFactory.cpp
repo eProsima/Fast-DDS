@@ -872,7 +872,9 @@ CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId()
     while (!unique)
     {
         RAND_bytes(buffer.data(), 4);
-        unique = std::find(m_CryptoTransformKeyIds.begin(), m_CryptoTransformKeyIds.end(), buffer) == m_CryptoTransformKeyIds.end();
+        unique =
+                std::find(m_CryptoTransformKeyIds.begin(), m_CryptoTransformKeyIds.end(),
+                        buffer) == m_CryptoTransformKeyIds.end();
     }
 
     m_CryptoTransformKeyIds.push_back(buffer);
