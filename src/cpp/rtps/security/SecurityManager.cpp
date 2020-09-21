@@ -1376,19 +1376,14 @@ void SecurityManager::process_participant_stateless_message(
 
         mutex_.lock();
         auto dp_it = discovered_participants_.find(remote_participant_key);
-
         if (dp_it != discovered_participants_.end())
         {
             remote_participant_info = dp_it->second.get_auth();
             participant_data = &(dp_it->second.participant_data());
         }
-        else
-        {
-            logInfo(SECURITY, "Received Authentication message but not found related remote_participant_key");
-        }
         mutex_.unlock();
 
-        if (remote_participant_info)
+        if (remote_participant_info && participant_data)
         {
             if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REQUEST)
             {
@@ -1521,6 +1516,10 @@ void SecurityManager::process_participant_stateless_message(
                     std::move(message.message_identity()), std::move(message.message_data().at(0)));
 
             restore_discovered_participant_info(remote_participant_key, remote_participant_info);
+        }
+        else
+        {
+            logInfo(SECURITY, "Received Authentication message but not found related remote_participant_key");
         }
     }
     else
