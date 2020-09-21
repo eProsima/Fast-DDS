@@ -92,7 +92,11 @@ History::~History()
 void History::do_release_cache(
         CacheChange_t* ch)
 {
-    payload_pool_->release_payload(*ch);
+    IPayloadPool* pool = ch->payload_owner();
+    if (pool)
+    {
+        pool->release_payload(*ch);
+    }
     change_pool_->release_cache(ch);
 }
 

@@ -286,6 +286,11 @@ struct RTPS_DllAPI CacheChange_t
         return payload_owner_;
     }
 
+    IPayloadPool* payload_owner()
+    {
+        return payload_owner_;
+    }
+
     void payload_owner(
             IPayloadPool* owner)
     {
