@@ -59,7 +59,9 @@ public:
      * @param change Pointer to the change
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(CacheChange_t* change, size_t);
+    RTPS_DllAPI virtual bool received_change(
+            CacheChange_t* change,
+            size_t);
 
     /**
      * Add a CacheChange_t to the ReaderHistory.
@@ -82,6 +84,8 @@ public:
      * @param ch Pointer to the CacheChange_t.
      * @param position Iterator where the CacheChange_t is located in the history.
      * @return An iterator pointing to the new location of the element that followed the removed CacheChange_t.
+     * @note This is a non-thread-safe method meant to be called from a RTPS reader, with which the ReaderHistory
+     *       shares the same mutex.
      */
     const_iterator remove_change_nts(
             CacheChange_t* ch,
@@ -115,8 +119,8 @@ protected:
     RTPSReader* mp_reader;
 };
 
-}
-} /* namespace rtps */
-} /* namespace eprosima */
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_READERHISTORY_H_ */

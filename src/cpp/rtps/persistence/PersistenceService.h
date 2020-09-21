@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
-* @file PersistenceService.h
-*/
+ * @file PersistenceService.h
+ */
 
 #ifndef PERSISTENCESERVICE_H_
 #define PERSISTENCESERVICE_H_
@@ -22,6 +22,8 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
@@ -32,35 +34,41 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class CacheChangePool;
-
 /**
-* Abstract interface representing a persistence service implementaion
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
+ * Abstract interface representing a persistence service implementaion
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
 class IPersistenceService
 {
 public:
-    using map_allocator_t = 
-        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+
+    using map_allocator_t =
+            foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
     virtual ~IPersistenceService() = default;
 
     /**
      * Get all data stored for a writer.
-     * @param writer_guid GUID of the writer to load.
-     * @param part_id ID of the RTPSParticipant the writer belongs to.
+     * @param persistence_guid   GUID of the writer used to store samples.
+     * @param writer_guid        GUID of the writer to load.
+     * @param changes            History of the writer to load.
+     * @param change_pool        Pool where new changes should be obtained from.
+     * @param payload_pool       Pool where payloads should be obtained from.
+     * @param next_sequence      Sequence that should be applied to the next created sample.
      * @return True if operation was successful.
      */
     virtual bool load_writer_from_storage(
             const std::string& persistence_guid,
             const GUID_t& writer_guid,
             std::vector<CacheChange_t*>& changes,
-            CacheChangePool* pool) = 0;
+            const std::shared_ptr<IChangePool>& change_pool,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            SequenceNumber_t& next_sequence) = 0;
 
     /**
      * Add a change to storage.
-     * @param change The cache change to add.
+     * @param persistence_guid   GUID of the writer used to store samples.
+     * @param change             The cache change to add.
      * @return True if operation was successful.
      */
     virtual bool add_writer_change_to_storage(
@@ -69,20 +77,22 @@ public:
 
     /**
      * Remove a change from storage.
-     * @param change The cache change to remove.
+     * @param persistence_guid   GUID of the writer used to store samples.
+     * @param change             The cache change to remove.
      * @return True if operation was successful.
      */
     virtual bool remove_writer_change_from_storage(
-            const std::string& persistence_guid, 
+            const std::string& persistence_guid,
             const CacheChange_t& change) = 0;
 
     /**
      * Get all data stored for a reader.
-     * @param reader_guid GUID of the reader to load.
+     * @param reader_guid   GUID of the reader to load.
+     * @param seq_map       History record (map of low marks) to be loaded.
      * @return True if operation was successful.
      */
     virtual bool load_reader_from_storage(
-            const std::string& reader_guid, 
+            const std::string& reader_guid,
             foonathan::memory::map<GUID_t, SequenceNumber_t, map_allocator_t>& seq_map) = 0;
 
     /**
@@ -100,18 +110,20 @@ public:
 };
 
 /**
-* Abstract factory to create a persistence service from participant or endpoint properties
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
+ * Abstract factory to create a persistence service from participant or endpoint properties
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
 class PersistenceFactory
 {
 public:
+
     /**
      * Create a persistence service implementation
      * @param property_policy PropertyPolicy where the persistence configuration will be searched
      * @return A pointer to a persistence service implementation. nullptr when policy does not contain the necessary properties or if persistence service could not be created
      */
-    static IPersistenceService* create_persistence_service(const PropertyPolicy& property_policy);
+    static IPersistenceService* create_persistence_service(
+            const PropertyPolicy& property_policy);
 };
 
 
@@ -119,4 +131,4 @@ public:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /*  */
+#endif /* PERSISTENCESERVICE_H_ */

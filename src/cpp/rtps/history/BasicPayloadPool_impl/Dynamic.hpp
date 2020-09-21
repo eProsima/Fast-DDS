@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,15 +13,23 @@
 // limitations under the License.
 
 /**
- * @file CacheChangePool.h
- *
+ * @file Dynamic.hpp
  */
 
+template <>
+class Impl<DYNAMIC_RESERVE_MEMORY_MODE> : public BaseImpl
+{
+public:
 
+    bool release_payload(
+            CacheChange_t& cache_change) override
+    {
+        assert(cache_change.payload_owner() == this);
 
-#ifndef CACHECHANGEPOOL_H_
-#define CACHECHANGEPOOL_H_
+        cache_change.serializedPayload.empty();
+        cache_change.payload_owner(nullptr);
 
-#include <fastdds/rtps/history/CacheChangePool.h>
+        return true;
+    }
 
-#endif /* CACHECHANGEPOOL_H_ */
+};

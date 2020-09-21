@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
-* @file SQLite3PersistenceService.h
-*/
+ * @file SQLite3PersistenceService.h
+ */
 
 #ifndef SQLITE3PERSISTENCESERVICE_H_
 #define SQLITE3PERSISTENCESERVICE_H_
@@ -27,20 +27,23 @@ namespace fastrtps {
 namespace rtps {
 
 /**
-* Create a new SQLite3 implementation of persistence service
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
-IPersistenceService* create_SQLite3_persistence_service(const char* filename);
+ * Create a new SQLite3 implementation of persistence service
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
+IPersistenceService* create_SQLite3_persistence_service(
+        const char* filename);
 
 
 /**
-* Persistence service implementation over SQLite3
-* @ingroup RTPS_PERSISTENCE_MODULE
-*/
+ * Persistence service implementation over SQLite3
+ * @ingroup RTPS_PERSISTENCE_MODULE
+ */
 class SQLite3PersistenceService : public IPersistenceService
 {
 public:
-    SQLite3PersistenceService(sqlite3* db);
+
+    SQLite3PersistenceService(
+            sqlite3* db);
     virtual ~SQLite3PersistenceService() override;
 
     /**
@@ -48,11 +51,13 @@ public:
      * @param writer_guid GUID of the writer to load.
      * @return True if operation was successful.
      */
-    virtual bool load_writer_from_storage(
+    bool load_writer_from_storage(
             const std::string& persistence_guid,
             const GUID_t& writer_guid,
             std::vector<CacheChange_t*>& changes,
-            CacheChangePool* pool) final;
+            const std::shared_ptr<IChangePool>& change_pool,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            SequenceNumber_t& next_sequence) final;
 
     /**
      * Add a change to storage.
@@ -94,6 +99,7 @@ public:
             const SequenceNumber_t& seq_number) final;
 
 private:
+
     sqlite3* db_;
 
     sqlite3_stmt* load_writer_stmt_;

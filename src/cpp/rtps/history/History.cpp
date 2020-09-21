@@ -20,10 +20,11 @@
 
 #include <fastdds/rtps/history/History.h>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CacheChange.h>
 
-
-#include <fastdds/dds/log/Log.hpp>
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
 
 #include <mutex>
 
@@ -35,21 +36,72 @@ History::History(
         const HistoryAttributes& att)
     : m_att(att)
     , m_isHistoryFull(false)
-    , m_changePool(att.initialReservedCaches, att.payloadMaxSize, att.maximumReservedCaches, att.memoryPolicy)
+    , max_payload_size_(att.payloadMaxSize)
     , mp_mutex(nullptr)
 
 {
-    m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
+    int32_t max_caches = std::max(att.maximumReservedCaches, 0);
+    int32_t initial_caches = std::max(att.initialReservedCaches, 0);
+    m_changes.reserve(static_cast<size_t>(initial_caches));
+
+    PoolConfig pool_config
+    {
+        att.memoryPolicy,
+        att.payloadMaxSize,
+        static_cast<uint32_t>(initial_caches),
+        static_cast<uint32_t>(max_caches)
+    };
+
+    payload_pool_ = BasicPayloadPool::get(pool_config);
+
+    if ((att.memoryPolicy == PREALLOCATED_MEMORY_MODE) || (att.memoryPolicy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
+    {
+        auto init_cache = [this](
+                CacheChange_t* item)
+        {
+            if (payload_pool_->get_payload(m_att.payloadMaxSize, *item))
+            {
+                payload_pool_->release_payload(*item);
+            }
+        };
+
+        change_pool_ = std::make_shared<CacheChangePool>(pool_config, init_cache);
+    }
+    else
+    {
+        change_pool_ = std::make_shared<CacheChangePool>(pool_config);
+    }
 }
 
 History::~History()
 {
     logInfo(RTPS_HISTORY, "");
+
+    for (auto change : m_changes)
+    {
+        do_release_cache(change);
+    }
+
+    // As releasing the change pool will delete the cache changes it owns,
+    // the payload pool may be called to release their payloads, so we should
+    // ensure that the payload pool is destroyed after the change pool.
+    change_pool_.reset();
+    payload_pool_.reset();
+}
+
+void History::do_release_cache(
+        CacheChange_t* ch)
+{
+    IPayloadPool* pool = ch->payload_owner();
+    if (pool)
+    {
+        pool->release_payload(*ch);
+    }
+    change_pool_->release_cache(ch);
 }
 
 bool History::remove_all_changes()
 {
-
     if (mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
@@ -158,9 +210,9 @@ bool History::get_earliest_change(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 
 //TODO Remove if you want.
@@ -182,6 +234,6 @@ void History::print_changes_seqNum2()
     std::cout << ss.str();
 }
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

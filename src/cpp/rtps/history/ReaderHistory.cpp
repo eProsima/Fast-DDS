@@ -75,9 +75,9 @@ bool ReaderHistory::add_change(
     {
         auto it = std::lower_bound(m_changes.begin(), m_changes.end(), a_change,
                         [](const CacheChange_t* c1, const CacheChange_t* c2) -> bool
-                    {
-                        return c1->sourceTimestamp < c2->sourceTimestamp;
-                    });
+                        {
+                            return c1->sourceTimestamp < c2->sourceTimestamp;
+                        });
         m_changes.insert(it, a_change);
     }
     else
@@ -114,7 +114,7 @@ bool ReaderHistory::remove_change(
         {
             logInfo(RTPS_HISTORY, "Removing change " << a_change->sequenceNumber);
             mp_reader->change_removed_by_history(a_change);
-            m_changePool.release_Cache(a_change);
+            do_release_cache(a_change);
             m_changes.erase(chit);
             return true;
         }
@@ -130,7 +130,7 @@ History::const_iterator ReaderHistory::remove_change_nts(
     (void)a_change;
     assert(nullptr != a_change);
     assert((*position) == a_change);
-    m_changePool.release_Cache(a_change);
+    do_release_cache(a_change);
     return m_changes.erase(position);
 }
 
@@ -145,7 +145,8 @@ bool ReaderHistory::remove_changes_with_guid(
         return false;
     }
 
-    {//Lock scope
+    {
+        //Lock scope
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
         for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit != m_changes.end(); ++chit)
         {
@@ -191,7 +192,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
                 {
                     logInfo(RTPS_HISTORY, "Removing change " << item->sequenceNumber);
                     mp_reader->change_removed_by_history(item);
-                    m_changePool.release_Cache(item);
+                    do_release_cache(item);
                     chit = m_changes.erase(chit);
                     continue;
                 }
