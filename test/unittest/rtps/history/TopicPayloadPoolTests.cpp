@@ -28,7 +28,6 @@ class TopicPayloadPoolTests : public TestWithParam<tuple<uint32_t, uint32_t, uin
 {
 protected:
 
-
     TopicPayloadPoolTests()
         : pool(nullptr)
         , test_input_pool_size(10)
@@ -71,7 +70,7 @@ protected:
     {
         // Compute the expected sizes
         uint32_t expected_max_pool_size =
-            num_of_infinite_histories == 0 ? expected_finite_max_pool_size : 0;
+                num_of_infinite_histories == 0 ? expected_finite_max_pool_size : 0;
 
         uint32_t expected_pool_size = 0;
         switch (memory_policy)
@@ -86,7 +85,7 @@ protected:
                 break;
         }
 
-        
+
         check_sizes(expected_pool_size, expected_max_pool_size);
     }
 
@@ -99,7 +98,7 @@ protected:
     {
         // Compute the expected sizes
         uint32_t expected_max_pool_size =
-            num_of_infinite_histories == 0 ? expected_finite_max_pool_size : 0;
+                num_of_infinite_histories == 0 ? expected_finite_max_pool_size : 0;
 
         uint32_t expected_pool_size = 0;
         switch (memory_policy)
@@ -120,8 +119,8 @@ protected:
     }
 
     void check_sizes(
-        uint32_t expected_pool_size,
-        uint32_t expected_max_pool_size)
+            uint32_t expected_pool_size,
+            uint32_t expected_max_pool_size)
     {
         // Check the reserved sizes
         ASSERT_EQ(pool->get_allCachesSize(), expected_pool_size);
@@ -186,9 +185,9 @@ protected:
     }
 
     void do_reserve_history(
-        uint32_t new_reserved_size,
-        uint32_t new_reserved_max_size,
-        bool is_reader)
+            uint32_t new_reserved_size,
+            uint32_t new_reserved_max_size,
+            bool is_reader)
     {
         // Do the reserve
         PoolConfig config{ memory_policy, 0, new_reserved_size, new_reserved_max_size };
@@ -202,14 +201,14 @@ protected:
         else
         {
             expected_finite_max_pool_size +=
-                (new_reserved_max_size < new_reserved_size ? new_reserved_size : new_reserved_max_size);
+                    (new_reserved_max_size < new_reserved_size ? new_reserved_size : new_reserved_max_size);
         }
 
         if (is_reader)
         {
             expected_pool_size_for_readers =
-                (new_reserved_size > expected_pool_size_for_readers) ?
-                new_reserved_size : expected_pool_size_for_readers;
+                    (new_reserved_size > expected_pool_size_for_readers) ?
+                    new_reserved_size : expected_pool_size_for_readers;
         }
         else
         {
@@ -218,9 +217,9 @@ protected:
     }
 
     void do_release_history(
-        uint32_t new_released_size,
-        uint32_t new_released_max_size,
-        bool is_reader)
+            uint32_t new_released_size,
+            uint32_t new_released_max_size,
+            bool is_reader)
     {
         // Do the release
         PoolConfig config{ memory_policy, 0, new_released_size, new_released_max_size };
@@ -234,7 +233,7 @@ protected:
         else
         {
             expected_finite_max_pool_size -=
-                (new_released_max_size < new_released_size ? new_released_size : new_released_max_size);
+                    (new_released_max_size < new_released_size ? new_released_size : new_released_max_size);
         }
     }
 
@@ -247,9 +246,9 @@ protected:
      * - Checks that the pool size and limits are correct
      */
     void do_history_test (
-        uint32_t size,
-        uint32_t max_size,
-        bool is_reader)
+            uint32_t size,
+            uint32_t max_size,
+            bool is_reader)
     {
         // First history reserved for a reader.
         do_reserve_history(test_input_pool_size, test_input_max_pool_size, true);
@@ -290,16 +289,16 @@ TEST_P(TopicPayloadPoolTests, reserve_history_reader_same_size)
 TEST_P(TopicPayloadPoolTests, reserve_history_reader_lower_size)
 {
     // A new history reserved for a reader. Lower limits than fixture.
-    uint32_t reserve_size = test_input_pool_size/2;
-    uint32_t reserve_max_size = test_input_max_pool_size/5;
+    uint32_t reserve_size = test_input_pool_size / 2;
+    uint32_t reserve_max_size = test_input_max_pool_size / 5;
     do_history_test(reserve_size, reserve_max_size, true);
 }
 
 TEST_P(TopicPayloadPoolTests, reserve_history_reader_larger_size)
 {
     // A new history reserved for a reader. Larger limits than fixture.
-    uint32_t reserve_size = test_input_pool_size*2;
-    uint32_t reserve_max_size = test_input_max_pool_size*5;
+    uint32_t reserve_size = test_input_pool_size * 2;
+    uint32_t reserve_max_size = test_input_max_pool_size * 5;
     do_history_test(reserve_size, reserve_max_size, true);
 }
 
@@ -314,16 +313,16 @@ TEST_P(TopicPayloadPoolTests, reserve_history_writer_same_size)
 TEST_P(TopicPayloadPoolTests, reserve_history_writer_lower_size)
 {
     // A new history reserved for a writer. Lower limits than fixture.
-    uint32_t reserve_size = test_input_pool_size/2;
-    uint32_t reserve_max_size = test_input_max_pool_size/5;
+    uint32_t reserve_size = test_input_pool_size / 2;
+    uint32_t reserve_max_size = test_input_max_pool_size / 5;
     do_history_test(reserve_size, reserve_max_size, false);
 }
 
 TEST_P(TopicPayloadPoolTests, reserve_history_writer_larger_size)
 {
     // A new history reserved for a writer. Larger limits than fixture.
-    uint32_t reserve_size = test_input_pool_size*2;
-    uint32_t reserve_max_size = test_input_max_pool_size*5;
+    uint32_t reserve_size = test_input_pool_size * 2;
+    uint32_t reserve_max_size = test_input_max_pool_size * 5;
     do_history_test(reserve_size, reserve_max_size, false);
 }
 

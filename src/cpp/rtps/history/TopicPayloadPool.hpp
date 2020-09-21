@@ -29,18 +29,18 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class TopicPayloadPool: public IPayloadPool
+class TopicPayloadPool : public IPayloadPool
 {
 public:
 
     /**
      * @brief Initializes the pool.
-     * 
+     *
      * This is a first approach to the TopicPayloadPool API,
      * whose purpose is the development of the unit tests.
      * The final implementation may need to rearrange certain elements,
      * and tests may need to be tuned accordingly.
-     * 
+     *
      * For example, TopicPayloadPool will probably end up being implemented
      * in a similar fashion as BasicPayloadPool,
      * with a template class specialized for each memory policy type.
@@ -90,13 +90,13 @@ public:
 
     /**
      * @brief Ensures the pool has capacity to fullfill the requirements of a new history.
-     * 
+     *
      * @param [in]  config              The new history's pool requirements.
      * @param [in]  is_reader_history   True if the new history is for a reader. False otherwise.
-     * 
+     *
      * @pre
      *   - Current pool is configured for the same memory policy as @c config.memory_policy.
-     * 
+     *
      * @post
      *   - If @c config.maximum_size is not zero
      *     - The maximum size of the pool is increased by @c config.maximum_size.
@@ -108,8 +108,8 @@ public:
      *       plus the maximum of the @c config.initial_size for all reserved reader histories.
      */
     bool reserve_history(
-         const PoolConfig& config,
-         bool is_reader)
+            const PoolConfig& config,
+            bool is_reader)
     {
         (void) config;
         (void) is_reader;
@@ -118,18 +118,18 @@ public:
 
     /**
      * @brief Informs the pool that some history requirements are not longer active.
-     * 
+     *
      * The pool can release some resources that are not needed any longer.
-     * 
+     *
      * @param [in]  config              The old history's pool requirements, which are no longer active.
      * @param [in]  is_reader_history   True if the history was for a reader. False otherwise.
-     * 
+     *
      * @pre
      *   - Current pool is configured for the same memory policy as @c config.memory_policy.
      *   - If all remaining histories were reserved with non zero @c config.maximum_size
      *      - The number of elements in use is less than
      *        the sum of the @c config.maximum_size for all remaining histories
-     * 
+     *
      * @post
      *   - If all remaining histories were reserved with non zero @c config.maximum_size
      *      - The maximum size of the pool is set to
@@ -140,8 +140,8 @@ public:
      *     the excess of elements are freed until the number of allocated elemets is equal to the new maximum.
      */
     bool release_history(
-         const PoolConfig& config,
-         bool is_reader)
+            const PoolConfig& config,
+            bool is_reader)
     {
         (void) config;
         (void) is_reader;
@@ -163,7 +163,6 @@ public:
     {
         return 0;
     }
-
 
 };
 
