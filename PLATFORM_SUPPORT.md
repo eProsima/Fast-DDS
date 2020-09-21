@@ -1,4 +1,4 @@
-# Support
+# Platform Support
 
 This document reflects the level of support offered by *eprosima Fast DDS* on different platforms as per the following
 definitions:
