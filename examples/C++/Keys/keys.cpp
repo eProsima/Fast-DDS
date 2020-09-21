@@ -276,7 +276,7 @@ void keys()
     std::cout << "Publishing " << max_instances << " keys, 10 samples per key..." << std::endl;
     for (uint8_t i = 0; i < max_instances; i++)
     {
-        for (int j = 0; j < 10; j++)
+        for (uint8_t j = 0; j < 10; j++)
         {
             my_sample.index(j + 1);
             my_sample.key_value(i + 1);
