@@ -1058,10 +1058,16 @@ static SharedSecretHandle* generate_sharedsecret(
                     if (EVP_PKEY_derive(ctx, data.value().data(), &length) > 0)
                     {
                         uint8_t md[32];
-                        EVP_Digest(data.value().data(), length, md, NULL, EVP_sha256(), NULL);
-                        data.value().assign(md, md + 32);
-                        handle = new SharedSecretHandle();
-                        (*handle)->data_.push_back(std::move(data));
+                        if (EVP_Digest(data.value().data(), length, md, NULL, EVP_sha256(), NULL))
+                        {
+                            data.value().assign(md, md + 32);
+                            handle = new SharedSecretHandle();
+                            (*handle)->data_.push_back(std::move(data));
+                        }
+                        else
+                        {
+                            exception = _SecurityException_("OpenSSL library failed while getting derived key");
+                        }
                     }
                     else
                     {
@@ -1376,6 +1382,7 @@ ValidationResult_t PKIDH::begin_handshake_request(
         {
             exception = _SecurityException_("Cannot find permissions file in permissions credential token");
             EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
+            delete handshake_handle_aux;
             return ValidationResult_t::VALIDATION_FAILED;
         }
     }
@@ -1709,6 +1716,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (((*handshake_handle_aux)->peerkeys_ = generate_dh_peer_key(*dh1, exception, kagree_kind)) == nullptr)
     {
         WARNING_SECURITY_LOGGING("PKIDH", "Cannot store peer key from dh1");
+        delete handshake_handle_aux;
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1846,7 +1854,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
                         "hash_c1"), false);
 
                 bproperty.name("signature");
-                bproperty.propagate("true");
+                bproperty.propagate(true);
                 if (sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
                 {
                     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
@@ -2306,7 +2314,7 @@ ValidationResult_t PKIDH::process_handshake_request(
             false);
 
     bproperty.name("signature");
-    bproperty.propagate("true");
+    bproperty.propagate(true);
     if (sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
     {
         final_message.binary_properties().push_back(std::move(bproperty));
