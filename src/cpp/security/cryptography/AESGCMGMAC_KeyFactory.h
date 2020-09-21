@@ -98,6 +98,10 @@ private:
      *  Use this method to generate KeyIds
      */
     CryptoTransformKeyId make_unique_KeyId();
+
+    void release_key_id(
+            CryptoTransformKeyId id);
+
     //Storage for KeyIds in use
     std::vector<CryptoTransformKeyId> m_CryptoTransformKeyIds;
 };
