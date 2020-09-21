@@ -1567,8 +1567,8 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
 {
 public:
 
-    fastrtps::rtps::security::EndpointSecurityAttributesMask security_attributes;
-    fastrtps::rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
+    fastrtps::rtps::security::EndpointSecurityAttributesMask security_attributes = 0;
+    fastrtps::rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes = 0;
 
     /**
      * @brief Constructor without parameters. <br>
