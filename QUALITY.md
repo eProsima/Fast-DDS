@@ -213,7 +213,7 @@ The chart below compares the requirements in the [REP-2004](https://www.ros.org/
 |4.v.a| Code style enforcement (linters)|✓|
 |4.v.b| Use of static analysis tools |✓|
 |5| **Dependencies** | --- |
-|5.iii| Justifies quality use of dependencies ||
+|5.iii| Justifies quality use of dependencies |✓|
 |6| **Platform support** | --- |
 |6.i| Support targets Tier1 ROS platforms|✓|
 |7| **Security** | --- |
