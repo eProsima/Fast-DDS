@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
-* @file fixed_size_string.hpp
+* @file fixed_size_bitmap.hpp
 *
 */
 
@@ -21,6 +21,7 @@
 #define FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
 
 #include <array>
+#include <cstdint>
 #include <string.h>
 
 #if _MSC_VER
