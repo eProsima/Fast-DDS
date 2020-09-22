@@ -157,7 +157,12 @@ However, the tendency will be to homogenize the older source files to the code s
 The first two dependencies are suggested to be installed for Linux using apt package manager, which would pull them from the Debian upstream.
 Therefore, these dependencies can be considered Quality Level 1 following the [advantages of being packaged for Debian](https://wiki.debian.org/AdvantagesForUpstream).
 
-The other two dependencies are installed from the eProsima repositories. Efforts to provide a Quality Declaration for these packages are being made currently.
+`foonathan_memory` dependency is installed from a vendor provided by *eProsima*: [`foonathan_memory_vendor`](https://github.com/eProsima/foonathan_memory_vendor).
+Its Quality Declaration can be found [here](https://github.com/eProsima/foonathan_memory_vendor/blob/master/QUALITY_DECLARATION.md).
+Currently, `foonathan_memory_vendor` claims to be in the **Quality Level 3** category.
+
+**eProsima Fast CDR** Quality Declaration can be found [here](https://github.com/eProsima/Fast-CDR/blob/master/QUALITY_DECLARATION.md). Currently, **eProsima Fast CDR** claims to be in the **Quality Level 2** category.
+
 
 ## Platform Support [6]
 
@@ -185,7 +190,6 @@ The chart below compares the requirements in the [REP-2004](https://www.ros.org/
 |1.iii|Declared public API|✓|
 |1.iv|API stability policy|✓|
 |1.v|ABI stability policy|✓|
-|1.vi|API/ABI stable within ROS distribution|N/A|
 |2| **Change control process** |---|
 |2.i| All changes occur on change request |✓|
 |2.ii| Contributor origin (DCO, CLA, etc) |✓|
@@ -209,9 +213,7 @@ The chart below compares the requirements in the [REP-2004](https://www.ros.org/
 |4.v.a| Code style enforcement (linters)|✓|
 |4.v.b| Use of static analysis tools |✓|
 |5| **Dependencies** | --- |
-|5.i| Must not have ROS lower level dependencies |N/A|
-|5.ii| Optional ROS lower level dependencies|N/A|
-|5.iii| Justifies quality use of non-ROS dependencies ||
+|5.iii| Justifies quality use of dependencies ||
 |6| **Platform support** | --- |
 |6.i| Support targets Tier1 ROS platforms|✓|
 |7| **Security** | --- |
