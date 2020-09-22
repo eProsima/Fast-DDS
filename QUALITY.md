@@ -41,7 +41,7 @@ The change control process can be found in [CONTRIBUTING](https://github.com/ePr
 
 All changes to *eprosima Fast DDS* occur through pull requests that are required to pass all CI tests.
 In case of failure, only maintainers can merge the pull request, and only when there is enough evidence that the failure is unrelated to the change.
-Additionally, all pull request must have a positive review from one other contributor that did not author the pull request.
+Additionally, all pull requests must have a positive review from one other contributor that did not author the pull request.
 
 ### Change Requests [2.i]
 
@@ -49,16 +49,17 @@ All changes will occur through a pull request.
 
 ### Contributor Origin [2.ii]
 
-*eprosima Fast DDS* uses the [Developer Certificate of Origin (DCO)](https://developercertificate.org/) as its confirmation of contributor origin policy. More information can be found in [CONTRIBUTING](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md)
+*eprosima Fast DDS* uses the [Developer Certificate of Origin (DCO)](https://developercertificate.org/) as its confirmation of contributor origin policy.
+More information can be found in [CONTRIBUTING](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md)
 
 ### Peer Review Policy [2.iii]
 
-All pull request will be peer-reviewed by at least one other contributor who did not author the pull request. Approval is required before merging.
+All pull requests will be peer-reviewed by at least one other contributor who did not author the pull request. Approval is required before merging.
 
 ### Continuous Integration [2.iv]
 
-All pull request must pass CI to be considered for merging, unless maintainers consider that there is enough evidence that the failure is unrelated to the changes.
-CI testing is automatically triggered by incoming pull requests .
+All pull requests must pass CI to be considered for merging, unless maintainers consider that there is enough evidence that the failure is unrelated to the changes.
+CI testing is automatically triggered by incoming pull requests.
 Current nightly results can be seen here for all supported platforms:
 
 * Linux [![Linux amd64 ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux)
@@ -68,7 +69,7 @@ Current nightly results can be seen here for all supported platforms:
 
 ### Documentation Policy [2.v]
 
-All pull requests must resolve related documentation changes before merging.
+All pull requests must resolve related documentation changes before merging as stated in [CONTRIBUTING](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md).
 
 ## Documentation [3]
 
@@ -96,7 +97,7 @@ There is some third-party content included with *eprosima Fast DDS* which is dis
 ### Feature Testing [4.i]
 
 Each feature in *eprosima Fast DDS* has corresponding tests which simulate typical usage, and they are located in the [`test` directory](test).
-New features are required to have tests before being added.
+New features are required to have tests before being added as stated in [CONTRIBUTING](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md).
 Current nightly results can be found here:
 
 * Linux [![Linux ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux)
@@ -133,7 +134,7 @@ Furthermore, [*eprosima benchmarking* project](https://github.com/eProsima/bench
 
 ### Linters and Static Analysis [4.v]
 
-*eprosima Fast DDS* has a [code style](https://github.com/eProsima/cpp-style) that it is enforced using *Uncrustify*.
+*eprosima Fast DDS* has a [code style](https://github.com/eProsima/cpp-style) that it is enforced using [*uncrustify*](https://github.com/uncrustify/uncrustify).
 Among the CI tests there are tests that ensures that every pull request is compliant with the code style.
 The latest pull request results can be seen [here](http://jenkins.eprosima.com:8080/job/fastdds_github_uncrustify/lastBuild).
 The tests only check files where changes have been made.
