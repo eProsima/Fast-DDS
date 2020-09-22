@@ -13,19 +13,20 @@
 // limitations under the License.
 
 /*!
-* @file fixed_size_string.hpp
-*
-*/
+ * @file fixed_size_bitmap.hpp
+ *
+ */
 
 #ifndef FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
 #define FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
 
 #include <array>
+#include <cstdint>
 #include <string.h>
 
 #if _MSC_VER
 #include <intrin.h>
-#endif
+#endif // if _MSC_VER
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
@@ -34,18 +35,20 @@ namespace fastrtps {
 template <class T>
 struct DiffFunction
 {
-    constexpr auto operator () (T a, T b) const 
-        -> decltype(a - b) 
-    { 
-        return a - b; 
+    constexpr auto operator () (
+            T a,
+            T b) const
+    -> decltype(a - b)
+    {
+        return a - b;
     }
 };
 
 /**
  * Template class to hold a range of items using a custom bitmap.
  * @tparam T      Type of the elements in the range.
- *                Should have `>=` operator and `T + uint32_t` returning T. 
- * @tparam Diff   Functor calculating the difference of two T. 
+ *                Should have `>=` operator and `T + uint32_t` returning T.
+ * @tparam Diff   Functor calculating the difference of two T.
  *                The result should be assignable to a uint32_t.
  * @tparam NBITS  Size in bits of the bitmap.
  *                Range of items will be [base, base + NBITS - 1].
@@ -55,7 +58,9 @@ template<class T, class Diff = DiffFunction<T>, uint32_t NBITS = 256>
 class BitmapRange
 {
     #define NITEMS ((NBITS + 31ul) / 32ul)
+
 public:
+
     // Alias to improve readability.
     using bitmap_type = std::array<uint32_t, NITEMS>;
 
@@ -74,7 +79,7 @@ public:
     /**
      * Base-specific constructor.
      * Constructs an empty range with specified base.
-     * 
+     *
      * @param base   Specific base value for the created range.
      */
     explicit BitmapRange(
@@ -92,7 +97,7 @@ public:
      * Get base of the range.
      * @return a copy of the range base.
      */
-    T base() const noexcept 
+    T base() const noexcept
     {
         return base_;
     }
@@ -148,7 +153,7 @@ public:
 
     /**
      * Returns whether the range is empty (i.e. has all bits unset).
-     * 
+     *
      * @return true if the range is empty, false otherwise.
      */
     bool empty() const noexcept
@@ -158,7 +163,7 @@ public:
 
     /**
      * Returns the highest value set in the range.
-     * 
+     *
      * @return the highest value set in the range. If the range is empty, the result is undetermined.
      */
     T max() const noexcept
@@ -191,7 +196,7 @@ public:
                 uint32_t offset = 31UL ^ bit;
 #else
                 uint32_t offset = __builtin_clz(bits);
-#endif
+#endif // if _MSC_VER
 
                 // Found first bit set in bitmap
                 return item + offset;
@@ -320,7 +325,7 @@ public:
      * @param item   Value to be removed.
      */
     void remove(
-        const T& item) noexcept
+            const T& item) noexcept
     {
         // Check item is inside the allowed range.
         T max_value = max();
@@ -343,7 +348,7 @@ public:
     /**
      * Gets the current value of the bitmap.
      * This method is designed to be used when performing serialization of a bitmap range.
-     * 
+     *
      * @param num_bits         Upon return, it will contain the number of significant bits in the bitmap.
      * @param bitmap           Upon return, it will contain the current value of the bitmap.
      * @param num_longs_used   Upon return, it will contain the number of valid elements on the returned bitmap.
@@ -361,7 +366,7 @@ public:
     /**
      * Sets the current value of the bitmap.
      * This method is designed to be used when performing deserialization of a bitmap range.
-     * 
+     *
      * @param num_bits   Number of significant bits in the input bitmap.
      * @param bitmap     Points to the begining of a uint32_t array holding the input bitmap.
      */
@@ -395,7 +400,7 @@ public:
             // Traverse through the bits set on the item, msb first.
             // Loop will stop when there are no bits set.
             uint32_t bits = bitmap_[i];
-            while(bits)
+            while (bits)
             {
                 // We use an intrinsic to find the index of the highest bit set.
                 // Most modern CPUs have an instruction to count the leading zeroes of a word.
@@ -407,7 +412,7 @@ public:
 #else
                 uint32_t offset = __builtin_clz(bits);
                 uint32_t bit = 31UL ^ offset;
-#endif
+#endif // if _MSC_VER
 
                 // Call the function for the corresponding item
                 f(item + offset);
@@ -422,6 +427,7 @@ public:
     }
 
 protected:
+
     T base_;               ///< Holds base value of the range.
     T range_max_;          ///< Holds maximum allowed value of the range.
     bitmap_type bitmap_;   ///< Holds the bitmap values.
@@ -546,14 +552,15 @@ private:
                 uint32_t offset = (31UL ^ bit) + 1;
 #else
                 uint32_t offset = __builtin_clz(bits) + 1;
-#endif
+#endif // if _MSC_VER
                 num_bits_ = (i << 5UL) + offset;
                 break;
             }
         }
     }
-}; 
-    
+
+};
+
 }   // namespace fastrtps
 }   // namespace eprosima
 

@@ -24,11 +24,20 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
 //Enums and configuration structure
-enum Reliability_type { Best_Effort, Reliable };
-enum Durability_type { Transient_Local, Volatile };
-enum HistoryKind_type { Keep_Last, Keep_All };
+enum Reliability_type
+{
+    Best_Effort, Reliable
+};
+enum Durability_type
+{
+    Transient_Local, Volatile
+};
+enum HistoryKind_type
+{
+    Keep_Last, Keep_All
+};
 
-typedef struct
+struct example_configuration
 {
     Reliability_type reliability;
     Durability_type durability;
@@ -37,7 +46,7 @@ typedef struct
     uint8_t depth = 1;
     uint8_t no_keys = 1;
     uint16_t max_samples_per_key = 1;
-} example_configuration;
+};
 
 
 
@@ -64,7 +73,8 @@ int main()
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch (std::invalid_argument&){
+        }
+        catch (std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -97,7 +107,8 @@ int main()
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch (std::invalid_argument&){
+        }
+        catch (std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -130,7 +141,8 @@ int main()
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch (std::invalid_argument&){
+        }
+        catch (std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -163,7 +175,8 @@ int main()
             int choice;
             try{
                 choice = std::stoi(userchoice);
-            }catch (std::invalid_argument&){
+            }
+            catch (std::invalid_argument&){
                 std::cout << "Please input a valid argument" << std::endl;
                 continue;
             }
@@ -183,7 +196,8 @@ int main()
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch (std::invalid_argument&){
+        }
+        catch (std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -213,7 +227,8 @@ int main()
             int choice;
             try{
                 choice = std::stoi(userchoice);
-            }catch (std::invalid_argument&){
+            }
+            catch (std::invalid_argument&){
                 std::cout << "Please input a valid argument" << std::endl;
                 continue;
             }
@@ -233,7 +248,8 @@ int main()
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch (std::invalid_argument&){
+        }
+        catch (std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -309,7 +325,7 @@ int main()
     rqos.resource_limits().max_samples = user_configuration.history_size;
     rqos.resource_limits().max_instances = user_configuration.no_keys;
     rqos.resource_limits().max_samples_per_instance = user_configuration.no_keys > 1 ?
-        user_configuration.max_samples_per_key : user_configuration.history_size;
+            user_configuration.max_samples_per_key : user_configuration.history_size;
 
     DataReader* EarlyReader = EarlySubscriber->create_datareader(SubTopic, rqos);
     if (EarlyReader == nullptr)
