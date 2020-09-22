@@ -357,8 +357,6 @@ elseif(NOT EPROSIMA_INSTALLER)
 
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         ${PROJECT_NAME_UPPER}_SOURCE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
         SQLITE_WIN32_GETVERSIONEX=0
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
