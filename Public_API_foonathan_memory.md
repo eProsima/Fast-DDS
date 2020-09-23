@@ -12,7 +12,7 @@ This document will be updated if new features are included and used in *eprosima
 ## Allocator implementations
 
 1. Class [foonathan::memory::memory_pool](https://foonathan.net/memory/classfoonathan_1_1memory_1_1memory__pool.html)
-1. Struct [foonathan::memory::node_pool](https://foonathan.net/memory/classfoonathan_1_1memory_1_1memory__pool.html)
+1. Struct [foonathan::memory::node_pool](https://foonathan.net/memory/structfoonathan_1_1memory_1_1node__pool.html)
 
 ## Adapters and Wrappers
 
