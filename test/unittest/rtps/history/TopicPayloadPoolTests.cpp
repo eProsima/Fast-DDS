@@ -14,7 +14,7 @@
 
 #include <gtest/gtest.h>
 
-#include <rtps/history/TopicPayloadPool.hpp>
+#include <rtps/history/TopicPayloadPool_impl/Base.hpp>
 
 #include <tuple>
 
