@@ -52,12 +52,19 @@ protected:
         payload_size             = get<2>(GetParam());
         memory_policy            = get<3>(GetParam());
 
-        pool = new TopicPayloadPool(memory_policy, payload_size);
+        std::cout << "[init:" << test_input_pool_size
+                << " max:" << test_input_max_pool_size
+                << " size:" << payload_size
+                << " policy:" << memory_policy
+                << "]" <<std::endl;
+
+        PoolConfig config{ memory_policy, payload_size, test_input_pool_size, test_input_max_pool_size };
+        pool = TopicPayloadPool::get(config);
     }
 
     virtual void TearDown()
     {
-        delete pool;
+        pool.reset();
     }
 
     /**
@@ -128,7 +135,7 @@ protected:
             uint32_t expected_max_pool_size)
     {
         // Check the reserved sizes
-        ASSERT_EQ(pool->get_allCachesSize(), expected_pool_size);
+        ASSERT_EQ(pool->get_allPayloadsSize(), expected_pool_size);
 
         // Check the maximum sizes
         // As there is no public interface exposing this data,
@@ -145,10 +152,10 @@ protected:
         {
             uint32_t data_size = i * 16;
             CacheChange_t* ch = new CacheChange_t();
+            cache_changes.push_back(ch);
 
             ASSERT_TRUE(pool->get_payload(data_size, *ch));
             ASSERT_NE(ch->serializedPayload.data, nullptr);
-            cache_changes.push_back(ch);
 
             switch (memory_policy)
             {
@@ -171,9 +178,9 @@ protected:
         if (expected_max_pool_size == 0)
         {
             CacheChange_t* ch = new CacheChange_t();
+            cache_changes.push_back(ch);
 
             ASSERT_TRUE(pool->get_payload(payload_size, *ch));
-            cache_changes.push_back(ch);
         }
         else
         {
@@ -271,7 +278,7 @@ protected:
         check_final_sizes();
     }
 
-    TopicPayloadPool* pool;                     //< The pool under test
+    std::shared_ptr<ITopicPayloadPool> pool;    //< The pool under test
 
     uint32_t test_input_pool_size;              //< Pool size given to the parametric test
     uint32_t test_input_max_pool_size;          //< Max pool size given to the parametric test
@@ -350,7 +357,7 @@ TEST_P(TopicPayloadPoolTests, release_history_reader_finite_size)
 
 TEST_P(TopicPayloadPoolTests, release_history_writer_infinite_size)
 {
-    // A history with infinite size reserved for a reader is released.
+    // A history with infinite size reserved for a reader is releasde.
     uint32_t reserve_size = test_input_pool_size;
     uint32_t reserve_max_size = 0;
     do_history_test(reserve_size, reserve_max_size, false);
