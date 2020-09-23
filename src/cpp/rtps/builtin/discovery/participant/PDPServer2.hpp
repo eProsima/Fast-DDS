@@ -22,8 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include "../DiscoveryDataFilter.hpp"
-#include "../DiscoveryDataBase.hpp"
+#include "../database/DiscoveryDataFilter.hpp"
+#include "../database/DiscoveryDataBase.hpp"
 #include "./DServerEvent2.hpp"
 
 // To be eventually removed together with eprosima::fastrtps

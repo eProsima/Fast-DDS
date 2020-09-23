@@ -23,8 +23,8 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include "../DiscoveryDataFilter.hpp"
-#include "../DiscoveryDataBase.hpp"
+#include "../database/DiscoveryDataFilter.hpp"
+#include "../database/DiscoveryDataBase.hpp"
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include "../participant/PDPServer2.hpp"
 

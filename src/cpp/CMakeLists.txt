@@ -199,9 +199,9 @@ set(${PROJECT_NAME}_source_files
 
     # new discovery-server sources
 
-#   rtps/builtin/discovery/DiscoveryDataFilter.hpp
-#   rtps/builtin/discovery/DiscoveryDataBase.hpp
-    rtps/builtin/discovery/DiscoveryDataBase.cpp
+#   rtps/builtin/discovery/database/DiscoveryDataFilter.hpp
+#   rtps/builtin/discovery/database/DiscoveryDataBase.hpp
+    rtps/builtin/discovery/database/DiscoveryDataBase.cpp
 #   rtps/builtin/discovery/participant/DSClientEvent2.hpp
     rtps/builtin/discovery/participant/DSClientEvent2.cpp
 #   rtps/builtin/discovery/participant/DServerEvent2.hpp
