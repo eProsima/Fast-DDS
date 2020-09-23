@@ -6,7 +6,7 @@ guidelines provided in the [ROS2 REP-2004 document](https://ros.org/reps/rep-200
 Foonathan's [`memory`](https://github.com/foonathan/memory) is a C++ library to manage memory allocations that improves upon the STL.
 *eprosima Fast DDS* started using this library following the advice of ROS's and eProsima's partner, Apex.AI.
 
-Even though several requirements stablished in REP-2004 are not met and, consequently, `foonathan_memory` cannot claim a high Quality Level, this document assess the quality risks that can be introduced by the use of this library in *eprosima Fast DDS*.
+Even though several requirements established in REP-2004 are not met and, consequently, `foonathan_memory` cannot claim a high Quality Level, this document assess the quality risks that can be introduced by the use of this library in *eprosima Fast DDS*.
 This Quality Declaration claims that the external dependency `foonathan_memory` qualifies to Quality Level 2 category for its use within *eprosima Fast DDS*.
 
 Below are the rationales, notes and caveats for this claim, organized by the requirements listed in the [Package Requirements for Quality Level 1 in REP-2004](https://www.ros.org/reps/rep-2004.html#package-requirements).
@@ -21,7 +21,7 @@ Below are the rationales, notes and caveats for this claim, organized by the req
 The latest release can be found [here](https://github.com/foonathan/memory/releases) and the release notes can be found in the [CHANGELOG](CHANGELOG.MD).
 Even though the current version is `< 1.0.0`, `foonathan_memory` is in [maintenance mode](https://www.jonathanmueller.dev/project/).
 
-*eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [commit](https://github.com/foonathan/memory/pull/70).
+*eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [commit](https://github.com/foonathan/memory/commits/c619113a616c5771ee693c7abdcef284e02f7d61).
 Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests uses this specific commit.
 This commit (signed December 16th 2019) is more recent than the current v0.6-2 released October 2nd 2019.
 
@@ -79,7 +79,7 @@ Additionally, eProsima CI runs `foonathan_memory` tests nightly in all *eprosima
 Latest results can be found here:
 
 * Linux [![Linux ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux)
-* Linux-aarch64 [![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux_aarch64/badge/icon?subject=%20%20%20Linux%20Aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_foonathan_memory_master_linux_aarch64/)
+* Linux-aarch64 [![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux_aarch64/badge/icon?subject=%20%20%20Linux-aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_foonathan_memory_master_linux_aarch64/)
 * Windows [![Windows ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_windows/label=windows-secure,platform=x64,toolset=v141/badge/icon?subject=%20%20%20%20Windows%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_windows/label=windows-secure,platform=x64,toolset=v141)
 * Mac [![Mac ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_mac/badge/icon?subject=%20%20%20%20%20%20%20Mac%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_mac)
 
@@ -122,7 +122,7 @@ Specifically, the API used by *eprosima Fast DDS* is tested in the following tes
 * Allocators: [test/default_allocator.cpp](https://github.com/foonathan/memory/blob/c619113a616c5771ee693c7abdcef284e02f7d61/test/default_allocator.cpp)
 * Allocator implementations: [test/memory_pool.cpp](https://github.com/foonathan/memory/blob/c619113a616c5771ee693c7abdcef284e02f7d61/test/memory_pool.cpp)
 * Adapters and Wrappers: [test/segregator.cpp](https://github.com/foonathan/memory/blob/c619113a616c5771ee693c7abdcef284e02f7d61/test/segregator.cpp)
-* Alias templates: `foonathan_memory` does not provide any test to check this functionality.
+* Alias templates: `foonathan_memory` does not provide any tests to check this functionality.
 Regardless, *eprosima Fast DDS* tests these features in the [PersistenceTests](https://github.com/eProsima/Fast-DDS/tree/master/test/unittest/rtps/persistence) and the [WriterProxyTests](https://github.com/eProsima/Fast-DDS/tree/master/test/unittest/rtps/reader).
 
 ### Coverage [4.iii]
@@ -152,7 +152,7 @@ As `foonathan_memory` is not maintained by eProsima, these requirements should b
 Current nightly results can be found here:
 
 * Linux [![Linux ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux)
-* Linux-aarch64 [![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux_aarch64/badge/icon?subject=%20%20%20Linux%20Aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_foonathan_memory_master_linux_aarch64/)
+* Linux-aarch64 [![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_linux_aarch64/badge/icon?subject=%20%20%20Linux-aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_foonathan_memory_master_linux_aarch64/)
 * Windows [![Windows ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_windows/label=windows-secure,platform=x64,toolset=v141/badge/icon?subject=%20%20%20%20Windows%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_windows/label=windows-secure,platform=x64,toolset=v141)
 * Mac [![Mac ci](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_mac/badge/icon?subject=%20%20%20%20%20%20%20Mac%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_foonathan_memory_master_mac)
 
