@@ -84,7 +84,7 @@ bool EDPServer2::createSEDPEndpoints()
             publications_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             // 1.1. Set publications writer data filter
             IReaderDataFilter* edp_publications_filter =
-                    static_cast<EDPDataFilter<DiscoveryDataBase,
+                    static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
                             true>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db);
             publications_writer_.first->reader_data_filter(edp_publications_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
@@ -143,7 +143,7 @@ bool EDPServer2::createSEDPEndpoints()
             subscriptions_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             // 1.1. Set subscriptions writer data filter
             IReaderDataFilter* edp_subscriptions_filter =
-                    static_cast<EDPDataFilter<DiscoveryDataBase,
+                    static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
                             false>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db);
             subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy

@@ -202,6 +202,7 @@ set(${PROJECT_NAME}_source_files
 #   rtps/builtin/discovery/database/DiscoveryDataFilter.hpp
 #   rtps/builtin/discovery/database/DiscoveryDataBase.hpp
     rtps/builtin/discovery/database/DiscoveryDataBase.cpp
+    
 #   rtps/builtin/discovery/participant/DSClientEvent2.hpp
     rtps/builtin/discovery/participant/DSClientEvent2.cpp
 #   rtps/builtin/discovery/participant/DServerEvent2.hpp

@@ -127,7 +127,7 @@ public:
     }
 
     //! Discovery database
-    fastdds::rtps::DiscoveryDataBase discovery_db;
+    fastdds::rtps::ddb::DiscoveryDataBase discovery_db;
 
 private:
 

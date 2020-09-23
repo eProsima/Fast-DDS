@@ -24,6 +24,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+namespace ddb {
 
 
 bool DiscoveryDataBase::pdp_is_relevant(
@@ -54,6 +55,7 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
 }
 
 
+} // namespace ddb
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
