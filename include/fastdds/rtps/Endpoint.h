@@ -26,7 +26,7 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -44,7 +44,7 @@ class Endpoint
 {
     friend class RTPSParticipantImpl;
 
-    protected:
+protected:
 
     Endpoint(
             RTPSParticipantImpl* pimpl,
@@ -54,37 +54,51 @@ class Endpoint
         , m_guid(guid)
         , m_att(att)
 #if HAVE_SECURITY
-        ,supports_rtps_protection_(true)
-#endif
+        , supports_rtps_protection_(true)
+#endif // if HAVE_SECURITY
     {
     }
 
     virtual ~Endpoint() = default;
 
-    public:
+public:
+
     /**
      * Get associated GUID
      * @return Associated GUID
      */
-    RTPS_DllAPI inline const GUID_t& getGuid() const { return m_guid; }
+    RTPS_DllAPI inline const GUID_t& getGuid() const
+    {
+        return m_guid;
+    }
 
     /**
      * Get mutex
      * @return Associated Mutex
      */
-    RTPS_DllAPI inline RecursiveTimedMutex& getMutex() { return mp_mutex; }
+    RTPS_DllAPI inline RecursiveTimedMutex& getMutex()
+    {
+        return mp_mutex;
+    }
 
     /**
      * Get associated attributes
      * @return Endpoint attributes
      */
-    RTPS_DllAPI inline EndpointAttributes& getAttributes() { return m_att; }
+    RTPS_DllAPI inline EndpointAttributes& getAttributes()
+    {
+        return m_att;
+    }
 
 #if HAVE_SECURITY
-    bool supports_rtps_protection() { return supports_rtps_protection_; }
-#endif
+    bool supports_rtps_protection()
+    {
+        return supports_rtps_protection_;
+    }
 
-    protected:
+#endif // if HAVE_SECURITY
+
+protected:
 
     //!Pointer to the RTPSParticipant containing this endpoint.
     RTPSParticipantImpl* mp_RTPSParticipant;
@@ -98,17 +112,18 @@ class Endpoint
     //!Endpoint Mutex
     mutable RecursiveTimedMutex mp_mutex;
 
-    private:
+private:
 
-    Endpoint& operator=(const Endpoint&) = delete;
+    Endpoint& operator =(
+            const Endpoint&) = delete;
 
 #if HAVE_SECURITY
     bool supports_rtps_protection_;
-#endif
+#endif // if HAVE_SECURITY
 };
 
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 
