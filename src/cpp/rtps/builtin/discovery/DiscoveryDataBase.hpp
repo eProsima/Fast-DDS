@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_DATABASE_H_
 #define _FASTDDS_RTPS_DISCOVERY_DATABASE_H_
 
-#include <fastdds/rtps/builtin/discovery/DiscoveryDataFilter.hpp>
+#include "./DiscoveryDataFilter.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -31,38 +31,24 @@ namespace rtps {
  *@ingroup DISCOVERY_MODULE
  */
 class DiscoveryDataBase
-    : public PDPDataFilter<DiscoveryDataBase>
-    , public EDPDataFilter<DiscoveryDataBase>
-    , public EDPDataFilter<DiscoveryDataBase, false>
+    : public eprosima::fastdds::rtps::PDPDataFilter<DiscoveryDataBase>
+    , public eprosima::fastdds::rtps::EDPDataFilter<DiscoveryDataBase>
+    , public eprosima::fastdds::rtps::EDPDataFilter<DiscoveryDataBase, false>
 {
+
 public:
 
     bool pdp_is_relevant(
-            const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const
-    {
-        (void)change;
-        (void)reader_guid;
-        return true;
-    }
+            const eprosima::fastrtps::rtps::CacheChange_t& change,
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid) const;
 
     bool edp_publications_is_relevant(
-            const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const
-    {
-        (void)change;
-        (void)reader_guid;
-        return true;
-    }
+            const eprosima::fastrtps::rtps::CacheChange_t& change,
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid) const;
 
     bool edp_subscriptions_is_relevant(
-            const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const
-    {
-        (void)change;
-        (void)reader_guid;
-        return true;
-    }
+            const eprosima::fastrtps::rtps::CacheChange_t& change,
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid) const;
 
 };
 
