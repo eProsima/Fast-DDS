@@ -22,7 +22,7 @@ The latest release can be found [here](https://github.com/foonathan/memory/relea
 Even though the current version is `< 1.0.0`, `foonathan_memory` is in [maintenance mode](https://www.jonathanmueller.dev/project/).
 
 *eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [commit](https://github.com/foonathan/memory/pull/70).
-Both *eprosima `foonathan_memory_vendor`* utility and *eprosima Fast DDS* CI tests uses this specific commit.
+Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests uses this specific commit.
 This commit (signed December 16th 2019) is more recent than the current v0.6-2 released October 2nd 2019.
 
 *eprosima Fast DDS* maintainers will keep a continuous watch over new releases in order to assess the impact they could have over *eprosima Fast DDS*.
@@ -171,17 +171,17 @@ The chart below compares the requirements in the [REP-2004](https://www.ros.org/
 |Number| Requirement| Current State |
 |--|--|--|
 |1| **Version policy** |---|
-|1.i|Version Policy available |✓|
+|1.i|Version Policy available |■|
 |1.ii|Stable version |✓|
 |1.iii|Declared public API|✓|
-|1.iv|API stability policy|✓|
-|1.v|ABI stability policy|✓|
+|1.iv|API stability policy|■|
+|1.v|ABI stability policy|■|
 |2| **Change control process** |---|
-|2.i| All changes occur on change request |✓|
-|2.ii| Contributor origin (DCO, CLA, etc) |✓|
-|2.iii| Peer review policy |✓|
-|2.iv| CI policy for change requests |✓|
-|2.v| Documentation policy for change requests |✓|
+|2.i| All changes occur on change request |■|
+|2.ii| Contributor origin (DCO, CLA, etc) |■|
+|2.iii| Peer review policy |■|
+|2.iv| CI policy for change requests |■|
+|2.v| Documentation policy for change requests |■|
 |3| **Documentation** | --- |
 |3.i| Per feature documentation |✓|
 |3.ii| Per public API item documentation |✓|
