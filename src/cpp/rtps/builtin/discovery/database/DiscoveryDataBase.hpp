@@ -245,6 +245,8 @@ protected:
 
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
 
+    void insert_change_into_data_map(const DiscoveryDataQueueInfo& data_queue_info);
+
 
     // mutexes
 
