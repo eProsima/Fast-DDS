@@ -108,6 +108,11 @@ protected:
             case MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
             case MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE:
                 expected_pool_size = expected_max_pool_size;
+                if (expected_max_pool_size == 0)
+                {
+                    expected_pool_size = max_num_reserves + 1;
+                }
+
                 break;
             // This policy frees released payloads
             case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
@@ -142,6 +147,7 @@ protected:
             CacheChange_t* ch = new CacheChange_t();
 
             ASSERT_TRUE(pool->get_payload(data_size, *ch));
+            ASSERT_NE(ch->serializedPayload.data, nullptr);
             cache_changes.push_back(ch);
 
             switch (memory_policy)
@@ -150,13 +156,13 @@ protected:
                     ASSERT_EQ(ch->serializedPayload.max_size, payload_size);
                     break;
                 case MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-                    ASSERT_EQ(ch->serializedPayload.max_size, max(payload_size, data_size));
+                    ASSERT_GE(ch->serializedPayload.max_size, max(payload_size, data_size));
                     break;
                 case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
                     ASSERT_EQ(ch->serializedPayload.max_size, data_size);
                     break;
                 case MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE:
-                    ASSERT_EQ(ch->serializedPayload.max_size, data_size);
+                    ASSERT_GE(ch->serializedPayload.max_size, data_size);
                     break;
             }
         }
@@ -328,7 +334,7 @@ TEST_P(TopicPayloadPoolTests, reserve_history_writer_larger_size)
 
 TEST_P(TopicPayloadPoolTests, release_history_reader_infinite_size)
 {
-    // A history with infinite size reserved for a reader is release.
+    // A history with infinite size reserved for a reader is released.
     uint32_t reserve_size = test_input_pool_size;
     uint32_t reserve_max_size = 0;
     do_history_test(reserve_size, reserve_max_size, true);
@@ -336,7 +342,7 @@ TEST_P(TopicPayloadPoolTests, release_history_reader_infinite_size)
 
 TEST_P(TopicPayloadPoolTests, release_history_reader_finite_size)
 {
-    // A history with infinite size reserved for a reader is release.
+    // A history with finite size reserved for a reader is released.
     uint32_t reserve_size = test_input_pool_size;
     uint32_t reserve_max_size = 100;
     do_history_test(reserve_size, reserve_max_size, true);
@@ -344,7 +350,7 @@ TEST_P(TopicPayloadPoolTests, release_history_reader_finite_size)
 
 TEST_P(TopicPayloadPoolTests, release_history_writer_infinite_size)
 {
-    // A history with infinite size reserved for a reader is release.
+    // A history with infinite size reserved for a reader is released.
     uint32_t reserve_size = test_input_pool_size;
     uint32_t reserve_max_size = 0;
     do_history_test(reserve_size, reserve_max_size, false);
@@ -352,7 +358,7 @@ TEST_P(TopicPayloadPoolTests, release_history_writer_infinite_size)
 
 TEST_P(TopicPayloadPoolTests, release_history_writer_finite_size)
 {
-    // A history with infinite size reserved for a reader is release.
+    // A history with finite size reserved for a reader is released.
     uint32_t reserve_size = test_input_pool_size;
     uint32_t reserve_max_size = 100;
     do_history_test(reserve_size, reserve_max_size, false);
