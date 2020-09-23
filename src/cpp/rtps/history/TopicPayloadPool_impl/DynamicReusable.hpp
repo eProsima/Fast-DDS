@@ -22,7 +22,7 @@ namespace rtps {
 namespace TopicPayloadPool {
 
 template <>
-class Impl<DYNAMIC_REUSABLE_MEMORY_MODE> : public Base
+class Impl<DYNAMIC_REUSABLE_MEMORY_MODE> : public BaseImpl
 {
     bool get_payload(
             uint32_t size,

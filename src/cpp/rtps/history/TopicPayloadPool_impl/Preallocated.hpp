@@ -22,7 +22,7 @@ namespace rtps {
 namespace TopicPayloadPool {
 
 template <>
-class Impl<PREALLOCATED_MEMORY_MODE> : public Base
+class Impl<PREALLOCATED_MEMORY_MODE> : public BaseImpl
 {
 public:
 

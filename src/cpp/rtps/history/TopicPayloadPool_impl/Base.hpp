@@ -24,6 +24,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/PoolConfig.h>
+#include <rtps/history/ITopicPayloadPool.h>
 
 #include <memory>
 #include <vector>
@@ -33,74 +34,7 @@ namespace fastrtps {
 namespace rtps {
 namespace TopicPayloadPool {
 
-
-class ITopicPayloadPool : public IPayloadPool
-{
-public:
-
-    /**
-     * @brief Ensures the pool has capacity to fullfill the requirements of a new history.
-     *
-     * @param [in]  config              The new history's pool requirements.
-     * @param [in]  is_reader_history   True if the new history is for a reader. False otherwise.
-     *
-     * @pre
-     *   - Current pool is configured for the same memory policy as @c config.memory_policy.
-     *
-     * @post
-     *   - If @c config.maximum_size is not zero
-     *     - The maximum size of the pool is increased by @c config.maximum_size.
-     *   - else
-     *     - The maximum size of the pool is set to the largest representable value.
-     *   - If the pool is configured for PREALLOCATED or PREALLOCATED WITH REALLOC memory policy:
-     *     - The pool has at least as many elements allocated (including elements already in use)
-     *       as the sum of the @c config.initial_size for all reserved writer histories
-     *       plus the maximum of the @c config.initial_size for all reserved reader histories.
-     */
-    virtual bool reserve_history(
-            const PoolConfig& config,
-            bool is_reader) = 0;
-
-    /**
-     * @brief Informs the pool that some history requirements are not longer active.
-     *
-     * The pool can release some resources that are not needed any longer.
-     *
-     * @param [in]  config              The old history's pool requirements, which are no longer active.
-     * @param [in]  is_reader_history   True if the history was for a reader. False otherwise.
-     *
-     * @pre
-     *   - Current pool is configured for the same memory policy as @c config.memory_policy.
-     *   - If all remaining histories were reserved with non zero @c config.maximum_size
-     *      - The number of elements in use is less than
-     *        the sum of the @c config.maximum_size for all remaining histories
-     *
-     * @post
-     *   - If all remaining histories were reserved with non zero @c config.maximum_size
-     *      - The maximum size of the pool is set to
-     *        the sum of the @c config.maximum_size for all remaining histories
-     *   - else
-     *     - The maximum size of the pool remains the largest representable value.
-     *   - If the number of allocated elements is greater than the new maximum size,
-     *     the excess of elements are freed until the number of allocated elemets is equal to the new maximum.
-     */
-    virtual bool release_history(
-            const PoolConfig& config,
-            bool is_reader) = 0;
-
-    /**
-     * @brief Get the number of allocated payloads (reserved and not reserved).
-     */
-    virtual size_t get_allPayloadsSize() const = 0;
-
-    /**
-     * @brief Get the number of available payloads (not reserved).
-     */
-    virtual size_t get_freePayloadsSize() const = 0;
-
-};
-
-class Base : public ITopicPayloadPool
+class BaseImpl : public ITopicPayloadPool
 {
 
 public:
@@ -372,7 +306,7 @@ protected:
 };
 
 template <MemoryManagementPolicy_t policy_>
-class Impl : public Base
+class Impl : public BaseImpl
 {
 };
 
