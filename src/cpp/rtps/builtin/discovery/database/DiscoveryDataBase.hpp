@@ -28,10 +28,12 @@
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/common/CacheChange.h>
+#include <fastrtps/utils/DBQueue.h>
 
 #include "./DiscoveryDataFilter.hpp"
 #include "./DiscoveryParticipantInfo.hpp"
 #include "./DiscoveryEndpointInfo.hpp"
+#include "./DiscoveryDataQueueInfo.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -175,7 +177,11 @@ public:
         return DiscoveryDataBase::ParticipantAckedFunctor(this, change);
     }
 
+    bool process_data_queue();
+
 private:
+
+    fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
     std::map<eprosima::fastrtps::rtps::CacheChange_t*, eprosima::fastrtps::rtps::GUID_t, CacheChangeCmp> data_map_;
 
@@ -198,6 +204,8 @@ private:
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send_;
 
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
+
+    void insert_change_into_data_map(const DiscoveryDataQueueInfo& data_queue_info);
 
 
     // mutexes

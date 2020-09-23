@@ -26,7 +26,6 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-
 bool DiscoveryDataBase::pdp_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
@@ -54,6 +53,33 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     return true;
 }
 
+bool DiscoveryDataBase::process_data_queue()
+{
+    // std::unique_lock<std::mutex> guard(sh_mutex);
+    data_queue_.Swap();
+    while (!data_queue_.Empty())
+    {
+        DiscoveryDataQueueInfo data_queue_info = data_queue_.Front();
+
+        insert_change_into_data_map(data_queue_info);
+        // if (data_queue_info.cache_change()->kind == eprosima::fastrtps::rtps::ALIVE)
+        // {
+        //     // update(participants_);
+        // }
+
+        data_queue_.Pop();
+    }
+
+
+    return false;
+}
+
+void DiscoveryDataBase::insert_change_into_data_map(
+        const DiscoveryDataQueueInfo& data_queue_info)
+{
+    (void) data_queue_info;
+    return;
+}
 
 } // namespace ddb
 } // namespace rtps

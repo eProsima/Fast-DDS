@@ -316,6 +316,12 @@ bool PDPServer2::remove_remote_participant(
     return true;
 }
 
+bool PDPServer2::process_data_queue()
+{
+    return discovery_db.process_data_queue();
+}
+
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

@@ -129,6 +129,10 @@ public:
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db;
 
+protected:
+
+    bool process_data_queue();
+
 private:
 
     /**
