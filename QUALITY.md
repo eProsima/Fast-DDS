@@ -158,8 +158,8 @@ The first two dependencies are suggested to be installed for Linux using apt pac
 Therefore, these dependencies can be considered Quality Level 1 following the [advantages of being packaged for Debian](https://wiki.debian.org/AdvantagesForUpstream).
 
 `foonathan_memory` dependency is installed from a vendor provided by *eProsima*: [`foonathan_memory_vendor`](https://github.com/eProsima/foonathan_memory_vendor).
-Its Quality Declaration can be found [here](https://github.com/eProsima/foonathan_memory_vendor/blob/master/QUALITY_DECLARATION.md).
-Currently, `foonathan_memory_vendor` claims to be in the **Quality Level 3** category.
+Its Quality Declaration can be found [here](QUALITY_DECLARATION_FOONATHAN.md).
+Currently, `foonathan_memory` claims to be in the **Quality Level 4** category.
 
 **eProsima Fast CDR** Quality Declaration can be found [here](https://github.com/eProsima/Fast-CDR/blob/master/QUALITY_DECLARATION.md). Currently, **eProsima Fast CDR** claims to be in the **Quality Level 2** category.
 
@@ -202,7 +202,7 @@ The chart below compares the requirements in the [REP-2004](https://www.ros.org/
 |3.iii| Declared License(s) |✓|
 |3.iv| Copyright in source files|✓|
 |3.v.a| Quality declaration linked to README |✓|
-|3.v.b| Centralized declaration available for peer review ||
+|3.v.b| Centralized declaration available for peer review |✓|
 |4| **Testing** | --- |
 |4.i| Feature items tests |✓|
 |4.ii| Public API tests |✓|
