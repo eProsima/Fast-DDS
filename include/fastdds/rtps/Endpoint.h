@@ -19,10 +19,15 @@
 #ifndef _FASTDDS_RTPS_ENDPOINT_H_
 #define _FASTDDS_RTPS_ENDPOINT_H_
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
+
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Types.h>
+
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
+
 #include <fastrtps/utils/TimedMutex.hpp>
 
 namespace eprosima {
@@ -53,13 +58,17 @@ protected:
         : mp_RTPSParticipant(pimpl)
         , m_guid(guid)
         , m_att(att)
-#if HAVE_SECURITY
-        , supports_rtps_protection_(true)
-#endif // if HAVE_SECURITY
     {
     }
 
-    virtual ~Endpoint() = default;
+    virtual ~Endpoint()
+    {
+        // As releasing the change pool will delete the cache changes it owns,
+        // the payload pool may be called to release their payloads, so we should
+        // ensure that the payload pool is destroyed after the change pool.
+        change_pool_.reset();
+        payload_pool_.reset();
+    }
 
 public:
 
@@ -112,13 +121,19 @@ protected:
     //!Endpoint Mutex
     mutable RecursiveTimedMutex mp_mutex;
 
+    //!Pool of serialized payloads.
+    std::shared_ptr<IPayloadPool> payload_pool_;
+
+    //!Pool of cache changes reserved when the History is created.
+    std::shared_ptr<IChangePool> change_pool_;
+
 private:
 
     Endpoint& operator =(
             const Endpoint&) = delete;
 
 #if HAVE_SECURITY
-    bool supports_rtps_protection_;
+    bool supports_rtps_protection_ = true;
 #endif // if HAVE_SECURITY
 };
 

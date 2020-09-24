@@ -19,10 +19,15 @@
 #ifndef _FASTDDS_ENDPOINTATTRIBUTES_H_
 #define _FASTDDS_ENDPOINTATTRIBUTES_H_
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Types.h>
+
+#if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#endif  // HAVE_SECURITY
 
 namespace eprosima {
 namespace fastrtps {
