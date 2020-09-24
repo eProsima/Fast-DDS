@@ -46,31 +46,43 @@ public:
     {
     }
 
-    // populate functions
     void add_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
+            {
+                relevant_participants_builtin_ack_status.add_participant(guid_p);
+            }
 
     void match_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
+            {
+                relevant_participants_builtin_ack_status.match_participant(guid_p);
+            }
 
     void remove_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
+            {
+                relevant_participants_builtin_ack_status.remove_participant(guid_p);
+            }
 
+    // set all acks to matched
     void set_disposal(
             eprosima::fastrtps::rtps::CacheChange_t* change_);
 
     void change_info(
             eprosima::fastrtps::rtps::CacheChange_t* change_);
 
-    // getter functions
     bool is_matched(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
+            {
+                return relevant_participants_builtin_ack_status.is_matched(guid_p);
+            }
 
 private:
 
     eprosima::fastrtps::rtps::CacheChange_t* change_;
 
-    eprosima::fastdds::rtps::ddb::DiscoveryParticipantAckStatus
+    // new class is used in order to could change it in the future for a more efficient implementation
+    eprosima::fastdds::rtps::ddb::DiscoveryParticipantsAckStatus
             relevant_participants_builtin_ack_status;
 
 

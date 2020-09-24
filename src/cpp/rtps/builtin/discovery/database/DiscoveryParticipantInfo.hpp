@@ -20,6 +20,8 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_INFO_H_
 #define _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_INFO_H_
 
+#include <vector>
+
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
@@ -51,16 +53,28 @@ public:
 
     // populate functions
     void add_reader(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            eprosima::fastrtps::rtps::GUID_t guid)
+            {
+                if (std::find(readers.begin(), readers.end(), guid) == readers.end()){readers.push_back(guid);}
+            }
 
     void remove_reader(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            eprosima::fastrtps::rtps::GUID_t guid)
+            {
+                readers.erase(guid);
+            }
 
     void add_writer(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            eprosima::fastrtps::rtps::GUID_t guid)
+            {
+                if (std::find(writers.begin(), writers.end(), guid) == writers.end()){writers.push_back(guid);}
+            }
 
     void remove_writer(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            eprosima::fastrtps::rtps::GUID_t guid)
+            {
+                writers.erase(guid);
+            }
 
     // getter functions
 

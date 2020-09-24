@@ -179,7 +179,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
      */
 }
 
-eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change_(
+eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     return fastrtps::rtps::iHandle2GUID(ch->instanceHandle);

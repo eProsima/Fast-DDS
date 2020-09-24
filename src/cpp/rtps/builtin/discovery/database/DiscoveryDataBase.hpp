@@ -55,6 +55,7 @@ struct CacheChangeCmp
 
 };
 
+
 /**
  * Class to manage the discovery data base
  *@ingroup DISCOVERY_MODULE
@@ -69,7 +70,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
         using result_type = void;
 
     public:
@@ -187,7 +188,7 @@ public:
     static bool is_reader(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
-    static eprosima::fastrtps::rtps::GUID_t guid_from_change_(
+    static eprosima::fastrtps::rtps::GUID_t guid_from_change(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
 protected:
