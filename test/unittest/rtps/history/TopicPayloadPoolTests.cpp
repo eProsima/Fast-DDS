@@ -53,10 +53,10 @@ protected:
         memory_policy            = get<3>(GetParam());
 
         std::cout << "[init:" << test_input_pool_size
-                << " max:" << test_input_max_pool_size
-                << " size:" << payload_size
-                << " policy:" << memory_policy
-                << "]" <<std::endl;
+                  << " max:" << test_input_max_pool_size
+                  << " size:" << payload_size
+                  << " policy:" << memory_policy
+                  << "]" << std::endl;
 
         PoolConfig config{ memory_policy, payload_size, test_input_pool_size, test_input_max_pool_size };
         pool = TopicPayloadPool::get(config);

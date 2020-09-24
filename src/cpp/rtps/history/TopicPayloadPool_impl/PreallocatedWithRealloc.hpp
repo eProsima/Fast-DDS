@@ -91,7 +91,7 @@ public:
         {
             return false;
         }
-        
+
         return shrink(max_pool_size_);
     }
 

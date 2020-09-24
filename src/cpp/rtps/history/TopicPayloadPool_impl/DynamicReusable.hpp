@@ -58,7 +58,7 @@ class DynamicReusableTopicPayloadPool : public TopicPayloadPool
         {
             return false;
         }
-        
+
         return shrink(max_pool_size_);
     }
 

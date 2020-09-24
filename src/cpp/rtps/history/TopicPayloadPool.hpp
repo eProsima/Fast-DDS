@@ -81,7 +81,7 @@ public:
     }
 
     static std::shared_ptr<ITopicPayloadPool> get(
-        PoolConfig config);
+            PoolConfig config);
 
 protected:
 
@@ -103,39 +103,42 @@ protected:
 
     /**
      * Ensures the pool has capacity for at least @c num_payloads elements.
-     * 
+     *
      * @param [IN] min_num_payloads Minimum number of payloads reserved in the pool
      * @param [IN] size             Size to allocate for the payloads that need to be added to the pool
-     * 
+     *
      * @pre
      *   - @c size <= @c max_pool_size_
      * @post
      *   - @c get_allPayloadsSize() >= @c min_num_payloads
      */
-    virtual void reserve (uint32_t min_num_payloads, uint32_t size);
+    virtual void reserve (
+            uint32_t min_num_payloads,
+            uint32_t size);
 
     /**
      * Ensures the pool has capacity for at most @c num_payloads elements.
-     * 
+     *
      * @param [IN] max_num_payloads Maximum number of payloads reserved in the pool
-     * 
+     *
      * @return @c true on success, @c false otherwise
-     * 
+     *
      * @post
      *   - On success, get_allPayloadsSize() <= max_num_payloads
      *   - On failure, memory for some payloads may have been released, but get_allPayloadsSize() > min_num_payloads
      */
-    bool shrink (uint32_t max_num_payloads);
+    bool shrink (
+            uint32_t max_num_payloads);
 
     /**
-     * Resizes a payload to have @c size octets, and updates the buffer of the pool accordingly. 
-     * 
+     * Resizes a payload to have @c size octets, and updates the buffer of the pool accordingly.
+     *
      * @param [IN,OUT] payload   Payload buffer to resize
      * @param [IN,OUT] size      Size of the payload buffer, will be updated with the final size
      * @param [IN]     new_size  Number of octets that the Payload needs to fit
-     * 
+     *
      * @return @c true on success, @c false otherwise
-     * 
+     *
      * @pre
      *   - @c payload is allocated in the pool
      *   - @c payload is not in the buffer of free payloads. Only payloads marked as 'used' can be resized.

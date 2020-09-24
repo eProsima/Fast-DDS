@@ -162,14 +162,16 @@ void TopicPayloadPool::update_maximum_size(
         }
         else
         {
-            max_pool_size_ -= (config.initial_size > config.maximum_size ? 
+            max_pool_size_ -= (config.initial_size > config.maximum_size ?
                     config.initial_size : config.maximum_size);
             finite_max_pool_size_ = max_pool_size_;
         }
     }
 }
 
-void TopicPayloadPool::reserve (uint32_t min_num_payloads, uint32_t size)
+void TopicPayloadPool::reserve (
+        uint32_t min_num_payloads,
+        uint32_t size)
 {
     assert (min_num_payloads <= max_pool_size_);
 
@@ -185,7 +187,8 @@ void TopicPayloadPool::reserve (uint32_t min_num_payloads, uint32_t size)
     }
 }
 
-bool TopicPayloadPool::shrink (uint32_t max_num_payloads)
+bool TopicPayloadPool::shrink (
+        uint32_t max_num_payloads)
 {
     assert(get_allPayloadsSize() - get_freePayloadsSize() <= max_num_payloads);
 
