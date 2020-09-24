@@ -241,6 +241,33 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     pending_ |= !is_acked;
 }
 
+bool DiscoveryDataBase::is_builtin_participant_publication(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return memcmp(
+            &eprosima::fastrtps::rtps::c_EntityId_SPDPWriter,
+            &ch->write_params.sample_identity().writer_guid().entityId,
+            5) == 0;
+}
+
+bool DiscoveryDataBase::is_builtin_publications_publication(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return memcmp(
+            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
+            &ch->write_params.sample_identity().writer_guid().entityId,
+            3) == 0;
+}
+
+bool DiscoveryDataBase::is_builtin_subscriptions_publication(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return memcmp(
+            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
+            &ch->write_params.sample_identity().writer_guid().entityId,
+            3) == 0;
+}
+
 } // namespace ddb
 } // namespace rtps
 } // namespace fastdds

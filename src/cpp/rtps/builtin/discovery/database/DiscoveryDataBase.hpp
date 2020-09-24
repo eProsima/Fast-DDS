@@ -245,7 +245,11 @@ protected:
 
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
 
-    void insert_change_into_data_map(const DiscoveryDataQueueInfo& data_queue_info);
+    bool is_builtin_participant_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    bool is_builtin_publications_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    bool is_builtin_subscriptions_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
 
     // mutexes
