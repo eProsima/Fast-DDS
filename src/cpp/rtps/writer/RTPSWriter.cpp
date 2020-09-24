@@ -132,22 +132,31 @@ CacheChange_t* RTPSWriter::new_change(
         InstanceHandle_t handle)
 {
     logInfo(RTPS_WRITER, "Creating new change");
-    CacheChange_t* ch = nullptr;
 
-    if (!mp_history->reserve_Cache(&ch, dataCdrSerializedSize))
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    CacheChange_t* reserved_change = nullptr;
+    if (!change_pool_->reserve_cache(reserved_change))
     {
-        logWarning(RTPS_WRITER, "Problem reserving Cache from the History");
+        logWarning(RTPS_WRITER, "Problem reserving cache from pool");
         return nullptr;
     }
 
-    ch->kind = changeKind;
+    uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : dataCdrSerializedSize();
+    if (!payload_pool_->get_payload(payload_size, *reserved_change))
+    {
+        change_pool_->release_cache(reserved_change);
+        logWarning(RTPS_WRITER, "Problem reserving payload from pool");
+        return nullptr;
+    }
+
+    reserved_change->kind = changeKind;
     if (m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
         logWarning(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
     }
-    ch->instanceHandle = handle;
-    ch->writerGUID = m_guid;
-    return ch;
+    reserved_change->instanceHandle = handle;
+    reserved_change->writerGUID = m_guid;
+    return reserved_change;
 }
 
 SequenceNumber_t RTPSWriter::get_seq_num_min()
