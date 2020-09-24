@@ -278,7 +278,31 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     pending_ |= !is_acked;
 }
 
-void mark_dispose_writer(
+static bool DiscoveryDataBase::is_participant(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return eprosima::fastrtps::rtps::c_EntityId_RTPSParticipant == ch->guid_from_change.entityId;
+}
+
+static bool DiscoveryDataBase::is_writer(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    constexpr uint8_t entity_id_is_writer_bit = 0x04;
+    const eprosima::fastrtps::rtps::GUID_t& change_guid = guid_from_cache(ch);
+
+    return ((guid_from_cache(ch).entityId.value[3] & entity_id_is_writer_bit) != 0);
+}
+
+static bool DiscoveryDataBase::is_reader(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    constexpr uint8_t entity_id_is_reader_bit = 0x04;
+    const eprosima::fastrtps::rtps::GUID_t& change_guid = guid_from_cache(ch);
+
+    return ((guid_from_cache(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
+}
+
+void DiscoveryDataBase::mark_dispose_writer(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_cache(ch);
@@ -312,7 +336,7 @@ void mark_dispose_writer(
 
 }
 
-void process_dispose_participant(
+void DiscoveryDataBase::process_dispose_participant(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     const eprosima::fastrtps::rtps::GUID_t& participant_guid = guid_from_cache(ch);
@@ -325,41 +349,45 @@ void process_dispose_participant(
     }
 
     // Delete entries from writers_/readers_ belonging to the participant
-    for (auto tit = writers_.begin(); tit != writers_.end(); ++tit)
+    for (auto wit = writers_.begin(); wit != writers_.end(); ++wit)
     {
-        if (tit->first.guidPrefix == participant_guid.guidPrefix)
+        if (wit->first.guidPrefix == participant_guid.guidPrefix)
         {
-            writers_.erase(tit->first);
+            writers_.erase(wit->first);
+            --wit;
         }
     }
 
-    for (auto tit = readers_.begin(); tit != readers_.end(); ++tit)
+    for (auto rit = readers_.begin(); rit != readers_.end(); ++rit)
     {
-        if (tit->first.guidPrefix == participant_guid.guidPrefix)
+        if (rit->first.guidPrefix == participant_guid.guidPrefix)
         {
-            readers_.erase(tit->first);
+            readers_.erase(rit->first);
+            --rit;
         }
     }
 
     // Delete Participant entries from readers_by_topic and writers_by_topic
     for (auto tit = readers_by_topic_.begin(); tit != readers_by_topic_.end(); ++tit)
     {
-        for (auto rit: tit->second)
+        for (auto rit = tit->second.begin(); rit != tit->second.end(); ++rit)
         {
             if(rit->guid_prefix == participant_guid.guid_prefix)
             {
                 tit->second.erase(rit);
+                --rit;
             }
         }
     }
 
     for (auto tit = writers_by_topic_.begin(); tit != writers_by_topic_.end(); ++tit)
     {
-        for (auto wit: tit->second)
+        for (auto wit = tit->second.begin(); wit != tit->second.end(); ++wit)
         {
             if(wit->guid_prefix == participant_guid.guid_prefix)
             {
                 tit->second.erase(wit);
+                --wit;
             }
         }
     }
@@ -386,30 +414,6 @@ void process_dispose_participant(
     {
         disposals_.push_back(ch);
     }
-}
-
-static bool DiscoveryDataBase::is_participant(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
-{
-    return eprosima::fastrtps::rtps::c_EntityId_RTPSParticipant == ch->guid_from_change.entityId;
-}
-
-static bool DiscoveryDataBase::is_writer(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
-{
-    constexpr uint8_t entity_id_is_writer_bit = 0x04;
-    const eprosima::fastrtps::rtps::GUID_t& change_guid = guid_from_cache(ch);
-
-    return ((guid_from_cache(ch).entityId.value[3] & entity_id_is_writer_bit) != 0);
-}
-
-static bool DiscoveryDataBase::is_reader(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
-{
-    constexpr uint8_t entity_id_is_reader_bit = 0x04;
-    const eprosima::fastrtps::rtps::GUID_t& change_guid = guid_from_cache(ch);
-
-    return ((guid_from_cache(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
 }
 
 void DiscoveryDataBase::create_participant_from_change(
