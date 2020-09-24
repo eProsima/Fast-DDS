@@ -20,6 +20,11 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_INFO_H_
 #define _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_INFO_H_
 
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+
+#include "./DiscoverySharedInfo.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -29,15 +34,20 @@ namespace ddb {
  * Class to join the main info required from a Participant in the Discovery Data Base
  *@ingroup DISCOVERY_MODULE
  */
-class DiscoveryParticipantInfo
+class DiscoveryParticipantInfo : DiscoverySharedInfo
 {
 
 public:
 
     DiscoveryParticipantInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* cache_);
+            eprosima::fastrtps::rtps::CacheChange_t* change_)
+        : DiscoverySharedInfo(change_)
+    {
+    }
 
-    ~DiscoveryParticipantInfo();
+    ~DiscoveryParticipantInfo()
+    {
+    }
 
     // populate functions
     void add_reader(
@@ -52,22 +62,13 @@ public:
     void remove_writer(
             eprosima::fastrtps::rtps::GUID_t guid);
 
-    void add_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+    // getter functions
 
-    void match_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+private:
 
-    void remove_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+    std::vector<eprosima::fastrtps::rtps::GUID_t> readers;
 
-    void set_disposal(
-            eprosima::fastrtps::rtps::CacheChange_t* cache_);
-
-    // get functions
-    bool is_matched(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
-
+    std::vector<eprosima::fastrtps::rtps::GUID_t> writers;
 
 };
 

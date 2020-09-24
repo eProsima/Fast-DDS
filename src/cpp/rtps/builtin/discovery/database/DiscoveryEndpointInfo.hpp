@@ -20,6 +20,12 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
 #define _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
 
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastrtps/utils/fixed_size_string.hpp>
+
+#include "./DiscoverySharedInfo.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -29,7 +35,7 @@ namespace ddb {
  * Class to join the main info required from a reader or writer in the Discovery Data Base
  *@ingroup DISCOVERY_MODULE
  */
-class DiscoveryEndpointInfo
+class DiscoveryEndpointInfo : DiscoverySharedInfo
 {
 };
 

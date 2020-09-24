@@ -17,6 +17,9 @@
  *
  */
 
+#include <mutex>
+#include <shared_mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 
 #include "./DiscoveryDataBase.hpp"
@@ -63,13 +66,69 @@ void DiscoveryDataBase::add_ack_(
 
 bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
-        std::string topic_name,
-        eprosima::fastrtps::rtps::GUID_t* entity)
+        std::string topic_name)
 {
     (void)change;
     (void)topic_name;
-    (void)entity;
     return true;
+}
+
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_dispose()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return disposals_;
+}
+
+void DiscoveryDataBase::clear_changes_to_dispose()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    disposals_.clear();
+}
+
+////////////
+// Functions to process_to_send_lists()
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::pdp_to_send()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return pdp_to_send_;
+}
+
+void DiscoveryDataBase::clear_pdp_to_send()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    pdp_to_send_.clear();
+}
+
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_publications_to_send()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return edp_publications_to_send_;
+}
+
+void DiscoveryDataBase::clear_edp_publications_to_send()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    edp_publications_to_send_.clear();
+}
+
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_subscriptions_to_send()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return edp_subscriptions_to_send_;
+}
+
+void DiscoveryDataBase::clear_edp_subscriptions_to_send()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    edp_subscriptions_to_send_.clear();
 }
 
 bool DiscoveryDataBase::process_data_queue()
