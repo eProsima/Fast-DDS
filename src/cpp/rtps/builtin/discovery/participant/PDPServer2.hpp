@@ -126,10 +126,27 @@ public:
         mp_sync->restart_timer();
     }
 
-    //! Discovery database
-    fastdds::rtps::ddb::DiscoveryDataBase discovery_db;
+    /* The server's main routine. This includes all the discovery related tasks that the server needs to run
+     * periodically to keep the discovery graph updated.
+     * @return: True if there is pending work, false otherwise.
+     */
+    bool server_update_routine();
+
+    fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
 protected:
+    // Check the messages in histories. Check which ones modify the database to unlock further messages
+    // and clean them when not needed anymore
+    bool process_writers_acknowledgements();
+
+    bool process_history_acknowledgement(
+        fastrtps::rtps::StatefulWriter* writer,
+        fastrtps::rtps::WriterHistory* writer_history);
+
+    bool process_change_acknowledgement(
+        fastrtps::rtps::CacheChange_t* c,
+        fastrtps::rtps::StatefulWriter* writer,
+        fastrtps::rtps::WriterHistory* writer_history);
 
     bool process_data_queue();
 
@@ -139,6 +156,9 @@ private:
      * TimedEvent for server synchronization
      */
     DServerEvent2* mp_sync;
+
+    //! Discovery database
+    fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
 
 };
 
