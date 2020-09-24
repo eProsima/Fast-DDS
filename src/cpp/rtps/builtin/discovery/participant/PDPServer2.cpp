@@ -328,8 +328,8 @@ bool PDPServer2::server_update_routine()
     bool result = process_writers_acknowledgements();       // server + ddb(functor_with_ddb)
     process_data_queue();  // all ddb
     result |= process_disposals();                       // server + ddb(get_disposals, clear_changes_to_disposes)
-    // result |= process_dirty_topics();                    // all ddb
-    // result |= process_to_send_lists();                   // server + ddb(get_to_send, remove_to_send_this)
+    result |= discovery_db_.process_dirty_topics();    // all ddb
+    // result |= process_to_send_lists();                 // server + ddb(get_to_send, remove_to_send_this)
 
     if (result)
     {
