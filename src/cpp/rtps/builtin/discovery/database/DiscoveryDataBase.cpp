@@ -53,6 +53,26 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     return true;
 }
 
+void DiscoveryDataBase::add_ack_(
+        const eprosima::fastrtps::rtps::CacheChange_t* change,
+        const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity)
+{
+    (void)change;
+    (void)acked_entity;
+}
+
+bool DiscoveryDataBase::update(
+        eprosima::fastrtps::rtps::CacheChange_t* cache,
+        std::string topic_name,
+        eprosima::fastrtps::rtps::GUID_t* entity)
+{
+    (void)cache;
+    (void)topic_name;
+    (void)entity;
+    return true;
+}
+
+
 bool DiscoveryDataBase::process_data_queue()
 {
     // std::unique_lock<std::mutex> guard(sh_mutex);
@@ -73,31 +93,60 @@ bool DiscoveryDataBase::process_data_queue()
     return false;
 }
 
-bool DiscoveryDataBase::is_builtin_participant_publication(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+bool DiscoveryDataBase::delete_entity_of_change(fastrtps::rtps::CacheChange_t* change)
 {
-    return memcmp(
-            &eprosima::fastrtps::rtps::c_EntityId_SPDPWriter,
-            &ch->write_params.sample_identity().writer_guid().entityId,
-            5) == 0;
+    /*
+    if (change->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
+    {
+        logWarning(DISCOVERY_DATABASE, "Attempting to delete information of an ALIVE entity: " << guid_from_change_(change));
+        return false;
+    }
+
+    if (DiscoveryDataBase::is_participant_(change))
+    {
+        return DiscoveryDataBase::remove_participant_(change);
+    }
+    else if (is_reader_(change))
+    {
+        return remove_reader_(change);
+    }
+    else if (is_writer_(change))
+    {
+        return remove_writer_(change);
+    }
+    return false;
+    */
 }
 
-bool DiscoveryDataBase::is_builtin_publications_publication(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+static eprosima::fastrtps::rtps::GUID_t guid_from_change_(const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    return memcmp(
-            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
-            &ch->write_params.sample_identity().writer_guid().entityId,
-            3) == 0;
+    return fastrtps::rtps::iHandle2GUID(ch->instanceHandle);
 }
 
-bool DiscoveryDataBase::is_builtin_subscriptions_publication(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+DiscoveryDataBase::AckedFunctor::AckedFunctor(
+        DiscoveryDataBase* db,
+        eprosima::fastrtps::rtps::CacheChange_t* change)
+    : db_(db)
+    , cache_(change)
 {
-    return memcmp(
-            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
-            &ch->write_params.sample_identity().writer_guid().entityId,
-            3) == 0;
+    db_->exclusive_lock_();
+}
+
+DiscoveryDataBase::AckedFunctor::~AckedFunctor()
+{
+    db_->exclusive_unlock_();
+}
+
+void DiscoveryDataBase::AckedFunctor::operator() (eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
+{
+    // Check whether the change has been acknowledged by a given reader
+    bool is_acked = reader_proxy->change_is_acked(cache_->sequenceNumber);
+    if (is_acked)
+    {
+        // In the discovery database, mark the change as acknowledged by the reader
+        db_->add_ack_(cache_, &reader_proxy->guid().guidPrefix);
+    }
+    pending_ |= !is_acked;
 }
 
 } // namespace ddb

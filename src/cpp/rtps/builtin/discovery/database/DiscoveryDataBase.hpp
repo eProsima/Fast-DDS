@@ -68,35 +68,16 @@ class DiscoveryDataBase
 public:
 
 
-    class ParticipantAckedFunctor {
+    class AckedFunctor {
         using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
         using result_type = void;
     public:
 
-        ParticipantAckedFunctor(DiscoveryDataBase* db, eprosima::fastrtps::rtps::CacheChange_t* change)
-            : db_(db)
-            , cache_(change)
-        {
-            // TODO initialize guid
-            db_->exclusive_lock();
-        }
+        AckedFunctor(DiscoveryDataBase* db, eprosima::fastrtps::rtps::CacheChange_t* change);
 
-        ~ParticipantAckedFunctor()
-        {
-            db_->exclusive_unlock();
-        }
+        ~AckedFunctor();
 
-        void operator() (eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
-        {
-            (void) reader_proxy;
-            /* TODO
-            bool status = reader_proxy->change_is_acked(cache_->sequenceNumber);
-            // relevant_participants_builtin_ack_status has an update method that only sets the status if the proxy
-            // is already there.
-            participant_->relevant_participants_builtin_ack_status.update(reader_proxy->guid_prefix, status);
-            pending_ |= !status;
-            */
-        }
+        void operator() (eprosima::fastrtps::rtps::ReaderProxy* reader_proxy);
 
         bool pending()
         {
@@ -105,13 +86,13 @@ public:
 
     private:
 
-        eprosima::fastrtps::rtps::GUID_t guid;
         DiscoveryDataBase* db_;
         eprosima::fastrtps::rtps::CacheChange_t* cache_;
         bool pending_ = false;
 
     };
-    friend class ParticipantAckedFunctor;
+    friend class AckedFunctor;
+
 
     ////////////
     // Functions to update queue from listener
@@ -124,6 +105,7 @@ public:
             eprosima::fastrtps::rtps::CacheChange_t* cache,
             std::string topic_name,
             eprosima::fastrtps::rtps::GUID_t* entity);
+
 
     ////////////
     // Functions to is_relevant
@@ -142,25 +124,32 @@ public:
             const eprosima::fastrtps::rtps::CacheChange_t& change,
             const eprosima::fastrtps::rtps::GUID_t& reader_guid) const;
 
+
     ////////////
     // Functions to process_writers_acknowledgements()
     // Return the functor, class that works as a lambda
-    ParticipantAckedFunctor functor(eprosima::fastrtps::rtps::CacheChange_t* change)
+    AckedFunctor functor(eprosima::fastrtps::rtps::CacheChange_t* change)
     {
-        return DiscoveryDataBase::ParticipantAckedFunctor(this, change);
+        return DiscoveryDataBase::AckedFunctor(this, change);
     }
 
-    // update the acks
-    void add_ack(eprosima::fastrtps::rtps::GUID_t entity, eprosima::fastrtps::rtps::GuidPrefix_t acked_entity);
+    /* Delete all information relative to the entity that produced a CacheChange
+     * @change: That entity's CacheChange.
+     * @return: True if the entity was deleted, false otherwise.
+     */
+    bool delete_entity_of_change(fastrtps::rtps::CacheChange_t* change);
+
 
     ////////////
     // Functions to process_data_queue()
     bool process_data_queue();
 
+
     ////////////
     // Functions to process_dirty_topics()
     bool process_dirty_topics();
     
+
     ////////////
     // Functions to process_disposals()
     const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_dispose()
@@ -170,9 +159,11 @@ public:
 
     void clear_changes_to_dispose()
     {
-        exclusive_lock();
+        exclusive_lock_();
         disposals_.clear();
+        exclusive_unlock_();
     }
+
 
     ////////////
     // Functions to process_to_send_lists()
@@ -183,8 +174,9 @@ public:
 
     void clear_pdp_to_send()
     {
-        exclusive_lock();
+        exclusive_lock_();
         pdp_to_send_.clear();
+        exclusive_unlock_();
     }
 
     const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send()
@@ -194,8 +186,9 @@ public:
 
     void clear_edp_publications_to_send()
     {
-        exclusive_lock();
+        exclusive_lock_();
         edp_publications_to_send_.clear();
+        exclusive_unlock_();
     }
 
     const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send()
@@ -205,35 +198,54 @@ public:
 
     void clear_edp_subscriptions_to_send()
     {
-        exclusive_lock();
+        exclusive_lock_();
         edp_subscriptions_to_send_.clear();
+        exclusive_unlock_();
     }
 
-    
 
-private:
+protected:
 
-    void exclusive_lock(){
+    // update the acks
+    void add_ack_(
+        const eprosima::fastrtps::rtps::CacheChange_t* change,
+        const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity);
+
+
+    ////////////
+    // Static Functions to work with GUIDs
+    static bool is_participant_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    static bool is_writer_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    static bool is_reader_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    static eprosima::fastrtps::rtps::GUID_t guid_from_change_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    ////////////
+    // Mutex Functions
+    void exclusive_lock_(){
         sh_mtx_.lock();
     }
 
-    void shared_lock(){
+    void shared_lock_(){
         sh_mtx_.lock_shared();
         //sh_mtx_.lock();
     }
 
-    void exclusive_unlock(){
+    void exclusive_unlock_(){
         sh_mtx_.unlock();
     }
 
-    void shared_unlock(){
+    void shared_unlock_(){
         sh_mtx_.unlock_shared();
         //sh_mtx_.unlock();
     }
 
+
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
-    std::map<eprosima::fastrtps::rtps::CacheChange_t*, eprosima::fastrtps::rtps::GUID_t, CacheChangeCmp> data_map_;
+    //std::map<eprosima::fastrtps::rtps::CacheChange_t*, eprosima::fastrtps::rtps::GUID_t, CacheChangeCmp> data_map_;
 
     std::map<eprosima::fastrtps::string_255, eprosima::fastrtps::rtps::GUID_t> readers_by_topic_;
 
@@ -254,12 +266,6 @@ private:
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send_;
 
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
-
-    bool is_builtin_participant_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    bool is_builtin_publications_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    bool is_builtin_subscriptions_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
 
     // mutexes
