@@ -199,7 +199,7 @@ bool PDPServer2::createPDPEndpoints()
             nullptr, c_EntityId_SPDPWriter, true))
     {
         // Set pdp filter to writer
-        IReaderDataFilter* pdp_filter = static_cast<PDPDataFilter<DiscoveryDataBase>*>(&discovery_db);
+        IReaderDataFilter* pdp_filter = static_cast<ddb::PDPDataFilter<ddb::DiscoveryDataBase>*>(&discovery_db);
         static_cast<StatefulWriter*>(mp_PDPWriter)->reader_data_filter(pdp_filter);
         // Enable separate sending so the filter can be called for each change and reader proxy
         mp_PDPWriter->set_separate_sending(true);
@@ -315,6 +315,11 @@ bool PDPServer2::remove_remote_participant(
     (void)reason;
     // TODO DISCOVERY SERVER VERSION 2
     return true;
+}
+
+bool PDPServer2::process_data_queue()
+{
+    return discovery_db.process_data_queue();
 }
 
 } // namespace rtps
