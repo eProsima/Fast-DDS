@@ -364,21 +364,28 @@ public:
 
 protected:
 
-    //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
-    bool m_pushMode;
+    //!Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.
+    bool m_pushMode = true;
     //!WriterHistory
-    WriterHistory* mp_history;
+    WriterHistory* mp_history = nullptr;
     //!Listener
-    WriterListener* mp_listener;
+    WriterListener* mp_listener = nullptr;
     //!Asynchronous publication activated
-    bool is_async_;
+    bool is_async_ = false;
     //!Separate sending activated
-    bool m_separateSendingEnabled;
+    bool m_separateSendingEnabled = false;
 
     LocatorSelector locator_selector_;
 
     ResourceLimitedVector<GUID_t> all_remote_readers_;
     ResourceLimitedVector<GuidPrefix_t> all_remote_participants_;
+
+    //! The liveliness kind of this writer
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this writer
+    Duration_t liveliness_lease_duration_;
+    //! The liveliness announcement period
+    Duration_t liveliness_announcement_period_;
 
     void add_guid(
             const GUID_t& remote_guid);
@@ -386,11 +393,6 @@ protected:
     void compute_selected_guids();
 
     void update_cached_info_nts();
-
-    /**
-     * Initialize the header of hte CDRMessages.
-     */
-    void init_header();
 
     /**
      * Add a change to the unsent list.
@@ -409,19 +411,12 @@ protected:
     virtual bool change_removed_by_history(
             CacheChange_t* a_change) = 0;
 
-    //! The liveliness kind of this writer
-    LivelinessQosPolicyKind liveliness_kind_;
-    //! The liveliness lease duration of this writer
-    Duration_t liveliness_lease_duration_;
-    //! The liveliness announcement period
-    Duration_t liveliness_announcement_period_;
-
 private:
 
     RTPSWriter& operator =(
             const RTPSWriter&) = delete;
 
-    RTPSWriter* next_[2];
+    RTPSWriter* next_[2] = { nullptr, nullptr };
 };
 
 } /* namespace rtps */

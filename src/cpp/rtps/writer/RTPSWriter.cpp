@@ -37,18 +37,15 @@ RTPSWriter::RTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
     : Endpoint(impl, guid, att.endpoint)
-    , m_pushMode(true)
     , mp_history(hist)
     , mp_listener(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
-    , m_separateSendingEnabled(false)
     , locator_selector_(att.matched_readers_allocation)
     , all_remote_readers_(att.matched_readers_allocation)
     , all_remote_participants_(att.matched_readers_allocation)
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
-    , next_{nullptr}
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
