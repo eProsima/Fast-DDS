@@ -241,31 +241,28 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     pending_ |= !is_acked;
 }
 
-bool DiscoveryDataBase::is_builtin_participant_publication(
+static bool DiscoveryDataBase::is_participant(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    return memcmp(
-            &eprosima::fastrtps::rtps::c_EntityId_SPDPWriter,
-            &ch->write_params.sample_identity().writer_guid().entityId,
-            5) == 0;
+    return eprosima::fastrtps::rtps::c_EntityId_RTPSParticipant == ch->guid_from_change.entityId;
 }
 
-bool DiscoveryDataBase::is_builtin_publications_publication(
+static bool DiscoveryDataBase::is_writer(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    return memcmp(
-            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
-            &ch->write_params.sample_identity().writer_guid().entityId,
-            3) == 0;
+    constexpr uint8_t entity_id_is_writer_bit = 0x04;
+    const eprosima::fastrtps::rtps::GUID_t& change_guid = guid_from_cache(ch);
+
+    return ((guid_from_cache(ch).entityId.value[3] & entity_id_is_writer_bit) != 0);
 }
 
-bool DiscoveryDataBase::is_builtin_subscriptions_publication(
+static bool DiscoveryDataBase::is_reader(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    return memcmp(
-            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
-            &ch->write_params.sample_identity().writer_guid().entityId,
-            3) == 0;
+    constexpr uint8_t entity_id_is_reader_bit = 0x04;
+    const eprosima::fastrtps::rtps::GUID_t& change_guid = guid_from_cache(ch);
+
+    return ((guid_from_cache(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
 }
 
 } // namespace ddb
