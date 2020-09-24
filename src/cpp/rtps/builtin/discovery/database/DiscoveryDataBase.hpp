@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <map>
-#include <mutex>  // For std::unique_lock
+#include <mutex>
 #include <shared_mutex>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
@@ -69,7 +69,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
         using result_type = void;
 
     public:
@@ -107,8 +107,7 @@ public:
      */
     bool update(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            std::string topic_name,
-            eprosima::fastrtps::rtps::GUID_t* entity);
+            std::string topic_name = "");
 
 
     ////////////
@@ -158,55 +157,34 @@ public:
 
     ////////////
     // Functions to process_disposals()
-    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_dispose()
-    {
-        return disposals_;
-    }
+    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_dispose();
 
-    void clear_changes_to_dispose()
-    {
-        exclusive_lock_();
-        disposals_.clear();
-        exclusive_unlock_();
-    }
+    void clear_changes_to_dispose();
 
     ////////////
     // Functions to process_to_send_lists()
-    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> pdp_to_send()
-    {
-        return pdp_to_send_;
-    }
+    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> pdp_to_send();
 
-    void clear_pdp_to_send()
-    {
-        exclusive_lock_();
-        pdp_to_send_.clear();
-        exclusive_unlock_();
-    }
+    void clear_pdp_to_send();
 
-    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send()
-    {
-        return edp_publications_to_send_;
-    }
+    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send();
 
-    void clear_edp_publications_to_send()
-    {
-        exclusive_lock_();
-        edp_publications_to_send_.clear();
-        exclusive_unlock_();
-    }
+    void clear_edp_publications_to_send();
 
-    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send()
-    {
-        return edp_subscriptions_to_send_;
-    }
+    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send();
 
-    void clear_edp_subscriptions_to_send()
-    {
-        exclusive_lock_();
-        edp_subscriptions_to_send_.clear();
-        exclusive_unlock_();
-    }
+    void clear_edp_subscriptions_to_send();
+
+    ////////////
+    // Static Functions to work with GUIDs
+    static bool is_participant(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    static bool is_writer(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    static bool is_reader(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
 protected:
 
@@ -214,18 +192,6 @@ protected:
     void add_ack_(
             const eprosima::fastrtps::rtps::CacheChange_t* change,
             const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity);
-
-
-    ////////////
-    // Static Functions to work with GUIDs
-    static bool is_participant_(
-            const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    static bool is_writer_(
-            const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    static bool is_reader_(
-            const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     static eprosima::fastrtps::rtps::GUID_t guid_from_change_(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
@@ -258,9 +224,9 @@ protected:
 
     //std::map<eprosima::fastrtps::rtps::CacheChange_t*, eprosima::fastrtps::rtps::GUID_t, CacheChangeCmp> data_map_;
 
-    std::map<eprosima::fastrtps::string_255, eprosima::fastrtps::rtps::GUID_t> readers_by_topic_;
+    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > readers_by_topic_;
 
-    std::map<eprosima::fastrtps::string_255, eprosima::fastrtps::rtps::GUID_t> writers_by_topic_;
+    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > writers_by_topic_;
 
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo> participants_;
 
