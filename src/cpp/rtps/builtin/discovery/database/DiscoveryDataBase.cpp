@@ -61,11 +61,10 @@ bool DiscoveryDataBase::process_data_queue()
     {
         DiscoveryDataQueueInfo data_queue_info = data_queue_.Front();
 
-        insert_change_into_data_map(data_queue_info);
-        // if (data_queue_info.cache_change()->kind == eprosima::fastrtps::rtps::ALIVE)
-        // {
-        //     // update(participants_);
-        // }
+        if (data_queue_info.cache_change()->kind == eprosima::fastrtps::rtps::ALIVE)
+        {
+            // update(participants_);
+        }
 
         data_queue_.Pop();
     }
@@ -74,11 +73,31 @@ bool DiscoveryDataBase::process_data_queue()
     return false;
 }
 
-void DiscoveryDataBase::insert_change_into_data_map(
-        const DiscoveryDataQueueInfo& data_queue_info)
+bool DiscoveryDataBase::is_builtin_participant_publication(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    (void) data_queue_info;
-    return;
+    return memcmp(
+            &eprosima::fastrtps::rtps::c_EntityId_SPDPWriter,
+            &ch->write_params.sample_identity().writer_guid().entityId,
+            5) == 0;
+}
+
+bool DiscoveryDataBase::is_builtin_publications_publication(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return memcmp(
+            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
+            &ch->write_params.sample_identity().writer_guid().entityId,
+            3) == 0;
+}
+
+bool DiscoveryDataBase::is_builtin_subscriptions_publication(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return memcmp(
+            &eprosima::fastrtps::rtps::c_EntityId_SEDPPubWriter,
+            &ch->write_params.sample_identity().writer_guid().entityId,
+            3) == 0;
 }
 
 } // namespace ddb
