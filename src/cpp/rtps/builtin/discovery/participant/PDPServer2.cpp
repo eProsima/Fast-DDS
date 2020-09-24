@@ -327,7 +327,7 @@ bool PDPServer2::server_update_routine()
 {
     bool result = process_writers_acknowledgements();  // server + ddb(functor_with_ddb)
     // result |= process_data_queue();                    // all ddb
-    // result |= process_disposals();                     // server + ddb(get_disposals, clear_changes_to_disposes)
+    result |= process_disposals();                     // server + ddb(get_disposals, clear_changes_to_disposes)
     // result |= process_dirty_topics();                  // all ddb
     // result |= process_to_send_lists();                 // server + ddb(get_to_send, remove_to_send_this)
 
@@ -412,7 +412,106 @@ bool PDPServer2::process_change_acknowledgement(
     return true;
 }
 
-fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2:: discovery_db()
+bool PDPServer2::process_disposals()
+{
+    fastrtps::rtps::WriterHistory* pubs_history = static_cast<EDPServer2*>(mp_EDP)->publications_writer_.second;
+    fastrtps::rtps::WriterHistory* subs_history = static_cast<EDPServer2*>(mp_EDP)->subscriptions_writer_.second;
+
+    // Get list of disposals from database
+    std::vector<fastrtps::rtps::CacheChange_t*> disposals = discovery_db_.changes_to_dispose();
+    // Iterate over disposals
+    for(auto change: disposals)
+    {
+        // Check that the change is actually a disposal
+        if (change->kind != fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
+        {
+            logWarning(PDPServer2, "The change does not correspond with a disposal");
+            continue;
+        }
+
+        fastrtps::rtps::GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change_(change).guidPrefix;
+
+        // DATA(Up) case
+        if (discovery_db_.is_participant(change))
+        {
+            // Remove all DATA(p) with the same sample identity as the DATA(Up) from PDP writer's history.
+            remove_related_alive_from_history(mp_PDPWriterHistory, change_guid_prefix);
+
+            // Add DATA(Up) to PDP writer's history
+            mp_PDPWriterHistory->add_change(change);
+        }
+        // DATA(Uw) case
+        else if (discovery_db_.is_writer(change))
+        {
+            // Remove all DATA(w) with the same sample identity as the DATA(Uw) from EDP publications writer's history
+            remove_related_alive_from_history(pubs_history, change_guid_prefix);
+
+            // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw).
+            // If it does, then there is no need of adding the DATA(Uw).
+            if (!announcement_from_same_paricipant_in_disposals(disposals, change_guid_prefix))
+            {
+                // Add DATA(Uw) to EDP publications writer's history.
+                pubs_history->add_change(change);
+            }
+        }
+        // DATA(Ur) case
+        else if (discovery_db_.is_reader(change))
+        {
+            // Remove all DATA(r) with the same sample identity as the DATA(Ur) from EDP subscriptions writer's history
+            remove_related_alive_from_history(subs_history, change_guid_prefix);
+
+            // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw).
+            // If it does, then there is no need of adding the DATA(Uw).
+            if (!announcement_from_same_paricipant_in_disposals(disposals, change_guid_prefix))
+            {
+                // Add DATA(Uw) to EDP publications writer's history.
+                pubs_history->add_change(change);
+            }
+
+            // Add DATA(Ur) to EDP subscriptions writer's history.
+            subs_history->add_change(change);
+        }
+        else
+        {
+            logError(PDPServer2, "Wrong DATA received from disposals");
+        }
+    }
+    // Clear database disposals list
+    discovery_db_.clear_changes_to_dispose();
+    return false;
+}
+
+void PDPServer2::remove_related_alive_from_history(
+        fastrtps::rtps::WriterHistory* writer_history,
+        const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)
+{
+    // Iterate over changes in writer_history
+    for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd(); chit++)
+    {
+        // Remove all DATA whose original sender was entity_guid_prefix from writer_history
+        if (entity_guid_prefix == discovery_db_.guid_from_change_(*chit).guidPrefix)
+        {
+            writer_history->remove_change(*chit);
+        }
+    }
+}
+
+bool PDPServer2::announcement_from_same_paricipant_in_disposals(
+        const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
+        const fastrtps::rtps::GuidPrefix_t& participant)
+{
+    for (auto change_: disposals)
+    {
+        if (discovery_db_.is_participant(change_) &&
+            (discovery_db_.guid_from_change_(change_).guidPrefix == participant))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
 {
     return discovery_db_;
 }
