@@ -154,7 +154,7 @@ bool WriterHistory::remove_change(
             mp_writer->change_removed_by_history(a_change);
 
             // Release from pools
-            do_release_cache(a_change);
+            mp_writer->release_change(a_change);
             return true;
         }
     }
@@ -194,7 +194,7 @@ bool WriterHistory::remove_change(
             mp_writer->change_removed_by_history(change);
 
             // Release from pools
-            do_release_cache(change);
+            mp_writer->release_change(change);
             return true;
         }
     }

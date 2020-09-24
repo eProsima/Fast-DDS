@@ -162,6 +162,23 @@ CacheChange_t* RTPSWriter::new_change(
     return reserved_change;
 }
 
+bool RTPSWriter::release_change(
+        CacheChange_t* change)
+{
+    // Asserting preconditions
+    assert(change != nullptr);
+    assert(change->writerGUID == m_guid);
+
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    IPayloadPool* pool = change->payload_owner();
+    if (pool)
+    {
+        pool->release_payload(*change);
+    }
+    return change_pool_->release_cache(change);
+}
+
 SequenceNumber_t RTPSWriter::get_seq_num_min()
 {
     CacheChange_t* change;

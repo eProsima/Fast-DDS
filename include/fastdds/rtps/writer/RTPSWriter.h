@@ -108,6 +108,22 @@ public:
             InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
     /**
+     * Release a change when it is not being used anymore.
+     *
+     * @param change Pointer to the cache change to be released.
+     *
+     * @returns whether the operation succeeded or not
+     *
+     * @pre
+     *     @li @c change is not @c nullptr
+     *     @li @c change points to a cache change obtained from a call to @c this->new_change
+     *
+     * @post memory pointed to by @c change is not accessed
+     */
+    RTPS_DllAPI bool release_change(
+            CacheChange_t* change);
+
+    /**
      * Add a matched reader.
      * @param data Pointer to the ReaderProxyData object added.
      * @return True if added.
