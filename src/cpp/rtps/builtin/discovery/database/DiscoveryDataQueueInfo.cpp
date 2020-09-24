@@ -29,9 +29,6 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoveryDataQueueInfo::cache_change()
     return cache_change_;
 }
 
-
-
-
 } /* namespace ddb */
 } /* namespace dds */
 } /* namespace fastdds */

@@ -67,17 +67,21 @@ class DiscoveryDataBase
 
 public:
 
-
-    class AckedFunctor {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
+    class AckedFunctor
+    {
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
         using result_type = void;
+
     public:
 
-        AckedFunctor(DiscoveryDataBase* db, eprosima::fastrtps::rtps::CacheChange_t* change);
+        AckedFunctor(
+                DiscoveryDataBase* db,
+                eprosima::fastrtps::rtps::CacheChange_t* change);
 
         ~AckedFunctor();
 
-        void operator() (eprosima::fastrtps::rtps::ReaderProxy* reader_proxy);
+        void operator () (
+                eprosima::fastrtps::rtps::ReaderProxy* reader_proxy);
 
         bool pending()
         {
@@ -87,7 +91,7 @@ public:
     private:
 
         DiscoveryDataBase* db_;
-        eprosima::fastrtps::rtps::CacheChange_t* cache_;
+        eprosima::fastrtps::rtps::CacheChange_t* change_;
         bool pending_ = false;
 
     };
@@ -102,7 +106,7 @@ public:
      * @return: True if the change was added, false otherwise.
      */
     bool update(
-            eprosima::fastrtps::rtps::CacheChange_t* cache,
+            eprosima::fastrtps::rtps::CacheChange_t* change,
             std::string topic_name,
             eprosima::fastrtps::rtps::GUID_t* entity);
 
@@ -128,7 +132,8 @@ public:
     ////////////
     // Functions to process_writers_acknowledgements()
     // Return the functor, class that works as a lambda
-    AckedFunctor functor(eprosima::fastrtps::rtps::CacheChange_t* change)
+    AckedFunctor functor(
+            eprosima::fastrtps::rtps::CacheChange_t* change)
     {
         return DiscoveryDataBase::AckedFunctor(this, change);
     }
@@ -137,7 +142,8 @@ public:
      * @change: That entity's CacheChange.
      * @return: True if the entity was deleted, false otherwise.
      */
-    bool delete_entity_of_change(fastrtps::rtps::CacheChange_t* change);
+    bool delete_entity_of_change(
+            fastrtps::rtps::CacheChange_t* change);
 
 
     ////////////
@@ -148,7 +154,7 @@ public:
     ////////////
     // Functions to process_dirty_topics()
     bool process_dirty_topics();
-    
+
 
     ////////////
     // Functions to process_disposals()
@@ -163,7 +169,6 @@ public:
         disposals_.clear();
         exclusive_unlock_();
     }
-
 
     ////////////
     // Functions to process_to_send_lists()
@@ -203,45 +208,51 @@ public:
         exclusive_unlock_();
     }
 
-
 protected:
 
     // update the acks
     void add_ack_(
-        const eprosima::fastrtps::rtps::CacheChange_t* change,
-        const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity);
+            const eprosima::fastrtps::rtps::CacheChange_t* change,
+            const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity);
 
 
     ////////////
     // Static Functions to work with GUIDs
-    static bool is_participant_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+    static bool is_participant_(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
-    static bool is_writer_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+    static bool is_writer_(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
-    static bool is_reader_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+    static bool is_reader_(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
-    static eprosima::fastrtps::rtps::GUID_t guid_from_change_(const eprosima::fastrtps::rtps::CacheChange_t* ch);
+    static eprosima::fastrtps::rtps::GUID_t guid_from_change_(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     ////////////
     // Mutex Functions
-    void exclusive_lock_(){
+    void exclusive_lock_()
+    {
         sh_mtx_.lock();
     }
 
-    void shared_lock_(){
+    void shared_lock_()
+    {
         sh_mtx_.lock_shared();
         //sh_mtx_.lock();
     }
 
-    void exclusive_unlock_(){
+    void exclusive_unlock_()
+    {
         sh_mtx_.unlock();
     }
 
-    void shared_unlock_(){
+    void shared_unlock_()
+    {
         sh_mtx_.unlock_shared();
         //sh_mtx_.unlock();
     }
-
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
@@ -251,7 +262,7 @@ protected:
 
     std::map<eprosima::fastrtps::string_255, eprosima::fastrtps::rtps::GUID_t> writers_by_topic_;
 
-    std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryParticipantInfo> participants_;
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo> participants_;
 
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> readers_;
 

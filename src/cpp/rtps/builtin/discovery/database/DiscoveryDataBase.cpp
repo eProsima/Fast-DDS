@@ -62,16 +62,15 @@ void DiscoveryDataBase::add_ack_(
 }
 
 bool DiscoveryDataBase::update(
-        eprosima::fastrtps::rtps::CacheChange_t* cache,
+        eprosima::fastrtps::rtps::CacheChange_t* change,
         std::string topic_name,
         eprosima::fastrtps::rtps::GUID_t* entity)
 {
-    (void)cache;
+    (void)change;
     (void)topic_name;
     (void)entity;
     return true;
 }
-
 
 bool DiscoveryDataBase::process_data_queue()
 {
@@ -93,32 +92,36 @@ bool DiscoveryDataBase::process_data_queue()
     return false;
 }
 
-bool DiscoveryDataBase::delete_entity_of_change(fastrtps::rtps::CacheChange_t* change)
+bool DiscoveryDataBase::delete_entity_of_change(
+        fastrtps::rtps::CacheChange_t* change)
 {
+    (void)change;
+    return true;
     /*
-    if (change->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
-    {
+       if (change->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
+       {
         logWarning(DISCOVERY_DATABASE, "Attempting to delete information of an ALIVE entity: " << guid_from_change_(change));
         return false;
-    }
+       }
 
-    if (DiscoveryDataBase::is_participant_(change))
-    {
+       if (DiscoveryDataBase::is_participant_(change))
+       {
         return DiscoveryDataBase::remove_participant_(change);
-    }
-    else if (is_reader_(change))
-    {
+       }
+       else if (is_reader_(change))
+       {
         return remove_reader_(change);
-    }
-    else if (is_writer_(change))
-    {
+       }
+       else if (is_writer_(change))
+       {
         return remove_writer_(change);
-    }
-    return false;
-    */
+       }
+       return false;
+     */
 }
 
-static eprosima::fastrtps::rtps::GUID_t guid_from_change_(const eprosima::fastrtps::rtps::CacheChange_t* ch)
+eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change_(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     return fastrtps::rtps::iHandle2GUID(ch->instanceHandle);
 }
@@ -127,7 +130,7 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
         DiscoveryDataBase* db,
         eprosima::fastrtps::rtps::CacheChange_t* change)
     : db_(db)
-    , cache_(change)
+    , change_(change)
 {
     db_->exclusive_lock_();
 }
@@ -137,14 +140,15 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
     db_->exclusive_unlock_();
 }
 
-void DiscoveryDataBase::AckedFunctor::operator() (eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
+void DiscoveryDataBase::AckedFunctor::operator () (
+        eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
 {
     // Check whether the change has been acknowledged by a given reader
-    bool is_acked = reader_proxy->change_is_acked(cache_->sequenceNumber);
+    bool is_acked = reader_proxy->change_is_acked(change_->sequenceNumber);
     if (is_acked)
     {
         // In the discovery database, mark the change as acknowledged by the reader
-        db_->add_ack_(cache_, &reader_proxy->guid().guidPrefix);
+        db_->add_ack_(change_, &reader_proxy->guid().guidPrefix);
     }
     pending_ |= !is_acked;
 }

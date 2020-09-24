@@ -321,7 +321,6 @@ bool PDPServer2::process_data_queue()
     return discovery_db.process_data_queue();
 }
 
-
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

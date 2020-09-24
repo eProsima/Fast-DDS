@@ -31,6 +31,37 @@ namespace ddb {
  */
 class DiscoveryParticipantInfo
 {
+
+public:
+
+    DiscoveryParticipantInfo(
+            eprosima::fastrtps::rtps::CacheChange_t* cache_);
+
+    void add_reader(
+            eprosima::fastrtps::rtps::GUID_t guid);
+
+    void remove_reader(
+            eprosima::fastrtps::rtps::GUID_t guid);
+
+    void add_writer(
+            eprosima::fastrtps::rtps::GUID_t guid);
+
+    void remove_writer(
+            eprosima::fastrtps::rtps::GUID_t guid);
+
+    void add_participant(
+            eprosima::fastrtps::rtps::GuidPrefix_t guid);
+
+    void match_participant(
+            eprosima::fastrtps::rtps::GuidPrefix_t guid);
+
+    void remove_participant(
+            eprosima::fastrtps::rtps::GuidPrefix_t guid);
+
+    void set_disposal(
+            eprosima::fastrtps::rtps::CacheChange_t* cache_);
+
+
 };
 
 } /* namespace ddb */

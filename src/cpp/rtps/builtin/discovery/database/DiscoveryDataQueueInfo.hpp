@@ -30,9 +30,14 @@ namespace ddb {
 class DiscoveryDataQueueInfo
 {
 public:
-    DiscoveryDataQueueInfo() {}
 
-    ~DiscoveryDataQueueInfo() {}
+    DiscoveryDataQueueInfo()
+    {
+    }
+
+    ~DiscoveryDataQueueInfo()
+    {
+    }
 
     eprosima::fastrtps::rtps::CacheChange_t* cache_change();
 
@@ -41,6 +46,7 @@ public:
     eprosima::fastrtps::rtps::GUID_t associated_entity();
 
 private:
+
     eprosima::fastrtps::rtps::CacheChange_t* cache_change_;
 
     eprosima::fastrtps::string_255 topic_name_;
