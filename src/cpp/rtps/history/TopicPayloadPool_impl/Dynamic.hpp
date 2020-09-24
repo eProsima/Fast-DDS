@@ -16,13 +16,16 @@
  * @file Dynamic.hpp
  */
 
+#ifndef RTPS_HISTORY_TOPICPAYLOADPOOLIMPL_DYNAMIC_HPP
+#define RTPS_HISTORY_TOPICPAYLOADPOOLIMPL_DYNAMIC_HPP
+
+#include <rtps/history/TopicPayloadPool.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-namespace TopicPayloadPool {
 
-template <>
-class Impl<DYNAMIC_RESERVE_MEMORY_MODE> : public BaseImpl
+class DynamicTopicPayloadPool : public TopicPayloadPool
 {
 public:
 
@@ -72,7 +75,8 @@ protected:
 
 };
 
-}  // namespace TopicPayloadPool
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima
+
+#endif  // RTPS_HISTORY_TOPICPAYLOADPOOLIMPL_DYNAMIC_HPP

@@ -20,6 +20,7 @@
 #define RTPS_HISTORY_ITOPICPAYLOADPOOL_HPP
 
 #include <fastdds/rtps/history/IPayloadPool.h>
+#include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
 namespace fastrtps {

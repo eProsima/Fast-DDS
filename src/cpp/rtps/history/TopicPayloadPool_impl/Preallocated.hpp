@@ -16,17 +16,20 @@
  * @file Preallocated.hpp
  */
 
+#ifndef RTPS_HISTORY_TOPICPAYLOADPOOLIMPL_PREALLOCATED_HPP
+#define RTPS_HISTORY_TOPICPAYLOADPOOLIMPL_PREALLOCATED_HPP
+
+#include <rtps/history/TopicPayloadPool.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-namespace TopicPayloadPool {
 
-template <>
-class Impl<PREALLOCATED_MEMORY_MODE> : public BaseImpl
+class PreallocatedTopicPayloadPool : public TopicPayloadPool
 {
 public:
 
-    explicit Impl(
+    explicit PreallocatedTopicPayloadPool(
             uint32_t payload_size)
         : payload_size_(payload_size)
         , minimum_pool_size_for_writers(0)
@@ -38,27 +41,7 @@ public:
             uint32_t /* size */,
             CacheChange_t& cache_change) override
     {
-        octet* payload = nullptr;
-        if (free_payloads_.empty())
-        {
-            payload = allocate(payload_size_); //Allocates a single payload
-            cache_change.serializedPayload.data = payload;
-            if (payload != nullptr)
-            {
-                cache_change.serializedPayload.max_size = payload_size_;
-                cache_change.payload_owner(this);
-                return true;
-            }
-            cache_change.serializedPayload.max_size = 0;
-            cache_change.payload_owner(nullptr);
-            return false;
-        }
-
-        cache_change.serializedPayload.data = free_payloads_.back().data;
-        cache_change.serializedPayload.max_size = free_payloads_.back().max_size;
-        cache_change.payload_owner(this);
-        free_payloads_.pop_back();
-        return true;
+        return TopicPayloadPool::get_payload(payload_size_, cache_change);
     }
 
     bool get_payload(
@@ -84,9 +67,11 @@ public:
             const PoolConfig& config,
             bool is_reader) override
     {
-        assert(config.memory_policy == memory_policy());
+        if (!TopicPayloadPool::reserve_history(config, is_reader))
+        {
+            return false;
+        }
 
-        update_maximum_size(config, true);
         if (is_reader)
         {
             minimum_pool_size_for_readers =
@@ -97,16 +82,19 @@ public:
             minimum_pool_size_for_writers += config.initial_size;
         }
 
-        return reserve(minimum_pool_size_for_writers + minimum_pool_size_for_readers, payload_size_);
+        reserve(minimum_pool_size_for_writers + minimum_pool_size_for_readers, payload_size_);
+        return true;
     }
 
     bool release_history(
             const PoolConfig& config,
-            bool /*is_reader*/) override
+            bool is_reader) override
     {
-        assert(config.memory_policy == memory_policy());
+        if (!TopicPayloadPool::release_history(config, is_reader))
+        {
+            return false;
+        }
 
-        update_maximum_size(config, false);
         return shrink(max_pool_size_);
     }
 
@@ -124,7 +112,8 @@ private:
     uint32_t minimum_pool_size_for_readers;    //< Initial pool size due to readers (max of all readers)
 };
 
-}  // namespace TopicPayloadPool
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima
+
+#endif  // RTPS_HISTORY_TOPICPAYLOADPOOLIMPL_PREALLOCATED_HPP
