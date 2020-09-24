@@ -29,6 +29,19 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoveryDataQueueInfo::cache_change()
     return cache_change_;
 }
 
+eprosima::fastrtps::string_255 DiscoveryDataQueueInfo::topic_name()
+{
+    return topic_name_;
+}
+
+eprosima::fastrtps::rtps::GUID_t DiscoveryDataQueueInfo::associated_entity()
+{
+    return associated_entity_;
+}
+
+
+
+
 } /* namespace ddb */
 } /* namespace dds */
 } /* namespace fastdds */

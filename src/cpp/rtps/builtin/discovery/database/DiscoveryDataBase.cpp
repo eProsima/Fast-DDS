@@ -141,11 +141,34 @@ bool DiscoveryDataBase::process_data_queue()
     while (!data_queue_.Empty())
     {
         DiscoveryDataQueueInfo data_queue_info = data_queue_.Front();
+        eprosima::fastrtps::rtps::CacheChange_t* change = data_queue_info.cache_change();
+        eprosima::fastrtps::string_255 topic_name = data_queue_info.topic_name();
 
-        if (data_queue_info.cache_change()->kind == eprosima::fastrtps::rtps::ALIVE)
+        if (change->kind == eprosima::fastrtps::rtps::ALIVE)
         {
-            // update(participants_);
+            if (is_participant(change))
+            {
+                create_participant_from_change(change);
+            }
+            else if (is_writer(change))
+            {
+                create_writers_from_change(change, topic_name);
+            }
+            else if (is_reader(change))
+            {
+                create_readers_from_change(change, topic_name);
+            }
+
+            if(std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
+            {
+                dirty_topics_.push_back(topic_name);
+            }
         }
+        else
+        {
+
+        }
+
 
         data_queue_.Pop();
     }
@@ -264,6 +287,71 @@ static bool DiscoveryDataBase::is_reader(
 
     return ((guid_from_cache(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
 }
+
+void DiscoveryDataBase::create_participant_from_change(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    participant_.insert(guid_from_cache(ch).guidPrefix, new DiscoveryParticipantInfo(ch));
+}
+
+void DiscoveryDataBase::create_writers_from_change(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name)
+{
+    const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_cache(ch);
+
+    bool ret = writers_.insert(writer_guid, new DiscoveryEndpointInfo(ch, topic_name));
+
+    if (ret.second) {
+        auto readers_it = readers_by_topic_.find(topic_name);
+        if (readers_it != readers_by_topic_.end())
+        {
+            for (auto reader_it: readers_it->second)
+            {
+                writers.find(guid_from_cache(ch))->second.add_participant(reader_it->guidPrefix);
+
+                auto rit = readers_.find(reader_it);
+                if (rit != readers_.end())
+                {
+                    rit->second.add_participant(writer_guid.guidPrefix);
+                }
+            }
+
+        }
+
+        writers_by_topic[topic_name].push_back(writer_guid);
+    }
+}
+
+void DiscoveryDataBase::create_readers_from_change(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name)
+{
+    const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_cache(ch);
+
+    bool ret = readers_.insert(guid_from_cache(ch), new DiscoveryEndpointInfo(ch, topic_name));
+
+    if (ret.second) {
+        auto writers_it = writers_by_topic_.find(topic_name);
+        if (writers_it != writers_by_topic_.end())
+        {
+            for (auto writer_it: writers_it->second)
+            {
+                writers.find(guid_from_cache(ch))->second.add_participant(writer_it->guidPrefix);
+
+                auto rit = writers_.find(writer_it);
+                if (rit != writers_.end())
+                {
+                    rit->second.add_participant(writer_guid.guidPrefix);
+                }
+            }
+
+        }
+
+        readers_by_topic[topic_name].push_back(reader_guid);
+    }
+}
+
 
 } // namespace ddb
 } // namespace rtps
