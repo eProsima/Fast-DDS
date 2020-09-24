@@ -15,7 +15,6 @@ Below are the rationales, notes and caveats for this claim, organized by the req
 
 ### Version Scheme [1.i]
 
-
 `foonathan_memory` does not have a declared versioning scheme.
 
 The latest release can be found [here](https://github.com/foonathan/memory/releases) and the release notes can be found in the [CHANGELOG](CHANGELOG.MD).
@@ -46,7 +45,7 @@ However, by pinning *eprosima Fast DDS* CI tests and `foonathan_memory_vendor` u
 ## Change Control Process [2]
 
 `foonathan_memory` does not have a stated change control process.
-Nevertheless, only when the pinned commit is updated, *eprosima Fast DDS* is affected.
+Nevertheless, only when the pinned commit is updated is *eprosima Fast DDS* affected.
 The change control process for the  update of the `foonathan_memory_vendor` utility follows [eProsima Contributing guidelines](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md). 
 
 ### Change Requests [2.i]
