@@ -923,10 +923,6 @@ TEST_F(XMLProfileParserTests, skip_default_xml)
             participant_atts_none.rtps.allocation.writers.maximum);
     EXPECT_NE(participant_atts_default.rtps.allocation.writers.increment,
             participant_atts_none.rtps.allocation.writers.increment);
-    EXPECT_NE(participant_atts_default.rtps.allocation.send_buffers.preallocated_number,
-            participant_atts_none.rtps.allocation.send_buffers.preallocated_number);
-    EXPECT_NE(participant_atts_default.rtps.allocation.send_buffers.dynamic,
-            participant_atts_none.rtps.allocation.send_buffers.dynamic);
 }
 
 int main(
