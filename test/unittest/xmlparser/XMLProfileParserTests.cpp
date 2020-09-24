@@ -884,7 +884,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
 TEST_F(XMLProfileParserTests, skip_default_xml)
 {
     const char* xml =
-    "                                                                                                                  \
+            "                                                                                                          \
         <profiles>                                                                                                     \
             <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">                        \
                 <domainId>2020268</domainId>                                                                           \
