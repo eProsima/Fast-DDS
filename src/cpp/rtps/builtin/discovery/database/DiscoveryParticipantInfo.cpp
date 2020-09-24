@@ -30,7 +30,7 @@ namespace rtps {
 namespace ddb {
 
 void DiscoveryParticipantInfo::add_reader(
-        eprosima::fastrtps::rtps::GUID_t guid)
+        const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     if (std::find(readers.begin(), readers.end(), guid) == readers.end())
     {
@@ -39,7 +39,7 @@ void DiscoveryParticipantInfo::add_reader(
 }
 
 void DiscoveryParticipantInfo::remove_reader(
-        eprosima::fastrtps::rtps::GUID_t guid)
+        const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     auto it = std::find(readers.begin(), readers.end(), guid);
     if (it != readers.end())
@@ -49,7 +49,7 @@ void DiscoveryParticipantInfo::remove_reader(
 }
 
 void DiscoveryParticipantInfo::add_writer(
-        eprosima::fastrtps::rtps::GUID_t guid)
+        const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     if (std::find(writers.begin(), writers.end(), guid) == writers.end())
     {
@@ -58,7 +58,7 @@ void DiscoveryParticipantInfo::add_writer(
 }
 
 void DiscoveryParticipantInfo::remove_writer(
-        eprosima::fastrtps::rtps::GUID_t guid)
+        const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     auto it = std::find(writers.begin(), writers.end(), guid);
     if (it != writers.end())

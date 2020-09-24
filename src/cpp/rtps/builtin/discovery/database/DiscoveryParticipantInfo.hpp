@@ -53,16 +53,16 @@ public:
 
     // populate functions
     void add_reader(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            const eprosima::fastrtps::rtps::GUID_t& guid);
 
     void remove_reader(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            const eprosima::fastrtps::rtps::GUID_t& guid);
 
     void add_writer(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            const eprosima::fastrtps::rtps::GUID_t& guid);
 
     void remove_writer(
-            eprosima::fastrtps::rtps::GUID_t guid);
+            const eprosima::fastrtps::rtps::GUID_t& guid);
 
 private:
 

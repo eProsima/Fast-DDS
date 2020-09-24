@@ -30,7 +30,7 @@ namespace ddb {
 
 
 bool DiscoveryParticipantsAckStatus::is_matched(
-        eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
 {
     auto it = relevant_participants_map.find(guid_p);
     if (it != relevant_participants_map.end())

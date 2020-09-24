@@ -70,7 +70,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
         using result_type = void;
 
     public:
@@ -196,7 +196,7 @@ protected:
     // update the acks
     void add_ack_(
             const eprosima::fastrtps::rtps::CacheChange_t* change,
-            const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity);
+            const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity);
 
 
     ////////////

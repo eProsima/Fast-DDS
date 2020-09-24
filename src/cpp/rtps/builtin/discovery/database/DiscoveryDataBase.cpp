@@ -58,10 +58,13 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
 
 void DiscoveryDataBase::add_ack_(
         const eprosima::fastrtps::rtps::CacheChange_t* change,
-        const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity)
+        const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity)
 {
-    (void)change;
-    (void)acked_entity;
+    if (is_participant(change))
+    {
+        auto it = participants_.find(guid_from_change(change).guidPrefix);
+        it->second.match_participant(acked_entity);
+    }
 }
 
 bool DiscoveryDataBase::update(
@@ -233,7 +236,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     if (is_acked)
     {
         // In the discovery database, mark the change as acknowledged by the reader
-        db_->add_ack_(change_, &reader_proxy->guid().guidPrefix);
+        db_->add_ack_(change_, reader_proxy->guid().guidPrefix);
     }
     pending_ |= !is_acked;
 }
