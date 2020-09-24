@@ -35,10 +35,61 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+static std::shared_ptr<IChangePool> create_change_pool(
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const PoolConfig& pool_config)
+{
+    if ((pool_config.memory_policy == PREALLOCATED_MEMORY_MODE) ||
+            (pool_config.memory_policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
+    {
+        auto init_cache = [payload_pool, pool_config](
+            CacheChange_t* item)
+                {
+                    if (payload_pool->get_payload(pool_config.payload_initial_size, *item))
+                    {
+                        payload_pool->release_payload(*item);
+                    }
+                };
+
+        return std::make_shared<CacheChangePool>(pool_config, init_cache);
+    }
+
+    return std::make_shared<CacheChangePool>(pool_config);
+}
+
 RTPSWriter::RTPSWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,
         const WriterAttributes& att,
+        WriterHistory* hist,
+        WriterListener* listen)
+    : RTPSWriter(
+        impl, guid, att,
+        BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
+        hist, listen)
+{
+}
+
+RTPSWriter::RTPSWriter(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* hist,
+        WriterListener* listen)
+    : RTPSWriter(
+        impl, guid, att, payload_pool,
+        create_change_pool(payload_pool, PoolConfig::from_history_attributes(hist->m_att)),
+        hist, listen)
+{
+}
+
+RTPSWriter::RTPSWriter(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* hist,
         WriterListener* listen)
     : Endpoint(impl, guid, att.endpoint)
@@ -52,34 +103,12 @@ RTPSWriter::RTPSWriter(
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
-    PoolConfig pool_config = PoolConfig::from_history_attributes(hist->m_att);
-    uint32_t payload_size = pool_config.payload_initial_size;
-
+    payload_pool_ = payload_pool;
+    change_pool_ = change_pool;
     fixed_payload_size_ = 0;
-    if (pool_config.memory_policy == PREALLOCATED_MEMORY_MODE)
+    if (hist->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
-        fixed_payload_size_ = payload_size;
-    }
-
-    payload_pool_ = BasicPayloadPool::get(pool_config);
-
-    if ((pool_config.memory_policy == PREALLOCATED_MEMORY_MODE) ||
-        (pool_config.memory_policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
-    {
-        auto init_cache = [this, payload_size](
-            CacheChange_t* item)
-        {
-            if (payload_pool_->get_payload(payload_size, *item))
-            {
-                payload_pool_->release_payload(*item);
-            }
-        };
-
-        change_pool_ = std::make_shared<CacheChangePool>(pool_config, init_cache);
-    }
-    else
-    {
-        change_pool_ = std::make_shared<CacheChangePool>(pool_config);
+        fixed_payload_size_ = hist->m_att.payloadMaxSize;
     }
 
     mp_history->mp_writer = this;

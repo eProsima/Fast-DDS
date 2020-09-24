@@ -56,11 +56,29 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
 protected:
 
     RTPSWriter(
-            RTPSParticipantImpl*,
+            RTPSParticipantImpl* impl,
             const GUID_t& guid,
             const WriterAttributes& att,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
+
+    RTPSWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    RTPSWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
     virtual ~RTPSWriter();
 
 public:
