@@ -4,11 +4,20 @@
 
 option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast RTPS" OFF)
 
-if(NOT (TINYXML2_FROM_SOURCE OR THIRDPARTY))
+# Option for evaluating whether we are looking in for tinyxml2 in submodule
+set(TINYXML2_FROM_THIRDPARTY OFF)
+if (
+    (THIRDPARTY_TinyXML2 STREQUAL "ON") OR
+    (THIRDPARTY_TinyXML2 STREQUAL "FORCE")
+)
+    set(TINYXML2_FROM_THIRDPARTY ON)
+endif()
+
+if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
     find_package(TinyXML2 CONFIG QUIET)
 endif()
 
-if(TinyXML2_FOUND AND NOT THIRDPARTY)
+if(TinyXML2_FOUND AND NOT TINYXML2_FROM_THIRDPARTY)
     message(STATUS "Found TinyXML2: ${TinyXML2_DIR}")
     if(NOT TINYXML2_LIBRARY)
         # in this case, we're probably using TinyXML2 version 5.0.0 or greater
@@ -20,11 +29,8 @@ if(TinyXML2_FOUND AND NOT THIRDPARTY)
         endif()
     endif()
 else()
-    if(THIRDPARTY OR ANDROID)
+    if(TINYXML2_FROM_THIRDPARTY OR ANDROID)
         set(TINYXML2_FROM_SOURCE ON)
-    endif()
-
-    if(THIRDPARTY OR ANDROID)
         find_path(TINYXML2_INCLUDE_DIR NAMES tinyxml2.h NO_CMAKE_FIND_ROOT_PATH)
     else()
         find_path(TINYXML2_INCLUDE_DIR NAMES tinyxml2.h)

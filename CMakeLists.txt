@@ -220,6 +220,7 @@ eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 find_package(foonathan_memory REQUIRED)
+message(STATUS "Found foonathan_memory: ${foonathan_memory_DIR}")
 find_package(ThirdpartyBoost REQUIRED)
 
 if(ANDROID)
@@ -266,7 +267,7 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER)
 endif()
 
 ###############################################################################
-# Tools default setup 
+# Tools default setup
 ###############################################################################
 option(COMPILE_TOOLS "Build tools" ON)
 
@@ -300,7 +301,7 @@ if(COMPILE_EXAMPLES)
 endif()
 
 ###############################################################################
-# Tools 
+# Tools
 ###############################################################################
 
 if(COMPILE_TOOLS)
@@ -448,10 +449,10 @@ if(EPROSIMA_INSTALLER)
 endif()
 
 if(INSTALL_TOOLS)
-  # Install tools 
+  # Install tools
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools
       DESTINATION tools/
-      COMPONENT tools 
+      COMPONENT tools
       PATTERN "tools/CMakeLists.txt" EXCLUDE
       )
 
