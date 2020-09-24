@@ -128,13 +128,15 @@ macro(eprosima_find_package package)
         endif()
     endif()
 
-    # If the package was found we have already show an status message.
-    # if it was not found and it was required throw an fatal error.
-    # if if was not found but it was not required show a warning.
-    if((NOT ${package}_FOUND) AND ${FIND_REQUIRED})
-        message(FATAL_ERROR "${package} package NOT found")
-    elseif(NOT ${package}_FOUND)
-        message(STATUS "${package} package NOT found")
+    # If the package was found we have already shown a status message.
+    # if it was not found and it was required, throw an fatal error.
+    # if it was not found but it was not required, show a warning.
+    if(NOT ${package}_FOUND)
+        if(${FIND_REQUIRED})
+            message(FATAL_ERROR "${package} package NOT found")
+        else()
+            message(STATUS "${package} package NOT found")
+        endif()
     endif()
 endmacro()
 
