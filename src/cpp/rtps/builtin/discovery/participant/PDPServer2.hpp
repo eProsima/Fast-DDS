@@ -22,8 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include <fastdds/rtps/builtin/discovery/DiscoveryDataFilter.hpp>
-#include <fastdds/rtps/builtin/discovery/DiscoveryDataBase.hpp>
+#include "../database/DiscoveryDataFilter.hpp"
+#include "../database/DiscoveryDataBase.hpp"
 #include "./DServerEvent2.hpp"
 
 // To be eventually removed together with eprosima::fastrtps
@@ -127,7 +127,11 @@ public:
     }
 
     //! Discovery database
-    fastdds::rtps::DiscoveryDataBase discovery_db;
+    fastdds::rtps::ddb::DiscoveryDataBase discovery_db;
+
+protected:
+
+    bool process_data_queue();
 
 private:
 

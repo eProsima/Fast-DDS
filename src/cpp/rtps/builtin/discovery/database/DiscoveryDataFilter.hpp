@@ -25,6 +25,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+namespace ddb {
 
 /**
  * Class to filter PDP data depending on the destination reader.
@@ -87,6 +88,7 @@ public:
 
 };
 
+} /* namespace ddb */
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
