@@ -65,7 +65,8 @@ public:
             eprosima::fastrtps::rtps::CacheChange_t* cache_);
 
     // get functions
-    bool is_matched(eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
+    bool is_matched(
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
 
 
 };
