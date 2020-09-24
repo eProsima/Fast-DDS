@@ -883,46 +883,40 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
 //! participant_atts_default contains the attributes in the default file in this folder which should be different.
 TEST_F(XMLProfileParserTests, skip_default_xml)
 {
+    const char* xml =
+    "                                                                                                                  \
+        <profiles>                                                                                                     \
+            <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">                        \
+                <domainId>2020268</domainId>                                                                           \
+                <rtps></rtps>                                                                                          \
+            </participant>                                                                                             \
+        </profiles>                                                                                                    \
+    ";
+    tinyxml2::XMLDocument xml_doc;
+    xml_doc.Parse(xml);
+    xml_doc.SaveFile("DEFAULT_FASTRTPS_PROFILES.xml");
+
 #ifdef _WIN32
     _putenv_s("SKIP_DEFAULT_XML_FILE", "1");
-    ParticipantAttributes participant_atts_none;
-    xmlparser::XMLProfileManager::loadDefaultXMLFile();
-    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
-
-    _putenv_s("SKIP_DEFAULT_XML_FILE", "");
-    ParticipantAttributes participant_atts_default;
-    xmlparser::XMLProfileManager::loadDefaultXMLFile();
-    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
 #else
     setenv("SKIP_DEFAULT_XML_FILE", "1", 1);
+#endif // ifdef _WIN32
     ParticipantAttributes participant_atts_none;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
 
+#ifdef _WIN32
+    _putenv_s("SKIP_DEFAULT_XML_FILE", "");
+#else
     unsetenv("SKIP_DEFAULT_XML_FILE");
+#endif // ifdef _WIN32
     ParticipantAttributes participant_atts_default;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
-#endif // ifdef _WIN32
 
-    EXPECT_NE(participant_atts_default.rtps.allocation.participants.initial,
-            participant_atts_none.rtps.allocation.participants.initial);
-    EXPECT_NE(participant_atts_default.rtps.allocation.participants.maximum,
-            participant_atts_none.rtps.allocation.participants.maximum);
-    EXPECT_NE(participant_atts_default.rtps.allocation.participants.increment,
-            participant_atts_none.rtps.allocation.participants.increment);
-    EXPECT_NE(participant_atts_default.rtps.allocation.readers.initial,
-            participant_atts_none.rtps.allocation.readers.initial);
-    EXPECT_NE(participant_atts_default.rtps.allocation.readers.maximum,
-            participant_atts_none.rtps.allocation.readers.maximum);
-    EXPECT_NE(participant_atts_default.rtps.allocation.readers.increment,
-            participant_atts_none.rtps.allocation.readers.increment);
-    EXPECT_NE(participant_atts_default.rtps.allocation.writers.initial,
-            participant_atts_none.rtps.allocation.writers.initial);
-    EXPECT_NE(participant_atts_default.rtps.allocation.writers.maximum,
-            participant_atts_none.rtps.allocation.writers.maximum);
-    EXPECT_NE(participant_atts_default.rtps.allocation.writers.increment,
-            participant_atts_none.rtps.allocation.writers.increment);
+    remove("DEFAULT_FASTRTPS_PROFILES.xml");
+
+    EXPECT_NE(participant_atts_none.domainId, participant_atts_default.domainId);
 }
 
 int main(
