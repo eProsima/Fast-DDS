@@ -37,6 +37,9 @@ public:
     DiscoveryParticipantInfo(
             eprosima::fastrtps::rtps::CacheChange_t* cache_);
 
+    ~DiscoveryParticipantInfo();
+
+    // populate functions
     void add_reader(
             eprosima::fastrtps::rtps::GUID_t guid);
 
@@ -50,16 +53,19 @@ public:
             eprosima::fastrtps::rtps::GUID_t guid);
 
     void add_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid);
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
 
     void match_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid);
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
 
     void remove_participant(
-            eprosima::fastrtps::rtps::GuidPrefix_t guid);
+            eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
 
     void set_disposal(
             eprosima::fastrtps::rtps::CacheChange_t* cache_);
+
+    // get functions
+    bool is_matched(eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
 
 
 };

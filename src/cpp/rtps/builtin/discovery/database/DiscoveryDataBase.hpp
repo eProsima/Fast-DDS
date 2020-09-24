@@ -69,7 +69,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
         using result_type = void;
 
     public:
