@@ -18,11 +18,16 @@
  */
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
+
+#include <fastdds/dds/log/Log.hpp>
+
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
 #include <rtps/flowcontrol/FlowController.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
@@ -47,6 +52,29 @@ RTPSWriter::RTPSWriter(
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
+    PoolConfig pool_config = PoolConfig::from_history_attributes(hist->m_att);
+
+    payload_pool_ = BasicPayloadPool::get(pool_config);
+
+    if ((pool_config.memory_policy == PREALLOCATED_MEMORY_MODE) ||
+        (pool_config.memory_policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
+    {
+        auto init_cache = [this, &pool_config](
+            CacheChange_t* item)
+        {
+            if (payload_pool_->get_payload(pool_config.payload_initial_size, *item))
+            {
+                payload_pool_->release_payload(*item);
+            }
+        };
+
+        change_pool_ = std::make_shared<CacheChangePool>(pool_config, init_cache);
+    }
+    else
+    {
+        change_pool_ = std::make_shared<CacheChangePool>(pool_config);
+    }
+
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
     logInfo(RTPS_WRITER, "RTPSWriter created");
