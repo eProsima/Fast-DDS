@@ -151,6 +151,11 @@ bool DiscoveryDataBase::process_data_queue()
     return false;
 }
 
+bool DiscoveryDataBase::process_dirty_topics()
+{
+    return true;
+}
+
 bool DiscoveryDataBase::delete_entity_of_change(
         fastrtps::rtps::CacheChange_t* change)
 {
@@ -177,6 +182,27 @@ bool DiscoveryDataBase::delete_entity_of_change(
        }
        return false;
      */
+}
+
+bool DiscoveryDataBase::is_participant(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    (void) ch;
+    return true;
+}
+
+bool DiscoveryDataBase::is_writer(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    (void) ch;
+    return true;
+}
+
+bool DiscoveryDataBase::is_reader(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    (void) ch;
+    return true;
 }
 
 eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(

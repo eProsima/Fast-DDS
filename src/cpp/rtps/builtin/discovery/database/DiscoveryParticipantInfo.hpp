@@ -53,30 +53,16 @@ public:
 
     // populate functions
     void add_reader(
-            eprosima::fastrtps::rtps::GUID_t guid)
-            {
-                if (std::find(readers.begin(), readers.end(), guid) == readers.end()){readers.push_back(guid);}
-            }
+            eprosima::fastrtps::rtps::GUID_t guid);
 
     void remove_reader(
-            eprosima::fastrtps::rtps::GUID_t guid)
-            {
-                readers.erase(guid);
-            }
+            eprosima::fastrtps::rtps::GUID_t guid);
 
     void add_writer(
-            eprosima::fastrtps::rtps::GUID_t guid)
-            {
-                if (std::find(writers.begin(), writers.end(), guid) == writers.end()){writers.push_back(guid);}
-            }
+            eprosima::fastrtps::rtps::GUID_t guid);
 
     void remove_writer(
-            eprosima::fastrtps::rtps::GUID_t guid)
-            {
-                writers.erase(guid);
-            }
-
-    // getter functions
+            eprosima::fastrtps::rtps::GUID_t guid);
 
 private:
 

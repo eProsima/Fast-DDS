@@ -70,25 +70,26 @@ public:
 
     void add_participant(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
-            {
-                relevant_participants_map[guid_p] = false;
-            }
+    {
+        relevant_participants_map[guid_p] = false;
+    }
 
     void match_participant(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
-            {
-                relevant_participants_map[guid_p] = true;
-            }
+    {
+        relevant_participants_map[guid_p] = true;
+    }
 
     void remove_participant(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
-            {
-                relevant_participants_map.erase(guid_p);
-            }
+    {
+        relevant_participants_map.erase(guid_p);
+    }
+
+    void match_all();
 
     bool is_matched(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p);
-
 
 private:
 

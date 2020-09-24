@@ -48,34 +48,37 @@ public:
 
     void add_participant(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
-            {
-                relevant_participants_builtin_ack_status.add_participant(guid_p);
-            }
+    {
+        relevant_participants_builtin_ack_status.add_participant(guid_p);
+    }
 
     void match_participant(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
-            {
-                relevant_participants_builtin_ack_status.match_participant(guid_p);
-            }
+    {
+        relevant_participants_builtin_ack_status.match_participant(guid_p);
+    }
 
     void remove_participant(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
-            {
-                relevant_participants_builtin_ack_status.remove_participant(guid_p);
-            }
+    {
+        relevant_participants_builtin_ack_status.remove_participant(guid_p);
+    }
 
     // set all acks to matched
     void set_disposal(
-            eprosima::fastrtps::rtps::CacheChange_t* change_);
+            eprosima::fastrtps::rtps::CacheChange_t* change);
 
     void change_info(
-            eprosima::fastrtps::rtps::CacheChange_t* change_);
+            eprosima::fastrtps::rtps::CacheChange_t* change)
+    {
+        change_ = change;
+    }
 
     bool is_matched(
             eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
-            {
-                return relevant_participants_builtin_ack_status.is_matched(guid_p);
-            }
+    {
+        return relevant_participants_builtin_ack_status.is_matched(guid_p);
+    }
 
 private:
 

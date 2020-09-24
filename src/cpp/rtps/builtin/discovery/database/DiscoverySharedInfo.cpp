@@ -13,39 +13,25 @@
 // limitations under the License.
 
 /**
- * @file DiscoveryParticipantsAckStatus.cpp
+ * @file DiscoverySharedInfo.cpp
  *
  */
 
-#include <map>
-
+#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
-#include "./DiscoveryParticipantsAckStatus.hpp"
+#include "./DiscoverySharedInfo.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-
-bool DiscoveryParticipantsAckStatus::is_matched(
-        eprosima::fastrtps::rtps::GuidPrefix_t guid_p)
+void DiscoverySharedInfo::set_disposal(
+        eprosima::fastrtps::rtps::CacheChange_t* change)
 {
-    auto it = relevant_participants_map.find(guid_p);
-    if (it != relevant_participants_map.end())
-    {
-        return it->second;
-    }
-    return false;
-}
-
-void DiscoveryParticipantsAckStatus::match_all()
-{
-    for (auto it = relevant_participants_map.begin(); it != relevant_participants_map.end(); ++it)
-    {
-        it->second = true;
-    }
+    relevant_participants_builtin_ack_status.match_all();
+    change_info(change);
 }
 
 } /* namespace ddb */
