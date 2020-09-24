@@ -190,6 +190,22 @@ protected:
             delete ch;
         }
 
+
+        // Get the same payloads for another cache change
+        for (uint32_t i = 0; i < num_reserves; i++)
+        {
+            CacheChange_t* ch = new CacheChange_t();
+            cache_changes.push_back(ch);
+
+            ch->writerGUID = GUID_t(GuidPrefix_t(), 1);
+            ch->sequenceNumber = SequenceNumber_t(0, i);
+            IPayloadPool* owner = cache_changes[i]->payload_owner();
+            ASSERT_TRUE(pool->get_payload(cache_changes[i]->serializedPayload, owner, *ch));
+            ASSERT_NE(ch->serializedPayload.data, nullptr);
+            ASSERT_EQ(ch->serializedPayload.data, cache_changes[i]->serializedPayload.data);
+            ASSERT_EQ(ch->payload_owner(), owner);
+        }
+
         for (CacheChange_t* ch : cache_changes)
         {
             ASSERT_TRUE(pool->release_payload(*ch));
