@@ -1161,11 +1161,9 @@ void DynamicData::get_value(
         {
             wchar_t value(0);
             get_char16_value(value, id);
-            using convert_type = std::codecvt_utf8<wchar_t>;
-            std::wstring_convert<convert_type, wchar_t> converter;
             std::wstring temp = L"";
             temp += value;
-            sOutValue = converter.to_bytes(temp);
+            sOutValue = wstring_to_bytes(temp);
         }
         break;
         case TK_BOOLEAN:
@@ -1189,11 +1187,9 @@ void DynamicData::get_value(
         break;
         case TK_STRING16:
         {
-            using convert_type = std::codecvt_utf8<wchar_t>;
-            std::wstring_convert<convert_type, wchar_t> converter;
             std::wstring value;
             get_wstring_value(value, id);
-            sOutValue = converter.to_bytes(value);
+            sOutValue = wstring_to_bytes(value);
         }
         break;
         case TK_ENUM:
