@@ -53,16 +53,23 @@ RTPSWriter::RTPSWriter(
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
     PoolConfig pool_config = PoolConfig::from_history_attributes(hist->m_att);
+    uint32_t payload_size = pool_config.payload_initial_size;
+
+    fixed_payload_size_ = 0;
+    if (pool_config.memory_policy == PREALLOCATED_MEMORY_MODE)
+    {
+        fixed_payload_size_ = payload_size;
+    }
 
     payload_pool_ = BasicPayloadPool::get(pool_config);
 
     if ((pool_config.memory_policy == PREALLOCATED_MEMORY_MODE) ||
         (pool_config.memory_policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
     {
-        auto init_cache = [this, &pool_config](
+        auto init_cache = [this, payload_size](
             CacheChange_t* item)
         {
-            if (payload_pool_->get_payload(pool_config.payload_initial_size, *item))
+            if (payload_pool_->get_payload(payload_size, *item))
             {
                 payload_pool_->release_payload(*item);
             }

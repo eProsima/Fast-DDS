@@ -124,8 +124,11 @@ protected:
     //!Pool of serialized payloads.
     std::shared_ptr<IPayloadPool> payload_pool_;
 
-    //!Pool of cache changes reserved when the History is created.
+    //!Pool of cache changes.
     std::shared_ptr<IChangePool> change_pool_;
+
+    //!Fixed size of payloads
+    uint32_t fixed_payload_size_ = 0;
 
 private:
 
