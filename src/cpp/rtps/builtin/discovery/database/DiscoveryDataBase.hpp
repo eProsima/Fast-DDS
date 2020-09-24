@@ -175,6 +175,7 @@ public:
 
     void clear_edp_subscriptions_to_send();
 
+
     ////////////
     // Static Functions to work with GUIDs
     static bool is_participant(
@@ -186,6 +187,9 @@ public:
     static bool is_reader(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
+    static eprosima::fastrtps::rtps::GUID_t guid_from_change_(
+            const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
 protected:
 
     // update the acks
@@ -193,8 +197,6 @@ protected:
             const eprosima::fastrtps::rtps::CacheChange_t* change,
             const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity);
 
-    static eprosima::fastrtps::rtps::GUID_t guid_from_change_(
-            const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     ////////////
     // Mutex Functions
