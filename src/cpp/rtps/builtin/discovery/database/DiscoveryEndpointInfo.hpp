@@ -43,7 +43,8 @@ public:
     DiscoveryEndpointInfo(
             eprosima::fastrtps::rtps::CacheChange_t* change_,
             eprosima::fastrtps::string_255 topic_)
-        : DiscoverySharedInfo(change_), topic(topic_)
+        : DiscoverySharedInfo(change_)
+        , topic(topic_)
     {
     }
 

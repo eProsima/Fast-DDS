@@ -80,6 +80,11 @@ public:
         return relevant_participants_builtin_ack_status.is_matched(guid_p);
     }
 
+    eprosima::fastrtps::rtps::CacheChange_t* change()
+    {
+        return change_;
+    }
+
 private:
 
     eprosima::fastrtps::rtps::CacheChange_t* change_;
