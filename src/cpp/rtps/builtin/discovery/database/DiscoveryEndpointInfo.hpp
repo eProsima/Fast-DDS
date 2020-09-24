@@ -35,7 +35,7 @@ namespace ddb {
  * Class to join the main info required from a reader or writer in the Discovery Data Base
  *@ingroup DISCOVERY_MODULE
  */
-class DiscoveryEndpointInfo : DiscoverySharedInfo
+class DiscoveryEndpointInfo : public DiscoverySharedInfo
 {
 
 public:
