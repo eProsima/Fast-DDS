@@ -159,7 +159,7 @@ endif()
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
-set(FORCE_CXX "11")
+set(FORCE_CXX "14")
 check_stdcxx()
 check_compile_feature()
 check_endianness()
@@ -266,7 +266,7 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER)
 endif()
 
 ###############################################################################
-# Tools default setup 
+# Tools default setup
 ###############################################################################
 option(COMPILE_TOOLS "Build tools" ON)
 
@@ -300,7 +300,7 @@ if(COMPILE_EXAMPLES)
 endif()
 
 ###############################################################################
-# Tools 
+# Tools
 ###############################################################################
 
 if(COMPILE_TOOLS)
@@ -448,10 +448,10 @@ if(EPROSIMA_INSTALLER)
 endif()
 
 if(INSTALL_TOOLS)
-  # Install tools 
+  # Install tools
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools
       DESTINATION tools/
-      COMPONENT tools 
+      COMPONENT tools
       PATTERN "tools/CMakeLists.txt" EXCLUDE
       )
 
