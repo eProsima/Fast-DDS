@@ -105,7 +105,9 @@ static void null_sent_fun(
 using namespace std::chrono;
 
 template <class Function>
-bool StatefulWriter::for_each_reader_proxy(const CacheChange_t* a_change, Function f)
+bool StatefulWriter::for_each_reader_proxy(
+        const CacheChange_t* a_change,
+        Function f)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (a_change->writerGUID != this->getGuid())

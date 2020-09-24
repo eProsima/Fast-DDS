@@ -135,18 +135,19 @@ public:
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
 protected:
+
     // Check the messages in histories. Check which ones modify the database to unlock further messages
     // and clean them when not needed anymore
     bool process_writers_acknowledgements();
 
     bool process_history_acknowledgement(
-        fastrtps::rtps::StatefulWriter* writer,
-        fastrtps::rtps::WriterHistory* writer_history);
+            fastrtps::rtps::StatefulWriter* writer,
+            fastrtps::rtps::WriterHistory* writer_history);
 
     bool process_change_acknowledgement(
-        fastrtps::rtps::CacheChange_t* c,
-        fastrtps::rtps::StatefulWriter* writer,
-        fastrtps::rtps::WriterHistory* writer_history);
+            fastrtps::rtps::CacheChange_t* c,
+            fastrtps::rtps::StatefulWriter* writer,
+            fastrtps::rtps::WriterHistory* writer_history);
 
     bool process_data_queue();
 

@@ -342,7 +342,7 @@ bool PDPServer2::process_writers_acknowledgements()
 {
     /* PDP Writer's History */
     bool pending = process_history_acknowledgement(
-            static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
+        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
 
     /* EDP Publications Writer's History */
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
@@ -355,8 +355,8 @@ bool PDPServer2::process_writers_acknowledgements()
 }
 
 bool PDPServer2::process_history_acknowledgement(
-    fastrtps::rtps::StatefulWriter* writer,
-    fastrtps::rtps::WriterHistory* writer_history)
+        fastrtps::rtps::StatefulWriter* writer,
+        fastrtps::rtps::WriterHistory* writer_history)
 {
     bool pending = false;
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
@@ -372,9 +372,9 @@ bool PDPServer2::process_history_acknowledgement(
 }
 
 bool PDPServer2::process_change_acknowledgement(
-    fastrtps::rtps::CacheChange_t* c,
-    fastrtps::rtps::StatefulWriter* writer,
-    fastrtps::rtps::WriterHistory* writer_history)
+        fastrtps::rtps::CacheChange_t* c,
+        fastrtps::rtps::StatefulWriter* writer,
+        fastrtps::rtps::WriterHistory* writer_history)
 {
     // DATA(p|w|r) case
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
