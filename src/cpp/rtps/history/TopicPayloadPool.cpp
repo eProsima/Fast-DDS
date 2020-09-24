@@ -34,43 +34,62 @@ bool TopicPayloadPool::get_payload(
         uint32_t size,
         CacheChange_t& cache_change)
 {
-    octet* payload = nullptr;
+    PayloadNode* payload = nullptr;
     if (free_payloads_.empty())
     {
         payload = allocate(size); //Allocates a single payload
-        cache_change.serializedPayload.data = payload;
         if (payload != nullptr)
         {
+            cache_change.serializedPayload.data = payload->data();
             cache_change.serializedPayload.max_size = size;
             cache_change.payload_owner(this);
+            payload->reference();
             return true;
         }
+        cache_change.serializedPayload.data = nullptr;
         cache_change.serializedPayload.max_size = 0;
         cache_change.payload_owner(nullptr);
         return false;
     }
 
-    cache_change.serializedPayload.data = free_payloads_.back().data;
-    cache_change.serializedPayload.max_size = free_payloads_.back().max_size;
+    payload = free_payloads_.back();
+    cache_change.serializedPayload.data = payload->data();
+    cache_change.serializedPayload.max_size = payload->data_size();
     cache_change.payload_owner(this);
+    payload->reference();
     free_payloads_.pop_back();
     return true;
 }
 
 bool TopicPayloadPool::get_payload(
         SerializedPayload_t& data,
-        IPayloadPool*& /* data_owner */,
+        IPayloadPool*& data_owner,
         CacheChange_t& cache_change)
 {
     assert(cache_change.writerGUID != GUID_t::unknown());
     assert(cache_change.sequenceNumber != SequenceNumber_t::unknown());
 
-    if (get_payload(data.length, cache_change))
+    if (data_owner == this)
     {
-        if (!cache_change.serializedPayload.copy(&data, false))
+        PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(data.data));
+        cache_change.serializedPayload.data = payload->data();
+        cache_change.serializedPayload.max_size = payload->data_size();
+        cache_change.payload_owner(this);
+        payload->reference();
+        return true;
+    }
+
+    else
+    {
+        if (get_payload(data.length, cache_change))
         {
-            release_payload(cache_change);
-            return false;
+            if (!cache_change.serializedPayload.copy(&data, true))
+            {
+                release_payload(cache_change);
+                return false;
+            }
+
+            return true;
         }
     }
 
@@ -82,15 +101,16 @@ bool TopicPayloadPool::release_payload(
 {
     assert(cache_change.payload_owner() == this);
 
-    FreePayload payload;
-    payload.data = cache_change.serializedPayload.data;
-    payload.max_size = cache_change.serializedPayload.max_size;
-    free_payloads_.push_back(payload);
-    cache_change.serializedPayload.length = 0;
-    cache_change.serializedPayload.pos = 0;
-    cache_change.serializedPayload.max_size = 0;
-    cache_change.serializedPayload.data = nullptr;
-    cache_change.payload_owner(nullptr);
+    PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
+    if (!payload->dereference())
+    {
+        free_payloads_.push_back(payload);
+        cache_change.serializedPayload.length = 0;
+        cache_change.serializedPayload.pos = 0;
+        cache_change.serializedPayload.max_size = 0;
+        cache_change.serializedPayload.data = nullptr;
+        cache_change.payload_owner(nullptr);
+    }
     return true;
 }
 
@@ -114,10 +134,10 @@ bool TopicPayloadPool::release_history(
     return true;
 }
 
-octet* TopicPayloadPool::allocate(
+TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(
         uint32_t size)
 {
-    octet* payload = nullptr;
+    PayloadNode* payload = nullptr;
 
     if (all_payloads_.size() >= max_pool_size_)
     {
@@ -125,8 +145,9 @@ octet* TopicPayloadPool::allocate(
         return nullptr;
     }
 
-    payload = (octet*)calloc(size, sizeof(octet));
+    payload = new PayloadNode(size);
     all_payloads_.push_back(payload);
+    payload->data_index(all_payloads_.size() - 1);
     return payload;
 }
 
@@ -177,13 +198,10 @@ void TopicPayloadPool::reserve (
 
     for (uint32_t i = all_payloads_.size(); i < min_num_payloads; ++i)
     {
-        octet* data = (octet*)calloc(size, sizeof(octet));
-        all_payloads_.push_back(data);
-
-        FreePayload payload;
-        payload.data = data;
-        payload.max_size = size;
+        PayloadNode* payload = new PayloadNode(size);
+        all_payloads_.push_back(payload);
         free_payloads_.push_back(payload);
+        payload->data_index(all_payloads_.size() - 1);
     }
 }
 
@@ -194,58 +212,32 @@ bool TopicPayloadPool::shrink (
 
     while (max_num_payloads < all_payloads_.size())
     {
-        octet* data = free_payloads_.back().data;
+        PayloadNode* payload = free_payloads_.back();
         free_payloads_.pop_back();
 
         // Find data in allPayloads, remove element, then delete it
-        std::vector<octet*>::iterator target =
-                std::find(all_payloads_.begin(), all_payloads_.end(), data);
-        if (target != all_payloads_.end())
-        {
-            // Copy last element into the element being removed
-            if (target != --all_payloads_.end())
-            {
-                *target = all_payloads_.back();
-            }
-
-            // Then drop last element
-            all_payloads_.pop_back();
-        }
-        else
-        {
-            logError(RTPS_HISTORY, "Found a free payload that is not logged in the Pool");
-            return false;
-        }
-
-        // Now we can free the memory
-        free(data);
+        all_payloads_.at(payload->data_index()) = all_payloads_.back();
+        all_payloads_.back()->data_index(payload->data_index());
+        all_payloads_.pop_back();
+        delete payload;
     }
 
     return true;
 }
 
 bool TopicPayloadPool::resize_payload (
-        octet*& payload,
+        octet*& data,
         uint32_t& size,
         uint32_t new_size)
 {
-    octet* old_payload = payload;
-    payload = (octet*)realloc(payload, new_size);
-    if (!payload)
+    PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(data));
+    if (payload->resize(new_size))
     {
-        // Nothing changed on the buffers, so nothing to undo
-        payload = old_payload;
-        return false;
+        data = payload->data();
+        size = payload->data_size();
+        return true;
     }
-    memset(payload + size, 0, (new_size - size) * sizeof(octet));
-    size = new_size;
-
-    // Find data in known payloads to update the pointer
-    std::vector<octet*>::iterator target =
-            std::find(all_payloads_.begin(), all_payloads_.end(), old_payload);
-    assert(target != all_payloads_.end());
-    *target = payload;
-    return true;
+    return false;
 }
 
 std::shared_ptr<ITopicPayloadPool> TopicPayloadPool::get(

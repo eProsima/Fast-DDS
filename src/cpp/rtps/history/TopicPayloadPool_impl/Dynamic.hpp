@@ -34,34 +34,23 @@ public:
     {
         assert(cache_change.payload_owner() == this);
 
-        // Find data in allPayloads, remove element, then delete it
-        std::vector<octet*>::iterator target =
-                std::find(all_payloads_.begin(), all_payloads_.end(), cache_change.serializedPayload.data);
-        if (target != all_payloads_.end())
+        PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
+        if (!payload->dereference())
         {
-            // Copy last element into the element being removed
-            if (target != --all_payloads_.end())
-            {
-                *target = all_payloads_.back();
-            }
-
-            // Then drop last element
+            //First remove it from all_payloads
+            all_payloads_.at(payload->data_index()) = all_payloads_.back();
+            all_payloads_.back()->data_index(payload->data_index());
             all_payloads_.pop_back();
-        }
-        else
-        {
-            logError(RTPS_HISTORY, "Trying to release a payload that is not logged in the Pool");
-            return false;
-        }
 
-        // Now we can free the memory
-        free(cache_change.serializedPayload.data);
+            // Now delete the data
+            delete(payload);
 
-        cache_change.serializedPayload.length = 0;
-        cache_change.serializedPayload.pos = 0;
-        cache_change.serializedPayload.max_size = 0;
-        cache_change.serializedPayload.data = nullptr;
-        cache_change.payload_owner(nullptr);
+            cache_change.serializedPayload.length = 0;
+            cache_change.serializedPayload.pos = 0;
+            cache_change.serializedPayload.max_size = 0;
+            cache_change.serializedPayload.data = nullptr;
+            cache_change.payload_owner(nullptr);
+        }
 
         return true;
     }

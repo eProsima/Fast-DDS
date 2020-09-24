@@ -44,7 +44,7 @@ public:
     {
         logInfo(RTPS_UTILS, "PayloadPool destructor");
 
-        for (octet* payload : all_payloads_)
+        for (PayloadNode* payload : all_payloads_)
         {
             free(payload);
         }
@@ -85,16 +85,99 @@ public:
 
 protected:
 
-    struct FreePayload
+    class PayloadNode
     {
-        uint32_t max_size = 0;
-        octet* data = nullptr;
+    public:
+
+        octet* buffer = nullptr;
+        static constexpr uint8_t size_offset = 0;
+        static constexpr uint8_t index_offset = sizeof(uint32_t);
+        static constexpr uint8_t reference_offset = 2 * sizeof(uint32_t);
+        static constexpr uint8_t data_offset = 3 * sizeof(uint32_t);
+
+        explicit PayloadNode(
+                uint32_t size)
+        {
+            buffer = (octet*)calloc(size + data_offset, sizeof(octet));
+            data_size(size);
+        }
+
+        explicit PayloadNode(
+                octet* data)
+        {
+
+            buffer = data - data_offset;
+        }
+
+        ~PayloadNode()
+        {
+            free(buffer);
+        }
+
+        bool resize (
+                uint32_t size)
+        {
+            octet* old_buffer = buffer;
+            buffer = (octet*)realloc(buffer, size + data_offset);
+            if (!buffer)
+            {
+                buffer = old_buffer;
+                return false;
+            }
+            memset(buffer + data_offset + data_size(), 0, (size - data_size()) * sizeof(octet));
+            data_size(size);
+            return true;
+        }
+
+        uint32_t data_size() const
+        {
+            return *reinterpret_cast<uint32_t*>(buffer + size_offset);
+        }
+
+        void data_size(
+                uint32_t size)
+        {
+            *reinterpret_cast<uint32_t*>(buffer + size_offset) = size;
+        }
+
+        uint32_t data_index() const
+        {
+            return *reinterpret_cast<uint32_t*>(buffer + index_offset);
+        }
+
+        void data_index(
+                uint32_t index)
+        {
+            *reinterpret_cast<uint32_t*>(buffer + index_offset) = index;
+        }
+
+        octet* data() const
+        {
+            return buffer + data_offset;
+        }
+
+        static uint32_t data_index(
+                octet* data)
+        {
+            return *reinterpret_cast<uint32_t*>(data - data_offset + index_offset);
+        }
+
+        void reference()
+        {
+            ++(*reinterpret_cast<uint32_t*>(buffer + reference_offset));
+        }
+
+        bool dereference()
+        {
+            return --(*reinterpret_cast<uint32_t*>(buffer + reference_offset));
+        }
+
     };
 
     /**
      * Adds a new payload in the pool, but does not add it to the list of free payloads
      */
-    virtual octet* allocate(
+    virtual PayloadNode* allocate(
             uint32_t size);
 
     virtual void update_maximum_size(
@@ -147,6 +230,7 @@ protected:
      *   - On failure, nothing has changed
      *   - If the buffer is enlarged, newly allocated octets are initialized to zero.
      */
+
     bool resize_payload (
             octet*& payload,
             uint32_t& size,
@@ -158,8 +242,9 @@ protected:
     uint32_t infinite_histories_count_  = 0;  //< Number of infinite histories reserved
     uint32_t finite_max_pool_size_      = 0;  //< Maximum size of the pool if no infinite histories were reserved
 
-    std::vector<FreePayload> free_payloads_;
-    std::vector<octet*> all_payloads_;
+    std::vector<PayloadNode*> free_payloads_; //< Payloads that are free
+    std::vector<PayloadNode*> all_payloads_;  //< All payloads
+
 };
 
 

@@ -44,25 +44,6 @@ public:
         return TopicPayloadPool::get_payload(payload_size_, cache_change);
     }
 
-    bool get_payload(
-            SerializedPayload_t& data,
-            IPayloadPool*& /* data_owner */,
-            CacheChange_t& cache_change) override
-    {
-        assert(cache_change.writerGUID != GUID_t::unknown());
-        assert(cache_change.sequenceNumber != SequenceNumber_t::unknown());
-
-        if (get_payload(payload_size_, cache_change))
-        {
-            if (!cache_change.serializedPayload.copy(&data, true))
-            {
-                release_payload(cache_change);
-                return false;
-            }
-        }
-        return true;
-    }
-
     bool reserve_history(
             const PoolConfig& config,
             bool is_reader) override
