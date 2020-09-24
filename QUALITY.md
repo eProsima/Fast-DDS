@@ -134,7 +134,7 @@ Furthermore, [*eprosima benchmarking* project](https://github.com/eProsima/bench
 
 ### Linters and Static Analysis [4.v]
 
-*eprosima Fast DDS* has a [code style](https://github.com/eProsima/cpp-style) that it is enforced using [*uncrustify*](https://github.com/uncrustify/uncrustify).
+*eprosima Fast DDS* has a [code style](https://github.com/eProsima/cpp-style) that is enforced using [*uncrustify*](https://github.com/uncrustify/uncrustify).
 Among the CI tests there are tests that ensures that every pull request is compliant with the code style.
 The latest pull request results can be seen [here](http://jenkins.eprosima.com:8080/job/fastdds_github_uncrustify/lastBuild).
 The tests only check files where changes have been made.
@@ -160,7 +160,7 @@ Therefore, these dependencies can be considered Quality Level 1 following the [a
 **eProsima Fast CDR** Quality Declaration can be found [here](https://github.com/eProsima/Fast-CDR/blob/master/QUALITY_DECLARATION.md). Currently, **eProsima Fast CDR** claims to be in the **Quality Level 2** category.
 
 `foonathan_memory` Quality Declaration can be found [here](Quality_Declaration_foonathan_memory.md).
-This declaration claims that, even though `foonathan_memory` does not met several quality requirements, it is considered to fulfill the **Quality Level 2** requirements for its use within *eprosima Fast DDS* with the caveats explained in the declaration.
+This declaration claims that, even though `foonathan_memory` does not meet several quality requirements, it is considered to fulfill the **Quality Level 2** requirements for its use within *eprosima Fast DDS* with the caveats explained in the declaration.
 
 Therefore, *eprosima Fast DDS* currently could claim to be **Quality Level 2** at most.
 
