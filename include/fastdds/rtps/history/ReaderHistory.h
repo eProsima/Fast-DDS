@@ -78,6 +78,22 @@ public:
             CacheChange_t* a_change) override;
 
     /**
+     * Detaches a CacheChange_t from the ReaderHistory.
+     * @param a_change Pointer to the CacheChange to remove.
+     * @return True if detached.
+     */
+    RTPS_DllAPI bool remove_change_and_reuse(
+            CacheChange_t* a_change);
+
+    /**
+     * Remove a CacheChange_t from the ReaderHistory refraining from its disposal.
+     * @param a_change Pointer to the CacheChange to remove.
+     * @return True if removed.
+     */
+    RTPS_DllAPI CacheChange_t* remove_change_and_reuse(
+            const SequenceNumber_t& sequence_number);
+
+    /**
      * Remove a specific change from the history.
      * @param ch Pointer to the CacheChange_t.
      * @param position Iterator where the CacheChange_t is located in the history.

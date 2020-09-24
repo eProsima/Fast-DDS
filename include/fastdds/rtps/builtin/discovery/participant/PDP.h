@@ -32,8 +32,16 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-
 namespace eprosima {
+
+namespace fastdds {
+namespace rtps {
+
+class PDPServerListener2;
+
+}
+}
+
 namespace fastrtps {
 namespace rtps {
 
@@ -53,7 +61,6 @@ class ReaderListener;
 class PDPListener;
 class PDPServerListener;
 
-
 /**
  * Abstract class PDP that implements the basic interfaces for all Participant Discovery implementations
  * It also keeps the Participant Discovery Data and provides interfaces to access it
@@ -63,6 +70,7 @@ class PDP
 {
     friend class PDPListener;
     friend class PDPServerListener;
+    friend class fastdds::rtps::PDPServerListener2;
 
 public:
     /**
