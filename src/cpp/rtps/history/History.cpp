@@ -35,10 +35,6 @@ namespace rtps {
 History::History(
         const HistoryAttributes& att)
     : m_att(att)
-    , m_isHistoryFull(false)
-    , max_payload_size_(att.payloadMaxSize)
-    , mp_mutex(nullptr)
-
 {
     PoolConfig pool_config = PoolConfig::from_history_attributes(att);
 
