@@ -55,7 +55,7 @@ struct RTPS_DllAPI GuidPrefix_t
      * @param prefix guid prefix to compare
      * @return True if the guid prefixes are equal
      */
-    bool operator==(
+    bool operator ==(
             const GuidPrefix_t& prefix) const
     {
         return (memcmp(value, prefix.value, size) == 0);
@@ -66,13 +66,35 @@ struct RTPS_DllAPI GuidPrefix_t
      * @param prefix Second guid prefix to compare
      * @return True if the guid prefixes are not equal
      */
-    bool operator!=(
+    bool operator !=(
             const GuidPrefix_t& prefix) const
     {
         return (memcmp(value, prefix.value, size) != 0);
     }
 
-#endif
+    /**
+     * Guid prefix minor operator
+     * @param prefix Second guid prefix to compare
+     * @return True if prefix is higher
+     */
+    bool operator <(
+            const GuidPrefix_t& prefix) const
+    {
+        for (uint8_t i = 0; i < size; ++i)
+        {
+            if (value[i] < prefix.value[i])
+            {
+                return true;
+            }
+            else if (value[i] > prefix.value[i])
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 };
 
 const GuidPrefix_t c_GuidPrefix_Unknown;

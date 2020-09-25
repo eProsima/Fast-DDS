@@ -63,7 +63,7 @@ void DiscoveryDataBase::add_ack_(
     if (is_participant(change))
     {
         auto it = participants_.find(guid_from_change(change).guidPrefix);
-        it->second.match_participant(acked_entity);
+        it->second.add_or_update_ack_participant(acked_entity, true);
     }
 }
 

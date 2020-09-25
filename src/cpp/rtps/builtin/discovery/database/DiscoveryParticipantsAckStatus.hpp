@@ -29,27 +29,6 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-struct GuidPrefixCmp
-{
-    bool operator ()(
-            const eprosima::fastrtps::rtps::GuidPrefix_t& a,
-            const eprosima::fastrtps::rtps::GuidPrefix_t& b) const
-    {
-        for (uint8_t i = 0; i < a.size; ++i)
-        {
-            if (a.value[i] < b.value[i])
-            {
-                return true;
-            }
-            else if (a.value[i] > b.value[i])
-            {
-                return false;
-            }
-        }
-        return false;
-    }
-
-};
 
 /**
  * Class to manage the relevant_participants_builtin_ack_status structure from DiscoveryDataBase
@@ -68,22 +47,17 @@ public:
     {
     }
 
-    void add_participant(
-            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
+    void add_or_update_participant(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
+        bool status = false)
     {
-        relevant_participants_map[guid_p] = false;
-    }
-
-    void match_participant(
-            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
-    {
-        relevant_participants_map[guid_p] = true;
+        relevant_participants_map_[guid_p] = status;
     }
 
     void remove_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
     {
-        relevant_participants_map.erase(guid_p);
+        relevant_participants_map_.erase(guid_p);
     }
 
     void match_all();
@@ -93,7 +67,7 @@ public:
 
 private:
 
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, bool, GuidPrefixCmp> relevant_participants_map;
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, bool> relevant_participants_map_;
 };
 
 } /* namespace ddb */

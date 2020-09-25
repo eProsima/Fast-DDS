@@ -40,28 +40,26 @@ class DiscoverySharedInfo
 public:
 
     DiscoverySharedInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* change_);
+            eprosima::fastrtps::rtps::CacheChange_t* change)
+        : change_(change)
+    {
+    }
 
     ~DiscoverySharedInfo()
     {
     }
 
-    void add_participant(
-            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
+    void add_or_update_ack_participant(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
+            bool status = false)
     {
-        relevant_participants_builtin_ack_status.add_participant(guid_p);
-    }
-
-    void match_participant(
-            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
-    {
-        relevant_participants_builtin_ack_status.match_participant(guid_p);
+        relevant_participants_builtin_ack_status_.add_or_update_participant(guid_p, status);
     }
 
     void remove_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
     {
-        relevant_participants_builtin_ack_status.remove_participant(guid_p);
+        relevant_participants_builtin_ack_status_.remove_participant(guid_p);
     }
 
     // set all acks to matched
@@ -77,7 +75,7 @@ public:
     bool is_matched(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
     {
-        return relevant_participants_builtin_ack_status.is_matched(guid_p);
+        return relevant_participants_builtin_ack_status_.is_matched(guid_p);
     }
 
     eprosima::fastrtps::rtps::CacheChange_t* change() const
@@ -91,7 +89,7 @@ private:
 
     // new class is used in order to could change it in the future for a more efficient implementation
     eprosima::fastdds::rtps::ddb::DiscoveryParticipantsAckStatus
-            relevant_participants_builtin_ack_status;
+            relevant_participants_builtin_ack_status_;
 
 
 };

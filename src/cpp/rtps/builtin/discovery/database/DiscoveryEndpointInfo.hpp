@@ -41,10 +41,10 @@ class DiscoveryEndpointInfo : public DiscoverySharedInfo
 public:
 
     DiscoveryEndpointInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* change_,
-            eprosima::fastrtps::string_255 topic_)
-        : DiscoverySharedInfo(change_)
-        , topic(topic_)
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            eprosima::fastrtps::string_255 topic)
+        : DiscoverySharedInfo(change)
+        , topic_(topic)
     {
     }
 
@@ -54,7 +54,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::string_255 topic;
+    eprosima::fastrtps::string_255 topic_;
 
 };
 

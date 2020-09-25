@@ -70,7 +70,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
         using result_type = void;
 
     public:
@@ -231,7 +231,7 @@ protected:
 
     std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > writers_by_topic_;
 
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo, GuidPrefixCmp> participants_;
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo> participants_;
 
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> readers_;
 
