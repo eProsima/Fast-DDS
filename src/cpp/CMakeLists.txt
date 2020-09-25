@@ -204,6 +204,12 @@ set(${PROJECT_NAME}_source_files
 #   rtps/builtin/discovery/database/DiscoveryDataFilter.hpp
 #   rtps/builtin/discovery/database/DiscoveryDataBase.hpp
     rtps/builtin/discovery/database/DiscoveryDataBase.cpp
+#   rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.hpp
+    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
+#   rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp
+    rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
+#   rtps/builtin/discovery/database/DiscoverySharedInfo.hpp
+    rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
 
 #   rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp
     rtps/builtin/discovery/database/DiscoveryDataQueueInfo.cpp

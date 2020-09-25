@@ -13,16 +13,12 @@
 // limitations under the License.
 
 /**
- * @file DiscoveryEndpointInfo.hpp
+ * @file DiscoverySharedInfo.cpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
-#define _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
-
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 #include "./DiscoverySharedInfo.hpp"
 
@@ -31,36 +27,14 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-/**
- * Class to join the main info required from a reader or writer in the Discovery Data Base
- *@ingroup DISCOVERY_MODULE
- */
-class DiscoveryEndpointInfo : public DiscoverySharedInfo
+void DiscoverySharedInfo::set_disposal(
+        eprosima::fastrtps::rtps::CacheChange_t* change)
 {
-
-public:
-
-    DiscoveryEndpointInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* change,
-            eprosima::fastrtps::string_255 topic)
-        : DiscoverySharedInfo(change)
-        , topic_(topic)
-    {
-    }
-
-    ~DiscoveryEndpointInfo()
-    {
-    }
-
-private:
-
-    eprosima::fastrtps::string_255 topic_;
-
-};
+    relevant_participants_builtin_ack_status_.match_all();
+    change_info(change);
+}
 
 } /* namespace ddb */
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
-
-#endif /* _FASTDDS_RTPS_ENDPOINT_INFO_H_ */

@@ -13,12 +13,16 @@
 // limitations under the License.
 
 /**
- * @file DiscoveryParticipantInfo.hpp
+ * @file DiscoveryParticipantsAckStatus.hpp
  *
  */
 
 #ifndef _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_ACK_STATUS_H_
 #define _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_ACK_STATUS_H_
+
+#include <map>
+
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -29,8 +33,40 @@ namespace ddb {
  * Class to manage the relevant_participants_builtin_ack_status structure from DiscoveryDataBase
  *@ingroup DISCOVERY_MODULE
  */
-class DiscoveryParticipantAckStatus
+class DiscoveryParticipantsAckStatus
 {
+
+public:
+
+    DiscoveryParticipantsAckStatus()
+    {
+    }
+
+    ~DiscoveryParticipantsAckStatus()
+    {
+    }
+
+    void add_or_update_participant(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
+            bool status = false)
+    {
+        relevant_participants_map_[guid_p] = status;
+    }
+
+    void remove_participant(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
+    {
+        relevant_participants_map_.erase(guid_p);
+    }
+
+    void match_all();
+
+    bool is_matched(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
+
+private:
+
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, bool> relevant_participants_map_;
 };
 
 } /* namespace ddb */
