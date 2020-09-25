@@ -70,7 +70,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
         using result_type = void;
 
     public:
@@ -108,7 +108,7 @@ public:
      */
     bool update(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            std::string topic_name = "");
+            eprosima::fastrtps::string_255 topic_name = "");
 
 
     ////////////
