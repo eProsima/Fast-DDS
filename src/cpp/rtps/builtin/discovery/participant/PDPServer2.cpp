@@ -330,7 +330,7 @@ bool PDPServer2::server_update_routine()
     process_data_queue();                              // all ddb
     result |= process_disposals();                     // server + ddb(get_disposals, clear_changes_to_disposes)
     result |= process_dirty_topics();                  // all ddb
-    // result |= process_to_send_lists();                 // server + ddb(get_to_send, remove_to_send_this)
+    result |= process_to_send_lists();                 // server + ddb(get_to_send, remove_to_send_this)
 
     if (result)
     {
@@ -524,6 +524,62 @@ bool PDPServer2::process_dirty_topics()
 fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
 {
     return discovery_db_;
+}
+
+bool PDPServer2::process_to_send_lists()
+{
+    // Process pdp_to_send_
+    process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
+    discovery_db_.clear_pdp_to_send();
+
+    // Process edp_publications_to_send_
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    process_to_send_list(
+        discovery_db_.edp_publications_to_send(),
+        edp->publications_writer_.first,
+        edp->publications_writer_.second);
+    discovery_db_.clear_edp_publications_to_send();
+
+    // Process edp_subscriptions_to_send_
+    process_to_send_list(
+        discovery_db_.edp_subscriptions_to_send(),
+        edp->subscriptions_writer_.first,
+        edp->subscriptions_writer_.second);
+    discovery_db_.clear_edp_subscriptions_to_send();
+
+    return false;
+}
+
+bool PDPServer2::process_to_send_list(
+        const std::vector<eprosima::fastrtps::rtps::CacheChange_t*>& send_list,
+        fastrtps::rtps::RTPSWriter* writer,
+        fastrtps::rtps::WriterHistory* history)
+{
+    // Iterate over DATAs in send_list
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
+    for (auto change: send_list)
+    {
+        // If the DATA is already in the writer's history, then remove it.
+        remove_change_from_history_nts(history, change);
+        // Add DATA to writer's history.
+        history->add_change(change);
+    }
+    return true;
+}
+
+bool PDPServer2::remove_change_from_history_nts(
+        fastrtps::rtps::WriterHistory* history,
+        fastrtps::rtps::CacheChange_t* change)
+{
+    for (auto chit = history->changesRbegin(); chit != history->changesRend(); chit++)
+    {
+        if (change->instanceHandle == (*chit)->instanceHandle)
+        {
+            history->remove_change(*chit);
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace rtps
