@@ -46,7 +46,6 @@ PDPServer2 * PDPServerListener2::pdp_server()
     return static_cast<PDPServer2*>(parent_pdp_);
 }
 
-
 void PDPServerListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)

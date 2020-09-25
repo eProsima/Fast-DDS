@@ -30,6 +30,7 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -148,7 +149,7 @@ bool PDPServer2::createPDPEndpoints()
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = VOLATILE;
+    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 
@@ -186,6 +187,9 @@ bool PDPServer2::createPDPEndpoints()
     // PDP Writer Attributes
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
+    // VOLATILE durability to highlight that on steady state the history is empty (except for announcement DATAs)
+    // this setting is incompatible with CLIENTs TRANSIENT_LOCAL PDP readers but not validation is done on builitin
+    // endpoints
     watt.endpoint.durabilityKind = VOLATILE;
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
@@ -248,17 +252,59 @@ void PDPServer2::initializeParticipantProxyData(
 void PDPServer2::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    (void)pdata;
-    // TODO DISCOVERY SERVER VERSION 2
+    logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid.guidPrefix);
+
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
+            pdata->metatraffic_locators.unicast.empty();
+
+    // only SERVER and CLIENT participants will be received. All builtin must be there
+    uint32_t auxendp = endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    assert(0 != auxendp);
+
+    {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        temp_writer_data_.clear();
+        temp_writer_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
+        temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
+        temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
+        temp_writer_data_.set_persistence_entity_id(c_EntityId_SPDPWriter);
+        temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
+        temp_writer_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+        temp_writer_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_PDPReader->matched_writer_add(temp_writer_data_);
+    }
+
+    // only SERVER and CLIENT participants will be received. All builtin must be there
+    auxendp = endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    assert(0 != auxendp);
+
+    {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        temp_reader_data_.clear();
+        temp_reader_data_.m_expectsInlineQos = false;
+        temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
+        temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
+        temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
+        temp_reader_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+        temp_reader_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_PDPWriter->matched_reader_add(temp_reader_data_);
+    }
+
+    //Inform EDP of new RTPSParticipant data:
+    notifyAboveRemoteEndpoints(*pdata);
 }
 
 void PDPServer2::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
-    (void)pdata;
-    // TODO DISCOVERY SERVER VERSION 2
+    //Inform EDP of new RTPSParticipant data:
+    if (mp_EDP != nullptr)
+    {
+        mp_EDP->assignRemoteEndpoints(pdata);
+    }
 
-    // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
     if (mp_builtin->mp_WLP != nullptr)
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
@@ -268,8 +314,22 @@ void PDPServer2::notifyAboveRemoteEndpoints(
 void PDPServer2::removeRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    (void)pdata;
-    // TODO DISCOVERY SERVER VERSION 2
+    logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid);
+    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+
+    assert(endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER);
+
+    {
+        GUID_t writer_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPWriter);
+        mp_PDPReader->matched_writer_remove(writer_guid);
+    }
+
+    assert(endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR);
+
+    {
+        GUID_t reader_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPReader);
+        mp_PDPWriter->matched_reader_remove(reader_guid);
+    }
 }
 
 #if HAVE_SQLITE3
@@ -312,10 +372,47 @@ bool PDPServer2::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
-    (void)partGUID;
-    (void)reason;
-    // TODO DISCOVERY SERVER VERSION 2
-    return true;
+    // Notify the DiscoveryDataBase on lease duration removal because the listener
+    // has already notified the database in all other cases
+    if (ParticipantDiscoveryInfo::DROPPED_PARTICIPANT == reason)
+    {
+        CacheChange_t * pC = nullptr;
+
+        // We must create the corresponding DATA(p[UD])
+        if ((pC = mp_PDPWriter->new_change(
+                    [this]() -> uint32_t
+                    {
+                        return mp_builtin->m_att.writerPayloadSize;
+                    },
+                    NOT_ALIVE_DISPOSED_UNREGISTERED, InstanceHandle_t(partGUID))))
+        {
+            // Use this server identity in order to hint clients it's a lease duration demise
+            WriteParams& wp = pC->write_params;
+            SampleIdentity local;
+            local.writer_guid(mp_PDPWriter->getGuid());
+            local.sequence_number(mp_PDPWriterHistory->next_sequence_number());
+            wp.sample_identity(local);
+            wp.related_sample_identity(local);
+
+            // notify the database
+            if (discovery_db_.update(pC))
+            {
+                // assure processing time for the cache
+                awakeServerThread();
+
+                // the discovery database takes ownership of the CacheChange_t
+                // henceforth there are no references to the CacheChange_t
+            }
+            else
+            {
+                // if the database doesn't take the ownership remove
+                mp_PDPWriterHistory->release_Cache(pC);
+            }
+        }
+    }
+
+    // delegate into the base class for inherited proxy database removal
+    return PDP::remove_remote_participant(partGUID, reason);
 }
 
 bool PDPServer2::process_data_queue()

@@ -23,8 +23,10 @@
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include "./discovery/participant/PDPClient2.hpp"
 #include "./discovery/participant/PDPServer2.hpp"
+// #include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include "./discovery/participant/PDPServer2.hpp"
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
@@ -38,8 +40,6 @@
 #include <fastrtps/utils/IPFinder.h>
 
 #include <algorithm>
-
-
 
 using namespace eprosima::fastrtps;
 
@@ -108,11 +108,13 @@ bool BuiltinProtocols::initBuiltinProtocols(
         case DiscoveryProtocol_t::SERVER:
             mp_PDP = new fastdds::rtps::PDPServer2(this, allocation);
             break;
+/*
 #if HAVE_SQLITE3
         case DiscoveryProtocol_t::BACKUP:
             mp_PDP = new fastdds::rtps::PDPServer2(this, allocation);
             break;
 #endif // if HAVE_SQLITE3
+*/
         default:
             logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
             return false;
@@ -138,14 +140,9 @@ bool BuiltinProtocols::initBuiltinProtocols(
         tlm_->init_typelookup_service(mp_participantImpl);
     }
 
-    if (m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SIMPLE ||
-            m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::CLIENT)
-    {
-        mp_PDP->enable();
-    }
-
     mp_PDP->announceParticipantState(true);
     mp_PDP->resetParticipantAnnouncement();
+    mp_PDP->enable();
 
     return true;
 }
