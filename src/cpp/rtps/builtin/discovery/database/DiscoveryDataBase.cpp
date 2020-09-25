@@ -478,7 +478,7 @@ void DiscoveryDataBase::process_dispose_writer(
         pit->second.remove_writer(writer_guid);
     }
 
-    //Update own entry writers_by_topic_
+    // Update own entry writers_by_topic_
     std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
             writers_by_topic_.find(topic_name);
     if (tit != writers_by_topic_.end())
@@ -492,6 +492,12 @@ void DiscoveryDataBase::process_dispose_writer(
                 tit->second.erase(writer_it);
                 break;
             }
+        }
+
+        if (tit->second.empty())
+        {
+            writers_by_topic_.erase(tit);
+            --tit;
         }
     }
 
@@ -524,7 +530,7 @@ void DiscoveryDataBase::process_dispose_reader(
         pit->second.remove_reader(reader_guid);
     }
 
-    //Update own entry readers_by_topic_
+    // Update own entry readers_by_topic_
     std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
             readers_by_topic_.find(topic_name);
     if (tit != readers_by_topic_.end())
@@ -538,6 +544,12 @@ void DiscoveryDataBase::process_dispose_reader(
                 tit->second.erase(reader_it);
                 break;
             }
+        }
+
+        if (tit->second.empty())
+        {
+            readers_by_topic_.erase(tit);
+            --tit;
         }
     }
 
