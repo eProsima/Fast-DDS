@@ -36,33 +36,66 @@ bool DiscoveryDataBase::pdp_is_relevant(
     auto it = participants_.find(guid_from_change(&change).guidPrefix);
     if (it != participants_.end())
     {
-        return it->second.is_matched(reader_guid.guidPrefix);
+        // it is relevant if the ack has not been received yet
+        // in NOT_ALIVE case the set_disposals unmatch every participant
+        return !it->second.is_matched(reader_guid.guidPrefix);
     }
-    return false; // error, should not arrive here
+    // not relevant
+    return false;
 }
 
 bool DiscoveryDataBase::edp_publications_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    auto it = writers_.find(guid_from_change(&change));
-    if (it != writers_.end())
+    auto itp = participants_.find(guid_from_change(&change).guidPrefix);
+    if (itp == participants_.end())
     {
-        return it->second.is_matched(reader_guid.guidPrefix);
+        // not relevant
+        return false;
     }
-    return false; // error, should not arrive here
+
+    if (!itp->second.is_matched(reader_guid.guidPrefix))
+    {
+        // participant still not matched
+        return false;
+    }
+
+    auto itw = writers_.find(guid_from_change(&change));
+    if (itw != writers_.end())
+    {
+        // it is relevant if the ack has not been received yet
+        return !itw->second.is_matched(reader_guid.guidPrefix);
+    }
+    // not relevant
+    return false;
 }
 
 bool DiscoveryDataBase::edp_subscriptions_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    auto it = writers_.find(guid_from_change(&change));
-    if (it != writers_.end())
+    auto itp = participants_.find(guid_from_change(&change).guidPrefix);
+    if (itp == participants_.end())
     {
-        return it->second.is_matched(reader_guid.guidPrefix);
+        // not relevant
+        return false;
     }
-    return false; // error, should not arrive here
+
+    if (!itp->second.is_matched(reader_guid.guidPrefix))
+    {
+        // participant still not matched
+        return false;
+    }
+
+    auto itr = readers_.find(guid_from_change(&change));
+    if (itr != readers_.end())
+    {
+        // it is relevant if the ack has not been received yet
+        return !itr->second.is_matched(reader_guid.guidPrefix);
+    }
+    // not relevant
+    return false;
 }
 
 void DiscoveryDataBase::add_ack_(

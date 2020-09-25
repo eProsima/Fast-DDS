@@ -39,11 +39,11 @@ bool DiscoveryParticipantsAckStatus::is_matched(
     return false;
 }
 
-void DiscoveryParticipantsAckStatus::match_all()
+void DiscoveryParticipantsAckStatus::unmatch_all()
 {
     for (auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it)
     {
-        it->second = true;
+        it->second = false;
     }
 }
 
