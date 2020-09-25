@@ -13,54 +13,41 @@
 // limitations under the License.
 
 /**
- * @file DiscoveryEndpointInfo.hpp
+ * @file DiscoveryParticipantsAckStatus.cpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
-#define _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
+#include <map>
 
-#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
-#include <fastrtps/utils/fixed_size_string.hpp>
 
-#include "./DiscoverySharedInfo.hpp"
+#include "./DiscoveryParticipantsAckStatus.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-/**
- * Class to join the main info required from a reader or writer in the Discovery Data Base
- *@ingroup DISCOVERY_MODULE
- */
-class DiscoveryEndpointInfo : public DiscoverySharedInfo
+bool DiscoveryParticipantsAckStatus::is_matched(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
 {
-
-public:
-
-    DiscoveryEndpointInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* change,
-            eprosima::fastrtps::string_255 topic)
-        : DiscoverySharedInfo(change)
-        , topic_(topic)
+    auto it = relevant_participants_map_.find(guid_p);
+    if (it != relevant_participants_map_.end())
     {
+        return it->second;
     }
+    return false;
+}
 
-    ~DiscoveryEndpointInfo()
+void DiscoveryParticipantsAckStatus::match_all()
+{
+    for (auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it)
     {
+        it->second = true;
     }
-
-private:
-
-    eprosima::fastrtps::string_255 topic_;
-
-};
+}
 
 } /* namespace ddb */
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
-
-#endif /* _FASTDDS_RTPS_ENDPOINT_INFO_H_ */
