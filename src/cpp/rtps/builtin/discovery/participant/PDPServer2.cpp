@@ -414,8 +414,9 @@ bool PDPServer2::process_change_acknowledgement(
 
 bool PDPServer2::process_disposals()
 {
-    fastrtps::rtps::WriterHistory* pubs_history = static_cast<EDPServer2*>(mp_EDP)->publications_writer_.second;
-    fastrtps::rtps::WriterHistory* subs_history = static_cast<EDPServer2*>(mp_EDP)->subscriptions_writer_.second;
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
+    fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
 
     // Get list of disposals from database
     std::vector<fastrtps::rtps::CacheChange_t*> disposals = discovery_db_.changes_to_dispose();
@@ -434,8 +435,11 @@ bool PDPServer2::process_disposals()
         // DATA(Up) case
         if (discovery_db_.is_participant(change))
         {
+            // Lock PDP writer
+            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
+
             // Remove all DATA(p) with the same sample identity as the DATA(Up) from PDP writer's history.
-            remove_related_alive_from_history(mp_PDPWriterHistory, change_guid_prefix);
+            remove_related_alive_from_history_nts(mp_PDPWriterHistory, change_guid_prefix);
 
             // Add DATA(Up) to PDP writer's history
             mp_PDPWriterHistory->add_change(change);
@@ -443,12 +447,15 @@ bool PDPServer2::process_disposals()
         // DATA(Uw) case
         else if (discovery_db_.is_writer(change))
         {
+            // Lock EDP publications writer
+            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(edp->publications_writer_.first->getMutex());
+
             // Remove all DATA(w) with the same sample identity as the DATA(Uw) from EDP publications writer's history
-            remove_related_alive_from_history(pubs_history, change_guid_prefix);
+            remove_related_alive_from_history_nts(pubs_history, change_guid_prefix);
 
             // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw).
             // If it does, then there is no need of adding the DATA(Uw).
-            if (!announcement_from_same_paricipant_in_disposals(disposals, change_guid_prefix))
+            if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
             {
                 // Add DATA(Uw) to EDP publications writer's history.
                 pubs_history->add_change(change);
@@ -457,19 +464,19 @@ bool PDPServer2::process_disposals()
         // DATA(Ur) case
         else if (discovery_db_.is_reader(change))
         {
+            // Lock EDP subscriptions writer
+            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(edp->subscriptions_writer_.first->getMutex());
+
             // Remove all DATA(r) with the same sample identity as the DATA(Ur) from EDP subscriptions writer's history
-            remove_related_alive_from_history(subs_history, change_guid_prefix);
+            remove_related_alive_from_history_nts(subs_history, change_guid_prefix);
 
-            // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Uw).
-            // If it does, then there is no need of adding the DATA(Uw).
-            if (!announcement_from_same_paricipant_in_disposals(disposals, change_guid_prefix))
+            // Check whether disposals contains a DATA(Up) from the same participant as the DATA(Ur).
+            // If it does, then there is no need of adding the DATA(Ur).
+            if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
             {
-                // Add DATA(Uw) to EDP publications writer's history.
-                pubs_history->add_change(change);
+                // Add DATA(Ur) to EDP subscriptions writer's history.
+                subs_history->add_change(change);
             }
-
-            // Add DATA(Ur) to EDP subscriptions writer's history.
-            subs_history->add_change(change);
         }
         else
         {
@@ -481,7 +488,7 @@ bool PDPServer2::process_disposals()
     return false;
 }
 
-void PDPServer2::remove_related_alive_from_history(
+void PDPServer2::remove_related_alive_from_history_nts(
         fastrtps::rtps::WriterHistory* writer_history,
         const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)
 {
@@ -496,7 +503,7 @@ void PDPServer2::remove_related_alive_from_history(
     }
 }
 
-bool PDPServer2::announcement_from_same_paricipant_in_disposals(
+bool PDPServer2::announcement_from_same_participant_in_disposals(
         const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
         const fastrtps::rtps::GuidPrefix_t& participant)
 {
