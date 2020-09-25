@@ -421,7 +421,7 @@ bool PDPServer2::process_disposals()
     // Get list of disposals from database
     std::vector<fastrtps::rtps::CacheChange_t*> disposals = discovery_db_.changes_to_dispose();
     // Iterate over disposals
-    for(auto change: disposals)
+    for (auto change: disposals)
     {
         // No check is performed on whether the change is an actual disposal, leaving the responsability of correctly
         // populating the disposals list to discovery_db_.process_data_queue().
@@ -507,7 +507,7 @@ bool PDPServer2::announcement_from_same_participant_in_disposals(
     for (auto change_: disposals)
     {
         if (discovery_db_.is_participant(change_) &&
-            (discovery_db_.guid_from_change(change_).guidPrefix == participant))
+                (discovery_db_.guid_from_change(change_).guidPrefix == participant))
         {
             return true;
         }
