@@ -47,6 +47,8 @@
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/writer/RTPSWriterCollector.h>
 
+#include "../builtin/discovery/database/DiscoveryDataBase.hpp"
+
 #include <mutex>
 #include <vector>
 #include <stdexcept>
@@ -103,6 +105,28 @@ static void null_sent_fun(
 }
 
 using namespace std::chrono;
+
+template <class Function>
+bool StatefulWriter::for_each_reader_proxy(
+        const CacheChange_t* a_change,
+        Function f)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (a_change->writerGUID != this->getGuid())
+    {
+        logWarning(RTPS_WRITER, "The given change is not from this Writer");
+        return false;
+    }
+
+    assert(mp_history->next_sequence_number() > a_change->sequenceNumber);
+    std::for_each(matched_readers_.begin(), matched_readers_.end(), f);
+    return true;
+}
+
+template
+bool StatefulWriter::for_each_reader_proxy<fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor>(
+        const CacheChange_t* a_change,
+        fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor f);
 
 StatefulWriter::StatefulWriter(
         RTPSParticipantImpl* pimpl,
