@@ -39,9 +39,6 @@ eprosima::fastrtps::rtps::GUID_t DiscoveryDataQueueInfo::associated_entity()
     return associated_entity_;
 }
 
-
-
-
 } /* namespace ddb */
 } /* namespace dds */
 } /* namespace fastdds */

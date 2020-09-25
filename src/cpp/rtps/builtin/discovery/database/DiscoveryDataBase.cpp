@@ -178,7 +178,7 @@ bool DiscoveryDataBase::process_data_queue()
                 create_readers_from_change(change, topic_name);
             }
             // Update set of dirty_topics
-            if(std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
+            if (std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
             {
                 dirty_topics_.push_back(topic_name);
                 is_dirty_topic = true;
@@ -225,14 +225,15 @@ void DiscoveryDataBase::create_writers_from_change(
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
 
     DiscoveryEndpointInfo tmp_writer(ch, topic_name);
-    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t,DiscoveryEndpointInfo>::iterator,bool> ret =
+    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             writers_.insert(std::make_pair(writer_guid, tmp_writer));
 
-    if (ret.second) {
-        std::map<eprosima::fastrtps::rtps::GUID_t,DiscoveryEndpointInfo>::iterator writer_it =
+    if (ret.second)
+    {
+        std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator writer_it =
                 writers_.find(writer_guid);
 
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator readers_it =
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator readers_it =
                 readers_by_topic_.find(topic_name);
         if (readers_it != readers_by_topic_.end())
         {
@@ -271,7 +272,7 @@ void DiscoveryDataBase::create_writers_from_change(
         }
 
         // Update writers_by_topic
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
                 writers_by_topic_.find(topic_name);
         if (topic_it != writers_by_topic_.end())
         {
@@ -296,14 +297,15 @@ void DiscoveryDataBase::create_readers_from_change(
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
 
     DiscoveryEndpointInfo tmp_reader(ch, topic_name);
-    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t,DiscoveryEndpointInfo>::iterator,bool> ret =
+    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             readers_.insert(std::make_pair(reader_guid, tmp_reader));
 
-    if (ret.second) {
-        std::map<eprosima::fastrtps::rtps::GUID_t,DiscoveryEndpointInfo>::iterator reader_it =
+    if (ret.second)
+    {
+        std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator reader_it =
                 readers_.find(reader_guid);
 
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator writers_it =
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator writers_it =
                 writers_by_topic_.find(topic_name);
         if (writers_it != writers_by_topic_.end())
         {
@@ -341,7 +343,7 @@ void DiscoveryDataBase::create_readers_from_change(
             pit->second.add_reader(reader_guid);
         }
         // Update readers_by_topic
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
                 readers_by_topic_.find(topic_name);
         if (topic_it != readers_by_topic_.end())
         {
@@ -365,7 +367,7 @@ void DiscoveryDataBase::process_dispose_participant(
     const eprosima::fastrtps::rtps::GUID_t& participant_guid = guid_from_change(ch);
 
     // Change DATA(p) with DATA(Up) in participants map
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t,DiscoveryParticipantInfo>::iterator pit =
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
             participants_.find(participant_guid.guidPrefix);
     if (pit != participants_.end())
     {
@@ -397,7 +399,7 @@ void DiscoveryDataBase::process_dispose_participant(
     {
         for (auto wit = tit->second.begin(); wit != tit->second.end(); ++wit)
         {
-            if(wit->guidPrefix == participant_guid.guidPrefix)
+            if (wit->guidPrefix == participant_guid.guidPrefix)
             {
                 tit->second.erase(wit);
                 --wit;
@@ -416,7 +418,7 @@ void DiscoveryDataBase::process_dispose_participant(
     {
         for (auto rit = tit->second.begin(); rit != tit->second.end(); ++rit)
         {
-            if(rit->guidPrefix == participant_guid.guidPrefix)
+            if (rit->guidPrefix == participant_guid.guidPrefix)
             {
                 tit->second.erase(rit);
                 --rit;
@@ -449,7 +451,7 @@ void DiscoveryDataBase::process_dispose_participant(
     }
 
     // Add entry to disposals_
-    if(std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
     {
         disposals_.push_back(ch);
     }
@@ -469,7 +471,7 @@ void DiscoveryDataBase::process_dispose_writer(
     }
 
     // Update own entry participants_::writers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t,DiscoveryParticipantInfo>::iterator pit =
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
             participants_.find(writer_guid.guidPrefix);
     if (pit != participants_.end())
     {
@@ -477,10 +479,11 @@ void DiscoveryDataBase::process_dispose_writer(
     }
 
     //Update own entry writers_by_topic_
-    std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator tit = writers_by_topic_.find(topic_name);
+    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+            writers_by_topic_.find(topic_name);
     if (tit != writers_by_topic_.end())
     {
-        for(std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = tit->second.begin();
+        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = tit->second.begin();
                 writer_it != tit->second.end();
                 ++writer_it)
         {
@@ -493,7 +496,7 @@ void DiscoveryDataBase::process_dispose_writer(
     }
 
     // Add entry to disposals_
-    if(std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
     {
         disposals_.push_back(ch);
     }
@@ -514,7 +517,7 @@ void DiscoveryDataBase::process_dispose_reader(
     }
 
     // Update own entry participants_::readers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t,DiscoveryParticipantInfo>::iterator pit =
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
             participants_.find(reader_guid.guidPrefix);
     if (pit != participants_.end())
     {
@@ -522,10 +525,11 @@ void DiscoveryDataBase::process_dispose_reader(
     }
 
     //Update own entry readers_by_topic_
-    std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator tit = readers_by_topic_.find(topic_name);
+    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+            readers_by_topic_.find(topic_name);
     if (tit != readers_by_topic_.end())
     {
-        for(std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = tit->second.begin();
+        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = tit->second.begin();
                 reader_it != tit->second.end();
                 ++reader_it)
         {
@@ -538,7 +542,7 @@ void DiscoveryDataBase::process_dispose_reader(
     }
 
     // Add entry to disposals_
-    if(std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
     {
         disposals_.push_back(ch);
     }

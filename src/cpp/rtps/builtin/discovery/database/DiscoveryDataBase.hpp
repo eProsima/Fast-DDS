@@ -70,7 +70,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
         using result_type = void;
 
     public:
@@ -150,26 +150,26 @@ public:
     bool process_data_queue();
 
     void create_participant_from_change(
-        eprosima::fastrtps::rtps::CacheChange_t* ch);
+            eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     void create_writers_from_change(
-        eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name);
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const eprosima::fastrtps::string_255& topic_name);
 
     void create_readers_from_change(
-        eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name);
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const eprosima::fastrtps::string_255& topic_name);
 
     void process_dispose_participant(
-        eprosima::fastrtps::rtps::CacheChange_t* ch);
+            eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     void process_dispose_writer(
-        eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name);
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const eprosima::fastrtps::string_255& topic_name);
 
     void process_dispose_reader(
-        eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name);
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const eprosima::fastrtps::string_255& topic_name);
 
     ////////////
     // Functions to process_dirty_topics()
