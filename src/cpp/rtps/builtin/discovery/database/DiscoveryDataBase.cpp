@@ -136,7 +136,9 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
 
 bool DiscoveryDataBase::process_data_queue()
 {
-    // std::unique_lock<std::mutex> guard(sh_mutex);
+    // Lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+
     bool is_dirty_topic = false;
 
     data_queue_.Swap();
@@ -186,7 +188,6 @@ bool DiscoveryDataBase::process_data_queue()
 
         data_queue_.Pop();
     }
-
 
     return is_dirty_topic;
 }
