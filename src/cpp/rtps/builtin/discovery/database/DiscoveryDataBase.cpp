@@ -134,24 +134,430 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
     edp_subscriptions_to_send_.clear();
 }
 
+////////////
+// Functions to process_data_queue()
 bool DiscoveryDataBase::process_data_queue()
 {
-    // std::unique_lock<std::mutex> guard(sh_mutex);
+    bool is_dirty_topic = false;
+
+    // Lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+
+    // Swap DATA queues
     data_queue_.Swap();
+
+    DiscoveryDataQueueInfo data_queue_info;
+    eprosima::fastrtps::rtps::CacheChange_t* change;
+    eprosima::fastrtps::string_255 topic_name;
+
+    // Process all messages in the queque
     while (!data_queue_.Empty())
     {
-        DiscoveryDataQueueInfo data_queue_info = data_queue_.Front();
+        // Process each message with Front()
+        data_queue_info = data_queue_.Front();
+        change = data_queue_info.change();
+        topic_name = data_queue_info.topic();
 
-        if (data_queue_info.cache_change()->kind == eprosima::fastrtps::rtps::ALIVE)
+        // If the change is a DATA(p|w|r)
+        if (change->kind == eprosima::fastrtps::rtps::ALIVE)
         {
-            // update(participants_);
+            // DATA(p) case
+            if (is_participant(change))
+            {
+                // Update participants map
+                create_participant_from_change(change);
+            }
+            // DATA(w) case
+            else if (is_writer(change))
+            {
+                create_writers_from_change(change, topic_name);
+            }
+            // DATA(r) case
+            else if (is_reader(change))
+            {
+                create_readers_from_change(change, topic_name);
+            }
+            // Update set of dirty_topics
+            if (std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
+            {
+                dirty_topics_.push_back(topic_name);
+                is_dirty_topic = true;
+            }
+        }
+        // If the change is a DATA(Up|Uw|Ur)
+        else
+        {
+            // DATA(Up) case
+            if (is_participant(change))
+            {
+                process_dispose_participant(change);
+            }
+            // DATA(Uw) case
+            else if (is_writer(change))
+            {
+                process_dispose_writer(change, topic_name);
+            }
+            // DATA(Ur) case
+            else if (is_reader(change))
+            {
+                process_dispose_reader(change, topic_name);
+            }
         }
 
+        // Pop the message from the queue
         data_queue_.Pop();
     }
 
+    return is_dirty_topic;
+}
 
-    return false;
+void DiscoveryDataBase::create_participant_from_change(
+        eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    DiscoveryParticipantInfo part(ch);
+    participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
+}
+
+void DiscoveryDataBase::create_writers_from_change(
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name)
+{
+    const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
+
+    DiscoveryEndpointInfo tmp_writer(ch, topic_name);
+    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
+            writers_.insert(std::make_pair(writer_guid, tmp_writer));
+
+    if (ret.second)
+    {
+        std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator writer_it =
+                writers_.find(writer_guid);
+
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator readers_it =
+                readers_by_topic_.find(topic_name);
+        if (readers_it != readers_by_topic_.end())
+        {
+            for (eprosima::fastrtps::rtps::GUID_t reader_it: readers_it->second)
+            {
+                // Update the participant ack status list from writers_
+                writer_it->second.add_or_update_ack_participant(reader_it.guidPrefix);
+
+                // Update the participant ack status list from readers_
+                std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit =
+                        readers_.find(reader_it);
+                if (rit != readers_.end())
+                {
+                    rit->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                }
+
+                // Update the participant ack status list from participants_
+                std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
+                        participants_.find(reader_it.guidPrefix);
+                if (pit != participants_.end())
+                {
+                    if (!pit->second.is_matched(writer_guid.guidPrefix))
+                    {
+                        pit->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                    }
+                }
+            }
+        }
+
+        // Update participants_::writers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
+                participants_.find(writer_guid.guidPrefix);
+        if (pit != participants_.end())
+        {
+            pit->second.add_writer(writer_guid);
+        }
+
+        // Update writers_by_topic
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
+                writers_by_topic_.find(topic_name);
+        if (topic_it != writers_by_topic_.end())
+        {
+            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
+                    std::find(topic_it->second.begin(), topic_it->second.end(), writer_guid);
+            if (writer_by_topic_it == topic_it->second.end())
+            {
+                topic_it->second.push_back(writer_guid);
+            }
+            else
+            {
+                *writer_by_topic_it = writer_guid;
+            }
+        }
+    }
+}
+
+void DiscoveryDataBase::create_readers_from_change(
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name)
+{
+    const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
+
+    DiscoveryEndpointInfo tmp_reader(ch, topic_name);
+    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
+            readers_.insert(std::make_pair(reader_guid, tmp_reader));
+
+    if (ret.second)
+    {
+        std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator reader_it =
+                readers_.find(reader_guid);
+
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator writers_it =
+                writers_by_topic_.find(topic_name);
+        if (writers_it != writers_by_topic_.end())
+        {
+            for (eprosima::fastrtps::rtps::GUID_t writer_it: writers_it->second)
+            {
+                // Update the participant ack status list from readers_
+                reader_it->second.add_or_update_ack_participant(writer_it.guidPrefix);
+
+                // Update the participant ack status list from writers_
+                std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit =
+                        writers_.find(writer_it);
+                if (wit != writers_.end())
+                {
+                    wit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                }
+
+                // Update the participant ack status list from participants_
+                std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
+                        participants_.find(writer_it.guidPrefix);
+                if (pit != participants_.end())
+                {
+                    if (!pit->second.is_matched(reader_guid.guidPrefix))
+                    {
+                        pit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                    }
+                }
+            }
+
+        }
+        // Update participants_::readers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
+                participants_.find(reader_guid.guidPrefix);
+        if (pit != participants_.end())
+        {
+            pit->second.add_reader(reader_guid);
+        }
+        // Update readers_by_topic
+        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
+                readers_by_topic_.find(topic_name);
+        if (topic_it != readers_by_topic_.end())
+        {
+            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
+                    std::find(topic_it->second.begin(), topic_it->second.end(), reader_guid);
+            if (reader_by_topic_it == topic_it->second.end())
+            {
+                topic_it->second.push_back(reader_guid);
+            }
+            else
+            {
+                *reader_by_topic_it = reader_guid;
+            }
+        }
+    }
+}
+
+void DiscoveryDataBase::process_dispose_participant(
+        eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    const eprosima::fastrtps::rtps::GUID_t& participant_guid = guid_from_change(ch);
+
+    // Change DATA(p) with DATA(Up) in participants map
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
+            participants_.find(participant_guid.guidPrefix);
+    if (pit != participants_.end())
+    {
+        pit->second.set_disposal(ch);
+    }
+
+    // Delete entries from writers_ belonging to the participant
+    for (auto wit = writers_.begin(); wit != writers_.end(); ++wit)
+    {
+        if (wit->first.guidPrefix == participant_guid.guidPrefix)
+        {
+            writers_.erase(wit->first);
+            --wit;
+        }
+    }
+
+    // Delete entries from readers_ belonging to the participant
+    for (auto rit = readers_.begin(); rit != readers_.end(); ++rit)
+    {
+        if (rit->first.guidPrefix == participant_guid.guidPrefix)
+        {
+            readers_.erase(rit->first);
+            --rit;
+        }
+    }
+
+    // Delete Participant entries from writers_by_topic
+    for (auto tit = writers_by_topic_.begin(); tit != writers_by_topic_.end(); ++tit)
+    {
+        for (auto wit = tit->second.begin(); wit != tit->second.end(); ++wit)
+        {
+            if (wit->guidPrefix == participant_guid.guidPrefix)
+            {
+                tit->second.erase(wit);
+                --wit;
+            }
+        }
+
+        if (tit->second.empty())
+        {
+            writers_by_topic_.erase(tit);
+            --tit;
+        }
+    }
+
+    // Delete Participant entries from readers_by_topic
+    for (auto tit = readers_by_topic_.begin(); tit != readers_by_topic_.end(); ++tit)
+    {
+        for (auto rit = tit->second.begin(); rit != tit->second.end(); ++rit)
+        {
+            if (rit->guidPrefix == participant_guid.guidPrefix)
+            {
+                tit->second.erase(rit);
+                --rit;
+            }
+        }
+
+        if (tit->second.empty())
+        {
+            readers_by_topic_.erase(tit);
+            --tit;
+        }
+    }
+
+    // Remove participant from others participants_[]::relevant_participants_builtin_ack_status
+    for (auto pit = participants_.begin(); pit != participants_.end(); ++pit)
+    {
+        pit->second.remove_participant(participant_guid.guidPrefix);
+    }
+
+    // Remove participant from others writers_[]::relevant_participants_builtin_ack_status
+    for (auto wit = writers_.begin(); wit != writers_.end(); ++wit)
+    {
+        wit->second.remove_participant(participant_guid.guidPrefix);
+    }
+
+    // Remove participant from others readers_[]::relevant_participants_builtin_ack_status
+    for (auto pit = readers_.begin(); pit != readers_.end(); ++pit)
+    {
+        pit->second.remove_participant(participant_guid.guidPrefix);
+    }
+
+    // Add entry to disposals_
+    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+    {
+        disposals_.push_back(ch);
+    }
+}
+
+void DiscoveryDataBase::process_dispose_writer(
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name)
+{
+    const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
+
+    // Change DATA(w) with DATA(Uw)
+    std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
+    if (wit != writers_.end())
+    {
+        wit->second.set_disposal(ch);
+    }
+
+    // Update own entry participants_::writers
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
+            participants_.find(writer_guid.guidPrefix);
+    if (pit != participants_.end())
+    {
+        pit->second.remove_writer(writer_guid);
+    }
+
+    // Update own entry writers_by_topic_
+    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+            writers_by_topic_.find(topic_name);
+    if (tit != writers_by_topic_.end())
+    {
+        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = tit->second.begin();
+                writer_it != tit->second.end();
+                ++writer_it)
+        {
+            if (*writer_it == writer_guid)
+            {
+                tit->second.erase(writer_it);
+                break;
+            }
+        }
+
+        if (tit->second.empty())
+        {
+            writers_by_topic_.erase(tit);
+            --tit;
+        }
+    }
+
+    // Add entry to disposals_
+    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+    {
+        disposals_.push_back(ch);
+    }
+
+}
+
+void DiscoveryDataBase::process_dispose_reader(
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name)
+{
+    const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
+
+    // Change DATA(r) with DATA(Ur)
+    std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
+    if (rit != readers_.end())
+    {
+        rit->second.set_disposal(ch);
+    }
+
+    // Update own entry participants_::readers
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
+            participants_.find(reader_guid.guidPrefix);
+    if (pit != participants_.end())
+    {
+        pit->second.remove_reader(reader_guid);
+    }
+
+    // Update own entry readers_by_topic_
+    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+            readers_by_topic_.find(topic_name);
+    if (tit != readers_by_topic_.end())
+    {
+        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = tit->second.begin();
+                reader_it != tit->second.end();
+                ++reader_it)
+        {
+            if (*reader_it == reader_guid)
+            {
+                tit->second.erase(reader_it);
+                break;
+            }
+        }
+
+        if (tit->second.empty())
+        {
+            readers_by_topic_.erase(tit);
+            --tit;
+        }
+    }
+
+    // Add entry to disposals_
+    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+    {
+        disposals_.push_back(ch);
+    }
 }
 
 bool DiscoveryDataBase::process_dirty_topics()
@@ -190,22 +596,23 @@ bool DiscoveryDataBase::delete_entity_of_change(
 bool DiscoveryDataBase::is_participant(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    (void) ch;
-    return true;
+    return eprosima::fastrtps::rtps::c_EntityId_RTPSParticipant == guid_from_change(ch).entityId;
 }
 
 bool DiscoveryDataBase::is_writer(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    (void) ch;
-    return true;
+    constexpr uint8_t entity_id_is_writer_bit = 0x04;
+
+    return ((guid_from_change(ch).entityId.value[3] & entity_id_is_writer_bit) != 0);
 }
 
 bool DiscoveryDataBase::is_reader(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    (void) ch;
-    return true;
+    constexpr uint8_t entity_id_is_reader_bit = 0x04;
+
+    return ((guid_from_change(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
 }
 
 eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(
