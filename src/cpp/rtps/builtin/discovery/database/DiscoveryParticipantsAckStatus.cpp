@@ -28,7 +28,6 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-
 bool DiscoveryParticipantsAckStatus::is_matched(
         const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
 {

@@ -29,7 +29,6 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-
 /**
  * Class to manage the relevant_participants_builtin_ack_status structure from DiscoveryDataBase
  *@ingroup DISCOVERY_MODULE
@@ -48,8 +47,8 @@ public:
     }
 
     void add_or_update_participant(
-        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
-        bool status = false)
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
+            bool status = false)
     {
         relevant_participants_map_[guid_p] = status;
     }
