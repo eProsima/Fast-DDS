@@ -91,7 +91,6 @@ private:
     eprosima::fastdds::rtps::ddb::DiscoveryParticipantsAckStatus
             relevant_participants_builtin_ack_status_;
 
-
 };
 
 } /* namespace ddb */
