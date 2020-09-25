@@ -59,7 +59,7 @@ public:
         relevant_participants_map_.erase(guid_p);
     }
 
-    void match_all();
+    void unmatch_all();
 
     bool is_matched(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
