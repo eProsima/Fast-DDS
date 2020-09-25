@@ -35,9 +35,8 @@ namespace rtps {
 
 bool EDPServer2::createSEDPEndpoints()
 {
-    // Assert that PDP is a SERVER
-    PDPServer2* pPDP = dynamic_cast<PDPServer2*>(mp_PDP);
-    assert(pPDP);
+    // Assert that there is PDP SERVER
+    assert(dynamic_cast<PDPServer2*>(mp_PDP));
 
     bool created = true;  // Return code
 

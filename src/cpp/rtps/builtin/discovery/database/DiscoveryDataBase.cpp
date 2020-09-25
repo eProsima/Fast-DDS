@@ -17,6 +17,9 @@
  *
  */
 
+#include <mutex>
+#include <shared_mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 
 #include "./DiscoveryDataBase.hpp"
@@ -55,21 +58,80 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
 
 void DiscoveryDataBase::add_ack_(
         const eprosima::fastrtps::rtps::CacheChange_t* change,
-        const eprosima::fastrtps::rtps::GuidPrefix_t* acked_entity)
+        const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity)
 {
-    (void)change;
-    (void)acked_entity;
+    if (is_participant(change))
+    {
+        auto it = participants_.find(guid_from_change(change).guidPrefix);
+        it->second.add_or_update_ack_participant(acked_entity, true);
+    }
 }
 
 bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
-        std::string topic_name,
-        eprosima::fastrtps::rtps::GUID_t* entity)
+        std::string topic_name)
 {
     (void)change;
     (void)topic_name;
-    (void)entity;
     return true;
+}
+
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_dispose()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return disposals_;
+}
+
+void DiscoveryDataBase::clear_changes_to_dispose()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    disposals_.clear();
+}
+
+////////////
+// Functions to process_to_send_lists()
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::pdp_to_send()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return pdp_to_send_;
+}
+
+void DiscoveryDataBase::clear_pdp_to_send()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    pdp_to_send_.clear();
+}
+
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_publications_to_send()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return edp_publications_to_send_;
+}
+
+void DiscoveryDataBase::clear_edp_publications_to_send()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    edp_publications_to_send_.clear();
+}
+
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_subscriptions_to_send()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return edp_subscriptions_to_send_;
+}
+
+void DiscoveryDataBase::clear_edp_subscriptions_to_send()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    edp_subscriptions_to_send_.clear();
 }
 
 bool DiscoveryDataBase::process_data_queue()
@@ -90,6 +152,11 @@ bool DiscoveryDataBase::process_data_queue()
 
 
     return false;
+}
+
+bool DiscoveryDataBase::process_dirty_topics()
+{
+    return true;
 }
 
 bool DiscoveryDataBase::delete_entity_of_change(
@@ -120,7 +187,28 @@ bool DiscoveryDataBase::delete_entity_of_change(
      */
 }
 
-eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change_(
+bool DiscoveryDataBase::is_participant(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    (void) ch;
+    return true;
+}
+
+bool DiscoveryDataBase::is_writer(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    (void) ch;
+    return true;
+}
+
+bool DiscoveryDataBase::is_reader(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    (void) ch;
+    return true;
+}
+
+eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     return fastrtps::rtps::iHandle2GUID(ch->instanceHandle);
@@ -148,7 +236,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     if (is_acked)
     {
         // In the discovery database, mark the change as acknowledged by the reader
-        db_->add_ack_(change_, &reader_proxy->guid().guidPrefix);
+        db_->add_ack_(change_, reader_proxy->guid().guidPrefix);
     }
     pending_ |= !is_acked;
 }
