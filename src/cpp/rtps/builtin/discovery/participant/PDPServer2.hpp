@@ -163,6 +163,8 @@ protected:
             const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
             const fastrtps::rtps::GuidPrefix_t& participant);
 
+    bool process_dirty_topics();
+
 private:
 
     /**

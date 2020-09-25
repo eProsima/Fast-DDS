@@ -562,7 +562,119 @@ void DiscoveryDataBase::process_dispose_reader(
 
 bool DiscoveryDataBase::process_dirty_topics()
 {
-    return true;
+    // Get shared lock
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+
+    // Iterator objects are declared here because they are reused in each iteration of the loops
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator parts_reader_it;
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator parts_writer_it;
+    std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator readers_it;
+    std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator writers_it;
+
+    // Iterate over dirty_topics_
+    for (auto topic_it = dirty_topics_.begin(); topic_it != dirty_topics_.end();)
+    {
+        // Flag to store whether a topic can be cleared.
+        bool is_clearable = true;
+
+        // Get all the writers in the topic
+        std::vector<fastrtps::rtps::GUID_t> writers = writers_by_topic_[*topic_it];
+        // Get all the readers in the topic
+        std::vector<fastrtps::rtps::GUID_t> readers = readers_by_topic_[*topic_it];
+
+        for (fastrtps::rtps::GUID_t writer: writers)
+        // Iterate over writers in the topic:
+        {
+            // Iterate over readers in the topic:
+            for (fastrtps::rtps::GUID_t reader : readers)
+            {
+                // Find participants with writer info and participant with reader info in participants_
+                parts_reader_it = participants_.find(reader.guidPrefix);
+                parts_writer_it = participants_.find(writer.guidPrefix);
+                // Find reader info in readers_
+                readers_it = readers_.find(reader);
+                // Find writer info in writers_
+                writers_it = writers_.find(writer);
+
+                // Check in `participants_` whether the client with the reader has acknowledge the PDP of the client
+                // with the writer.
+                if (parts_reader_it != participants_.end() && parts_reader_it->second.is_matched(writer.guidPrefix))
+                {
+                    // Check the status of the writer in `readers_[reader]::relevant_participants_builtin_ack_status`.
+                    if (readers_it != readers_.end() && !readers_it->second.is_matched(writer.guidPrefix))
+                    {
+                        // If the status is 0, add DATA(w) to a `edp_publications_to_send_` (if it's not there).
+                        if (std::find(
+                                    edp_publications_to_send_.begin(),
+                                    edp_publications_to_send_.end(),
+                                    writers_it->second.change()) == edp_publications_to_send_.end())
+                        {
+                            edp_publications_to_send_.push_back(writers_it->second.change());
+                        }
+                    }
+                }
+                else
+                {
+                    // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
+                    if (std::find(
+                                pdp_to_send_.begin(),
+                                pdp_to_send_.end(),
+                                parts_writer_it->second.change()) == pdp_to_send_.end())
+                    {
+                        pdp_to_send_.push_back(parts_writer_it->second.change());
+                    }
+                    // Set topic as not-clearable.
+                    is_clearable = false;
+                }
+
+                // Check in `participants_` whether the client with the writer has acknowledge the PDP of the client
+                // with the reader.
+                if (parts_writer_it != participants_.end() && parts_writer_it->second.is_matched(reader.guidPrefix))
+                {
+                    // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
+                    if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
+                    {
+                        // If the status is 0, add DATA(r) to a `edp_subscriptions_to_send_` (if it's not there).
+                        if (std::find(
+                                    edp_subscriptions_to_send_.begin(),
+                                    edp_subscriptions_to_send_.end(),
+                                    readers_it->second.change()) == edp_subscriptions_to_send_.end())
+                        {
+                            edp_subscriptions_to_send_.push_back(readers_it->second.change());
+                        }
+                    }
+                }
+                else
+                {
+                    // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
+                    if (std::find(
+                                pdp_to_send_.begin(),
+                                pdp_to_send_.end(),
+                                parts_reader_it->second.change()) == pdp_to_send_.end())
+                    {
+                        pdp_to_send_.push_back(parts_reader_it->second.change());
+                    }
+                    // Set topic as not-clearable.
+                    is_clearable = false;
+                }
+            }
+        }
+
+        // Check whether the topic is still dirty or it can be cleared
+        if (is_clearable)
+        {
+            // Delete topic from dirty_topics_
+            topic_it = dirty_topics_.erase(topic_it);
+        }
+        else
+        {
+            // Proceed with next topic
+            ++topic_it;
+        }
+    }
+
+    // Return whether there still are dirty topics
+    return dirty_topics_.empty();
 }
 
 bool DiscoveryDataBase::delete_entity_of_change(
