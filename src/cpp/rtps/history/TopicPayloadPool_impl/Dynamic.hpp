@@ -34,16 +34,19 @@ public:
     {
         assert(cache_change.payload_owner() == this);
 
-        PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
-        if (!payload->dereference())
         {
-            //First remove it from all_payloads
-            all_payloads_.at(payload->data_index()) = all_payloads_.back();
-            all_payloads_.back()->data_index(payload->data_index());
-            all_payloads_.pop_back();
+            std::lock_guard<std::mutex> lock(mutex_);
+            PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
+            if (!payload->dereference())
+            {
+                //First remove it from all_payloads
+                all_payloads_.at(payload->data_index()) = all_payloads_.back();
+                all_payloads_.back()->data_index(payload->data_index());
+                all_payloads_.pop_back();
 
-            // Now delete the data
-            delete(payload);
+                // Now delete the data
+                delete(payload);
+            }
         }
 
         cache_change.serializedPayload.length = 0;
@@ -61,6 +64,7 @@ public:
     {
         assert(config.memory_policy == memory_policy());
 
+        std::lock_guard<std::mutex> lock(mutex_);
         update_maximum_size(config, false);
 
         return true;

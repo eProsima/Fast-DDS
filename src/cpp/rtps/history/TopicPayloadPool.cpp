@@ -35,6 +35,8 @@ bool TopicPayloadPool::get_payload(
         CacheChange_t& cache_change)
 {
     PayloadNode* payload = nullptr;
+
+    std::lock_guard<std::mutex> lock(mutex_);
     if (free_payloads_.empty())
     {
         payload = allocate(size); //Allocates a single payload
@@ -69,6 +71,7 @@ bool TopicPayloadPool::get_payload(
 
     if (data_owner == this)
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(data.data));
         payload->reference();
 
@@ -100,10 +103,13 @@ bool TopicPayloadPool::release_payload(
 {
     assert(cache_change.payload_owner() == this);
 
-    PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
-    if (!payload->dereference())
     {
-        free_payloads_.push_back(payload);
+        std::lock_guard<std::mutex> lock(mutex_);
+        PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
+        if (!payload->dereference())
+        {
+            free_payloads_.push_back(payload);
+        }
     }
 
     cache_change.serializedPayload.length = 0;
@@ -120,6 +126,7 @@ bool TopicPayloadPool::reserve_history(
 {
     assert(config.memory_policy == memory_policy());
 
+    std::lock_guard<std::mutex> lock(mutex_);
     update_maximum_size(config, true);
     return true;
 }
@@ -130,6 +137,7 @@ bool TopicPayloadPool::release_history(
 {
     assert(config.memory_policy == memory_policy());
 
+    std::lock_guard<std::mutex> lock(mutex_);
     update_maximum_size(config, false);
 
     return shrink(max_pool_size_);
@@ -231,6 +239,7 @@ bool TopicPayloadPool::resize_payload (
         uint32_t& size,
         uint32_t new_size)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(data));
     if (payload->resize(new_size))
     {

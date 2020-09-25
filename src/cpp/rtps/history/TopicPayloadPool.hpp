@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <vector>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {
@@ -244,6 +245,8 @@ protected:
 
     std::vector<PayloadNode*> free_payloads_; //< Payloads that are free
     std::vector<PayloadNode*> all_payloads_;  //< All payloads
+
+    std::mutex mutex_;
 
 };
 

@@ -69,6 +69,7 @@ public:
             return false;
         }
 
+        std::lock_guard<std::mutex> lock(mutex_);
         if (is_reader)
         {
             minimum_pool_size_for_readers =
