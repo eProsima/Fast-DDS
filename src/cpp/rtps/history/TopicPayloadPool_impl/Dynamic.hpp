@@ -44,17 +44,27 @@ public:
 
             // Now delete the data
             delete(payload);
-
-            cache_change.serializedPayload.length = 0;
-            cache_change.serializedPayload.pos = 0;
-            cache_change.serializedPayload.max_size = 0;
-            cache_change.serializedPayload.data = nullptr;
-            cache_change.payload_owner(nullptr);
         }
+
+        cache_change.serializedPayload.length = 0;
+        cache_change.serializedPayload.pos = 0;
+        cache_change.serializedPayload.max_size = 0;
+        cache_change.serializedPayload.data = nullptr;
+        cache_change.payload_owner(nullptr);
 
         return true;
     }
 
+    bool release_history(
+            const PoolConfig& config,
+            bool /*is_reader*/) override
+    {
+        assert(config.memory_policy == memory_policy());
+
+        update_maximum_size(config, false);
+
+        return true;
+    }
 protected:
 
     MemoryManagementPolicy_t memory_policy() const

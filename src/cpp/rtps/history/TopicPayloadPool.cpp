@@ -38,26 +38,24 @@ bool TopicPayloadPool::get_payload(
     if (free_payloads_.empty())
     {
         payload = allocate(size); //Allocates a single payload
-        if (payload != nullptr)
+        if (payload == nullptr)
         {
-            cache_change.serializedPayload.data = payload->data();
-            cache_change.serializedPayload.max_size = size;
-            cache_change.payload_owner(this);
-            payload->reference();
-            return true;
+            cache_change.serializedPayload.data = nullptr;
+            cache_change.serializedPayload.max_size = 0;
+            cache_change.payload_owner(nullptr);
+            return false;
         }
-        cache_change.serializedPayload.data = nullptr;
-        cache_change.serializedPayload.max_size = 0;
-        cache_change.payload_owner(nullptr);
-        return false;
+    }
+    else
+    {
+        payload = free_payloads_.back();
+        free_payloads_.pop_back();
     }
 
-    payload = free_payloads_.back();
+    payload->reference();
     cache_change.serializedPayload.data = payload->data();
     cache_change.serializedPayload.max_size = payload->data_size();
     cache_change.payload_owner(this);
-    payload->reference();
-    free_payloads_.pop_back();
     return true;
 }
 
@@ -72,10 +70,11 @@ bool TopicPayloadPool::get_payload(
     if (data_owner == this)
     {
         PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(data.data));
+        payload->reference();
+
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = payload->data_size();
         cache_change.payload_owner(this);
-        payload->reference();
         return true;
     }
 
@@ -105,12 +104,13 @@ bool TopicPayloadPool::release_payload(
     if (!payload->dereference())
     {
         free_payloads_.push_back(payload);
-        cache_change.serializedPayload.length = 0;
-        cache_change.serializedPayload.pos = 0;
-        cache_change.serializedPayload.max_size = 0;
-        cache_change.serializedPayload.data = nullptr;
-        cache_change.payload_owner(nullptr);
     }
+
+    cache_change.serializedPayload.length = 0;
+    cache_change.serializedPayload.pos = 0;
+    cache_change.serializedPayload.max_size = 0;
+    cache_change.serializedPayload.data = nullptr;
+    cache_change.payload_owner(nullptr);
     return true;
 }
 
@@ -131,7 +131,8 @@ bool TopicPayloadPool::release_history(
     assert(config.memory_policy == memory_policy());
 
     update_maximum_size(config, false);
-    return true;
+
+    return shrink(max_pool_size_);
 }
 
 TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(

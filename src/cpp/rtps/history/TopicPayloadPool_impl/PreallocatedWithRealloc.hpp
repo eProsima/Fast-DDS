@@ -83,18 +83,6 @@ public:
         return true;
     }
 
-    bool release_history(
-            const PoolConfig& config,
-            bool is_reader) override
-    {
-        if (!TopicPayloadPool::release_history(config, is_reader))
-        {
-            return false;
-        }
-
-        return shrink(max_pool_size_);
-    }
-
 protected:
 
     MemoryManagementPolicy_t memory_policy() const
