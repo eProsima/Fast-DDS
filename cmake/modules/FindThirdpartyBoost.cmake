@@ -19,10 +19,6 @@ else() # Posix
     set(THIRDPARTY_BOOST_LINK_LIBS ${CMAKE_THREAD_LIBS_INIT} rt)
 endif()
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    list(APPEND THIRDPARTY_BOOST_LINK_LIBS atomic)
-endif()
-
 try_compile(IS_THIRDPARTY_BOOST_OK
         ${CMAKE_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}/thirdparty/boost/test/ThirdpartyBoostCompile_test.cpp
