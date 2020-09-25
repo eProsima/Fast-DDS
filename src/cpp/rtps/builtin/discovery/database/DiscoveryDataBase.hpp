@@ -44,18 +44,6 @@ namespace ddb {
 // only working in C++14
 typedef std::shared_timed_mutex share_mutex_t;
 
-struct CacheChangeCmp
-{
-    bool operator ()(
-            const eprosima::fastrtps::rtps::CacheChange_t& a,
-            const eprosima::fastrtps::rtps::CacheChange_t& b) const
-    {
-        return a.write_params.sample_identity() < b.write_params.sample_identity();
-    }
-
-};
-
-
 /**
  * Class to manage the discovery data base
  *@ingroup DISCOVERY_MODULE
