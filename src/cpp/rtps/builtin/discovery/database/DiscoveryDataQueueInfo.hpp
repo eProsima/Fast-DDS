@@ -39,17 +39,17 @@ public:
     {
     }
 
-    eprosima::fastrtps::rtps::CacheChange_t* cache_change();
+    eprosima::fastrtps::rtps::CacheChange_t* change();
 
-    eprosima::fastrtps::string_255 topic_name();
+    eprosima::fastrtps::string_255 topic();
 
     eprosima::fastrtps::rtps::GUID_t associated_entity();
 
 private:
 
-    eprosima::fastrtps::rtps::CacheChange_t* cache_change_;
+    eprosima::fastrtps::rtps::CacheChange_t* change_;
 
-    eprosima::fastrtps::string_255 topic_name_;
+    eprosima::fastrtps::string_255 topic_;
 
     eprosima::fastrtps::rtps::GUID_t associated_entity_;
 };

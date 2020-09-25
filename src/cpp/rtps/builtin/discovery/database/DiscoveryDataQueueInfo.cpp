@@ -24,14 +24,14 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-eprosima::fastrtps::rtps::CacheChange_t* DiscoveryDataQueueInfo::cache_change()
+eprosima::fastrtps::rtps::CacheChange_t* DiscoveryDataQueueInfo::change()
 {
-    return cache_change_;
+    return change_;
 }
 
-eprosima::fastrtps::string_255 DiscoveryDataQueueInfo::topic_name()
+eprosima::fastrtps::string_255 DiscoveryDataQueueInfo::topic()
 {
-    return topic_name_;
+    return topic_;
 }
 
 eprosima::fastrtps::rtps::GUID_t DiscoveryDataQueueInfo::associated_entity()

@@ -149,21 +149,24 @@ public:
     // Functions to process_data_queue()
     bool process_data_queue();
 
-    void mark_dispose_writer(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
     void process_dispose_participant(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch);
+        eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    void process_dispose_writer(
+        eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    void process_dispose_reader(
+        eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     void create_participant_from_change(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch);
+        eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     void create_writers_from_change(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch,
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
         const eprosima::fastrtps::string_255& topic_name);
 
     void create_readers_from_change(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch,
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
         const eprosima::fastrtps::string_255& topic_name);
 
     ////////////
