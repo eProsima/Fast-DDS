@@ -325,10 +325,10 @@ bool PDPServer2::process_data_queue()
 
 bool PDPServer2::server_update_routine()
 {
-    bool result = process_writers_acknowledgements();       // server + ddb(functor_with_ddb)
-    process_data_queue();  // all ddb
-    result |= process_disposals();                       // server + ddb(get_disposals, clear_changes_to_disposes)
-    result |= discovery_db_.process_dirty_topics();    // all ddb
+    bool result = process_writers_acknowledgements();  // server + ddb(functor_with_ddb)
+    process_data_queue();                              // all ddb
+    result |= process_disposals();                     // server + ddb(get_disposals, clear_changes_to_disposes)
+    result |= process_dirty_topics();                  // all ddb
     // result |= process_to_send_lists();                 // server + ddb(get_to_send, remove_to_send_this)
 
     if (result)
@@ -513,6 +513,11 @@ bool PDPServer2::announcement_from_same_participant_in_disposals(
         }
     }
     return false;
+}
+
+bool PDPServer2::process_dirty_topics()
+{
+    return discovery_db_.process_dirty_topics();
 }
 
 fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()

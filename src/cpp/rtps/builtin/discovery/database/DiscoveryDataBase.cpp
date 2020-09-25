@@ -562,9 +562,6 @@ void DiscoveryDataBase::process_dispose_reader(
 
 bool DiscoveryDataBase::process_dirty_topics()
 {
-    // Return value. True if after processing there still are dirty topics.
-    bool are_dirty_topics = false;
-
     // Get shared lock
     std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
 
@@ -635,7 +632,6 @@ bool DiscoveryDataBase::process_dirty_topics()
                 if (parts_writer_it != participants_.end() && parts_writer_it->second.is_matched(reader.guidPrefix))
                 {
                     // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
-                    auto writers_it = writers_.find(writer);
                     if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
                     {
                         // If the status is 0, add DATA(r) to a `edp_subscriptions_to_send_` (if it's not there).
@@ -672,13 +668,13 @@ bool DiscoveryDataBase::process_dirty_topics()
         }
         else
         {
-            // Mark are_dirty_topics as true since this topic is still dirty
-            are_dirty_topics = true;
             // Proceed with next topic
             ++topic_it;
         }
     }
-    return are_dirty_topics;
+
+    // Return whether there still are dirty topics
+    return dirty_topics_.empty();
 }
 
 bool DiscoveryDataBase::delete_entity_of_change(
