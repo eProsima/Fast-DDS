@@ -149,6 +149,22 @@ public:
     // Functions to process_data_queue()
     bool process_data_queue();
 
+    void mark_dispose_writer(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    void process_dispose_participant(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    void create_participant_from_change(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    void create_writers_from_change(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name);
+
+    void create_readers_from_change(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const eprosima::fastrtps::string_255& topic_name);
 
     ////////////
     // Functions to process_dirty_topics()
@@ -244,13 +260,6 @@ protected:
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send_;
 
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
-
-    bool is_builtin_participant_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    bool is_builtin_publications_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    bool is_builtin_subscriptions_publication(const eprosima::fastrtps::rtps::CacheChange_t* ch);
-
 
     // mutexes
 
