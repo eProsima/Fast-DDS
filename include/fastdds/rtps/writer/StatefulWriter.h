@@ -166,6 +166,11 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
+    template <class Function>
+    bool for_each_reader_proxy(
+            const CacheChange_t* a_change,
+            Function f);
+
     bool wait_for_all_acked(
             const Duration_t& max_wait) override;
 
