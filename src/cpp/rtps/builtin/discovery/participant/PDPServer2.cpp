@@ -423,13 +423,10 @@ bool PDPServer2::process_disposals()
     // Iterate over disposals
     for(auto change: disposals)
     {
-        // Check that the change is actually a disposal
-        if (change->kind != fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
-        {
-            logWarning(PDPServer2, "The change does not correspond with a disposal");
-            continue;
-        }
+        // No check is performed on whether the change is an actual disposal, leaving the responsability of correctly
+        // populating the disposals list to discovery_db_.process_data_queue().
 
+        // Get the identity of the participant from which the change came.
         fastrtps::rtps::GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change(change).guidPrefix;
 
         // DATA(Up) case
