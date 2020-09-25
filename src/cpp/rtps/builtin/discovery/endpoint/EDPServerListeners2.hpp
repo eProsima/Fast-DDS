@@ -41,6 +41,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class PDPServer2;
 class EDPServer2;
 
 /*!
@@ -62,6 +63,9 @@ public:
     {
     }
 
+    //! return the PDPServer2
+    PDPServer2* get_pdp();
+
     /**
      * Virtual method,
      * @param reader
@@ -70,17 +74,6 @@ public:
     void onNewCacheChangeAdded(
             aux::RTPSReader* reader,
             const aux::CacheChange_t* const change) override;
-
-
-    /*!
-     * This method is called when all the readers matched with this Writer acknowledge that a cache
-     * change has been received.
-     * @param writer Pointer to the RTPSWriter.
-     * @param change Pointer to the affected CacheChange_t.
-     */
-    void onWriterChangeReceivedByAll(
-            aux::RTPSWriter* writer,
-            aux::CacheChange_t* change) override;
 
 private:
 
@@ -104,23 +97,17 @@ public:
             EDPServer2* sedp);
 
     virtual ~EDPServerSUBListener2() = default;
-    /**
+
+    //! return the PDPServer2
+    PDPServer2* get_pdp();
+
+   /**
      * @param reader
      * @param change
      */
     void onNewCacheChangeAdded(
             aux::RTPSReader* reader,
             const aux::CacheChange_t* const change) override;
-
-    /*!
-     * This method is called when all the readers matched with this Writer acknowledge that a cache
-     * change has been received.
-     * @param writer Pointer to the RTPSWriter.
-     * @param change Pointer to the affected CacheChange_t.
-     */
-    void onWriterChangeReceivedByAll(
-            aux::RTPSWriter* writer,
-            aux::CacheChange_t* change) override;
 
 private:
 

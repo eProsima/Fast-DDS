@@ -62,7 +62,8 @@ bool EDPServer2::createSEDPEndpoints()
     subscriptions_listener_ = new EDPServerSUBListener2(this);
 
     /* Manage publications */
-    if (m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    assert(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader);
+
     {
         /* If the participant declares that it will have publications, then it needs a writer to announce them, and a
          * reader to receive information about subscriptions that might match the participant's publications.
@@ -121,7 +122,8 @@ bool EDPServer2::createSEDPEndpoints()
     }
 
     /* Manage subscriptions */
-    if (m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    assert(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter);
+
     {
         /* If the participant declares that it will have subscriptions, then it needs a writer to announce them, and a
          * reader to receive information about publications that might match the participant's subscriptions.
@@ -179,6 +181,7 @@ bool EDPServer2::createSEDPEndpoints()
             return false;
         }
     }
+
     logInfo(RTPS_EDP, "Creation finished");
     return created;
 }
@@ -186,37 +189,202 @@ bool EDPServer2::createSEDPEndpoints()
 bool EDPServer2::removeLocalReader(
         RTPSReader* R)
 {
-    (void)R;
-    // TODO DISCOVERY SERVER VERSION 2
-    return true;
+    logInfo(RTPS_EDP, R->getGuid().entityId);
+
+    auto* writer = &subscriptions_writer_;
+    GUID_t guid = R->getGuid();
+
+    // Recover endpoint info
+    std::string topic_name;
+    {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        mp_PDP->lookupReaderProxyData(guid, temp_reader_proxy_data_);
+        topic_name = temp_reader_proxy_data_.topicName().to_string();
+    }
+
+    if (mp_PDP->removeReaderProxyData(guid)
+            && writer->first != nullptr)
+    {
+        CacheChange_t* change = writer->first->new_change(
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().readerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
+
+        if (change != nullptr)
+        {
+            WriteParams& wp = change->write_params;
+            SampleIdentity local;
+            local.writer_guid(writer->first->getGuid());
+            local.sequence_number(writer->second->next_sequence_number());
+            wp.sample_identity(local);
+            wp.related_sample_identity(local);
+
+            // notify the DiscoveryDataBase
+            if (get_pdp()->discovery_db.update(change, topic_name))
+            {
+                // assure processing time for the cache
+                get_pdp()->awakeServerThread();
+
+                // the discovery database takes ownership of the CacheChange_t
+                // henceforth there are no references to the CacheChange_t
+            }
+            else
+            {
+                // if the database doesn't take the ownership remove
+                get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+            }
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool EDPServer2::removeLocalWriter(
         RTPSWriter* W)
 {
-    (void)W;
-    // TODO DISCOVERY SERVER VERSION 2
-    return true;
+    logInfo(RTPS_EDP, W->getGuid().entityId);
+
+    auto* writer = &publications_writer_;
+    GUID_t guid = W->getGuid();
+
+    // Recover endpoint info
+    std::string topic_name;
+    {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        mp_PDP->lookupWriterProxyData(guid, temp_writer_proxy_data_);
+        topic_name = temp_writer_proxy_data_.topicName().to_string();
+    }
+
+    if (mp_PDP->removeWriterProxyData(guid)
+            && writer->first != nullptr)
+    {
+        CacheChange_t* change = writer->first->new_change(
+        [this]() -> uint32_t
+        {
+            return mp_PDP->builtin_attributes().writerPayloadSize;
+        },
+        NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
+
+        if (change != nullptr)
+        {
+            WriteParams& wp = change->write_params;
+            SampleIdentity local;
+            local.writer_guid(writer->first->getGuid());
+            local.sequence_number(writer->second->next_sequence_number());
+            wp.sample_identity(local);
+            wp.related_sample_identity(local);
+
+            // notify the DiscoveryDataBase
+            if (get_pdp()->discovery_db.update(change, topic_name))
+            {
+                // assure processing time for the cache
+                get_pdp()->awakeServerThread();
+
+                // the discovery database takes ownership of the CacheChange_t
+                // henceforth there are no references to the CacheChange_t
+            }
+            else
+            {
+                // if the database doesn't take the ownership remove
+                get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+            }
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool EDPServer2::processLocalWriterProxyData(
         RTPSWriter* local_writer,
         WriterProxyData* wdata)
 {
+    logInfo(RTPS_EDP, wdata->guid().entityId);
     (void)local_writer;
-    (void)wdata;
-    // TODO DISCOVERY SERVER VERSION 2
-    return true;
+
+    auto* writer = &publications_writer_;
+    CacheChange_t* change = nullptr;
+
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
+
+    if (change != nullptr)
+    {
+        // We must key-signed the CacheChange_t to avoid duplications:
+        WriteParams& wp = change->write_params;
+        SampleIdentity local;
+        local.writer_guid(writer->first->getGuid());
+        local.sequence_number(writer->second->next_sequence_number());
+        wp.sample_identity(local);
+        wp.related_sample_identity(local);
+
+        // notify the DiscoveryDataBase
+        if (get_pdp()->discovery_db.update(change, wdata->topicName().to_string()))
+        {
+            // assure processing time for the cache
+            get_pdp()->awakeServerThread();
+
+            // the discovery database takes ownership of the CacheChange_t
+            // henceforth there are no references to the CacheChange_t
+        }
+        else
+        {
+            // if the database doesn't take the ownership remove
+            get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+        }
+
+        return ret_val;
+    }
+
+    return false;
 }
 
 bool EDPServer2::processLocalReaderProxyData(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {
+    logInfo(RTPS_EDP, rdata->guid().entityId);
     (void)local_reader;
-    (void)rdata;
-    // TODO DISCOVERY SERVER VERSION 2
-    return true;
+
+    auto* writer = &subscriptions_writer_;
+
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
+
+    if (change != nullptr )
+    {
+        // We must key-signed the CacheChange_t to avoid duplications:
+        WriteParams& wp = change->write_params;
+        SampleIdentity local;
+        local.writer_guid(writer->first->getGuid());
+        local.sequence_number(writer->second->next_sequence_number());
+        wp.sample_identity(local);
+        wp.related_sample_identity(local);
+
+        // notify the DiscoveryDataBase
+        if (get_pdp()->discovery_db.update(change, rdata->topicName().to_string()))
+        {
+            // assure processing time for the cache
+            get_pdp()->awakeServerThread();
+
+            // the discovery database takes ownership of the CacheChange_t
+            // henceforth there are no references to the CacheChange_t
+        }
+        else
+        {
+            // if the database doesn't take the ownership remove
+            get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+
+        }
+
+        return ret_val;
+    }
+
+    return false;
 }
 
 } /* namespace rtps */

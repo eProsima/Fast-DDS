@@ -384,7 +384,7 @@ bool PDPServer2::remove_remote_participant(
                     {
                         return mp_builtin->m_att.writerPayloadSize;
                     },
-                    NOT_ALIVE_DISPOSED_UNREGISTERED, InstanceHandle_t(partGUID))))
+                    NOT_ALIVE_DISPOSED_UNREGISTERED, partGUID)))
         {
             // Use this server identity in order to hint clients it's a lease duration demise
             WriteParams& wp = pC->write_params;

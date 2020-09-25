@@ -84,7 +84,8 @@ protected:
             RTPSReader* reader,
             ReaderHistory* reader_history,
             CacheChange_t* change,
-            EDP* edp);
+            EDP* edp,
+            bool release_change = true);
 
     //!Temporary structure to avoid allocations
     WriterProxyData temp_writer_data_;
@@ -116,7 +117,8 @@ protected:
         RTPSReader* reader,
         ReaderHistory* reader_history,
         CacheChange_t* change,
-        EDP* edp);
+        EDP* edp,
+        bool release_change = true);
 
     //!Temporary structure to avoid allocations
     ReaderProxyData temp_reader_data_;
