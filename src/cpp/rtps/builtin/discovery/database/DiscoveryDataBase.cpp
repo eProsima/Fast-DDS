@@ -605,9 +605,9 @@ bool DiscoveryDataBase::process_dirty_topics()
                     {
                         // If the status is 0, add DATA(w) to a `edp_publications_to_send_` (if it's not there).
                         if (std::find(
-                            edp_publications_to_send_.begin(),
-                            edp_publications_to_send_.end(),
-                            writers_it->second.change()) == edp_publications_to_send_.end())
+                                    edp_publications_to_send_.begin(),
+                                    edp_publications_to_send_.end(),
+                                    writers_it->second.change()) == edp_publications_to_send_.end())
                         {
                             edp_publications_to_send_.push_back(writers_it->second.change());
                         }
@@ -617,9 +617,9 @@ bool DiscoveryDataBase::process_dirty_topics()
                 {
                     // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
                     if (std::find(
-                        pdp_to_send_.begin(),
-                        pdp_to_send_.end(),
-                        parts_writer_it->second.change()) == pdp_to_send_.end())
+                                pdp_to_send_.begin(),
+                                pdp_to_send_.end(),
+                                parts_writer_it->second.change()) == pdp_to_send_.end())
                     {
                         pdp_to_send_.push_back(parts_writer_it->second.change());
                     }
@@ -636,9 +636,9 @@ bool DiscoveryDataBase::process_dirty_topics()
                     {
                         // If the status is 0, add DATA(r) to a `edp_subscriptions_to_send_` (if it's not there).
                         if (std::find(
-                            edp_subscriptions_to_send_.begin(),
-                            edp_subscriptions_to_send_.end(),
-                            readers_it->second.change()) == edp_subscriptions_to_send_.end())
+                                    edp_subscriptions_to_send_.begin(),
+                                    edp_subscriptions_to_send_.end(),
+                                    readers_it->second.change()) == edp_subscriptions_to_send_.end())
                         {
                             edp_subscriptions_to_send_.push_back(readers_it->second.change());
                         }
@@ -648,9 +648,9 @@ bool DiscoveryDataBase::process_dirty_topics()
                 {
                     // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
                     if (std::find(
-                        pdp_to_send_.begin(),
-                        pdp_to_send_.end(),
-                        parts_reader_it->second.change()) == pdp_to_send_.end())
+                                pdp_to_send_.begin(),
+                                pdp_to_send_.end(),
+                                parts_reader_it->second.change()) == pdp_to_send_.end())
                     {
                         pdp_to_send_.push_back(parts_reader_it->second.change());
                     }
