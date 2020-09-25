@@ -33,27 +33,36 @@ bool DiscoveryDataBase::pdp_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    (void)change;
-    (void)reader_guid;
-    return true;
+    auto it = participants_.find(guid_from_change(&change).guidPrefix);
+    if (it != participants_.end())
+    {
+        return it->second.is_matched(reader_guid.guidPrefix);
+    }
+    return false; // error, should not arrive here
 }
 
 bool DiscoveryDataBase::edp_publications_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    (void)change;
-    (void)reader_guid;
-    return true;
+    auto it = writers_.find(guid_from_change(&change));
+    if (it != writers_.end())
+    {
+        return it->second.is_matched(reader_guid.guidPrefix);
+    }
+    return false; // error, should not arrive here
 }
 
 bool DiscoveryDataBase::edp_subscriptions_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    (void)change;
-    (void)reader_guid;
-    return true;
+    auto it = writers_.find(guid_from_change(&change));
+    if (it != writers_.end())
+    {
+        return it->second.is_matched(reader_guid.guidPrefix);
+    }
+    return false; // error, should not arrive here
 }
 
 void DiscoveryDataBase::add_ack_(
@@ -69,10 +78,12 @@ void DiscoveryDataBase::add_ack_(
 
 bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
-        std::string topic_name)
+        eprosima::fastrtps::string_255 topic_name)
 {
-    (void)change;
-    (void)topic_name;
+    //  add the data to the queue to process
+    data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo(change, topic_name));
+
+    // not way to check if is an error
     return true;
 }
 
@@ -680,29 +691,27 @@ bool DiscoveryDataBase::process_dirty_topics()
 bool DiscoveryDataBase::delete_entity_of_change(
         fastrtps::rtps::CacheChange_t* change)
 {
-    (void)change;
-    return true;
-    /*
-       if (change->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
-       {
-        logWarning(DISCOVERY_DATABASE, "Attempting to delete information of an ALIVE entity: " << guid_from_change_(change));
-        return false;
-       }
 
-       if (DiscoveryDataBase::is_participant_(change))
-       {
-        return DiscoveryDataBase::remove_participant_(change);
-       }
-       else if (is_reader_(change))
-       {
-        return remove_reader_(change);
-       }
-       else if (is_writer_(change))
-       {
-        return remove_writer_(change);
-       }
-       return false;
-     */
+    if (change->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
+    {
+        logWarning(DISCOVERY_DATABASE,
+                "Attempting to delete information of an ALIVE entity: " << guid_from_change(change));
+        return false;
+    }
+
+    if (is_participant(change))
+    {
+        return participants_.erase(guid_from_change(change).guidPrefix);
+    }
+    else if (is_reader(change))
+    {
+        return readers_.erase(guid_from_change(change));
+    }
+    else if (is_writer(change))
+    {
+        return writers_.erase(guid_from_change(change));
+    }
+    return false;
 }
 
 bool DiscoveryDataBase::is_participant(

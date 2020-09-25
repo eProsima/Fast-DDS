@@ -31,7 +31,11 @@ class DiscoveryDataQueueInfo
 {
 public:
 
-    DiscoveryDataQueueInfo()
+    DiscoveryDataQueueInfo(
+            eprosima::fastrtps::rtps::CacheChange_t* cache_change,
+            eprosima::fastrtps::string_255 topic_name)
+        : cache_change_(cache_change)
+        , topic_name_(topic_name)
     {
     }
 
@@ -39,19 +43,21 @@ public:
     {
     }
 
-    eprosima::fastrtps::rtps::CacheChange_t* change();
+    eprosima::fastrtps::rtps::CacheChange_t* cache_change()
+    {
+        return cache_change_;
+    }
 
-    eprosima::fastrtps::string_255 topic();
-
-    eprosima::fastrtps::rtps::GUID_t associated_entity();
+    eprosima::fastrtps::string_255 topic_name()
+    {
+        return topic_name_;
+    }
 
 private:
 
-    eprosima::fastrtps::rtps::CacheChange_t* change_;
+    eprosima::fastrtps::rtps::CacheChange_t* cache_change_;
 
-    eprosima::fastrtps::string_255 topic_;
-
-    eprosima::fastrtps::rtps::GUID_t associated_entity_;
+    eprosima::fastrtps::string_255 topic_name_;
 };
 
 
