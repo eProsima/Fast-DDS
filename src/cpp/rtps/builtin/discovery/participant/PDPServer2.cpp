@@ -17,6 +17,8 @@
  *
  */
 
+#include <fastrtps/utils/TimedMutex.hpp>
+
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
@@ -199,7 +201,7 @@ bool PDPServer2::createPDPEndpoints()
             nullptr, c_EntityId_SPDPWriter, true))
     {
         // Set pdp filter to writer
-        IReaderDataFilter* pdp_filter = static_cast<ddb::PDPDataFilter<ddb::DiscoveryDataBase>*>(&discovery_db);
+        IReaderDataFilter* pdp_filter = static_cast<ddb::PDPDataFilter<ddb::DiscoveryDataBase>*>(&discovery_db_);
         static_cast<StatefulWriter*>(mp_PDPWriter)->reader_data_filter(pdp_filter);
         // Enable separate sending so the filter can be called for each change and reader proxy
         mp_PDPWriter->set_separate_sending(true);
@@ -318,7 +320,101 @@ bool PDPServer2::remove_remote_participant(
 
 bool PDPServer2::process_data_queue()
 {
-    return discovery_db.process_data_queue();
+    return discovery_db_.process_data_queue();
+}
+
+bool PDPServer2::server_update_routine()
+{
+    bool result = process_writers_acknowledgements();  // server + ddb(functor_with_ddb)
+    // result |= process_data_queue();                    // all ddb
+    // result |= process_disposals();                     // server + ddb(get_disposals, clear_changes_to_disposes)
+    // result |= process_dirty_topics();                  // all ddb
+    // result |= process_to_send_lists();                 // server + ddb(get_to_send, remove_to_send_this)
+
+    if (result)
+    {
+        awakeServerThread();
+    }
+    return result;
+}
+
+bool PDPServer2::process_writers_acknowledgements()
+{
+    /* PDP Writer's History */
+    bool pending = process_history_acknowledgement(
+        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
+
+    /* EDP Publications Writer's History */
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    pending |= process_history_acknowledgement(edp->publications_writer_.first, edp->publications_writer_.second);
+
+    /* EDP Subscriptions Writer's History */
+    pending |= process_history_acknowledgement(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second);
+
+    return pending;
+}
+
+bool PDPServer2::process_history_acknowledgement(
+        fastrtps::rtps::StatefulWriter* writer,
+        fastrtps::rtps::WriterHistory* writer_history)
+{
+    bool pending = false;
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
+    // Iterate over changes in writer's history
+    for (auto chit = writer_history->changesRbegin(); chit != writer_history->changesRend(); chit++)
+    {
+        pending |= process_change_acknowledgement(
+            *chit,
+            writer,
+            writer_history);
+    }
+    return pending;
+}
+
+bool PDPServer2::process_change_acknowledgement(
+        fastrtps::rtps::CacheChange_t* c,
+        fastrtps::rtps::StatefulWriter* writer,
+        fastrtps::rtps::WriterHistory* writer_history)
+{
+    // DATA(p|w|r) case
+    if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+    {
+        // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
+        // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
+        // `pending` to whether the change is has been acknowledged by all readers.
+        fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor func = discovery_db_.functor(c);
+        writer->for_each_reader_proxy(c, func);
+
+        // If the change has been acknowledge by everyone
+        if (!func.pending())
+        {
+            // Remove the entry from writer history, but do not release the cache.
+            // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
+            writer_history->remove_change_and_reuse(c->sequenceNumber);
+            return false;
+        }
+    }
+    // DATA(Up|Uw|Ur) case. Currently, Fast DDS only considers CacheChange kinds ALIVE and NOT_ALIVE_DISPOSED, so if the
+    // kind is not ALIVE, then we know is NOT_ALIVE_DISPOSED and so a DATA(Up|Uw|Ur). In the future we should handle the
+    // cases where kind is NOT_ALIVE_UNREGISTERED or NOT_ALIVE_DISPOSED_UNREGISTERED.
+    else
+    {
+        // If `StatefulWriter::is_acked_by_all()`:
+        if (writer->is_acked_by_all(c))
+        {
+            // Remove entry from `participants_|writers_|readers_`
+            discovery_db_.delete_entity_of_change(c);
+            // Remove from writer's history
+            writer_history->remove_change(c->sequenceNumber);
+            return false;
+        }
+    }
+    return true;
+}
+
+fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2:: discovery_db()
+{
+    return discovery_db_;
 }
 
 } // namespace rtps

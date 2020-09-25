@@ -98,7 +98,6 @@ public:
     };
     friend class AckedFunctor;
 
-
     ////////////
     // Functions to update queue from listener
     /* Add a new CacheChange_t to database queue
@@ -154,7 +153,6 @@ public:
     ////////////
     // Functions to process_dirty_topics()
     bool process_dirty_topics();
-
 
     ////////////
     // Functions to process_disposals()
