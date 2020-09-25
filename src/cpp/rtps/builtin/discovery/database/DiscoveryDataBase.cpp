@@ -134,27 +134,6 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
     edp_subscriptions_to_send_.clear();
 }
 
-bool DiscoveryDataBase::is_participant(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
-{
-    (void)ch;
-    return true;
-}
-
-bool DiscoveryDataBase::is_writer(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
-{
-    (void)ch;
-    return true;
-}
-
-bool DiscoveryDataBase::is_reader(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
-{
-    (void)ch;
-    return true;
-}
-
 bool DiscoveryDataBase::process_data_queue()
 {
     // std::unique_lock<std::mutex> guard(sh_mutex);

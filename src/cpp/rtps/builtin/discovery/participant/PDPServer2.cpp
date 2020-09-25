@@ -430,7 +430,7 @@ bool PDPServer2::process_disposals()
             continue;
         }
 
-        fastrtps::rtps::GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change_(change).guidPrefix;
+        fastrtps::rtps::GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change(change).guidPrefix;
 
         // DATA(Up) case
         if (discovery_db_.is_participant(change))
@@ -496,7 +496,7 @@ void PDPServer2::remove_related_alive_from_history_nts(
     for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd(); chit++)
     {
         // Remove all DATA whose original sender was entity_guid_prefix from writer_history
-        if (entity_guid_prefix == discovery_db_.guid_from_change_(*chit).guidPrefix)
+        if (entity_guid_prefix == discovery_db_.guid_from_change(*chit).guidPrefix)
         {
             writer_history->remove_change(*chit);
         }
@@ -510,7 +510,7 @@ bool PDPServer2::announcement_from_same_participant_in_disposals(
     for (auto change_: disposals)
     {
         if (discovery_db_.is_participant(change_) &&
-            (discovery_db_.guid_from_change_(change_).guidPrefix == participant))
+            (discovery_db_.guid_from_change(change_).guidPrefix == participant))
         {
             return true;
         }
