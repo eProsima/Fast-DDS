@@ -51,9 +51,19 @@ DServerEvent2::~DServerEvent2()
 
 bool DServerEvent2::event()
 {
-    // TODO DISCOVERY SERVER VERSION 2
+    logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
-    return false;
+    /*
+     * TODO: Management of other server should be done here
+     */
+
+    bool pending_work = mp_PDP->server_update_routine();
+    if (pending_work)
+    {
+        mp_PDP->awakeServerThread();
+    }
+
+    return pending_work;
 }
 
 } // namespace rtps
