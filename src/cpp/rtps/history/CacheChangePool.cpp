@@ -178,6 +178,10 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
+    if (ch == nullptr){
+        return;
+    }
+    
     switch(memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:
