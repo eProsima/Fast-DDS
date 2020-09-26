@@ -197,7 +197,6 @@ bool DiscoveryDataBase::process_data_queue()
     // Swap DATA queues
     data_queue_.Swap();
 
-    DiscoveryDataQueueInfo data_queue_info;
     eprosima::fastrtps::rtps::CacheChange_t* change;
     eprosima::fastrtps::string_255 topic_name;
 
@@ -205,7 +204,7 @@ bool DiscoveryDataBase::process_data_queue()
     while (!data_queue_.Empty())
     {
         // Process each message with Front()
-        data_queue_info = data_queue_.Front();
+        DiscoveryDataQueueInfo data_queue_info = data_queue_.Front();
         change = data_queue_info.change();
         topic_name = data_queue_info.topic();
 

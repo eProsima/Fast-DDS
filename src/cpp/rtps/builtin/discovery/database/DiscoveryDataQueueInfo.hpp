@@ -39,12 +39,6 @@ public:
     {
     }
 
-    DiscoveryDataQueueInfo()
-        : change_(nullptr)
-        , topic_("")
-    {
-    }
-
     ~DiscoveryDataQueueInfo()
     {
     }

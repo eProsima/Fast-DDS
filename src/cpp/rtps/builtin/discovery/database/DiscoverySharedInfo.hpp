@@ -67,7 +67,7 @@ public:
             eprosima::fastrtps::rtps::CacheChange_t* change);
 
     void set_change_and_unmatch(
-        eprosima::fastrtps::rtps::CacheChange_t* change);
+            eprosima::fastrtps::rtps::CacheChange_t* change);
 
     void change_info(
             eprosima::fastrtps::rtps::CacheChange_t* change)
