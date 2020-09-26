@@ -222,7 +222,7 @@ bool EDPServer2::removeLocalReader(
             wp.related_sample_identity(local);
 
             // notify the DiscoveryDataBase
-            if (get_pdp()->discovery_db.update(change, topic_name))
+            if (get_pdp()->discovery_db().update(change, topic_name))
             {
                 // assure processing time for the cache
                 get_pdp()->awakeServerThread();
@@ -279,7 +279,7 @@ bool EDPServer2::removeLocalWriter(
             wp.related_sample_identity(local);
 
             // notify the DiscoveryDataBase
-            if (get_pdp()->discovery_db.update(change, topic_name))
+            if (get_pdp()->discovery_db().update(change, topic_name))
             {
                 // assure processing time for the cache
                 get_pdp()->awakeServerThread();
@@ -323,7 +323,7 @@ bool EDPServer2::processLocalWriterProxyData(
         wp.related_sample_identity(local);
 
         // notify the DiscoveryDataBase
-        if (get_pdp()->discovery_db.update(change, wdata->topicName().to_string()))
+        if (get_pdp()->discovery_db().update(change, wdata->topicName().to_string()))
         {
             // assure processing time for the cache
             get_pdp()->awakeServerThread();
@@ -366,7 +366,7 @@ bool EDPServer2::processLocalReaderProxyData(
         wp.related_sample_identity(local);
 
         // notify the DiscoveryDataBase
-        if (get_pdp()->discovery_db.update(change, rdata->topicName().to_string()))
+        if (get_pdp()->discovery_db().update(change, rdata->topicName().to_string()))
         {
             // assure processing time for the cache
             get_pdp()->awakeServerThread();

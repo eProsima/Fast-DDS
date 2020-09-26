@@ -88,7 +88,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
 
     // notify the DiscoveryDataBase
     if (!topic_name.empty() &&
-            get_pdp()->discovery_db.update(change, topic_name))
+            get_pdp()->discovery_db().update(change, topic_name))
     {
         // assure processing time for the cache
         get_pdp()->awakeServerThread();
@@ -158,7 +158,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
 
     // notify the DiscoveryDataBase
     if (!topic_name.empty() &&
-            get_pdp()->discovery_db.update(change, topic_name))
+            get_pdp()->discovery_db().update(change, topic_name))
     {
         // assure processing time for the cache
         get_pdp()->awakeServerThread();
