@@ -21,6 +21,8 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 
+#include <fastrtps/utils/fixed_size_string.hpp>
+
 #include <fastdds/dds/log/Log.hpp>
 
 #include "./EDPServerListeners2.hpp"
@@ -65,7 +67,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     ReaderHistory* reader_history = sedp_->publications_reader_.second;
 
     // String to store the topic of the writer
-    std::string topic_name;
+    fastrtps::string_255 topic_name;
 
     // DATA(w) case: new writer or updated information about an existing writer
     if (change->kind == ALIVE)
@@ -78,7 +80,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
         if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
         {
-            topic_name = temp_writer_data_.topicName().to_string();
+            topic_name = temp_writer_data_.topicName();
         }
     }
     // DATA(Uw) case
@@ -89,7 +91,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         // Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
         if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
         {
-            topic_name = temp_writer_data_.topicName().to_string();
+            topic_name = temp_writer_data_.topicName();
         }
 
         // Remove WriterProxy data information
@@ -101,7 +103,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     }
 
     // Notify the DiscoveryDataBase
-    if (!topic_name.empty() &&
+    if (topic_name.size() > 0 &&
             get_pdp()->discovery_db().update(change, topic_name))
     {
         // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
@@ -148,7 +150,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
     ReaderHistory* reader_history = sedp_->subscriptions_reader_.second;
 
     // String to store the topic of the reader
-    std::string topic_name;
+    fastrtps::string_255 topic_name;
 
     // DATA(r) case: new reader or updated information about an existing reader
     if (change->kind == ALIVE)
@@ -161,7 +163,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
         if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
         {
-            topic_name = temp_reader_data_.topicName().to_string();
+            topic_name = temp_reader_data_.topicName();
         }
     }
     // DATA(Ur) case
@@ -173,7 +175,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         // Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
         if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
         {
-            topic_name = temp_reader_data_.topicName().to_string();
+            topic_name = temp_reader_data_.topicName();
         }
 
         // Remove ReaderProxy data information
@@ -185,7 +187,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
     }
 
     // Notify the DiscoveryDataBase
-    if (!topic_name.empty() &&
+    if (topic_name.size() > 0 &&
             get_pdp()->discovery_db().update(change, topic_name))
     {
         // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
