@@ -33,27 +33,76 @@ bool DiscoveryDataBase::pdp_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    (void)change;
-    (void)reader_guid;
-    return true;
+    // Lock(shared mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+
+    auto it = participants_.find(guid_from_change(&change).guidPrefix);
+    if (it != participants_.end())
+    {
+        // it is relevant if the ack has not been received yet
+        // in NOT_ALIVE case the set_disposal unmatches every participant
+        return !it->second.is_matched(reader_guid.guidPrefix);
+    }
+    // not relevant
+    return false;
 }
 
 bool DiscoveryDataBase::edp_publications_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    (void)change;
-    (void)reader_guid;
-    return true;
+    // Lock(shared mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+
+    auto itp = participants_.find(guid_from_change(&change).guidPrefix);
+    if (itp == participants_.end())
+    {
+        // not relevant
+        return false;
+    }
+    else if (!itp->second.is_matched(reader_guid.guidPrefix))
+    {
+        // Reader client hasn't matched with the writer client
+        return false;
+    }
+
+    auto itw = writers_.find(guid_from_change(&change));
+    if (itw != writers_.end())
+    {
+        // it is relevant if the ack has not been received yet
+        return !itw->second.is_matched(reader_guid.guidPrefix);
+    }
+    // not relevant
+    return false;
 }
 
 bool DiscoveryDataBase::edp_subscriptions_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    (void)change;
-    (void)reader_guid;
-    return true;
+    // Lock(shared mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+
+    auto itp = participants_.find(guid_from_change(&change).guidPrefix);
+    if (itp == participants_.end())
+    {
+        // not relevant
+        return false;
+    }
+    else if (!itp->second.is_matched(reader_guid.guidPrefix))
+    {
+        // participant still not matched
+        return false;
+    }
+
+    auto itr = readers_.find(guid_from_change(&change));
+    if (itr != readers_.end())
+    {
+        // it is relevant if the ack has not been received yet
+        return !itr->second.is_matched(reader_guid.guidPrefix);
+    }
+    // not relevant
+    return false;
 }
 
 void DiscoveryDataBase::add_ack_(
@@ -69,10 +118,12 @@ void DiscoveryDataBase::add_ack_(
 
 bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
-        std::string topic_name)
+        eprosima::fastrtps::string_255 topic_name)
 {
-    (void)change;
-    (void)topic_name;
+    //  add the data to the queue to process
+    data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo(change, topic_name));
+
+    // not way to check if is an error
     return true;
 }
 
@@ -146,7 +197,6 @@ bool DiscoveryDataBase::process_data_queue()
     // Swap DATA queues
     data_queue_.Swap();
 
-    DiscoveryDataQueueInfo data_queue_info;
     eprosima::fastrtps::rtps::CacheChange_t* change;
     eprosima::fastrtps::string_255 topic_name;
 
@@ -154,7 +204,7 @@ bool DiscoveryDataBase::process_data_queue()
     while (!data_queue_.Empty())
     {
         // Process each message with Front()
-        data_queue_info = data_queue_.Front();
+        DiscoveryDataQueueInfo data_queue_info = data_queue_.Front();
         change = data_queue_info.change();
         topic_name = data_queue_info.topic();
 
@@ -228,6 +278,7 @@ void DiscoveryDataBase::create_writers_from_change(
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             writers_.insert(std::make_pair(writer_guid, tmp_writer));
 
+    // If writer does not exists, create the change
     if (ret.second)
     {
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator writer_it =
@@ -288,6 +339,12 @@ void DiscoveryDataBase::create_writers_from_change(
             }
         }
     }
+    // If writer exists, update the change and set all participant ack status to false
+    else
+    {
+        ret.first->second.set_change_and_unmatch(ch);
+    }
+
 }
 
 void DiscoveryDataBase::create_readers_from_change(
@@ -300,6 +357,7 @@ void DiscoveryDataBase::create_readers_from_change(
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             readers_.insert(std::make_pair(reader_guid, tmp_reader));
 
+    // If reader does not exists, create the change
     if (ret.second)
     {
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator reader_it =
@@ -358,6 +416,11 @@ void DiscoveryDataBase::create_readers_from_change(
                 *reader_by_topic_it = reader_guid;
             }
         }
+    }
+    // If reader exists, update the change and set all participant ack status to false
+    else
+    {
+        ret.first->second.set_change_and_unmatch(ch);
     }
 }
 
@@ -680,29 +743,32 @@ bool DiscoveryDataBase::process_dirty_topics()
 bool DiscoveryDataBase::delete_entity_of_change(
         fastrtps::rtps::CacheChange_t* change)
 {
-    (void)change;
-    return true;
-    /*
-       if (change->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
-       {
-        logWarning(DISCOVERY_DATABASE, "Attempting to delete information of an ALIVE entity: " << guid_from_change_(change));
-        return false;
-       }
+    // Lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
 
-       if (DiscoveryDataBase::is_participant_(change))
-       {
-        return DiscoveryDataBase::remove_participant_(change);
-       }
-       else if (is_reader_(change))
-       {
-        return remove_reader_(change);
-       }
-       else if (is_writer_(change))
-       {
-        return remove_writer_(change);
-       }
-       return false;
-     */
+    if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+    {
+        logWarning(DISCOVERY_DATABASE,
+                "Attempting to delete information of an ALIVE entity: " << guid_from_change(change));
+        return false;
+    }
+
+    if (is_participant(change))
+    {
+        // The information related to this participant is cleaned up in process_data_queue
+        return participants_.erase(guid_from_change(change).guidPrefix);
+    }
+    else if (is_reader(change))
+    {
+        // The information related to this reader is cleaned up in process_data_queue
+        return readers_.erase(guid_from_change(change));
+    }
+    else if (is_writer(change))
+    {
+        // The information related to this writer is cleaned up in process_data_queue
+        return writers_.erase(guid_from_change(change));
+    }
+    return false;
 }
 
 bool DiscoveryDataBase::is_participant(
