@@ -771,6 +771,12 @@ bool PDPServer2::process_disposals()
     return false;
 }
 
+bool process_changes_release()
+{
+
+}
+
+
 void PDPServer2::remove_related_alive_from_history_nts(
         fastrtps::rtps::WriterHistory* writer_history,
         const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)

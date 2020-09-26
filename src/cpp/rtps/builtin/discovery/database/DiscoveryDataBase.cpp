@@ -200,6 +200,19 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
     edp_subscriptions_to_send_.clear();
 }
 
+
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> change_to_release_(){
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return change_to_release_;
+}
+
+void clear_change_to_release_(){
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    change_to_release_.clear();
+}
+
 ////////////
 // Functions to process_data_queue()
 bool DiscoveryDataBase::process_data_queue()
@@ -360,7 +373,8 @@ void DiscoveryDataBase::create_writers_from_change(
     // If writer exists, update the change and set all participant ack status to false
     else
     {
-        ret.first->second.set_change_and_unmatch(ch);
+        eprosima::fastrtps::rtps::CacheChange_t* old_change = ret.first->second.set_change_and_unmatch(ch);
+        changes_to_release_.push_back(old_change);
     }
 
 }
@@ -438,7 +452,8 @@ void DiscoveryDataBase::create_readers_from_change(
     // If reader exists, update the change and set all participant ack status to false
     else
     {
-        ret.first->second.set_change_and_unmatch(ch);
+        eprosima::fastrtps::rtps::CacheChange_t* old_change = ret.first->second.set_change_and_unmatch(ch);
+        changes_to_release_.push_back(old_change);
     }
 }
 
@@ -452,7 +467,8 @@ void DiscoveryDataBase::process_dispose_participant(
             participants_.find(participant_guid.guidPrefix);
     if (pit != participants_.end())
     {
-        pit->second.set_disposal(ch);
+        eprosima::fastrtps::rtps::CacheChange_t* old_change = pit->second.set_change_and_unmatch(ch);
+        changes_to_release_.push_back(old_change);
     }
 
     // Delete entries from writers_ belonging to the participant
@@ -526,9 +542,9 @@ void DiscoveryDataBase::process_dispose_participant(
     }
 
     // Remove participant from others readers_[]::relevant_participants_builtin_ack_status
-    for (auto pit = readers_.begin(); pit != readers_.end(); ++pit)
+    for (auto rit = readers_.begin(); rit != readers_.end(); ++rit)
     {
-        pit->second.remove_participant(participant_guid.guidPrefix);
+        rit->second.remove_participant(participant_guid.guidPrefix);
     }
 
     // Add entry to disposals_
@@ -548,7 +564,8 @@ void DiscoveryDataBase::process_dispose_writer(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
     if (wit != writers_.end())
     {
-        wit->second.set_disposal(ch);
+        eprosima::fastrtps::rtps::CacheChange_t* old_change = wit->second.set_change_and_unmatch(ch);
+        changes_to_release_.push_back(old_change);
     }
 
     // Update own entry participants_::writers
@@ -600,7 +617,8 @@ void DiscoveryDataBase::process_dispose_reader(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
     if (rit != readers_.end())
     {
-        rit->second.set_disposal(ch);
+        eprosima::fastrtps::rtps::CacheChange_t* old_change = rit->second.set_change_and_unmatch(ch);
+        changes_to_release_.push_back(old_change);
     }
 
     // Update own entry participants_::readers
@@ -774,17 +792,32 @@ bool DiscoveryDataBase::delete_entity_of_change(
     if (is_participant(change))
     {
         // The information related to this participant is cleaned up in process_data_queue
-        return participants_.erase(guid_from_change(change).guidPrefix);
+        auto it participants_.find(guid_from_change(change).guidPrefix);
+        if (it == participants_.end()){
+            return false;
+        }
+        changes_to_release_.push_back(it->second.change_)
+        return participants_.erase(it);
     }
     else if (is_reader(change))
     {
         // The information related to this reader is cleaned up in process_data_queue
-        return readers_.erase(guid_from_change(change));
+        auto it readers_.find(guid_from_change(change));
+        if (it == readers_.end()){
+            return false;
+        }
+        changes_to_release_.push_back(it->second.change_)
+        return readers_.erase(it);
     }
     else if (is_writer(change))
     {
         // The information related to this writer is cleaned up in process_data_queue
-        return writers_.erase(guid_from_change(change));
+        auto it writers_.find(guid_from_change(change));
+        if (it == writers_.end()){
+            return false;
+        }
+        changes_to_release_.push_back(it->second.change_)
+        return writers_.erase(it);
     }
     return false;
 }
@@ -853,6 +886,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     }
     pending_ |= !is_acked;
 }
+
 
 } // namespace ddb
 } // namespace rtps

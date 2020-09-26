@@ -154,6 +154,8 @@ protected:
 
     bool process_disposals();
 
+    bool process_changes_release();
+
     // Remove from writer_history all the changes whose original sender was entity_guid_prefix
     void remove_related_alive_from_history_nts(
             fastrtps::rtps::WriterHistory* writer_history,
