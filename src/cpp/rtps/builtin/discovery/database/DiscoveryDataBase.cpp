@@ -29,6 +29,12 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
+DiscoveryDataBase::DiscoveryDataBase(
+        fastrtps::rtps::GuidPrefix_t server_guid_prefix)
+    : server_guid_prefix_(server_guid_prefix)
+{
+}
+
 bool DiscoveryDataBase::pdp_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
@@ -36,7 +42,16 @@ bool DiscoveryDataBase::pdp_is_relevant(
     // Lock(shared mode) mutex locally
     std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
 
-    auto it = participants_.find(guid_from_change(&change).guidPrefix);
+    // Get identity of the participant that generated the DATA(p|Up)
+    fastrtps::rtps::GuidPrefix_t change_guid_prefix = guid_from_change(&change).guidPrefix;
+
+    // Own DATA(p|Up) is always relevant
+    if (server_guid_prefix_ == change_guid_prefix)
+    {
+        return true;
+    }
+
+    auto it = participants_.find(change_guid_prefix);
     if (it != participants_.end())
     {
         // it is relevant if the ack has not been received yet
@@ -797,6 +812,16 @@ eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     return fastrtps::rtps::iHandle2GUID(ch->instanceHandle);
+}
+
+fastrtps::rtps::CacheChange_t* DiscoveryDataBase::cache_change_own_participant()
+{
+    auto part_it = participants_.find(server_guid_prefix_);
+    if (part_it != participants_.end())
+    {
+        return part_it->second.change();
+    }
+    return nullptr;
 }
 
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
