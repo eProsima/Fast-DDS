@@ -394,7 +394,7 @@ void PDPServer2::announceParticipantState(
      */
     std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
 
-    if(!dispose)
+    if (!dispose)
     {
         // Create the CacheChange_t if necessary
         if (m_hasChangedLocalPDP.exchange(false) || new_change)
@@ -422,7 +422,7 @@ void PDPServer2::announceParticipantState(
             change = mp_PDPWriter->new_change(
                 [cdr_size]() -> uint32_t
                 {
-                return cdr_size;
+                    return cdr_size;
                 },
                 ALIVE, proxy_data_copy.m_key);
 
@@ -506,11 +506,11 @@ void PDPServer2::announceParticipantState(
         getMutex()->unlock();
 
         change = pW->new_change(
-                [cdr_size]() -> uint32_t
-                {
+            [cdr_size]() -> uint32_t
+            {
                 return cdr_size;
-                },
-                NOT_ALIVE_DISPOSED_UNREGISTERED, key);
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, key);
 
         // Generate the Data(Up)
         if (nullptr != change)
