@@ -86,6 +86,9 @@ public:
     };
     friend class AckedFunctor;
 
+    DiscoveryDataBase(
+            fastrtps::rtps::GuidPrefix_t server_guid_prefix);
+
     ////////////
     // Functions to update queue from listener
     /* Add a new CacheChange_t to database queue
@@ -198,6 +201,8 @@ public:
     static eprosima::fastrtps::rtps::GUID_t guid_from_change(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
+    fastrtps::rtps::CacheChange_t* cache_change_own_participant();
+
 protected:
 
     // update the acks
@@ -232,8 +237,6 @@ protected:
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
-    //std::map<eprosima::fastrtps::rtps::CacheChange_t*, eprosima::fastrtps::rtps::GUID_t, CacheChangeCmp> data_map_;
-
     std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > readers_by_topic_;
 
     std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > writers_by_topic_;
@@ -255,9 +258,9 @@ protected:
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
 
     // mutexes
-
     mutable share_mutex_t sh_mtx_;
 
+    fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
 };
 
 
