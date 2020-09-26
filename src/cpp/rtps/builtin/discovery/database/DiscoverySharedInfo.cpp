@@ -30,7 +30,13 @@ namespace ddb {
 void DiscoverySharedInfo::set_disposal(
         eprosima::fastrtps::rtps::CacheChange_t* change)
 {
-    relevant_participants_builtin_ack_status_.match_all();
+    set_change_and_unmatch(change);
+}
+
+void DiscoverySharedInfo::set_change_and_unmatch(
+        eprosima::fastrtps::rtps::CacheChange_t* change)
+{
+    relevant_participants_builtin_ack_status_.unmatch_all();
     change_info(change);
 }
 
