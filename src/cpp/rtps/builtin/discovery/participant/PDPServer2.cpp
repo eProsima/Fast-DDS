@@ -53,6 +53,7 @@ PDPServer2::PDPServer2(
         const RTPSParticipantAllocationAttributes& allocation)
     : PDP(builtin, allocation)
     , mp_sync(nullptr)
+    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix)
 {
 }
 
