@@ -378,9 +378,182 @@ void PDPServer2::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    (void)new_change;
-    (void)dispose;
-    // TODO DISCOVERY SERVER VERSION 2
+    logInfo(RTPS_PDP, "Announcing Server (new change: " << new_change << ")");
+    CacheChange_t* change = nullptr;
+
+    StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
+    assert(pW);
+
+    /*
+       Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
+       writer mutex is systematically lock before the PDP one (if needed):
+        - transport callbacks on PDPListener
+        - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
+        - DSClientEvent (own thread)
+        - ResendParticipantProxyDataPeriod (participant event thread)
+     */
+    std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
+
+    if(!dispose)
+    {
+        // Create the CacheChange_t if necessary
+        if (m_hasChangedLocalPDP.exchange(false) || new_change)
+        {
+            getMutex()->lock();
+
+            // Copy the participant data
+            ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
+
+            // Prepare identity
+            WriteParams wp;
+            // TODO: Make sure in the database that this CacheChange_t is given this sequence number
+            SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
+            {
+                SampleIdentity local;
+                local.writer_guid(mp_PDPWriter->getGuid());
+                local.sequence_number(sn);
+                wp.sample_identity(local);
+                wp.related_sample_identity(local);
+            }
+
+            getMutex()->unlock();
+
+            uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
+            change = mp_PDPWriter->new_change(
+                [cdr_size]() -> uint32_t
+                {
+                return cdr_size;
+                },
+                ALIVE, proxy_data_copy.m_key);
+
+            if (change != nullptr)
+            {
+                CDRMessage_t aux_msg(change->serializedPayload);
+
+#if __BIG_ENDIAN__
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+                aux_msg.msg_endian = BIGEND;
+#else
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+                aux_msg.msg_endian =  LITTLEEND;
+#endif // if __BIG_ENDIAN__
+
+                if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                {
+                    change->serializedPayload.length = (uint16_t)aux_msg.length;
+                }
+                else
+                {
+                    logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                    return;
+                }
+
+                // assign identity
+                change->sequenceNumber = sn;
+                change->write_params = std::move(wp);
+
+                // Update the database with our own data
+                if (discovery_db().update(change))
+                {
+                    // distribute
+                    awakeServerThread();
+                }
+                else
+                {
+                    // already there, dispose
+                    logError(RTPS_PDP, "DiscoveryDatabase already initialized with local DATA(p) on creation");
+                    mp_PDPWriterHistory->release_Cache(change);
+                }
+            }
+
+            // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
+            // sequence number.
+            return;
+        }
+        else
+        {
+            // Retrieve the CacheChange_t from the database
+            change = discovery_db().cache_change_own_participant();
+            if (nullptr == change)
+            {
+                logError(RTPS_PDP, "DiscoveryDatabase uninitialized with local DATA(p) on announcement");
+                return;
+            }
+        }
+    }
+    else
+    {
+        getMutex()->lock();
+
+        // Copy the participant data
+        ParticipantProxyData* local_participant = getLocalParticipantProxyData();
+        InstanceHandle_t key = local_participant->m_key;
+        uint32_t cdr_size = local_participant->get_serialized_size(true);
+        local_participant = nullptr;
+
+        // Prepare identity
+        WriteParams wp;
+        // TODO: Make sure in the database that this CacheChange_t is given this sequence number
+        SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
+        {
+            SampleIdentity local;
+            local.writer_guid(mp_PDPWriter->getGuid());
+            local.sequence_number(sn);
+            wp.sample_identity(local);
+            wp.related_sample_identity(local);
+        }
+
+        getMutex()->unlock();
+
+        change = pW->new_change(
+                [cdr_size]() -> uint32_t
+                {
+                return cdr_size;
+                },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, key);
+
+        // Generate the Data(Up)
+        if (nullptr != change)
+        {
+            // assign identity
+            change->sequenceNumber = sn;
+            change->write_params = std::move(wp);
+
+            // Update the database with our own data
+            if (discovery_db().update(change))
+            {
+                // distribute
+                awakeServerThread();
+            }
+            else
+            {
+                // already there, dispose. If participant is not removed fast enought may happen
+                mp_PDPWriterHistory->release_Cache(change);
+                return;
+            }
+        }
+        else
+        {
+            // failed to create the disposal change
+            logError(RTPS_PDP, "Server failed to create its DATA(Up)");
+            return;
+        }
+    }
+
+    assert(nullptr != change);
+
+    // Force send the announcement
+    std::vector<GUID_t> remote_readers;
+    LocatorList_t locators;
+
+    // TODO: figure out how to identify the receivers
+    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
+
+    if (!group.add_data(*change, false))
+    {
+        logError(RTPS_PDP, "Error sending announcement from server to clients");
+    }
 }
 
 /**
