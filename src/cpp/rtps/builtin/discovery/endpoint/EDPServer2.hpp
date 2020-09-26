@@ -66,6 +66,12 @@ public:
     {
     }
 
+    //! Return the PDP reference actual type
+    PDPServer2* get_pdp()
+    {
+        return static_cast<PDPServer2*>(mp_PDP);
+    }
+
     /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
      * @param reader Pointer to the Reader object.

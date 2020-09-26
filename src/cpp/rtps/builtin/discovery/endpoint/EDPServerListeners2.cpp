@@ -19,6 +19,7 @@
 
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -32,6 +33,11 @@ namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
 
+PDPServer2* EDPServerPUBListener2::get_pdp()
+{
+    return sedp_->get_pdp();
+}
+
 EDPServerPUBListener2::EDPServerPUBListener2(
         EDPServer2* sedp)
     : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
@@ -44,24 +50,75 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    (void)reader;
-    (void)change_in;
-    // TODO DISCOVERY SERVER VERSION 2
+    // Create a new change from the one received
+    CacheChange_t* change = (CacheChange_t*)change_in;
+    logInfo(RTPS_EDP, "Server EDP listener received new publisher info");
+
+    // DATA(w)s should have key
+    if (!computeKey(change))
+    {
+        logWarning(RTPS_EDP, "Received change with no Key");
+    }
+
+    // Get writer's GUID and EDP publications' reader history
+    GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
+    ReaderHistory* reader_history = sedp_->publications_reader_.second;
+
+    // String to store the topic of the writer
+    std::string topic_name;
+
+    // DATA(w) case: new writer or updated information about an existing writer
+    if (change->kind == ALIVE)
+    {
+        // Note: add_writer_from_change() removes the change from the EDP publications' reader history, but it does not
+        // return it to the pool
+        add_writer_from_change(reader, reader_history, change, sedp_, false);
+
+        // Retrieve the topic after creating the WriterProxyData (in add_writer_from_change()). This way, not matter
+        // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
+        if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
+        {
+            topic_name = temp_writer_data_.topicName().to_string();
+        }
+    }
+    // DATA(Uw) case
+    else
+    {
+        logInfo(RTPS_EDP, "Disposed Remote Writer, removing...");
+
+        // Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
+        if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
+        {
+            topic_name = temp_writer_data_.topicName().to_string();
+        }
+
+        // Remove WriterProxy data information
+        get_pdp()->removeWriterProxyData(auxGUID);
+
+        // Removing change from history, not returning the change to the pool, since the ownership will be yielded to
+        // the database
+        reader_history->remove_change_and_reuse(change);
+    }
+
+    // Notify the DiscoveryDataBase
+    if (!topic_name.empty() &&
+            get_pdp()->discovery_db().update(change, topic_name))
+    {
+        // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+        // references to the CacheChange_t.
+        // Ensure processing time for the cache by triggering the Server thread (which process the updates
+        get_pdp()->awakeServerThread();
+    }
+    else
+    {
+        // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+        reader_history->release_Cache(change);
+    }
 }
 
-void EDPServerPUBListener2::onWriterChangeReceivedByAll(
-        RTPSWriter* writer,
-        CacheChange_t* change)
+PDPServer2* EDPServerSUBListener2::get_pdp()
 {
-    (void)writer;
-
-    if (ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == change->kind)
-    {
-        WriterHistory* writer_history =
-                sedp_->publications_writer_.second;
-
-        writer_history->remove_change(change);
-    }
+    return sedp_->get_pdp();
 }
 
 EDPServerSUBListener2::EDPServerSUBListener2(
@@ -76,25 +133,71 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    (void)reader;
-    (void)change_in;
-    // TODO DISCOVERY SERVER VERSION 2
-}
+    // Create a new change from the one received
+    CacheChange_t* change = (CacheChange_t*)change_in;
+    logInfo(RTPS_EDP, "Server EDP listener received new subscriber info");
 
-void EDPServerSUBListener2::onWriterChangeReceivedByAll(
-        RTPSWriter* writer,
-        CacheChange_t* change)
-{
-    (void)writer;
-
-    if (ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == change->kind)
+    // DATA(r)s should have key
+    if (!computeKey(change))
     {
-        WriterHistory* writer_history =
-                sedp_->subscriptions_writer_.second;
-
-        writer_history->remove_change(change);
+        logWarning(RTPS_EDP, "Received change with no Key");
     }
 
+    // Get readers's GUID and EDP subscriptions' reader history
+    GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
+    ReaderHistory* reader_history = sedp_->subscriptions_reader_.second;
+
+    // String to store the topic of the reader
+    std::string topic_name;
+
+    // DATA(r) case: new reader or updated information about an existing reader
+    if (change->kind == ALIVE)
+    {
+        // Note: add_reader_from_change() removes the change from the EDP subscriptions' reader history, but it does not
+        // return it to the pool
+        add_reader_from_change(reader, reader_history, change, sedp_, false);
+
+        // Retrieve the topic after creating the ReaderProxyData (in add_reader_from_change()). This way, not matter
+        // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
+        if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
+        {
+            topic_name = temp_reader_data_.topicName().to_string();
+        }
+    }
+    // DATA(Ur) case
+    else
+    {
+        //REMOVE WRITER FROM OUR READERS:
+        logInfo(RTPS_EDP, "Disposed Remote Reader, removing...");
+
+        // Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
+        if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
+        {
+            topic_name = temp_reader_data_.topicName().to_string();
+        }
+
+        // Remove ReaderProxy data information
+        get_pdp()->removeReaderProxyData(auxGUID);
+
+        // Removing change from history, not returning the change to the pool, since the ownership will be yielded to
+        // the database
+        reader_history->remove_change_and_reuse(change);
+    }
+
+    // Notify the DiscoveryDataBase
+    if (!topic_name.empty() &&
+            get_pdp()->discovery_db().update(change, topic_name))
+    {
+        // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+        // references to the CacheChange_t.
+        // Ensure processing time for the cache by triggering the Server thread (which process the updates
+        get_pdp()->awakeServerThread();
+    }
+    else
+    {
+        // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+        reader_history->release_Cache(change);
+    }
 }
 
 } /* namespace rtps */
