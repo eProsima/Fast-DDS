@@ -28,6 +28,19 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
+void DiscoveryParticipantsAckStatus::add_or_update_participant(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
+        bool status = false)
+{
+    relevant_participants_map_[guid_p] = status;
+}
+
+void DiscoveryParticipantsAckStatus::remove_participant(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
+{
+    relevant_participants_map_.erase(guid_p);
+}
+
 bool DiscoveryParticipantsAckStatus::is_matched(
         const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
 {
@@ -39,11 +52,11 @@ bool DiscoveryParticipantsAckStatus::is_matched(
     return false;
 }
 
-void DiscoveryParticipantsAckStatus::match_all()
+void DiscoveryParticipantsAckStatus::unmatch_all()
 {
     for (auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it)
     {
-        it->second = true;
+        it->second = false;
     }
 }
 
