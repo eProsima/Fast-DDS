@@ -75,9 +75,9 @@ bool ReaderHistory::add_change(
     {
         auto it = std::lower_bound(m_changes.begin(), m_changes.end(), a_change,
                         [](const CacheChange_t* c1, const CacheChange_t* c2) -> bool
-                    {
-                        return c1->sourceTimestamp < c2->sourceTimestamp;
-                    });
+                        {
+                            return c1->sourceTimestamp < c2->sourceTimestamp;
+                        });
         m_changes.insert(it, a_change);
     }
     else
@@ -92,6 +92,18 @@ bool ReaderHistory::add_change(
 }
 
 bool ReaderHistory::remove_change(
+        CacheChange_t* a_change)
+{
+    if (remove_change_and_reuse(a_change))
+    {
+        m_changePool.release_Cache(a_change);
+        return true;
+    }
+
+    return false;
+}
+
+bool ReaderHistory::remove_change_and_reuse(
         CacheChange_t* a_change)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
@@ -114,7 +126,6 @@ bool ReaderHistory::remove_change(
         {
             logInfo(RTPS_HISTORY, "Removing change " << a_change->sequenceNumber);
             mp_reader->change_removed_by_history(a_change);
-            m_changePool.release_Cache(a_change);
             m_changes.erase(chit);
             return true;
         }
@@ -145,7 +156,8 @@ bool ReaderHistory::remove_changes_with_guid(
         return false;
     }
 
-    {//Lock scope
+    {
+        //Lock scope
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
         for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit != m_changes.end(); ++chit)
         {

@@ -59,7 +59,9 @@ public:
      * @param change Pointer to the change
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(CacheChange_t* change, size_t);
+    RTPS_DllAPI virtual bool received_change(
+            CacheChange_t* change,
+            size_t);
 
     /**
      * Add a CacheChange_t to the ReaderHistory.
@@ -70,12 +72,28 @@ public:
             CacheChange_t* a_change);
 
     /**
-     * Remove a CacheChange_t from the ReaderHistory.
+     * Remove a CacheChange_t from the ReaderHistory, returning it to the pool.
      * @param a_change Pointer to the CacheChange to remove.
      * @return True if removed.
      */
     RTPS_DllAPI bool remove_change(
             CacheChange_t* a_change) override;
+
+    /**
+     * Remove CacheChange_t from the ReaderHistory without returning a_change to the pool.
+     * @param a_change Pointer to the CacheChange to remove.
+     * @return True removed from history.
+     */
+    RTPS_DllAPI bool remove_change_and_reuse(
+            CacheChange_t* a_change);
+
+    /**
+     * Remove the CacheChange_t with a given sequence number from the ReaderHistory without returning it to the pool.
+     * @param sequence_number The sequence number of the CacheChange to remove.
+     * @return True if removed.
+     */
+    RTPS_DllAPI CacheChange_t* remove_change_and_reuse(
+            const SequenceNumber_t& sequence_number);
 
     /**
      * Remove a specific change from the history.
@@ -115,7 +133,7 @@ protected:
     RTPSReader* mp_reader;
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 
