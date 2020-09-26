@@ -201,16 +201,16 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
 }
 
 
-const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> change_to_release_(){
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release(){
     // lock(sharing mode) mutex locally
     std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
-    return change_to_release_;
+    return changes_to_release_;
 }
 
-void clear_change_to_release_(){
+void DiscoveryDataBase::clear_changes_to_release(){
     // lock(exclusive mode) mutex locally
     std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
-    change_to_release_.clear();
+    changes_to_release_.clear();
 }
 
 ////////////
@@ -248,7 +248,7 @@ bool DiscoveryDataBase::process_data_queue()
             else{
                 // in case of Data(P) the dirty_topcics must not be populated
                 // DATA(w) case
-                else if (is_writer(change))
+                if (is_writer(change))
                 {
                     create_writers_from_change(change, topic_name);
                 }
@@ -792,32 +792,35 @@ bool DiscoveryDataBase::delete_entity_of_change(
     if (is_participant(change))
     {
         // The information related to this participant is cleaned up in process_data_queue
-        auto it participants_.find(guid_from_change(change).guidPrefix);
+        auto it = participants_.find(guid_from_change(change).guidPrefix);
         if (it == participants_.end()){
             return false;
         }
-        changes_to_release_.push_back(it->second.change_)
-        return participants_.erase(it);
+        changes_to_release_.push_back(it->second.change());
+        participants_.erase(it);
+        return true;
     }
     else if (is_reader(change))
     {
         // The information related to this reader is cleaned up in process_data_queue
-        auto it readers_.find(guid_from_change(change));
+        auto it = readers_.find(guid_from_change(change));
         if (it == readers_.end()){
             return false;
         }
-        changes_to_release_.push_back(it->second.change_)
-        return readers_.erase(it);
+        changes_to_release_.push_back(it->second.change());
+        readers_.erase(it);
+        return true;
     }
     else if (is_writer(change))
     {
         // The information related to this writer is cleaned up in process_data_queue
-        auto it writers_.find(guid_from_change(change));
+        auto it = writers_.find(guid_from_change(change));
         if (it == writers_.end()){
             return false;
         }
-        changes_to_release_.push_back(it->second.change_)
-        return writers_.erase(it);
+        changes_to_release_.push_back(it->second.change());
+        writers_.erase(it);
+        return true;
     }
     return false;
 }

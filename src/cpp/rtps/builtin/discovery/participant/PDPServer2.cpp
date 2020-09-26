@@ -28,6 +28,7 @@
 
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/History.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -771,11 +772,63 @@ bool PDPServer2::process_disposals()
     return false;
 }
 
-bool process_changes_release()
+bool PDPServer2::process_changes_release()
 {
+    // could be optimized giving the list the reason why it is being removed
+    //  if it is for Ux, it wont be in history
+    //  if it is for update, it could be in history yet
 
+    // use to use the w/r from EDP
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+
+    // for each change to erase, first try to erase in case is in writer history and then it releases it
+    for (auto ch : discovery_db_.changes_to_release()){
+
+        // check if its owner is this participant
+        if (discovery_db_.guid_from_change(ch).guidPrefix == mp_builtin->mp_participantImpl->getGuid().guidPrefix){
+
+            if (discovery_db_.is_participant(ch)){
+                remove_change_from_history(mp_PDPWriter, mp_PDPWriterHistory, ch);
+                mp_PDPWriterHistory->release_Cache(ch);
+            }
+            else if (discovery_db_.is_writer(ch)){
+                remove_change_from_history(edp->publications_writer_.first, edp->publications_writer_.second, ch);
+                edp->publications_writer_.second->release_Cache(ch);
+            }
+            else if (discovery_db_.is_writer(ch)){
+                remove_change_from_history(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second, ch);
+                edp->subscriptions_writer_.second->release_Cache(ch);
+            }
+            else
+            {
+                logError(PDPServer2, "Wrong DATA received to remove");
+            }
+        }
+        else
+        { // other ownership
+            
+            if (discovery_db_.is_participant(ch)){
+                remove_change_from_history(mp_PDPWriter, mp_PDPWriterHistory, ch);
+                mp_PDPReaderHistory->release_Cache(ch);
+            }
+            else if (discovery_db_.is_writer(ch)){
+                remove_change_from_history(edp->publications_writer_.first, edp->publications_writer_.second, ch);
+                edp->publications_reader_.second->release_Cache(ch);
+            }
+            else if (discovery_db_.is_writer(ch)){
+                remove_change_from_history(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second, ch);
+                edp->subscriptions_reader_.second->release_Cache(ch);
+            }
+            else
+            {
+                logError(PDPServer2, "Wrong DATA received to remove");
+            }
+        }
+
+    }
+
+    return false;
 }
-
 
 void PDPServer2::remove_related_alive_from_history_nts(
         fastrtps::rtps::WriterHistory* writer_history,
@@ -856,6 +909,16 @@ bool PDPServer2::process_to_send_list(
         history->add_change(change);
     }
     return true;
+}
+
+bool PDPServer2::remove_change_from_history(
+        fastrtps::rtps::RTPSWriter* writer,
+        fastrtps::rtps::WriterHistory* history,
+        fastrtps::rtps::CacheChange_t* change)
+{
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
+    // TODO check if return a function will not unlock the mutex before time
+    return remove_change_from_history_nts(history, change);
 }
 
 bool PDPServer2::remove_change_from_history_nts(

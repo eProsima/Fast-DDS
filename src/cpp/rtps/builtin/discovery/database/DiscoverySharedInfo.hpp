@@ -62,10 +62,10 @@ public:
         relevant_participants_builtin_ack_status_.remove_participant(guid_p);
     }
 
-    void set_change_and_unmatch(
+    eprosima::fastrtps::rtps::CacheChange_t* set_change_and_unmatch(
             eprosima::fastrtps::rtps::CacheChange_t* change);
 
-    void change_info(
+    eprosima::fastrtps::rtps::CacheChange_t* change_info(
             eprosima::fastrtps::rtps::CacheChange_t* change);
 
     bool is_matched(
