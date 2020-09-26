@@ -55,7 +55,8 @@ public:
 protected:
 
     //! returns true if loading info from persistency database
-    static bool ongoingDeserialization(EDP* edp);
+    static bool ongoingDeserialization(
+            EDP* edp);
 };
 
 /**
@@ -84,7 +85,8 @@ protected:
             RTPSReader* reader,
             ReaderHistory* reader_history,
             CacheChange_t* change,
-            EDP* edp);
+            EDP* edp,
+            bool release_change = true);
 
     //!Temporary structure to avoid allocations
     WriterProxyData temp_writer_data_;
@@ -113,10 +115,11 @@ public:
 protected:
 
     void add_reader_from_change(
-        RTPSReader* reader,
-        ReaderHistory* reader_history,
-        CacheChange_t* change,
-        EDP* edp);
+            RTPSReader* reader,
+            ReaderHistory* reader_history,
+            CacheChange_t* change,
+            EDP* edp,
+            bool release_change = true);
 
     //!Temporary structure to avoid allocations
     ReaderProxyData temp_reader_data_;
@@ -220,5 +223,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* EDPSIMPLELISTENER_H_ */
