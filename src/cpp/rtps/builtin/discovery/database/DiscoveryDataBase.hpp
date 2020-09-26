@@ -95,7 +95,7 @@ public:
      */
     bool update(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            std::string topic_name = "");
+            eprosima::fastrtps::string_255 topic_name = "");
 
 
     ////////////
