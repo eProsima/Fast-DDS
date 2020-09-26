@@ -62,8 +62,7 @@ bool EDPServer2::createSEDPEndpoints()
     subscriptions_listener_ = new EDPServerSUBListener2(this);
 
     /* Manage publications */
-    assert(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader);
-
+    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         /* If the participant declares that it will have publications, then it needs a writer to announce them, and a
          * reader to receive information about subscriptions that might match the participant's publications.
@@ -120,10 +119,14 @@ bool EDPServer2::createSEDPEndpoints()
             return false;
         }
     }
+    else
+    {
+        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
+        return false;
+    }
 
     /* Manage subscriptions */
-    assert(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter);
-
+    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         /* If the participant declares that it will have subscriptions, then it needs a writer to announce them, and a
          * reader to receive information about publications that might match the participant's subscriptions.
@@ -181,6 +184,11 @@ bool EDPServer2::createSEDPEndpoints()
             return false;
         }
     }
+    else
+    {
+        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
+        return false;
+    }
 
     logInfo(RTPS_EDP, "Creation finished");
     return created;
@@ -189,12 +197,13 @@ bool EDPServer2::createSEDPEndpoints()
 bool EDPServer2::removeLocalReader(
         RTPSReader* R)
 {
-    logInfo(RTPS_EDP, R->getGuid().entityId);
+    logInfo(RTPS_EDP, "Removing local reader: " << R->getGuid().entityId);
 
+    // Get subscriptions writer and reader guid
     auto* writer = &subscriptions_writer_;
     GUID_t guid = R->getGuid();
 
-    // Recover endpoint info
+    // Recover reader information
     std::string topic_name;
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
@@ -202,9 +211,12 @@ bool EDPServer2::removeLocalReader(
         topic_name = temp_reader_proxy_data_.topicName().to_string();
     }
 
+    // Remove proxy data associated with the reader
     if (mp_PDP->removeReaderProxyData(guid)
             && writer->first != nullptr)
     {
+        // We need to create a DATA(Ur) here to added it to the discovery database, so that the disposal can be
+        // propagated to remote clients
         CacheChange_t* change = writer->first->new_change(
             [this]() -> uint32_t
             {
@@ -212,6 +224,7 @@ bool EDPServer2::removeLocalReader(
             },
             NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
 
+        // Populate the DATA(Ur)
         if (change != nullptr)
         {
             WriteParams& wp = change->write_params;
@@ -221,37 +234,35 @@ bool EDPServer2::removeLocalReader(
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
-            // notify the DiscoveryDataBase
+            // Notify the DiscoveryDataBase
             if (get_pdp()->discovery_db().update(change, topic_name))
             {
-                // assure processing time for the cache
+                // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+                // references to the CacheChange_t.
+                // Ensure processing time for the cache by triggering the Server thread (which process the updates)
                 get_pdp()->awakeServerThread();
-
-                // the discovery database takes ownership of the CacheChange_t
-                // henceforth there are no references to the CacheChange_t
             }
             else
             {
-                // if the database doesn't take the ownership remove
+                // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
                 get_pdp()->mp_PDPWriterHistory->release_Cache(change);
             }
-
             return true;
         }
     }
-
     return false;
 }
 
 bool EDPServer2::removeLocalWriter(
         RTPSWriter* W)
 {
-    logInfo(RTPS_EDP, W->getGuid().entityId);
+    logInfo(RTPS_EDP, "Removing local writer: " << W->getGuid().entityId);
 
+    // Get publications writer and writer guid
     auto* writer = &publications_writer_;
     GUID_t guid = W->getGuid();
 
-    // Recover endpoint info
+    // Recover writer information
     std::string topic_name;
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
@@ -259,9 +270,12 @@ bool EDPServer2::removeLocalWriter(
         topic_name = temp_writer_proxy_data_.topicName().to_string();
     }
 
+    // Remove proxy data associated with the writer
     if (mp_PDP->removeWriterProxyData(guid)
             && writer->first != nullptr)
     {
+        // We need to create a DATA(Uw) here to added it to the discovery database, so that the disposal can be
+        // propagated to remote clients
         CacheChange_t* change = writer->first->new_change(
         [this]() -> uint32_t
         {
@@ -269,6 +283,7 @@ bool EDPServer2::removeLocalWriter(
         },
         NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
 
+        // Populate the DATA(Uw)
         if (change != nullptr)
         {
             WriteParams& wp = change->write_params;
@@ -278,25 +293,22 @@ bool EDPServer2::removeLocalWriter(
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
-            // notify the DiscoveryDataBase
+            // Notify the DiscoveryDataBase
             if (get_pdp()->discovery_db().update(change, topic_name))
             {
-                // assure processing time for the cache
+                // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+                // references to the CacheChange_t.
+                // Ensure processing time for the cache by triggering the Server thread (which process the updates)
                 get_pdp()->awakeServerThread();
-
-                // the discovery database takes ownership of the CacheChange_t
-                // henceforth there are no references to the CacheChange_t
             }
             else
             {
-                // if the database doesn't take the ownership remove
+                // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
                 get_pdp()->mp_PDPWriterHistory->release_Cache(change);
             }
-
             return true;
         }
     }
-
     return false;
 }
 
@@ -304,14 +316,20 @@ bool EDPServer2::processLocalWriterProxyData(
         RTPSWriter* local_writer,
         WriterProxyData* wdata)
 {
-    logInfo(RTPS_EDP, wdata->guid().entityId);
+    logInfo(RTPS_EDP, "Processing local writer: " << wdata->guid().entityId);
+    // We actually don't need the writer here
     (void)local_writer;
 
+    // Get publications writer
     auto* writer = &publications_writer_;
-    CacheChange_t* change = nullptr;
 
+    // Since the listeners will not be triggered for local writers, we need to manually create the DATA(w) and add it
+    // to the discovery database.
+    // Create an empty change add populate it with writer's information from its proxy
+    CacheChange_t* change = nullptr;
     bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
 
+    // If the was information about the writer, then fill some other DATA(w) fields and notify database
     if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:
@@ -322,24 +340,25 @@ bool EDPServer2::processLocalWriterProxyData(
         wp.sample_identity(local);
         wp.related_sample_identity(local);
 
-        // notify the DiscoveryDataBase
+        // Notify the DiscoveryDataBase
         if (get_pdp()->discovery_db().update(change, wdata->topicName().to_string()))
         {
-            // assure processing time for the cache
+            // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+            // references to the CacheChange_t.
+            // Ensure processing time for the cache by triggering the Server thread (which process the updates)
             get_pdp()->awakeServerThread();
-
-            // the discovery database takes ownership of the CacheChange_t
-            // henceforth there are no references to the CacheChange_t
         }
         else
         {
-            // if the database doesn't take the ownership remove
+            // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
             get_pdp()->mp_PDPWriterHistory->release_Cache(change);
         }
-
+        // Return whether the DATA(w) was generated correctly
         return ret_val;
     }
 
+    // Return the change to the pool and return false
+    get_pdp()->mp_PDPWriterHistory->release_Cache(change);
     return false;
 }
 
@@ -347,15 +366,21 @@ bool EDPServer2::processLocalReaderProxyData(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {
-    logInfo(RTPS_EDP, rdata->guid().entityId);
+    logInfo(RTPS_EDP, "Processing local reader: " << rdata->guid().entityId);
+    // We actually don't need the reader here
     (void)local_reader;
 
+    // Get subscriptions writer
     auto* writer = &subscriptions_writer_;
 
+    // Since the listeners will not be triggered for local readers, we need to manually create the DATA(r) and add it
+    // to the discovery database.
+    // Create an empty change add populate it with readers's information from its proxy
     CacheChange_t* change = nullptr;
     bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
 
-    if (change != nullptr )
+    // If the was information about the reader, then fill some other DATA(r) fields and notify database
+    if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:
         WriteParams& wp = change->write_params;
@@ -365,25 +390,25 @@ bool EDPServer2::processLocalReaderProxyData(
         wp.sample_identity(local);
         wp.related_sample_identity(local);
 
-        // notify the DiscoveryDataBase
+        // Notify the DiscoveryDataBase
         if (get_pdp()->discovery_db().update(change, rdata->topicName().to_string()))
         {
-            // assure processing time for the cache
+            // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+            // references to the CacheChange_t.
+            // Ensure processing time for the cache by triggering the Server thread (which process the updates)
             get_pdp()->awakeServerThread();
-
-            // the discovery database takes ownership of the CacheChange_t
-            // henceforth there are no references to the CacheChange_t
         }
         else
         {
-            // if the database doesn't take the ownership remove
+            // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
             get_pdp()->mp_PDPWriterHistory->release_Cache(change);
-
         }
-
+        // Return whether the DATA(w) was generated correctly
         return ret_val;
     }
 
+    // Return the change to the pool and return false
+    get_pdp()->mp_PDPWriterHistory->release_Cache(change);
     return false;
 }
 

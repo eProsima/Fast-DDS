@@ -50,18 +50,26 @@ void PDPServerListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
+    logInfo(RTPS_PDP, "PDP Server Message received");
+
+    // Get PDP reader history
     auto pdp_history = pdp_server()->mp_PDPReaderHistory;
+
+    // Create a delete function to clear the data associated with the unique pointer in case the change is not passed
+    // to the database.
     auto deleter = [pdp_history](CacheChange_t* p)
             {
+                // Remove change from reader history, returning it to the pool
                 pdp_history->remove_change(p);
             };
 
+    // Unique pointer to the change
     std::unique_ptr<CacheChange_t, decltype(deleter)> change((CacheChange_t*)(change_in), deleter);
 
+    // Get GUID of the writer that sent the change
     GUID_t writer_guid = change->writerGUID;
-    logInfo(RTPS_PDP, "PDP Server Message received");
 
-    // validate CacheChange
+    // DATA(p|Up) should have a unkown instance handle and no key
     if (change->instanceHandle == c_InstanceHandle_Unknown
         && !this->get_key(change.get()))
     {
@@ -70,25 +78,26 @@ void PDPServerListener2::onNewCacheChangeAdded(
     }
 
     // Take GUID from instance handle
-    GUID_t guid;
-    iHandle2GUID(guid, change->instanceHandle);
+    GUID_t guid = iHandle2GUID(change->instanceHandle);
 
+    // DATA(p|Up) sample identity should not be unknown
     if (change->write_params.sample_identity() == SampleIdentity::unknown())
     {
-        logWarning(RTPS_PDP, "CacheChange_t is not properly identified for client-server operation.");
+        logWarning(RTPS_PDP, "CacheChange_t is not properly identified for client-server operation");
         return;
     }
 
+    // DATA(p) case
     if (change->kind == ALIVE)
     {
         // Ignore announcement from own RTPSParticipant
         if (guid == pdp_server()->getRTPSParticipant()->getGuid())
         {
-            logInfo(RTPS_PDP, "Message from own RTPSParticipant, removing");
+            logInfo(RTPS_PDP, "Message from own RTPSParticipant, ignoring");
             return;
         }
 
-        // Deserialized the payload to access the discovery info
+        // Deserialize the payload to access the discovery info
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
 
@@ -98,21 +107,23 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 pdp_server()->getRTPSParticipant()->network_factory(),
                 pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
+            // Key should not match instance handle
             if (change->instanceHandle == temp_participant_data_.m_key)
             {
-                logInfo(RTPS_PDP, "Malformed PDP payload received, removing");
+                logInfo(RTPS_PDP, "Malformed PDP payload received, ignoring");
                 return;
             }
 
-            // Update the DiscoveryDabase
+            // Notify the DiscoveryDataBase
             if (pdp_server()->discovery_db().update(change.get()))
             {
-                // assure processing time for the cache
-                pdp_server()->awakeServerThread();
-
-                // the discovery database takes ownership of the CacheChange_t
-                // henceforth there are no references to the CacheChange_t
+                // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
+                // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
+                // Take change ownership away from the unique pointer, so that its destruction does not destroy the data
                 pdp_history->remove_change_and_reuse(change.release());
+
+                // Ensure processing time for the cache by triggering the Server thread (which process the updates
+                pdp_server()->awakeServerThread();
 
                 // TODO: when the DiscoveryDataBase allows updating capabilities we can dismissed old PDP processing
             }
@@ -120,10 +131,10 @@ void PDPServerListener2::onNewCacheChangeAdded(
             // At this point we can release reader lock.
             reader->getMutex().unlock();
 
-            // grant atomic access to PDP inherited database
+            // Grant atomic access to PDP inherited proxies database
             std::unique_lock<std::recursive_mutex> lock(*pdp_server()->getMutex());
 
-            // Check if participant already exists (updated info)
+            // Check if participant proxy already exists (means the DATA(p) brings updated info)
             ParticipantProxyData* pdata = nullptr;
             for (ParticipantProxyData* it : pdp_server()->participant_proxies_)
             {
@@ -134,17 +145,20 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 }
             }
 
+            // Store whether the participant is new or updated
             auto status = (pdata == nullptr) ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
                     ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
 
-            if (pdata == nullptr)
+            // New participant case
+            if (status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
                 // TODO: pending avoid builtin connections on client info relayed by other server
 
                 logInfo(RTPS_PDP, "Registering a new participant: " << guid);
 
-                // Create a new one when not found
+                // Create a new participant proxy entry
                 pdata = pdp_server()->createParticipantProxyData(temp_participant_data_, writer_guid);
+                // Realease PDP mutex
                 lock.unlock();
 
                 // All builtins are connected, the database will avoid any EDP DATA to be send before having PDP DATA
@@ -154,10 +168,13 @@ void PDPServerListener2::onNewCacheChangeAdded(
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
             }
+            // Updated participant information case
             else
             {
+                // Update proxy
                 pdata->updateData(temp_participant_data_);
                 pdata->isAlive = true;
+                // Realease PDP mutex
                 lock.unlock();
 
                 // TODO: pending client liveliness management here
@@ -168,8 +185,10 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 }
             }
 
+            // Check whether the participant proxy data was created/updated correctly
             if (pdata != nullptr)
             {
+                // Notify user of the discovery/update of the participant
                 RTPSParticipantListener* listener = pdp_server()->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
@@ -187,23 +206,26 @@ void PDPServerListener2::onNewCacheChangeAdded(
             reader->getMutex().lock();
         }
     }
-    else // Participant disposal
+    // DATA(Up) case
+    else
     {
         // remove_remote_participant will try to remove the cache from the history and destroy it. We do it beforehand
-        // to grant DiscoveryDatabase ownership
+        // to grant DiscoveryDatabase ownership by not returning the change to the pool.
         pdp_history->remove_change_and_reuse(change.get());
 
-        // Update the DiscoveryDabase
+        // Notify the DiscoveryDatabase
         if (pdp_server()->discovery_db().update(change.get()))
         {
-            // assure processing time for the cache
+            // Ensure processing time for the cache by triggering the Server thread (which process the updates
             pdp_server()->awakeServerThread();
 
-            // the discovery database takes ownership of the CacheChange_t
-            // henceforth there are no references to the CacheChange_t
+            // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+            // references to the change. Take change ownership away from the unique pointer, so that its destruction
+            // does not destroy the data
             change.release();
         }
 
+        // Remove participant from proxies
         reader->getMutex().unlock();
         if (pdp_server()->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
@@ -212,8 +234,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
         }
         reader->getMutex().lock();
     }
-
-    // cache is removed from history (if still there) on leaving the scope
+    // cache is removed from history (if it's still there) and returned to the pool on leaving the scope, since the
+    // unique pointer destruction grants it. If the ownership has been taken away from the unique pointer, then nothing
+    // happens at this point
 }
 
 } /* namespace rtps */

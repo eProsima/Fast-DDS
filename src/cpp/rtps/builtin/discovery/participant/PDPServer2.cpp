@@ -261,8 +261,7 @@ void PDPServer2::assignRemoteEndpoints(
 
     // only SERVER and CLIENT participants will be received. All builtin must be there
     uint32_t auxendp = endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-    assert(0 != auxendp);
-
+    if (0 != auxendp)
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         temp_writer_data_.clear();
@@ -275,11 +274,16 @@ void PDPServer2::assignRemoteEndpoints(
         temp_writer_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPReader->matched_writer_add(temp_writer_data_);
     }
+    else
+    {
+        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+                << " did not send information about builtin writers");
+        return;
+    }
 
     // only SERVER and CLIENT participants will be received. All builtin must be there
     auxendp = endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
-    assert(0 != auxendp);
-
+    if (0 != auxendp)
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         temp_reader_data_.clear();
@@ -290,6 +294,12 @@ void PDPServer2::assignRemoteEndpoints(
         temp_reader_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(temp_reader_data_);
+    }
+    else
+    {
+        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+                << " did not send information about builtin readers");
+        return;
     }
 
     //Inform EDP of new RTPSParticipant data:
@@ -317,18 +327,28 @@ void PDPServer2::removeRemoteEndpoints(
     logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
 
-    assert(endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER);
-
+    if (endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER)
     {
         GUID_t writer_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPWriter);
         mp_PDPReader->matched_writer_remove(writer_guid);
     }
+    else
+    {
+        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+                << " did not send information about builtin writers");
+        return;
+    }
 
-    assert(endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR);
-
+    if (endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR)
     {
         GUID_t reader_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPReader);
         mp_PDPWriter->matched_reader_remove(reader_guid);
+    }
+    else
+    {
+        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+                << " did not send information about builtin readers");
+        return;
     }
 }
 

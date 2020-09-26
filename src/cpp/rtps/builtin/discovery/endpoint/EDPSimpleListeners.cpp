@@ -109,9 +109,7 @@ void EDPBasePUBListener::add_writer_from_change(
                 edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
         if (writer_data != nullptr)
         {
-            assert(nullptr != reader_history);
-
-            //Removing change from history
+            // Removing change from history
             if (release_change)
             {
                 reader_history->remove_change(change);
