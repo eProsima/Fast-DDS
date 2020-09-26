@@ -277,7 +277,7 @@ void PDPServer2::assignRemoteEndpoints(
     else
     {
         logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
-                << " did not send information about builtin writers");
+                                          << " did not send information about builtin writers");
         return;
     }
 
@@ -298,7 +298,7 @@ void PDPServer2::assignRemoteEndpoints(
     else
     {
         logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
-                << " did not send information about builtin readers");
+                                          << " did not send information about builtin readers");
         return;
     }
 
@@ -335,7 +335,7 @@ void PDPServer2::removeRemoteEndpoints(
     else
     {
         logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
-                << " did not send information about builtin writers");
+                                          << " did not send information about builtin writers");
         return;
     }
 
@@ -347,7 +347,7 @@ void PDPServer2::removeRemoteEndpoints(
     else
     {
         logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
-                << " did not send information about builtin readers");
+                                          << " did not send information about builtin readers");
         return;
     }
 }
@@ -396,7 +396,7 @@ bool PDPServer2::remove_remote_participant(
     // has already notified the database in all other cases
     if (ParticipantDiscoveryInfo::DROPPED_PARTICIPANT == reason)
     {
-        CacheChange_t * pC = nullptr;
+        CacheChange_t* pC = nullptr;
 
         // We must create the corresponding DATA(p[UD])
         if ((pC = mp_PDPWriter->new_change(

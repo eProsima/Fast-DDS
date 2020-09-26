@@ -41,7 +41,7 @@ PDPServerListener2::PDPServerListener2(
 {
 }
 
-PDPServer2 * PDPServerListener2::pdp_server()
+PDPServer2* PDPServerListener2::pdp_server()
 {
     return static_cast<PDPServer2*>(parent_pdp_);
 }
@@ -71,7 +71,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
 
     // DATA(p|Up) should have a unkown instance handle and no key
     if (change->instanceHandle == c_InstanceHandle_Unknown
-        && !this->get_key(change.get()))
+            && !this->get_key(change.get()))
     {
         logWarning(RTPS_PDP, "Problem getting the key of the change, removing");
         return;
@@ -102,10 +102,10 @@ void PDPServerListener2::onNewCacheChangeAdded(
         temp_participant_data_.clear();
 
         if (temp_participant_data_.readFromCDRMessage(
-                &msg,
-                true,
-                pdp_server()->getRTPSParticipant()->network_factory(),
-                pdp_server()->getRTPSParticipant()->has_shm_transport()))
+                    &msg,
+                    true,
+                    pdp_server()->getRTPSParticipant()->network_factory(),
+                    pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
             // Key should not match instance handle
             if (change->instanceHandle == temp_participant_data_.m_key)

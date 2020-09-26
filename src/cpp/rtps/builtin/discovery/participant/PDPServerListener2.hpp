@@ -50,7 +50,7 @@ public:
     ~PDPServerListener2() override = default;
 
     //!Pointer to the associated mp_SPDP;
-    PDPServer2 * pdp_server();
+    PDPServer2* pdp_server();
 
     /**
      * New added cache

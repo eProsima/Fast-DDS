@@ -103,9 +103,9 @@ void PDPSimple::initializeParticipantProxyData(
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
         }
-#endif
+#endif // if HAVE_SECURITY
     }
-    else if(!getRTPSParticipant()->getAttributes().builtin.discovery_config.
+    else if (!getRTPSParticipant()->getAttributes().builtin.discovery_config.
             use_STATIC_EndpointDiscoveryProtocol)
     {
         logError(RTPS_PDP, "Neither EDP simple nor EDP static enabled. Endpoints will not be discovered.");
@@ -264,7 +264,7 @@ bool PDPSimple::createPDPEndpoints()
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(mp_PDPReader, false);
-#endif
+#endif // if HAVE_SECURITY
     }
     else
     {
@@ -301,7 +301,7 @@ bool PDPSimple::createPDPEndpoints()
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
-#endif
+#endif // if HAVE_SECURITY
         mp_PDPWriter = wout;
         if (mp_PDPWriter != nullptr)
         {
@@ -374,7 +374,7 @@ void PDPSimple::assignRemoteEndpoints(
 #else
     //Inform EDP of new RTPSParticipant data:
     notifyAboveRemoteEndpoints(*pdata);
-#endif
+#endif // if HAVE_SECURITY
 }
 
 void PDPSimple::removeRemoteEndpoints(

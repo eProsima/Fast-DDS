@@ -62,7 +62,7 @@ bool EDPServer2::createSEDPEndpoints()
     subscriptions_listener_ = new EDPServerSUBListener2(this);
 
     /* Manage publications */
-    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    if (m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         /* If the participant declares that it will have publications, then it needs a writer to announce them, and a
          * reader to receive information about subscriptions that might match the participant's publications.
@@ -126,7 +126,7 @@ bool EDPServer2::createSEDPEndpoints()
     }
 
     /* Manage subscriptions */
-    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    if (m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         /* If the participant declares that it will have subscriptions, then it needs a writer to announce them, and a
          * reader to receive information about publications that might match the participant's subscriptions.
@@ -277,11 +277,11 @@ bool EDPServer2::removeLocalWriter(
         // We need to create a DATA(Uw) here to added it to the discovery database, so that the disposal can be
         // propagated to remote clients
         CacheChange_t* change = writer->first->new_change(
-        [this]() -> uint32_t
-        {
-            return mp_PDP->builtin_attributes().writerPayloadSize;
-        },
-        NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
+            [this]() -> uint32_t
+            {
+                return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
 
         // Populate the DATA(Uw)
         if (change != nullptr)

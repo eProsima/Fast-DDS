@@ -52,8 +52,8 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
     (reader)->getMutex().lock();                                          \
                                                                           \
     if ( (ALIVE != (change)->kind) ||                                     \
-         (seq_num != (change)->sequenceNumber) ||                         \
-         (writer_guid != (change)->writerGUID) )                          \
+            (seq_num != (change)->sequenceNumber) ||                         \
+            (writer_guid != (change)->writerGUID) )                          \
     {                                                                     \
         return;                                                           \
     }                                                                     \
@@ -74,11 +74,11 @@ void EDPBasePUBListener::add_writer_from_change(
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     if (temp_writer_data_.readFromCDRMessage(&tempMsg, network,
-        edp->mp_RTPSParticipant->has_shm_transport()))
+            edp->mp_RTPSParticipant->has_shm_transport()))
     {
         change->instanceHandle = temp_writer_data_.key();
         if (temp_writer_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
-            && !ongoingDeserialization(edp))
+                && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
@@ -150,7 +150,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
 #if HAVE_SECURITY
             reader == sedp_->publications_secure_reader_.first ?
             sedp_->publications_secure_reader_.second :
-#endif
+#endif // if HAVE_SECURITY
             sedp_->publications_reader_.second;
 
     if (change->kind == ALIVE)
@@ -180,11 +180,11 @@ bool EDPListener::computeKey(
 }
 
 bool EDPListener::ongoingDeserialization(
-    EDP* edp)
+        EDP* edp)
 {
-    EDPServer * pServer = dynamic_cast<EDPServer*>(edp);
+    EDPServer* pServer = dynamic_cast<EDPServer*>(edp);
 
-    if(pServer)
+    if (pServer)
     {
         return pServer->ongoingDeserialization();
     }
@@ -203,11 +203,11 @@ void EDPBaseSUBListener::add_reader_from_change(
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     if (temp_reader_data_.readFromCDRMessage(&tempMsg, network,
-        edp->mp_RTPSParticipant->has_shm_transport()))
+            edp->mp_RTPSParticipant->has_shm_transport()))
     {
         change->instanceHandle = temp_reader_data_.key();
         if (temp_reader_data_.guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix
-            && !ongoingDeserialization(edp))
+                && !ongoingDeserialization(edp))
         {
             logInfo(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;
@@ -279,7 +279,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
 #if HAVE_SECURITY
             reader == sedp_->subscriptions_secure_reader_.first ?
             sedp_->subscriptions_secure_reader_.second :
-#endif
+#endif // if HAVE_SECURITY
             sedp_->subscriptions_reader_.second;
 
     if (change->kind == ALIVE)
@@ -315,7 +315,7 @@ void EDPSimplePUBListener::onWriterChangeReceivedByAll(
 #if HAVE_SECURITY
                 writer == sedp_->publications_secure_writer_.first ?
                 sedp_->publications_secure_writer_.second :
-#endif
+#endif // if HAVE_SECURITY
                 sedp_->publications_writer_.second;
 
         writer_history->remove_change(change);
@@ -334,7 +334,7 @@ void EDPSimpleSUBListener::onWriterChangeReceivedByAll(
 #if HAVE_SECURITY
                 writer == sedp_->subscriptions_secure_writer_.first ?
                 sedp_->subscriptions_secure_writer_.second :
-#endif
+#endif // if HAVE_SECURITY
                 sedp_->subscriptions_writer_.second;
 
         writer_history->remove_change(change);
@@ -343,5 +343,5 @@ void EDPSimpleSUBListener::onWriterChangeReceivedByAll(
 }
 
 } /* namespace rtps */
-}
+} // namespace fastrtps
 } /* namespace eprosima */

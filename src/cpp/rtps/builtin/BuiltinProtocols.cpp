@@ -106,13 +106,13 @@ bool BuiltinProtocols::initBuiltinProtocols(
         case DiscoveryProtocol_t::SERVER:
             mp_PDP = new fastdds::rtps::PDPServer2(this, allocation);
             break;
-/*
-#if HAVE_SQLITE3
-        case DiscoveryProtocol_t::BACKUP:
-            mp_PDP = new fastdds::rtps::PDPServer2(this, allocation);
-            break;
-#endif // if HAVE_SQLITE3
-*/
+        /*
+         #if HAVE_SQLITE3
+                case DiscoveryProtocol_t::BACKUP:
+                    mp_PDP = new fastdds::rtps::PDPServer2(this, allocation);
+                    break;
+         #endif // if HAVE_SQLITE3
+         */
         default:
             logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
             return false;
