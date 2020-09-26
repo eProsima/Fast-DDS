@@ -232,22 +232,25 @@ bool DiscoveryDataBase::process_data_queue()
                 // Update participants map
                 create_participant_from_change(change);
             }
-            // DATA(w) case
-            else if (is_writer(change))
-            {
-                create_writers_from_change(change, topic_name);
-            }
-            // DATA(r) case
-            else if (is_reader(change))
-            {
-                create_readers_from_change(change, topic_name);
-            }
-            // Update set of dirty_topics
-            if (std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
-            {
-                dirty_topics_.push_back(topic_name);
-                is_dirty_topic = true;
-            }
+            else{
+                // in case of Data(P) the dirty_topcics must not be populated
+                // DATA(w) case
+                else if (is_writer(change))
+                {
+                    create_writers_from_change(change, topic_name);
+                }
+                // DATA(r) case
+                else if (is_reader(change))
+                {
+                    create_readers_from_change(change, topic_name);
+                }
+                // Update set of dirty_topics
+                if (std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
+                {
+                    dirty_topics_.push_back(topic_name);
+                    is_dirty_topic = true;
+                }
+            }  
         }
         // If the change is a DATA(Up|Uw|Ur)
         else
