@@ -48,16 +48,10 @@ public:
 
     void add_or_update_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
-            bool status = false)
-    {
-        relevant_participants_map_[guid_p] = status;
-    }
+            bool status);
 
     void remove_participant(
-            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
-    {
-        relevant_participants_map_.erase(guid_p);
-    }
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p);
 
     void unmatch_all();
 
