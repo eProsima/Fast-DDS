@@ -1033,7 +1033,7 @@ bool PDPServer2::process_to_send_list(
         // If the DATA is already in the writer's history, then remove it.
         remove_change_from_history_nts(history, change);
         // Add DATA to writer's history.
-        change->writerGUID = mp_PDPWriter->getGuid();
+        change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
         history->add_change(change);
     }
     return true;

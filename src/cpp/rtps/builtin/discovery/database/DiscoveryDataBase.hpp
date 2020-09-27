@@ -41,8 +41,8 @@ namespace rtps {
 namespace ddb {
 
 //typedef std::shared_timed_mutex share_mutex_t;
-// only working in C++14
-typedef std::shared_timed_mutex share_mutex_t;
+// only working in C++17
+typedef std::mutex share_mutex_t;
 
 /**
  * Class to manage the discovery data base
@@ -226,7 +226,7 @@ protected:
 
     void shared_lock_()
     {
-        sh_mtx_.lock_shared();
+        sh_mtx_.lock();
         //sh_mtx_.lock();
     }
 
@@ -237,7 +237,7 @@ protected:
 
     void shared_unlock_()
     {
-        sh_mtx_.unlock_shared();
+        sh_mtx_.unlock();
         //sh_mtx_.unlock();
     }
 
