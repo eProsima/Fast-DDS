@@ -192,7 +192,7 @@ bool PDPServer2::createPDPEndpoints()
     // VOLATILE durability to highlight that on steady state the history is empty (except for announcement DATAs)
     // this setting is incompatible with CLIENTs TRANSIENT_LOCAL PDP readers but not validation is done on builitin
     // endpoints
-    watt.endpoint.durabilityKind = VOLATILE;
+    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -564,18 +564,18 @@ void PDPServer2::announceParticipantState(
     LocatorList_t locators;
     std::vector<GUID_t> remote_readers;
 
-    // Iterate over clients
-    for (auto client: clients_)
-    {
-        fastrtps::rtps::ReaderProxyData& rat = client.second;
-        remote_readers.push_back(rat.guid());
+    // // Iterate over clients
+    // for (auto client: clients_)
+    // {
+    //     fastrtps::rtps::ReaderProxyData& rat = client.second;
+    //     remote_readers.push_back(rat.guid());
 
-        // Add default unicast locators of the remote reader
-        for (const Locator_t& locator: client.second.remote_locators().unicast)
-        {
-            locators.push_back(locator);
-        }
-    }
+    //     // Add default unicast locators of the remote reader
+    //     for (const Locator_t& locator: client.second.remote_locators().unicast)
+    //     {
+    //         locators.push_back(locator);
+    //     }
+    // }
 
     // std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
     // for (GuidPrefix_t participant_prefix: remote_participants)
@@ -739,7 +739,9 @@ bool PDPServer2::process_change_acknowledgement(
         writer->for_each_reader_proxy(c, func);
 
         // If the change has been acknowledge by everyone
-        if (!func.pending())
+        if (!func.pending() &&
+            !(discovery_db_.is_participant(c) &&
+                discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
         {
             // Remove the entry from writer history, but do not release the cache.
             // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
@@ -1031,6 +1033,7 @@ bool PDPServer2::process_to_send_list(
         // If the DATA is already in the writer's history, then remove it.
         remove_change_from_history_nts(history, change);
         // Add DATA to writer's history.
+        change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
         history->add_change(change);
     }
     return true;

@@ -40,7 +40,7 @@ bool DiscoveryDataBase::pdp_is_relevant(
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
     // Lock(shared mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     // Get identity of the participant that generated the DATA(p|Up)
     fastrtps::rtps::GuidPrefix_t change_guid_prefix = guid_from_change(&change).guidPrefix;
@@ -67,7 +67,7 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
     // Lock(shared mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     auto itp = participants_.find(guid_from_change(&change).guidPrefix);
     if (itp == participants_.end())
@@ -96,7 +96,7 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
     // Lock(shared mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     auto itp = participants_.find(guid_from_change(&change).guidPrefix);
     if (itp == participants_.end())
@@ -146,14 +146,14 @@ bool DiscoveryDataBase::update(
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_dispose()
 {
     // lock(sharing mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     return disposals_;
 }
 
 void DiscoveryDataBase::clear_changes_to_dispose()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     disposals_.clear();
 }
 
@@ -162,56 +162,56 @@ void DiscoveryDataBase::clear_changes_to_dispose()
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::pdp_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     return pdp_to_send_;
 }
 
 void DiscoveryDataBase::clear_pdp_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     pdp_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_publications_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     return edp_publications_to_send_;
 }
 
 void DiscoveryDataBase::clear_edp_publications_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     edp_publications_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_subscriptions_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     return edp_subscriptions_to_send_;
 }
 
 void DiscoveryDataBase::clear_edp_subscriptions_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     edp_subscriptions_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release()
 {
     // lock(sharing mode) mutex locally
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     return changes_to_release_;
 }
 
 void DiscoveryDataBase::clear_changes_to_release()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
     changes_to_release_.clear();
 }
 
@@ -222,7 +222,7 @@ bool DiscoveryDataBase::process_data_queue()
     bool is_dirty_topic = false;
 
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     // Swap DATA queues
     data_queue_.Swap();
@@ -319,7 +319,20 @@ void DiscoveryDataBase::create_participant_from_change(
     }
     else
     {
-        logInfo(DISCOVERY_DATABASE, "New participant added: " << guid_from_change(ch).guidPrefix);
+        fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
+        logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
+        if (change_guid.guidPrefix == server_guid_prefix_)
+        {
+            if (std::find(
+                        pdp_to_send_.begin(),
+                        pdp_to_send_.end(),
+                        ch) == pdp_to_send_.end())
+            {
+                logInfo(DISCOVERY_DATABASE, "Addind Server DATA(p) to send: "
+                            << ch->instanceHandle);
+                pdp_to_send_.push_back(ch);
+            }
+        }
     }
 
 }
@@ -516,63 +529,69 @@ void DiscoveryDataBase::process_dispose_participant(
     }
 
     // Delete entries from writers_ belonging to the participant
-    for (auto wit = writers_.begin(); wit != writers_.end(); ++wit)
+    for (auto wit = writers_.begin(); wit != writers_.end();)
     {
         if (wit->first.guidPrefix == participant_guid.guidPrefix)
         {
             changes_to_release_.push_back(wit->second.change());
             writers_.erase(wit->first);
-            --wit;
+            continue;
         }
+        ++wit;
     }
 
     // Delete entries from readers_ belonging to the participant
-    for (auto rit = readers_.begin(); rit != readers_.end(); ++rit)
+    for (auto rit = readers_.begin(); rit != readers_.end();)
     {
         if (rit->first.guidPrefix == participant_guid.guidPrefix)
         {
             changes_to_release_.push_back(rit->second.change());
             readers_.erase(rit->first);
-            --rit;
+            continue;
         }
+        ++rit;
     }
 
     // Delete Participant entries from writers_by_topic_
-    for (auto tit = writers_by_topic_.begin(); tit != writers_by_topic_.end(); ++tit)
+    for (auto tit = writers_by_topic_.begin(); tit != writers_by_topic_.end();)
     {
-        for (auto wit = tit->second.begin(); wit != tit->second.end(); ++wit)
+        for (auto wit = tit->second.begin(); wit != tit->second.end();)
         {
             if (wit->guidPrefix == participant_guid.guidPrefix)
             {
                 tit->second.erase(wit);
-                --wit;
+                continue;
             }
+            ++wit;
         }
 
         if (tit->second.empty())
         {
             writers_by_topic_.erase(tit);
-            --tit;
+            continue;
         }
+        ++tit;
     }
 
     // Delete Participant entries from readers_by_topic_
-    for (auto tit = readers_by_topic_.begin(); tit != readers_by_topic_.end(); ++tit)
+    for (auto tit = readers_by_topic_.begin(); tit != readers_by_topic_.end();)
     {
-        for (auto rit = tit->second.begin(); rit != tit->second.end(); ++rit)
+        for (auto rit = tit->second.begin(); rit != tit->second.end();)
         {
             if (rit->guidPrefix == participant_guid.guidPrefix)
             {
                 tit->second.erase(rit);
-                --rit;
+                continue;
             }
+            ++rit;
         }
 
         if (tit->second.empty())
         {
             readers_by_topic_.erase(tit);
-            --tit;
+            continue;
         }
+        ++tit;
     }
 
     // Remove participant from others participants_[]::relevant_participants_builtin_ack_status
@@ -640,7 +659,6 @@ void DiscoveryDataBase::process_dispose_writer(
         if (tit->second.empty())
         {
             writers_by_topic_.erase(tit);
-            --tit;
         }
     }
 
@@ -692,7 +710,6 @@ void DiscoveryDataBase::process_dispose_reader(
         if (tit->second.empty())
         {
             readers_by_topic_.erase(tit);
-            --tit;
         }
     }
 
@@ -707,7 +724,7 @@ bool DiscoveryDataBase::process_dirty_topics()
 {
     logInfo(DISCOVERY_DATABASE, "process_dirty_topics start");
     // Get shared lock
-    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     // Iterator objects are declared here because they are reused in each iteration of the loops
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator parts_reader_it;
@@ -849,7 +866,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
         fastrtps::rtps::CacheChange_t* change)
 {
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
