@@ -200,6 +200,20 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
     edp_subscriptions_to_send_.clear();
 }
 
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release()
+{
+    // lock(sharing mode) mutex locally
+    std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    return changes_to_release_;
+}
+
+void DiscoveryDataBase::clear_changes_to_release()
+{
+    // lock(exclusive mode) mutex locally
+    std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
+    changes_to_release_.clear();
+}
+
 ////////////
 // Functions to process_data_queue()
 bool DiscoveryDataBase::process_data_queue()
@@ -233,7 +247,7 @@ bool DiscoveryDataBase::process_data_queue()
                 create_participant_from_change(change);
             }
             // DATA(w) case
-            else if (is_writer(change))
+            if (is_writer(change))
             {
                 create_writers_from_change(change, topic_name);
             }
@@ -242,8 +256,12 @@ bool DiscoveryDataBase::process_data_queue()
             {
                 create_readers_from_change(change, topic_name);
             }
+
             // Update set of dirty_topics
-            if (std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
+            // In case of Data(p), topic name is empty, so no topic should be added to dirty_topics_
+            if ((topic_name != "") &&
+                    std::find(dirty_topics_.begin(), dirty_topics_.end(),
+                    topic_name) == dirty_topics_.end())
             {
                 dirty_topics_.push_back(topic_name);
                 is_dirty_topic = true;
@@ -280,7 +298,17 @@ void DiscoveryDataBase::create_participant_from_change(
         eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     DiscoveryParticipantInfo part(ch);
-    participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
+    std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
+            participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
+
+    // If insert resturn false, means that the participant already existed (DATA(p) is an update). In that case
+    // we need to update the change related to the participant and return the old change to the pool
+    if (!ret.second)
+    {
+        // Add old change to changes_to_release_
+        changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
+    }
+
 }
 
 void DiscoveryDataBase::create_writers_from_change(
@@ -357,7 +385,7 @@ void DiscoveryDataBase::create_writers_from_change(
     // If writer exists, update the change and set all participant ack status to false
     else
     {
-        ret.first->second.set_change_and_unmatch(ch);
+        changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
     }
 
 }
@@ -435,7 +463,7 @@ void DiscoveryDataBase::create_readers_from_change(
     // If reader exists, update the change and set all participant ack status to false
     else
     {
-        ret.first->second.set_change_and_unmatch(ch);
+        changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
     }
 }
 
@@ -449,7 +477,7 @@ void DiscoveryDataBase::process_dispose_participant(
             participants_.find(participant_guid.guidPrefix);
     if (pit != participants_.end())
     {
-        pit->second.set_disposal(ch);
+        changes_to_release_.push_back(pit->second.set_change_and_unmatch(ch));
     }
 
     // Delete entries from writers_ belonging to the participant
@@ -457,6 +485,7 @@ void DiscoveryDataBase::process_dispose_participant(
     {
         if (wit->first.guidPrefix == participant_guid.guidPrefix)
         {
+            changes_to_release_.push_back(wit->second.change());
             writers_.erase(wit->first);
             --wit;
         }
@@ -467,12 +496,13 @@ void DiscoveryDataBase::process_dispose_participant(
     {
         if (rit->first.guidPrefix == participant_guid.guidPrefix)
         {
+            changes_to_release_.push_back(rit->second.change());
             readers_.erase(rit->first);
             --rit;
         }
     }
 
-    // Delete Participant entries from writers_by_topic
+    // Delete Participant entries from writers_by_topic_
     for (auto tit = writers_by_topic_.begin(); tit != writers_by_topic_.end(); ++tit)
     {
         for (auto wit = tit->second.begin(); wit != tit->second.end(); ++wit)
@@ -491,7 +521,7 @@ void DiscoveryDataBase::process_dispose_participant(
         }
     }
 
-    // Delete Participant entries from readers_by_topic
+    // Delete Participant entries from readers_by_topic_
     for (auto tit = readers_by_topic_.begin(); tit != readers_by_topic_.end(); ++tit)
     {
         for (auto rit = tit->second.begin(); rit != tit->second.end(); ++rit)
@@ -523,9 +553,9 @@ void DiscoveryDataBase::process_dispose_participant(
     }
 
     // Remove participant from others readers_[]::relevant_participants_builtin_ack_status
-    for (auto pit = readers_.begin(); pit != readers_.end(); ++pit)
+    for (auto rit = readers_.begin(); rit != readers_.end(); ++rit)
     {
-        pit->second.remove_participant(participant_guid.guidPrefix);
+        rit->second.remove_participant(participant_guid.guidPrefix);
     }
 
     // Add entry to disposals_
@@ -545,7 +575,7 @@ void DiscoveryDataBase::process_dispose_writer(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
     if (wit != writers_.end())
     {
-        wit->second.set_disposal(ch);
+        changes_to_release_.push_back(wit->second.set_change_and_unmatch(ch));
     }
 
     // Update own entry participants_::writers
@@ -597,7 +627,7 @@ void DiscoveryDataBase::process_dispose_reader(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
     if (rit != readers_.end())
     {
-        rit->second.set_disposal(ch);
+        changes_to_release_.push_back(rit->second.set_change_and_unmatch(ch));
     }
 
     // Update own entry participants_::readers
@@ -770,18 +800,39 @@ bool DiscoveryDataBase::delete_entity_of_change(
 
     if (is_participant(change))
     {
-        // The information related to this participant is cleaned up in process_data_queue
-        return participants_.erase(guid_from_change(change).guidPrefix);
+        // The information related to this participant is cleaned up in process_data_queue()
+        auto it = participants_.find(guid_from_change(change).guidPrefix);
+        if (it == participants_.end())
+        {
+            return false;
+        }
+        changes_to_release_.push_back(it->second.change());
+        participants_.erase(it);
+        return true;
     }
     else if (is_reader(change))
     {
-        // The information related to this reader is cleaned up in process_data_queue
-        return readers_.erase(guid_from_change(change));
+        // The information related to this reader is cleaned up in process_data_queue()
+        auto it = readers_.find(guid_from_change(change));
+        if (it == readers_.end())
+        {
+            return false;
+        }
+        changes_to_release_.push_back(it->second.change());
+        readers_.erase(it);
+        return true;
     }
     else if (is_writer(change))
     {
-        // The information related to this writer is cleaned up in process_data_queue
-        return writers_.erase(guid_from_change(change));
+        // The information related to this writer is cleaned up in process_data_queue()
+        auto it = writers_.find(guid_from_change(change));
+        if (it == writers_.end())
+        {
+            return false;
+        }
+        changes_to_release_.push_back(it->second.change());
+        writers_.erase(it);
+        return true;
     }
     return false;
 }
