@@ -63,7 +63,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
     else
         m_max_pool_size = 0;
 
-    switch(memoryMode)
+    switch (memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:
             logInfo(RTPS_UTILS,"Static Mode is active, preallocating memory for pool_size elements");
