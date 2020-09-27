@@ -62,18 +62,11 @@ public:
         relevant_participants_builtin_ack_status_.remove_participant(guid_p);
     }
 
-    // set all acks to matched
-    void set_disposal(
+    eprosima::fastrtps::rtps::CacheChange_t* set_change_and_unmatch(
             eprosima::fastrtps::rtps::CacheChange_t* change);
 
-    void set_change_and_unmatch(
+    eprosima::fastrtps::rtps::CacheChange_t* change_info(
             eprosima::fastrtps::rtps::CacheChange_t* change);
-
-    void change_info(
-            eprosima::fastrtps::rtps::CacheChange_t* change)
-    {
-        change_ = change;
-    }
 
     bool is_matched(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
