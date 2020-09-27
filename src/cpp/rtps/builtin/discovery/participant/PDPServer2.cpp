@@ -544,10 +544,16 @@ void PDPServer2::announceParticipantState(
     assert(nullptr != change);
 
     // Force send the announcement
-    std::vector<GUID_t> remote_readers;
     LocatorList_t locators;
 
-    // TODO: figure out how to identify the receivers
+    // Create a list of receivers based on the remote participants known by the discovery database
+    std::vector<GUID_t> remote_readers;
+    std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
+    for (GuidPrefix_t participant_prefix: remote_participants)
+    {
+        remote_readers.push_back(GUID_t(participant_prefix, c_EntityId_SPDPReader));
+    }
+
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
     RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
 

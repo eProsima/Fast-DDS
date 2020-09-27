@@ -207,6 +207,8 @@ public:
 
     fastrtps::rtps::CacheChange_t* cache_change_own_participant();
 
+    const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
+
 protected:
 
     // update the acks
