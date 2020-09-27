@@ -178,10 +178,11 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
-    if (ch == nullptr){
+    if (ch == nullptr)
+    {
         return;
     }
-    
+
     switch(memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:
@@ -200,14 +201,15 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
             if(target != m_allCaches.end())
             {
                 m_allCaches.erase(target);
-            }else{
+            }
+            else
+            {
                 logInfo(RTPS_UTILS,"Tried to release a CacheChange that is not logged in the Pool");
                 break;
             }
             delete(ch);
             --m_pool_size;
             break;
-
     }
 }
 

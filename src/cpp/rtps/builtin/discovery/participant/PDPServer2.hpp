@@ -158,7 +158,7 @@ protected:
 
     bool process_changes_release();
 
-    bool remove_change_from_history(
+    bool remove_change_from_writer_history(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::WriterHistory* history,
             fastrtps::rtps::CacheChange_t* change);
