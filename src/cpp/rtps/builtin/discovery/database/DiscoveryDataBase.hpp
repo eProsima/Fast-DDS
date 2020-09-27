@@ -186,6 +186,10 @@ public:
 
     void clear_edp_subscriptions_to_send();
 
+    const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release();
+
+    void clear_changes_to_release();
+
 
     ////////////
     // Static Functions to work with GUIDs
@@ -261,6 +265,9 @@ protected:
     mutable share_mutex_t sh_mtx_;
 
     fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
+
+    std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
+
 };
 
 

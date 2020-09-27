@@ -27,18 +27,23 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-void DiscoverySharedInfo::set_disposal(
-        eprosima::fastrtps::rtps::CacheChange_t* change)
-{
-    set_change_and_unmatch(change);
-}
 
-void DiscoverySharedInfo::set_change_and_unmatch(
+eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::set_change_and_unmatch(
         eprosima::fastrtps::rtps::CacheChange_t* change)
 {
     relevant_participants_builtin_ack_status_.unmatch_all();
-    change_info(change);
+    return change_info(change);
 }
+
+eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::change_info(
+        eprosima::fastrtps::rtps::CacheChange_t* change)
+{
+    eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
+    change_ = change;
+    return old_change;
+}
+
+eprosima::fastrtps::rtps::CacheChange_t* change();
 
 } /* namespace ddb */
 } /* namespace rtps */
