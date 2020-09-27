@@ -779,7 +779,8 @@ bool PDPServer2::process_changes_release()
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
 
     // For each change to erase, first try to erase in case is in writer history and then it releases it
-    for (auto ch : discovery_db_.changes_to_release()){
+    for (auto ch : discovery_db_.changes_to_release())
+    {
 
         // Check if change owner is this participant. In that case, the change comes from a writer pool (PDP, EDP
         // publications or EDP subscriptions)
@@ -802,9 +803,9 @@ bool PDPServer2::process_changes_release()
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
                     remove_change_from_writer_history(
-                            edp->publications_writer_.first,
-                            edp->publications_writer_.second,
-                            ch);
+                        edp->publications_writer_.first,
+                        edp->publications_writer_.second,
+                        ch);
                 }
                 edp->publications_writer_.second->release_Cache(ch);
             }
@@ -815,9 +816,9 @@ bool PDPServer2::process_changes_release()
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
                     remove_change_from_writer_history(
-                            edp->subscriptions_writer_.first,
-                            edp->subscriptions_writer_.second,
-                            ch);
+                        edp->subscriptions_writer_.first,
+                        edp->subscriptions_writer_.second,
+                        ch);
                 }
                 edp->subscriptions_writer_.second->release_Cache(ch);
             }

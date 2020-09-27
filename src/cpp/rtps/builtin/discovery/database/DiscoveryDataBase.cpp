@@ -200,14 +200,15 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
     edp_subscriptions_to_send_.clear();
 }
 
-
-const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release(){
+const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release()
+{
     // lock(sharing mode) mutex locally
     std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
     return changes_to_release_;
 }
 
-void DiscoveryDataBase::clear_changes_to_release(){
+void DiscoveryDataBase::clear_changes_to_release()
+{
     // lock(exclusive mode) mutex locally
     std::unique_lock<std::shared_timed_mutex> lock(sh_mtx_);
     changes_to_release_.clear();
@@ -258,7 +259,9 @@ bool DiscoveryDataBase::process_data_queue()
 
             // Update set of dirty_topics
             // In case of Data(p), topic name is empty, so no topic should be added to dirty_topics_
-            if ((topic_name != "") && std::find(dirty_topics_.begin(), dirty_topics_.end(), topic_name) == dirty_topics_.end())
+            if ((topic_name != "") &&
+                    std::find(dirty_topics_.begin(), dirty_topics_.end(),
+                    topic_name) == dirty_topics_.end())
             {
                 dirty_topics_.push_back(topic_name);
                 is_dirty_topic = true;
@@ -898,7 +901,6 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     }
     pending_ |= !is_acked;
 }
-
 
 } // namespace ddb
 } // namespace rtps
