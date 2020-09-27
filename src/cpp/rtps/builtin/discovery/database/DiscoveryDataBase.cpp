@@ -875,6 +875,21 @@ fastrtps::rtps::CacheChange_t* DiscoveryDataBase::cache_change_own_participant()
     return nullptr;
 }
 
+const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::remote_participants()
+{
+    std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants;
+    // Iterate over participants to add the remote ones
+    for (auto participant: participants_)
+    {
+        // Only add participants other than the sever
+        if (server_guid_prefix_ != participant.first)
+        {
+            remote_participants.push_back(participant.first);
+        }
+    }
+    return remote_participants;
+}
+
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
         DiscoveryDataBase* db,
         eprosima::fastrtps::rtps::CacheChange_t* change)
