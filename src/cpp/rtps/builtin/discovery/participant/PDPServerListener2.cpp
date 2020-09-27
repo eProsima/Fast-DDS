@@ -50,7 +50,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    logInfo(RTPS_PDP, "PDP Server Message received");
+    logInfo(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
     // Get PDP reader history
     auto pdp_history = pdp_server()->mp_PDPReaderHistory;
@@ -73,7 +73,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
     if (change->instanceHandle == c_InstanceHandle_Unknown
             && !this->get_key(change.get()))
     {
-        logWarning(RTPS_PDP, "Problem getting the key of the change, removing");
+        logWarning(RTPS_PDP_LISTENER, "Problem getting the key of the change, removing");
         return;
     }
 
@@ -83,7 +83,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
     // DATA(p|Up) sample identity should not be unknown
     if (change->write_params.sample_identity() == SampleIdentity::unknown())
     {
-        logWarning(RTPS_PDP, "CacheChange_t is not properly identified for client-server operation");
+        logWarning(RTPS_PDP_LISTENER, "CacheChange_t is not properly identified for client-server operation");
         return;
     }
 
@@ -93,7 +93,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
         // Ignore announcement from own RTPSParticipant
         if (guid == pdp_server()->getRTPSParticipant()->getGuid())
         {
-            logInfo(RTPS_PDP, "Message from own RTPSParticipant, ignoring");
+            logInfo(RTPS_PDP_LISTENER, "Message from own RTPSParticipant, ignoring");
             return;
         }
 
@@ -107,12 +107,12 @@ void PDPServerListener2::onNewCacheChangeAdded(
                     pdp_server()->getRTPSParticipant()->network_factory(),
                     pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
-            // Key should not match instance handle
-            if (change->instanceHandle == temp_participant_data_.m_key)
-            {
-                logInfo(RTPS_PDP, "Malformed PDP payload received, ignoring");
-                return;
-            }
+            // // Key should not match instance handle
+            // if (change->instanceHandle == temp_participant_data_.m_key)
+            // {
+            //     logInfo(RTPS_PDP_LISTENER, "Malformed PDP payload received, ignoring: " << change->instanceHandle);
+            //     return;
+            // }
 
             // Notify the DiscoveryDataBase
             if (pdp_server()->discovery_db().update(change.get()))
@@ -154,7 +154,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
             {
                 // TODO: pending avoid builtin connections on client info relayed by other server
 
-                logInfo(RTPS_PDP, "Registering a new participant: " << guid);
+                logInfo(RTPS_PDP_LISTENER, "Registering a new participant: " << guid);
 
                 // Create a new participant proxy entry
                 pdata = pdp_server()->createParticipantProxyData(temp_participant_data_, writer_guid);

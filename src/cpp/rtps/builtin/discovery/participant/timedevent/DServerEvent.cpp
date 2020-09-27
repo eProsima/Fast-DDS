@@ -53,7 +53,7 @@ DServerEvent::~DServerEvent()
 
 bool DServerEvent::event()
 {
-    logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
+    // logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
     bool restart = false;
 
