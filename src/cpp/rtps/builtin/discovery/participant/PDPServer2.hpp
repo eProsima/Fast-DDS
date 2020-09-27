@@ -161,7 +161,8 @@ protected:
     bool remove_change_from_writer_history(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::WriterHistory* history,
-            fastrtps::rtps::CacheChange_t* change);
+            fastrtps::rtps::CacheChange_t* change,
+            bool release_change = true);
 
 
     // Remove from writer_history all the changes whose original sender was entity_guid_prefix
@@ -182,7 +183,8 @@ protected:
 
     bool remove_change_from_history_nts(
             fastrtps::rtps::WriterHistory* history,
-            fastrtps::rtps::CacheChange_t* change);
+            fastrtps::rtps::CacheChange_t* change,
+            bool release_change = true);
 
     bool process_dirty_topics();
 

@@ -544,14 +544,42 @@ void PDPServer2::announceParticipantState(
     assert(nullptr != change);
 
     // Force send the announcement
-    LocatorList_t locators;
 
-    // Create a list of receivers based on the remote participants known by the discovery database
+    // Create a list of receivers based on the remote participants known by the discovery database. Add the locators
+    // of those remote participants.
+    LocatorList_t locators;
     std::vector<GUID_t> remote_readers;
     std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
     for (GuidPrefix_t participant_prefix: remote_participants)
     {
-        remote_readers.push_back(GUID_t(participant_prefix, c_EntityId_SPDPReader));
+        // Add remote reader
+        GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
+        remote_readers.push_back(remote_guid);
+
+        // Iterate over participant_proxies to find the reader
+        for (ParticipantProxyData* proxy: participant_proxies_)
+        {
+            // Check if this is the participant for which we are looking
+            if (proxy->m_guid == remote_guid)
+            {
+                // Add default unicast locators of the remote reader
+                for (Locator_t locator: proxy->metatraffic_locators.unicast)
+                {
+                    locators.push_back(locator);
+                }
+                // The participant will be there only once, so we can stop looking when found
+                break;
+            }
+        }
+    }
+    // Add own default multicast address
+    for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.multicast)
+    {
+        locators.push_back(locator);
+    }
+    for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.unicast)
+    {
+        locators.push_back(locator);
     }
 
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
@@ -798,9 +826,15 @@ bool PDPServer2::process_changes_release()
                 // everyone, time at which it is removed from history.
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
-                    remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch);
+                    if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
+                    {
+                        mp_PDPWriterHistory->release_Cache(ch);
+                    }
                 }
-                mp_PDPWriterHistory->release_Cache(ch);
+                else
+                {
+                    mp_PDPWriterHistory->release_Cache(ch);
+                }
             }
             else if (discovery_db_.is_writer(ch))
             {
@@ -808,12 +842,18 @@ bool PDPServer2::process_changes_release()
                 // everyone, time at which it is removed from history.
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
-                    remove_change_from_writer_history(
+                    if (!remove_change_from_writer_history(
                         edp->publications_writer_.first,
                         edp->publications_writer_.second,
-                        ch);
+                        ch))
+                    {
+                        edp->publications_writer_.second->release_Cache(ch);
+                    }
                 }
-                edp->publications_writer_.second->release_Cache(ch);
+                else
+                {
+                    edp->publications_writer_.second->release_Cache(ch);
+                }
             }
             else if (discovery_db_.is_reader(ch))
             {
@@ -821,12 +861,18 @@ bool PDPServer2::process_changes_release()
                 // everyone, time at which it is removed from history.
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
-                    remove_change_from_writer_history(
+                    if (!remove_change_from_writer_history(
                         edp->subscriptions_writer_.first,
                         edp->subscriptions_writer_.second,
-                        ch);
+                        ch))
+                    {
+                        edp->subscriptions_writer_.second->release_Cache(ch);
+                    }
                 }
-                edp->subscriptions_writer_.second->release_Cache(ch);
+                else
+                {
+                    edp->subscriptions_writer_.second->release_Cache(ch);
+                }
             }
             else
             {
@@ -841,14 +887,25 @@ bool PDPServer2::process_changes_release()
             // take it out upon reading it in the listeners
             if (discovery_db_.is_participant(ch))
             {
+                remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
                 mp_PDPReaderHistory->release_Cache(ch);
             }
             else if (discovery_db_.is_writer(ch))
             {
+                remove_change_from_writer_history(
+                    edp->publications_writer_.first,
+                    edp->publications_writer_.second,
+                    ch,
+                    false);
                 edp->publications_reader_.second->release_Cache(ch);
             }
             else if (discovery_db_.is_reader(ch))
             {
+                remove_change_from_writer_history(
+                    edp->subscriptions_writer_.first,
+                    edp->subscriptions_writer_.second,
+                    ch,
+                    false);
                 edp->subscriptions_reader_.second->release_Cache(ch);
             }
             else
@@ -944,21 +1001,30 @@ bool PDPServer2::process_to_send_list(
 bool PDPServer2::remove_change_from_writer_history(
         fastrtps::rtps::RTPSWriter* writer,
         fastrtps::rtps::WriterHistory* history,
-        fastrtps::rtps::CacheChange_t* change)
+        fastrtps::rtps::CacheChange_t* change,
+        bool release_change /*= true*/)
 {
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
-    return remove_change_from_history_nts(history, change);
+    return remove_change_from_history_nts(history, change, release_change);
 }
 
 bool PDPServer2::remove_change_from_history_nts(
         fastrtps::rtps::WriterHistory* history,
-        fastrtps::rtps::CacheChange_t* change)
+        fastrtps::rtps::CacheChange_t* change,
+        bool release_change /*= true*/)
 {
     for (auto chit = history->changesRbegin(); chit != history->changesRend(); chit++)
     {
         if (change->instanceHandle == (*chit)->instanceHandle)
         {
-            history->remove_change(*chit);
+            if (release_change)
+            {
+                history->remove_change(*chit);
+            }
+            else
+            {
+                history->remove_change_and_reuse((*chit)->sequenceNumber);
+            }
             return true;
         }
     }
