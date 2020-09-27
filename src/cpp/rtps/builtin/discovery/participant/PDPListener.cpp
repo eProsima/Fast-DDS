@@ -55,7 +55,7 @@ void PDPListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
     GUID_t writer_guid = change->writerGUID;
-    logInfo(RTPS_PDP, "SPDP Message received");
+    logInfo(RTPS_PDP, "SPDP Message received from: " << change_in->writerGUID);
 
     // Make sure we have an instance handle (i.e GUID)
     if (change->instanceHandle == c_InstanceHandle_Unknown)

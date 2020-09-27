@@ -564,18 +564,18 @@ void PDPServer2::announceParticipantState(
     LocatorList_t locators;
     std::vector<GUID_t> remote_readers;
 
-    // Iterate over clients
-    for (auto client: clients_)
-    {
-        fastrtps::rtps::ReaderProxyData& rat = client.second;
-        remote_readers.push_back(rat.guid());
+    // // Iterate over clients
+    // for (auto client: clients_)
+    // {
+    //     fastrtps::rtps::ReaderProxyData& rat = client.second;
+    //     remote_readers.push_back(rat.guid());
 
-        // Add default unicast locators of the remote reader
-        for (const Locator_t& locator: client.second.remote_locators().unicast)
-        {
-            locators.push_back(locator);
-        }
-    }
+    //     // Add default unicast locators of the remote reader
+    //     for (const Locator_t& locator: client.second.remote_locators().unicast)
+    //     {
+    //         locators.push_back(locator);
+    //     }
+    // }
 
     // std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
     // for (GuidPrefix_t participant_prefix: remote_participants)
@@ -1031,6 +1031,7 @@ bool PDPServer2::process_to_send_list(
         // If the DATA is already in the writer's history, then remove it.
         remove_change_from_history_nts(history, change);
         // Add DATA to writer's history.
+        change->writerGUID = mp_PDPWriter->getGuid();
         history->add_change(change);
     }
     return true;

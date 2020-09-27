@@ -319,7 +319,20 @@ void DiscoveryDataBase::create_participant_from_change(
     }
     else
     {
-        logInfo(DISCOVERY_DATABASE, "New participant added: " << guid_from_change(ch).guidPrefix);
+        fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
+        logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
+        if (change_guid.guidPrefix == server_guid_prefix_)
+        {
+            if (std::find(
+                        pdp_to_send_.begin(),
+                        pdp_to_send_.end(),
+                        ch) == pdp_to_send_.end())
+            {
+                logInfo(DISCOVERY_DATABASE, "Addind Server DATA(p) to send: "
+                            << ch->instanceHandle);
+                pdp_to_send_.push_back(ch);
+            }
+        }
     }
 
 }
