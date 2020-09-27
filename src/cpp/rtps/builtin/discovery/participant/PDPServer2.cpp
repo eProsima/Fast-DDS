@@ -192,7 +192,7 @@ bool PDPServer2::createPDPEndpoints()
     // VOLATILE durability to highlight that on steady state the history is empty (except for announcement DATAs)
     // this setting is incompatible with CLIENTs TRANSIENT_LOCAL PDP readers but not validation is done on builitin
     // endpoints
-    watt.endpoint.durabilityKind = VOLATILE;
+    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -739,7 +739,9 @@ bool PDPServer2::process_change_acknowledgement(
         writer->for_each_reader_proxy(c, func);
 
         // If the change has been acknowledge by everyone
-        if (!func.pending())
+        if (!func.pending() &&
+            !(discovery_db_.is_participant(c) &&
+                discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
         {
             // Remove the entry from writer history, but do not release the cache.
             // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
