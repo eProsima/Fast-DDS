@@ -98,7 +98,7 @@ public:
      */
     bool update(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            eprosima::fastrtps::string_255 topic_name = "");
+            std::string topic_name = "");
 
 
     ////////////
@@ -145,22 +145,22 @@ public:
 
     void create_writers_from_change(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     void create_readers_from_change(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     void process_dispose_participant(
             eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     void process_dispose_writer(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     void process_dispose_reader(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     ////////////
     // Functions to process_dirty_topics()
@@ -243,9 +243,9 @@ protected:
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
-    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > readers_by_topic_;
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> > readers_by_topic_;
 
-    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > writers_by_topic_;
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> > writers_by_topic_;
 
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo> participants_;
 
@@ -255,7 +255,7 @@ protected:
 
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> disposals_;
 
-    std::vector<eprosima::fastrtps::string_255> dirty_topics_;
+    std::vector<std::string> dirty_topics_;
 
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> pdp_to_send_;
 

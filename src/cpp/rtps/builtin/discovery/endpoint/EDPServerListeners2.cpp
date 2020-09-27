@@ -54,7 +54,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
 {
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
-    logInfo(RTPS_EDP, "Server EDP listener received new publisher info");
+    logInfo(RTPS_EDP_LISTENER, "EDP Server PUB Message received: " << change_in->instanceHandle);
 
     // DATA(w)s should have key
     if (!computeKey(change))
@@ -67,7 +67,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     ReaderHistory* reader_history = sedp_->publications_reader_.second;
 
     // String to store the topic of the writer
-    fastrtps::string_255 topic_name;
+    std::string topic_name;
 
     // DATA(w) case: new writer or updated information about an existing writer
     if (change->kind == ALIVE)
@@ -80,7 +80,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
         if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
         {
-            topic_name = temp_writer_data_.topicName();
+            topic_name = temp_writer_data_.topicName().to_string();
         }
     }
     // DATA(Uw) case
@@ -91,7 +91,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         // Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
         if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
         {
-            topic_name = temp_writer_data_.topicName();
+            topic_name = temp_writer_data_.topicName().to_string();
         }
 
         // Remove WriterProxy data information
@@ -137,7 +137,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
 {
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
-    logInfo(RTPS_EDP, "Server EDP listener received new subscriber info");
+    logInfo(RTPS_EDP_LISTENER, "EDP Server SUB Message received: " << change_in->instanceHandle);
 
     // DATA(r)s should have key
     if (!computeKey(change))
@@ -150,7 +150,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
     ReaderHistory* reader_history = sedp_->subscriptions_reader_.second;
 
     // String to store the topic of the reader
-    fastrtps::string_255 topic_name;
+    std::string topic_name;
 
     // DATA(r) case: new reader or updated information about an existing reader
     if (change->kind == ALIVE)
@@ -163,7 +163,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
         if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
         {
-            topic_name = temp_reader_data_.topicName();
+            topic_name = temp_reader_data_.topicName().to_string();
         }
     }
     // DATA(Ur) case
@@ -175,7 +175,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         // Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
         if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
         {
-            topic_name = temp_reader_data_.topicName();
+            topic_name = temp_reader_data_.topicName().to_string();
         }
 
         // Remove ReaderProxy data information

@@ -133,8 +133,9 @@ void DiscoveryDataBase::add_ack_(
 
 bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
-        eprosima::fastrtps::string_255 topic_name)
+        std::string topic_name)
 {
+    logInfo(DISCOVERY_DATABASE, "Adding change to the queue: " << change->instanceHandle);
     //  add the data to the queue to process
     data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo(change, topic_name));
 
@@ -227,7 +228,7 @@ bool DiscoveryDataBase::process_data_queue()
     data_queue_.Swap();
 
     eprosima::fastrtps::rtps::CacheChange_t* change;
-    eprosima::fastrtps::string_255 topic_name;
+    std::string topic_name;
 
     // Process all messages in the queque
     while (!data_queue_.Empty())
@@ -240,20 +241,26 @@ bool DiscoveryDataBase::process_data_queue()
         // If the change is a DATA(p|w|r)
         if (change->kind == eprosima::fastrtps::rtps::ALIVE)
         {
+            logInfo(DISCOVERY_DATABASE, "ALIVE change received from: " << change->instanceHandle);
             // DATA(p) case
             if (is_participant(change))
             {
                 // Update participants map
+                logInfo(DISCOVERY_DATABASE, "DATA(p) received from: " << change->instanceHandle);
                 create_participant_from_change(change);
             }
             // DATA(w) case
-            if (is_writer(change))
+            else if (is_writer(change))
             {
+                logInfo(DISCOVERY_DATABASE, "DATA(w) in topic " << topic_name << " received from: "
+                        << change->instanceHandle);
                 create_writers_from_change(change, topic_name);
             }
             // DATA(r) case
             else if (is_reader(change))
             {
+                logInfo(DISCOVERY_DATABASE, "DATA(r) in topic " << topic_name << " received from: "
+                        << change->instanceHandle);
                 create_readers_from_change(change, topic_name);
             }
 
@@ -263,6 +270,7 @@ bool DiscoveryDataBase::process_data_queue()
                     std::find(dirty_topics_.begin(), dirty_topics_.end(),
                     topic_name) == dirty_topics_.end())
             {
+                logInfo(DISCOVERY_DATABASE, "Setting topic " << topic_name << " as dirty");
                 dirty_topics_.push_back(topic_name);
                 is_dirty_topic = true;
             }
@@ -306,14 +314,19 @@ void DiscoveryDataBase::create_participant_from_change(
     if (!ret.second)
     {
         // Add old change to changes_to_release_
+        logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
         changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
+    }
+    else
+    {
+        logInfo(DISCOVERY_DATABASE, "New participant added: " << guid_from_change(ch).guidPrefix);
     }
 
 }
 
 void DiscoveryDataBase::create_writers_from_change(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name)
+        const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
 
@@ -327,7 +340,7 @@ void DiscoveryDataBase::create_writers_from_change(
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator writer_it =
                 writers_.find(writer_guid);
 
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator readers_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator readers_it =
                 readers_by_topic_.find(topic_name);
         if (readers_it != readers_by_topic_.end())
         {
@@ -366,7 +379,7 @@ void DiscoveryDataBase::create_writers_from_change(
         }
 
         // Update writers_by_topic
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
                 writers_by_topic_.find(topic_name);
         if (topic_it != writers_by_topic_.end())
         {
@@ -381,6 +394,17 @@ void DiscoveryDataBase::create_writers_from_change(
                 *writer_by_topic_it = writer_guid;
             }
         }
+        // This is the first writer in the topic
+        else
+        {
+            std::vector<fastrtps::rtps::GUID_t> writers_in_topic = {writer_guid};
+            auto ret = writers_by_topic_.insert(
+                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, writers_in_topic));
+            if (!ret.second)
+            {
+                logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
+            }
+        }
     }
     // If writer exists, update the change and set all participant ack status to false
     else
@@ -392,7 +416,7 @@ void DiscoveryDataBase::create_writers_from_change(
 
 void DiscoveryDataBase::create_readers_from_change(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name)
+        const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
 
@@ -406,7 +430,7 @@ void DiscoveryDataBase::create_readers_from_change(
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator reader_it =
                 readers_.find(reader_guid);
 
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator writers_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator writers_it =
                 writers_by_topic_.find(topic_name);
         if (writers_it != writers_by_topic_.end())
         {
@@ -444,7 +468,7 @@ void DiscoveryDataBase::create_readers_from_change(
             pit->second.add_reader(reader_guid);
         }
         // Update readers_by_topic
-        std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
                 readers_by_topic_.find(topic_name);
         if (topic_it != readers_by_topic_.end())
         {
@@ -457,6 +481,17 @@ void DiscoveryDataBase::create_readers_from_change(
             else
             {
                 *reader_by_topic_it = reader_guid;
+            }
+        }
+        // This is the first reader in the topic
+        else
+        {
+            std::vector<fastrtps::rtps::GUID_t> readers_in_topic = {reader_guid};
+            auto ret = readers_by_topic_.insert(
+                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, readers_in_topic));
+            if (!ret.second)
+            {
+                logError(DISCOVERY_DATABASE, "Could not insert reader " << reader_guid << " in topic " << topic_name);
             }
         }
     }
@@ -567,7 +602,7 @@ void DiscoveryDataBase::process_dispose_participant(
 
 void DiscoveryDataBase::process_dispose_writer(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name)
+        const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
 
@@ -587,7 +622,7 @@ void DiscoveryDataBase::process_dispose_writer(
     }
 
     // Update own entry writers_by_topic_
-    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
             writers_by_topic_.find(topic_name);
     if (tit != writers_by_topic_.end())
     {
@@ -619,7 +654,7 @@ void DiscoveryDataBase::process_dispose_writer(
 
 void DiscoveryDataBase::process_dispose_reader(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const eprosima::fastrtps::string_255& topic_name)
+        const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
 
@@ -639,7 +674,7 @@ void DiscoveryDataBase::process_dispose_reader(
     }
 
     // Update own entry readers_by_topic_
-    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
             readers_by_topic_.find(topic_name);
     if (tit != readers_by_topic_.end())
     {
@@ -670,6 +705,7 @@ void DiscoveryDataBase::process_dispose_reader(
 
 bool DiscoveryDataBase::process_dirty_topics()
 {
+    logInfo(DISCOVERY_DATABASE, "process_dirty_topics start");
     // Get shared lock
     std::shared_lock<std::shared_timed_mutex> lock(sh_mtx_);
 
@@ -682,20 +718,33 @@ bool DiscoveryDataBase::process_dirty_topics()
     // Iterate over dirty_topics_
     for (auto topic_it = dirty_topics_.begin(); topic_it != dirty_topics_.end();)
     {
+        logInfo(DISCOVERY_DATABASE, "Processing topic: " << *topic_it);
         // Flag to store whether a topic can be cleared.
         bool is_clearable = true;
 
         // Get all the writers in the topic
-        std::vector<fastrtps::rtps::GUID_t> writers = writers_by_topic_[*topic_it];
+        std::vector<fastrtps::rtps::GUID_t> writers;
+        auto ret = writers_by_topic_.find(*topic_it);
+        if (ret != writers_by_topic_.end())
+        {
+            writers = ret->second;
+        }
         // Get all the readers in the topic
-        std::vector<fastrtps::rtps::GUID_t> readers = readers_by_topic_[*topic_it];
+        std::vector<fastrtps::rtps::GUID_t> readers;
+        ret = readers_by_topic_.find(*topic_it);
+        if (ret != readers_by_topic_.end())
+        {
+            readers = ret->second;
+        }
 
         for (fastrtps::rtps::GUID_t writer: writers)
         // Iterate over writers in the topic:
         {
+            logInfo(DISCOVERY_DATABASE, "[" << *topic_it << "]" << " Processing writer: " << writer);
             // Iterate over readers in the topic:
             for (fastrtps::rtps::GUID_t reader : readers)
             {
+                logInfo(DISCOVERY_DATABASE, "[" << *topic_it << "]" << " Processing reader: " << reader);
                 // Find participants with writer info and participant with reader info in participants_
                 parts_reader_it = participants_.find(reader.guidPrefix);
                 parts_writer_it = participants_.find(writer.guidPrefix);
@@ -717,6 +766,8 @@ bool DiscoveryDataBase::process_dirty_topics()
                                     edp_publications_to_send_.end(),
                                     writers_it->second.change()) == edp_publications_to_send_.end())
                         {
+                            logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+                                    << writers_it->second.change()->instanceHandle);
                             edp_publications_to_send_.push_back(writers_it->second.change());
                         }
                     }
@@ -729,6 +780,8 @@ bool DiscoveryDataBase::process_dirty_topics()
                                 pdp_to_send_.end(),
                                 parts_writer_it->second.change()) == pdp_to_send_.end())
                     {
+                        logInfo(DISCOVERY_DATABASE, "Addind writer's DATA(p) to send: "
+                                    << parts_writer_it->second.change()->instanceHandle);
                         pdp_to_send_.push_back(parts_writer_it->second.change());
                     }
                     // Set topic as not-clearable.
@@ -748,6 +801,8 @@ bool DiscoveryDataBase::process_dirty_topics()
                                     edp_subscriptions_to_send_.end(),
                                     readers_it->second.change()) == edp_subscriptions_to_send_.end())
                         {
+                            logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
+                                    << readers_it->second.change()->instanceHandle);
                             edp_subscriptions_to_send_.push_back(readers_it->second.change());
                         }
                     }
@@ -760,6 +815,8 @@ bool DiscoveryDataBase::process_dirty_topics()
                                 pdp_to_send_.end(),
                                 parts_reader_it->second.change()) == pdp_to_send_.end())
                     {
+                        logInfo(DISCOVERY_DATABASE, "Addind readers's DATA(p) to send: "
+                                    << parts_reader_it->second.change()->instanceHandle);
                         pdp_to_send_.push_back(parts_reader_it->second.change());
                     }
                     // Set topic as not-clearable.
@@ -773,16 +830,19 @@ bool DiscoveryDataBase::process_dirty_topics()
         {
             // Delete topic from dirty_topics_
             topic_it = dirty_topics_.erase(topic_it);
+            logInfo(DISCOVERY_DATABASE, "Topic " << *topic_it << " has been cleaned");
         }
         else
         {
             // Proceed with next topic
+            logInfo(DISCOVERY_DATABASE, "Topic " << *topic_it << " is still dirty");
             ++topic_it;
         }
     }
 
     // Return whether there still are dirty topics
-    return dirty_topics_.empty();
+    logInfo(DISCOVERY_DATABASE, "Are there dirty topics? " << !dirty_topics_.empty());
+    return !dirty_topics_.empty();
 }
 
 bool DiscoveryDataBase::delete_entity_of_change(
@@ -846,16 +906,22 @@ bool DiscoveryDataBase::is_participant(
 bool DiscoveryDataBase::is_writer(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    constexpr uint8_t entity_id_is_writer_bit = 0x04;
-
+    if (is_participant(ch))
+    {
+        return false;
+    }
+    constexpr uint8_t entity_id_is_writer_bit = 0x03;
     return ((guid_from_change(ch).entityId.value[3] & entity_id_is_writer_bit) != 0);
 }
 
 bool DiscoveryDataBase::is_reader(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
+    if (is_participant(ch))
+    {
+        return false;
+    }
     constexpr uint8_t entity_id_is_reader_bit = 0x04;
-
     return ((guid_from_change(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
 }
 

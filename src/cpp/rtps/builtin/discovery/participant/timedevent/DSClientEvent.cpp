@@ -52,7 +52,7 @@ DSClientEvent::DSClientEvent(
 
 bool DSClientEvent::event()
 {
-    logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " DSClientEvent Period");
+    // logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " DSClientEvent Period");
     bool restart = true;
 
     // Check if all servers received my discovery data
@@ -64,7 +64,7 @@ bool DSClientEvent::event()
             restart = !mp_PDP->match_servers_EDP_endpoints();
             // we must keep this TimedEvent alive to cope with servers' shutdown
             // PDPClient::removeRemoteEndpoints would restart_timer if a server vanishes
-            logInfo(CLIENT_PDP_THREAD,"Client " << mp_PDP->getRTPSParticipant()->getGuid() << " matching servers EDP endpoints")
+            // logInfo(CLIENT_PDP_THREAD,"Client " << mp_PDP->getRTPSParticipant()->getGuid() << " matching servers EDP endpoints")
         }
         else
         {

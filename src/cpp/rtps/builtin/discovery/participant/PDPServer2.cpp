@@ -254,7 +254,7 @@ void PDPServer2::initializeParticipantProxyData(
 void PDPServer2::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid.guidPrefix);
+    logInfo(RTPS_PDP, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
@@ -296,6 +296,16 @@ void PDPServer2::assignRemoteEndpoints(
         temp_reader_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(temp_reader_data_);
+
+        // TODO: remove when the Writer API issue is resolved
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
+        // Waiting till we remove C++11 restriction:
+        // clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
+        auto emplace_result = clients_.emplace(temp_reader_data_.guid(), temp_reader_data_);
+        if (!emplace_result.second)
+        {
+            emplace_result.first->second = temp_reader_data_;
+        }
     }
     else
     {
@@ -352,6 +362,10 @@ void PDPServer2::removeRemoteEndpoints(
                                           << " did not send information about builtin readers");
         return;
     }
+
+    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+    // TODO: remove when the Writer API issue is resolved
+    clients_.erase(pdata->m_guid);
 }
 
 #if HAVE_SQLITE3
@@ -379,7 +393,7 @@ void PDPServer2::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    logInfo(RTPS_PDP, "Announcing Server (new change: " << new_change << ")");
+    // logInfo(RTPS_PDP, "Announcing Server (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
@@ -549,38 +563,53 @@ void PDPServer2::announceParticipantState(
     // of those remote participants.
     LocatorList_t locators;
     std::vector<GUID_t> remote_readers;
-    std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
-    for (GuidPrefix_t participant_prefix: remote_participants)
-    {
-        // Add remote reader
-        GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
-        remote_readers.push_back(remote_guid);
 
-        // Iterate over participant_proxies to find the reader
-        for (ParticipantProxyData* proxy: participant_proxies_)
+    // Iterate over clients
+    for (auto client: clients_)
+    {
+        fastrtps::rtps::ReaderProxyData& rat = client.second;
+        remote_readers.push_back(rat.guid());
+
+        // Add default unicast locators of the remote reader
+        for (const Locator_t& locator: client.second.remote_locators().unicast)
         {
-            // Check if this is the participant for which we are looking
-            if (proxy->m_guid == remote_guid)
-            {
-                // Add default unicast locators of the remote reader
-                for (Locator_t locator: proxy->metatraffic_locators.unicast)
-                {
-                    locators.push_back(locator);
-                }
-                // The participant will be there only once, so we can stop looking when found
-                break;
-            }
+            locators.push_back(locator);
         }
     }
-    // Add own default multicast address
-    for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.multicast)
-    {
-        locators.push_back(locator);
-    }
-    for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.unicast)
-    {
-        locators.push_back(locator);
-    }
+
+    // std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
+    // for (GuidPrefix_t participant_prefix: remote_participants)
+    // {
+    //     // Add remote reader
+    //     GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
+    //     remote_readers.push_back(remote_guid);
+
+    //     // Iterate over participant_proxies to find the reader
+    //     for (ParticipantProxyData* proxy: participant_proxies_)
+    //     {
+    //         // Check if this is the participant for which we are looking
+    //         if (proxy->m_guid == remote_guid)
+    //         {
+    //             // Add default unicast locators of the remote reader
+    //             for (Locator_t locator: proxy->metatraffic_locators.unicast)
+    //             {
+    //                 locators.push_back(locator);
+    //             }
+    //             // The participant will be there only once, so we can stop looking when found
+    //             break;
+    //         }
+    //     }
+    // }
+
+    // // Add own default multicast address
+    // for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.multicast)
+    // {
+    //     locators.push_back(locator);
+    // }
+    // for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.unicast)
+    // {
+    //     locators.push_back(locator);
+    // }
 
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
     RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
@@ -646,6 +675,7 @@ bool PDPServer2::remove_remote_participant(
 
 bool PDPServer2::process_data_queue()
 {
+    logInfo(RTPS_PDP, "process_data_queue start");
     return discovery_db_.process_data_queue();
 }
 
@@ -662,6 +692,7 @@ bool PDPServer2::server_update_routine()
 
 bool PDPServer2::process_writers_acknowledgements()
 {
+    // logInfo(RTPS_PDP, "process_writers_acknowledgements start");
     /* PDP Writer's History */
     bool pending = process_history_acknowledgement(
         static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
@@ -736,6 +767,7 @@ bool PDPServer2::process_change_acknowledgement(
 
 bool PDPServer2::process_disposals()
 {
+    // logInfo(RTPS_PDP, "process_disposals start");
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
     fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
@@ -809,6 +841,7 @@ bool PDPServer2::process_disposals()
 
 bool PDPServer2::process_changes_release()
 {
+    // logInfo(RTPS_PDP, "process_changes_release start");
     // We will need the EDP publications/subscriptions writers, readers, and histories
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
 
@@ -949,6 +982,7 @@ bool PDPServer2::announcement_from_same_participant_in_disposals(
 
 bool PDPServer2::process_dirty_topics()
 {
+    // logInfo(RTPS_PDP, "process_dirty_topics start");
     return discovery_db_.process_dirty_topics();
 }
 
@@ -959,11 +993,14 @@ fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
 
 bool PDPServer2::process_to_send_lists()
 {
+    logInfo(RTPS_PDP, "process_to_send_lists start");
     // Process pdp_to_send_
+    logInfo(RTPS_PDP, "Processing pdp_to_send");
     process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
     discovery_db_.clear_pdp_to_send();
 
     // Process edp_publications_to_send_
+    logInfo(RTPS_PDP, "Processing edp_publications_to_send");
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     process_to_send_list(
         discovery_db_.edp_publications_to_send(),
@@ -972,6 +1009,7 @@ bool PDPServer2::process_to_send_lists()
     discovery_db_.clear_edp_publications_to_send();
 
     // Process edp_subscriptions_to_send_
+    logInfo(RTPS_PDP, "Processing edp_subscriptions_to_send");
     process_to_send_list(
         discovery_db_.edp_subscriptions_to_send(),
         edp->subscriptions_writer_.first,
