@@ -22,6 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/history/History.h>
+
 #include "../database/DiscoveryDataFilter.hpp"
 #include "../database/DiscoveryDataBase.hpp"
 #include "./DServerEvent2.hpp"
@@ -153,6 +155,14 @@ protected:
     bool process_data_queue();
 
     bool process_disposals();
+
+    bool process_changes_release();
+
+    bool remove_change_from_writer_history(
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::WriterHistory* history,
+            fastrtps::rtps::CacheChange_t* change);
+
 
     // Remove from writer_history all the changes whose original sender was entity_guid_prefix
     void remove_related_alive_from_history_nts(
