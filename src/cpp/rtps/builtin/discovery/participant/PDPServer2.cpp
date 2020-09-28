@@ -720,6 +720,7 @@ bool PDPServer2::process_history_acknowledgement(
     // Iterate over changes in writer's history
     auto chit = writer_history->changesBegin();
     auto prev_chit = chit;
+    bool first = true;
 
     while(chit != writer_history->changesEnd())
     {
@@ -730,9 +731,13 @@ bool PDPServer2::process_history_acknowledgement(
 
         if (change_deleted)
         {
-            if (chit == prev_chit)
+            if (first)
             {
                 chit = writer_history->changesBegin();
+                if (chit == writer_history->changesEnd())
+                {
+                    break;
+                }
             }
             else
             {
@@ -742,6 +747,7 @@ bool PDPServer2::process_history_acknowledgement(
         prev_chit = chit;
         chit++;
         pending |= !change_deleted;
+        first = false;
     }
     return pending;
 }
