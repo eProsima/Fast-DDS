@@ -30,12 +30,14 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+namespace detail {
 #include "./BasicPayloadPool_impl/Base.hpp"
 
 #include "./BasicPayloadPool_impl/Dynamic.hpp"
 #include "./BasicPayloadPool_impl/DynamicReusable.hpp"
 #include "./BasicPayloadPool_impl/Preallocated.hpp"
 #include "./BasicPayloadPool_impl/PreallocatedWithRealloc.hpp"
+}  // namespace detail
 
 class BasicPayloadPool
 {
@@ -48,13 +50,13 @@ public:
         switch (config.memory_policy)
         {
             case PREALLOCATED_MEMORY_MODE:
-                return std::make_shared<Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
+                return std::make_shared<detail::Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
             case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-                return std::make_shared<Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(config.payload_initial_size);
+                return std::make_shared<detail::Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(config.payload_initial_size);
             case DYNAMIC_RESERVE_MEMORY_MODE:
-                return std::make_shared<Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
+                return std::make_shared<detail::Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
             case DYNAMIC_REUSABLE_MEMORY_MODE:
-                return std::make_shared<Impl<DYNAMIC_REUSABLE_MEMORY_MODE> >();
+                return std::make_shared<detail::Impl<DYNAMIC_REUSABLE_MEMORY_MODE> >();
         }
 
         return nullptr;
