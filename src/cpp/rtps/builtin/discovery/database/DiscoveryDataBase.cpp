@@ -127,11 +127,35 @@ void DiscoveryDataBase::add_ack_(
         const eprosima::fastrtps::rtps::CacheChange_t* change,
         const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity)
 {
-    logInfo(DISCOVERY_DATABASE, "Adding ACK for change " << change->instanceHandle << " to " << acked_entity);
     if (is_participant(change))
     {
+        logInfo(DISCOVERY_DATABASE,
+            "Adding DATA(p) ACK for change " << change->instanceHandle << " to " << acked_entity);
         auto it = participants_.find(guid_from_change(change).guidPrefix);
-        it->second.add_or_update_ack_participant(acked_entity, true);
+        if (it != participants_.end())
+        {
+            it->second.add_or_update_ack_participant(acked_entity, true);
+        }
+    }
+    else if (is_writer(change))
+    {
+        logInfo(DISCOVERY_DATABASE,
+            "Adding DATA(w) ACK for change " << change->instanceHandle << " to " << acked_entity);
+        auto it = writers_.find(guid_from_change(change));
+        if (it != writers_.end())
+        {
+            it->second.add_or_update_ack_participant(acked_entity, true);
+        }
+    }
+    else if (is_reader(change))
+    {
+        logInfo(DISCOVERY_DATABASE,
+            "Adding DATA(r) ACK for change " << change->instanceHandle << " to " << acked_entity);
+        auto it = readers_.find(guid_from_change(change));
+        if (it != readers_.end())
+        {
+            it->second.add_or_update_ack_participant(acked_entity, true);
+        }
     }
 }
 
@@ -1003,12 +1027,18 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
 }
 
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
-    const DiscoveryDataBase::AckedFunctor& r)
+        const DiscoveryDataBase::AckedFunctor& r)
 {
     db_ = r.db_;
     change_ = r.change_;
-
     db_->exclusive_lock_();
+}
+
+DiscoveryDataBase::AckedFunctor::AckedFunctor(
+        DiscoveryDataBase::AckedFunctor&& r)
+{
+    db_ = r.db_;
+    change_ = r.change_;
 }
 
 DiscoveryDataBase::AckedFunctor::~AckedFunctor()
@@ -1020,13 +1050,19 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
 {
     // Check whether the change has been acknowledged by a given reader
-    bool is_acked = reader_proxy->change_is_acked(change_->sequenceNumber);
-    if (is_acked)
+    if (reader_proxy->rtps_is_relevant(change_))
     {
-        // In the discovery database, mark the change as acknowledged by the reader
-        db_->add_ack_(change_, reader_proxy->guid().guidPrefix);
+        if (reader_proxy->change_is_acked(change_->sequenceNumber))
+        {
+            // In the discovery database, mark the change as acknowledged by the reader
+            db_->add_ack_(change_, reader_proxy->guid().guidPrefix);
+        }
+        else
+        {
+            // This change is relevant and has not been acked, so there are pending acknowledgements
+            pending_ = true;
+        }
     }
-    pending_ |= !is_acked;
 }
 
 } // namespace ddb

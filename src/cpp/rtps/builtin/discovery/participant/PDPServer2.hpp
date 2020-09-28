@@ -188,6 +188,8 @@ protected:
 
     bool process_dirty_topics();
 
+    bool pending_ack();
+
 private:
 
     /**

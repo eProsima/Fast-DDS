@@ -689,6 +689,7 @@ bool PDPServer2::server_update_routine()
     result |= process_dirty_topics();                 // all ddb
     result |= process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
     result |= process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
+    result |= pending_ack();                          // all server
     logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
     logInfo(RTPS_PDP_SERVER, "");
     return result;
@@ -1098,6 +1099,16 @@ bool PDPServer2::remove_change_from_history_nts(
         }
     }
     return false;
+}
+
+bool PDPServer2::pending_ack()
+{
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    bool ret = (mp_PDPWriterHistory->getHistorySize() > 1 ||
+        edp->publications_writer_.second->getHistorySize() > 0 ||
+        edp->subscriptions_writer_.second->getHistorySize() > 0);
+    logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
+    return ret;
 }
 
 } // namespace rtps

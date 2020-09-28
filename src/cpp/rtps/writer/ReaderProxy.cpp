@@ -84,7 +84,7 @@ bool ReaderProxy::rtps_is_relevant(
     {
         bool ret = writer_->reader_data_filter()->is_relevant(*change, guid());
         logInfo(READER_PROXY,
-            "Change " << change->instanceHandle << " is relevant for reader " << guid() << "?: " << ret);
+            "Change " << change->instanceHandle << " is relevant for reader " << guid() << "? " << ret);
         return ret;
     }
     return true;
