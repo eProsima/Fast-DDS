@@ -85,9 +85,10 @@ public:
     bool change_removed_by_history(
             CacheChange_t* a_change) override;
 };
+
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_STATELESSPERSISTENTWRITER_H_ */

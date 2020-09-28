@@ -89,6 +89,6 @@ bool StatefulPersistentWriter::change_removed_by_history(
     return StatefulWriter::change_removed_by_history(change);
 }
 
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima

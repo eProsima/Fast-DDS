@@ -69,9 +69,10 @@ private:
     //!Persistence GUID
     std::string persistence_guid_;
 };
+
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PERSISTENTWRITER_H_ */

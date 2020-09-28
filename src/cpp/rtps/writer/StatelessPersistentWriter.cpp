@@ -26,7 +26,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 StatelessPersistentWriter::StatelessPersistentWriter(
         RTPSParticipantImpl* pimpl,
         const GUID_t& guid,
@@ -89,6 +88,6 @@ bool StatelessPersistentWriter::change_removed_by_history(
     return StatelessWriter::change_removed_by_history(change);
 }
 
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima
