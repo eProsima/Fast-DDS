@@ -34,6 +34,7 @@
 #include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <rtps/history/BasicPayloadPool.hpp>
 #include "rtps/RTPSDomainImpl.hpp"
 
 namespace eprosima {
@@ -77,15 +78,43 @@ static bool add_change_to_rtps_group(
 }
 
 StatelessWriter::StatelessWriter(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& attributes,
+        WriterHistory* history,
+        WriterListener* listener)
+    : StatelessWriter(impl, guid, attributes,
+        BasicPayloadPool::get(PoolConfig::from_history_attributes(history->m_att)),
+        history, listener)
+{
+}
+
+StatelessWriter::StatelessWriter(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& attributes,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* history,
+        WriterListener* listener)
+    : StatelessWriter(impl, guid, attributes, payload_pool,
+        RTPSWriter::create_change_pool(payload_pool, history->m_att), history, listener)
+{
+}
+
+StatelessWriter::StatelessWriter(
         RTPSParticipantImpl* participant,
-        GUID_t& guid,
-        WriterAttributes& attributes,
+        const GUID_t& guid,
+        const WriterAttributes& attributes,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* history,
         WriterListener* listener)
     : RTPSWriter(
         participant,
         guid,
         attributes,
+        payload_pool,
+        change_pool,
         history,
         listener)
     , matched_readers_(attributes.matched_readers_allocation)
