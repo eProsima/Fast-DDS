@@ -26,6 +26,7 @@
 class HelloWorldServer
 {
 public:
+
     HelloWorldServer();
     virtual ~HelloWorldServer();
     //!Initialize the subscriber
@@ -35,6 +36,7 @@ public:
     void run();
 
 private:
+
     eprosima::fastrtps::Participant* mp_participant;
 };
 

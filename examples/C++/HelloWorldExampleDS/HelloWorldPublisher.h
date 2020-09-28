@@ -32,6 +32,7 @@
 class HelloWorldPublisher
 {
 public:
+
     HelloWorldPublisher();
     virtual ~HelloWorldPublisher();
     //!Initialize
@@ -39,24 +40,43 @@ public:
             eprosima::fastrtps::rtps::Locator_t server_address,
             std::string topic_name);
     //!Publish a sample
-    bool publish(bool waitForListener = true);
+    bool publish(
+            bool waitForListener = true);
     //!Run for number samples
-    void run(uint32_t number, uint32_t sleep);
+    void run(
+            uint32_t number,
+            uint32_t sleep);
+
 private:
+
     HelloWorld m_hello;
     eprosima::fastrtps::Participant* mp_participant;
     eprosima::fastrtps::Publisher* mp_publisher;
     bool stop;
-    class PubListener :public eprosima::fastrtps::PublisherListener
+    class PubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
-        PubListener() :n_matched(0), firstConnected(false) {};
-        ~PubListener() {};
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        PubListener()
+            : n_matched(0)
+            , firstConnected(false)
+        {
+        }
+
+        ~PubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
         int n_matched;
         bool firstConnected;
-    }m_listener;
-    void runThread(uint32_t number, uint32_t sleep);
+    }
+    m_listener;
+    void runThread(
+            uint32_t number,
+            uint32_t sleep);
     HelloWorldPubSubType m_type;
 };
 

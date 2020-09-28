@@ -35,6 +35,7 @@
 class HelloWorldSubscriber
 {
 public:
+
     HelloWorldSubscriber();
     virtual ~HelloWorldSubscriber();
     //!Initialize the subscriber
@@ -44,24 +45,44 @@ public:
     //!RUN the subscriber
     void run();
     //!Run the subscriber until number samples have been recevied.
-    void run(uint32_t number);
+    void run(
+            uint32_t number);
+
 private:
+
     eprosima::fastrtps::Participant* mp_participant;
     eprosima::fastrtps::Subscriber* mp_subscriber;
+
 public:
-    class SubListener :public eprosima::fastrtps::SubscriberListener
+
+    class SubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
-        SubListener() :n_matched(0), n_samples(0) {};
-        ~SubListener() {};
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+
+        SubListener()
+            : n_matched(0)
+            , n_samples(0)
+        {
+        }
+
+        ~SubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
         HelloWorld m_hello;
         eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         uint32_t n_samples;
-    }m_listener;
+    }
+    m_listener;
+
 private:
+
     HelloWorldPubSubType m_type;
 };
 

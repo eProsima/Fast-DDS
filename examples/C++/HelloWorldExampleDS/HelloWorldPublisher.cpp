@@ -59,10 +59,10 @@ bool HelloWorldPublisher::init(
 
     uint16_t default_port = IPLocator::getPhysicalPort(server_address.port);
 
-    if(server_address.kind == LOCATOR_KIND_TCPv4 ||
-        server_address.kind == LOCATOR_KIND_TCPv6)
+    if (server_address.kind == LOCATOR_KIND_TCPv4 ||
+            server_address.kind == LOCATOR_KIND_TCPv6)
     {
-        if(!IsAddressDefined(server_address))
+        if (!IsAddressDefined(server_address))
         {
             server_address.kind = LOCATOR_KIND_TCPv4;
             IPLocator::setIPv4(server_address, 127, 0, 0, 1);
@@ -88,7 +88,7 @@ bool HelloWorldPublisher::init(
     }
     else
     {
-        if(!IsAddressDefined(server_address))
+        if (!IsAddressDefined(server_address))
         {
             server_address.kind = LOCATOR_KIND_UDPv4;
             server_address.port = default_port;
@@ -107,7 +107,7 @@ bool HelloWorldPublisher::init(
     }
 
     //REGISTER THE TYPE
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(mp_participant, &m_type);
 
     //CREATE THE PUBLISHER
     PublisherAttributes Wparam;
@@ -121,7 +121,7 @@ bool HelloWorldPublisher::init(
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 0;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+    mp_publisher = Domain::createPublisher(mp_participant, Wparam, (PublisherListener*)&m_listener);
 
     if (mp_publisher == nullptr)
     {
@@ -138,8 +138,8 @@ HelloWorldPublisher::~HelloWorldPublisher()
 }
 
 void HelloWorldPublisher::PubListener::onPublicationMatched(
-    Publisher* /*pub*/,
-    MatchingInfo& info)
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -155,23 +155,24 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(
 }
 
 void HelloWorldPublisher::runThread(
-    uint32_t samples,
-    uint32_t sleep)
+        uint32_t samples,
+        uint32_t sleep)
 {
     if (samples == 0)
     {
-        while(!stop)
+        while (!stop)
         {
             if (publish(false))
             {
-                std::cout << "Message: " << m_hello.message() << " with index: " << m_hello.index() << " SENT" << std::endl;
+                std::cout << "Message: " << m_hello.message() << " with index: " << m_hello.index() << " SENT" <<
+                    std::endl;
             }
             std::this_thread::sleep_for(std::chrono::duration<uint32_t, std::milli>(sleep));
         }
     }
     else
     {
-        for(uint32_t i = 0;i<samples;++i)
+        for (uint32_t i = 0; i < samples; ++i)
         {
             if (!publish())
             {
@@ -179,16 +180,17 @@ void HelloWorldPublisher::runThread(
             }
             else
             {
-                std::cout << "Message: " << m_hello.message() << " with index: " << m_hello.index() << " SENT" << std::endl;
+                std::cout << "Message: " << m_hello.message() << " with index: " << m_hello.index() << " SENT" <<
+                    std::endl;
             }
-            std::this_thread::sleep_for(std::chrono::duration<uint32_t,std::milli>(sleep));
+            std::this_thread::sleep_for(std::chrono::duration<uint32_t, std::milli>(sleep));
         }
     }
 }
 
 void HelloWorldPublisher::run(
-    uint32_t samples,
-    uint32_t sleep)
+        uint32_t samples,
+        uint32_t sleep)
 {
     stop = false;
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
@@ -205,11 +207,12 @@ void HelloWorldPublisher::run(
     thread.join();
 }
 
-bool HelloWorldPublisher::publish(bool waitForListener)
+bool HelloWorldPublisher::publish(
+        bool waitForListener)
 {
-    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
-        m_hello.index(m_hello.index()+1);
+        m_hello.index(m_hello.index() + 1);
         mp_publisher->write((void*)&m_hello);
         return true;
     }

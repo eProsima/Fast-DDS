@@ -53,10 +53,10 @@ bool HelloWorldSubscriber::init(
 
     uint16_t default_port = IPLocator::getPhysicalPort(server_address.port);
 
-    if(server_address.kind == LOCATOR_KIND_TCPv4 ||
-        server_address.kind == LOCATOR_KIND_TCPv6)
+    if (server_address.kind == LOCATOR_KIND_TCPv4 ||
+            server_address.kind == LOCATOR_KIND_TCPv6)
     {
-        if(!IsAddressDefined(server_address))
+        if (!IsAddressDefined(server_address))
         {
             server_address.kind = LOCATOR_KIND_TCPv4;
             IPLocator::setIPv4(server_address, 127, 0, 0, 1);
@@ -82,7 +82,7 @@ bool HelloWorldSubscriber::init(
     }
     else
     {
-        if(!IsAddressDefined(server_address))
+        if (!IsAddressDefined(server_address))
         {
             server_address.kind = LOCATOR_KIND_UDPv4;
             server_address.port = default_port;
@@ -102,7 +102,7 @@ bool HelloWorldSubscriber::init(
 
     //REGISTER THE TYPE
 
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(mp_participant, &m_type);
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
@@ -114,7 +114,7 @@ bool HelloWorldSubscriber::init(
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
 
     if (mp_subscriber == nullptr)
     {
@@ -130,8 +130,8 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
 }
 
 void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
-    Subscriber* /*sub*/,
-    MatchingInfo& info)
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -145,7 +145,8 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
     }
 }
 
-void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void HelloWorldSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
     if (sub->takeNextData((void*)&m_hello, &m_info))
     {
@@ -153,7 +154,7 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
         {
             this->n_samples++;
             // Print your structure data here.
-            std::cout << "Message " << m_hello.message() << " "<< m_hello.index() << " RECEIVED" <<std::endl;
+            std::cout << "Message " << m_hello.message() << " " << m_hello.index() << " RECEIVED" << std::endl;
         }
     }
 
@@ -165,7 +166,8 @@ void HelloWorldSubscriber::run()
     std::cin.ignore();
 }
 
-void HelloWorldSubscriber::run(uint32_t number)
+void HelloWorldSubscriber::run(
+        uint32_t number)
 {
     std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
     while (number > this->m_listener.n_samples)

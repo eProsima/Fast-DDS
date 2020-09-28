@@ -31,29 +31,46 @@
 
 struct Arg : public option::Arg
 {
-    static void print_error(const char* msg1, const option::Option& opt, const char* msg2)
+    static void print_error(
+            const char* msg1,
+            const option::Option& opt,
+            const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
         fprintf(stderr, "%s", msg2);
     }
 
-    static option::ArgStatus Unknown(const option::Option& option, bool msg)
+    static option::ArgStatus Unknown(
+            const option::Option& option,
+            bool msg)
     {
-        if (msg) print_error("Unknown option '", option, "'\n");
+        if (msg)
+        {
+            print_error("Unknown option '", option, "'\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Required(const option::Option& option, bool msg)
+    static option::ArgStatus Required(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
+        {
             return option::ARG_OK;
+        }
 
-        if (msg) print_error("Option '", option, "' requires an argument\n");
+        if (msg)
+        {
+            print_error("Option '", option, "' requires an argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Numeric(const option::Option& option, bool msg)
+    static option::ArgStatus Numeric(
+            const option::Option& option,
+            bool msg)
     {
         char* endptr = 0;
         if (option.arg != 0 && strtol(option.arg, &endptr, 10))
@@ -71,13 +88,15 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Locator(const option::Option& option, bool msg)
+    static option::ArgStatus Locator(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0)
         {
             // we must check if its a correct ip address plus port number
-            if(std::regex_match(option.arg, ipv4)
-                || std::regex_match(option.arg, ipv6))
+            if (std::regex_match(option.arg, ipv4)
+                    || std::regex_match(option.arg, ipv6))
             {
                 return option::ARG_OK;
             }
@@ -89,7 +108,9 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus NonEmpty(const option::Option& option, bool msg)
+    static option::ArgStatus NonEmpty(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
         {
@@ -105,7 +126,8 @@ struct Arg : public option::Arg
     static const std::regex ipv4, ipv6;
 };
 
-enum  optionIndex {
+enum  optionIndex
+{
     UNKNOWN_OPT,
     HELP,
     SAMPLES,
@@ -116,19 +138,19 @@ enum  optionIndex {
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,
-        "Usage: HelloWorldExampleDS <publisher|subscriber|server>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
-    { TCP,0,"t","tcp",                   Arg::None,
-        "  -t \t--tcp \tUse tcp transport instead of the default UDP one." },
-    { SAMPLES,0,"c","count",              Arg::Numeric,
-        "  -c <num>, \t--count=<num>  \tNumber of datagrams to send (0 = infinite) defaults to 10." },
-    { INTERVAL,0,"i","interval",            Arg::Numeric,
-        "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,
+      "Usage: HelloWorldExampleDS <publisher|subscriber|server>\n\nGeneral options:" },
+    { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
+    { TCP, 0, "t", "tcp",                   Arg::None,
+      "  -t \t--tcp \tUse tcp transport instead of the default UDP one." },
+    { SAMPLES, 0, "c", "count",              Arg::Numeric,
+      "  -c <num>, \t--count=<num>  \tNumber of datagrams to send (0 = infinite) defaults to 10." },
+    { INTERVAL, 0, "i", "interval",            Arg::Numeric,
+      "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { LOCATOR, 0, "l", "ip",                Arg::Locator,
-        "  -l <IPaddress[:port number]>, \t--ip=<IPaddress[:port number]>  \tServer address." },
+      "  -l <IPaddress[:port number]>, \t--ip=<IPaddress[:port number]>  \tServer address." },
     { TOPIC, 0, "T", "topic",                Arg::NonEmpty,
-        "  -T <topic-name>, \t--topic=<topic-name>  \tTopic name for the publisher/subscriber." },
+      "  -T <topic-name>, \t--topic=<topic-name>  \tTopic name for the publisher/subscriber." },
 
     { 0, 0, 0, 0, 0, 0 }
 };
@@ -139,27 +161,29 @@ const option::Descriptor usage[] = {
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int columns;
 
     #if defined(_WIN32)
-        char* buf = nullptr;
-        size_t sz = 0;
-        if (_dupenv_s(&buf, &sz, "COLUMNS") == 0 && buf != nullptr)
-        {
-            columns = strtol(buf, nullptr, 10);
-            free(buf);
-        }
-        else
-        {
-            columns = 80;
-        }
+    char* buf = nullptr;
+    size_t sz = 0;
+    if (_dupenv_s(&buf, &sz, "COLUMNS") == 0 && buf != nullptr)
+    {
+        columns = strtol(buf, nullptr, 10);
+        free(buf);
+    }
+    else
+    {
+        columns = 80;
+    }
     #else
-        columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
-    #endif
+    columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
+    #endif // if defined(_WIN32)
 
-    std::cout << "Starting "<< std::endl;
+    std::cout << "Starting " << std::endl;
     int type = 1;
     int count = 20;
     long sleep = 100;
@@ -167,7 +191,7 @@ int main(int argc, char** argv)
     Locator_t server_address;
     server_address.port = 60006; // default physical port
 
-    if(argc > 1)
+    if (argc > 1)
     {
         if (strcmp(argv[1], "publisher") == 0)
         {
@@ -205,86 +229,86 @@ int main(int argc, char** argv)
             option::Option& opt = buffer[i];
             switch (opt.index())
             {
-            case HELP:
-                option::printUsage(fwrite, stdout, usage, columns);
-                return 0;
+                case HELP:
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
 
-            case SAMPLES:
-                count = strtol(opt.arg, nullptr, 10);
-                break;
+                case SAMPLES:
+                    count = strtol(opt.arg, nullptr, 10);
+                    break;
 
-            case INTERVAL:
-                sleep = strtol(opt.arg, nullptr, 10);
-                break;
+                case INTERVAL:
+                    sleep = strtol(opt.arg, nullptr, 10);
+                    break;
 
-            case TOPIC:
-                topic_name = opt.arg;
-                break;
+                case TOPIC:
+                    topic_name = opt.arg;
+                    break;
 
-            // remember that options can be parsed in any order
-            case TCP:
-            {
-                // locators default to LOCATOR_KIND_UDPv4
-                // promote from UDP to TCP
-                if(IsAddressDefined(server_address))
+                // remember that options can be parsed in any order
+                case TCP:
                 {
-                    server_address.kind =
-                        ( server_address.kind == LOCATOR_KIND_UDPv4 ) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_TCPv6;
-                }
-                else
-                {
-                    server_address.kind = LOCATOR_KIND_TCPv4;
-                }
-
-                break;
-            }
-
-            case LOCATOR:
-            {
-                std::cmatch mr;
-                std::string ip_address;
-                uint16_t port = server_address.port;
-                bool v4 = true;
-
-                if((v4 = regex_match(opt.arg, mr, Arg::ipv4))
-                    || regex_match(opt.arg, mr, Arg::ipv6))
-                {
-                    std::cmatch::iterator it = mr.cbegin();
-                    ip_address = (++it)->str();
-
-                    if((++it)->matched)
+                    // locators default to LOCATOR_KIND_UDPv4
+                    // promote from UDP to TCP
+                    if (IsAddressDefined(server_address))
                     {
-                        port = std::stoi(it->str());
-                    }
-                }
-
-                // promote to v6 if needed
-                if(!v4)
-                {
-                    server_address.kind =
-                        (server_address.kind == LOCATOR_KIND_UDPv4) ? LOCATOR_KIND_UDPv6 : LOCATOR_KIND_TCPv6;
-                }
-
-                if(!ip_address.empty() && port > 1000)
-                {
-                    IPLocator::setPhysicalPort(server_address, port);
-                    if(v4)
-                    {
-                        IPLocator::setIPv4(server_address, ip_address);
+                        server_address.kind =
+                                ( server_address.kind == LOCATOR_KIND_UDPv4 ) ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_TCPv6;
                     }
                     else
                     {
-                        IPLocator::setIPv6(server_address, ip_address);
+                        server_address.kind = LOCATOR_KIND_TCPv4;
                     }
+
+                    break;
                 }
 
-                break;
-            }
+                case LOCATOR:
+                {
+                    std::cmatch mr;
+                    std::string ip_address;
+                    uint16_t port = server_address.port;
+                    bool v4 = true;
 
-            case UNKNOWN_OPT:
-                option::printUsage(fwrite, stdout, usage, columns);
-                return 0;
-                break;
+                    if ((v4 = regex_match(opt.arg, mr, Arg::ipv4))
+                            || regex_match(opt.arg, mr, Arg::ipv6))
+                    {
+                        std::cmatch::iterator it = mr.cbegin();
+                        ip_address = (++it)->str();
+
+                        if ((++it)->matched)
+                        {
+                            port = std::stoi(it->str());
+                        }
+                    }
+
+                    // promote to v6 if needed
+                    if (!v4)
+                    {
+                        server_address.kind =
+                                (server_address.kind == LOCATOR_KIND_UDPv4) ? LOCATOR_KIND_UDPv6 : LOCATOR_KIND_TCPv6;
+                    }
+
+                    if (!ip_address.empty() && port > 1000)
+                    {
+                        IPLocator::setPhysicalPort(server_address, port);
+                        if (v4)
+                        {
+                            IPLocator::setIPv4(server_address, ip_address);
+                        }
+                        else
+                        {
+                            IPLocator::setIPv6(server_address, ip_address);
+                        }
+                    }
+
+                    break;
+                }
+
+                case UNKNOWN_OPT:
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
+                    break;
 
             }
         }
@@ -298,29 +322,30 @@ int main(int argc, char** argv)
     }
 
     // Log::ReportFilenames(true);
-    Log::SetCategoryFilter(std::regex("(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
+    Log::SetCategoryFilter(std::regex(
+                "(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
     Log::SetVerbosity(Log::Kind::Info);
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            HelloWorldPublisher mypub;
+            if (mypub.init(server_address, topic_name))
             {
-                HelloWorldPublisher mypub;
-                if(mypub.init(server_address, topic_name))
-                {
-                    mypub.run(count, sleep);
-                }
-                break;
+                mypub.run(count, sleep);
             }
+            break;
+        }
         case 2:
+        {
+            HelloWorldSubscriber mysub;
+            if (mysub.init(server_address, topic_name))
             {
-                HelloWorldSubscriber mysub;
-                if(mysub.init(server_address, topic_name))
-                {
-                    mysub.run();
-                }
-                break;
+                mysub.run();
             }
+            break;
+        }
         case 3:
         {
             HelloWorldServer myserver;
