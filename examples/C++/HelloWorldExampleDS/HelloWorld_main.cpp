@@ -89,6 +89,19 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
+    static option::ArgStatus NonEmpty(const option::Option& option, bool msg)
+    {
+        if (option.arg != 0 && option.arg[0] != 0)
+        {
+            return option::ARG_OK;
+        }
+        if (msg)
+        {
+            print_error("Option '", option, "' requires a non-empty argument\n");
+        }
+        return option::ARG_ILLEGAL;
+    }
+
     static const std::regex ipv4, ipv6;
 };
 
@@ -98,7 +111,8 @@ enum  optionIndex {
     SAMPLES,
     INTERVAL,
     TCP,
-    LOCATOR
+    LOCATOR,
+    TOPIC
 };
 
 const option::Descriptor usage[] = {
@@ -113,6 +127,9 @@ const option::Descriptor usage[] = {
         "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { LOCATOR, 0, "l", "ip",                Arg::Locator,
         "  -l <IPaddress[:port number]>, \t--ip=<IPaddress[:port number]>  \tServer address." },
+    { TOPIC, 0, "T", "topic",                Arg::NonEmpty,
+        "  -T <topic-name>, \t--topic=<topic-name>  \tTopic name for the publisher/subscriber." },
+
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -146,6 +163,7 @@ int main(int argc, char** argv)
     int type = 1;
     int count = 20;
     long sleep = 100;
+    std::string topic_name = "HelloWorldTopic";
     Locator_t server_address;
     server_address.port = 60006; // default physical port
 
@@ -197,6 +215,10 @@ int main(int argc, char** argv)
 
             case INTERVAL:
                 sleep = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case TOPIC:
+                topic_name = opt.arg;
                 break;
 
             // remember that options can be parsed in any order
@@ -284,7 +306,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if(mypub.init(server_address))
+                if(mypub.init(server_address, topic_name))
                 {
                     mypub.run(count, sleep);
                 }
@@ -293,7 +315,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if(mysub.init(server_address))
+                if(mysub.init(server_address, topic_name))
                 {
                     mysub.run();
                 }

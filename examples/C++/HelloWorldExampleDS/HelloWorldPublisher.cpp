@@ -41,10 +41,13 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 }
 
-bool HelloWorldPublisher::init(Locator_t server_address)
+bool HelloWorldPublisher::init(
+        Locator_t server_address,
+        std::string topic_name)
 {
     m_hello.index(0);
-    m_hello.message("HelloWorld");
+    std::string msg = "HelloWorld-" + topic_name;
+    m_hello.message(msg);
 
     eprosima::fastdds::rtps::RemoteServerAttributes ratt;
     ratt.ReadguidPrefix("4D.49.47.55.45.4c.5f.42.41.52.52.4f");
@@ -110,7 +113,7 @@ bool HelloWorldPublisher::init(Locator_t server_address)
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "HelloWorldTopic";
+    Wparam.topic.topicName = topic_name;
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;

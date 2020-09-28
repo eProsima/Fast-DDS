@@ -38,7 +38,9 @@ public:
     HelloWorldSubscriber();
     virtual ~HelloWorldSubscriber();
     //!Initialize the subscriber
-    bool init(eprosima::fastrtps::rtps::Locator_t server_address);
+    bool init(
+            eprosima::fastrtps::rtps::Locator_t server_address,
+            std::string topic_name);
     //!RUN the subscriber
     void run();
     //!Run the subscriber until number samples have been recevied.

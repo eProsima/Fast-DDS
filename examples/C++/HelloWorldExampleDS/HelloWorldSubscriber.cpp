@@ -38,7 +38,9 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 {
 }
 
-bool HelloWorldSubscriber::init(Locator_t server_address)
+bool HelloWorldSubscriber::init(
+        Locator_t server_address,
+        std::string topic_name)
 {
 
     eprosima::fastdds::rtps::RemoteServerAttributes ratt;
@@ -105,7 +107,7 @@ bool HelloWorldSubscriber::init(Locator_t server_address)
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
-    Rparam.topic.topicName = "HelloWorldTopic";
+    Rparam.topic.topicName = topic_name;
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;

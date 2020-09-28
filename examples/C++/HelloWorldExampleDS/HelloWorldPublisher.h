@@ -29,13 +29,15 @@
 
 #include "HelloWorld.h"
 
-class HelloWorldPublisher 
+class HelloWorldPublisher
 {
 public:
     HelloWorldPublisher();
     virtual ~HelloWorldPublisher();
     //!Initialize
-    bool init(eprosima::fastrtps::rtps::Locator_t server_address);
+    bool init(
+            eprosima::fastrtps::rtps::Locator_t server_address,
+            std::string topic_name);
     //!Publish a sample
     bool publish(bool waitForListener = true);
     //!Run for number samples
@@ -50,7 +52,7 @@ private:
     public:
         PubListener() :n_matched(0), firstConnected(false) {};
         ~PubListener() {};
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);   
+        void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
         int n_matched;
         bool firstConnected;
     }m_listener;

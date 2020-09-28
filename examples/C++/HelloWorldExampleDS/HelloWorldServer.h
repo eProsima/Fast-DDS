@@ -29,7 +29,8 @@ public:
     HelloWorldServer();
     virtual ~HelloWorldServer();
     //!Initialize the subscriber
-    bool init(eprosima::fastrtps::rtps::Locator_t server_address);
+    bool init(
+            eprosima::fastrtps::rtps::Locator_t server_address);
     //!RUN the subscriber
     void run();
 
