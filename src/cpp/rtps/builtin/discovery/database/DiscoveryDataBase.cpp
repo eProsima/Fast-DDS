@@ -982,6 +982,15 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
     db_->exclusive_lock_();
 }
 
+DiscoveryDataBase::AckedFunctor::AckedFunctor(
+    const DiscoveryDataBase::AckedFunctor& r)
+{
+    db_ = r.db_;
+    change_ = r.change_;
+
+    db_->exclusive_lock_();
+}
+
 DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 {
     db_->exclusive_unlock_();
