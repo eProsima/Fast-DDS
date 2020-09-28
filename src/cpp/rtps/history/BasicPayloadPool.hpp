@@ -52,7 +52,8 @@ public:
             case PREALLOCATED_MEMORY_MODE:
                 return std::make_shared<detail::Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
             case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-                return std::make_shared<detail::Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(config.payload_initial_size);
+                return std::make_shared<detail::Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(
+                    config.payload_initial_size);
             case DYNAMIC_RESERVE_MEMORY_MODE:
                 return std::make_shared<detail::Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
             case DYNAMIC_REUSABLE_MEMORY_MODE:

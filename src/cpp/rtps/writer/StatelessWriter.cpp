@@ -84,8 +84,8 @@ StatelessWriter::StatelessWriter(
         WriterHistory* history,
         WriterListener* listener)
     : StatelessWriter(impl, guid, attributes,
-        BasicPayloadPool::get(PoolConfig::from_history_attributes(history->m_att)),
-        history, listener)
+            BasicPayloadPool::get(PoolConfig::from_history_attributes(history->m_att)),
+            history, listener)
 {
 }
 
@@ -97,7 +97,7 @@ StatelessWriter::StatelessWriter(
         WriterHistory* history,
         WriterListener* listener)
     : StatelessWriter(impl, guid, attributes, payload_pool,
-        RTPSWriter::create_change_pool(payload_pool, history->m_att), history, listener)
+            RTPSWriter::create_change_pool(payload_pool, history->m_att), history, listener)
 {
 }
 

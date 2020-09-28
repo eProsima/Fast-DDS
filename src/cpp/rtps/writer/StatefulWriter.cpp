@@ -24,7 +24,7 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/flowcontrol/FlowController.h>
-#include <rtps/history/BasicPayloadPool.hpp> 
+#include <rtps/history/BasicPayloadPool.hpp>
 
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
@@ -107,8 +107,8 @@ StatefulWriter::StatefulWriter(
         WriterHistory* history,
         WriterListener* listener)
     : StatefulWriter(impl, guid, attributes,
-        BasicPayloadPool::get(PoolConfig::from_history_attributes(history->m_att)),
-        history, listener)
+            BasicPayloadPool::get(PoolConfig::from_history_attributes(history->m_att)),
+            history, listener)
 {
 }
 
@@ -120,7 +120,7 @@ StatefulWriter::StatefulWriter(
         WriterHistory* history,
         WriterListener* listener)
     : StatefulWriter(impl, guid, attributes, payload_pool,
-        RTPSWriter::create_change_pool(payload_pool, history->m_att), history, listener)
+            RTPSWriter::create_change_pool(payload_pool, history->m_att), history, listener)
 {
 }
 
