@@ -91,6 +91,7 @@ bool TopicPayloadPool::get_payload(
                 return false;
             }
 
+            data_owner = this;
             return true;
         }
     }
