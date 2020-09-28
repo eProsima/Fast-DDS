@@ -26,6 +26,7 @@
 #include <chrono>
 #include <sstream>
 #include <fstream>
+#include <stdlib.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -672,7 +673,7 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     EXPECT_EQ(sub_bin_props[1].propagate(), false);
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
@@ -797,7 +798,8 @@ TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
 //! The expected return value is XMLP_ret::XML_OK.
 TEST_F(XMLProfileParserTests, extract_profiles_ok)
 {
-    const char* xml = "                                                                                                \
+    const char* xml =
+            "                                                                                                \
         <profiles>                                                                                                     \
             <participant profile_name=\"participant_prof\">                                                            \
                 <rtps></rtps>                                                                                          \
@@ -822,7 +824,8 @@ TEST_F(XMLProfileParserTests, extract_profiles_ok)
 //! The expected return value is XMLP_ret::XML_NOK.
 TEST_F(XMLProfileParserTests, extract_profiles_nok)
 {
-    const char* xml = "                                                                                                \
+    const char* xml =
+            "                                                                                                \
         <profiles>                                                                                                     \
             <!-- OK PROFILE -->                                                                                        \
             <participant profile_name=\"participant_prof\">                                                            \
@@ -857,7 +860,8 @@ TEST_F(XMLProfileParserTests, extract_profiles_nok)
 TEST_F(XMLProfileParserTests, extract_profiles_error)
 {
 
-    const char* xml = "                                                                                                \
+    const char* xml =
+            "                                                                                                \
         <profiles>                                                                                                     \
             <participant>                                                                                              \
             </participant>                                                                                             \
@@ -872,6 +876,47 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
     tinyxml2::XMLDocument xml_doc;
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+}
+
+//! Tests whether the SKIP_DEFAULT_XML_FILE variable prevents the xmlparser from loading the default XML file.
+//! participant_atts_none skips the default and obtains the values from the constructors.
+//! participant_atts_default contains the attributes in the default file in this folder which should be different.
+TEST_F(XMLProfileParserTests, skip_default_xml)
+{
+    const char* xml =
+            "                                                                                                          \
+        <profiles>                                                                                                     \
+            <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">                        \
+                <domainId>2020268</domainId>                                                                           \
+                <rtps></rtps>                                                                                          \
+            </participant>                                                                                             \
+        </profiles>                                                                                                    \
+    ";
+    tinyxml2::XMLDocument xml_doc;
+    xml_doc.Parse(xml);
+    xml_doc.SaveFile("DEFAULT_FASTRTPS_PROFILES.xml");
+
+#ifdef _WIN32
+    _putenv_s("SKIP_DEFAULT_XML_FILE", "1");
+#else
+    setenv("SKIP_DEFAULT_XML_FILE", "1", 1);
+#endif // ifdef _WIN32
+    ParticipantAttributes participant_atts_none;
+    xmlparser::XMLProfileManager::loadDefaultXMLFile();
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
+
+#ifdef _WIN32
+    _putenv_s("SKIP_DEFAULT_XML_FILE", "");
+#else
+    unsetenv("SKIP_DEFAULT_XML_FILE");
+#endif // ifdef _WIN32
+    ParticipantAttributes participant_atts_default;
+    xmlparser::XMLProfileManager::loadDefaultXMLFile();
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
+
+    remove("DEFAULT_FASTRTPS_PROFILES.xml");
+
+    EXPECT_NE(participant_atts_none.domainId, participant_atts_default.domainId);
 }
 
 int main(
