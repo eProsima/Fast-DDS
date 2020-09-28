@@ -811,6 +811,8 @@ bool PDPServer2::process_disposals()
         // Get the identity of the participant from which the change came.
         fastrtps::rtps::GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change(change).guidPrefix;
 
+        change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
+
         // DATA(Up) case
         if (discovery_db_.is_participant(change))
         {
