@@ -39,8 +39,8 @@ class PersistentWriter
 protected:
 
     PersistentWriter(
-            GUID_t& guid,
-            WriterAttributes& att,
+            const GUID_t& guid,
+            const WriterAttributes& att,
             WriterHistory* hist,
             IPersistenceService* persistence);
 
