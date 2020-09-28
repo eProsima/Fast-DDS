@@ -411,9 +411,9 @@ void DiscoveryDataBase::create_writers_from_change(
         else
         {
             std::vector<fastrtps::rtps::GUID_t> writers_in_topic = {writer_guid};
-            auto ret = writers_by_topic_.insert(
+            auto retu = writers_by_topic_.insert(
                 std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, writers_in_topic));
-            if (!ret.second)
+            if (!retu.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
             }
@@ -500,9 +500,9 @@ void DiscoveryDataBase::create_readers_from_change(
         else
         {
             std::vector<fastrtps::rtps::GUID_t> readers_in_topic = {reader_guid};
-            auto ret = readers_by_topic_.insert(
+            auto retu = readers_by_topic_.insert(
                 std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, readers_in_topic));
-            if (!ret.second)
+            if (!retu.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert reader " << reader_guid << " in topic " << topic_name);
             }
@@ -589,7 +589,7 @@ void DiscoveryDataBase::process_dispose_participant(
     }
 
     // Remove participant from others participants_[]::relevant_participants_builtin_ack_status
-    for (auto pit = participants_.begin(); pit != participants_.end(); ++pit)
+    for (pit = participants_.begin(); pit != participants_.end(); ++pit)
     {
         pit->second.remove_participant(participant_guid.guidPrefix);
     }

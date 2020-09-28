@@ -476,7 +476,7 @@ void PDPServer2::announceParticipantState(
                 else
                 {
                     // already there, dispose
-                    logError(RTPS_PDP, "DiscoveryDatabase already initialized with local DATA(p) on creation");
+                    logWarning(RTPS_PDP, "DiscoveryDatabase already initialized with local DATA(p) on creation");
                     mp_PDPWriterHistory->release_Cache(change);
                 }
             }
