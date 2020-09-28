@@ -21,6 +21,7 @@
 
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
@@ -54,6 +55,10 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
     friend class AsyncInterestTree;
 
 protected:
+
+    static std::shared_ptr<IChangePool> create_change_pool(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const HistoryAttributes& history_attr);
 
     RTPSWriter(
             RTPSParticipantImpl* impl,

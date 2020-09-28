@@ -57,6 +57,13 @@ static std::shared_ptr<IChangePool> create_change_pool(
     return std::make_shared<CacheChangePool>(pool_config);
 }
 
+std::shared_ptr<IChangePool> RTPSWriter::create_change_pool(
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const HistoryAttributes& history_attr)
+{
+    return rtps::create_change_pool(payload_pool, PoolConfig::from_history_attributes(history_attr));
+}
+
 RTPSWriter::RTPSWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,
@@ -79,7 +86,7 @@ RTPSWriter::RTPSWriter(
         WriterListener* listen)
     : RTPSWriter(
         impl, guid, att, payload_pool,
-        create_change_pool(payload_pool, PoolConfig::from_history_attributes(hist->m_att)),
+        create_change_pool(payload_pool, hist->m_att),
         hist, listen)
 {
 }
