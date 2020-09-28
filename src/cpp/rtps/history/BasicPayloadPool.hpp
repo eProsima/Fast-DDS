@@ -30,15 +30,15 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class BasicPayloadPool
-{
-
 #include "./BasicPayloadPool_impl/Base.hpp"
 
 #include "./BasicPayloadPool_impl/Dynamic.hpp"
 #include "./BasicPayloadPool_impl/DynamicReusable.hpp"
 #include "./BasicPayloadPool_impl/Preallocated.hpp"
 #include "./BasicPayloadPool_impl/PreallocatedWithRealloc.hpp"
+
+class BasicPayloadPool
+{
 
 public:
 
