@@ -172,8 +172,8 @@ void XMLProfileManager::loadDefaultXMLFile()
         loadXMLFile(file_path);
     }
 
-    char skip_xml[1];
-    size = 1;
+    char skip_xml[2];
+    size = 2;
 
     // Try to load the default XML file if variable does not exist or is no set to '1'
     if (!(getenv_s(&size, skip_xml, size, "SKIP_DEFAULT_XML_FILE") == 0 && skip_xml[0] == '1'))
