@@ -6,7 +6,7 @@ guidelines provided in the [ROS2 REP-2004 document](https://ros.org/reps/rep-200
 Foonathan's [`memory`](https://github.com/foonathan/memory) is a C++ library to manage memory allocations that improves upon the STL.
 *eprosima Fast DDS* started using this library following the advice of ROS's and eProsima's partner, Apex.AI.
 
-Even though several requirements established in REP-2004 are not met and, consequently, `foonathan_memory` cannot claim a high Quality Level, this document assess the quality risks that can be introduced by the use of this library in *eprosima Fast DDS*.
+Even though several requirements established in REP-2004 are not met and, consequently, `foonathan_memory` cannot claim a high Quality Level, this document assesses the quality risks that can be introduced by the use of this library in *eprosima Fast DDS*.
 This Quality Declaration claims that the external dependency `foonathan_memory` qualifies to Quality Level 2 category for its use within *eprosima Fast DDS*.
 
 Below are the rationales, notes and caveats for this claim, organized by the requirements listed in the [Package Requirements for Quality Level 1 in REP-2004](https://www.ros.org/reps/rep-2004.html#package-requirements).
@@ -17,11 +17,11 @@ Below are the rationales, notes and caveats for this claim, organized by the req
 
 `foonathan_memory` does not have a declared versioning scheme.
 
-The latest release can be found [here](https://github.com/foonathan/memory/releases) and the release notes can be found in the [CHANGELOG](CHANGELOG.MD).
+The latest release can be found [here](https://github.com/foonathan/memory/releases) and the release notes can be found in the [CHANGELOG](https://github.com/foonathan/memory/blob/master/CHANGELOG.MD).
 Even though the current version is `< 1.0.0`, `foonathan_memory` is in [maintenance mode](https://www.jonathanmueller.dev/project/).
 
 *eprosima Fast DDS* ensures `foonathan_memory` version stability by pinning to a specific [commit](https://github.com/foonathan/memory/commits/c619113a616c5771ee693c7abdcef284e02f7d61).
-Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests uses this specific commit.
+Both *eprosima* `foonathan_memory_vendor` utility and *eprosima Fast DDS* CI tests use this specific commit.
 This commit (signed December 16th 2019) is more recent than the current v0.6-2 released October 2nd 2019.
 
 *eprosima Fast DDS* maintainers will keep a continuous watch over new releases in order to assess the impact they could have over *eprosima Fast DDS*.
@@ -133,7 +133,7 @@ Anyway, *eprosima Fast DDS* ensures that every feature and API used within the l
 
 `foonathan_memory` does not conduct performance tests.
 
-*eprosima Fast DDS* will run its [performance tests](test/performance) and analyzed their results before deciding to change the pinned commit to prevent performance regression.
+*eprosima Fast DDS* will run its [performance tests](test/performance) and analyze their results before deciding to change the pinned commit to prevent performance regression.
 Being pinned to a specific commit, any performance regression in *eprosima Fast DDS* could not be blamed on `foonathan_memory`.
 
 ### Linters and Static Analysis [4.v]
