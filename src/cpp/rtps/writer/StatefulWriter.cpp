@@ -24,6 +24,7 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/flowcontrol/FlowController.h>
+#include <rtps/history/BasicPayloadPool.hpp> 
 
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
@@ -99,15 +100,41 @@ static void null_sent_fun(
 {
 }
 
+StatefulWriter::StatefulWriter(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& attributes,
+        WriterHistory* history,
+        WriterListener* listener)
+    : StatefulWriter(impl, guid, attributes,
+        BasicPayloadPool::get(PoolConfig::from_history_attributes(history->m_att)),
+        history, listener)
+{
+}
+
+StatefulWriter::StatefulWriter(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& attributes,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* history,
+        WriterListener* listener)
+    : StatefulWriter(impl, guid, attributes, payload_pool,
+        RTPSWriter::create_change_pool(payload_pool, history->m_att), history, listener)
+{
+}
+
 using namespace std::chrono;
 
 StatefulWriter::StatefulWriter(
         RTPSParticipantImpl* pimpl,
         const GUID_t& guid,
         const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* hist,
         WriterListener* listen)
-    : RTPSWriter(pimpl, guid, att, hist, listen)
+    : RTPSWriter(pimpl, guid, att, payload_pool, change_pool, hist, listen)
     , periodic_hb_event_(nullptr)
     , nack_response_event_(nullptr)
     , ack_event_(nullptr)
