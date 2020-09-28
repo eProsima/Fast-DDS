@@ -29,12 +29,39 @@ namespace rtps {
 
 StatefulPersistentWriter::StatefulPersistentWriter(
         RTPSParticipantImpl* pimpl,
-        GUID_t& guid,
-        WriterAttributes& att,
+        const GUID_t& guid,
+        const WriterAttributes& att,
         WriterHistory* hist,
         WriterListener* listen,
         IPersistenceService* persistence)
     : StatefulWriter(pimpl, guid, att, hist, listen)
+    , PersistentWriter(guid, att, hist, persistence)
+{
+}
+
+StatefulPersistentWriter::StatefulPersistentWriter(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* hist,
+        WriterListener* listen,
+        IPersistenceService* persistence)
+    : StatefulWriter(pimpl, guid, att, payload_pool, hist, listen)
+    , PersistentWriter(guid, att, hist, persistence)
+{
+}
+
+StatefulPersistentWriter::StatefulPersistentWriter(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        WriterHistory* hist,
+        WriterListener* listen,
+        IPersistenceService* persistence)
+    : StatefulWriter(pimpl, guid, att, payload_pool, change_pool, hist, listen)
     , PersistentWriter(guid, att, hist, persistence)
 {
 }

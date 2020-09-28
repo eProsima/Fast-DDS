@@ -39,8 +39,27 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
 
     StatefulPersistentWriter(
             RTPSParticipantImpl*,
-            GUID_t& guid,
-            WriterAttributes& att,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
+
+    StatefulPersistentWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
+
+    StatefulPersistentWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
             WriterListener* listen = nullptr,
             IPersistenceService* persistence = nullptr);
