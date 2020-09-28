@@ -50,15 +50,12 @@ struct PoolConfig
     static constexpr PoolConfig from_history_attributes(
             const HistoryAttributes& history_attr) noexcept
     {
-        int32_t max_caches = std::max(history_attr.maximumReservedCaches, 0);
-        int32_t initial_caches = std::max(history_attr.initialReservedCaches, 0);
-
         return
             {
                 history_attr.memoryPolicy,
                 history_attr.payloadMaxSize,
-                static_cast<uint32_t>(initial_caches),
-                static_cast<uint32_t>(max_caches)
+                static_cast<uint32_t>(history_attr.initialReservedCaches < 0 ? 0 : history_attr.initialReservedCaches),
+                static_cast<uint32_t>(history_attr.maximumReservedCaches < 0 ? 0 : history_attr.maximumReservedCaches)
             };
     }
 
