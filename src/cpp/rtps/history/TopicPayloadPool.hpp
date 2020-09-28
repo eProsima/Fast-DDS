@@ -47,7 +47,7 @@ public:
 
         for (PayloadNode* payload : all_payloads_)
         {
-            free(payload);
+            delete payload;
         }
     }
 

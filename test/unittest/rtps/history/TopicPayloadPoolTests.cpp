@@ -209,6 +209,7 @@ protected:
         for (CacheChange_t* ch : cache_changes)
         {
             ASSERT_TRUE(pool->release_payload(*ch));
+            delete ch;
         }
         cache_changes.clear();
     }

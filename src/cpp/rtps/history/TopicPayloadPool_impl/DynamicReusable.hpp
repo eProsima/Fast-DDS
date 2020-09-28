@@ -52,7 +52,7 @@ class DynamicReusableTopicPayloadPool : public TopicPayloadPool
 
 protected:
 
-    MemoryManagementPolicy_t memory_policy() const
+    MemoryManagementPolicy_t memory_policy() const override
     {
         return DYNAMIC_REUSABLE_MEMORY_MODE;
     }

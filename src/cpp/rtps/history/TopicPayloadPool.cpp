@@ -156,8 +156,8 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(
     }
 
     payload = new PayloadNode(size);
+    payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
     all_payloads_.push_back(payload);
-    payload->data_index(all_payloads_.size() - 1);
     return payload;
 }
 
@@ -206,12 +206,12 @@ void TopicPayloadPool::reserve (
 {
     assert (min_num_payloads <= max_pool_size_);
 
-    for (uint32_t i = all_payloads_.size(); i < min_num_payloads; ++i)
+    for (size_t i = all_payloads_.size(); i < min_num_payloads; ++i)
     {
         PayloadNode* payload = new PayloadNode(size);
+        payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
         all_payloads_.push_back(payload);
         free_payloads_.push_back(payload);
-        payload->data_index(all_payloads_.size() - 1);
     }
 }
 

@@ -71,7 +71,7 @@ public:
     }
 protected:
 
-    MemoryManagementPolicy_t memory_policy() const
+    MemoryManagementPolicy_t memory_policy() const override
     {
         return DYNAMIC_RESERVE_MEMORY_MODE;
     }

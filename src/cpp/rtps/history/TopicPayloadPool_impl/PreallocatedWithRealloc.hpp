@@ -86,7 +86,7 @@ public:
 
 protected:
 
-    MemoryManagementPolicy_t memory_policy() const
+    MemoryManagementPolicy_t memory_policy() const override
     {
         return PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
