@@ -75,7 +75,7 @@ bool PDPServer2::init(
     mp_EDP = new EDPServer2(this, mp_RTPSParticipant);
     if (!mp_EDP->initEDP(m_discovery))
     {
-        logError(RTPS_PDP, "Endpoint discovery configuration failed");
+        logError(RTPS_PDP_SERVER, "Endpoint discovery configuration failed");
         return false;
     }
 
@@ -132,7 +132,7 @@ ParticipantProxyData* PDPServer2::createParticipantProxyData(
 
 bool PDPServer2::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP, "Beginning PDPServer Endpoints creation");
+    logInfo(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
     /***********************************
     * PDP READER
@@ -168,7 +168,7 @@ bool PDPServer2::createPDPEndpoints()
     // Could not create PDP Reader, so return false
     else
     {
-        logError(RTPS_PDP, "PDPServer Reader creation failed");
+        logError(RTPS_PDP_SERVER, "PDPServer Reader creation failed");
         delete(mp_PDPReaderHistory);
         mp_PDPReaderHistory = nullptr;
         delete(mp_listener);
@@ -215,12 +215,12 @@ bool PDPServer2::createPDPEndpoints()
     // Could not create PDP Writer, so return false
     else
     {
-        logError(RTPS_PDP, "PDPServer Writer creation failed");
+        logError(RTPS_PDP_SERVER, "PDPServer Writer creation failed");
         delete(mp_PDPWriterHistory);
         mp_PDPWriterHistory = nullptr;
         return false;
     }
-    logInfo(RTPS_PDP, "PDPServer Endpoints creation finished");
+    logInfo(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
     return true;
 }
 
@@ -232,7 +232,7 @@ void PDPServer2::initializeParticipantProxyData(
     if (!(getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
             DiscoveryProtocol_t::CLIENT))
     {
-        logError(RTPS_PDP, "Using a PDP Server object with another user's settings");
+        logError(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }
 
     // A PDP server should always be provided with all EDP endpoints
@@ -247,14 +247,14 @@ void PDPServer2::initializeParticipantProxyData(
 
     if (!(se.use_PublicationWriterANDSubscriptionReader && se.use_PublicationReaderANDSubscriptionWriter))
     {
-        logWarning(RTPS_PDP, "SERVER or BACKUP PDP requires always all EDP endpoints creation.");
+        logWarning(RTPS_PDP_SERVER, "SERVER or BACKUP PDP requires always all EDP endpoints creation.");
     }
 }
 
 void PDPServer2::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
+    logInfo(RTPS_PDP_SERVER, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
@@ -278,7 +278,7 @@ void PDPServer2::assignRemoteEndpoints(
     }
     else
     {
-        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+        logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
                                           << " did not send information about builtin writers");
         return;
     }
@@ -309,7 +309,7 @@ void PDPServer2::assignRemoteEndpoints(
     }
     else
     {
-        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+        logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
                                           << " did not send information about builtin readers");
         return;
     }
@@ -336,7 +336,7 @@ void PDPServer2::notifyAboveRemoteEndpoints(
 void PDPServer2::removeRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid);
+    logInfo(RTPS_PDP_SERVER, "For RTPSParticipant: " << pdata->m_guid);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
 
     if (endp & DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER)
@@ -346,7 +346,7 @@ void PDPServer2::removeRemoteEndpoints(
     }
     else
     {
-        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+        logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
                                           << " did not send information about builtin writers");
         return;
     }
@@ -358,7 +358,7 @@ void PDPServer2::removeRemoteEndpoints(
     }
     else
     {
-        logError(RTPS_PDP, "Participant " << pdata->m_guid.guidPrefix
+        logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
                                           << " did not send information about builtin readers");
         return;
     }
@@ -393,7 +393,7 @@ void PDPServer2::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    // logInfo(RTPS_PDP, "Announcing Server (new change: " << new_change << ")");
+    // logInfo(RTPS_PDP_SERVER, "Announcing Server (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
@@ -459,7 +459,7 @@ void PDPServer2::announceParticipantState(
                 }
                 else
                 {
-                    logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                    logError(RTPS_PDP_SERVER, "Cannot serialize ParticipantProxyData.");
                     return;
                 }
 
@@ -476,7 +476,7 @@ void PDPServer2::announceParticipantState(
                 else
                 {
                     // already there, dispose
-                    logWarning(RTPS_PDP, "DiscoveryDatabase already initialized with local DATA(p) on creation");
+                    logError(RTPS_PDP_SERVER, "DiscoveryDatabase already initialized with local DATA(p) on creation");
                     mp_PDPWriterHistory->release_Cache(change);
                 }
             }
@@ -491,7 +491,7 @@ void PDPServer2::announceParticipantState(
             change = discovery_db().cache_change_own_participant();
             if (nullptr == change)
             {
-                logError(RTPS_PDP, "DiscoveryDatabase uninitialized with local DATA(p) on announcement");
+                logError(RTPS_PDP_SERVER, "DiscoveryDatabase uninitialized with local DATA(p) on announcement");
                 return;
             }
         }
@@ -550,7 +550,7 @@ void PDPServer2::announceParticipantState(
         else
         {
             // failed to create the disposal change
-            logError(RTPS_PDP, "Server failed to create its DATA(Up)");
+            logError(RTPS_PDP_SERVER, "Server failed to create its DATA(Up)");
             return;
         }
     }
@@ -616,7 +616,7 @@ void PDPServer2::announceParticipantState(
 
     if (!group.add_data(*change, false))
     {
-        logError(RTPS_PDP, "Error sending announcement from server to clients");
+        logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
     }
 }
 
@@ -675,24 +675,28 @@ bool PDPServer2::remove_remote_participant(
 
 bool PDPServer2::process_data_queue()
 {
-    logInfo(RTPS_PDP, "process_data_queue start");
+    logInfo(RTPS_PDP_SERVER, "process_data_queue start");
     return discovery_db_.process_data_queue();
 }
 
 bool PDPServer2::server_update_routine()
 {
+    logInfo(RTPS_PDP_SERVER, "");
+    logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
     bool result = process_writers_acknowledgements(); // server + ddb(functor_with_ddb)
     process_data_queue();                             // all ddb
     result |= process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
     result |= process_dirty_topics();                 // all ddb
     result |= process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
     result |= process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
+    logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
+    logInfo(RTPS_PDP_SERVER, "");
     return result;
 }
 
 bool PDPServer2::process_writers_acknowledgements()
 {
-    // logInfo(RTPS_PDP, "process_writers_acknowledgements start");
+    // logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
     /* PDP Writer's History */
     bool pending = process_history_acknowledgement(
         static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
@@ -714,12 +718,30 @@ bool PDPServer2::process_history_acknowledgement(
     bool pending = false;
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
     // Iterate over changes in writer's history
-    for (auto chit = writer_history->changesRbegin(); chit != writer_history->changesRend(); chit++)
+    auto chit = writer_history->changesBegin();
+    auto prev_chit = chit;
+
+    while(chit != writer_history->changesEnd())
     {
-        pending |= process_change_acknowledgement(
+        bool change_deleted = !process_change_acknowledgement(
             *chit,
             writer,
             writer_history);
+
+        if (change_deleted)
+        {
+            if (chit == prev_chit)
+            {
+                chit = writer_history->changesBegin();
+            }
+            else
+            {
+                chit = prev_chit;
+            }
+        }
+        prev_chit = chit;
+        chit++;
+        pending |= !change_deleted;
     }
     return pending;
 }
@@ -769,7 +791,7 @@ bool PDPServer2::process_change_acknowledgement(
 
 bool PDPServer2::process_disposals()
 {
-    // logInfo(RTPS_PDP, "process_disposals start");
+    // logInfo(RTPS_PDP_SERVER, "process_disposals start");
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
     fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
@@ -843,7 +865,7 @@ bool PDPServer2::process_disposals()
 
 bool PDPServer2::process_changes_release()
 {
-    // logInfo(RTPS_PDP, "process_changes_release start");
+    // logInfo(RTPS_PDP_SERVER, "process_changes_release start");
     // We will need the EDP publications/subscriptions writers, readers, and histories
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
 
@@ -984,7 +1006,7 @@ bool PDPServer2::announcement_from_same_participant_in_disposals(
 
 bool PDPServer2::process_dirty_topics()
 {
-    // logInfo(RTPS_PDP, "process_dirty_topics start");
+    logInfo(RTPS_PDP_SERVER, "process_dirty_topics start");
     return discovery_db_.process_dirty_topics();
 }
 
@@ -995,14 +1017,14 @@ fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
 
 bool PDPServer2::process_to_send_lists()
 {
-    logInfo(RTPS_PDP, "process_to_send_lists start");
+    logInfo(RTPS_PDP_SERVER, "process_to_send_lists start");
     // Process pdp_to_send_
-    logInfo(RTPS_PDP, "Processing pdp_to_send");
+    logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");
     process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
     discovery_db_.clear_pdp_to_send();
 
     // Process edp_publications_to_send_
-    logInfo(RTPS_PDP, "Processing edp_publications_to_send");
+    logInfo(RTPS_PDP_SERVER, "Processing edp_publications_to_send");
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     process_to_send_list(
         discovery_db_.edp_publications_to_send(),
@@ -1011,7 +1033,7 @@ bool PDPServer2::process_to_send_lists()
     discovery_db_.clear_edp_publications_to_send();
 
     // Process edp_subscriptions_to_send_
-    logInfo(RTPS_PDP, "Processing edp_subscriptions_to_send");
+    logInfo(RTPS_PDP_SERVER, "Processing edp_subscriptions_to_send");
     process_to_send_list(
         discovery_db_.edp_subscriptions_to_send(),
         edp->subscriptions_writer_.first,

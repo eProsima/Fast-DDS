@@ -52,6 +52,8 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
+    logInfo(RTPS_PDP_LISTENER, "");
+    logInfo(RTPS_PDP_LISTENER, "------------------ EDP PUB SERVER LISTENER START ------------------");
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
     logInfo(RTPS_EDP_LISTENER, "EDP Server PUB Message received: " << change_in->instanceHandle);
@@ -116,6 +118,8 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
         reader_history->release_Cache(change);
     }
+    logInfo(RTPS_PDP_LISTENER, "------------------ EDP PUB SERVER LISTENER END ------------------");
+    logInfo(RTPS_PDP_LISTENER, "");
 }
 
 PDPServer2* EDPServerSUBListener2::get_pdp()
@@ -135,6 +139,8 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
+    logInfo(RTPS_PDP_LISTENER, "");
+    logInfo(RTPS_PDP_LISTENER, "------------------ EDP SUB SERVER LISTENER START ------------------");
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
     logInfo(RTPS_EDP_LISTENER, "EDP Server SUB Message received: " << change_in->instanceHandle);
@@ -200,6 +206,8 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
         reader_history->release_Cache(change);
     }
+    logInfo(RTPS_PDP_LISTENER, "------------------ EDP SUB SERVER LISTENER END ------------------");
+    logInfo(RTPS_PDP_LISTENER, "");
 }
 
 } /* namespace rtps */

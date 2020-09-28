@@ -111,6 +111,11 @@ int main (
         rtps.setName(is.str().c_str());
     }
 
+    fastdds::dds::Log::SetCategoryFilter(
+        std::regex("(RTPS_HISTORY)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP_SERVER)|(READER_PROXY)"
+                   "|(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
+    fastdds::dds::Log::SetVerbosity(fastdds::dds::Log::Kind::Info);
+
     // Choose the kind of server to create
     rtps.builtin.discovery_config.discoveryProtocol =
             options[BACKUP] ? rtps::DiscoveryProtocol_t::BACKUP : rtps::DiscoveryProtocol_t::SERVER;

@@ -53,14 +53,14 @@ bool ReaderHistory::add_change(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before adding any changes");
+        logError(RTPS_READER_HISTORY, "You need to create a Reader with this History before adding any changes");
         return false;
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && a_change->serializedPayload.length > m_att.payloadMaxSize)
     {
-        logError(RTPS_HISTORY,
+        logError(RTPS_READER_HISTORY,
                 "Change payload size of '" << a_change->serializedPayload.length <<
                 "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
                 "' bytes and cannot be resized.");
@@ -68,7 +68,7 @@ bool ReaderHistory::add_change(
     }
     if (a_change->writerGUID == c_Guid_Unknown)
     {
-        logError(RTPS_HISTORY, "The Writer GUID_t must be defined");
+        logError(RTPS_READER_HISTORY, "The Writer GUID_t must be defined");
     }
 
     if (!m_changes.empty() && a_change->sourceTimestamp < (*m_changes.rbegin())->sourceTimestamp)
@@ -85,7 +85,7 @@ bool ReaderHistory::add_change(
         m_changes.push_back(a_change);
     }
 
-    logInfo(RTPS_HISTORY,
+    logInfo(RTPS_READER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
     return true;
@@ -108,14 +108,14 @@ bool ReaderHistory::remove_change_and_reuse(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before removing any changes");
+        logError(RTPS_READER_HISTORY, "You need to create a Reader with this History before removing any changes");
         return false;
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (a_change == nullptr)
     {
-        logError(RTPS_HISTORY, "Pointer is not valid")
+        logError(RTPS_READER_HISTORY, "Pointer is not valid")
         return false;
     }
     for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
@@ -124,13 +124,13 @@ bool ReaderHistory::remove_change_and_reuse(
         if ((*chit)->sequenceNumber == a_change->sequenceNumber &&
                 (*chit)->writerGUID == a_change->writerGUID)
         {
-            logInfo(RTPS_HISTORY, "Removing change " << a_change->sequenceNumber);
+            logInfo(RTPS_READER_HISTORY, "Removing change " << a_change->sequenceNumber);
             mp_reader->change_removed_by_history(a_change);
             m_changes.erase(chit);
             return true;
         }
     }
-    logWarning(RTPS_HISTORY, "SequenceNumber " << a_change->sequenceNumber << " not found");
+    logWarning(RTPS_READER_HISTORY, "SequenceNumber " << a_change->sequenceNumber << " not found");
     return false;
 }
 
@@ -152,7 +152,7 @@ bool ReaderHistory::remove_changes_with_guid(
 
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with History before removing any changes");
+        logError(RTPS_READER_HISTORY, "You need to create a Reader with History before removing any changes");
         return false;
     }
 
@@ -173,7 +173,7 @@ bool ReaderHistory::remove_changes_with_guid(
     {
         if (!remove_change(*chit))
         {
-            logError(RTPS_HISTORY, "One of the cachechanged in the GUID removal bulk could not be removed");
+            logError(RTPS_READER_HISTORY, "One of the cachechanged in the GUID removal bulk could not be removed");
             return false;
         }
     }
@@ -186,7 +186,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with History before removing any changes");
+        logError(RTPS_READER_HISTORY, "You need to create a Reader with History before removing any changes");
         return false;
     }
 
@@ -201,7 +201,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
             {
                 if (item->is_fully_assembled() == false)
                 {
-                    logInfo(RTPS_HISTORY, "Removing change " << item->sequenceNumber);
+                    logInfo(RTPS_READER_HISTORY, "Removing change " << item->sequenceNumber);
                     mp_reader->change_removed_by_history(item);
                     m_changePool.release_Cache(item);
                     chit = m_changes.erase(chit);

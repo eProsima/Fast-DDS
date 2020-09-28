@@ -50,6 +50,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
+    logInfo(RTPS_PDP_LISTENER, "");
+    logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER START ------------------");
     logInfo(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
     // Get PDP reader history
@@ -74,6 +76,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
             && !this->get_key(change.get()))
     {
         logWarning(RTPS_PDP_LISTENER, "Problem getting the key of the change, removing");
+        logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+        logInfo(RTPS_PDP_LISTENER, "");
         return;
     }
 
@@ -84,6 +88,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
     if (change->write_params.sample_identity() == SampleIdentity::unknown())
     {
         logWarning(RTPS_PDP_LISTENER, "CacheChange_t is not properly identified for client-server operation");
+        logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+        logInfo(RTPS_PDP_LISTENER, "");
         return;
     }
 
@@ -94,6 +100,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
         if (guid == pdp_server()->getRTPSParticipant()->getGuid())
         {
             logInfo(RTPS_PDP_LISTENER, "Message from own RTPSParticipant, ignoring");
+            logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+            logInfo(RTPS_PDP_LISTENER, "");
             return;
         }
 
@@ -237,6 +245,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
     // cache is removed from history (if it's still there) and returned to the pool on leaving the scope, since the
     // unique pointer destruction grants it. If the ownership has been taken away from the unique pointer, then nothing
     // happens at this point
+
+    logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+    logInfo(RTPS_PDP_LISTENER, "");
 }
 
 } /* namespace rtps */

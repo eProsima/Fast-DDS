@@ -64,21 +64,21 @@ bool WriterHistory::add_change_(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before adding any changes");
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before adding any changes");
         return false;
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (a_change->writerGUID != mp_writer->getGuid())
     {
-        logError(RTPS_HISTORY,
+        logError(RTPS_WRITER_HISTORY,
                 "Change writerGUID " << a_change->writerGUID << " different than Writer GUID " <<
                 mp_writer->getGuid());
         return false;
     }
     if ((m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE) && a_change->serializedPayload.length > m_att.payloadMaxSize)
     {
-        logError(RTPS_HISTORY,
+        logError(RTPS_WRITER_HISTORY,
                 "Change payload size of '" << a_change->serializedPayload.length <<
                 "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
                 "' bytes and cannot be resized.");
@@ -87,7 +87,7 @@ bool WriterHistory::add_change_(
 
     if (m_isHistoryFull)
     {
-        logWarning(RTPS_HISTORY, "History full for writer " << a_change->writerGUID);
+        logWarning(RTPS_WRITER_HISTORY, "History full for writer " << a_change->writerGUID);
         return false;
     }
 
@@ -107,7 +107,7 @@ bool WriterHistory::add_change_(
         m_isHistoryFull = true;
     }
 
-    logInfo(RTPS_HISTORY,
+    logInfo(RTPS_WRITER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
     mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
@@ -120,14 +120,14 @@ bool WriterHistory::remove_change(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before removing any changes");
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
         return false;
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (a_change == nullptr)
     {
-        logError(RTPS_HISTORY, "Pointer is not valid")
+        logError(RTPS_WRITER_HISTORY, "Pointer is not valid")
         return false;
     }
     if (a_change->writerGUID != mp_writer->getGuid())
@@ -135,7 +135,7 @@ bool WriterHistory::remove_change(
         // cout << "a change " << a_change->sequenceNumber<< endl;
         // cout << "a change "<< a_change->writerGUID << endl;
         // cout << "writer: "<< mp_writer->getGuid()<<endl;
-        logError(RTPS_HISTORY,
+        logError(RTPS_WRITER_HISTORY,
                 "Change writerGUID " << a_change->writerGUID << " different than Writer GUID " <<
                 mp_writer->getGuid());
         return false;
@@ -153,7 +153,7 @@ bool WriterHistory::remove_change(
             return true;
         }
     }
-    logWarning(RTPS_HISTORY, "SequenceNumber " << a_change->sequenceNumber << " not found");
+    logWarning(RTPS_WRITER_HISTORY, "SequenceNumber " << a_change->sequenceNumber << " not found");
     return false;
 }
 
@@ -181,7 +181,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before removing any changes");
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
         return nullptr;
     }
 
@@ -200,7 +200,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
         }
     }
 
-    logWarning(RTPS_HISTORY, "SequenceNumber " <<  sequence_number << " not found");
+    logWarning(RTPS_WRITER_HISTORY, "SequenceNumber " <<  sequence_number << " not found");
     return nullptr;
 }
 
@@ -209,7 +209,7 @@ bool WriterHistory::remove_min_change()
 
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Writer with this History before removing any changes");
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
         return false;
     }
 

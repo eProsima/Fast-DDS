@@ -40,9 +40,6 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-//typedef std::shared_timed_mutex share_mutex_t;
-// only working in C++17
-// AckedFunctor copy forces us to use recursive_mutex because two object simultaneously own the mutex during the copy
 typedef std::recursive_mutex share_mutex_t;
 
 /**

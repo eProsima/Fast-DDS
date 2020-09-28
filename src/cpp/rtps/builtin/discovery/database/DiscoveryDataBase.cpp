@@ -56,9 +56,10 @@ bool DiscoveryDataBase::pdp_is_relevant(
     {
         // it is relevant if the ack has not been received yet
         // in NOT_ALIVE case the set_disposal unmatches every participant
-        return !it->second.is_matched(reader_guid.guidPrefix);
+        return (it->second.is_relevant_participant(reader_guid.guidPrefix) &&
+            !it->second.is_matched(reader_guid.guidPrefix));
     }
-    // not relevant
+    // Not relevant
     return false;
 }
 
@@ -85,7 +86,8 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
     if (itw != writers_.end())
     {
         // it is relevant if the ack has not been received yet
-        return !itw->second.is_matched(reader_guid.guidPrefix);
+        return (itw->second.is_relevant_participant(reader_guid.guidPrefix) &&
+            !itw->second.is_matched(reader_guid.guidPrefix));
     }
     // not relevant
     return false;
@@ -114,7 +116,8 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     if (itr != readers_.end())
     {
         // it is relevant if the ack has not been received yet
-        return !itr->second.is_matched(reader_guid.guidPrefix);
+        return (itr->second.is_relevant_participant(reader_guid.guidPrefix) &&
+            !itr->second.is_matched(reader_guid.guidPrefix));
     }
     // not relevant
     return false;
@@ -534,7 +537,7 @@ void DiscoveryDataBase::process_dispose_participant(
         if (wit->first.guidPrefix == participant_guid.guidPrefix)
         {
             changes_to_release_.push_back(wit->second.change());
-            writers_.erase(wit->first);
+            wit = writers_.erase(wit);
             continue;
         }
         ++wit;
@@ -546,7 +549,7 @@ void DiscoveryDataBase::process_dispose_participant(
         if (rit->first.guidPrefix == participant_guid.guidPrefix)
         {
             changes_to_release_.push_back(rit->second.change());
-            readers_.erase(rit->first);
+            rit = readers_.erase(rit);
             continue;
         }
         ++rit;
@@ -559,7 +562,7 @@ void DiscoveryDataBase::process_dispose_participant(
         {
             if (wit->guidPrefix == participant_guid.guidPrefix)
             {
-                tit->second.erase(wit);
+                wit = tit->second.erase(wit);
                 continue;
             }
             ++wit;
@@ -567,7 +570,7 @@ void DiscoveryDataBase::process_dispose_participant(
 
         if (tit->second.empty())
         {
-            writers_by_topic_.erase(tit);
+            tit = writers_by_topic_.erase(tit);
             continue;
         }
         ++tit;
@@ -580,7 +583,7 @@ void DiscoveryDataBase::process_dispose_participant(
         {
             if (rit->guidPrefix == participant_guid.guidPrefix)
             {
-                tit->second.erase(rit);
+                rit = tit->second.erase(rit);
                 continue;
             }
             ++rit;
@@ -588,7 +591,7 @@ void DiscoveryDataBase::process_dispose_participant(
 
         if (tit->second.empty())
         {
-            readers_by_topic_.erase(tit);
+            tit = readers_by_topic_.erase(tit);
             continue;
         }
         ++tit;
@@ -722,7 +725,7 @@ void DiscoveryDataBase::process_dispose_reader(
 
 bool DiscoveryDataBase::process_dirty_topics()
 {
-    logInfo(DISCOVERY_DATABASE, "process_dirty_topics start");
+    // logInfo(DISCOVERY_DATABASE, "process_dirty_topics start");
     // Get shared lock
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
@@ -846,8 +849,8 @@ bool DiscoveryDataBase::process_dirty_topics()
         if (is_clearable)
         {
             // Delete topic from dirty_topics_
-            topic_it = dirty_topics_.erase(topic_it);
             logInfo(DISCOVERY_DATABASE, "Topic " << *topic_it << " has been cleaned");
+            topic_it = dirty_topics_.erase(topic_it);
         }
         else
         {
