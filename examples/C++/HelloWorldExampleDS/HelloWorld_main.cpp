@@ -322,8 +322,9 @@ int main(
     }
 
     // Log::ReportFilenames(true);
-    Log::SetCategoryFilter(std::regex(
-                "(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
+    Log::SetCategoryFilter(
+        std::regex("(RTPS_HISTORY)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP_SERVER)|(READER_PROXY)"
+                   "|(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
     Log::SetVerbosity(Log::Kind::Info);
 
     switch (type)

@@ -715,7 +715,6 @@ bool PDPServer2::process_history_acknowledgement(
         fastrtps::rtps::StatefulWriter* writer,
         fastrtps::rtps::WriterHistory* writer_history)
 {
-    bool pending = false;
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
     // Iterate over changes in writer's history
     auto chit = writer_history->changesBegin();
@@ -746,10 +745,9 @@ bool PDPServer2::process_history_acknowledgement(
         }
         prev_chit = chit;
         chit++;
-        pending |= !change_deleted;
         first = false;
     }
-    return pending;
+    return writer_history->getHistorySize() > 1;
 }
 
 bool PDPServer2::process_change_acknowledgement(

@@ -64,7 +64,7 @@ bool DiscoveryParticipantsAckStatus::is_relevant_participant(
     const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
 {
     auto it = relevant_participants_map_.find(guid_p);
-    if (it != relevant_participants_map_.end())
+    if (it == relevant_participants_map_.end())
     {
         return false;
     }

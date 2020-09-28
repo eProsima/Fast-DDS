@@ -127,6 +127,7 @@ void DiscoveryDataBase::add_ack_(
         const eprosima::fastrtps::rtps::CacheChange_t* change,
         const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity)
 {
+    logInfo(DISCOVERY_DATABASE, "Adding ACK for change " << change->instanceHandle << " to " << acked_entity);
     if (is_participant(change))
     {
         auto it = participants_.find(guid_from_change(change).guidPrefix);
@@ -383,6 +384,14 @@ void DiscoveryDataBase::create_writers_from_change(
                         pit->second.add_or_update_ack_participant(writer_guid.guidPrefix);
                     }
                 }
+                pit = participants_.find(writer_guid.guidPrefix);
+                if (pit != participants_.end())
+                {
+                    if (!pit->second.is_matched(reader_it.guidPrefix))
+                    {
+                        pit->second.add_or_update_ack_participant(reader_it.guidPrefix);
+                    }
+                }
             }
         }
 
@@ -471,6 +480,14 @@ void DiscoveryDataBase::create_readers_from_change(
                     if (!pit->second.is_matched(reader_guid.guidPrefix))
                     {
                         pit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                    }
+                }
+                pit = participants_.find(reader_guid.guidPrefix);
+                if (pit != participants_.end())
+                {
+                    if (!pit->second.is_matched(writer_it.guidPrefix))
+                    {
+                        pit->second.add_or_update_ack_participant(writer_it.guidPrefix);
                     }
                 }
             }
