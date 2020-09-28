@@ -24,7 +24,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class IPersistenceService;
@@ -36,32 +36,42 @@ class WriterHistory;
  */
 class PersistentWriter
 {
-    protected:
-    PersistentWriter(GUID_t& guid,WriterAttributes& att,WriterHistory* hist, IPersistenceService* persistence);
-    public:
+protected:
+
+    PersistentWriter(
+            GUID_t& guid,
+            WriterAttributes& att,
+            WriterHistory* hist,
+            IPersistenceService* persistence);
+
+public:
+
     virtual ~PersistentWriter();
-    
+
     /**
      * Add a specific change to storage.
      * @param change Pointer to the change to be stored.
      */
-    void add_persistent_change(CacheChange_t* change);
+    void add_persistent_change(
+            CacheChange_t* change);
 
     /**
      * Remove a change from storage.
      * @param change Pointer to the change to be removed.
      */
-    void remove_persistent_change(CacheChange_t* change);
+    void remove_persistent_change(
+            CacheChange_t* change);
 
-    private:
+private:
+
     //!Persistence service
     IPersistenceService* persistence_;
     //!Persistence GUID
     std::string persistence_guid_;
 };
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PERSISTENTWRITER_H_ */
