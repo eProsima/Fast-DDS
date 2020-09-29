@@ -78,6 +78,10 @@ protected:
 
 private:
 
+    void init(
+            RTPSParticipantImpl* pimpl,
+            const WriterAttributes& att);
+
     //!Timed Event to manage the periodic HB to the Reader.
     TimedEvent* periodic_hb_event_;
 
