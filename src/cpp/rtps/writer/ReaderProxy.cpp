@@ -529,6 +529,12 @@ void ReaderProxy::change_has_been_removed(
 
     auto chit = find_change(seq_num);
 
+    if (chit == this->changes_for_reader_.end())
+    {
+        // No change for this sequence number
+        return;
+    }
+
     // In intraprocess, if there is an UNACKNOWLEDGED, a GAP has to be send because there is no reliable mechanism.
     if (is_local_reader() && ACKNOWLEDGED > chit->getStatus())
     {

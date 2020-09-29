@@ -1017,32 +1017,42 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::remote_partic
     return remote_participants;
 }
 
+
+DiscoveryDataBase::AckedFunctor DiscoveryDataBase::functor(
+        eprosima::fastrtps::rtps::CacheChange_t* change)
+{
+    return DiscoveryDataBase::AckedFunctor(this, change);
+}
+
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
         DiscoveryDataBase* db,
         eprosima::fastrtps::rtps::CacheChange_t* change)
     : db_(db)
     , change_(change)
+    , pending_(false)
+     // references its own state
+    , external_pending_(pending_)
 {
+    // RAII only for the stateful object
     db_->exclusive_lock_();
 }
 
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
         const DiscoveryDataBase::AckedFunctor& r)
+    // references original state
+    : external_pending_(r.external_pending_)
 {
     db_ = r.db_;
     change_ = r.change_;
-    db_->exclusive_lock_();
-}
-
-DiscoveryDataBase::AckedFunctor::AckedFunctor(
-        DiscoveryDataBase::AckedFunctor&& r)
-    : DiscoveryDataBase::AckedFunctor(r)
-{
 }
 
 DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 {
-    db_->exclusive_unlock_();
+    if (&external_pending_ == &pending_)
+    {
+        // only the stateful object manages the lock
+        db_->exclusive_unlock_();
+    }
 }
 
 void DiscoveryDataBase::AckedFunctor::operator () (
@@ -1059,7 +1069,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         else
         {
             // This change is relevant and has not been acked, so there are pending acknowledgements
-            pending_ = true;
+            external_pending_ = true;
         }
     }
 }

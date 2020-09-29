@@ -766,7 +766,7 @@ bool PDPServer2::process_change_acknowledgement(
         writer->for_each_reader_proxy(c, func);
 
         // If the change has been acknowledge by everyone
-        if (!func.pending() &&
+        if (!func &&
             !(discovery_db_.is_participant(c) &&
                 discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
         {

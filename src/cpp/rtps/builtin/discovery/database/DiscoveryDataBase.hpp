@@ -54,22 +54,41 @@ class DiscoveryDataBase
 
 public:
 
+    class AckedFunctor;
+
+    ////////////
+    // Functions to process_writers_acknowledgements()
+    // Return the functor, class that works as a lambda
+    AckedFunctor functor(
+            eprosima::fastrtps::rtps::CacheChange_t* );
+
     class AckedFunctor
     {
         using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
         using result_type = void;
 
-    public:
+        // friend class DiscoveryDataBase;
+        friend AckedFunctor DiscoveryDataBase::functor(
+            eprosima::fastrtps::rtps::CacheChange_t* );
 
+        // Stateful constructor
+        // This constructor generates the only object that keeps the state
+        // all other constructors reference this object state
         AckedFunctor(
                 DiscoveryDataBase* db,
                 eprosima::fastrtps::rtps::CacheChange_t* change);
+    public:
 
+        // Stateless constructors
         AckedFunctor(
             const AckedFunctor &);
 
         AckedFunctor(
-            AckedFunctor&& r);
+            AckedFunctor&& r)
+        // delegates in copy constructor
+            : AckedFunctor(r)
+        {
+        }
 
         AckedFunctor() = delete;
 
@@ -78,18 +97,20 @@ public:
         void operator () (
                 eprosima::fastrtps::rtps::ReaderProxy* reader_proxy);
 
-        bool pending()
+        operator bool() const
         {
-            return pending_;
+            return external_pending_;
         }
 
     private:
 
         DiscoveryDataBase* db_;
         eprosima::fastrtps::rtps::CacheChange_t* change_;
-        bool pending_ = false;
-
+        // stateful functor is the one contructed form the database
+        bool pending_; // stateful functor state
+        bool& external_pending_; // references stateful functor
     };
+
     friend class AckedFunctor;
 
     DiscoveryDataBase(
@@ -123,16 +144,6 @@ public:
     bool edp_subscriptions_is_relevant(
             const eprosima::fastrtps::rtps::CacheChange_t& change,
             const eprosima::fastrtps::rtps::GUID_t& reader_guid) const;
-
-
-    ////////////
-    // Functions to process_writers_acknowledgements()
-    // Return the functor, class that works as a lambda
-    AckedFunctor functor(
-            eprosima::fastrtps::rtps::CacheChange_t* change)
-    {
-        return DiscoveryDataBase::AckedFunctor(this, change);
-    }
 
     /* Delete all information relative to the entity that produced a CacheChange
      * @change: That entity's CacheChange.
