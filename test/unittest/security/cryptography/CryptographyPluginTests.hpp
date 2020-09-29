@@ -88,44 +88,53 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
             eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
 
     ASSERT_FALSE( std::all_of(local_participant->ParticipantKeyMaterial.master_salt.begin(),
-            local_participant->ParticipantKeyMaterial.master_salt.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_participant->ParticipantKeyMaterial.master_salt.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.begin(),
-            local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_salt.begin(),
-            local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_salt.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
 
     ASSERT_FALSE( std::all_of(local_participant->ParticipantKeyMaterial.master_sender_key.begin(),
-            local_participant->ParticipantKeyMaterial.master_sender_key.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_participant->ParticipantKeyMaterial.master_sender_key.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).master_sender_key.begin(),
-            local_participant->Participant2ParticipantKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_participant->Participant2ParticipantKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key.begin(),
-            local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
 
     ASSERT_FALSE( std::any_of(local_participant->ParticipantKeyMaterial.receiver_specific_key_id.begin(),
-            local_participant->ParticipantKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i){
-        return i != 0;
-    }) );
+            local_participant->ParticipantKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i)
+            {
+                return i != 0;
+            }) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id.begin(),
-            local_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKxKeyMaterial.at(0).receiver_specific_key_id.
             begin(), local_participant->Participant2ParticipantKxKeyMaterial.at(0).receiver_specific_key_id.end(),
-            [](uint8_t i){
-        return i == 0;
-    }) );
+            [](uint8_t i)
+            {
+                return i == 0;
+            }) );
 
     delete i_handle;
     delete perm_handle;
@@ -605,24 +614,28 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
             eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
 
     ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.at(0).master_salt.begin(),
-            local_writer->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_writer->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
 
     ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.at(0).master_sender_key.begin(),
-            local_writer->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_writer->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
 
     ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.at(0).receiver_specific_key_id.begin(),
-            local_writer->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i){
-        return i != 0;
-    }) );
+            local_writer->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i)
+            {
+                return i != 0;
+            }) );
 
     ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.at(0).master_receiver_specific_key.begin(),
-            local_writer->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i){
-        return i != 0;
-    }) );
+            local_writer->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i)
+            {
+                return i != 0;
+            }) );
 
     delete i_handle;
     delete perm_handle;
@@ -674,24 +687,28 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
             eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
 
     ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.at(0).master_salt.begin(),
-            local_reader->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_reader->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
 
     ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.at(0).master_sender_key.begin(),
-            local_reader->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i){
-        return i == 0;
-    }) );
+            local_reader->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i)
+            {
+                return i == 0;
+            }) );
 
     ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.at(0).receiver_specific_key_id.begin(),
-            local_reader->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i){
-        return i != 0;
-    }) );
+            local_reader->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i)
+            {
+                return i != 0;
+            }) );
 
     ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.at(0).master_receiver_specific_key.begin(),
-            local_reader->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i){
-        return i != 0;
-    }) );
+            local_reader->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i)
+            {
+                return i != 0;
+            }) );
 
     delete i_handle;
     delete perm_handle;
@@ -1296,10 +1313,10 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     //TODO(Ricardo) Fix
     //Send message to intended participant
     /*
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_payload, plain_payload,
-               *writer, receivers, exception));
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload, encoded_payload,
-               *reader, *remote_writer, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_payload,
+               plain_payload, *writer, receivers, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload,
+               encoded_payload, *reader, *remote_writer, exception));
        ASSERT_TRUE(plain_payload == decoded_payload);
      */
 
@@ -1377,10 +1394,10 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     //TODO(Ricardo) Fix
     //Send message to intended participant
     /*
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_payload, plain_payload,
-               *writer, receivers, exception));
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload, encoded_payload,
-               *reader, *remote_writer, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datawriter_submessage(encoded_payload,
+               plain_payload, *writer, receivers, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datawriter_submessage(decoded_payload,
+               encoded_payload, *reader, *remote_writer, exception));
        ASSERT_TRUE(plain_payload == decoded_payload);
      */
 
@@ -1524,10 +1541,10 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     //TODO(Ricardo) Fix
     //Send message to intended participant
     /*
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_payload, plain_payload,
-               *reader, receivers, exception));
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload, encoded_payload,
-               *writer, *remote_reader, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_payload,
+               plain_payload, *reader, receivers, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload,
+               encoded_payload, *writer, *remote_reader, exception));
        ASSERT_TRUE(plain_payload == decoded_payload);
      */
 
@@ -1607,10 +1624,10 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     //TODO(Ricardo)Fix
     //Send message to intended participant
     /*
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_payload, plain_payload,
-               *reader, receivers, exception));
-       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload, encoded_payload,
-               *writer, *remote_reader, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_datareader_submessage(encoded_payload,
+               plain_payload, *reader, receivers, exception));
+       ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_datareader_submessage(decoded_payload,
+               encoded_payload, *writer, *remote_reader, exception));
        ASSERT_TRUE(plain_payload == decoded_payload);
      */
 
@@ -1777,9 +1794,9 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
 
     eprosima::fastrtps::rtps::security::SecureSubmessageCategory_t message_category;
     eprosima::fastrtps::rtps::security::DatareaderCryptoHandle** target_reader =
-            new eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *;
+            new eprosima::fastrtps::rtps::security::DatareaderCryptoHandle*;
     eprosima::fastrtps::rtps::security::DatawriterCryptoHandle** target_writer =
-            new eprosima::fastrtps::rtps::security::DatawriterCryptoHandle *;
+            new eprosima::fastrtps::rtps::security::DatawriterCryptoHandle*;
     encoded_datareader_payload.pos = 0;
     ASSERT_TRUE(CryptoPlugin->cryptotransform()->preprocess_secure_submsg(target_writer, target_reader,
             message_category, encoded_datareader_payload, *participant_A, *ParticipantA_remote, exception));
@@ -1814,4 +1831,4 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     delete i_handle;
 }
 
-#endif
+#endif // ifndef _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_
