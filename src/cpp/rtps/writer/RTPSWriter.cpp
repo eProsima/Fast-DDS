@@ -70,11 +70,23 @@ RTPSWriter::RTPSWriter(
         const WriterAttributes& att,
         WriterHistory* hist,
         WriterListener* listen)
-    : RTPSWriter(
-        impl, guid, att,
-        BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
-        hist, listen)
+    : Endpoint(impl, guid, att.endpoint)
+    , mp_history(hist)
+    , mp_listener(listen)
+    , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
+    , locator_selector_(att.matched_readers_allocation)
+    , all_remote_readers_(att.matched_readers_allocation)
+    , all_remote_participants_(att.matched_readers_allocation)
+    , liveliness_kind_(att.liveliness_kind)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
+    , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
+    PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
+    std::shared_ptr<IChangePool> change_pool;
+    std::shared_ptr<IPayloadPool> payload_pool;
+    payload_pool = BasicPayloadPool::get(cfg, change_pool);
+
+    init(payload_pool, change_pool);
 }
 
 RTPSWriter::RTPSWriter(
@@ -86,7 +98,7 @@ RTPSWriter::RTPSWriter(
         WriterListener* listen)
     : RTPSWriter(
         impl, guid, att, payload_pool,
-        create_change_pool(payload_pool, hist->m_att),
+        std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(hist->m_att)),
         hist, listen)
 {
 }
@@ -110,12 +122,19 @@ RTPSWriter::RTPSWriter(
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
+    init(payload_pool, change_pool);
+}
+
+void RTPSWriter::init(
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool)
+{
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
     fixed_payload_size_ = 0;
-    if (hist->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
-        fixed_payload_size_ = hist->m_att.payloadMaxSize;
+        fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
     mp_history->mp_writer = this;

@@ -455,6 +455,11 @@ private:
     RTPSWriter& operator =(
             const RTPSWriter&) = delete;
 
+    void init(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool);
+
+
     RTPSWriter* next_[2] = { nullptr, nullptr };
 };
 
