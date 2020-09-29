@@ -22,6 +22,7 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
+#include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 
 #include <memory>
@@ -61,6 +62,35 @@ public:
         }
 
         return nullptr;
+    }
+
+    static std::shared_ptr<IPayloadPool> get(
+            const PoolConfig& config,
+            std::shared_ptr<IChangePool>& change_pool)
+    {
+        auto payload_pool = get(config);
+        if (payload_pool)
+        {
+            if ((PREALLOCATED_MEMORY_MODE == config.memory_policy) ||
+                    (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy))
+            {
+                change_pool = std::make_shared<CacheChangePool>(config,
+                                [&payload_pool, &config](
+                                    CacheChange_t* change)
+                                {
+                                    if (payload_pool->get_payload(config.payload_initial_size, *change))
+                                    {
+                                        payload_pool->release_payload(*change);
+                                    }
+                                });
+            }
+            else
+            {
+                change_pool = std::make_shared<CacheChangePool>(config);
+            }
+        }
+
+        return payload_pool;
     }
 
 };
