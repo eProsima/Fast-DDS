@@ -1036,9 +1036,8 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
 
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
         DiscoveryDataBase::AckedFunctor&& r)
+    : DiscoveryDataBase::AckedFunctor(r)
 {
-    db_ = r.db_;
-    change_ = r.change_;
 }
 
 DiscoveryDataBase::AckedFunctor::~AckedFunctor()
