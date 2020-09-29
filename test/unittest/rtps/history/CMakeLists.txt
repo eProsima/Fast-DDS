@@ -35,6 +35,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
+        set(BASICPOOLSTESTS_SOURCE BasicPoolsTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+
         set(CACHECHANGEPOOLTESTS_SOURCE CacheChangePoolTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
@@ -69,6 +75,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${GTEST_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(HistoryTests SOURCES ${HISTORYTESTS_SOURCE})
+
+        add_executable(BasicPoolsTests ${BASICPOOLSTESTS_SOURCE})
+        target_compile_definitions(BasicPoolsTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(BasicPoolsTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(BasicPoolsTests
+            ${GTEST_LIBRARIES}
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        add_gtest(BasicPoolsTests SOURCES ${BASICPOOLSTESTS_SOURCE})
 
         add_executable(CacheChangePoolTests ${CACHECHANGEPOOLTESTS_SOURCE})
         target_compile_definitions(CacheChangePoolTests PRIVATE FASTRTPS_NO_LIB)
