@@ -35,35 +35,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-static std::shared_ptr<IChangePool> create_change_pool(
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const PoolConfig& pool_config)
-{
-    if ((pool_config.memory_policy == PREALLOCATED_MEMORY_MODE) ||
-            (pool_config.memory_policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
-    {
-        auto init_cache = [payload_pool, pool_config](
-            CacheChange_t* item)
-                {
-                    if (payload_pool->get_payload(pool_config.payload_initial_size, *item))
-                    {
-                        payload_pool->release_payload(*item);
-                    }
-                };
-
-        return std::make_shared<CacheChangePool>(pool_config, init_cache);
-    }
-
-    return std::make_shared<CacheChangePool>(pool_config);
-}
-
-std::shared_ptr<IChangePool> RTPSWriter::create_change_pool(
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const HistoryAttributes& history_attr)
-{
-    return rtps::create_change_pool(payload_pool, PoolConfig::from_history_attributes(history_attr));
-}
-
 RTPSWriter::RTPSWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,

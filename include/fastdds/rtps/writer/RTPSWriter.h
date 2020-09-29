@@ -56,10 +56,6 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
 
 protected:
 
-    static std::shared_ptr<IChangePool> create_change_pool(
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const HistoryAttributes& history_attr);
-
     RTPSWriter(
             RTPSParticipantImpl* impl,
             const GUID_t& guid,
