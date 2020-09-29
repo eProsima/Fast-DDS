@@ -163,6 +163,10 @@ public:
 
 private:
 
+    void init(
+            RTPSParticipantImpl* participant,
+            const WriterAttributes& attributes);
+
     void get_builtin_guid();
 
     bool has_builtin_guid();

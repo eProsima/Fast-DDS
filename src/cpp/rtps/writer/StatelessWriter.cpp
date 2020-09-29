@@ -35,7 +35,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
-#include "rtps/RTPSDomainImpl.hpp"
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/RTPSDomainImpl.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -83,10 +84,13 @@ StatelessWriter::StatelessWriter(
         const WriterAttributes& attributes,
         WriterHistory* history,
         WriterListener* listener)
-    : StatelessWriter(impl, guid, attributes,
-            BasicPayloadPool::get(PoolConfig::from_history_attributes(history->m_att)),
-            history, listener)
+    : RTPSWriter(impl, guid, attributes, history, listener)
+    , matched_readers_(attributes.matched_readers_allocation)
+    , late_joiner_guids_(attributes.matched_readers_allocation)
+    , unsent_changes_(resource_limits_from_history(history->m_att))
+    , last_intraprocess_sequence_number_(0)
 {
+    init(impl, attributes);
 }
 
 StatelessWriter::StatelessWriter(
@@ -96,9 +100,13 @@ StatelessWriter::StatelessWriter(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         WriterHistory* history,
         WriterListener* listener)
-    : StatelessWriter(impl, guid, attributes, payload_pool,
-            RTPSWriter::create_change_pool(payload_pool, history->m_att), history, listener)
+    : RTPSWriter(impl, guid, attributes, payload_pool, history, listener)
+    , matched_readers_(attributes.matched_readers_allocation)
+    , late_joiner_guids_(attributes.matched_readers_allocation)
+    , unsent_changes_(resource_limits_from_history(history->m_att))
+    , last_intraprocess_sequence_number_(0)
 {
+    init(impl, attributes);
 }
 
 StatelessWriter::StatelessWriter(
@@ -109,18 +117,18 @@ StatelessWriter::StatelessWriter(
         const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* history,
         WriterListener* listener)
-    : RTPSWriter(
-        participant,
-        guid,
-        attributes,
-        payload_pool,
-        change_pool,
-        history,
-        listener)
+    : RTPSWriter(participant, guid, attributes, payload_pool, change_pool, history, listener)
     , matched_readers_(attributes.matched_readers_allocation)
     , late_joiner_guids_(attributes.matched_readers_allocation)
     , unsent_changes_(resource_limits_from_history(history->m_att))
     , last_intraprocess_sequence_number_(0)
+{
+    init(participant, attributes);
+}
+
+void StatelessWriter::init(
+        RTPSParticipantImpl* participant,
+        const WriterAttributes& attributes)
 {
     get_builtin_guid();
 
