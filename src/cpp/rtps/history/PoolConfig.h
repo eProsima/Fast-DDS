@@ -19,6 +19,7 @@
 #ifndef RTPS_HISTORY_POOLCONFIG_H_
 #define RTPS_HISTORY_POOLCONFIG_H_
 
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 namespace eprosima {
@@ -38,6 +39,26 @@ struct PoolConfig
 
     //! Maximum number of elements in the pool. Default value is 0, indicating to make allocations until they fail.
     uint32_t maximum_size;
+
+    /**
+     * Transform a HistoryAttributes object into a PoolConfig
+     *
+     * @param [in] history_attr HistoryAttributes to be transformed
+     *
+     * @return equivalent PoolConfig object
+     */
+    static constexpr PoolConfig from_history_attributes(
+            const HistoryAttributes& history_attr) noexcept
+    {
+        return
+            {
+                history_attr.memoryPolicy,
+                history_attr.payloadMaxSize,
+                static_cast<uint32_t>(history_attr.initialReservedCaches < 0 ? 0 : history_attr.initialReservedCaches),
+                static_cast<uint32_t>(history_attr.maximumReservedCaches < 0 ? 0 : history_attr.maximumReservedCaches)
+            };
+    }
+
 };
 
 } /* namespace rtps */

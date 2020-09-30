@@ -146,10 +146,15 @@ bool WriterHistory::remove_change(
     {
         if ((*chit)->sequenceNumber == a_change->sequenceNumber)
         {
-            mp_writer->change_removed_by_history(a_change);
-            do_release_cache(a_change);
+            // Remove from history
             m_changes.erase(chit);
             m_isHistoryFull = false;
+
+            // Inform writer
+            mp_writer->change_removed_by_history(a_change);
+
+            // Release from pools
+            mp_writer->release_change(a_change);
             return true;
         }
     }
@@ -179,10 +184,17 @@ bool WriterHistory::remove_change(
     {
         if ((*chit)->sequenceNumber == sequence_number)
         {
-            mp_writer->change_removed_by_history(*chit);
-            do_release_cache(*chit);
+            CacheChange_t* change = *chit;
+
+            // Remove from history
             m_changes.erase(chit);
             m_isHistoryFull = false;
+
+            // Inform writer
+            mp_writer->change_removed_by_history(change);
+
+            // Release from pools
+            mp_writer->release_change(change);
             return true;
         }
     }
@@ -208,9 +220,15 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
         if ((*chit)->sequenceNumber == sequence_number)
         {
             CacheChange_t* change = *chit;
-            mp_writer->change_removed_by_history(change);
+
+            // Remove from history
             m_changes.erase(chit);
             m_isHistoryFull = false;
+
+            // Inform writer
+            mp_writer->change_removed_by_history(change);
+
+            // Do not release, but return for reuse
             return change;
         }
     }

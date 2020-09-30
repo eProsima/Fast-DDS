@@ -22,6 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <condition_variable>
 #include <mutex>
@@ -51,13 +53,34 @@ protected:
 
     //!Constructor
     StatefulWriter(
-            RTPSParticipantImpl*,
+            RTPSParticipantImpl* impl,
             const GUID_t& guid,
             const WriterAttributes& att,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
+    StatefulWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    StatefulWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
 private:
+
+    void init(
+            RTPSParticipantImpl* pimpl,
+            const WriterAttributes& att);
 
     //!Timed Event to manage the periodic HB to the Reader.
     TimedEvent* periodic_hb_event_;

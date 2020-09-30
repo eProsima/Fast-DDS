@@ -21,12 +21,15 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/writer/ChangeForReader.h>
 #include <fastdds/rtps/writer/ReaderLocator.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <list>
+#include <memory>
 
 namespace eprosima {
 namespace fastrtps {
@@ -45,10 +48,27 @@ protected:
 
     StatelessWriter(
             RTPSParticipantImpl* participant,
-            GUID_t& guid,
-            WriterAttributes& attributes,
+            const GUID_t& guid,
+            const WriterAttributes& attributes,
             WriterHistory* history,
             WriterListener* listener = nullptr);
+
+    StatelessWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    StatelessWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
 
 public:
 
@@ -142,6 +162,10 @@ public:
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
 private:
+
+    void init(
+            RTPSParticipantImpl* participant,
+            const WriterAttributes& attributes);
 
     void get_builtin_guid();
 
