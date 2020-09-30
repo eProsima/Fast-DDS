@@ -84,15 +84,10 @@ public:
         return false;
     }
 
-    /**
-     * release a previously reserved CacheChange_t.
-     * @param ch Pointer to the CacheChange_t.
-     */
+    FASTRTPS_DEPRECATED("Use release_change on RTPSWriter or releaseCache on RTPSReader")
     RTPS_DllAPI inline void release_Cache(
-            CacheChange_t* ch)
+            CacheChange_t*)
     {
-        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        do_release_cache(ch);
     }
 
     /**
