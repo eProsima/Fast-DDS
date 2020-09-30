@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file Authentication.h	
+ * @file CryptoTypes.h
  */
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
@@ -46,42 +46,42 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-    typedef std::array<uint8_t,4> CryptoTransformKind;
-    typedef std::array<uint8_t,4> CryptoTransformKeyId;
+typedef std::array<uint8_t, 4> CryptoTransformKind;
+typedef std::array<uint8_t, 4> CryptoTransformKeyId;
 
-    const CryptoTransformKeyId c_transformKeyIdZero = { {0,0,0,0} };
+constexpr CryptoTransformKeyId c_transformKeyIdZero = { {0, 0, 0, 0} };
 
-    typedef Token MessageToken;
-    typedef MessageToken AuthRequestMessageToken;
-    typedef MessageToken HandshakeMessageToken;
+typedef Token MessageToken;
+typedef MessageToken AuthRequestMessageToken;
+typedef MessageToken HandshakeMessageToken;
 
-    typedef Token CryptoToken;
-    typedef Token ParticipantCryptoToken;
-    typedef Token DatawriterCryptoToken;
-    typedef Token DatareaderCryptoToken;
+typedef Token CryptoToken;
+typedef Token ParticipantCryptoToken;
+typedef Token DatawriterCryptoToken;
+typedef Token DatareaderCryptoToken;
 
-    typedef std::vector<HandshakeMessageToken> HandshakeMessageTokenSeq;
-    typedef std::vector<CryptoToken> CryptoTokenSeq;
-    typedef CryptoTokenSeq ParticipantCryptoTokenSeq;
-    typedef CryptoTokenSeq DatawriterCryptoTokenSeq;
-    typedef CryptoTokenSeq DatareaderCryptoTokenSeq;
+typedef std::vector<HandshakeMessageToken> HandshakeMessageTokenSeq;
+typedef std::vector<CryptoToken> CryptoTokenSeq;
+typedef CryptoTokenSeq ParticipantCryptoTokenSeq;
+typedef CryptoTokenSeq DatawriterCryptoTokenSeq;
+typedef CryptoTokenSeq DatareaderCryptoTokenSeq;
 
-    struct CryptoTransformIdentifier{
-        CryptoTransformKind transformation_kind;
-        CryptoTransformKeyId transformation_key_id;
-    };
+struct CryptoTransformIdentifier
+{
+    CryptoTransformKind transformation_kind;
+    CryptoTransformKeyId transformation_key_id;
+};
 
-    enum SecureSubmessageCategory_t: uint8_t
-    {
-        INFO_SUBMESSAGE = 0,
-        DATAWRITER_SUBMESSAGE,
-        DATAREADER_SUBMESSAGE
-    };
+enum SecureSubmessageCategory_t : uint8_t
+{
+    INFO_SUBMESSAGE = 0,
+    DATAWRITER_SUBMESSAGE,
+    DATAREADER_SUBMESSAGE
+};
 
-
-} //namespace eprosima
-} //namespace fastrtps
-} //namespace rtps
 } //namespace security
+} //namespace rtps
+} //namespace fastrtps
+} //namespace eprosima
 
 #endif //_FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
