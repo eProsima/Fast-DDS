@@ -33,7 +33,7 @@ class WriteParams;
  * Class WriterHistory, container of the different CacheChanges of a writer
  * @ingroup WRITER_MODULE
  */
-class WriterHistory : public History
+class WriterHistory : public rtps::History
 {
     friend class RTPSWriter;
     friend class PersistentWriter;
@@ -68,12 +68,31 @@ class WriterHistory : public History
 
     /**
      * Remove a specific change from the history.
-     * @param a_change Pointer to the CacheChange_t.
-     * @return True if removed.
+     * @param removal iterator to the change for removal
+     * @return iterator to the next change if any
      */
-    RTPS_DllAPI bool remove_change(CacheChange_t* a_change) override;
+    RTPS_DllAPI iterator remove_change(
+            const_iterator removal,
+            bool release = true) override;
 
-    virtual bool remove_change_g(CacheChange_t* a_change);
+    /**
+     * Criteria to search a specific CacheChange_t on history
+     * @param chi inner change to compare
+     * @param cho outer change for comparisson
+     * @return true if chi matches cho criteria
+     */
+    RTPS_DllAPI bool matches_change(
+            const CacheChange_t* chi,
+            CacheChange_t* cho) override;
+
+    //! Introduce base class method into scope
+    RTPS_DllAPI bool remove_change(
+            CacheChange_t* ch)
+    {
+        return History::remove_change(ch);
+    }
+
+    RTPS_DllAPI virtual bool remove_change_g(CacheChange_t* a_change);
 
     RTPS_DllAPI bool remove_change(const SequenceNumber_t& sequence_number);
 

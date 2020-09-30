@@ -128,7 +128,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                 // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
                 // Take change ownership away from the unique pointer, so that its destruction does not destroy the data
-                pdp_history->remove_change_and_reuse(change.release());
+                pdp_history->remove_change(pdp_history->find_change(change.release()), false);
 
                 // Ensure processing time for the cache by triggering the Server thread (which process the updates
                 pdp_server()->awakeServerThread();
@@ -219,7 +219,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
     {
         // remove_remote_participant will try to remove the cache from the history and destroy it. We do it beforehand
         // to grant DiscoveryDatabase ownership by not returning the change to the pool.
-        pdp_history->remove_change_and_reuse(change.get());
+        pdp_history->remove_change(pdp_history->find_change(change.get()), false);
 
         // Notify the DiscoveryDatabase
         if (pdp_server()->discovery_db().update(change.get()))

@@ -101,7 +101,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
 
         // Removing change from history, not returning the change to the pool, since the ownership will be yielded to
         // the database
-        reader_history->remove_change_and_reuse(change);
+        reader_history->remove_change(reader_history->find_change(change), false);
     }
 
     // Notify the DiscoveryDataBase
@@ -189,7 +189,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
 
         // Removing change from history, not returning the change to the pool, since the ownership will be yielded to
         // the database
-        reader_history->remove_change_and_reuse(change);
+        reader_history->remove_change(reader_history->find_change(change), false);
     }
 
     // Notify the DiscoveryDataBase

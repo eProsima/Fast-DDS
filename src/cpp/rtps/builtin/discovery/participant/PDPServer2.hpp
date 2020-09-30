@@ -147,8 +147,8 @@ protected:
             fastrtps::rtps::StatefulWriter* writer,
             fastrtps::rtps::WriterHistory* writer_history);
 
-    bool process_change_acknowledgement(
-            fastrtps::rtps::CacheChange_t* c,
+    fastrtps::rtps::History::iterator process_change_acknowledgement(
+            fastrtps::rtps::History::iterator c,
             fastrtps::rtps::StatefulWriter* writer,
             fastrtps::rtps::WriterHistory* writer_history);
 

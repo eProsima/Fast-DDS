@@ -91,47 +91,53 @@ bool ReaderHistory::add_change(
     return true;
 }
 
-bool ReaderHistory::remove_change(
-        CacheChange_t* a_change)
+bool ReaderHistory::matches_change(
+        const CacheChange_t* chi,
+        CacheChange_t* cho)
 {
-    if (remove_change_and_reuse(a_change))
-    {
-        m_changePool.release_Cache(a_change);
-        return true;
-    }
-
-    return false;
-}
-
-bool ReaderHistory::remove_change_and_reuse(
-        CacheChange_t* a_change)
-{
-    if (mp_reader == nullptr || mp_mutex == nullptr)
-    {
-        logError(RTPS_READER_HISTORY, "You need to create a Reader with this History before removing any changes");
-        return false;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (a_change == nullptr)
+    if (cho == nullptr)
     {
         logError(RTPS_READER_HISTORY, "Pointer is not valid")
         return false;
     }
-    for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
-            chit != m_changes.end(); ++chit)
+
+    return chi->sequenceNumber == cho->sequenceNumber &&
+                chi->writerGUID == cho->writerGUID;
+}
+
+History::iterator ReaderHistory::remove_change(
+        const_iterator removal,
+        bool release)
+{
+    if ( mp_reader == nullptr || mp_mutex == nullptr)
     {
-        if ((*chit)->sequenceNumber == a_change->sequenceNumber &&
-                (*chit)->writerGUID == a_change->writerGUID)
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
+        return changesEnd();
+    }
+
+    if ( removal == changesEnd() )
+    {
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
+        return changesEnd();
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
+    CacheChange_t * change = *removal;
+    auto it = m_changes.erase(removal);
+
+    if( it != changesEnd() )
+    {
+        mp_reader->change_removed_by_history(change);
+
+        if ( release )
         {
-            logInfo(RTPS_READER_HISTORY, "Removing change " << a_change->sequenceNumber);
-            mp_reader->change_removed_by_history(a_change);
-            m_changes.erase(chit);
-            return true;
+            m_changePool.release_Cache(change);
         }
     }
-    logWarning(RTPS_READER_HISTORY, "SequenceNumber " << a_change->sequenceNumber << " not found");
-    return false;
+
+    return it;
+
 }
 
 History::const_iterator ReaderHistory::remove_change_nts(

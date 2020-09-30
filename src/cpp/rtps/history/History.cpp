@@ -47,6 +47,41 @@ History::~History()
     logInfo(RTPS_HISTORY, "");
 }
 
+History::const_iterator History::find_change(
+        CacheChange_t* ch)
+{
+    if (mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
+        return const_iterator();
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
+    return std::find_if(changesBegin(), changesEnd(), [this, ch] (const CacheChange_t* chi)
+            {
+            // use the derived classes comparisson criteria for searching
+            return this->matches_change(chi,ch);
+            });
+}
+
+bool History::remove_change(
+        CacheChange_t* ch)
+{
+    const_iterator it = find_change(ch);
+
+    if (it == changesEnd())
+    {
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history")
+            return false;
+    }
+
+    // remove using the virtual method
+    remove_change(it);
+
+    return true;
+}
+
 bool History::remove_all_changes()
 {
 

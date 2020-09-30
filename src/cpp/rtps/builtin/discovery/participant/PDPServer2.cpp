@@ -717,46 +717,26 @@ bool PDPServer2::process_history_acknowledgement(
         fastrtps::rtps::WriterHistory* writer_history)
 {
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
-    // Iterate over changes in writer's history
-    auto chit = writer_history->changesBegin();
-    auto prev_chit = chit;
-    bool first = true;
 
-    while(chit != writer_history->changesEnd())
+    // Iterate over changes in writer's history
+    for(auto it = writer_history->changesBegin(); it != writer_history->changesEnd();)
     {
-        bool change_deleted = !process_change_acknowledgement(
-            *chit,
+        it = process_change_acknowledgement(
+            it,
             writer,
             writer_history);
-
-        if (change_deleted)
-        {
-            if (first)
-            {
-                chit = writer_history->changesBegin();
-                if (chit == writer_history->changesEnd())
-                {
-                    break;
-                }
-            }
-            else
-            {
-                chit = prev_chit;
-            }
-        }
-        prev_chit = chit;
-        chit++;
-        first = false;
     }
     return writer_history->getHistorySize() > 1;
 }
 
-bool PDPServer2::process_change_acknowledgement(
-        fastrtps::rtps::CacheChange_t* c,
+History::iterator PDPServer2::process_change_acknowledgement(
+        fastrtps::rtps::History::iterator cit,
         fastrtps::rtps::StatefulWriter* writer,
         fastrtps::rtps::WriterHistory* writer_history)
 {
     // DATA(p|w|r) case
+    CacheChange_t* c = *cit;
+
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
         // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
@@ -772,8 +752,7 @@ bool PDPServer2::process_change_acknowledgement(
         {
             // Remove the entry from writer history, but do not release the cache.
             // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-            writer_history->remove_change_and_reuse(c->sequenceNumber);
-            return false;
+            return writer_history->remove_change(cit, false);
         }
     }
     // DATA(Up|Uw|Ur) case. Currently, Fast DDS only considers CacheChange kinds ALIVE and NOT_ALIVE_DISPOSED, so if the
@@ -787,11 +766,12 @@ bool PDPServer2::process_change_acknowledgement(
             // Remove entry from `participants_|writers_|readers_`
             discovery_db_.delete_entity_of_change(c);
             // Remove from writer's history
-            writer_history->remove_change(c->sequenceNumber);
-            return false;
+            return writer_history->remove_change(cit);
         }
     }
-    return true;
+
+    // proceed to the next change
+    return ++cit;
 }
 
 bool PDPServer2::process_disposals()
