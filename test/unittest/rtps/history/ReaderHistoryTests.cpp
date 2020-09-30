@@ -29,6 +29,7 @@ using namespace std;
 class ReaderHistoryTests : public Test
 {
 protected:
+
     HistoryAttributes history_attr;
     ReaderHistory* history;
     StatefulReader* readerMock;
@@ -39,9 +40,13 @@ protected:
     uint32_t num_changes = num_writers * num_sequence_numbers;
     vector<CacheChange_t*> changes_list;
 
-    ReaderHistoryTests() {}
+    ReaderHistoryTests()
+    {
+    }
 
-    virtual ~ReaderHistoryTests() {}
+    virtual ~ReaderHistoryTests()
+    {
+    }
 
     virtual void SetUp()
     {
@@ -54,18 +59,18 @@ protected:
         readerMock = new StatefulReader(history, &mutex);
 
         //Create changes list
-        uint32_t t=0;
-        for (uint32_t i=1; i<=num_writers; i++)
+        uint32_t t = 0;
+        for (uint32_t i = 1; i <= num_writers; i++)
         {
             GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
 
-            for (uint32_t j=1; j<=num_sequence_numbers; j++)
+            for (uint32_t j = 1; j <= num_sequence_numbers; j++)
             {
                 CacheChange_t* ch = nullptr;
                 history->reserve_Cache(&ch, 0);
                 ch->writerGUID = writer_guid;
-                ch->sequenceNumber = SequenceNumber_t(0,j);;
-                ch->sourceTimestamp = rtps::Time_t(0,t);
+                ch->sequenceNumber = SequenceNumber_t(0, j);
+                ch->sourceTimestamp = rtps::Time_t(0, t);
 
                 changes_list.push_back(ch);
 
@@ -79,6 +84,7 @@ protected:
         delete history;
         delete readerMock;
     }
+
 };
 
 TEST_F(ReaderHistoryTests, add_and_remove_changes)
@@ -87,16 +93,16 @@ TEST_F(ReaderHistoryTests, add_and_remove_changes)
             WillRepeatedly(Return(true));
     EXPECT_CALL(*readerMock, releaseCache(_)).Times(num_changes);
 
-    for (uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i = 0; i < num_changes; i++)
     {
         history->add_change(changes_list[i]);
-        ASSERT_EQ(history->getHistorySize(), i+1U);
+        ASSERT_EQ(history->getHistorySize(), i + 1U);
     }
 
-    for (uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i = 0; i < num_changes; i++)
     {
         history->remove_change(changes_list[i]);
-        ASSERT_EQ(history->getHistorySize(), num_changes-i-1U);
+        ASSERT_EQ(history->getHistorySize(), num_changes - i - 1U);
     }
 }
 
@@ -138,20 +144,20 @@ TEST_F(ReaderHistoryTests, cache_change_payload_max_size)
 
 TEST_F(ReaderHistoryTests, get_change)
 {
-    for (uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i = 0; i < num_changes; i++)
     {
         history->add_change(changes_list[i]);
     }
 
     ASSERT_EQ(history->getHistorySize(), num_changes);
 
-    for (uint32_t i=1; i<=num_writers; i++)
+    for (uint32_t i = 1; i <= num_writers; i++)
     {
         GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
 
-        for (uint32_t j=1; j<=num_sequence_numbers; j++)
+        for (uint32_t j = 1; j <= num_sequence_numbers; j++)
         {
-            SequenceNumber_t seq_number = SequenceNumber_t(0,j);
+            SequenceNumber_t seq_number = SequenceNumber_t(0, j);
 
             CacheChange_t* ch = nullptr;
             ASSERT_TRUE(history->get_change(seq_number, writer_guid, &ch));
@@ -163,7 +169,7 @@ TEST_F(ReaderHistoryTests, get_change)
 
 TEST_F(ReaderHistoryTests, get_min_change_from_writer)
 {
-    for (uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i = 0; i < num_changes; i++)
     {
         history->add_change(changes_list[i]);
     }
@@ -174,12 +180,12 @@ TEST_F(ReaderHistoryTests, get_min_change_from_writer)
     GUID_t w1 = GUID_t(GuidPrefix_t::unknown(), 1U);
     ASSERT_TRUE(history->get_min_change_from(&ch, w1));
     ASSERT_EQ(ch->writerGUID, GUID_t(GuidPrefix_t::unknown(), 1U));
-    ASSERT_EQ(ch->sequenceNumber, SequenceNumber_t(0,1U));
+    ASSERT_EQ(ch->sequenceNumber, SequenceNumber_t(0, 1U));
 
     GUID_t w2 = GUID_t(GuidPrefix_t::unknown(), 2U);
     ASSERT_TRUE(history->get_min_change_from(&ch, w2));
     ASSERT_EQ(ch->writerGUID, GUID_t(GuidPrefix_t::unknown(), 2U));
-    ASSERT_EQ(ch->sequenceNumber, SequenceNumber_t(0,1U));
+    ASSERT_EQ(ch->sequenceNumber, SequenceNumber_t(0, 1U));
 }
 
 TEST_F(ReaderHistoryTests, get_min_change_from_writer_non_existent)
@@ -192,7 +198,7 @@ TEST_F(ReaderHistoryTests, get_min_change_from_writer_non_existent)
 
 TEST_F(ReaderHistoryTests, remove_changes_with_guid)
 {
-    for (uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i = 0; i < num_changes; i++)
     {
         history->add_change(changes_list[i]);
     }
@@ -208,7 +214,9 @@ TEST_F(ReaderHistoryTests, remove_changes_with_guid)
     ASSERT_EQ(history->getHistorySize(), num_changes - num_sequence_numbers);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
