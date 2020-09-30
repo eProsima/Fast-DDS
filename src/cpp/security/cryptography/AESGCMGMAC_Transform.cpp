@@ -2245,7 +2245,7 @@ bool AESGCMGMAC_Transform::lookup_reader(
         DatareaderCryptoHandle** datareader_crypto,
         CryptoTransformKeyId key_id)
 {
-    for (auto readerHandle : participant->Readers)
+    for (DatareaderCryptoHandle* readerHandle : participant->Readers)
     {
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(*readerHandle);
 
@@ -2255,7 +2255,7 @@ bool AESGCMGMAC_Transform::lookup_reader(
             continue;
         }
 
-        for (auto elem : reader->Remote2EntityKeyMaterial)
+        for (const KeyMaterial_AES_GCM_GMAC& elem : reader->Remote2EntityKeyMaterial)
         {
             if (elem.sender_key_id == key_id)
             {
@@ -2273,7 +2273,7 @@ bool AESGCMGMAC_Transform::lookup_writer(
         DatawriterCryptoHandle** datawriter_crypto,
         CryptoTransformKeyId key_id)
 {
-    for (auto writerHandle : participant->Writers)
+    for (DatawriterCryptoHandle* writerHandle : participant->Writers)
     {
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(*writerHandle);
 
@@ -2283,7 +2283,7 @@ bool AESGCMGMAC_Transform::lookup_writer(
             continue;
         }
 
-        for (auto elem : writer->Remote2EntityKeyMaterial)
+        for (const KeyMaterial_AES_GCM_GMAC& elem : writer->Remote2EntityKeyMaterial)
         {
             if (elem.sender_key_id == key_id)
             {
