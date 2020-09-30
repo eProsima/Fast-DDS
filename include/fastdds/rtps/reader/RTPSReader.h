@@ -55,9 +55,26 @@ class RTPSReader : public Endpoint
 protected:
 
     RTPSReader(
-            RTPSParticipantImpl*,
+            RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    RTPSReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    RTPSReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             ReaderHistory* hist,
             ReaderListener* listen = nullptr);
 
@@ -346,6 +363,11 @@ private:
 
     RTPSReader& operator =(
             const RTPSReader&) = delete;
+
+    void init(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool);
+
 };
 
 } /* namespace rtps */

@@ -18,13 +18,17 @@
  */
 
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <rtps/reader/ReaderHistoryState.hpp>
 
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/ReaderHistoryState.hpp>
 
 #include <foonathan/memory/namespace_alias.hpp>
 
@@ -52,8 +56,65 @@ RTPSReader::RTPSReader(
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
+    PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
+    std::shared_ptr<IChangePool> change_pool;
+    std::shared_ptr<IPayloadPool> payload_pool;
+    payload_pool = BasicPayloadPool::get(cfg, change_pool);
+
+    init(payload_pool, change_pool);
+}
+
+RTPSReader::RTPSReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* hist,
+        ReaderListener* rlisten)
+    : RTPSReader(
+        pimpl, guid, att, payload_pool,
+        std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(hist->m_att)),
+        hist, rlisten)
+{
+}
+
+RTPSReader::RTPSReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        ReaderHistory* hist,
+        ReaderListener* rlisten)
+    : Endpoint(pimpl, guid, att.endpoint)
+    , mp_history(hist)
+    , mp_listener(rlisten)
+    , m_acceptMessagesToUnknownReaders(true)
+    , m_acceptMessagesFromUnkownWriters(false)
+    , m_expectsInlineQos(att.expectsInlineQos)
+    , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
+    , liveliness_kind_(att.liveliness_kind_)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
+{
+    init(payload_pool, change_pool);
+}
+
+void RTPSReader::init(
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool)
+{
+    payload_pool_ = payload_pool;
+    change_pool_ = change_pool;
+    fixed_payload_size_ = 0;
+    if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    {
+        fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+    }
+
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
+    mp_history->change_pool_ = change_pool_;
+    mp_history->payload_pool_ = payload_pool_;
 
     logInfo(RTPS_READER, "RTPSReader created correctly");
 }
@@ -201,7 +262,9 @@ bool RTPSReader::wait_for_unread_cache(
 
     if (lock.try_lock_until(time_out))
     {
-        if (new_notification_cv_.wait_until(lock, time_out, [&]()
+        if (new_notification_cv_.wait_until(
+                    lock, time_out,
+                    [&]()
                     {
                         return total_unread_ > 0;
                     }))
