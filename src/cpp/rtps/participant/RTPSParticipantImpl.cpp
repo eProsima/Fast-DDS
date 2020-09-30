@@ -21,8 +21,11 @@
 
 #include <rtps/flowcontrol/ThroughputController.h>
 #include <rtps/persistence/PersistenceService.h>
+#include <rtps/history/BasicPayloadPool.hpp>
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
+
+#include <fastdds/rtps/history/WriterHistory.h>
 
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -458,6 +461,20 @@ bool RTPSParticipantImpl::createWriter(
         const EntityId_t& entityId,
         bool isBuiltin)
 {
+    return createWriter(WriterOut, param,
+            BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
+            hist, listen, entityId, isBuiltin);
+}
+
+bool RTPSParticipantImpl::createWriter(
+        RTPSWriter** WriterOut,
+        WriterAttributes& param,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* hist,
+        WriterListener* listen,
+        const EntityId_t& entityId,
+        bool isBuiltin)
+{
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, " of type " << type);
     EntityId_t entId;
@@ -575,14 +592,14 @@ bool RTPSParticipantImpl::createWriter(
     if (param.endpoint.reliabilityKind == BEST_EFFORT)
     {
         SWriter = (persistence == nullptr) ?
-                new StatelessWriter(this, guid, param, hist, listen) :
-                new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
+                new StatelessWriter(this, guid, param, payload_pool, hist, listen) :
+                new StatelessPersistentWriter(this, guid, param, payload_pool, hist, listen, persistence);
     }
     else if (param.endpoint.reliabilityKind == RELIABLE)
     {
         SWriter = (persistence == nullptr) ?
-                new StatefulWriter(this, guid, param, hist, listen) :
-                new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
+                new StatefulWriter(this, guid, param, payload_pool, hist, listen) :
+                new StatefulPersistentWriter(this, guid, param, payload_pool, hist, listen, persistence);
     }
 
     // restore attributes

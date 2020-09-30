@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_DOMAIN_H_
 
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
@@ -100,6 +101,22 @@ public:
     RTPS_DllAPI static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
             WriterAttributes& watt,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    /**
+     * Create a RTPSWriter in a participant.
+     * @param p Pointer to the RTPSParticipant.
+     * @param watt Writer Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @return Pointer to the created RTPSWriter.
+     */
+    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+            RTPSParticipant* p,
+            WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 

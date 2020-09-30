@@ -21,6 +21,8 @@
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <fastdds/rtps/history/WriterHistory.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -276,6 +278,19 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
+    return RTPSDomain::createRTPSWriter(p, watt,
+            BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
+             hist, listen);
+}
+
+
+RTPSWriter* RTPSDomain::createRTPSWriter(
+        RTPSParticipant* p,
+        WriterAttributes& watt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* hist,
+        WriterListener* listen)
+{
     std::unique_lock<std::mutex> lock(m_mutex);
     for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
     {
@@ -284,7 +299,7 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
             t_p_RTPSParticipant participant = *it;
             lock.unlock();
             RTPSWriter* writ;
-            if (participant.second->createWriter(&writ, watt, hist, listen))
+            if (participant.second->createWriter(&writ, watt, payload_pool, hist, listen))
             {
                 return writ;
             }
