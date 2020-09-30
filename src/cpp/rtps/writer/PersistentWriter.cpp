@@ -30,6 +30,8 @@ namespace rtps {
 PersistentWriter::PersistentWriter(
         const GUID_t& guid,
         const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* hist,
         IPersistenceService* persistence)
     : persistence_(persistence)
@@ -42,7 +44,7 @@ PersistentWriter::PersistentWriter(
     persistence_guid_ = ss.str();
 
     persistence_->load_writer_from_storage(persistence_guid_, guid, hist->m_changes,
-            hist->change_pool_, hist->payload_pool_, hist->m_lastCacheChangeSeqNum);
+            change_pool, payload_pool, hist->m_lastCacheChangeSeqNum);
 }
 
 PersistentWriter::~PersistentWriter()

@@ -213,28 +213,11 @@ protected:
     //!Variable to know if the history is full without needing to block the History mutex.
     bool m_isHistoryFull = false;
 
-    //!Pool of serialized payloads.
-    std::shared_ptr<IPayloadPool> payload_pool_;
-
-    //!Pool of cache changes reserved when the History is created.
-    std::shared_ptr<IChangePool> change_pool_;
-
     //!Mutex for the History.
     RecursiveTimedMutex* mp_mutex = nullptr;
 
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
-
-    void do_release_cache(
-            CacheChange_t* ch);
-
-    template<class SizeFunctor>
-    uint32_t get_payload_size(
-            SizeFunctor size_fun)
-    {
-        return m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE ?
-               m_att.payloadMaxSize : size_fun();
-    }
 
 };
 
