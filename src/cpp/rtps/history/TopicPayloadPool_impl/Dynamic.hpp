@@ -69,6 +69,7 @@ public:
 
         return true;
     }
+
 protected:
 
     MemoryManagementPolicy_t memory_policy() const override
