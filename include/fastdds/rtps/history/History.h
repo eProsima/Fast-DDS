@@ -64,41 +64,24 @@ public:
     //!Attributes of the History
     HistoryAttributes m_att;
 
-    /**
-     * Reserve a CacheChange_t from the CacheChange pool.
-     * @param[out] change Pointer to pointer to the CacheChange_t to reserve
-     * @param[in] calculateSizeFunc Function to calculate the size of the change.
-     * @return True is reserved
-     */
+    FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
-            const std::function<uint32_t()>& calculateSizeFunc)
+            const std::function<uint32_t()>&)
     {
-        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        CacheChange_t* reserved_change = nullptr;
-        if (change_pool_->reserve_cache(reserved_change))
-        {
-            uint32_t payload_size = get_payload_size(calculateSizeFunc);
-            if (payload_pool_->get_payload(payload_size, *reserved_change))
-            {
-                *change = reserved_change;
-                return true;
-            }
-
-            change_pool_->release_cache(reserved_change);
-        }
-
+        assert(change != nullptr);
+        *change = nullptr;
         return false;
     }
 
+    FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
-            uint32_t dataSize)
+            uint32_t)
     {
-        return reserve_Cache(change, [dataSize]()
-                       {
-                           return dataSize;
-                       });
+        assert(change != nullptr);
+        *change = nullptr;
+        return false;
     }
 
     /**
