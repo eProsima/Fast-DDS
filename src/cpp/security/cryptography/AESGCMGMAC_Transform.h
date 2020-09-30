@@ -169,6 +169,20 @@ class AESGCMGMAC_Transform : public CryptoTransform
     uint32_t calculate_extra_size_for_rtps_submessage(uint32_t number_discovered_readers) const override;
 
     uint32_t calculate_extra_size_for_encoded_payload(uint32_t number_discovered_readers) const override;
+
+private:
+
+        //Aux function to lookup endpoints
+    bool lookup_reader(
+            AESGCMGMAC_ParticipantCryptoHandle& participant,
+            DatareaderCryptoHandle **datareader_crypto,
+            CryptoTransformKeyId key_id);
+
+    bool lookup_writer(
+            AESGCMGMAC_ParticipantCryptoHandle& participant,
+            DatawriterCryptoHandle **datawriter_crypto,
+            CryptoTransformKeyId key_id);
+
 };
 
 
