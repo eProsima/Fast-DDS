@@ -281,7 +281,12 @@ bool EDPServer::addEndpointFromHistory(
 
     if ( it == history.changesRend())
     {
-        if (history.reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
+        pCh = writer.new_change(
+            [&c]()
+            {
+                return c.serializedPayload.max_size;
+            }, ALIVE);
+        if (pCh && pCh->copy(&c))
         {
             pCh->writerGUID = writer.getGuid();
             return history.add_change(pCh, pCh->write_params);
