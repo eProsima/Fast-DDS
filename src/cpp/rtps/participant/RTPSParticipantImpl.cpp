@@ -462,8 +462,8 @@ bool RTPSParticipantImpl::createWriter(
         bool isBuiltin)
 {
     return createWriter(WriterOut, param,
-            BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
-            hist, listen, entityId, isBuiltin);
+                   BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
+                   hist, listen, entityId, isBuiltin);
 }
 
 bool RTPSParticipantImpl::createWriter(

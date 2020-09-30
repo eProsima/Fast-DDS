@@ -45,7 +45,8 @@ public:
         return result;
     }
 
-    MOCK_METHOD2(get_payload_delegate, bool(uint32_t size, CacheChange_t& cache_change));
+    MOCK_METHOD2(get_payload_delegate,
+            bool(uint32_t size, CacheChange_t& cache_change));
 
 
     bool get_payload(
@@ -61,9 +62,11 @@ public:
         return result;
     }
 
-    MOCK_METHOD3(get_payload_delegate, bool(SerializedPayload_t& data, IPayloadPool*& data_owner, CacheChange_t& cache_change));
+    MOCK_METHOD3(get_payload_delegate,
+            bool(SerializedPayload_t& data, IPayloadPool*& data_owner, CacheChange_t& cache_change));
 
-    bool release_payload (CacheChange_t& cache_change) override
+    bool release_payload (
+            CacheChange_t& cache_change) override
     {
         bool result = release_payload_delegate(cache_change);
         if (result)
@@ -73,7 +76,8 @@ public:
         return result;
     }
 
-    MOCK_METHOD1(release_payload_delegate, bool(CacheChange_t& cache_change));
+    MOCK_METHOD1(release_payload_delegate,
+            bool(CacheChange_t& cache_change));
 };
 
 class TestDataType
@@ -88,14 +92,15 @@ public:
     }
 };
 
-void pool_initialization_test (MemoryManagementPolicy_t policy)
+void pool_initialization_test (
+        MemoryManagementPolicy_t policy)
 {
     uint32_t domain_id = 0;
     uint32_t initial_reserved_caches = 10;
 
     RTPSParticipantAttributes p_attr;
     RTPSParticipant* participant = RTPSDomain::createParticipant(
-            domain_id, true, p_attr);
+        domain_id, true, p_attr);
 
     ASSERT_NE(participant, nullptr);
 
@@ -111,30 +116,30 @@ void pool_initialization_test (MemoryManagementPolicy_t policy)
     if (policy == PREALLOCATED_MEMORY_MODE || policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
     {
         EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-                .Times(initial_reserved_caches + 1)
-                .WillRepeatedly(Return(true));
+            .Times(initial_reserved_caches + 1)
+            .WillRepeatedly(Return(true));
         EXPECT_CALL(*pool, release_payload_delegate(_))
-                .Times(initial_reserved_caches + 1)
-                .WillRepeatedly(Return(true));
+            .Times(initial_reserved_caches + 1)
+            .WillRepeatedly(Return(true));
     }
     else
     {
         EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-                .Times(0);
+            .Times(0);
         EXPECT_CALL(*pool, release_payload_delegate(_))
-                .Times(0);
+            .Times(0);
     }
 
     WriterAttributes w_attr;
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
-            participant, w_attr, pool, history);
+        participant, w_attr, pool, history);
 
     Mock::VerifyAndClearExpectations(pool.get());
 
     // Changes requested to the writer have a payload taken from the pool
     EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-            .Times(1)
-            .WillOnce(Return(true));
+        .Times(1)
+        .WillOnce(Return(true));
 
     TestDataType data;
     CacheChange_t* ch = writer->new_change(data, ALIVE);
@@ -142,8 +147,8 @@ void pool_initialization_test (MemoryManagementPolicy_t policy)
 
     // Changes released to the writer have the payload returned to the pool
     EXPECT_CALL(*pool, release_payload_delegate(_))
-            .Times(1)
-            .WillOnce(Return(true));
+        .Times(1)
+        .WillOnce(Return(true));
 
     writer->release_change(ch);
 
@@ -176,7 +181,9 @@ TEST(RTPSWriterTests, WriterWithCustomPayloadPool_DoesNotInitializePool_WhenDyna
 } // namespace fastrtps
 } // namespace eprosima
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char **argv)
 {
     testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();

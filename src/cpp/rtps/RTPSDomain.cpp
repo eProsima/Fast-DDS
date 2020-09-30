@@ -279,10 +279,9 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterListener* listen)
 {
     return RTPSDomain::createRTPSWriter(p, watt,
-            BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
-             hist, listen);
+                   BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
+                   hist, listen);
 }
-
 
 RTPSWriter* RTPSDomain::createRTPSWriter(
         RTPSParticipant* p,
