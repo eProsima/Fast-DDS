@@ -153,7 +153,7 @@ bool EDPServer2::createSEDPEndpoints()
                             false>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db());
             subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
-            publications_writer_.first->set_separate_sending(true);
+            subscriptions_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Subscriptions Writer created");
 
         }
