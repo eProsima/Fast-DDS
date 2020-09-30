@@ -24,7 +24,7 @@
 #include <fastdds/rtps/writer/PersistentWriter.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class IPersistenceService;
@@ -37,8 +37,35 @@ class StatelessPersistentWriter : public StatelessWriter, private PersistentWrit
 {
     friend class RTPSParticipantImpl;
 
-    StatelessPersistentWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr, IPersistenceService* persistence = nullptr);
-    public:
+    StatelessPersistentWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
+
+    StatelessPersistentWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
+
+    StatelessPersistentWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
+
+public:
+
     virtual ~StatelessPersistentWriter();
 
     /**
@@ -55,11 +82,13 @@ class StatelessPersistentWriter : public StatelessWriter, private PersistentWrit
      * @param a_change Pointer to the change that is going to be removed.
      * @return True if removed correctly.
      */
-    bool change_removed_by_history(CacheChange_t* a_change) override;
+    bool change_removed_by_history(
+            CacheChange_t* a_change) override;
 };
-}
-} /* namespace rtps */
-} /* namespace eprosima */
 
-#endif
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_STATELESSPERSISTENTWRITER_H_ */
