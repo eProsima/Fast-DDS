@@ -27,6 +27,14 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
+DiscoverySharedInfo::DiscoverySharedInfo(
+        eprosima::fastrtps::rtps::CacheChange_t* change,
+        const eprosima::fastrtps::rtps::GuidPrefix_t& own_guid)
+    : change_(change)
+{
+    // the server already knows every message
+    add_or_update_ack_participant(own_guid, true);
+}
 
 eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::set_change_and_unmatch(
         eprosima::fastrtps::rtps::CacheChange_t* change)

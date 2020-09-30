@@ -41,10 +41,8 @@ class DiscoverySharedInfo
 public:
 
     DiscoverySharedInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* change)
-        : change_(change)
-    {
-    }
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p);
 
     ~DiscoverySharedInfo()
     {
