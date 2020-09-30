@@ -48,7 +48,7 @@ class History
 protected:
 
     History(
-            const HistoryAttributes&  att);
+            const HistoryAttributes& att);
     History(
             History&&) = delete;
     History& operator =(
@@ -63,6 +63,7 @@ public:
 
     //!Attributes of the History
     HistoryAttributes m_att;
+
     /**
      * Reserve a CacheChange_t from the CacheChange pool.
      * @param[out] change Pointer to pointer to the CacheChange_t to reserve
@@ -77,8 +78,7 @@ public:
         CacheChange_t* reserved_change = nullptr;
         if (change_pool_->reserve_cache(reserved_change))
         {
-            uint32_t payload_size = m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE ?
-                    max_payload_size_ : calculateSizeFunc();
+            uint32_t payload_size = get_payload_size(calculateSizeFunc);
             if (payload_pool_->get_payload(payload_size, *reserved_change))
             {
                 *change = reserved_change;
@@ -251,7 +251,7 @@ public:
      */
     RTPS_DllAPI inline uint32_t getTypeMaxSerialized()
     {
-        return max_payload_size_;
+        return m_att.payloadMaxSize;
     }
 
     /*!
@@ -260,7 +260,8 @@ public:
      */
     RTPS_DllAPI inline RecursiveTimedMutex* getMutex()
     {
-        assert(mp_mutex != nullptr); return mp_mutex;
+        assert(mp_mutex != nullptr);
+        return mp_mutex;
     }
 
     RTPS_DllAPI bool get_change(
@@ -288,23 +289,31 @@ protected:
     std::vector<CacheChange_t*> m_changes;
 
     //!Variable to know if the history is full without needing to block the History mutex.
-    bool m_isHistoryFull;
+    bool m_isHistoryFull = false;
 
+    //!Pool of serialized payloads.
     std::shared_ptr<IPayloadPool> payload_pool_;
 
     //!Pool of cache changes reserved when the History is created.
     std::shared_ptr<IChangePool> change_pool_;
 
-    uint32_t max_payload_size_;
+    //!Mutex for the History.
+    RecursiveTimedMutex* mp_mutex = nullptr;
 
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
 
-    //!Mutex for the History.
-    RecursiveTimedMutex* mp_mutex;
-
     void do_release_cache(
             CacheChange_t* ch);
+
+    template<class SizeFunctor>
+    uint32_t get_payload_size(
+            SizeFunctor size_fun)
+    {
+        return m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE ?
+               m_att.payloadMaxSize : size_fun();
+    }
+
 };
 
 } /* namespace rtps     */

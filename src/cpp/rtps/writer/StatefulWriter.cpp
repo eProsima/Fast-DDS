@@ -25,6 +25,7 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/flowcontrol/FlowController.h>
+#include <rtps/history/BasicPayloadPool.hpp>
 
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
@@ -41,9 +42,10 @@
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
+#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/writer/RTPSWriterCollector.h>
-#include "rtps/RTPSDomainImpl.hpp"
-#include "rtps/messages/RTPSGapBuilder.hpp"
 
 #include "../builtin/discovery/database/DiscoveryDataBase.hpp"
 
@@ -108,9 +110,9 @@ StatefulWriter::StatefulWriter(
         RTPSParticipantImpl* pimpl,
         const GUID_t& guid,
         const WriterAttributes& att,
-        WriterHistory* hist,
-        WriterListener* listen)
-    : RTPSWriter(pimpl, guid, att, hist, listen)
+        WriterHistory* history,
+        WriterListener* listener)
+    : RTPSWriter(pimpl, guid, att, history, listener)
     , periodic_hb_event_(nullptr)
     , nack_response_event_(nullptr)
     , ack_event_(nullptr)
@@ -131,8 +133,76 @@ StatefulWriter::StatefulWriter(
     , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
     , m_controllers()
 {
-    m_heartbeatCount = 0;
+    init(pimpl, att);
+}
 
+StatefulWriter::StatefulWriter(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* history,
+        WriterListener* listener)
+    : RTPSWriter(pimpl, guid, att, payload_pool, history, listener)
+    , periodic_hb_event_(nullptr)
+    , nack_response_event_(nullptr)
+    , ack_event_(nullptr)
+    , m_heartbeatCount(0)
+    , m_times(att.times)
+    , matched_readers_(att.matched_readers_allocation)
+    , matched_readers_pool_(att.matched_readers_allocation)
+    , next_all_acked_notify_sequence_(0, 1)
+    , all_acked_(false)
+    , may_remove_change_cond_()
+    , may_remove_change_(0)
+    , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
+    , disable_positive_acks_(att.disable_positive_acks)
+    , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
+    , last_sequence_number_()
+    , biggest_removed_sequence_number_()
+    , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
+    , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
+    , m_controllers()
+{
+    init(pimpl, att);
+}
+
+StatefulWriter::StatefulWriter(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        WriterHistory* hist,
+        WriterListener* listen)
+    : RTPSWriter(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    , periodic_hb_event_(nullptr)
+    , nack_response_event_(nullptr)
+    , ack_event_(nullptr)
+    , m_heartbeatCount(0)
+    , m_times(att.times)
+    , matched_readers_(att.matched_readers_allocation)
+    , matched_readers_pool_(att.matched_readers_allocation)
+    , next_all_acked_notify_sequence_(0, 1)
+    , all_acked_(false)
+    , may_remove_change_cond_()
+    , may_remove_change_(0)
+    , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
+    , disable_positive_acks_(att.disable_positive_acks)
+    , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
+    , last_sequence_number_()
+    , biggest_removed_sequence_number_()
+    , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
+    , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
+    , m_controllers()
+{
+    init(pimpl, att);
+}
+
+void StatefulWriter::init(
+        RTPSParticipantImpl* pimpl,
+        const WriterAttributes& att)
+{
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
 
     periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool

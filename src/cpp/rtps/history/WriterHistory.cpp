@@ -154,16 +154,21 @@ History::iterator WriterHistory::remove_change_nts(
         return changesEnd();
     }
 
+    // Remove from history
     CacheChange_t* change = *removal;
-    mp_writer->change_removed_by_history(change);
+    auto ret_val = m_changes.erase(removal);
     m_isHistoryFull = false;
 
+    // Inform writer
+    mp_writer->change_removed_by_history(change);
+
+    // Release from pools
     if ( release )
     {
-        do_release_cache(change);
+        mp_writer->release_change(change);
     }
 
-    return m_changes.erase(removal);
+    return ret_val;
 }
 
 bool WriterHistory::remove_change_g(
@@ -179,7 +184,7 @@ bool WriterHistory::remove_change(
 
     if (nullptr != p )
     {
-        do_release_cache(p);
+        mp_writer->release_change(p);
         return true;
     }
 
