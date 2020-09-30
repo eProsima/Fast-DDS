@@ -76,7 +76,7 @@ protected:
 
 private:
 
-    void StatefulPersistentReader::init(
+    void init(
             const GUID_t& guid,
             const ReaderAttributes& att);
 
