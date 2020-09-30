@@ -904,10 +904,8 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             *datawriter_crypto = *it;
 
             //We have the remote writer, now lets look for the local datareader
-            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant =
-                    is_key_id_zero ? remote_participant : local_participant;
-            for (std::vector<DatareaderCryptoHandle*>::iterator itt = lookup_participant->Readers.begin();
-                    itt != lookup_participant->Readers.end(); ++itt)
+            for (std::vector<DatareaderCryptoHandle*>::iterator itt = local_participant->Readers.begin();
+                    itt != local_participant->Readers.end(); ++itt)
             {
                 AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
 
@@ -926,6 +924,31 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
                     }
                 }   //For each Reader2WriterKeyMaterial in the local datareader
             } //For each datareader present in the local participant
+
+            // Discovery: local datareader not found, look for remote datareader only when is_key_id_zero is true
+            if (is_key_id_zero)
+            {
+                for (std::vector<DatareaderCryptoHandle*>::iterator itt = remote_participant->Readers.begin();
+                        itt != remote_participant->Readers.end(); ++itt)
+                {
+                    AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
+
+                    if (reader->Remote2EntityKeyMaterial.size() == 0)
+                    {
+                        logWarning(SECURITY_CRYPTO, "No key material yet");
+                        continue;
+                    }
+
+                    for (size_t i = 0; i < reader->Remote2EntityKeyMaterial.size(); ++i)
+                    {
+                        if (reader->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
+                        {
+                            *datareader_crypto = *itt;
+                            return true;
+                        }
+                    }   //For each Reader2WriterKeyMaterial in the remote datareader
+                } //For each datareader present in the remote participant
+            } // key_id is zero
         } //Remote writer key found
     } //For each datawriter present in the remote participant
 
@@ -949,10 +972,8 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             *datareader_crypto = *it;
 
             //We have the remote reader, now lets look for the local datawriter
-            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant =
-                    is_key_id_zero ? remote_participant : local_participant;
-            for (std::vector<DatawriterCryptoHandle*>::iterator itt = lookup_participant->Writers.begin();
-                    itt != lookup_participant->Writers.end(); ++itt)
+            for (std::vector<DatawriterCryptoHandle*>::iterator itt = local_participant->Writers.begin();
+                    itt != local_participant->Writers.end(); ++itt)
             {
                 AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
 
@@ -971,6 +992,31 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
                     }
                 }   //For each Writer2ReaderKeyMaterial in the local datawriter
             } //For each datawriter present in the local participant
+
+            // Discovery: local datawriter not found, look for remote datawriter only when is_key_id_zero is true
+            if (is_key_id_zero)
+            {
+                for (std::vector<DatawriterCryptoHandle*>::iterator itt = remote_participant->Writers.begin();
+                        itt != remote_participant->Writers.end(); ++itt)
+                {
+                    AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
+
+                    if (writer->Remote2EntityKeyMaterial.size() == 0)
+                    {
+                        logWarning(SECURITY_CRYPTO, "No key material yet");
+                        continue;
+                    }
+
+                    for (size_t i = 0; i < writer->Remote2EntityKeyMaterial.size(); ++i)
+                    {
+                        if (writer->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
+                        {
+                            *datawriter_crypto = *itt;
+                            return true;
+                        }
+                    }   //For each Writer2ReaderKeyMaterial in the remote datawriter
+                } //For each datawriter present in the remote participant
+            } // key_id is zero
         } //Remote reader key found
     } //For each datareader present in the remote participant
 
