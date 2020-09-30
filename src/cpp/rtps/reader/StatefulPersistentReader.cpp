@@ -27,17 +27,54 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 StatefulPersistentReader::StatefulPersistentReader(
         RTPSParticipantImpl* impl,
-        GUID_t& guid,
-        ReaderAttributes& att,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen,
         IPersistenceService* persistence)
     : StatefulReader(impl, guid, att, hist, listen)
     , persistence_(persistence)
     , persistence_guid_()
+{
+    init(guid, att);
+}
+
+StatefulPersistentReader::StatefulPersistentReader(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* hist,
+        ReaderListener* listen,
+        IPersistenceService* persistence)
+    : StatefulReader(impl, guid, att, payload_pool, hist, listen)
+    , persistence_(persistence)
+    , persistence_guid_()
+{
+    init(guid, att);
+}
+
+StatefulPersistentReader::StatefulPersistentReader(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        ReaderHistory* hist,
+        ReaderListener* listen,
+        IPersistenceService* persistence)
+    : StatefulReader(impl, guid, att, payload_pool, change_pool, hist, listen)
+    , persistence_(persistence)
+    , persistence_guid_()
+{
+    init(guid, att);
+}
+
+void StatefulPersistentReader::init(
+        const GUID_t& guid,
+        const ReaderAttributes& att)
 {
     // When persistence GUID is unknown, create from rtps GUID
     GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
