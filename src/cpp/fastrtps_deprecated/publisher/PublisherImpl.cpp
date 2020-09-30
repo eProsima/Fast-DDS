@@ -171,7 +171,7 @@ bool PublisherImpl::create_new_change_with_params(
                 if (!mp_type->serialize(data, &ch->serializedPayload))
                 {
                     logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
-                    m_history.release_Cache(ch);
+                    mp_writer->release_change(ch);
                     return false;
                 }
             }
@@ -215,7 +215,7 @@ bool PublisherImpl::create_new_change_with_params(
             InstanceHandle_t change_handle = ch->instanceHandle;
             if (!this->m_history.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
-                m_history.release_Cache(ch);
+                mp_writer->release_change(ch);
                 return false;
             }
 
