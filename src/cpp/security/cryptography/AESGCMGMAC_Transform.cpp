@@ -1453,7 +1453,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
 bool AESGCMGMAC_Transform::lookup_reader(
         AESGCMGMAC_ParticipantCryptoHandle& participant,
-        DatareaderCryptoHandle **datareader_crypto,
+        DatareaderCryptoHandle** datareader_crypto,
         CryptoTransformKeyId key_id)
 {
     for (auto readerHandle : participant->Readers)
@@ -1481,7 +1481,7 @@ bool AESGCMGMAC_Transform::lookup_reader(
 
 bool AESGCMGMAC_Transform::lookup_writer(
         AESGCMGMAC_ParticipantCryptoHandle& participant,
-        DatawriterCryptoHandle **datawriter_crypto,
+        DatawriterCryptoHandle** datawriter_crypto,
         CryptoTransformKeyId key_id)
 {
     for (auto writerHandle : participant->Writers)
