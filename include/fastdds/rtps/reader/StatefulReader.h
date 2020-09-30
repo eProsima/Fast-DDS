@@ -50,9 +50,26 @@ public:
 protected:
 
     StatefulReader(
-            RTPSParticipantImpl*,
+            RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    StatefulReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    StatefulReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             ReaderHistory* hist,
             ReaderListener* listen = nullptr);
 
@@ -255,6 +272,10 @@ public:
             std::chrono::steady_clock::time_point& max_blocking_time_point);
 
 private:
+
+    void init(
+            RTPSParticipantImpl* pimpl,
+            const ReaderAttributes& att);
 
     bool acceptMsgFrom(
             const GUID_t& entityGUID,
