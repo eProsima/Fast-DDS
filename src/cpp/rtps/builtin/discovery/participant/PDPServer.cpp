@@ -625,7 +625,12 @@ bool PDPServer::addRelayedChangeToHistory(
 
     if (it == mp_PDPWriterHistory->changesRend())
     {
-        if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
+        pCh = mp_PDPWriter->new_change(
+            [&c]()
+            {
+                return c.serializedPayload.max_size;
+            }, ALIVE);
+        if (pCh && pCh->copy(&c))
         {
             pCh->writerGUID = mp_PDPWriter->getGuid();
             // keep the original sample identity by using wp
