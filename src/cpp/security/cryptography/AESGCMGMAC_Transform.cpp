@@ -910,7 +910,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             {
                 return true;
             }
-            // Datareader not found locally. Look remotelly (Discovery case)
+            // Datareader not found locally. Look remotely (Discovery case)
             else if (is_key_id_zero)
             {
                 found = lookup_reader(remote_participant, datareader_crypto, key_id);
@@ -948,7 +948,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             {
                 return true;
             }
-            // Datawriter not found locally. Look remotelly (Discovery case)
+            // Datawriter not found locally. Look remotely (Discovery case)
             else if (is_key_id_zero)
             {
                 found = lookup_writer(remote_participant, datawriter_crypto, key_id);
@@ -1449,62 +1449,6 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     plain_payload.encapsulation = encoded_payload.encapsulation;
 
     return true;
-}
-
-bool AESGCMGMAC_Transform::lookup_reader(
-        AESGCMGMAC_ParticipantCryptoHandle& participant,
-        DatareaderCryptoHandle** datareader_crypto,
-        CryptoTransformKeyId key_id)
-{
-    for (auto readerHandle : participant->Readers)
-    {
-        AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(*readerHandle);
-
-        if (reader->Remote2EntityKeyMaterial.size() == 0)
-        {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
-            continue;
-        }
-
-        for (size_t i = 0; i < reader->Remote2EntityKeyMaterial.size(); ++i)
-        {
-            if (reader->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
-            {
-                *datareader_crypto = readerHandle;
-                return true;
-            }
-        }   //For each Reader2WriterKeyMaterial in the datareader
-    } //For each datareader present in the participant
-
-    return false;
-}
-
-bool AESGCMGMAC_Transform::lookup_writer(
-        AESGCMGMAC_ParticipantCryptoHandle& participant,
-        DatawriterCryptoHandle** datawriter_crypto,
-        CryptoTransformKeyId key_id)
-{
-    for (auto writerHandle : participant->Writers)
-    {
-        AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(*writerHandle);
-
-        if (writer->Remote2EntityKeyMaterial.size() == 0)
-        {
-            logWarning(SECURITY_CRYPTO, "No key material yet");
-            continue;
-        }
-
-        for (size_t i = 0; i < writer->Remote2EntityKeyMaterial.size(); ++i)
-        {
-            if (writer->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
-            {
-                *datawriter_crypto = writerHandle;
-                return true;
-            }
-        }   //For each Writer2ReaderKeyMaterial in the datawriter
-    } //For each datawriter present in the participant
-
-    return false;
 }
 
 void AESGCMGMAC_Transform::compute_sessionkey(
@@ -2294,4 +2238,60 @@ uint32_t AESGCMGMAC_Transform::calculate_extra_size_for_encoded_payload(
     calculate += number_discovered_readers > 10 ? number_discovered_readers * 20 : 200;
 
     return calculate;
+}
+
+bool AESGCMGMAC_Transform::lookup_reader(
+        AESGCMGMAC_ParticipantCryptoHandle& participant,
+        DatareaderCryptoHandle** datareader_crypto,
+        CryptoTransformKeyId key_id)
+{
+    for (auto readerHandle : participant->Readers)
+    {
+        AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(*readerHandle);
+
+        if (reader->Remote2EntityKeyMaterial.empty())
+        {
+            logWarning(SECURITY_CRYPTO, "No key material yet");
+            continue;
+        }
+
+        for (auto elem : reader->Remote2EntityKeyMaterial)
+        {
+            if (elem.sender_key_id == key_id)
+            {
+                *datareader_crypto = readerHandle;
+                return true;
+            }
+        }   //For each Reader2WriterKeyMaterial in the datareader
+    } //For each datareader present in the participant
+
+    return false;
+}
+
+bool AESGCMGMAC_Transform::lookup_writer(
+        AESGCMGMAC_ParticipantCryptoHandle& participant,
+        DatawriterCryptoHandle** datawriter_crypto,
+        CryptoTransformKeyId key_id)
+{
+    for (auto writerHandle : participant->Writers)
+    {
+        AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(*writerHandle);
+
+        if (writer->Remote2EntityKeyMaterial.empty())
+        {
+            logWarning(SECURITY_CRYPTO, "No key material yet");
+            continue;
+        }
+
+        for (auto elem : writer->Remote2EntityKeyMaterial)
+        {
+            if (elem.sender_key_id == key_id)
+            {
+                *datawriter_crypto = writerHandle;
+                return true;
+            }
+        }   //For each Writer2ReaderKeyMaterial in the datawriter
+    } //For each datawriter present in the participant
+
+    return false;
 }
