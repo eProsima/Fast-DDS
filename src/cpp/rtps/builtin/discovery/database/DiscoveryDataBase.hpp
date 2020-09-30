@@ -227,6 +227,16 @@ public:
 
     const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
 
+    bool server_acked_by_all() const
+    {
+        return server_acked_by_all_;
+    }
+
+    void server_acked_by_all(bool s)
+    {
+        server_acked_by_all_ = s;
+    }
+
 protected:
 
     // update the acks
@@ -293,10 +303,14 @@ protected:
     //! changes that are no longer associated to living endpoints and should be returned to it's pool
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
-    // mutexes
+    // mutex
     mutable share_mutex_t sh_mtx_;
 
+    // guid from own server
     const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
+
+    // is own server DATA(p) acked by all other clients
+    bool server_acked_by_all_ = false;
 
 };
 
