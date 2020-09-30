@@ -21,6 +21,7 @@
 
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
@@ -56,11 +57,29 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
 protected:
 
     RTPSWriter(
-            RTPSParticipantImpl*,
+            RTPSParticipantImpl* impl,
             const GUID_t& guid,
             const WriterAttributes& att,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
+
+    RTPSWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    RTPSWriter(
+            RTPSParticipantImpl* impl,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
     virtual ~RTPSWriter();
 
 public:
@@ -88,6 +107,22 @@ public:
             const std::function<uint32_t()>& dataCdrSerializedSize,
             ChangeKind_t changeKind,
             InstanceHandle_t handle = c_InstanceHandle_Unknown);
+
+    /**
+     * Release a change when it is not being used anymore.
+     *
+     * @param change Pointer to the cache change to be released.
+     *
+     * @returns whether the operation succeeded or not
+     *
+     * @pre
+     *     @li @c change is not @c nullptr
+     *     @li @c change points to a cache change obtained from a call to @c this->new_change
+     *
+     * @post memory pointed to by @c change is not accessed
+     */
+    RTPS_DllAPI bool release_change(
+            CacheChange_t* change);
 
     /**
      * Add a matched reader.
@@ -364,21 +399,28 @@ public:
 
 protected:
 
-    //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
-    bool m_pushMode;
+    //!Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.
+    bool m_pushMode = true;
     //!WriterHistory
-    WriterHistory* mp_history;
+    WriterHistory* mp_history = nullptr;
     //!Listener
-    WriterListener* mp_listener;
+    WriterListener* mp_listener = nullptr;
     //!Asynchronous publication activated
-    bool is_async_;
+    bool is_async_ = false;
     //!Separate sending activated
-    bool m_separateSendingEnabled;
+    bool m_separateSendingEnabled = false;
 
     LocatorSelector locator_selector_;
 
     ResourceLimitedVector<GUID_t> all_remote_readers_;
     ResourceLimitedVector<GuidPrefix_t> all_remote_participants_;
+
+    //! The liveliness kind of this writer
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this writer
+    Duration_t liveliness_lease_duration_;
+    //! The liveliness announcement period
+    Duration_t liveliness_announcement_period_;
 
     void add_guid(
             const GUID_t& remote_guid);
@@ -386,11 +428,6 @@ protected:
     void compute_selected_guids();
 
     void update_cached_info_nts();
-
-    /**
-     * Initialize the header of hte CDRMessages.
-     */
-    void init_header();
 
     /**
      * Add a change to the unsent list.
@@ -409,19 +446,17 @@ protected:
     virtual bool change_removed_by_history(
             CacheChange_t* a_change) = 0;
 
-    //! The liveliness kind of this writer
-    LivelinessQosPolicyKind liveliness_kind_;
-    //! The liveliness lease duration of this writer
-    Duration_t liveliness_lease_duration_;
-    //! The liveliness announcement period
-    Duration_t liveliness_announcement_period_;
-
 private:
 
     RTPSWriter& operator =(
             const RTPSWriter&) = delete;
 
-    RTPSWriter* next_[2];
+    void init(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool);
+
+
+    RTPSWriter* next_[2] = { nullptr, nullptr };
 };
 
 } /* namespace rtps */

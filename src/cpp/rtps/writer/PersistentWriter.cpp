@@ -28,8 +28,8 @@ namespace rtps {
 
 
 PersistentWriter::PersistentWriter(
-        GUID_t& guid,
-        WriterAttributes& att,
+        const GUID_t& guid,
+        const WriterAttributes& att,
         WriterHistory* hist,
         IPersistenceService* persistence)
     : persistence_(persistence)
@@ -66,6 +66,6 @@ void PersistentWriter::remove_persistent_change(
     persistence_->remove_writer_change_from_storage(persistence_guid_, *change);
 }
 
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima

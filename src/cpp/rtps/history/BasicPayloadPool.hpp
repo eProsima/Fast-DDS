@@ -22,6 +22,7 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
+#include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 
 #include <memory>
@@ -30,34 +31,69 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-namespace BasicPayloadPool {
-
+namespace detail {
 #include "./BasicPayloadPool_impl/Base.hpp"
 
 #include "./BasicPayloadPool_impl/Dynamic.hpp"
 #include "./BasicPayloadPool_impl/DynamicReusable.hpp"
 #include "./BasicPayloadPool_impl/Preallocated.hpp"
 #include "./BasicPayloadPool_impl/PreallocatedWithRealloc.hpp"
+}  // namespace detail
 
-std::shared_ptr<IPayloadPool> get(
-        PoolConfig config)
+class BasicPayloadPool
 {
-    switch (config.memory_policy)
+
+public:
+
+    static std::shared_ptr<IPayloadPool> get(
+            const PoolConfig& config)
     {
-        case PREALLOCATED_MEMORY_MODE:
-            return std::make_shared<Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
-        case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            return std::make_shared<Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(config.payload_initial_size);
-        case DYNAMIC_RESERVE_MEMORY_MODE:
-            return std::make_shared<Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
-        case DYNAMIC_REUSABLE_MEMORY_MODE:
-            return std::make_shared<Impl<DYNAMIC_REUSABLE_MEMORY_MODE> >();
+        switch (config.memory_policy)
+        {
+            case PREALLOCATED_MEMORY_MODE:
+                return std::make_shared<detail::Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
+            case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+                return std::make_shared<detail::Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(
+                    config.payload_initial_size);
+            case DYNAMIC_RESERVE_MEMORY_MODE:
+                return std::make_shared<detail::Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
+            case DYNAMIC_REUSABLE_MEMORY_MODE:
+                return std::make_shared<detail::Impl<DYNAMIC_REUSABLE_MEMORY_MODE> >();
+        }
+
+        return nullptr;
     }
 
-    return nullptr;
-}
+    static std::shared_ptr<IPayloadPool> get(
+            const PoolConfig& config,
+            std::shared_ptr<IChangePool>& change_pool)
+    {
+        auto payload_pool = get(config);
+        if (payload_pool)
+        {
+            if ((PREALLOCATED_MEMORY_MODE == config.memory_policy) ||
+                    (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy))
+            {
+                change_pool = std::make_shared<CacheChangePool>(config,
+                                [&payload_pool, &config](
+                                    CacheChange_t* change)
+                                {
+                                    if (payload_pool->get_payload(config.payload_initial_size, *change))
+                                    {
+                                        payload_pool->release_payload(*change);
+                                    }
+                                });
+            }
+            else
+            {
+                change_pool = std::make_shared<CacheChangePool>(config);
+            }
+        }
 
-}  // namespace BasicPayloadPool
+        return payload_pool;
+    }
+
+};
 
 }  // namespace rtps
 }  // namespace fastrtps
