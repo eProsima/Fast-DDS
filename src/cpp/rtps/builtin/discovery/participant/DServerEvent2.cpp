@@ -33,14 +33,15 @@ namespace fastdds {
 namespace rtps {
 
 DServerEvent2::DServerEvent2(
-        PDPServer2* p_PDP,
-        double interval)
-    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
+        PDPServer2* pdp,
+        double server_routine_period)
+    : TimedEvent(pdp->getResouceEventThread(),
             [this]()
             {
-                return event();
-            }, interval)
-    , mp_PDP(p_PDP)
+                return server_routine_event();
+            }, 0)
+    , pdp_(pdp)
+    , server_routine_period_(server_routine_period)
 {
 
 }
@@ -49,18 +50,19 @@ DServerEvent2::~DServerEvent2()
 {
 }
 
-bool DServerEvent2::event()
+bool DServerEvent2::server_routine_event()
 {
-    // logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
+    // logInfo(SERVER_PDP_THREAD, "Server " << pdp->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
     /*
      * TODO: Management of other server should be done here
      */
 
-    bool pending_work = mp_PDP->server_update_routine();
+    bool pending_work = pdp_->server_update_routine();
     if (pending_work)
     {
-        mp_PDP->awakeServerThread();
+        // Update timer to the server routine period (Default: 450 ms)
+        pdp_->awakeServerThread(server_routine_period_);
     }
 
     return pending_work;

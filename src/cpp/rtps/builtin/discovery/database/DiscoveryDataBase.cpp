@@ -982,6 +982,11 @@ bool DiscoveryDataBase::delete_entity_of_change(
     return false;
 }
 
+bool DiscoveryDataBase::data_queue_empty()
+{
+    return data_queue_.Empty();
+}
+
 bool DiscoveryDataBase::is_participant(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {

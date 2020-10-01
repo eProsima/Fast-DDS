@@ -130,6 +130,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // Take change ownership away from the unique pointer, so that its destruction does not destroy the data
                 pdp_history->remove_change(pdp_history->find_change(change.release()), false);
 
+                // Set timer to 0 ms
+
                 // Ensure processing time for the cache by triggering the Server thread (which process the updates
                 pdp_server()->awakeServerThread();
 

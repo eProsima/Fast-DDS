@@ -23,6 +23,7 @@
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/history/History.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 
 #include "../database/DiscoveryDataFilter.hpp"
 #include "../database/DiscoveryDataBase.hpp"
@@ -123,11 +124,12 @@ public:
     std::string GetPersistenceFileName();
 #endif // if HAVE_SQLITE3
 
-    //! Wakes up the DServerEvent2 for new matching or trimming
-    void awakeServerThread()
-    {
-        mp_sync->restart_timer();
-    }
+    /*
+     * Wakes up the DServerEvent2 for new matching or trimming
+     * By default the server execute the routine instantly
+     */
+    void awakeServerThread(
+            double interval_ms = 0);
 
     /* The server's main routine. This includes all the discovery related tasks that the server needs to run
      * periodically to keep the discovery graph updated.
@@ -138,6 +140,11 @@ public:
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
 protected:
+
+    /*
+     * Get Pointer to the server resource event thread.
+     */
+    eprosima::fastrtps::rtps::ResourceEvent& getResouceEventThread();
 
     // Check the messages in histories. Check which ones modify the database to unlock further messages
     // and clean them when not needed anymore
@@ -191,6 +198,10 @@ protected:
     bool pending_ack();
 
 private:
+
+
+    //! Server thread
+    eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 
     /**
      * TimedEvent for server synchronization
