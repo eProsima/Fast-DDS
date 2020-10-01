@@ -27,29 +27,66 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 StatelessPersistentReader::StatelessPersistentReader(
         RTPSParticipantImpl* impl,
-        GUID_t& guid,
-        ReaderAttributes& att,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen,
         IPersistenceService* persistence)
-     : StatelessReader(impl, guid, att, hist,listen)
-     , persistence_(persistence)
-     , persistence_guid_()
+    : StatelessReader(impl, guid, att, hist, listen)
+    , persistence_(persistence)
+    , persistence_guid_()
 {
-     // When persistence GUID is unknown, create from rtps GUID
-     GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
-     std::ostringstream ss;
-     ss << p_guid;
-     persistence_guid_ = ss.str();
-     persistence_->load_reader_from_storage(persistence_guid_, history_state_->history_record);
- }
+    init(guid, att);
+}
 
- StatelessPersistentReader::~StatelessPersistentReader()
+StatelessPersistentReader::StatelessPersistentReader(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* hist,
+        ReaderListener* listen,
+        IPersistenceService* persistence)
+    : StatelessReader(impl, guid, att, payload_pool, hist, listen)
+    , persistence_(persistence)
+    , persistence_guid_()
 {
-     delete persistence_;
+    init(guid, att);
+}
+
+StatelessPersistentReader::StatelessPersistentReader(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        ReaderHistory* hist,
+        ReaderListener* listen,
+        IPersistenceService* persistence)
+    : StatelessReader(impl, guid, att, payload_pool, change_pool, hist, listen)
+    , persistence_(persistence)
+    , persistence_guid_()
+{
+    init(guid, att);
+}
+
+void StatelessPersistentReader::init(
+        const GUID_t& guid,
+        const ReaderAttributes& att)
+{
+    // When persistence GUID is unknown, create from rtps GUID
+    GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
+    std::ostringstream ss;
+    ss << p_guid;
+    persistence_guid_ = ss.str();
+    persistence_->load_reader_from_storage(persistence_guid_, history_state_->history_record);
+}
+
+StatelessPersistentReader::~StatelessPersistentReader()
+{
+    delete persistence_;
 }
 
 void StatelessPersistentReader::set_last_notified(
