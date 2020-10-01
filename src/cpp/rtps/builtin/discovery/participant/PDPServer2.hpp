@@ -139,6 +139,8 @@ public:
 
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
+    const RemoteServerList_t& servers();
+
 protected:
 
     /*
@@ -159,7 +161,7 @@ protected:
             fastrtps::rtps::StatefulWriter* writer,
             fastrtps::rtps::WriterHistory* writer_history);
 
-    bool process_data_queue();
+    bool process_data_queues();
 
     bool process_disposals();
 

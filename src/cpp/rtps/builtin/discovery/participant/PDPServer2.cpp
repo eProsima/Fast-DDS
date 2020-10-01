@@ -469,15 +469,33 @@ void PDPServer2::announceParticipantState(
                 change->sequenceNumber = sn;
                 change->write_params = std::move(wp);
 
-                // Update the database with our own data
-                if (discovery_db().update(change))
+                // Create a RemoteLocatorList for metatraffic_locators
+                fastrtps::rtps::RemoteLocatorList metatraffic_locators(
+                    mp_builtin->m_metatrafficUnicastLocatorList.size(),
+                    mp_builtin->m_metatrafficMulticastLocatorList.size());
+
+                // Populate with server's unicast locators
+                for (auto locator : mp_builtin->m_metatrafficUnicastLocatorList)
                 {
-                    // distribute
+                    metatraffic_locators.add_unicast_locator(locator);
+                }
+                // Populate with server's multicast locators
+                for (auto locator : mp_builtin->m_metatrafficMulticastLocatorList)
+                {
+                    metatraffic_locators.add_multicast_locator(locator);
+                }
+
+                // Update the database with our own data
+                if (discovery_db().update(
+                    change,
+                    ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false)))
+                {
+                    // Distribute
                     awake_server_thread();
                 }
                 else
                 {
-                    // already there, dispose
+                    // Already there, dispose
                     logError(RTPS_PDP_SERVER, "DiscoveryDatabase already initialized with local DATA(p) on creation");
                     mp_PDPWriterHistory->release_Cache(change);
                 }
@@ -537,7 +555,7 @@ void PDPServer2::announceParticipantState(
             change->write_params = std::move(wp);
 
             // Update the database with our own data
-            if (discovery_db().update(change))
+            if (discovery_db().update(change, ddb::DiscoveryParticipantChangeData()))
             {
                 // distribute
                 awake_server_thread();
@@ -654,8 +672,8 @@ bool PDPServer2::remove_remote_participant(
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
-            // notify the database
-            if (discovery_db_.update(pC))
+            // Notify the database
+            if (discovery_db_.update(pC, ddb::DiscoveryParticipantChangeData()))
             {
                 // assure processing time for the cache
                 awake_server_thread();
@@ -675,10 +693,11 @@ bool PDPServer2::remove_remote_participant(
     return PDP::remove_remote_participant(partGUID, reason);
 }
 
-bool PDPServer2::process_data_queue()
+bool PDPServer2::process_data_queues()
 {
-    logInfo(RTPS_PDP_SERVER, "process_data_queue start");
-    return discovery_db_.process_data_queue();
+    logInfo(RTPS_PDP_SERVER, "process_data_queues start");
+    discovery_db_.process_pdp_data_queue();
+    return discovery_db_.process_edp_data_queue();
 }
 
 void PDPServer2::awake_server_thread(
@@ -700,7 +719,7 @@ bool PDPServer2::server_update_routine()
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
-        process_data_queue();                   // all ddb
+        process_data_queues();                   // all ddb
         process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
         process_dirty_topics();                 // all ddb
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
@@ -1044,6 +1063,12 @@ fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
 {
     return discovery_db_;
 }
+
+const RemoteServerList_t& PDPServer2::servers()
+{
+    return mp_builtin->m_DiscoveryServers;
+}
+
 
 bool PDPServer2::process_to_send_lists()
 {

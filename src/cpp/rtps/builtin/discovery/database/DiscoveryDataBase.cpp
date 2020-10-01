@@ -170,14 +170,33 @@ void DiscoveryDataBase::add_ack_(
 }
 
 bool DiscoveryDataBase::update(
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            DiscoveryParticipantChangeData participant_change_data)
+{
+    if (!is_participant(change))
+    {
+        logError(DISCOVERY_DATABASE, "Change is not a DATA(p|Up): " << change->instanceHandle);
+        return false;
+    }
+    logInfo(DISCOVERY_DATABASE, "Adding DATA(p|Up) to the queue: " << change->instanceHandle);
+    //  Add the DATA(p|Up) to the PDP queue to process
+    pdp_data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo(change, participant_change_data));
+    return true;
+}
+
+bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         std::string topic_name)
 {
-    logInfo(DISCOVERY_DATABASE, "Adding change to the queue: " << change->instanceHandle);
-    //  add the data to the queue to process
-    data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo(change, topic_name));
+    if (!is_writer(change) && !is_reader(change))
+    {
+        logError(DISCOVERY_DATABASE, "Change is not a DATA(w|Uw|r|Ur): " << change->instanceHandle);
+        return false;
+    }
 
-    // not way to check if is an error
+    logInfo(DISCOVERY_DATABASE, "Adding DATA(w|Uw|r|Ur) to the queue: " << change->instanceHandle);
+    //  add the DATA(w|Uw|r|Ur) to the EDP queue to process
+    edp_data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo(change, topic_name));
     return true;
 }
 
@@ -254,8 +273,40 @@ void DiscoveryDataBase::clear_changes_to_release()
 }
 
 ////////////
-// Functions to process_data_queue()
-bool DiscoveryDataBase::process_data_queue()
+// Functions to process PDP and EDP data queues
+void DiscoveryDataBase::process_pdp_data_queue()
+{
+    // Lock(exclusive mode) mutex locally
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+
+    // Swap DATA queues
+    pdp_data_queue_.Swap();
+
+    // Process all messages in the queque
+    while (!pdp_data_queue_.Empty())
+    {
+        // Process each message with Front()
+        DiscoveryPDPDataQueueInfo data_queue_info = pdp_data_queue_.Front();
+
+        // If the change is a DATA(p)
+        if (data_queue_info.change()->kind == eprosima::fastrtps::rtps::ALIVE)
+        {
+            // Update participants map
+            logInfo(DISCOVERY_DATABASE, "DATA(p) received from: " << data_queue_info.change()->instanceHandle);
+            create_participant_from_change(data_queue_info.change(), data_queue_info.participant_change_data());
+        }
+        // If the change is a DATA(Up)
+        else
+        {
+            process_dispose_participant(data_queue_info.change());
+        }
+
+        // Pop the message from the queue
+        pdp_data_queue_.Pop();
+    }
+}
+
+bool DiscoveryDataBase::process_edp_data_queue()
 {
     bool is_dirty_topic = false;
 
@@ -263,32 +314,25 @@ bool DiscoveryDataBase::process_data_queue()
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     // Swap DATA queues
-    data_queue_.Swap();
+    edp_data_queue_.Swap();
 
     eprosima::fastrtps::rtps::CacheChange_t* change;
     std::string topic_name;
 
     // Process all messages in the queque
-    while (!data_queue_.Empty())
+    while (!edp_data_queue_.Empty())
     {
         // Process each message with Front()
-        DiscoveryDataQueueInfo data_queue_info = data_queue_.Front();
+        DiscoveryEDPDataQueueInfo data_queue_info = edp_data_queue_.Front();
         change = data_queue_info.change();
         topic_name = data_queue_info.topic();
 
-        // If the change is a DATA(p|w|r)
+        // If the change is a DATA(w|r)
         if (change->kind == eprosima::fastrtps::rtps::ALIVE)
         {
             logInfo(DISCOVERY_DATABASE, "ALIVE change received from: " << change->instanceHandle);
-            // DATA(p) case
-            if (is_participant(change))
-            {
-                // Update participants map
-                logInfo(DISCOVERY_DATABASE, "DATA(p) received from: " << change->instanceHandle);
-                create_participant_from_change(change);
-            }
             // DATA(w) case
-            else if (is_writer(change))
+            if (is_writer(change))
             {
                 logInfo(DISCOVERY_DATABASE, "DATA(w) in topic " << topic_name << " received from: "
                                                                 << change->instanceHandle);
@@ -303,9 +347,9 @@ bool DiscoveryDataBase::process_data_queue()
             }
 
             // Update set of dirty_topics
-            // In case of Data(p), topic name is empty, so no topic should be added to dirty_topics_
-            if ((topic_name != "") &&
-                    std::find(dirty_topics_.begin(), dirty_topics_.end(),
+            if (std::find(
+                    dirty_topics_.begin(),
+                    dirty_topics_.end(),
                     topic_name) == dirty_topics_.end())
             {
                 logInfo(DISCOVERY_DATABASE, "Setting topic " << topic_name << " as dirty");
@@ -313,16 +357,11 @@ bool DiscoveryDataBase::process_data_queue()
                 is_dirty_topic = true;
             }
         }
-        // If the change is a DATA(Up|Uw|Ur)
+        // If the change is a DATA(Uw|Ur)
         else
         {
-            // DATA(Up) case
-            if (is_participant(change))
-            {
-                process_dispose_participant(change);
-            }
             // DATA(Uw) case
-            else if (is_writer(change))
+            if (is_writer(change))
             {
                 process_dispose_writer(change, topic_name);
             }
@@ -334,16 +373,17 @@ bool DiscoveryDataBase::process_data_queue()
         }
 
         // Pop the message from the queue
-        data_queue_.Pop();
+        edp_data_queue_.Pop();
     }
 
     return is_dirty_topic;
 }
 
 void DiscoveryDataBase::create_participant_from_change(
-        eprosima::fastrtps::rtps::CacheChange_t* ch)
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const DiscoveryParticipantChangeData& change_data)
 {
-    DiscoveryParticipantInfo part(ch, server_guid_prefix_);
+    DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
             participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
 
@@ -353,7 +393,7 @@ void DiscoveryDataBase::create_participant_from_change(
     {
         // Add old change to changes_to_release_
         logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
-        changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
+        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch, change_data));
     }
     else
     {
@@ -479,7 +519,7 @@ void DiscoveryDataBase::create_writers_from_change(
     // If writer exists, update the change and set all participant ack status to false
     else
     {
-        changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
+        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch));
     }
 
 }
@@ -579,7 +619,7 @@ void DiscoveryDataBase::create_readers_from_change(
     // If reader exists, update the change and set all participant ack status to false
     else
     {
-        changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
+        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch));
     }
 }
 
@@ -593,7 +633,9 @@ void DiscoveryDataBase::process_dispose_participant(
             participants_.find(participant_guid.guidPrefix);
     if (pit != participants_.end())
     {
-        changes_to_release_.push_back(pit->second.set_change_and_unmatch(ch));
+        // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
+        // participant's meta-information, but we don't want to loose it here.
+        changes_to_release_.push_back(pit->second.update_and_unmatch(ch));
     }
 
     // Delete entries from writers_ belonging to the participant
@@ -697,7 +739,7 @@ void DiscoveryDataBase::process_dispose_writer(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
     if (wit != writers_.end())
     {
-        changes_to_release_.push_back(wit->second.set_change_and_unmatch(ch));
+        changes_to_release_.push_back(wit->second.update_and_unmatch(ch));
     }
 
     // Update own entry participants_::writers
@@ -748,7 +790,7 @@ void DiscoveryDataBase::process_dispose_reader(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
     if (rit != readers_.end())
     {
-        changes_to_release_.push_back(rit->second.set_change_and_unmatch(ch));
+        changes_to_release_.push_back(rit->second.update_and_unmatch(ch));
     }
 
     // Update own entry participants_::readers
@@ -984,7 +1026,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
 
 bool DiscoveryDataBase::data_queue_empty()
 {
-    return data_queue_.BothEmpty();
+    return (pdp_data_queue_.BothEmpty() && edp_data_queue_.BothEmpty());
 }
 
 bool DiscoveryDataBase::is_participant(
