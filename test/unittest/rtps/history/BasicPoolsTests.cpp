@@ -50,25 +50,7 @@ protected:
         memory_policy_ = get<3>(GetParam());
 
         PoolConfig cfg { memory_policy_, payload_size_, pool_size_, max_pool_size_ };
-        payload_pool_ = BasicPayloadPool::get(cfg);
-        if ( (MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE == memory_policy_) ||
-                (MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE == memory_policy_) )
-        {
-            change_pool_ = std::make_shared<CacheChangePool>(
-                cfg,
-                [this](
-                    CacheChange_t* item)
-                {
-                    if (payload_pool_->get_payload(payload_size_, *item))
-                    {
-                        payload_pool_->release_payload(*item);
-                    }
-                });
-        }
-        else
-        {
-            change_pool_ = std::make_shared<CacheChangePool>(cfg);
-        }
+        payload_pool_ = BasicPayloadPool::get(cfg, change_pool_);
     }
 
     virtual void TearDown()

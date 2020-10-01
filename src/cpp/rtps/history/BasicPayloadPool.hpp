@@ -46,25 +46,6 @@ class BasicPayloadPool
 public:
 
     static std::shared_ptr<IPayloadPool> get(
-            const PoolConfig& config)
-    {
-        switch (config.memory_policy)
-        {
-            case PREALLOCATED_MEMORY_MODE:
-                return std::make_shared<detail::Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
-            case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-                return std::make_shared<detail::Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(
-                    config.payload_initial_size);
-            case DYNAMIC_RESERVE_MEMORY_MODE:
-                return std::make_shared<detail::Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
-            case DYNAMIC_REUSABLE_MEMORY_MODE:
-                return std::make_shared<detail::Impl<DYNAMIC_REUSABLE_MEMORY_MODE> >();
-        }
-
-        return nullptr;
-    }
-
-    static std::shared_ptr<IPayloadPool> get(
             const PoolConfig& config,
             std::shared_ptr<IChangePool>& change_pool)
     {
@@ -91,6 +72,27 @@ public:
         }
 
         return payload_pool;
+    }
+
+private:
+
+    static std::shared_ptr<IPayloadPool> get(
+            const PoolConfig& config)
+    {
+        switch (config.memory_policy)
+        {
+            case PREALLOCATED_MEMORY_MODE:
+                return std::make_shared<detail::Impl<PREALLOCATED_MEMORY_MODE> >(config.payload_initial_size);
+            case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+                return std::make_shared<detail::Impl<PREALLOCATED_WITH_REALLOC_MEMORY_MODE> >(
+                    config.payload_initial_size);
+            case DYNAMIC_RESERVE_MEMORY_MODE:
+                return std::make_shared<detail::Impl<DYNAMIC_RESERVE_MEMORY_MODE> >();
+            case DYNAMIC_REUSABLE_MEMORY_MODE:
+                return std::make_shared<detail::Impl<DYNAMIC_REUSABLE_MEMORY_MODE> >();
+        }
+
+        return nullptr;
     }
 
 };
