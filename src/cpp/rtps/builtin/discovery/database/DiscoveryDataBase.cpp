@@ -1172,19 +1172,29 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     }
 }
 
-void erase_writer_(eprosima::fastrtps::rtps::GUID_t& guid)
-{
-}
+void erase_participant_(eprosima::fastrtps::rtps::GuidPrefix_t& guid);
 
-void erase_reader_(eprosima::fastrtps::rtps::GUID_t& guid)
-{
-}
+// unmatch in every other entity including its readers and writers
+void unmatch_participant_(eprosima::fastrtps::rtps::GuidPrefix_t& guid);
 
+// unmatch all the readers
+void unmatch_writer_(eprosima::fastrtps::rtps::GUID_t& guid);
+
+// erase a writer from a participant and clean the entity populting changes_to_release_
+void erase_writer_(eprosima::fastrtps::rtps::GUID_t& guid);
+
+// unmatch all the writers
+void unmatch_reader_(eprosima::fastrtps::rtps::GUID_t& guid);
+
+// erase a reader from a participant and clean the entity populting changes_to_release_
+void erase_reader_(eprosima::fastrtps::rtps::GUID_t& guid);
+
+// check if the participants must be matched and add/erase in the acks data if they
+// should know each other. This works finding the related topics and entities below
+// this function should be called when a reader or writer is disposed
 bool update_matching_(
     eprosima::fastrtps::rtps::GuidPrefix_t& participant1,
-    eprosima::fastrtps::rtps::GuidPrefix_t& participant2)
-{
-}
+    eprosima::fastrtps::rtps::GuidPrefix_t& participant2);
 
 } // namespace ddb
 } // namespace rtps
