@@ -26,7 +26,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
 
-class BasicPoolsTest : public TestWithParam<tuple<uint32_t, uint32_t, uint32_t, MemoryManagementPolicy> >
+class BasicPoolsTest : public TestWithParam<tuple<uint32_t, uint32_t, uint32_t, MemoryManagementPolicy>>
 {
 protected:
 

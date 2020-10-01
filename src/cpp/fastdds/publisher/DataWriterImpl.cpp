@@ -490,7 +490,7 @@ bool DataWriterImpl::perform_create_new_change(
 
             if (qos_.lifespan().duration != c_TimeInfinite)
             {
-                lifespan_duration_us_ = duration<double, std::ratio<1, 1000000> >(
+                lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(
                     qos_.lifespan().duration.to_ns() * 1e-3);
                 lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
                 lifespan_timer_->restart_timer();
@@ -612,7 +612,7 @@ ReturnCode_t DataWriterImpl::set_qos(
         if (qos_.deadline().period != c_TimeInfinite)
         {
             deadline_duration_us_ =
-                    duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
+                    duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
             deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
         }
         else
@@ -624,7 +624,7 @@ ReturnCode_t DataWriterImpl::set_qos(
         if (qos_.lifespan().duration != c_TimeInfinite)
         {
             lifespan_duration_us_ =
-                    duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
+                    duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
             lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
         }
         else

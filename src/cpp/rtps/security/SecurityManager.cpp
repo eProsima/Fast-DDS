@@ -198,7 +198,7 @@ bool SecurityManager::init(
             }
 
             if (!( logging_plugin_->set_log_options(log_options, exception) &&
-                    logging_plugin_->enable_logging(exception) ))
+                    logging_plugin_->enable_logging(exception)))
             {
                 return init_logging_fail(exception);
             }
@@ -3625,8 +3625,8 @@ bool SecurityManager::participant_authorized(
     if (access_plugin_ == nullptr || remote_permissions != nullptr)
     {
 
-        std::list<std::pair<ReaderProxyData, GUID_t> > temp_readers;
-        std::list<std::pair<WriterProxyData, GUID_t> > temp_writers;
+        std::list<std::pair<ReaderProxyData, GUID_t>> temp_readers;
+        std::list<std::pair<WriterProxyData, GUID_t>> temp_writers;
 
         if (crypto_plugin_ != nullptr)
         {

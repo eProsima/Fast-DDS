@@ -188,7 +188,7 @@ bool EDPServer::trimWriterHistory(
             });
 
     logInfo(RTPS_PDPSERVER_TRIM, "I've classified the following EDP history data for removal "
-            << std::distance(removal.begin(), removal.end()) );
+            << std::distance(removal.begin(), removal.end()));
 
     if (removal.empty())
     {
@@ -222,7 +222,7 @@ bool EDPServer::trimWriterHistory(
     // update demises
     _demises.swap(pending);
 
-    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim EDP we still must remove " << _demises.size() );
+    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim EDP we still must remove " << _demises.size());
 
     return _demises.empty(); // is finished?
 
@@ -304,7 +304,7 @@ void EDPServer::removePublisherFromHistory(
         _PUBdemises.insert(key);
     }
 
-    if ( !trimPUBWriterHistory() )
+    if ( !trimPUBWriterHistory())
     {
         PDPServer* pS = dynamic_cast<PDPServer*>(mp_PDP);
         assert(pS); // EDPServer should always be associated with a PDPServer
