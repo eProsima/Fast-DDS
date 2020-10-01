@@ -80,6 +80,54 @@ StatefulReader::StatefulReader(
     , disable_positive_acks_(att.disable_positive_acks)
     , is_alive_(true)
 {
+    init(pimpl, att);
+}
+
+StatefulReader::StatefulReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* hist,
+        ReaderListener* listen)
+    : RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
+    , acknack_count_(0)
+    , nackfrag_count_(0)
+    , times_(att.times)
+    , matched_writers_(att.matched_writers_allocation)
+    , matched_writers_pool_(att.matched_writers_allocation)
+    , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
+    , disable_positive_acks_(att.disable_positive_acks)
+    , is_alive_(true)
+{
+    init(pimpl, att);
+}
+
+StatefulReader::StatefulReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        ReaderHistory* hist,
+        ReaderListener* listen)
+    : RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    , acknack_count_(0)
+    , nackfrag_count_(0)
+    , times_(att.times)
+    , matched_writers_(att.matched_writers_allocation)
+    , matched_writers_pool_(att.matched_writers_allocation)
+    , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
+    , disable_positive_acks_(att.disable_positive_acks)
+    , is_alive_(true)
+{
+    init(pimpl, att);
+}
+
+void StatefulReader::init(
+        RTPSParticipantImpl* pimpl,
+        const ReaderAttributes& att)
+{
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {

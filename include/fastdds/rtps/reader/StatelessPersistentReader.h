@@ -24,7 +24,7 @@
 #include <fastdds/rtps/reader/StatelessReader.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class IPersistenceService;
@@ -37,22 +37,56 @@ class StatelessPersistentReader : public StatelessReader
 {
     friend class RTPSParticipantImpl;
 
-    StatelessPersistentReader(RTPSParticipantImpl*, GUID_t& guid,
-        ReaderAttributes& att, ReaderHistory* hist, ReaderListener* listen,
-        IPersistenceService* persistence);
-    public:
+    StatelessPersistentReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            IPersistenceService* persistence);
+
+    StatelessPersistentReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            IPersistenceService* persistence);
+
+    StatelessPersistentReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            IPersistenceService* persistence);
+
+public:
+
     virtual ~StatelessPersistentReader();
 
-    protected:
-    virtual void set_last_notified(const GUID_t& persistence_guid, const SequenceNumber_t& seq) override;
+protected:
 
-    private:
+    virtual void set_last_notified(
+            const GUID_t& persistence_guid,
+            const SequenceNumber_t& seq) override;
+
+private:
+
+    void init(
+            const GUID_t& guid,
+            const ReaderAttributes& att);
+
     IPersistenceService* persistence_;
     std::string persistence_guid_;
 };
-}
-} /* namespace rtps */
-} /* namespace eprosima */
 
-#endif
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_STATELESSPERSISTENTREADER_H_ */

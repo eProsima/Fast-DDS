@@ -86,7 +86,7 @@ public:
 
     MOCK_METHOD2(reserveCache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
 
-    MOCK_METHOD1(releaseCache, bool (CacheChange_t* a_change));
+    MOCK_METHOD1(releaseCache, void (CacheChange_t* a_change));
 
     MOCK_METHOD0(expectsInlineQos, bool());
 
