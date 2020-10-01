@@ -137,6 +137,8 @@ public:
 
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
+    const RemoteServerList_t& servers();
+
 protected:
 
     // Check the messages in histories. Check which ones modify the database to unlock further messages
@@ -152,7 +154,7 @@ protected:
             fastrtps::rtps::StatefulWriter* writer,
             fastrtps::rtps::WriterHistory* writer_history);
 
-    bool process_data_queue();
+    bool process_data_queues();
 
     bool process_disposals();
 

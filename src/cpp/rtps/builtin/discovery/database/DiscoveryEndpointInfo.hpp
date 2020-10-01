@@ -52,6 +52,11 @@ public:
     {
     }
 
+    const eprosima::fastrtps::string_255& topic()
+    {
+        return topic_;
+    }
+
 private:
 
     eprosima::fastrtps::string_255 topic_;

@@ -28,22 +28,20 @@ namespace rtps {
 namespace ddb {
 
 
-eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::set_change_and_unmatch(
+eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::update_and_unmatch(
         eprosima::fastrtps::rtps::CacheChange_t* change)
 {
     relevant_participants_builtin_ack_status_.unmatch_all();
-    return change_info(change);
+    return update(change);
 }
 
-eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::change_info(
+eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::update(
         eprosima::fastrtps::rtps::CacheChange_t* change)
 {
     eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
     change_ = change;
     return old_change;
 }
-
-eprosima::fastrtps::rtps::CacheChange_t* change();
 
 } /* namespace ddb */
 } /* namespace rtps */

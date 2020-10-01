@@ -26,6 +26,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include "./DiscoverySharedInfo.hpp"
+#include "./DiscoveryParticipantChangeData.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -42,13 +43,35 @@ class DiscoveryParticipantInfo : public DiscoverySharedInfo
 public:
 
     DiscoveryParticipantInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* change_)
-        : DiscoverySharedInfo(change_)
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            DiscoveryParticipantChangeData participant_change_data)
+        : DiscoverySharedInfo(change)
+        , participant_change_data_(participant_change_data)
     {
     }
 
     ~DiscoveryParticipantInfo()
     {
+    }
+
+    eprosima::fastrtps::rtps::CacheChange_t* update(
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            DiscoveryParticipantChangeData participant_change_data);
+
+    eprosima::fastrtps::rtps::CacheChange_t* update(
+            eprosima::fastrtps::rtps::CacheChange_t* change)
+    {
+        return DiscoverySharedInfo::update(change);
+    }
+
+    eprosima::fastrtps::rtps::CacheChange_t* update_and_unmatch(
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            DiscoveryParticipantChangeData participant_change_data);
+
+    eprosima::fastrtps::rtps::CacheChange_t* update_and_unmatch(
+            eprosima::fastrtps::rtps::CacheChange_t* change)
+    {
+        return DiscoverySharedInfo::update_and_unmatch(change);
     }
 
     // populate functions
@@ -64,11 +87,28 @@ public:
     void remove_writer(
             const eprosima::fastrtps::rtps::GUID_t& guid);
 
+    bool is_client()
+    {
+        return participant_change_data_.is_client;
+    }
+
+    bool is_my_client()
+    {
+        return participant_change_data_.is_my_client;
+    }
+
+    fastrtps::rtps::RemoteLocatorList metatraffic_locators()
+    {
+        return participant_change_data_.metatraffic_locators;
+    }
+
 private:
 
     std::vector<eprosima::fastrtps::rtps::GUID_t> readers;
 
     std::vector<eprosima::fastrtps::rtps::GUID_t> writers;
+
+    DiscoveryParticipantChangeData participant_change_data_;
 
 };
 

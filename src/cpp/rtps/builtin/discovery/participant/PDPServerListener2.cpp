@@ -26,6 +26,7 @@
 
 #include "./PDPServerListener2.hpp"
 #include "./PDPServer2.hpp"
+#include "../database/DiscoveryParticipantChangeData.hpp"
 
 #include <memory>
 
@@ -122,8 +123,54 @@ void PDPServerListener2::onNewCacheChangeAdded(
             //     return;
             // }
 
+            // Check whether the participant is a CLIENT or a SERVER
+            bool is_client = true;
+            fastrtps::ParameterPropertyList_t properties = temp_participant_data_.m_properties;
+            for (auto property : properties)
+            {
+                // If property PID_PERSISTENCE_GUID is set, then the participant is not a CLIENT
+                if (property.first() == "PID_PERSISTENCE_GUID")
+                {
+                    is_client = false;
+                    break;
+                }
+            }
+
+            // Check whether the participant is a client of this server, or it has been discovered through another
+            // server
+            bool is_my_client = true;
+            // If the instance handle is different from the writer GUID, then the change has been relayed. That means,
+            // that the participants is somebody else's client
+            if (change->instanceHandle != change->writerGUID)
+            {
+                is_my_client = false;
+            }
+            // If the change has NOT been relayed, then look for it in this server's list of remote servers (servers
+            // for which this sever is a client).
+            //    1. If the participant is there, it means that this server is a CLIENT of the remote one, thus the
+            //       remote is not my client.
+            //    2. If the participant is not there, it means that the remote server is a CLIENT of this server
+            else
+            {
+                // Iterate over the servers for which I'm a CLIENT
+                for (auto server : pdp_server()->servers())
+                {
+                    // If the change's participant is in the list, then it means I'm a CLIENT to it.
+                    if (iHandle2GUID(change->instanceHandle).guidPrefix == server.guidPrefix)
+                    {
+                        is_my_client = false;
+                        break;
+                    }
+                }
+            }
+
             // Notify the DiscoveryDataBase
-            if (pdp_server()->discovery_db().update(change.get()))
+            if (pdp_server()->discovery_db().update(
+                change.get(),
+                ddb::DiscoveryParticipantChangeData(
+                    temp_participant_data_.metatraffic_locators,
+                    is_client,
+                    is_my_client)))
             {
                 // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                 // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
@@ -221,8 +268,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
         // to grant DiscoveryDatabase ownership by not returning the change to the pool.
         pdp_history->remove_change(pdp_history->find_change(change.get()), false);
 
-        // Notify the DiscoveryDatabase
-        if (pdp_server()->discovery_db().update(change.get()))
+        // Notify the DiscoveryDatabase. DiscoveryParticipantChangeData is left as default since DATA(Up) does not have
+        // serialized data
+        if (pdp_server()->discovery_db().update(change.get(), ddb::DiscoveryParticipantChangeData()))
         {
             // Ensure processing time for the cache by triggering the Server thread (which process the updates
             pdp_server()->awakeServerThread();
