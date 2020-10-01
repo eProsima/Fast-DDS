@@ -31,7 +31,7 @@ namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
         fastrtps::rtps::GuidPrefix_t server_guid_prefix)
-    : server_guid_prefix_(server_guid_prefix)
+    : server_guid_prefix_(server_guid_prefix), server_acked_by_all_(false)
 {
 }
 

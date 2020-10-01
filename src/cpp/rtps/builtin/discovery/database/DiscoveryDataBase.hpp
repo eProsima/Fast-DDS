@@ -309,8 +309,8 @@ protected:
     // guid from own server
     const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
 
-    // is own server DATA(p) acked by all other clients
-    bool server_acked_by_all_ = false;
+    // is own server DATA(p) acked by all other clients    
+    std::atomic<bool> server_acked_by_all_;
 
 };
 

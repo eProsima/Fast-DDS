@@ -740,36 +740,37 @@ History::iterator PDPServer2::process_change_acknowledgement(
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
 
-        // if change is servers DATA(P) it could be already acked by all and skip this step
+        // If then change is the server's DATA(p), it could be already acked by all.
+        // In that case, we can skip checking ack status on every reader proxy
         if (discovery_db_.is_participant(c) &&
                 discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid() &&
-                discovery_db_.server_acked_by_all()){
-            logInfo(RTPS_PDP_SERVER, "Server already known by all. Skip the check for every ReaderProxy");
-            return false;
-        }
-
-        // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
-        // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
-        // `pending` to whether the change is has been acknowledged by all readers.
-        fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor func = discovery_db_.functor(c);
-        writer->for_each_reader_proxy(c, func);
-
-        // If the change has been acknowledge by everyone
-        if (!func)
+                discovery_db_.server_acked_by_all())
         {
-            if(discovery_db_.is_participant(c) &&
-                discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid())
-            {
-                // in case there is not pending to our server, we set var in ddb to true
-                discovery_db_.server_acked_by_all(true);
-                return false;
-            }else{
-                // Remove the entry from writer history, but do not release the cache.
-                // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-                writer_history->remove_change_and_reuse(c->sequenceNumber);
-                return false;
-            }
+            logInfo(RTPS_PDP_SERVER, "Server's DATA(p) already acked by all. Skipping check for every ReaderProxy");
         }
+        else
+        {        
+            // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
+            // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
+            // `pending` to whether the change is has been acknowledged by all readers.
+            fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor func = discovery_db_.functor(c);
+            writer->for_each_reader_proxy(c, func);
+
+            // If the change has been acknowledge by everyone
+            if (!func)
+            {
+                if(discovery_db_.is_participant(c) &&
+                    discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid())
+                {
+                    // in case there is not pending to our server, we notify the ddb that it is acked by all
+                    discovery_db_.server_acked_by_all(true);
+                }else{
+                    // Remove the entry from writer history, but do not release the cache.
+                    // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
+                    return writer_history->remove_change(c->sequenceNumber, false);
+                }
+            }
+        }   
     }
     // DATA(Up|Uw|Ur) case. Currently, Fast DDS only considers CacheChange kinds ALIVE and NOT_ALIVE_DISPOSED, so if the
     // kind is not ALIVE, then we know is NOT_ALIVE_DISPOSED and so a DATA(Up|Uw|Ur). In the future we should handle the
