@@ -427,7 +427,7 @@ bool MessageReceiver::readSubmessageHeader(
         return false;
     }
 
-    if ( (length == 0) && (smh->submessageId != INFO_TS) && (smh->submessageId != PAD) )
+    if ((length == 0) && (smh->submessageId != INFO_TS) && (smh->submessageId != PAD))
     {
         // THIS IS THE LAST SUBMESSAGE
         smh->submessageLength = msg->length - msg->pos;
@@ -605,7 +605,7 @@ bool MessageReceiver::proc_Submsg_Data(
 
     if (inlineQosFlag)
     {
-        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize) )
+        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
         {
             logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
@@ -683,6 +683,12 @@ bool MessageReceiver::proc_Submsg_Data(
             {
                 reader->processDataMsg(&ch);
             });
+
+    IPayloadPool* payload_pool = ch.payload_owner();
+    if (payload_pool)
+    {
+        payload_pool->release_payload(ch);
+    }
 
     //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
     ch.serializedPayload.data = nullptr;
