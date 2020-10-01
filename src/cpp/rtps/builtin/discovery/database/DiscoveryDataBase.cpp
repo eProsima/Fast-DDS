@@ -378,11 +378,13 @@ bool DiscoveryDataBase::process_edp_data_queue()
             // DATA(Uw) case
             if (is_writer(change))
             {
+                logInfo(DISCOVERY_DATABASE, "DATA(Uw) received from: " << change->instanceHandle);
                 process_dispose_writer(change, topic_name);
             }
             // DATA(Ur) case
             else if (is_reader(change))
             {
+                logInfo(DISCOVERY_DATABASE, "DATA(Ur) received from: " << change->instanceHandle);
                 process_dispose_reader(change, topic_name);
             }
         }
@@ -408,7 +410,7 @@ void DiscoveryDataBase::create_participant_from_change(
     {
         // Add old change to changes_to_release_
         logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
-        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch, change_data));
+        update_change_and_unmatch_(ch, ret.first->second);
     }
     else
     {
@@ -531,7 +533,7 @@ void DiscoveryDataBase::create_writers_from_change(
     // If writer exists, update the change and set all participant ack status to false
     else
     {
-        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch));
+        update_change_and_unmatch_(ch, ret.first->second);
     }
 
 }
@@ -628,7 +630,7 @@ void DiscoveryDataBase::create_readers_from_change(
     // If reader exists, update the change and set all participant ack status to false
     else
     {
-        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch));
+        update_change_and_unmatch_(ch, ret.first->second);
     }
 }
 
@@ -642,13 +644,11 @@ void DiscoveryDataBase::process_dispose_participant(
             participants_.find(participant_guid.guidPrefix);
     if (pit != participants_.end())
     {
+<<<<<<< HEAD
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
         // participant's meta-information, but we don't want to loose it here.
         changes_to_release_.push_back(pit->second.update_and_unmatch(ch));
-    }
-
     // Delete entries from writers_ belonging to the participant
-    for (auto wit = writers_.begin(); wit != writers_.end();)
     {
         if (wit->first.guidPrefix == participant_guid.guidPrefix)
         {
@@ -748,7 +748,11 @@ void DiscoveryDataBase::process_dispose_writer(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
     if (wit != writers_.end())
     {
+<<<<<<< HEAD
         changes_to_release_.push_back(wit->second.update_and_unmatch(ch));
+=======
+        update_change_and_unmatch_(ch, wit->second);
+>>>>>>> b701c4bae... Refs #9445: functions signature
     }
 
     // Update own entry participants_::writers
@@ -799,7 +803,11 @@ void DiscoveryDataBase::process_dispose_reader(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
     if (rit != readers_.end())
     {
+<<<<<<< HEAD
         changes_to_release_.push_back(rit->second.update_and_unmatch(ch));
+=======
+        update_change_and_unmatch_(ch, rit->second);
+>>>>>>> b701c4bae... Refs #9445: functions signature
     }
 
     // Update own entry participants_::readers
@@ -1162,6 +1170,20 @@ void DiscoveryDataBase::AckedFunctor::operator () (
             external_pending_ = true;
         }
     }
+}
+
+void erase_writer_(eprosima::fastrtps::rtps::GUID_t& guid)
+{
+}
+
+void erase_reader_(eprosima::fastrtps::rtps::GUID_t& guid)
+{
+}
+
+bool update_matching_(
+    eprosima::fastrtps::rtps::GuidPrefix_t& participant1,
+    eprosima::fastrtps::rtps::GuidPrefix_t& participant2)
+{
 }
 
 } // namespace ddb

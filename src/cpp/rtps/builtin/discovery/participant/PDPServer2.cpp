@@ -772,6 +772,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
         if (writer->is_acked_by_all(c))
         {
             // Remove entry from `participants_|writers_|readers_`
+            // AND put the change in changes_release
             discovery_db_.delete_entity_of_change(c);
             // Remove from writer's history
             return writer_history->remove_change(cit);

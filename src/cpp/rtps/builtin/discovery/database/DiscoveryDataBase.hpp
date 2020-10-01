@@ -255,6 +255,14 @@ public:
 
 protected:
 
+    // change a cacheChange by update or new disposal
+    void update_change_and_unmatch_(
+            fastrtps::rtps::CacheChange_t* new_change,
+            ddb::DiscoverySharedInfo& entity)
+    {
+        changes_to_release_.push_back(entity.set_change_and_unmatch(new_change));
+    }
+
     // update the acks
     void add_ack_(
             const eprosima::fastrtps::rtps::CacheChange_t* change,
@@ -284,6 +292,17 @@ protected:
         sh_mtx_.unlock();
         //sh_mtx_.unlock();
     }
+
+    ////////////
+    // functions to manage disposals
+
+    void erase_writer_(eprosima::fastrtps::rtps::GUID_t& guid);
+
+    void erase_reader_(eprosima::fastrtps::rtps::GUID_t& guid);
+
+    bool update_matching_(
+        eprosima::fastrtps::rtps::GuidPrefix_t& participant1,
+        eprosima::fastrtps::rtps::GuidPrefix_t& participant2);
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
 
