@@ -155,20 +155,15 @@ History::iterator WriterHistory::remove_change(
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     CacheChange_t* change = *removal;
-    auto it = m_changes.erase(removal);
+    mp_writer->change_removed_by_history(change);
+    m_isHistoryFull = false;
 
-    if ( it != changesEnd() )
+    if ( release )
     {
-        mp_writer->change_removed_by_history(change);
-        m_isHistoryFull = false;
-
-        if ( release )
-        {
-            m_changePool.release_Cache(change);
-        }
+        m_changePool.release_Cache(change);
     }
 
-    return it;
+    return m_changes.erase(removal);
 }
 
 bool WriterHistory::remove_change_g(
