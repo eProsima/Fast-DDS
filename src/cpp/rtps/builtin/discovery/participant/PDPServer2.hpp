@@ -202,9 +202,6 @@ private:
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
 
-    //! Temporary locator list to solve new Writer API issue
-    // TODO: remove when the Writer API issue is resolved
-    std::map<fastrtps::rtps::GUID_t, fastrtps::rtps::ReaderProxyData> clients_;
 };
 
 } // namespace rtps

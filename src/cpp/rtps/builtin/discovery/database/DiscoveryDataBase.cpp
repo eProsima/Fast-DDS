@@ -1049,19 +1049,38 @@ fastrtps::rtps::CacheChange_t* DiscoveryDataBase::cache_change_own_participant()
     return nullptr;
 }
 
-const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::remote_participants()
+const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_clients_and_servers()
 {
-    std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants;
-    // Iterate over participants to add the remote ones
+    std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers;
+    // Iterate over participants to add the remote ones that are direct clients or servers
     for (auto participant: participants_)
     {
         // Only add participants other than the sever
         if (server_guid_prefix_ != participant.first)
         {
-            remote_participants.push_back(participant.first);
+            // Only add direct clients or server, not relayed ones.
+            if (participant.second.is_my_client() || participant.second.is_my_server())
+            {
+                direct_clients_and_servers.push_back(participant.first);
+            }
         }
     }
-    return remote_participants;
+    return direct_clients_and_servers;
+}
+
+fastrtps::rtps::LocatorList_t DiscoveryDataBase::participant_metatraffic_locators(
+    fastrtps::rtps::GuidPrefix_t participant_guid_prefix)
+{
+    fastrtps::rtps::LocatorList_t locators;
+    auto part_it = participants_.find(participant_guid_prefix);
+    if (part_it != participants_.end())
+    {
+        for (auto locator : part_it->second.metatraffic_locators().unicast)
+        {
+            locators.push_back(locator);
+        }
+    }
+    return locators;
 }
 
 DiscoveryDataBase::AckedFunctor DiscoveryDataBase::functor(

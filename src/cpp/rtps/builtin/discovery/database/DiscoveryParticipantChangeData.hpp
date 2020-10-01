@@ -42,10 +42,12 @@ struct DiscoveryParticipantChangeData
     DiscoveryParticipantChangeData(
             fastrtps::rtps::RemoteLocatorList metatraffic_locators_,
             bool is_client_,
-            bool is_my_client_)
+            bool is_my_client_,
+            bool is_my_server_)
         : metatraffic_locators(metatraffic_locators_)
         , is_client(is_client_)
         , is_my_client(is_my_client_)
+        , is_my_server(is_my_server_)
     {
     }
 
@@ -55,6 +57,8 @@ struct DiscoveryParticipantChangeData
     bool is_client = true;
     // Whether this participant (CLIENT OR SERVER) is a client of this server
     bool is_my_client = true;
+    // Whether this participant is my server (necessary to sort out the relayed servers)
+    bool is_my_server = false;
 };
 
 } /* namespace ddb */

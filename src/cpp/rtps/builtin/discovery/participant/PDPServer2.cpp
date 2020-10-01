@@ -296,16 +296,6 @@ void PDPServer2::assignRemoteEndpoints(
         temp_reader_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(temp_reader_data_);
-
-        // TODO: remove when the Writer API issue is resolved
-        std::lock_guard<std::recursive_mutex> lock(*getMutex());
-        // Waiting till we remove C++11 restriction:
-        // clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
-        auto emplace_result = clients_.emplace(temp_reader_data_.guid(), temp_reader_data_);
-        if (!emplace_result.second)
-        {
-            emplace_result.first->second = temp_reader_data_;
-        }
     }
     else
     {
@@ -362,10 +352,6 @@ void PDPServer2::removeRemoteEndpoints(
                                                  << " did not send information about builtin readers");
         return;
     }
-
-    std::unique_lock<std::recursive_mutex> lock(*getMutex());
-    // TODO: remove when the Writer API issue is resolved
-    clients_.erase(pdata->m_guid);
 }
 
 #if HAVE_SQLITE3
@@ -393,7 +379,7 @@ void PDPServer2::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    // logInfo(RTPS_PDP_SERVER, "Announcing Server (new change: " << new_change << ")");
+    logInfo(RTPS_PDP_SERVER, "Announcing Server (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
@@ -486,7 +472,7 @@ void PDPServer2::announceParticipantState(
                 // Update the database with our own data
                 if (discovery_db().update(
                     change,
-                    ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false)))
+                    ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false, false)))
                 {
                     // Distribute
                     awakeServerThread();
@@ -577,57 +563,20 @@ void PDPServer2::announceParticipantState(
 
     // Force send the announcement
 
-    // Create a list of receivers based on the remote participants known by the discovery database. Add the locators
-    // of those remote participants.
-    LocatorList_t locators;
+    // Create a list of receivers based on the remote participants known by the discovery database that are direct
+    // clients or servers of this server. Add the locators of those remote participants.
     std::vector<GUID_t> remote_readers;
+    LocatorList_t locators;
 
-    // // Iterate over clients
-    // for (auto client: clients_)
-    // {
-    //     fastrtps::rtps::ReaderProxyData& rat = client.second;
-    //     remote_readers.push_back(rat.guid());
+    std::vector<GuidPrefix_t> direct_clients_and_servers = discovery_db_.direct_clients_and_servers();
+    for (GuidPrefix_t participant_prefix: direct_clients_and_servers)
+    {
+        // Add remote reader
+        GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
+        remote_readers.push_back(remote_guid);
 
-    //     // Add default unicast locators of the remote reader
-    //     for (const Locator_t& locator: client.second.remote_locators().unicast)
-    //     {
-    //         locators.push_back(locator);
-    //     }
-    // }
-
-    // std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
-    // for (GuidPrefix_t participant_prefix: remote_participants)
-    // {
-    //     // Add remote reader
-    //     GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
-    //     remote_readers.push_back(remote_guid);
-
-    //     // Iterate over participant_proxies to find the reader
-    //     for (ParticipantProxyData* proxy: participant_proxies_)
-    //     {
-    //         // Check if this is the participant for which we are looking
-    //         if (proxy->m_guid == remote_guid)
-    //         {
-    //             // Add default unicast locators of the remote reader
-    //             for (Locator_t locator: proxy->metatraffic_locators.unicast)
-    //             {
-    //                 locators.push_back(locator);
-    //             }
-    //             // The participant will be there only once, so we can stop looking when found
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // // Add own default multicast address
-    // for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.multicast)
-    // {
-    //     locators.push_back(locator);
-    // }
-    // for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.unicast)
-    // {
-    //     locators.push_back(locator);
-    // }
+        locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
+    }
 
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
     RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);

@@ -231,7 +231,10 @@ public:
 
     fastrtps::rtps::CacheChange_t* cache_change_own_participant();
 
-    const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
+    const std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers();
+
+    fastrtps::rtps::LocatorList_t participant_metatraffic_locators(
+            fastrtps::rtps::GuidPrefix_t participant_guid_prefix);
 
 protected:
 
@@ -265,14 +268,9 @@ protected:
         //sh_mtx_.unlock();
     }
 
-<<<<<<< HEAD
-    //! Incoming discovery traffic populated by the listeners, PDP database is already updated on notify
-    fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
-=======
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
->>>>>>> 261857512... Refs #9449: Add locators + whether a participant is a client + whether a participant is my client to DDB
 
     //! Covenient per-topic mapping of readers and writers to speed-up queries
     std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> readers_by_topic_;
