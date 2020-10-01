@@ -139,9 +139,10 @@ void PDPServerListener2::onNewCacheChangeAdded(
             // Check whether the participant is a client of this server, or it has been discovered through another
             // server
             bool is_my_client = true;
+            bool is_my_server = false;
             // If the instance handle is different from the writer GUID, then the change has been relayed. That means,
             // that the participants is somebody else's client
-            if (change->instanceHandle != change->writerGUID)
+            if (iHandle2GUID(change->instanceHandle).guidPrefix != change->writerGUID.guidPrefix)
             {
                 is_my_client = false;
             }
@@ -159,6 +160,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
                     if (iHandle2GUID(change->instanceHandle).guidPrefix == server.guidPrefix)
                     {
                         is_my_client = false;
+                        is_my_server = true;
                         break;
                     }
                 }
@@ -170,7 +172,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 ddb::DiscoveryParticipantChangeData(
                     temp_participant_data_.metatraffic_locators,
                     is_client,
-                    is_my_client)))
+                    is_my_client,
+                    is_my_server)))
             {
                 // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                 // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.

@@ -231,7 +231,10 @@ public:
 
     fastrtps::rtps::CacheChange_t* cache_change_own_participant();
 
-    const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
+    const std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers();
+
+    fastrtps::rtps::LocatorList_t participant_metatraffic_locators(
+            fastrtps::rtps::GuidPrefix_t participant_guid_prefix);
 
     bool server_acked_by_all() const
     {
