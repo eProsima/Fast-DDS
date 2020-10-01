@@ -126,7 +126,7 @@ History::iterator ReaderHistory::remove_change_nts(
     mp_reader->change_removed_by_history(change);
     if ( release )
     {
-        do_release_cache(change);
+        mp_reader->releaseCache(change);
     }
 
     return m_changes.erase(removal);
@@ -190,7 +190,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
                 {
                     logInfo(RTPS_READER_HISTORY, "Removing change " << item->sequenceNumber);
                     mp_reader->change_removed_by_history(item);
-                    do_release_cache(item);
+                    mp_reader->releaseCache(item);
                     chit = m_changes.erase(chit);
                     continue;
                 }

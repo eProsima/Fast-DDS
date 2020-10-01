@@ -50,9 +50,26 @@ public:
 protected:
 
     StatefulReader(
-            RTPSParticipantImpl*,
+            RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    StatefulReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    StatefulReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             ReaderHistory* hist,
             ReaderListener* listen = nullptr);
 
@@ -244,10 +261,10 @@ public:
 
     /**
      * Use the participant of this reader to send a message to certain locator.
-     *@param message Message to be sent.
-     *@param locators_begin Destination locators iterator begin.
-     *@param locators_end Destination locators iterator end.
-     *@param max_blocking_time_point Future time point where any blocking should end.
+     * @param message Message to be sent.
+     * @param locators_begin Destination locators iterator begin.
+     * @param locators_end Destination locators iterator end.
+     * @param max_blocking_time_point Future time point where any blocking should end.
      */
     bool send_sync_nts(
             CDRMessage_t* message,
@@ -257,12 +274,16 @@ public:
 
 private:
 
+    void init(
+            RTPSParticipantImpl* pimpl,
+            const ReaderAttributes& att);
+
     bool acceptMsgFrom(
             const GUID_t& entityGUID,
             WriterProxy** wp) const;
 
     /*!
-     * @remarks Nn thread-safe.
+     * @remarks Non thread-safe.
      */
     bool findWriterProxy(
             const GUID_t& writerGUID,
