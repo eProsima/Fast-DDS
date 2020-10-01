@@ -221,7 +221,8 @@ public:
         while (history_->changesBegin() != history_->changesEnd())
         {
             eprosima::fastrtps::rtps::CacheChange_t* change = *history_->changesBegin();
-            receive_one(reader_, change);
+            std::cout << "Late processing change " << change->sequenceNumber << std::endl;
+            receive_one(reader_, change, false);
         }
     }
 
@@ -388,9 +389,20 @@ private:
 
     void receive_one(
             eprosima::fastrtps::rtps::RTPSReader* reader,
-            const eprosima::fastrtps::rtps::CacheChange_t* change)
+            const eprosima::fastrtps::rtps::CacheChange_t* change,
+            bool check_seq = true)
     {
         std::unique_lock<std::mutex> lock(mutex_);
+
+        // Check order of changes.
+        if (check_seq)
+        {
+            EXPECT_LT(last_seq_, change->sequenceNumber);
+            if (last_seq_ < change->sequenceNumber)
+            {
+                last_seq_ = change->sequenceNumber;
+            }
+        }
 
         if (receiving_)
         {
@@ -399,23 +411,26 @@ private:
                     change->serializedPayload.length);
             eprosima::fastcdr::Cdr cdr(buffer);
 
-            // Check order of changes.
-            ASSERT_LT(last_seq_, change->sequenceNumber);
-            last_seq_ = change->sequenceNumber;
-
             cdr >> data;
 
             auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-            ASSERT_NE(it, total_msgs_.end());
-            total_msgs_.erase(it);
-            ++current_received_count_;
-            default_receive_print<type>(data);
-            cv_.notify_one();
+            EXPECT_NE(it, total_msgs_.end());
+            if (it != total_msgs_.end())
+            {
+                total_msgs_.erase(it);
+                ++current_received_count_;
+                if (check_seq) { default_receive_print<type>(data); }
+                cv_.notify_one();
+            }
 
             eprosima::fastrtps::rtps::ReaderHistory* history = reader->getHistory();
-            ASSERT_NE(history, nullptr);
+            EXPECT_EQ(history, history_);
 
             history->remove_change((eprosima::fastrtps::rtps::CacheChange_t*)change);
+        }
+        else
+        {
+            std::cerr << "Received unexpected " << change->sequenceNumber << std::endl;
         }
     }
 
