@@ -767,7 +767,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
                 }else{
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-                    return writer_history->remove_change(c->sequenceNumber, false);
+                    return writer_history->remove_change(cit, false);
                 }
             }
         }   
