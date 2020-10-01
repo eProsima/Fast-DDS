@@ -40,17 +40,12 @@ bool DiscoveryDataBase::pdp_is_relevant(
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
 
-    // it would never ask if relevant because the ReaderProxy does not exists
-    // if (reader_guid.guidPrefix == server_guid_prefix_)
-    // {
-    //     // a message to the server itself is never relevant
-    //     return false;
-    // }
-
     // Get identity of the participant that generated the DATA(p|Up)
     fastrtps::rtps::GuidPrefix_t change_guid_prefix = guid_from_change(&change).guidPrefix;
 
-    // Own DATA(p|Up) is always relevant (except for itself)
+    // Own DATA(p|Up) is always relevant for remote PDP readers. Server's PDP ReaderProxy will never
+    // be queried for relevance, since Participant's own PDP writer and reader are not matched,
+    // and there for there is no ReaderProxy for participant's own PDP reader.
     if (server_guid_prefix_ == change_guid_prefix)
     {
         return true;
