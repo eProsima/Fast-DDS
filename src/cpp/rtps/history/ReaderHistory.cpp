@@ -115,7 +115,7 @@ History::iterator ReaderHistory::remove_change(
         return changesEnd();
     }
 
-    if ( removal == changesEnd() )
+    if ( removal == changesEnd())
     {
         logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();
@@ -162,7 +162,7 @@ bool ReaderHistory::remove_changes_with_guid(
         {
             if ((*chit)->writerGUID == a_guid)
             {
-                changes_to_remove.push_back( (*chit) );
+                changes_to_remove.push_back((*chit));
             }
         }
     }//End lock scope

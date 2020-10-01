@@ -100,7 +100,7 @@ int main (
         // validation have been already done
         // Name the server according with the identifier
         if ( !( is >> server_id
-                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id, rtps.prefix) ) )
+                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id, rtps.prefix)))
         {
             cout << "The provided server identifier is not valid" << endl;
             return 1;
@@ -153,7 +153,7 @@ int main (
 
                 if ( !(is >> id
                         && is.eof()
-                        && rtps::IPLocator::setPhysicalPort(locator, id)) )
+                        && rtps::IPLocator::setPhysicalPort(locator, id)))
                 {
                     cout << "Invalid listening locator port specified:" << id << endl;
                     return 1;
@@ -246,7 +246,7 @@ option::ArgStatus Arg::check_server_ipv4(
     if ( nullptr != option.arg )
     {
         // we must check if its a proper ip address
-        if ( std::regex_match(option.arg, ipv4) )
+        if ( std::regex_match(option.arg, ipv4))
         {
             return option::ARG_OK;
         }

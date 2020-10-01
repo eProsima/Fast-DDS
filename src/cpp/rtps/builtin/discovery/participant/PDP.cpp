@@ -546,7 +546,7 @@ bool PDP::lookupWriterProxyData(
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
             auto wit = pit->m_writers->find(writer.entityId);
-            if ( wit != pit->m_writers->end() )
+            if ( wit != pit->m_writers->end())
             {
                 wdata.copy(wit->second);
                 return true;

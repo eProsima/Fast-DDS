@@ -70,7 +70,7 @@ bool DSClientEvent::event()
         {
             logInfo(CLIENT_PDP_THREAD,
                     "Client " << mp_PDP->getRTPSParticipant()->getGuid() <<
-                                " not all servers acknowledge PDP info")
+                    " not all servers acknowledge PDP info")
         }
     }
     else

@@ -381,7 +381,7 @@ void DiscoveryDataBase::create_writers_from_change(
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator writer_it =
                 writers_.find(writer_guid);
 
-        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator readers_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator readers_it =
                 readers_by_topic_.find(topic_name);
         if (readers_it != readers_by_topic_.end())
         {
@@ -428,7 +428,7 @@ void DiscoveryDataBase::create_writers_from_change(
         }
 
         // Update writers_by_topic
-        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
                 writers_by_topic_.find(topic_name);
         if (topic_it != writers_by_topic_.end())
         {
@@ -448,7 +448,7 @@ void DiscoveryDataBase::create_writers_from_change(
         {
             std::vector<fastrtps::rtps::GUID_t> writers_in_topic = {writer_guid};
             auto retu = writers_by_topic_.insert(
-                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t> >(topic_name, writers_in_topic));
+                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, writers_in_topic));
             if (!retu.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
@@ -479,7 +479,7 @@ void DiscoveryDataBase::create_readers_from_change(
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator reader_it =
                 readers_.find(reader_guid);
 
-        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator writers_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator writers_it =
                 writers_by_topic_.find(topic_name);
         if (writers_it != writers_by_topic_.end())
         {
@@ -525,7 +525,7 @@ void DiscoveryDataBase::create_readers_from_change(
             pit->second.add_reader(reader_guid);
         }
         // Update readers_by_topic
-        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
                 readers_by_topic_.find(topic_name);
         if (topic_it != readers_by_topic_.end())
         {
@@ -545,7 +545,7 @@ void DiscoveryDataBase::create_readers_from_change(
         {
             std::vector<fastrtps::rtps::GUID_t> readers_in_topic = {reader_guid};
             auto retu = readers_by_topic_.insert(
-                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t> >(topic_name, readers_in_topic));
+                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, readers_in_topic));
             if (!retu.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert reader " << reader_guid << " in topic " << topic_name);
@@ -685,7 +685,7 @@ void DiscoveryDataBase::process_dispose_writer(
     }
 
     // Update own entry writers_by_topic_
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
             writers_by_topic_.find(topic_name);
     if (tit != writers_by_topic_.end())
     {
@@ -736,7 +736,7 @@ void DiscoveryDataBase::process_dispose_reader(
     }
 
     // Update own entry readers_by_topic_
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator tit =
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
             readers_by_topic_.find(topic_name);
     if (tit != readers_by_topic_.end())
     {

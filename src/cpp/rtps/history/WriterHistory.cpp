@@ -146,7 +146,7 @@ History::iterator WriterHistory::remove_change(
         return changesEnd();
     }
 
-    if ( removal == changesEnd() )
+    if ( removal == changesEnd())
     {
         logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();
@@ -201,7 +201,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
 
     auto it = find_change(&ch);
 
-    if ( it == changesEnd() )
+    if ( it == changesEnd())
     {
         logError(RTPS_WRITER_HISTORY, "Sequence number provided doesn't match any change in history");
         return nullptr;

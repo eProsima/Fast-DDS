@@ -84,7 +84,7 @@ bool DServerEvent::event()
         {
             logInfo(SERVER_PDP_THREAD,
                     "Server " << mp_PDP->getRTPSParticipant()->getGuid() <<
-                                " not all servers acknowledge PDP info")
+                    " not all servers acknowledge PDP info")
             restart = true;
         }
     }
@@ -115,7 +115,7 @@ bool DServerEvent::event()
 
             logInfo(SERVER_PDP_THREAD,
                     "Server " << mp_PDP->getRTPSParticipant()->getGuid() <<
-                                " not all clients acknowledge PDP info")
+                    " not all clients acknowledge PDP info")
         }
     }
 

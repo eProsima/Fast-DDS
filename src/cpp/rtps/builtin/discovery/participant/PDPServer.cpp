@@ -508,7 +508,7 @@ bool PDPServer::trimWriterHistory()
 bool PDPServer::trimPDPWriterHistory()
 {
     logInfo(RTPS_PDPSERVER_TRIM, "In trimPDPWriteHistory PDP history count: " << mp_PDPWriterHistory->getHistorySize()
-                                                                              << " demises:" << _demises.size() );
+                                                                              << " demises:" << _demises.size());
 
     // trim demises container
     key_list disposal, aux;
@@ -545,7 +545,7 @@ bool PDPServer::trimPDPWriterHistory()
             });
 
     logInfo(RTPS_PDPSERVER_TRIM, "I've classified the following PDP history data for removal "
-            << std::distance(removal.begin(), removal.end()) );
+            << std::distance(removal.begin(), removal.end()));
 
     if (removal.empty())
     {
@@ -579,7 +579,7 @@ bool PDPServer::trimPDPWriterHistory()
     // update demises
     _demises.swap(pending);
 
-    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim PDP we still must remove " << _demises.size() );
+    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim PDP we still must remove " << _demises.size());
 
     return _demises.empty(); // finish?
 }
@@ -949,7 +949,7 @@ void PDPServer::processPersistentData()
 
                     // Only DATA(p)s directly received from a client would have the PID_BACKUP_STAMP property
                     // The CacheChange_t pass to the server simulates a client's DATA(p)
-                    if ( guid != GUID_t::unknown() && guid == mp_PDPWriter->getGuid() )
+                    if ( guid != GUID_t::unknown() && guid == mp_PDPWriter->getGuid())
                     {
                         assert(si != SampleIdentity::unknown());
                         change_to_add->writerGUID = si.writer_guid();

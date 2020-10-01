@@ -261,9 +261,9 @@ protected:
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> > readers_by_topic_;
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> readers_by_topic_;
 
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> > writers_by_topic_;
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> writers_by_topic_;
 
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo> participants_;
 
