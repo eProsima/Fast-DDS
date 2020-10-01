@@ -102,7 +102,7 @@ bool ReaderHistory::matches_change(
     }
 
     return chi->sequenceNumber == cho->sequenceNumber &&
-                chi->writerGUID == cho->writerGUID;
+           chi->writerGUID == cho->writerGUID;
 }
 
 History::iterator ReaderHistory::remove_change(
@@ -123,10 +123,10 @@ History::iterator ReaderHistory::remove_change(
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
-    CacheChange_t * change = *removal;
+    CacheChange_t* change = *removal;
     auto it = m_changes.erase(removal);
 
-    if( it != changesEnd() )
+    if ( it != changesEnd() )
     {
         mp_reader->change_removed_by_history(change);
 

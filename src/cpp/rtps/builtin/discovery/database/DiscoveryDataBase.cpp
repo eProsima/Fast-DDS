@@ -57,7 +57,7 @@ bool DiscoveryDataBase::pdp_is_relevant(
         // it is relevant if the ack has not been received yet
         // in NOT_ALIVE case the set_disposal unmatches every participant
         return (it->second.is_relevant_participant(reader_guid.guidPrefix) &&
-            !it->second.is_matched(reader_guid.guidPrefix));
+               !it->second.is_matched(reader_guid.guidPrefix));
     }
     // Not relevant
     return false;
@@ -87,7 +87,7 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
     {
         // it is relevant if the ack has not been received yet
         return (itw->second.is_relevant_participant(reader_guid.guidPrefix) &&
-            !itw->second.is_matched(reader_guid.guidPrefix));
+               !itw->second.is_matched(reader_guid.guidPrefix));
     }
     // not relevant
     return false;
@@ -117,7 +117,7 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     {
         // it is relevant if the ack has not been received yet
         return (itr->second.is_relevant_participant(reader_guid.guidPrefix) &&
-            !itr->second.is_matched(reader_guid.guidPrefix));
+               !itr->second.is_matched(reader_guid.guidPrefix));
     }
     // not relevant
     return false;
@@ -130,7 +130,7 @@ void DiscoveryDataBase::add_ack_(
     if (is_participant(change))
     {
         logInfo(DISCOVERY_DATABASE,
-            "Adding DATA(p) ACK for change " << change->instanceHandle << " to " << acked_entity);
+                "Adding DATA(p) ACK for change " << change->instanceHandle << " to " << acked_entity);
         auto it = participants_.find(guid_from_change(change).guidPrefix);
         if (it != participants_.end())
         {
@@ -140,7 +140,7 @@ void DiscoveryDataBase::add_ack_(
     else if (is_writer(change))
     {
         logInfo(DISCOVERY_DATABASE,
-            "Adding DATA(w) ACK for change " << change->instanceHandle << " to " << acked_entity);
+                "Adding DATA(w) ACK for change " << change->instanceHandle << " to " << acked_entity);
         auto it = writers_.find(guid_from_change(change));
         if (it != writers_.end())
         {
@@ -150,7 +150,7 @@ void DiscoveryDataBase::add_ack_(
     else if (is_reader(change))
     {
         logInfo(DISCOVERY_DATABASE,
-            "Adding DATA(r) ACK for change " << change->instanceHandle << " to " << acked_entity);
+                "Adding DATA(r) ACK for change " << change->instanceHandle << " to " << acked_entity);
         auto it = readers_.find(guid_from_change(change));
         if (it != readers_.end())
         {
@@ -281,14 +281,14 @@ bool DiscoveryDataBase::process_data_queue()
             else if (is_writer(change))
             {
                 logInfo(DISCOVERY_DATABASE, "DATA(w) in topic " << topic_name << " received from: "
-                        << change->instanceHandle);
+                                                                << change->instanceHandle);
                 create_writers_from_change(change, topic_name);
             }
             // DATA(r) case
             else if (is_reader(change))
             {
                 logInfo(DISCOVERY_DATABASE, "DATA(r) in topic " << topic_name << " received from: "
-                        << change->instanceHandle);
+                                                                << change->instanceHandle);
                 create_readers_from_change(change, topic_name);
             }
 
@@ -357,7 +357,7 @@ void DiscoveryDataBase::create_participant_from_change(
                         ch) == pdp_to_send_.end())
             {
                 logInfo(DISCOVERY_DATABASE, "Addind Server DATA(p) to send: "
-                            << ch->instanceHandle);
+                        << ch->instanceHandle);
                 pdp_to_send_.push_back(ch);
             }
         }
@@ -448,7 +448,7 @@ void DiscoveryDataBase::create_writers_from_change(
         {
             std::vector<fastrtps::rtps::GUID_t> writers_in_topic = {writer_guid};
             auto retu = writers_by_topic_.insert(
-                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, writers_in_topic));
+                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t> >(topic_name, writers_in_topic));
             if (!retu.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
@@ -545,7 +545,7 @@ void DiscoveryDataBase::create_readers_from_change(
         {
             std::vector<fastrtps::rtps::GUID_t> readers_in_topic = {reader_guid};
             auto retu = readers_by_topic_.insert(
-                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, readers_in_topic));
+                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t> >(topic_name, readers_in_topic));
             if (!retu.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert reader " << reader_guid << " in topic " << topic_name);
@@ -842,7 +842,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                                 parts_writer_it->second.change()) == pdp_to_send_.end())
                     {
                         logInfo(DISCOVERY_DATABASE, "Addind writer's DATA(p) to send: "
-                                    << parts_writer_it->second.change()->instanceHandle);
+                                << parts_writer_it->second.change()->instanceHandle);
                         pdp_to_send_.push_back(parts_writer_it->second.change());
                     }
                     // Set topic as not-clearable.
@@ -877,7 +877,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                                 parts_reader_it->second.change()) == pdp_to_send_.end())
                     {
                         logInfo(DISCOVERY_DATABASE, "Addind readers's DATA(p) to send: "
-                                    << parts_reader_it->second.change()->instanceHandle);
+                                << parts_reader_it->second.change()->instanceHandle);
                         pdp_to_send_.push_back(parts_reader_it->second.change());
                     }
                     // Set topic as not-clearable.
@@ -1017,7 +1017,6 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::remote_partic
     return remote_participants;
 }
 
-
 DiscoveryDataBase::AckedFunctor DiscoveryDataBase::functor(
         eprosima::fastrtps::rtps::CacheChange_t* change)
 {
@@ -1030,7 +1029,7 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
     : db_(db)
     , change_(change)
     , pending_(false)
-     // references its own state
+    // references its own state
     , external_pending_(pending_)
 {
     // RAII only for the stateful object
@@ -1039,7 +1038,7 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
 
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
         const DiscoveryDataBase::AckedFunctor& r)
-    // references original state
+// references original state
     : external_pending_(r.external_pending_)
 {
     db_ = r.db_;

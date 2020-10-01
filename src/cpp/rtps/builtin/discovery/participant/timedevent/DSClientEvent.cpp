@@ -30,7 +30,7 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
@@ -38,15 +38,15 @@ DSClientEvent::DSClientEvent(
         PDPClient* p_PDP,
         double interval)
     : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
-        [this]()
-        {
-            return event();
-        }, interval)
+            [this]()
+            {
+                return event();
+            }, interval)
     , mp_PDP(p_PDP)
 {
 }
 
- DSClientEvent::~DSClientEvent()
+DSClientEvent::~DSClientEvent()
 {
 }
 
@@ -68,7 +68,9 @@ bool DSClientEvent::event()
         }
         else
         {
-            logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " not all servers acknowledge PDP info")
+            logInfo(CLIENT_PDP_THREAD,
+                    "Client " << mp_PDP->getRTPSParticipant()->getGuid() <<
+                                " not all servers acknowledge PDP info")
         }
     }
     else
@@ -82,6 +84,6 @@ bool DSClientEvent::event()
     return restart;
 }
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

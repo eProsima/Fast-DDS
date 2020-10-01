@@ -559,8 +559,8 @@ bool PDPClient::match_servers_EDP_endpoints()
         if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
         {
             logInfo(RTPS_PDP, "Client "
-                << mp_EDP->mp_PDP->getRTPSParticipant()->getGuid()
-                << " matching servers EDP endpoints");
+                    << mp_EDP->mp_PDP->getRTPSParticipant()->getGuid()
+                    << " matching servers EDP endpoints");
             mp_EDP->assignRemoteEndpoints(*svr.proxy);
         }
     }

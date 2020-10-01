@@ -69,7 +69,7 @@ public:
 
         // friend class DiscoveryDataBase;
         friend AckedFunctor DiscoveryDataBase::functor(
-            eprosima::fastrtps::rtps::CacheChange_t* );
+                eprosima::fastrtps::rtps::CacheChange_t* );
 
         // Stateful constructor
         // This constructor generates the only object that keeps the state
@@ -77,14 +77,15 @@ public:
         AckedFunctor(
                 DiscoveryDataBase* db,
                 eprosima::fastrtps::rtps::CacheChange_t* change);
+
     public:
 
         // Stateless constructors
         AckedFunctor(
-            const AckedFunctor &);
+                const AckedFunctor&);
 
         AckedFunctor(
-            AckedFunctor&& r)
+                AckedFunctor&& r)
         // delegates in copy constructor
             : AckedFunctor(r)
         {

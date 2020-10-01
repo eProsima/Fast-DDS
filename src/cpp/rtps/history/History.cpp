@@ -58,11 +58,11 @@ History::const_iterator History::find_change(
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
-    return std::find_if(changesBegin(), changesEnd(), [this, ch] (const CacheChange_t* chi)
-            {
-            // use the derived classes comparisson criteria for searching
-            return this->matches_change(chi,ch);
-            });
+    return std::find_if(changesBegin(), changesEnd(), [this, ch](const CacheChange_t* chi)
+                   {
+                       // use the derived classes comparisson criteria for searching
+                       return this->matches_change(chi, ch);
+                   });
 }
 
 bool History::remove_change(
@@ -73,7 +73,7 @@ bool History::remove_change(
     if (it == changesEnd())
     {
         logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history")
-            return false;
+        return false;
     }
 
     // remove using the virtual method
@@ -193,9 +193,9 @@ bool History::get_earliest_change(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 
 //TODO Remove if you want.
@@ -217,6 +217,6 @@ void History::print_changes_seqNum2()
     std::cout << ss.str();
 }
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

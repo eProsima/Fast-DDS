@@ -101,7 +101,7 @@ void PDPListener::onNewCacheChangeAdded(
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
         if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory(),
-            parent_pdp_->getRTPSParticipant()->has_shm_transport()))
+                parent_pdp_->getRTPSParticipant()->has_shm_transport()))
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;
@@ -131,7 +131,8 @@ void PDPListener::onNewCacheChangeAdded(
                     lock.unlock();
 
                     logInfo(RTPS_PDP_DISCOVERY, "New participant " << pdata->m_guid << " at " << "MTTLoc: "
-                            << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
+                                                                   << pdata->metatraffic_locators << " DefLoc:" <<
+                                        pdata->default_locators);
 
                     // Assigning remote endpoints implies sending a DATA(p) to all matched and fixed readers, since
                     // StatelessWriter::matched_reader_add marks the entire history as unsent if the added reader's
@@ -154,7 +155,8 @@ void PDPListener::onNewCacheChangeAdded(
                 lock.unlock();
 
                 logInfo(RTPS_PDP_DISCOVERY, "Update participant " << pdata->m_guid << " at " << "MTTLoc: "
-                        << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
+                                                                  << pdata->metatraffic_locators << " DefLoc:" <<
+                                    pdata->default_locators);
 
                 if (parent_pdp_->updateInfoMatchesEDP())
                 {

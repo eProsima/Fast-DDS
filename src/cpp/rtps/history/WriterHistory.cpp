@@ -116,8 +116,8 @@ bool WriterHistory::add_change_(
 }
 
 bool WriterHistory::matches_change(
-            const CacheChange_t* chi,
-            CacheChange_t* cho)
+        const CacheChange_t* chi,
+        CacheChange_t* cho)
 {
     if (cho == nullptr)
     {
@@ -137,8 +137,8 @@ bool WriterHistory::matches_change(
 }
 
 History::iterator WriterHistory::remove_change(
-            const_iterator removal,
-            bool release)
+        const_iterator removal,
+        bool release)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -154,10 +154,10 @@ History::iterator WriterHistory::remove_change(
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
-    CacheChange_t * change = *removal;
+    CacheChange_t* change = *removal;
     auto it = m_changes.erase(removal);
 
-    if( it != changesEnd() )
+    if ( it != changesEnd() )
     {
         mp_writer->change_removed_by_history(change);
         m_isHistoryFull = false;
@@ -202,7 +202,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
     // Create a temporary reference change associated to the sequence number
     CacheChange_t ch;
     ch.sequenceNumber = sequence_number;
-    ch.writerGUID =mp_writer->getGuid();
+    ch.writerGUID = mp_writer->getGuid();
 
     auto it = find_change(&ch);
 
@@ -213,7 +213,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
     }
 
     CacheChange_t* removal = *it;
-    remove_change(it,false);
+    remove_change(it, false);
 
     return removal;
 }

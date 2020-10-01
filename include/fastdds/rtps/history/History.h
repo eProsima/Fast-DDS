@@ -253,7 +253,7 @@ protected:
 
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 

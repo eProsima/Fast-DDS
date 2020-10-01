@@ -279,7 +279,7 @@ void PDPServer2::assignRemoteEndpoints(
     else
     {
         logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                          << " did not send information about builtin writers");
+                                                 << " did not send information about builtin writers");
         return;
     }
 
@@ -310,7 +310,7 @@ void PDPServer2::assignRemoteEndpoints(
     else
     {
         logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                          << " did not send information about builtin readers");
+                                                 << " did not send information about builtin readers");
         return;
     }
 
@@ -347,7 +347,7 @@ void PDPServer2::removeRemoteEndpoints(
     else
     {
         logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                          << " did not send information about builtin writers");
+                                                 << " did not send information about builtin writers");
         return;
     }
 
@@ -359,7 +359,7 @@ void PDPServer2::removeRemoteEndpoints(
     else
     {
         logError(RTPS_PDP_SERVER, "Participant " << pdata->m_guid.guidPrefix
-                                          << " did not send information about builtin readers");
+                                                 << " did not send information about builtin readers");
         return;
     }
 
@@ -719,7 +719,7 @@ bool PDPServer2::process_history_acknowledgement(
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
 
     // Iterate over changes in writer's history
-    for(auto it = writer_history->changesBegin(); it != writer_history->changesEnd();)
+    for (auto it = writer_history->changesBegin(); it != writer_history->changesEnd();)
     {
         it = process_change_acknowledgement(
             it,
@@ -747,7 +747,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
 
         // If the change has been acknowledge by everyone
         if (!func &&
-            !(discovery_db_.is_participant(c) &&
+                !(discovery_db_.is_participant(c) &&
                 discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
         {
             // Remove the entry from writer history, but do not release the cache.
@@ -887,9 +887,9 @@ bool PDPServer2::process_changes_release()
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
                     if (!remove_change_from_writer_history(
-                        edp->publications_writer_.first,
-                        edp->publications_writer_.second,
-                        ch))
+                                edp->publications_writer_.first,
+                                edp->publications_writer_.second,
+                                ch))
                     {
                         edp->publications_writer_.second->release_Cache(ch);
                     }
@@ -906,9 +906,9 @@ bool PDPServer2::process_changes_release()
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
                     if (!remove_change_from_writer_history(
-                        edp->subscriptions_writer_.first,
-                        edp->subscriptions_writer_.second,
-                        ch))
+                                edp->subscriptions_writer_.first,
+                                edp->subscriptions_writer_.second,
+                                ch))
                     {
                         edp->subscriptions_writer_.second->release_Cache(ch);
                     }
@@ -1085,8 +1085,8 @@ bool PDPServer2::pending_ack()
 {
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     bool ret = (mp_PDPWriterHistory->getHistorySize() > 1 ||
-        edp->publications_writer_.second->getHistorySize() > 0 ||
-        edp->subscriptions_writer_.second->getHistorySize() > 0);
+            edp->publications_writer_.second->getHistorySize() > 0 ||
+            edp->subscriptions_writer_.second->getHistorySize() > 0);
     logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
 }
