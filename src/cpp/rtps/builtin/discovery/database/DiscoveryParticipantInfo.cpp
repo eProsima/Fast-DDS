@@ -50,38 +50,38 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoveryParticipantInfo::update_and_un
 void DiscoveryParticipantInfo::add_reader(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    if (std::find(readers.begin(), readers.end(), guid) == readers.end())
+    if (std::find(readers_.begin(), readers_.end(), guid) == readers_.end())
     {
-        readers.push_back(guid);
+        readers_.push_back(guid);
     }
 }
 
 void DiscoveryParticipantInfo::remove_reader(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    auto it = std::find(readers.begin(), readers.end(), guid);
-    if (it != readers.end())
+    auto it = std::find(readers_.begin(), readers_.end(), guid);
+    if (it != readers_.end())
     {
-        readers.erase(it);
+        readers_.erase(it);
     }
 }
 
 void DiscoveryParticipantInfo::add_writer(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    if (std::find(writers.begin(), writers.end(), guid) == writers.end())
+    if (std::find(writers_.begin(), writers_.end(), guid) == writers_.end())
     {
-        writers.push_back(guid);
+        writers_.push_back(guid);
     }
 }
 
 void DiscoveryParticipantInfo::remove_writer(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    auto it = std::find(writers.begin(), writers.end(), guid);
-    if (it != writers.end())
+    auto it = std::find(writers_.begin(), writers_.end(), guid);
+    if (it != writers_.end())
     {
-        writers.erase(it);
+        writers_.erase(it);
     }
 }
 

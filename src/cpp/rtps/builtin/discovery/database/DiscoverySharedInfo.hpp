@@ -86,7 +86,12 @@ public:
         return change_;
     }
 
-protected:
+    std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> relevant_participants() const
+    {
+        return relevant_participants_builtin_ack_status_.relevant_participants();
+    }
+
+private:
 
     eprosima::fastrtps::rtps::CacheChange_t* change_;
 

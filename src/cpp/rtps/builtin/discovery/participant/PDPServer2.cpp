@@ -775,7 +775,8 @@ History::iterator PDPServer2::process_change_acknowledgement(
             // AND put the change in changes_release
             discovery_db_.delete_entity_of_change(c);
             // Remove from writer's history
-            return writer_history->remove_change(cit);
+            // remove false because the clean of the change is made by release_change of ddb
+            return writer_history->remove_change(cit, false);
         }
     }
 

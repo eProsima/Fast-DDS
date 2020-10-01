@@ -107,12 +107,22 @@ public:
     {
         return participant_change_data_.metatraffic_locators;
     }
+    
+    std::vector<eprosima::fastrtps::rtps::GUID_t> readers()
+    {
+        return readers_;
+    }
+
+    std::vector<eprosima::fastrtps::rtps::GUID_t> writers()
+    {
+        return writers_;
+    }
 
 private:
 
-    std::vector<eprosima::fastrtps::rtps::GUID_t> readers;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> readers_;
 
-    std::vector<eprosima::fastrtps::rtps::GUID_t> writers;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> writers_;
 
     DiscoveryParticipantChangeData participant_change_data_;
 

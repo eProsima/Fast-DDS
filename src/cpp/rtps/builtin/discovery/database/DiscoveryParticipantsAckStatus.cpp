@@ -18,6 +18,7 @@
  */
 
 #include <map>
+#include <vector>
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
@@ -69,6 +70,15 @@ bool DiscoveryParticipantsAckStatus::is_relevant_participant(
         return false;
     }
     return true;
+}
+
+std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> DiscoveryParticipantsAckStatus::relevant_participants() const
+{
+    std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> res;
+    for(auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it) {
+        res.push_back(it->first);
+    }
+    return res;
 }
 
 } /* namespace ddb */
