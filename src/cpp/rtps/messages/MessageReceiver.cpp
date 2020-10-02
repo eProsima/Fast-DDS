@@ -662,26 +662,33 @@ bool MessageReceiver::proc_Submsg_Data(
         ch.sourceTimestamp = timestamp_;
     }
 
-#if HAVE_SECURITY
-    if (first_reader->getAttributes().security_attributes().is_payload_protected)
-    {
-        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_,
-                first_reader->getGuid(), ch.writerGUID))
-        {
-            ch.serializedPayload.data = crypto_payload_.data;
-            ch.serializedPayload.length = crypto_payload_.length;
-        }
-    }
-#endif  // HAVE_SECURITY
-
     logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
             associated_readers_.size());
 
+    bool is_decoded = false;
+
     //Look for the correct reader to add the change
     findAllReaders(readerID,
-            [&ch](RTPSReader* reader)
+            [&ch, &is_decoded, this](RTPSReader* reader)
             {
-                reader->processDataMsg(&ch);
+                {
+#if HAVE_SECURITY
+                    if (!is_decoded &&
+                            reader->getAttributes().security_attributes().is_payload_protected &&
+                            reader->matched_writer_is_matched(ch.writerGUID))
+                    {
+                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_,
+                                reader->getGuid(), ch.writerGUID))
+                        {
+                            ch.serializedPayload.data = crypto_payload_.data;
+                            ch.serializedPayload.length = crypto_payload_.length;
+                            is_decoded = true;
+                        }
+                    }
+#endif  // HAVE_SECURITY
+
+                    reader->processDataMsg(&ch);
+                }
             });
 
     //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
@@ -850,27 +857,34 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         ch.sourceTimestamp = timestamp_;
     }
 
-#if HAVE_SECURITY
-    if (first_reader->getAttributes().security_attributes().is_payload_protected)
-    {
-        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_,
-                first_reader->getGuid(), ch.writerGUID))
-        {
-            ch.serializedPayload.data = crypto_payload_.data;
-            ch.serializedPayload.length = crypto_payload_.length;
-        }
-    }
-#endif  // HAVE_SECURITY
-
     //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
     logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
             associated_readers_.size());
 
+    bool is_decoded = false;
+
     //Look for the correct reader to add the change
     findAllReaders(readerID,
-            [&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage](RTPSReader* reader)
+            [&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage, &is_decoded, this](RTPSReader* reader)
             {
-                reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+                {
+#if HAVE_SECURITY
+                    if (!is_decoded &&
+                            reader->getAttributes().security_attributes().is_payload_protected &&
+                            reader->matched_writer_is_matched(ch.writerGUID))
+                    {
+                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_,
+                                reader->getGuid(), ch.writerGUID))
+                        {
+                            ch.serializedPayload.data = crypto_payload_.data;
+                            ch.serializedPayload.length = crypto_payload_.length;
+                            is_decoded = true;
+                        }
+                    }
+#endif  // HAVE_SECURITY
+
+                    reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+                }
             });
 
     ch.serializedPayload.data = nullptr;
