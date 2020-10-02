@@ -1101,7 +1101,7 @@ bool StatefulWriter::send_hole_gaps_to_group(
     SequenceNumber_t last_sequence = mp_history->next_sequence_number();
     SequenceNumber_t min_history_seq = get_seq_num_min();
     uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
-    if ( (min_readers_low_mark_ < max_removed) &&    // some holes pending acknowledgement
+    if ((min_readers_low_mark_ < max_removed) &&     // some holes pending acknowledgement
             (min_history_seq + history_size != last_sequence)) // There is a hole in the history
     {
         try
@@ -1583,7 +1583,7 @@ void StatefulWriter::check_acked_status()
         // min_low_mark will be zero, and no change will be notified as received by all
         if (next_all_acked_notify_sequence_ <= min_low_mark)
         {
-            if ( (mp_listener != nullptr) && (min_low_mark >= get_seq_num_min()))
+            if ((mp_listener != nullptr) && (min_low_mark >= get_seq_num_min()))
             {
                 // We will inform backwards about the changes received by all readers, starting
                 // on min_low_mark down until next_all_acked_notify_sequence_. This way we can
