@@ -57,6 +57,8 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
+    void rebuild_status_after_load();
+
 private:
 
     //!Timed Event to manage the periodic HB to the Reader.
