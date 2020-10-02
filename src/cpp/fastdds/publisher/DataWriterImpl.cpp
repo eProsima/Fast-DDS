@@ -149,6 +149,9 @@ ReturnCode_t DataWriterImpl::enable()
 
     writer_ = writer;
 
+    // In case it has been loaded from the persistence DB, rebuild instances on history
+    history_.rebuild_instances();
+
     //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
     if (high_mark_for_frag_ == 0)
     {

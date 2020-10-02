@@ -237,6 +237,10 @@ Publisher* ParticipantImpl::createPublisher(
         return nullptr;
     }
     pubimpl->mp_writer = writer;
+
+    // In case it has been loaded from the persistence DB, rebuild instances on history
+    pubimpl->m_history.rebuild_instances();
+
     //SAVE THE PUBLISHER PAIR
     t_p_PublisherPair pubpair;
     pubpair.first = pub;
