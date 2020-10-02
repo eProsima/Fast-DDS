@@ -984,7 +984,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
 
 bool DiscoveryDataBase::data_queue_empty()
 {
-    return data_queue_.Empty();
+    return data_queue_.BothEmpty();
 }
 
 bool DiscoveryDataBase::is_participant(

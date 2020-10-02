@@ -35,7 +35,7 @@ namespace rtps {
 DServerEvent2::DServerEvent2(
         PDPServer2* pdp,
         double server_routine_period)
-    : TimedEvent(pdp->getResouceEventThread(),
+    : TimedEvent(pdp->get_resource_event_thread(),
             [this]()
             {
                 return server_routine_event();
@@ -62,7 +62,7 @@ bool DServerEvent2::server_routine_event()
     if (pending_work)
     {
         // Update timer to the server routine period (Default: 450 ms)
-        pdp_->awakeServerThread(server_routine_period_);
+        pdp_->awake_server_thread(server_routine_period_);
     }
 
     return pending_work;

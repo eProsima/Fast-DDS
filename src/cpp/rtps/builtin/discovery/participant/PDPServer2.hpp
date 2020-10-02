@@ -128,7 +128,7 @@ public:
      * Wakes up the DServerEvent2 for new matching or trimming
      * By default the server execute the routine instantly
      */
-    void awakeServerThread(
+    void awake_server_thread(
             double interval_ms = 0);
 
     /* The server's main routine. This includes all the discovery related tasks that the server needs to run
@@ -144,7 +144,7 @@ protected:
     /*
      * Get Pointer to the server resource event thread.
      */
-    eprosima::fastrtps::rtps::ResourceEvent& getResouceEventThread();
+    eprosima::fastrtps::rtps::ResourceEvent& get_resource_event_thread();
 
     // Check the messages in histories. Check which ones modify the database to unlock further messages
     // and clean them when not needed anymore

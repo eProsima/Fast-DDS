@@ -90,7 +90,7 @@ bool PDPServer2::init(
                     TimeConv::Duration_t2MilliSecondsDouble(
                             m_discovery.discovery_config.discoveryServer_client_syncperiod));
 
-    awakeServerThread();
+    // awake_server_thread();
 
     return true;
 }
@@ -475,7 +475,7 @@ void PDPServer2::announceParticipantState(
                 if (discovery_db().update(change))
                 {
                     // distribute
-                    awakeServerThread();
+                    awake_server_thread();
                 }
                 else
                 {
@@ -542,7 +542,7 @@ void PDPServer2::announceParticipantState(
             if (discovery_db().update(change))
             {
                 // distribute
-                awakeServerThread();
+                awake_server_thread();
             }
             else
             {
@@ -660,7 +660,7 @@ bool PDPServer2::remove_remote_participant(
             if (discovery_db_.update(pC))
             {
                 // assure processing time for the cache
-                awakeServerThread();
+                awake_server_thread();
 
                 // the discovery database takes ownership of the CacheChange_t
                 // henceforth there are no references to the CacheChange_t
@@ -683,8 +683,8 @@ bool PDPServer2::process_data_queue()
     return discovery_db_.process_data_queue();
 }
 
-void PDPServer2::awakeServerThread(
-        double interval_ms)
+void PDPServer2::awake_server_thread(
+        double interval_ms /*= 0*/)
 {
     mp_sync->update_interval_millisec(interval_ms);
     mp_sync->restart_timer();
@@ -692,26 +692,29 @@ void PDPServer2::awakeServerThread(
 
 bool PDPServer2::server_update_routine()
 {
-    bool result = true;
-    // If the data queue is not empty re-start the routine
+    // There is pending work to be done by the server if there are changes that have not been acknowledged.
+    bool pending_work = true;
 
+    // Execute the server routine
     do
     {
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
-        process_writers_acknowledgements();               // server + ddb(functor_with_ddb)
-        process_data_queue();                             // all ddb
-        process_disposals();                              // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
-        process_dirty_topics();                           // all ddb
-        process_to_send_lists();                          // server + ddb(get_to_send, remove_to_send_this)
-        process_changes_release();                        // server + ddb(changes_to_release(), clear_changes_to_release())
-        result = pending_ack();                           // all server
+        process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
+        process_data_queue();                   // all ddb
+        process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
+        process_dirty_topics();                 // all ddb
+        process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
+        process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
+        pending_work = pending_ack();           // all server
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         logInfo(RTPS_PDP_SERVER, "");
     }
+    // If the data queue is not empty re-start the routine.
+    // A non-empty queue means that the server has received a change while it is running the processing routine.
     while (!discovery_db_.data_queue_empty());
 
-    return result;
+    return pending_work;
 }
 
 bool PDPServer2::process_writers_acknowledgements()
@@ -1132,7 +1135,7 @@ bool PDPServer2::pending_ack()
     return ret;
 }
 
-eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::getResouceEventThread()
+eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::get_resource_event_thread()
 {
     return resource_event_thread_;
 }
