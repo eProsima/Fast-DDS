@@ -427,7 +427,7 @@ bool MessageReceiver::readSubmessageHeader(
         return false;
     }
 
-    if ( (length == 0) && (smh->submessageId != INFO_TS) && (smh->submessageId != PAD) )
+    if ((length == 0) && (smh->submessageId != INFO_TS) && (smh->submessageId != PAD))
     {
         // THIS IS THE LAST SUBMESSAGE
         smh->submessageLength = msg->length - msg->pos;
@@ -605,7 +605,7 @@ bool MessageReceiver::proc_Submsg_Data(
 
     if (inlineQosFlag)
     {
-        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize) )
+        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
         {
             logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
@@ -677,8 +677,8 @@ bool MessageReceiver::proc_Submsg_Data(
                             reader->getAttributes().security_attributes().is_payload_protected &&
                             reader->matched_writer_is_matched(ch.writerGUID))
                     {
-                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_,
-                                reader->getGuid(), ch.writerGUID))
+                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
+                                crypto_payload_, reader->getGuid(), ch.writerGUID))
                         {
                             ch.serializedPayload.data = crypto_payload_.data;
                             ch.serializedPayload.length = crypto_payload_.length;
@@ -873,8 +873,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(
                             reader->getAttributes().security_attributes().is_payload_protected &&
                             reader->matched_writer_is_matched(ch.writerGUID))
                     {
-                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_,
-                                reader->getGuid(), ch.writerGUID))
+                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
+                                crypto_payload_, reader->getGuid(), ch.writerGUID))
                         {
                             ch.serializedPayload.data = crypto_payload_.data;
                             ch.serializedPayload.length = crypto_payload_.length;
