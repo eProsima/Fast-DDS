@@ -786,6 +786,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
 
 bool PDPServer2::process_disposals()
 {
+    logInfo(RTPS_PDP_SERVER, "process_disposals start");
     // logInfo(RTPS_PDP_SERVER, "process_disposals start");
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
@@ -862,6 +863,7 @@ bool PDPServer2::process_disposals()
 
 bool PDPServer2::process_changes_release()
 {
+    logInfo(RTPS_PDP_SERVER, "process_changes_release start");
     // logInfo(RTPS_PDP_SERVER, "process_changes_release start");
     // We will need the EDP publications/subscriptions writers, readers, and histories
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);

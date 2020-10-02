@@ -540,6 +540,9 @@ void DiscoveryDataBase::create_readers_from_change_(
         {
             for (eprosima::fastrtps::rtps::GUID_t writer_it: writers_it->second)
             {
+                logInfo(DISCOVERY_DATABASE, "Matching Data(r): " << reader_guid << " with writer: "
+                            << writer_it);
+
                 // Update the participant ack status list from readers_
                 ret.first->second.add_or_update_ack_participant(writer_it.guidPrefix);
 
@@ -570,7 +573,6 @@ void DiscoveryDataBase::create_readers_from_change_(
                     }
                 }
             }
-
         }
 
         // Update participants_::readers
@@ -607,10 +609,17 @@ void DiscoveryDataBase::process_dispose_participant_(
         changes_to_release_.push_back(pit->second.update_and_unmatch(ch));
     // Delete entries from writers_ belonging to the participant
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     for (auto writer : pit->second.writers())
 >>>>>>> 7cb576923... Refs #9445: disposals and erase functions implemented, not working properly
+=======
+    while (!pit->second.writers().empty())
+>>>>>>> 300b99407... Refs #9445: Disposals tested and working
     {
+        auto writer = pit->second.writers().front();
+
+        // this unmatch must erase the entity from writers
         unmatch_writer_(writer);
 
         // release the change and remove entity without setting Data(Uw)
@@ -618,8 +627,11 @@ void DiscoveryDataBase::process_dispose_participant_(
     }
 
     // Delete entries from readers_ belonging to the participant
-    for (auto reader : pit->second.readers())
+    while (!pit->second.readers().empty())
     {
+        auto reader = pit->second.writers().front();
+
+        // this unmatch must erase the entity from writers
         unmatch_reader_(reader);
 
         // release the change and remove entity without setting Data(Ur)
@@ -1100,7 +1112,7 @@ void DiscoveryDataBase::unmatch_writer_(const eprosima::fastrtps::rtps::GUID_t& 
     }
 
     // get writer topic
-    std::string topic = wit->second.topic().to_string();
+    std::string topic = wit->second.topic();
 
     // remove it from writer by topic
     remove_writer_from_topic_(guid, topic);
@@ -1108,23 +1120,21 @@ void DiscoveryDataBase::unmatch_writer_(const eprosima::fastrtps::rtps::GUID_t& 
     // it there are more than one writer in this topic in the same participant we do not unmatch the endpoints
     if (repeated_writer_topic_(guid.guidPrefix, topic))
     {
-        return;
-    }
-
-    // for each reader in same topic make not relevant. It could be none in readers
-    auto tit = readers_by_topic_.find(topic);
-    if (tit != readers_by_topic_.end())
-    {
-        for (auto reader : tit->second)
+        // for each reader in same topic make not relevant. It could be none in readers
+        auto tit = readers_by_topic_.find(topic);
+        if (tit != readers_by_topic_.end())
         {
-            auto rit = readers_.find(reader);
-            if (rit == readers_.end())
+            for (auto reader : tit->second)
             {
-                logWarning(DISCOVERY_DATABASE,
-                        "Unexisting reader " << reader << " in topic: " << topic);
-            }
+                auto rit = readers_.find(reader);
+                if (rit == readers_.end())
+                {
+                    logWarning(DISCOVERY_DATABASE,
+                            "Unexisting reader " << reader << " in topic: " << topic);
+                }
 
-            rit->second.remove_participant(guid.guidPrefix);
+                rit->second.remove_participant(guid.guidPrefix);
+            }
         }
     }
 
@@ -1153,36 +1163,29 @@ void DiscoveryDataBase::unmatch_reader_(const eprosima::fastrtps::rtps::GUID_t& 
     }
 
     // get reader topic
-    std::string topic = rit->second.topic().to_string();
-    logInfo(DISCOVERY_DATABASE, "unmatching reader in topic: " << topic);
+    std::string topic = rit->second.topic();
 
     // remove it from reader by topic
     remove_reader_from_topic_(guid, topic);
 
-    logInfo(DISCOVERY_DATABASE, "erased from readers_by_topic");
-
     // it there are more than one reader in this topic in the same participant we do not unmatch the endpoints
     if (repeated_reader_topic_(guid.guidPrefix, topic))
     {
-        return;
-    }
-
-    logInfo(DISCOVERY_DATABASE, "unmatching all writers in topic: " << topic);
-
-    // for each writer in same topic make not relevant. It could be none in writers
-    auto tit = writers_by_topic_.find(topic);
-    if (tit == writers_by_topic_.end())
-    {
-        for (auto writer : tit->second)
+        // for each writer in same topic make not relevant. It could be none in writers
+        auto tit = writers_by_topic_.find(topic);
+        if (tit != writers_by_topic_.end())
         {
-            auto wit = writers_.find(writer);
-            if (wit == writers_.end())
+            for (auto writer : tit->second)
             {
-                logWarning(DISCOVERY_DATABASE,
-                        "Unexisting writer " << writer << " in topic: " << topic);
-            }
+                auto wit = writers_.find(writer);
+                if (wit == writers_.end())
+                {
+                    logWarning(DISCOVERY_DATABASE,
+                            "Unexisting writer " << writer << " in topic: " << topic);
+                }
 
-            wit->second.remove_participant(guid.guidPrefix);
+                wit->second.remove_participant(guid.guidPrefix);
+            }
         }
     }
 
@@ -1194,7 +1197,6 @@ void DiscoveryDataBase::unmatch_reader_(const eprosima::fastrtps::rtps::GUID_t& 
                 "Unexisting participant " << guid.guidPrefix << " for reader: " << guid);
         return;
     }
-
     pit->second.remove_reader(guid);
 }
 
@@ -1240,7 +1242,7 @@ bool DiscoveryDataBase::repeated_reader_topic_(const eprosima::fastrtps::rtps::G
     if (pit == participants_.end())
     {
         logWarning(DISCOVERY_DATABASE,
-                "Checking repeated writer topics in an unexisting participant: " << participant);
+                "Checking repeated reader topics in an unexisting participant: " << participant);
         return false;
     }
 
@@ -1302,7 +1304,6 @@ void DiscoveryDataBase::remove_reader_from_topic_(const eprosima::fastrtps::rtps
         {
             if (*reader_it == reader_guid)
             {
-                logInfo(DISCOVERY_DATABASE, "found, erasing");
                 tit->second.erase(reader_it);
                 break;
             }
@@ -1310,9 +1311,7 @@ void DiscoveryDataBase::remove_reader_from_topic_(const eprosima::fastrtps::rtps
 
         if (tit->second.empty())
         {
-            logInfo(DISCOVERY_DATABASE, "Empty, erasing");
             readers_by_topic_.erase(tit);
-            logInfo(DISCOVERY_DATABASE, "After erase tit");
         }
     }
 }
