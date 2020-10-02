@@ -259,34 +259,44 @@ protected:
         //sh_mtx_.unlock();
     }
 
+    //! Incoming discovery traffic populated by the listeners, PDP database is already updated on notify
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
+    //! Covenient per-topic mapping of readers and writers to speed-up queries
     std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> readers_by_topic_;
-
     std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> writers_by_topic_;
 
+    //! Collection of participant proxies that:
+    //  - stores the CacheChange_t
+    //  - keeps track of its acknowledgement status
+    //  - keeps an account of participant's readers and writers
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo> participants_;
 
+    //! Collection of reader and writer proxies that:
+    //  - stores the CacheChange_t
+    //  - keeps track of its acknowledgement status
+    //  - stores the topic name (only matching criteria available)
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> readers_;
-
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> writers_;
 
-    std::vector<eprosima::fastrtps::rtps::CacheChange_t*> disposals_;
-
+    //! Collection of topics whose related endpoints have changed and require a match recalculation
     std::vector<std::string> dirty_topics_;
 
+    //! Collection of changes to take out of the server builtin writers
+    std::vector<eprosima::fastrtps::rtps::CacheChange_t*> disposals_;
+
+    //! Collection of changes to put into the server builtin writers
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> pdp_to_send_;
-
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send_;
-
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
+
+    //! changes that are no longer associated to living endpoints and should be returned to it's pool
+    std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
     // mutexes
     mutable share_mutex_t sh_mtx_;
 
     fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
-
-    std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
 };
 

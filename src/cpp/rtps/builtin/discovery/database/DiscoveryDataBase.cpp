@@ -371,6 +371,15 @@ void DiscoveryDataBase::create_writers_from_change(
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
 
+    // Update participants_::writers
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator w_pit =
+            participants_.find(writer_guid.guidPrefix);
+    if (w_pit != participants_.end())
+    {
+        w_pit->second.add_writer(writer_guid);
+    }
+
+    // Update writers_
     DiscoveryEndpointInfo tmp_writer(ch, topic_name);
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             writers_.insert(std::make_pair(writer_guid, tmp_writer));
@@ -383,6 +392,7 @@ void DiscoveryDataBase::create_writers_from_change(
 
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator readers_it =
                 readers_by_topic_.find(topic_name);
+
         if (readers_it != readers_by_topic_.end())
         {
             for (eprosima::fastrtps::rtps::GUID_t reader_it: readers_it->second)
@@ -408,28 +418,21 @@ void DiscoveryDataBase::create_writers_from_change(
                         pit->second.add_or_update_ack_participant(writer_guid.guidPrefix);
                     }
                 }
-                pit = participants_.find(writer_guid.guidPrefix);
-                if (pit != participants_.end())
+
+                if (w_pit != participants_.end())
                 {
-                    if (!pit->second.is_matched(reader_it.guidPrefix))
+                    if (!w_pit->second.is_matched(reader_it.guidPrefix))
                     {
-                        pit->second.add_or_update_ack_participant(reader_it.guidPrefix);
+                        w_pit->second.add_or_update_ack_participant(reader_it.guidPrefix);
                     }
                 }
             }
         }
 
-        // Update participants_::writers
-        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-                participants_.find(writer_guid.guidPrefix);
-        if (pit != participants_.end())
-        {
-            pit->second.add_writer(writer_guid);
-        }
-
         // Update writers_by_topic
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
                 writers_by_topic_.find(topic_name);
+
         if (topic_it != writers_by_topic_.end())
         {
             std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
@@ -447,9 +450,9 @@ void DiscoveryDataBase::create_writers_from_change(
         else
         {
             std::vector<fastrtps::rtps::GUID_t> writers_in_topic = {writer_guid};
-            auto retu = writers_by_topic_.insert(
+            auto topic_iterator = writers_by_topic_.insert(
                 std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, writers_in_topic));
-            if (!retu.second)
+            if (!topic_iterator.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
             }
@@ -468,6 +471,14 @@ void DiscoveryDataBase::create_readers_from_change(
         const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
+
+    // Update participants_::readers
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator r_pit =
+            participants_.find(reader_guid.guidPrefix);
+    if (r_pit != participants_.end())
+    {
+        r_pit->second.add_reader(reader_guid);
+    }
 
     DiscoveryEndpointInfo tmp_reader(ch, topic_name);
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
@@ -506,27 +517,21 @@ void DiscoveryDataBase::create_readers_from_change(
                         pit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
                     }
                 }
-                pit = participants_.find(reader_guid.guidPrefix);
-                if (pit != participants_.end())
+
+                if (r_pit != participants_.end())
                 {
-                    if (!pit->second.is_matched(writer_it.guidPrefix))
+                    if (!r_pit->second.is_matched(writer_it.guidPrefix))
                     {
-                        pit->second.add_or_update_ack_participant(writer_it.guidPrefix);
+                        r_pit->second.add_or_update_ack_participant(writer_it.guidPrefix);
                     }
                 }
             }
+        }
 
-        }
-        // Update participants_::readers
-        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-                participants_.find(reader_guid.guidPrefix);
-        if (pit != participants_.end())
-        {
-            pit->second.add_reader(reader_guid);
-        }
         // Update readers_by_topic
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
                 readers_by_topic_.find(topic_name);
+
         if (topic_it != readers_by_topic_.end())
         {
             std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
@@ -544,9 +549,9 @@ void DiscoveryDataBase::create_readers_from_change(
         else
         {
             std::vector<fastrtps::rtps::GUID_t> readers_in_topic = {reader_guid};
-            auto retu = readers_by_topic_.insert(
+            auto topic_iterator = readers_by_topic_.insert(
                 std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, readers_in_topic));
-            if (!retu.second)
+            if (!topic_iterator.second)
             {
                 logError(DISCOVERY_DATABASE, "Could not insert reader " << reader_guid << " in topic " << topic_name);
             }

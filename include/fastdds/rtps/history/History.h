@@ -126,9 +126,9 @@ public:
             CacheChange_t* ch);
 
     /**
-     * Remove a specific change from the history.
-     * @param ch Pointer to the CacheChange_t.
-     * @return True if removed.
+     * Find a specific change in the history using the matches_change method criteria.
+     * @param ch Pointer to the CacheChange_t to search for.
+     * @return an iterator if a suitable change is found
      */
     RTPS_DllAPI const_iterator find_change(
             CacheChange_t* ch);
@@ -254,7 +254,7 @@ protected:
 };
 
 } // namespace rtps
-} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_HISTORY_H_ */

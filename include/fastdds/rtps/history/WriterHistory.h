@@ -73,6 +73,7 @@ public:
     /**
      * Remove a specific change from the history.
      * @param removal iterator to the change for removal
+     * @param release specifies if the change should be return to the pool
      * @return iterator to the next change if any
      */
     RTPS_DllAPI iterator remove_change(
@@ -81,13 +82,13 @@ public:
 
     /**
      * Criteria to search a specific CacheChange_t on history
-     * @param chi inner change to compare
-     * @param cho outer change for comparisson
+     * @param inner change to compare
+     * @param outer change for comparisson
      * @return true if chi matches cho criteria
      */
     RTPS_DllAPI bool matches_change(
-            const CacheChange_t* chi,
-            CacheChange_t* cho) override;
+            const CacheChange_t* inner,
+            CacheChange_t* outer) override;
 
     //! Introduce base class method into scope
     using History::remove_change;

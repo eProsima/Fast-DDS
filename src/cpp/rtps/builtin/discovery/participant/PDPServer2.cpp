@@ -859,7 +859,6 @@ bool PDPServer2::process_changes_release()
     // For each change to erase, first try to erase in case is in writer history and then it releases it
     for (auto ch : discovery_db_.changes_to_release())
     {
-
         // Check if change owner is this participant. In that case, the change comes from a writer pool (PDP, EDP
         // publications or EDP subscriptions)
         if (discovery_db_.guid_from_change(ch).guidPrefix == mp_builtin->mp_participantImpl->getGuid().guidPrefix)
@@ -870,6 +869,7 @@ bool PDPServer2::process_changes_release()
                 // everyone, time at which it is removed from history.
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
+                    // The change must return to the pool even if not present in the history
                     if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
                     {
                         mp_PDPWriterHistory->release_Cache(ch);
@@ -886,6 +886,7 @@ bool PDPServer2::process_changes_release()
                 // everyone, time at which it is removed from history.
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
+                    // The change must return to the pool even if not present in the history
                     if (!remove_change_from_writer_history(
                                 edp->publications_writer_.first,
                                 edp->publications_writer_.second,
@@ -905,6 +906,7 @@ bool PDPServer2::process_changes_release()
                 // everyone, time at which it is removed from history.
                 if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
                 {
+                    // The change must return to the pool even if not present in the history
                     if (!remove_change_from_writer_history(
                                 edp->subscriptions_writer_.first,
                                 edp->subscriptions_writer_.second,
