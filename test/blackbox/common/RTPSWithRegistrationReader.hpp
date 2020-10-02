@@ -419,7 +419,10 @@ private:
             {
                 total_msgs_.erase(it);
                 ++current_received_count_;
-                if (check_seq) { default_receive_print<type>(data); }
+                if (check_seq)
+                {
+                    default_receive_print<type>(data);
+                }
                 cv_.notify_one();
             }
 
