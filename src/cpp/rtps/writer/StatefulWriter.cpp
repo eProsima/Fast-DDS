@@ -1846,6 +1846,10 @@ void StatefulWriter::send_heartbeat_nts_(
         bool final,
         bool liveliness)
 {
+    if (!number_of_readers)
+    {
+        return;
+    }
 
     SequenceNumber_t firstSeq = get_seq_num_min();
     SequenceNumber_t lastSeq = get_seq_num_max();
