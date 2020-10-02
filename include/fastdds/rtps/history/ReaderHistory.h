@@ -91,11 +91,7 @@ public:
             CacheChange_t* cho) override;
 
     //! Introduce base class method into scope
-    RTPS_DllAPI bool remove_change(
-            CacheChange_t* ch)
-    {
-        return History::remove_change(ch);
-    }
+    using History::remove_change;
 
     /**
      * Remove a specific change from the history.
