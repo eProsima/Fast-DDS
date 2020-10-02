@@ -80,7 +80,6 @@ bool TopicPayloadPool::get_payload(
         cache_change.payload_owner(this);
         return true;
     }
-
     else
     {
         if (get_payload(data.length, cache_change))
@@ -91,7 +90,11 @@ bool TopicPayloadPool::get_payload(
                 return false;
             }
 
-            data_owner = this;
+            if (data_owner == nullptr)
+            {
+                data_owner = this;
+            }
+
             return true;
         }
     }
@@ -155,6 +158,14 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(
         return nullptr;
     }
 
+    return do_allocate(size);
+}
+
+TopicPayloadPool::PayloadNode* TopicPayloadPool::do_allocate(
+        uint32_t size)
+{
+    PayloadNode* payload = nullptr;
+
     payload = new PayloadNode(size);
     payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
     all_payloads_.push_back(payload);
@@ -186,16 +197,15 @@ void TopicPayloadPool::update_maximum_size(
         if (config.maximum_size == 0)
         {
             --infinite_histories_count_;
-            if (infinite_histories_count_ == 0)
-            {
-                max_pool_size_ = finite_max_pool_size_;
-            }
         }
         else
         {
-            max_pool_size_ -= (config.initial_size > config.maximum_size ?
+            finite_max_pool_size_ -= (config.initial_size > config.maximum_size ?
                     config.initial_size : config.maximum_size);
-            finite_max_pool_size_ = max_pool_size_;
+        }
+        if (infinite_histories_count_ == 0)
+        {
+            max_pool_size_ = finite_max_pool_size_;
         }
     }
 }
@@ -208,9 +218,7 @@ void TopicPayloadPool::reserve (
 
     for (size_t i = all_payloads_.size(); i < min_num_payloads; ++i)
     {
-        PayloadNode* payload = new PayloadNode(size);
-        payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
-        all_payloads_.push_back(payload);
+        PayloadNode* payload = do_allocate(size);
         free_payloads_.push_back(payload);
     }
 }
@@ -218,7 +226,7 @@ void TopicPayloadPool::reserve (
 bool TopicPayloadPool::shrink (
         uint32_t max_num_payloads)
 {
-    assert(get_allPayloadsSize() - get_freePayloadsSize() <= max_num_payloads);
+    assert(payload_pool_allocated_size() - payload_pool_available_size() <= max_num_payloads);
 
     while (max_num_payloads < all_payloads_.size())
     {

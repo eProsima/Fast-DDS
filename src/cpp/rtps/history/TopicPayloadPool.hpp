@@ -63,20 +63,62 @@ public:
     virtual bool release_payload(
             CacheChange_t& cache_change) override;
 
-    virtual bool reserve_history(
+    /**
+     * @brief Ensures the pool has capacity to fullfill the requirements of a new history.
+     *
+     * @param [in]  config              The new history's pool requirements.
+     * @param [in]  is_reader_history   True if the new history is for a reader. False otherwise.
+     *
+     * @pre
+     *   - Current pool is configured for the same memory policy as @c config.memory_policy.
+     *
+     * @post
+     *   - If @c config.maximum_size is not zero
+     *     - The maximum size of the pool is increased by @c config.maximum_size.
+     *   - else
+     *     - The maximum size of the pool is set to the largest representable value.
+     *   - If the pool is configured for PREALLOCATED or PREALLOCATED WITH REALLOC memory policy:
+     *     - The pool has at least as many elements allocated (including elements already in use)
+     *       as the sum of the @c config.initial_size for all reserved writer histories
+     *       plus the maximum of the @c config.initial_size for all reserved reader histories.
+     */
+    bool reserve_history(
             const PoolConfig& config,
             bool is_reader) override;
 
-    virtual bool release_history(
+    /**
+     * @brief Informs the pool that some history requirements are not longer active.
+     *
+     * The pool can release some resources that are not needed any longer.
+     *
+     * @param [in]  config              The old history's pool requirements, which are no longer active.
+     * @param [in]  is_reader_history   True if the history was for a reader. False otherwise.
+     *
+     * @pre
+     *   - Current pool is configured for the same memory policy as @c config.memory_policy.
+     *   - If all remaining histories were reserved with non zero @c config.maximum_size
+     *      - The number of elements in use is less than
+     *        the sum of the @c config.maximum_size for all remaining histories
+     *
+     * @post
+     *   - If all remaining histories were reserved with non zero @c config.maximum_size
+     *      - The maximum size of the pool is set to
+     *        the sum of the @c config.maximum_size for all remaining histories
+     *   - else
+     *     - The maximum size of the pool remains the largest representable value.
+     *   - If the number of allocated elements is greater than the new maximum size,
+     *     the excess of elements are freed until the number of allocated elemets is equal to the new maximum.
+     */
+    bool release_history(
             const PoolConfig& config,
             bool is_reader) override;
 
-    size_t get_allPayloadsSize() const override
+    size_t payload_pool_allocated_size() const override
     {
         return all_payloads_.size();
     }
 
-    size_t get_freePayloadsSize() const override
+    size_t payload_pool_available_size() const override
     {
         return free_payloads_.size();
     }
@@ -106,7 +148,6 @@ protected:
         explicit PayloadNode(
                 octet* data)
         {
-
             buffer = data - data_offset;
         }
 
@@ -179,6 +220,9 @@ protected:
      * Adds a new payload in the pool, but does not add it to the list of free payloads
      */
     virtual PayloadNode* allocate(
+            uint32_t size);
+
+    PayloadNode* do_allocate(
             uint32_t size);
 
     virtual void update_maximum_size(

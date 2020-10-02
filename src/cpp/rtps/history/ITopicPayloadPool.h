@@ -36,9 +36,6 @@ public:
      * @param [in]  config              The new history's pool requirements.
      * @param [in]  is_reader_history   True if the new history is for a reader. False otherwise.
      *
-     * @pre
-     *   - Current pool is configured for the same memory policy as @c config.memory_policy.
-     *
      * @post
      *   - If @c config.maximum_size is not zero
      *     - The maximum size of the pool is increased by @c config.maximum_size.
@@ -62,7 +59,6 @@ public:
      * @param [in]  is_reader_history   True if the history was for a reader. False otherwise.
      *
      * @pre
-     *   - Current pool is configured for the same memory policy as @c config.memory_policy.
      *   - If all remaining histories were reserved with non zero @c config.maximum_size
      *      - The number of elements in use is less than
      *        the sum of the @c config.maximum_size for all remaining histories
@@ -83,12 +79,12 @@ public:
     /**
      * @brief Get the number of allocated payloads (reserved and not reserved).
      */
-    virtual size_t get_allPayloadsSize() const = 0;
+    virtual size_t payload_pool_allocated_size() const = 0;
 
     /**
      * @brief Get the number of available payloads (not reserved).
      */
-    virtual size_t get_freePayloadsSize() const = 0;
+    virtual size_t payload_pool_available_size() const = 0;
 
 };
 

@@ -24,7 +24,7 @@ using namespace std;
 
 constexpr uint32_t max_num_reserves = 1000u;
 
-class TopicPayloadPoolTests : public TestWithParam<tuple<uint32_t, uint32_t, uint32_t, MemoryManagementPolicy_t> >
+class TopicPayloadPoolTests : public TestWithParam<tuple<uint32_t, uint32_t, uint32_t, MemoryManagementPolicy_t>>
 {
 protected:
 
@@ -135,7 +135,7 @@ protected:
             uint32_t expected_max_pool_size)
     {
         // Check the reserved sizes
-        ASSERT_EQ(pool->get_allPayloadsSize(), expected_pool_size);
+        ASSERT_EQ(pool->payload_pool_allocated_size(), expected_pool_size);
 
         // Check the maximum sizes
         // As there is no public interface exposing this data,
