@@ -43,6 +43,9 @@ PersistentWriter::PersistentWriter(
 
     persistence_->load_writer_from_storage(persistence_guid_, guid, hist->m_changes,
             hist->change_pool_, hist->payload_pool_, hist->m_lastCacheChangeSeqNum);
+
+    // Update history state after loading from DB
+    hist->m_isHistoryFull = static_cast<int32_t>(hist->m_changes.size()) == hist->m_att.maximumReservedCaches;
 }
 
 PersistentWriter::~PersistentWriter()

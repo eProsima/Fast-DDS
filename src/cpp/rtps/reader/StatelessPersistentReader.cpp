@@ -35,21 +35,21 @@ StatelessPersistentReader::StatelessPersistentReader(
         ReaderHistory* hist,
         ReaderListener* listen,
         IPersistenceService* persistence)
-     : StatelessReader(impl, guid, att, hist,listen)
-     , persistence_(persistence)
-     , persistence_guid_()
+    : StatelessReader(impl, guid, att, hist,listen)
+    , persistence_(persistence)
+    , persistence_guid_()
 {
-     // When persistence GUID is unknown, create from rtps GUID
-     GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
-     std::ostringstream ss;
-     ss << p_guid;
-     persistence_guid_ = ss.str();
-     persistence_->load_reader_from_storage(persistence_guid_, history_state_->history_record);
- }
+    // When persistence GUID is unknown, create from rtps GUID
+    GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
+    std::ostringstream ss;
+    ss << p_guid;
+    persistence_guid_ = ss.str();
+    persistence_->load_reader_from_storage(persistence_guid_, history_state_->history_record);
+}
 
- StatelessPersistentReader::~StatelessPersistentReader()
+StatelessPersistentReader::~StatelessPersistentReader()
 {
-     delete persistence_;
+    delete persistence_;
 }
 
 void StatelessPersistentReader::set_last_notified(
