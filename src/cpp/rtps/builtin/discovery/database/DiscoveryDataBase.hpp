@@ -268,6 +268,12 @@ protected:
         //sh_mtx_.unlock();
     }
 
+    // Get a vector of entities that are in the topic name, + plus those that are in the virtual_topic_.
+    // If topic_name == virtual_topic_, then return all entities in the map.
+    std::vector<eprosima::fastrtps::rtps::GUID_t> find_by_topic_(
+            const std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>& map_by_topic,
+            const std::string& topic_name);
+
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
@@ -307,6 +313,16 @@ protected:
     mutable share_mutex_t sh_mtx_;
 
     fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
+
+    eprosima::fastrtps::rtps::GUID_t virtual_guid_;
+
+    eprosima::fastrtps::rtps::SampleIdentity sample_id_;
+
+    std::unique_ptr<eprosima::fastrtps::rtps::CacheChange_t> virtual_change_;
+
+    const std::string virtual_topic_ = "eprosima_server_virtual_topic";
+
+    uint16_t local_servers_count_ = 0;
 
 };
 
