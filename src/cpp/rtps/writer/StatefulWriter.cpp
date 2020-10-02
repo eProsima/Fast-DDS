@@ -1265,7 +1265,14 @@ bool StatefulWriter::matched_reader_add(
     RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
 
     // Add initial heartbeat to message group
-    send_heartbeat_nts_(1u, group, disable_positive_acks_);
+    if (rp->is_local_reader())
+    {
+        intraprocess_heartbeat(rp);
+    }
+    else
+    {
+        send_heartbeat_nts_(1u, group, disable_positive_acks_);
+    }
 
     SequenceNumber_t current_seq = get_seq_num_min();
     SequenceNumber_t last_seq = get_seq_num_max();
@@ -1389,14 +1396,17 @@ bool StatefulWriter::matched_reader_add(
         periodic_hb_event_->restart_timer();
     }
 
-    try
+    if (!rp->is_local_reader())
     {
-        // Send all messages
-        group.flush_and_reset();
-    }
-    catch (const RTPSMessageGroup::timeout&)
-    {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        try
+        {
+            // Send all messages
+            group.flush_and_reset();
+        }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
     }
 
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
@@ -1843,6 +1853,10 @@ void StatefulWriter::send_heartbeat_nts_(
         bool final,
         bool liveliness)
 {
+    if (!number_of_readers)
+    {
+        return;
+    }
 
     SequenceNumber_t firstSeq = get_seq_num_min();
     SequenceNumber_t lastSeq = get_seq_num_max();
