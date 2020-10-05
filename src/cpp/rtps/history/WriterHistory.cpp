@@ -259,6 +259,18 @@ bool WriterHistory::remove_min_change()
 
 //TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.
 
+bool WriterHistory::do_reserve_cache(
+        CacheChange_t** change,
+        uint32_t size)
+{
+    *change = mp_writer->new_change(
+        [size]()
+        {
+            return size;
+        }, ALIVE);
+    return *change != nullptr;
+}
+
 void WriterHistory::do_release_cache(
         CacheChange_t* ch)
 {

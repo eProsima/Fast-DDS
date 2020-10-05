@@ -64,24 +64,34 @@ public:
     //!Attributes of the History
     HistoryAttributes m_att;
 
+    /**
+     * Reserve a CacheChange_t from the CacheChange pool.
+     * @param[out] change Pointer to pointer to the CacheChange_t to reserve
+     * @param[in] calculateSizeFunc Function to calculate the size of the payload.
+     * @return True if reserved
+     * @warn This method has been deprecated and will be removed on v3.0.0
+     */
     FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
-            const std::function<uint32_t()>&)
+            const std::function<uint32_t()>& calculateSizeFunc)
     {
-        assert(change != nullptr);
-        *change = nullptr;
-        return false;
+        return do_reserve_cache(change, calculateSizeFunc());
     }
 
+    /**
+     * Reserve a CacheChange_t from the CacheChange pool.
+     * @param[out] change Pointer to pointer to the CacheChange_t to reserve
+     * @param[in] dataSize Required size for the payload.
+     * @return True if reserved
+     * @warn This method has been deprecated and will be removed on v3.0.0
+     */
     FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
-            uint32_t)
+            uint32_t dataSize)
     {
-        assert(change != nullptr);
-        *change = nullptr;
-        return false;
+        return do_reserve_cache(change, dataSize);
     }
 
     /**
@@ -224,6 +234,10 @@ protected:
 
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
+
+    RTPS_DllAPI virtual bool do_reserve_cache(
+            CacheChange_t** change,
+            uint32_t size) = 0;
 
     RTPS_DllAPI virtual void do_release_cache(
             CacheChange_t* ch) = 0;

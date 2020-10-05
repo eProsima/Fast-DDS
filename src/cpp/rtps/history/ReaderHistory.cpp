@@ -227,6 +227,13 @@ bool ReaderHistory::get_min_change_from(
     return ret;
 }
 
+bool ReaderHistory::do_reserve_cache(
+        CacheChange_t** change,
+        uint32_t size)
+{
+    return mp_reader->reserveCache(change, size);
+}
+
 void ReaderHistory::do_release_cache(
         CacheChange_t* ch)
 {
