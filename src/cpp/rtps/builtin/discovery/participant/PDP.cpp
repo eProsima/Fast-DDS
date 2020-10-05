@@ -381,7 +381,7 @@ void PDP::announceParticipantState(
         bool dispose,
         WriteParams& wparams)
 {
-    logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
+    // logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     if (!dispose)
@@ -546,7 +546,7 @@ bool PDP::lookupWriterProxyData(
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
             auto wit = pit->m_writers->find(writer.entityId);
-            if ( wit != pit->m_writers->end() )
+            if ( wit != pit->m_writers->end())
             {
                 wdata.copy(wit->second);
                 return true;
