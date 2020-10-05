@@ -960,6 +960,7 @@ bool PDPServer2::process_changes_release()
             }
         }
     }
+    discovery_db_.clear_changes_to_release();
     return false;
 }
 
