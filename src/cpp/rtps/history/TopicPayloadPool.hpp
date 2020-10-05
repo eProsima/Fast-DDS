@@ -176,6 +176,12 @@ protected:
             return *reinterpret_cast<uint32_t*>(buffer + size_offset);
         }
 
+        static uint32_t data_size(
+                octet* data)
+        {
+            return *reinterpret_cast<uint32_t*>(data - data_offset + size_offset);
+        }
+
         void data_size(
                 uint32_t size)
         {
@@ -212,6 +218,18 @@ protected:
         bool dereference()
         {
             return --(*reinterpret_cast<uint32_t*>(buffer + reference_offset));
+        }
+
+        static void reference(
+                octet* data)
+        {
+            ++(*reinterpret_cast<uint32_t*>(data - data_offset + reference_offset));
+        }
+
+        static bool dereference(
+                octet* data)
+        {
+            return --(*reinterpret_cast<uint32_t*>(data - data_offset + reference_offset));
         }
 
     };

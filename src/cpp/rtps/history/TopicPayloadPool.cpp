@@ -36,12 +36,13 @@ bool TopicPayloadPool::get_payload(
 {
     PayloadNode* payload = nullptr;
 
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     if (free_payloads_.empty())
     {
         payload = allocate(size); //Allocates a single payload
         if (payload == nullptr)
         {
+            lock.unlock();
             cache_change.serializedPayload.data = nullptr;
             cache_change.serializedPayload.max_size = 0;
             cache_change.payload_owner(nullptr);
@@ -54,6 +55,7 @@ bool TopicPayloadPool::get_payload(
         free_payloads_.pop_back();
     }
 
+    lock.unlock();
     payload->reference();
     cache_change.serializedPayload.data = payload->data();
     cache_change.serializedPayload.max_size = payload->data_size();
@@ -71,12 +73,10 @@ bool TopicPayloadPool::get_payload(
 
     if (data_owner == this)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(data.data));
-        payload->reference();
+        PayloadNode::reference(data.data);
 
-        cache_change.serializedPayload.data = payload->data();
-        cache_change.serializedPayload.max_size = payload->data_size();
+        cache_change.serializedPayload.data = data.data;
+        cache_change.serializedPayload.max_size = PayloadNode::data_size(data.data);
         cache_change.payload_owner(this);
         return true;
     }
@@ -93,6 +93,8 @@ bool TopicPayloadPool::get_payload(
             if (data_owner == nullptr)
             {
                 data_owner = this;
+                data.data = cache_change.serializedPayload.data;
+                PayloadNode::reference(data.data);
             }
 
             return true;
@@ -150,8 +152,6 @@ bool TopicPayloadPool::release_history(
 TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(
         uint32_t size)
 {
-    PayloadNode* payload = nullptr;
-
     if (all_payloads_.size() >= max_pool_size_)
     {
         logWarning(RTPS_HISTORY, "Maximum number of allowed reserved payloads reached");
