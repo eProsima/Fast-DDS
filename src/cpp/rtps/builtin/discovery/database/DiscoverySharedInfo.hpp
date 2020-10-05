@@ -22,6 +22,7 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
 #include "./DiscoveryParticipantsAckStatus.hpp"
 
@@ -53,6 +54,8 @@ public:
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
             bool status = false)
     {
+        logInfo(DISCOVERY_DATABASE, "Adding relevant participant " << guid_p << " with status " << status << " to " <<
+                fastrtps::rtps::iHandle2GUID(change_->instanceHandle).guidPrefix);
         relevant_participants_builtin_ack_status_.add_or_update_participant(guid_p, status);
     }
 
@@ -72,6 +75,12 @@ public:
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
     {
         return relevant_participants_builtin_ack_status_.is_matched(guid_p);
+    }
+
+    bool is_relevant_participant(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
+    {
+        return relevant_participants_builtin_ack_status_.is_relevant_participant(guid_p);
     }
 
     eprosima::fastrtps::rtps::CacheChange_t* change() const
