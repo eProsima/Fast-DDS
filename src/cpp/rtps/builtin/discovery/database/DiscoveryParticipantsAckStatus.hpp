@@ -58,6 +58,9 @@ public:
     bool is_matched(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
 
+    bool is_relevant_participant(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
+
 private:
 
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, bool> relevant_participants_map_;
