@@ -32,6 +32,7 @@ namespace ddb {
 DiscoveryDataBase::DiscoveryDataBase(
         fastrtps::rtps::GuidPrefix_t server_guid_prefix)
     : server_guid_prefix_(server_guid_prefix)
+    , server_acked_by_all_(false)
 {
 }
 
@@ -358,6 +359,8 @@ void DiscoveryDataBase::create_participant_from_change(
     {
         fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
         logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
+
+        // if its our own server guid, we put the DATA(P) in the history
         if (change_guid.guidPrefix == server_guid_prefix_)
         {
             if (std::find(
@@ -369,6 +372,11 @@ void DiscoveryDataBase::create_participant_from_change(
                         << ch->instanceHandle);
                 pdp_to_send_.push_back(ch);
             }
+        }
+        else
+        {
+            // if it is a new participant, we have to wait to make ack to our DATA(P)
+            server_acked_by_all(false);
         }
     }
 
