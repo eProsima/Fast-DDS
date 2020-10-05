@@ -22,30 +22,20 @@
 
 #include "./DiscoverySharedInfo.hpp"
 
-namespace eprosima {
-namespace fastdds {
-namespace rtps {
-namespace ddb {
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps::ddb;
 
-
-eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::set_change_and_unmatch(
-        eprosima::fastrtps::rtps::CacheChange_t* change)
+CacheChange_t* DiscoverySharedInfo::set_change_and_unmatch(
+        CacheChange_t* change)
 {
     relevant_participants_builtin_ack_status_.unmatch_all();
     return change_info(change);
 }
 
-eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::change_info(
-        eprosima::fastrtps::rtps::CacheChange_t* change)
+CacheChange_t* DiscoverySharedInfo::change_info(
+        CacheChange_t* change)
 {
     eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
     change_ = change;
     return old_change;
 }
-
-eprosima::fastrtps::rtps::CacheChange_t* change();
-
-} /* namespace ddb */
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
