@@ -296,7 +296,7 @@ protected:
     // mutexes
     mutable share_mutex_t sh_mtx_;
 
-    fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
+    const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
 
 };
 
