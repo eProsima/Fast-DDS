@@ -39,17 +39,20 @@ bool DiscoveryDataBase::pdp_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
-    // Lock(shared mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     // Get identity of the participant that generated the DATA(p|Up)
     fastrtps::rtps::GuidPrefix_t change_guid_prefix = guid_from_change(&change).guidPrefix;
 
-    // Own DATA(p|Up) is always relevant
+    // Own DATA(p|Up) is always relevant for remote PDP readers. Server's PDP ReaderProxy will never
+    // be queried for relevance, since Participant's own PDP writer and reader are not matched,
+    // and there for there is no ReaderProxy for participant's own PDP reader.
     if (server_guid_prefix_ == change_guid_prefix)
     {
         return true;
     }
+
+    // Lock(shared mode) mutex locally
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     auto it = participants_.find(change_guid_prefix);
     if (it != participants_.end())
@@ -67,10 +70,13 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
+    // Get identity of the participant that generated the DATA
+    fastrtps::rtps::GUID_t change_guid = guid_from_change(&change);
+
     // Lock(shared mode) mutex locally
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
-    auto itp = participants_.find(guid_from_change(&change).guidPrefix);
+    auto itp = participants_.find(change_guid.guidPrefix);
     if (itp == participants_.end())
     {
         // not relevant
@@ -82,7 +88,7 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
         return false;
     }
 
-    auto itw = writers_.find(guid_from_change(&change));
+    auto itw = writers_.find(change_guid);
     if (itw != writers_.end())
     {
         // it is relevant if the ack has not been received yet
@@ -97,10 +103,13 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
         const eprosima::fastrtps::rtps::CacheChange_t& change,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid) const
 {
+    // Get identity of the participant that generated the DATA
+    fastrtps::rtps::GUID_t change_guid = guid_from_change(&change);
+
     // Lock(shared mode) mutex locally
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
-    auto itp = participants_.find(guid_from_change(&change).guidPrefix);
+    auto itp = participants_.find(change_guid.guidPrefix);
     if (itp == participants_.end())
     {
         // not relevant
@@ -112,7 +121,7 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
         return false;
     }
 
-    auto itr = readers_.find(guid_from_change(&change));
+    auto itr = readers_.find(change_guid);
     if (itr != readers_.end())
     {
         // it is relevant if the ack has not been received yet
@@ -333,7 +342,7 @@ bool DiscoveryDataBase::process_data_queue()
 void DiscoveryDataBase::create_participant_from_change(
         eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    DiscoveryParticipantInfo part(ch);
+    DiscoveryParticipantInfo part(ch, server_guid_prefix_);
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
             participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
 
@@ -380,7 +389,8 @@ void DiscoveryDataBase::create_writers_from_change(
     }
 
     // Update writers_
-    DiscoveryEndpointInfo tmp_writer(ch, topic_name);
+    DiscoveryEndpointInfo tmp_writer(ch, topic_name, server_guid_prefix_);
+
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             writers_.insert(std::make_pair(writer_guid, tmp_writer));
 
@@ -480,7 +490,8 @@ void DiscoveryDataBase::create_readers_from_change(
         r_pit->second.add_reader(reader_guid);
     }
 
-    DiscoveryEndpointInfo tmp_reader(ch, topic_name);
+    DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
+
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             readers_.insert(std::make_pair(reader_guid, tmp_reader));
 
