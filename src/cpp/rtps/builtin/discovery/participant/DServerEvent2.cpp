@@ -51,7 +51,7 @@ DServerEvent2::~DServerEvent2()
 
 bool DServerEvent2::event()
 {
-    logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
+    // logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
     /*
      * TODO: Management of other server should be done here

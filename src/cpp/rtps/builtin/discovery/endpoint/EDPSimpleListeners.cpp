@@ -51,9 +51,9 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
     std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
     (reader)->getMutex().lock();                                          \
                                                                           \
-    if ( (ALIVE != (change)->kind) ||                                     \
+    if ((ALIVE != (change)->kind) ||                                     \
             (seq_num != (change)->sequenceNumber) ||                         \
-            (writer_guid != (change)->writerGUID) )                          \
+            (writer_guid != (change)->writerGUID))                          \
     {                                                                     \
         return;                                                           \
     }                                                                     \
@@ -110,14 +110,7 @@ void EDPBasePUBListener::add_writer_from_change(
         if (writer_data != nullptr)
         {
             // Removing change from history
-            if (release_change)
-            {
-                reader_history->remove_change(change);
-            }
-            else
-            {
-                reader_history->remove_change_and_reuse(change);
-            }
+            reader_history->remove_change(reader_history->find_change(change), release_change);
 
             // At this point we can release reader lock, cause change is not used
             reader->getMutex().unlock();
@@ -239,14 +232,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         if (reader_data != nullptr) //ADDED NEW DATA
         {
             // Remove change from history.
-            if (release_change)
-            {
-                reader_history->remove_change(change);
-            }
-            else
-            {
-                reader_history->remove_change_and_reuse(change);
-            }
+            reader_history->remove_change(reader_history->find_change(change), release_change);
 
             // At this point we can release reader lock, cause change is not used
             reader->getMutex().unlock();
