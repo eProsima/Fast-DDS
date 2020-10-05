@@ -259,6 +259,12 @@ bool WriterHistory::remove_min_change()
 
 //TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.
 
+void WriterHistory::do_release_cache(
+        CacheChange_t* ch)
+{
+    mp_writer->release_change(ch);
+}
+
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima

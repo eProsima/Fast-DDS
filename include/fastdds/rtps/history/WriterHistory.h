@@ -100,6 +100,9 @@ public:
 
 protected:
 
+    RTPS_DllAPI void do_release_cache(
+            CacheChange_t* ch) override;
+
     bool add_change_(
             CacheChange_t* a_change,
             WriteParams& wparams,

@@ -151,7 +151,7 @@ bool ReaderHistory::remove_changes_with_guid(
         {
             if ((*chit)->writerGUID == a_guid)
             {
-                changes_to_remove.push_back( (*chit) );
+                changes_to_remove.push_back((*chit));
             }
         }
     }//End lock scope
@@ -225,6 +225,12 @@ bool ReaderHistory::get_min_change_from(
     }
 
     return ret;
+}
+
+void ReaderHistory::do_release_cache(
+        CacheChange_t* ch)
+{
+    mp_reader->releaseCache(ch);
 }
 
 } /* namespace rtps */

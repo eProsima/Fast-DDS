@@ -84,10 +84,16 @@ public:
         return false;
     }
 
+    /**
+     * release a previously reserved CacheChange_t.
+     * @param ch Pointer to the CacheChange_t.
+     * @warn This method has been deprecated and will be removed on v3.0.0
+     */
     FASTRTPS_DEPRECATED("Use release_change on RTPSWriter or releaseCache on RTPSReader")
     RTPS_DllAPI inline void release_Cache(
-            CacheChange_t*)
+            CacheChange_t* ch)
     {
+        do_release_cache(ch);
     }
 
     /**
@@ -219,10 +225,13 @@ protected:
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
 
+    RTPS_DllAPI virtual void do_release_cache(
+            CacheChange_t* ch) = 0;
+
 };
 
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_HISTORY_H_ */
