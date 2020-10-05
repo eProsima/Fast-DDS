@@ -343,11 +343,11 @@ int main()
     {
         std::cout << "Press 'r' to read Messages from the History or 'q' to quit" << std::endl;
         std::cin >> c;
-        if ( c == std::string("q") )
+        if ( c == std::string("q"))
         {
             condition = false;
         }
-        else if ( c == std::string("r") )
+        else if ( c == std::string("r"))
         {
             while (EarlyReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
             {
