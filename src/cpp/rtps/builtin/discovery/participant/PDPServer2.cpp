@@ -739,20 +739,39 @@ History::iterator PDPServer2::process_change_acknowledgement(
 
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
-        // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
-        // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
-        // `pending` to whether the change is has been acknowledged by all readers.
-        fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor func = discovery_db_.functor(c);
-        writer->for_each_reader_proxy(c, func);
 
-        // If the change has been acknowledge by everyone
-        if (!func &&
-                !(discovery_db_.is_participant(c) &&
-                discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
+        // If the change is a DATA(p), and it's the server's DATA(p), and the database knows that
+        // it had been acked by all, then skip the change acked check for every reader proxy
+        if (discovery_db_.is_participant(c) &&
+                discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid() &&
+                discovery_db_.server_acked_by_all())
         {
-            // Remove the entry from writer history, but do not release the cache.
-            // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-            return writer_history->remove_change(cit, false);
+            logInfo(RTPS_PDP_SERVER, "Server's DATA(p) already acked by all. Skipping check for every ReaderProxy");
+        }
+        else
+        {
+            // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
+            // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
+            // `pending` to whether the change is has been acknowledged by all readers.
+            fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor func = discovery_db_.functor(c);
+            writer->for_each_reader_proxy(c, func);
+
+            // If the change has been acknowledge by everyone
+            if (!func)
+            {
+                // in case there is not pending acks for our DATA(p) server, we notify the ddb that it is acked by all
+                if (discovery_db_.is_participant(c) &&
+                        discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid())
+                {
+                    discovery_db_.server_acked_by_all(true);
+                }
+                else
+                {
+                    // Remove the entry from writer history, but do not release the cache.
+                    // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
+                    return writer_history->remove_change(cit, false);
+                }
+            }
         }
     }
     // DATA(Up|Uw|Ur) case. Currently, Fast DDS only considers CacheChange kinds ALIVE and NOT_ALIVE_DISPOSED, so if the
