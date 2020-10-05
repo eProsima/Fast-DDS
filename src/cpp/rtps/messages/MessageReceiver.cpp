@@ -679,33 +679,22 @@ bool MessageReceiver::proc_Submsg_Data(
                     return;
                 }
 
-                bool is_decoded = false;
-                if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
+                if (!participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
                         crypto_payload_, reader->getGuid(), ch.writerGUID))
-                {
-                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                    is_decoded = true;
-                }
-                else
                 {
                     return;
                 }
-                reader->processDataMsg(&ch);
 
-                if (is_decoded)
-                {
-                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                }
+                std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                std::swap(ch.serializedPayload.length, crypto_payload_.length);
+                reader->processDataMsg(&ch);
+                std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                std::swap(ch.serializedPayload.length, crypto_payload_.length);
             };
 #else
     auto process_message = [&ch](RTPSReader* reader)
             {
-                if (reader->matched_writer_is_matched(ch.writerGUID))
-                {
-                    reader->processDataMsg(&ch);
-                }
+                reader->processDataMsg(&ch);
             };
 #endif  // HAVE_SECURITY
 
@@ -895,33 +884,22 @@ bool MessageReceiver::proc_Submsg_DataFrag(
                     return;
                 }
 
-                bool is_decoded = false;
-                if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
+                if (!participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
                         crypto_payload_, reader->getGuid(), ch.writerGUID))
-                {
-                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                    is_decoded = true;
-                }
-                else
                 {
                     return;
                 }
-                reader->processDataMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
 
-                if (is_decoded)
-                {
-                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                }
+                std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                std::swap(ch.serializedPayload.length, crypto_payload_.length);
+                reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+                std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                std::swap(ch.serializedPayload.length, crypto_payload_.length);
             };
 #else
     auto process_message = [&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage](RTPSReader* reader)
             {
-                if (reader->matched_writer_is_matched(ch.writerGUID))
-                {
-                    reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
-                }
+                reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
             };
 #endif  // HAVE_SECURITY
 
