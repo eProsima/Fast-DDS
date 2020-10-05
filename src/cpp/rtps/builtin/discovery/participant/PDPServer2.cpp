@@ -90,8 +90,6 @@ bool PDPServer2::init(
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
 
-    // awake_server_thread();
-
     return true;
 }
 
@@ -687,6 +685,7 @@ void PDPServer2::awake_server_thread(
         double interval_ms /*= 0*/)
 {
     mp_sync->update_interval_millisec(interval_ms);
+    mp_sync->cancel_timer();
     mp_sync->restart_timer();
 }
 
