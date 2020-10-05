@@ -199,7 +199,6 @@ protected:
 
 private:
 
-
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 

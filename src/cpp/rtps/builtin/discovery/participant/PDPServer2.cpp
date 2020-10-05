@@ -88,7 +88,7 @@ bool PDPServer2::init(
      */
     mp_sync = new DServerEvent2(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
-                            m_discovery.discovery_config.discoveryServer_client_syncperiod));
+                        m_discovery.discovery_config.discoveryServer_client_syncperiod));
 
     // awake_server_thread();
 
