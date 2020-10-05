@@ -740,8 +740,8 @@ History::iterator PDPServer2::process_change_acknowledgement(
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
 
-        // If then change is the server's DATA(p), it could be already acked by all.
-        // In that case, we can skip checking ack status on every reader proxy
+        // If the change is a DATA(p), and it's the server's DATA(p), and the database knows that
+        // it had been acked by all, then skip the change acked check for every reader proxy
         if (discovery_db_.is_participant(c) &&
                 discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid() &&
                 discovery_db_.server_acked_by_all())
@@ -759,10 +759,10 @@ History::iterator PDPServer2::process_change_acknowledgement(
             // If the change has been acknowledge by everyone
             if (!func)
             {
+                // in case there is not pending acks for our DATA(p) server, we notify the ddb that it is acked by all
                 if (discovery_db_.is_participant(c) &&
                         discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid())
                 {
-                    // in case there is not pending to our server, we notify the ddb that it is acked by all
                     discovery_db_.server_acked_by_all(true);
                 }
                 else
