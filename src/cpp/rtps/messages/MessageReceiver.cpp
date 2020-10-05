@@ -668,30 +668,35 @@ bool MessageReceiver::proc_Submsg_Data(
 #if HAVE_SECURITY
     auto process_message = [&ch, this](RTPSReader* reader)
             {
-                if (reader->matched_writer_is_matched(ch.writerGUID))
+                if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
-                    bool is_decoded = false;
-                    if (reader->getAttributes().security_attributes().is_payload_protected)
-                    {
-                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
-                                crypto_payload_, reader->getGuid(), ch.writerGUID))
-                        {
-                            std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                            std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                            is_decoded = true;
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
                     reader->processDataMsg(&ch);
+                    return;
+                }
 
-                    if (is_decoded)
-                    {
-                        std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                        std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                    }
+                if (!reader->matched_writer_is_matched(ch.writerGUID))
+                {
+                    return;
+                }
+
+                bool is_decoded = false;
+                if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
+                        crypto_payload_, reader->getGuid(), ch.writerGUID))
+                {
+                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
+                    is_decoded = true;
+                }
+                else
+                {
+                    return;
+                }
+                reader->processDataMsg(&ch);
+
+                if (is_decoded)
+                {
+                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
                 }
             };
 #else
@@ -873,37 +878,41 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         ch.sourceTimestamp = timestamp_;
     }
 
-    //FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
     logInfo(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
             associated_readers_.size());
 
 #if HAVE_SECURITY
     auto process_message = [&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage, this](RTPSReader* reader)
             {
-                if (reader->matched_writer_is_matched(ch.writerGUID))
+                if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
-                    bool is_decoded = false;
-                    if (reader->getAttributes().security_attributes().is_payload_protected)
-                    {
-                        if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
-                                crypto_payload_, reader->getGuid(), ch.writerGUID))
-                        {
-                            std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                            std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                            is_decoded = true;
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
                     reader->processDataMsg(&ch);
+                    return;
+                }
 
-                    if (is_decoded)
-                    {
-                        std::swap(ch.serializedPayload.data, crypto_payload_.data);
-                        std::swap(ch.serializedPayload.length, crypto_payload_.length);
-                    }
+                if (!reader->matched_writer_is_matched(ch.writerGUID))
+                {
+                    return;
+                }
+
+                bool is_decoded = false;
+                if (participant_->security_manager().decode_serialized_payload(ch.serializedPayload,
+                        crypto_payload_, reader->getGuid(), ch.writerGUID))
+                {
+                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
+                    is_decoded = true;
+                }
+                else
+                {
+                    return;
+                }
+                reader->processDataMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+
+                if (is_decoded)
+                {
+                    std::swap(ch.serializedPayload.data, crypto_payload_.data);
+                    std::swap(ch.serializedPayload.length, crypto_payload_.length);
                 }
             };
 #else
