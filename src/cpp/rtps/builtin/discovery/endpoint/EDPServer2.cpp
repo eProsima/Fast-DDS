@@ -206,11 +206,11 @@ bool EDPServer2::removeLocalReader(
     GUID_t guid = R->getGuid();
 
     // Recover reader information
-    fastrtps::string_255 topic_name;
+    std::string topic_name;
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         mp_PDP->lookupReaderProxyData(guid, temp_reader_proxy_data_);
-        topic_name = temp_reader_proxy_data_.topicName();
+        topic_name = temp_reader_proxy_data_.topicName().to_string();
     }
 
     // Remove proxy data associated with the reader
@@ -265,12 +265,12 @@ bool EDPServer2::removeLocalWriter(
     GUID_t guid = W->getGuid();
 
     // Recover writer information
-    fastrtps::string_255 topic_name;
+    std::string topic_name;
 
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         mp_PDP->lookupWriterProxyData(guid, temp_writer_proxy_data_);
-        topic_name = temp_writer_proxy_data_.topicName();
+        topic_name = temp_writer_proxy_data_.topicName().to_string();
     }
 
     // Remove proxy data associated with the writer
@@ -344,7 +344,7 @@ bool EDPServer2::processLocalWriterProxyData(
         wp.related_sample_identity(local);
 
         // Notify the DiscoveryDataBase
-        if (get_pdp()->discovery_db().update(change, wdata->topicName()))
+        if (get_pdp()->discovery_db().update(change, wdata->topicName().to_string()))
         {
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the CacheChange_t.
@@ -394,7 +394,7 @@ bool EDPServer2::processLocalReaderProxyData(
         wp.related_sample_identity(local);
 
         // Notify the DiscoveryDataBase
-        if (get_pdp()->discovery_db().update(change, rdata->topicName()))
+        if (get_pdp()->discovery_db().update(change, rdata->topicName().to_string()))
         {
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the CacheChange_t.

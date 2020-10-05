@@ -281,7 +281,7 @@ bool PublisherHistory::remove_change_pub(
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     if (topic_att_.getTopicKind() == NO_KEY)
     {
-        if (this->remove_change(change))
+        if (remove_change(change))
         {
             m_isHistoryFull = false;
             return true;
