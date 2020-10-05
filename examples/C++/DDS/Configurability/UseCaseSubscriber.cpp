@@ -28,7 +28,7 @@ enum Reliability_type { Best_Effort, Reliable };
 enum Durability_type { Transient_Local, Volatile };
 enum HistoryKind_type { Keep_Last, Keep_All };
 
-typedef struct
+struct example_configuration
 {
     Reliability_type reliability;
     Durability_type durability;
@@ -37,7 +37,7 @@ typedef struct
     uint8_t depth = 1;
     uint8_t no_keys = 1;
     uint16_t max_samples_per_key = 1;
-} example_configuration;
+};
 
 
 
