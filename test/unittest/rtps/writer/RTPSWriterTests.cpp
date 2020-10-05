@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 
@@ -113,22 +113,10 @@ void pool_initialization_test (
     std::shared_ptr<TestPayloadPool> pool = std::make_shared<TestPayloadPool>();
 
     // Creating the Writer initializes the PayloadPool with the initial reserved size
-    if (policy == PREALLOCATED_MEMORY_MODE || policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
-    {
-        EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-            .Times(initial_reserved_caches + 1)
-            .WillRepeatedly(Return(true));
-        EXPECT_CALL(*pool, release_payload_delegate(_))
-            .Times(initial_reserved_caches + 1)
-            .WillRepeatedly(Return(true));
-    }
-    else
-    {
-        EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-            .Times(0);
-        EXPECT_CALL(*pool, release_payload_delegate(_))
-            .Times(0);
-    }
+    EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
+        .Times(0);
+    EXPECT_CALL(*pool, release_payload_delegate(_))
+        .Times(0);
 
     WriterAttributes w_attr;
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(

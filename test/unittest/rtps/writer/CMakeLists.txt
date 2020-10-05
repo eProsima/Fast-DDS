@@ -50,7 +50,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderLocator
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSGapBuilder
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(ReaderProxyTests
@@ -76,7 +76,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
           ${GTEST_INCLUDE_DIRS}
           ${GMOCK_INCLUDE_DIRS}
           ${PROJECT_SOURCE_DIR}/include
-          ${PROJECT_BINARY_DIR}/include
           ${PROJECT_SOURCE_DIR}/src/cpp
           )
     target_link_libraries(LivelinessManagerTests PRIVATE
@@ -86,15 +85,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     # RTPSWriter
 
-    set(RTPSWRITERTESTS_SOURCE RTPSWriterTests.cpp
-    )
+    set(RTPSWRITERTESTS_SOURCE RTPSWriterTests.cpp)
 
     add_executable(RTPSWriterTests ${RTPSWRITERTESTS_SOURCE})
     target_compile_definitions(RTPSWriterTests PRIVATE FASTRTPS_NO_LIB)
     target_include_directories(RTPSWriterTests PRIVATE
         ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-        ${PROJECT_SOURCE_DIR}/src/cpp
+        ${PROJECT_SOURCE_DIR}/include
         )
     target_link_libraries(RTPSWriterTests fastrtps foonathan_memory
         ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}

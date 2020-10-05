@@ -105,7 +105,7 @@ public:
             WriterListener* listen = nullptr);
 
     /**
-     * Create a RTPSWriter in a participant.
+     * Create a RTPSWriter in a participant using a custom payload pool.
      * @param p Pointer to the RTPSParticipant.
      * @param watt Writer Attributes.
      * @param payload_pool Shared pointer to the IPayloadPool
