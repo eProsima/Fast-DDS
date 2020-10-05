@@ -136,13 +136,13 @@ public:
     /**
      * Verifies if an element of the changes collection matches a given change
      * Derived classes have more info on how to identify univocally a change and should override.
-     * @param chi element of the collection to compare with the given change
-     * @param cho Pointer to the CacheChange_t to identify.
+     * @param ch_inner element of the collection to compare with the given change
+     * @param ch_outer Pointer to the CacheChange_t to identify.
      * @return true if the iterator identifies this change.
      */
     RTPS_DllAPI virtual bool matches_change(
-            const CacheChange_t* chi,
-            CacheChange_t* cho) = 0;
+            const CacheChange_t* ch_inner,
+            CacheChange_t* ch_outer) = 0;
     /**
      * Remove a specific change from the history.
      * @param removal iterator to the CacheChange_t to remove.
