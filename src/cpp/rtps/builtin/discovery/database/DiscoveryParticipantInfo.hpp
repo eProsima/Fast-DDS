@@ -42,8 +42,9 @@ class DiscoveryParticipantInfo : public DiscoverySharedInfo
 public:
 
     DiscoveryParticipantInfo(
-            eprosima::fastrtps::rtps::CacheChange_t* change_)
-        : DiscoverySharedInfo(change_)
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            const eprosima::fastrtps::rtps::GuidPrefix_t& known_participant)
+        : DiscoverySharedInfo(change, known_participant)
     {
     }
 
