@@ -28,16 +28,16 @@ namespace fastrtps {
 namespace rtps {
 
 
- StatefulPersistentReader::StatefulPersistentReader(
+StatefulPersistentReader::StatefulPersistentReader(
         RTPSParticipantImpl* impl,
         GUID_t& guid,
         ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen,
         IPersistenceService* persistence)
-     : StatefulReader(impl, guid, att, hist,listen)
-     , persistence_(persistence)
-     , persistence_guid_()
+    : StatefulReader(impl, guid, att, hist, listen)
+    , persistence_(persistence)
+    , persistence_guid_()
 {
     // When persistence GUID is unknown, create from rtps GUID
     GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
@@ -52,7 +52,9 @@ StatefulPersistentReader::~StatefulPersistentReader()
     delete persistence_;
 }
 
-void StatefulPersistentReader::set_last_notified(const GUID_t& writer_guid, const SequenceNumber_t& seq)
+void StatefulPersistentReader::set_last_notified(
+        const GUID_t& writer_guid,
+        const SequenceNumber_t& seq)
 {
     history_state_->history_record[writer_guid] = seq;
     persistence_->update_writer_seq_on_storage(persistence_guid_, writer_guid, seq);

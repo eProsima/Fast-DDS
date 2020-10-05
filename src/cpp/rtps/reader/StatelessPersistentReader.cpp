@@ -35,7 +35,7 @@ StatelessPersistentReader::StatelessPersistentReader(
         ReaderHistory* hist,
         ReaderListener* listen,
         IPersistenceService* persistence)
-    : StatelessReader(impl, guid, att, hist,listen)
+    : StatelessReader(impl, guid, att, hist, listen)
     , persistence_(persistence)
     , persistence_guid_()
 {
